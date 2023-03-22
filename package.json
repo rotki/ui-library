@@ -1,0 +1,24 @@
+{
+  "name": "@rotki/ui-library",
+  "version": "1.0.0",
+  "packageManager": "pnpm@7.30.0",
+  "description": "A vue design system and component library for rotki",
+  "keywords": [
+    "vue",
+    "ui",
+    "components",
+    "rotki"
+  ],
+  "license": "AGPL-3.0",
+  "author": "Rotki Solutions GmbH <info@rotki.com>",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+    "@rotki/eslint-config": "1.0.3",
+    "eslint": "8.36.0",
+    "typescript": "5.0.2"
+  }
+}
