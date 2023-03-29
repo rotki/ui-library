@@ -2,7 +2,7 @@
 
 A vue component library and design system for rotki
 
-### @rotki/ui-library
+### Installation
 
 To install the dependencies you need to run on the root of the repository
 
@@ -48,20 +48,22 @@ pnpm run storybook
 # How to test the usage locally.
 After you build the bundle, in the `package.json` on your main project, you can add this to the dependencies:
 
-```
-"@rotki/ui-library": "file:...path_of_this_directory",
+```json
+{
+  "@rotki/ui-library": "file:...path_of_this_directory"
+}
 ```
 
 When the dependency installed on the main project, it will run the `postinstall` script to determine which dist version will be used, based on the Vue version on the main project.
 
 Don't forget to import the `style.css` file from `@rotki/ui-library`
 
-```
+```typescript
 import '@rotki/ui-library/dist/style.css';
 ```
 
 And then you can use the component 
-```
+```vue
 <script setup lang="ts">
 import { Button as RotkiButton } from '@rotki/ui-library';
 </script>
