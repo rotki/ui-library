@@ -12,6 +12,10 @@ on:
       - develop
       - bugfixes
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
 env:
   NODE_VERSION: 18
 
