@@ -3,7 +3,7 @@ import vue3 from '@vitejs/plugin-vue';
 import vue from '@vitejs/plugin-vue2';
 import { defineConfig } from 'vite';
 import AutoImport from 'unplugin-auto-import/vite';
-import * as Vue3SfcCompiler from 'vue3/compiler-sfc';
+import * as Vue3SfcCompiler from '@vue/compiler-sfc';
 import { isVue3 } from 'vue-demi';
 
 export default defineConfig({
