@@ -15,7 +15,7 @@
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "postinstall": "pnpm build:prod",
+    "postinstall": "node scripts/postinstall.js",
     "dist:build": "node scripts/dist-build.js",
     "dist:select": "node scripts/dist-select.js",
     "build:prod": "pnpm dist:build && pnpm dist:select",

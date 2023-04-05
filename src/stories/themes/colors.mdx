@@ -1,0 +1,69 @@
+import { baseColors, baseColorsIntensities, contextColors, contextColorsIntensities } from '@/consts/colors';
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Themes/Colors" />
+
+# Colors
+#### You can use these classes with prefix `bg-rui-`, `text-rui-`, `border-rui-`.
+
+&nbsp;
+### Base Colors
+
+<div className="max-w-full overflow-y-scroll">
+  <table>
+    <tr>
+      <th>Color</th>
+      {baseColorsIntensities.map(intensity => (
+        <th>{intensity}</th>
+      ))}
+    </tr>
+    {baseColors.map(color => (
+      <tr>
+        <td>
+          {color}
+        </td>
+        {baseColorsIntensities.map(intensity => (
+          <td className="sb-unstyled">
+            <div className={`w-12 h-12 rounded shadow bg-rui-${color}-${intensity}`}></div>
+            <div className="font-bold mt-2"><code>{`${color}-${intensity}`}</code></div>
+          </td>
+        ))}
+      </tr>
+    ))}
+  </table>
+</div>
+
+&nbsp;
+### Context Colors
+
+<table>
+  <tr>
+    <th>Context Color</th>
+    <th>Variety</th>
+    <th>Light</th>
+    <th>Dark</th>
+    <th>Adaptive (based on browser theme)</th>
+  </tr>
+  {contextColors.map(color => (
+    <>
+      {contextColorsIntensities.map(({ name, prefix }, index) => (
+        <tr>
+          {index === 0 && <td rowSpan={3}>{color}</td>}
+          <td>{name}</td>
+          <td className="sb-unstyled">
+            <div className={`w-12 h-12 rounded shadow bg-rui-light-${color}${prefix}`}></div>
+            <div className="font-bold mt-2"><code>{`light-${color}${prefix}`}</code></div>
+          </td>
+          <td className="sb-unstyled">
+            <div className={`w-12 h-12 rounded shadow bg-rui-dark-${color}${prefix}`}></div>
+            <div className="font-bold mt-2"><code>{`dark-${color}${prefix}`}</code></div>
+          </td>
+          <td className="sb-unstyled">
+            <div className={`w-12 h-12 rounded shadow bg-rui-${color}${prefix}`}></div>
+            <div className="font-bold mt-2"><code>{`${color}${prefix}`}</code></div>
+          </td>
+        </tr>
+      ))}
+    </>
+  ))}
+</table>

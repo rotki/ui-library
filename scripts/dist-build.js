@@ -8,17 +8,6 @@ if (fs.existsSync(dist)) {
   fs.rmSync(dist, { recursive: true });
 }
 
-const tailwind = spawn('pnpm', ['build:tailwind'], {
-  stdio: [process.stdout, process.stderr]
-});
-
-tailwind.on('close', code => {
-  if (code !== 0) {
-    console.error('[rotki-ui] build:tailwind failed');
-    process.exit(code);
-  }
-});
-
 const types = spawn('pnpm', ['build:types'], {
   stdio: [process.stdout, process.stderr]
 });
