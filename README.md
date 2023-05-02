@@ -56,21 +56,41 @@ After you build the bundle, in the `package.json` on your main project, you can 
 
 When the dependency installed on the main project, it will run the `postinstall` script to determine which dist version will be used, based on the Vue version on the main project.
 
-Don't forget to import the `style.css` file from `@rotki/ui-library`
+Don't forget to import the `style.css` file from `@rotki/ui-library` in the project root (e.g main.ts)
 
 ```typescript
 import '@rotki/ui-library/dist/style.css';
 ```
 
+Also, import the library plugin and use, depending on app version:
+
+Vue 2
+```typescript
+import RuiTheme from "@rotki/ui-library";
+
+...
+
+Vue.use(RuiTheme, options);
+```
+
+Vue 3
+```typescript
+import RuiTheme from "@rotki/ui-library";
+
+...
+
+app.use(RuiTheme, options);
+```
+
 And then you can use the component 
 ```vue
 <script setup lang="ts">
-import { Button as RotkiButton } from '@rotki/ui-library';
+import { RuiButton } from '@rotki/ui-library';
 </script>
 
 <template>
   <v-container>
-    <rotki-button label="This is button" outlined />
+    <rui-button label="This is button" outlined />
   </v-container>
 </template>
 ```
