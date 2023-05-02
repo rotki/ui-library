@@ -5,15 +5,23 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brown: '#7E4A3B'
+        'rui-primary': {
+          300: 'rgb(var(--rui-primary-light) / <alpha-value>)',
+          500: 'rgb(var(--rui-primary) / <alpha-value>)',
+          600: 'rgb(var(--rui-primary-dark) / <alpha-value>)'
+        },
+        'rui-secondary': {
+          300: 'rgb(var(--rui-secondary-light) / <alpha-value>)',
+          500: 'rgb(var(--rui-secondary) / <alpha-value>)',
+          600: 'rgb(var(--rui-secondary-dark) / <alpha-value>)'
+        },
+        'rui-error': {
+          300: 'rgb(var(--rui-error-light) / <alpha-value>)',
+          500: 'rgb(var(--rui-error) / <alpha-value>)',
+          600: 'rgb(var(--rui-error-dark) / <alpha-value>)'
+        }
       }
     }
   },
-  safelist: [
-    {
-      pattern: /(bg|text|border)-(brown)(-(100|200|300|400|500))?/,
-      variants: ['important', 'hover', 'disabled', 'active', 'focus']
-    }
-  ],
   plugins: []
 };
