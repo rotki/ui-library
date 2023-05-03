@@ -66,20 +66,20 @@ Also, import the library plugin and use, depending on app version:
 
 Vue 2
 ```typescript
-import RuiTheme from "@rotki/ui-library";
+import { RuiPlugin } from "@rotki/ui-library";
 
 ...
 
-Vue.use(RuiTheme, options);
+Vue.use(RuiPlugin, {});
 ```
 
 Vue 3
 ```typescript
-import RuiTheme from "@rotki/ui-library";
+import { RuiPlugin } from "@rotki/ui-library";
 
 ...
 
-app.use(RuiTheme, options);
+app.use(RuiPlugin, options);
 ```
 
 And then you can use the component 
