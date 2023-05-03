@@ -95,6 +95,21 @@ import { RuiButton } from '@rotki/ui-library';
 </template>
 ```
 
+after complete setup, we can then use the theme manager as:
+
+```typescript
+const { toggleThemeMode, setThemeConfig, switchThemeScheme, state, store } = useRotkiTheme();
+
+// to change the theme (pass colors as described by `ThemeConfig`) anytime:
+setThemeConfig(newTheme);
+
+// to switch between auto|light|dark
+toggleThemeMode();
+
+// to switch to a specific theme mode
+switchThemeScheme(ThemeMode.dark);
+```
+
 ## License
 
 [AGPL-3.0](./LICENSE) License &copy; 2023- [Rotki Solutions GmbH](https://github.com/rotki)
