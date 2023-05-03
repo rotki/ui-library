@@ -27,7 +27,7 @@ const meta: Meta<typeof Button> = {
   },
   parameters: {
     docs: {
-      controls: { exclude: ['prefix', 'suffix'] }
+      controls: { exclude: ['prefix', 'suffix', 'click'] }
     }
   }
 };

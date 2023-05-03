@@ -66,8 +66,9 @@ const css = useCssModule();
 
 <style lang="scss" module>
 .btn {
-  @apply bg-rui-primary-500 text-white text-sm hover:bg-rui-primary-600 disabled:bg-black/[.12] dark:disabled:bg-white/[.12];
-  @apply px-4 py-1.5 rounded-full disabled:text-black/[.26] dark:disabled:text-white/[.30] focus:outline-0 focus-within:outline-0;
+  @apply bg-rui-primary-500 text-white text-sm font-medium hover:bg-rui-primary-600 border border-transparent;
+  @apply dark:disabled:bg-white/[.12] dark:disabled:active:bg-white/[.12] disabled:bg-black/[.12] disabled:active:bg-black/[.12] disabled:text-black/[.26] dark:disabled:text-white/[.30] #{!important};
+  @apply px-4 py-1.5 rounded-full transition-all duration-75 focus:outline-0 focus-within:outline-0 active:bg-rui-primary-600/90;
 
   &.tile {
     @apply rounded;
@@ -82,41 +83,41 @@ const css = useCssModule();
   }
 
   &.elevated {
+    @apply disabled:shadow-none;
     box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2),
-      0 6px 10px rgba(0, 0, 0, 0.14), 0 1px 18px rgba(0, 0, 0, 0.12);
+      0 6px 10px rgba(0, 0, 0, 0.14), 0 1px 13px rgba(0, 0, 0, 0.12);
   }
 
   &.outlined {
-    @apply border bg-transparent hover:bg-rui-primary-300/5 active:bg-rui-primary-300/10 border-rui-primary-500 text-rui-primary-500;
-    @apply disabled:border-black/[.12] dark:disabled:border-white/[.12] disabled:text-black/[.26] dark:disabled:text-white/[.30] #{!important};
+    @apply border-current bg-transparent hover:bg-rui-primary-300/5 active:bg-rui-primary-300/10 border-rui-primary-500 text-rui-primary-500;
+    @apply disabled:border-black/[.12] dark:disabled:border-white/[.12] #{!important};
   }
 
   &.text {
-    @apply border-none bg-transparent text-rui-primary-500 hover:bg-rui-primary-500/[.04] active:bg-rui-primary-300/10 shadow-none;
-    @apply disabled:border-none dark:disabled:border-none disabled:text-black/[.26] dark:disabled:text-white/[.30] #{!important};
+    @apply bg-transparent text-rui-primary-500 hover:bg-rui-primary-500/[.04] active:bg-rui-primary-300/10 shadow-none;
   }
 
   &.secondary {
-    @apply bg-rui-secondary-500 hover:bg-rui-secondary-600 text-white;
+    @apply bg-rui-secondary-500 hover:bg-rui-secondary-600 active:bg-rui-secondary-600/90 text-white;
 
     &.outlined {
-      @apply border bg-transparent border-rui-secondary-500 hover:bg-rui-secondary-300/5 active:bg-rui-secondary-300/10 text-rui-secondary-500;
+      @apply border bg-transparent border-rui-secondary-500 hover:bg-rui-secondary-300/5 active:bg-rui-secondary-300/25 text-rui-secondary-500;
     }
 
     &.text {
-      @apply border-none bg-transparent text-rui-secondary-500 hover:bg-rui-secondary-500/[.04] active:bg-rui-secondary-300/10;
+      @apply bg-transparent text-rui-secondary-500 hover:bg-rui-secondary-500/[.04] active:bg-rui-secondary-300/25;
     }
   }
 
   &.error {
-    @apply bg-rui-error-500 hover:bg-rui-error-600 text-white;
+    @apply bg-rui-error-500 hover:bg-rui-error-600 active:bg-rui-error-600/90 text-white;
 
     &.outlined {
       @apply border bg-transparent border-rui-error-500 hover:bg-rui-error-300/5 active:bg-rui-error-300/10 text-rui-error-500;
     }
 
     &.text {
-      @apply border-none bg-transparent text-rui-error-500 hover:bg-rui-error-500/[.04] active:bg-rui-error-300/10;
+      @apply bg-transparent text-rui-error-500 hover:bg-rui-error-500/[.04] active:bg-rui-error-300/10;
     }
   }
 }

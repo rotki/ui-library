@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.dark .sbdocs-preview, .dark .sb-show-main {
+  background-color: #121212;
+}
