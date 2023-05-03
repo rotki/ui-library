@@ -40,7 +40,7 @@
   "peerDependencies": {
     "vue": ">=2.7.14"
   },
-  "dependencies": {
+  "devDependencies": {
     "@babel/core": "7.21.4",
     "@babel/types": "7.21.4",
     "@rotki/eslint-config": "1.0.6",
@@ -53,20 +53,20 @@
     "@storybook/vue": "7.0.7",
     "@storybook/vue-vite": "7.0.7",
     "@types/node": "18.16.1",
+    "@types/vue": "2.0.0",
     "@vitejs/plugin-vue": "4.2.1",
     "@vitejs/plugin-vue2": "2.2.0",
     "@vue/compiler-sfc": "3.2.47",
     "@vue/tsconfig": "0.3.2",
-    "@vueuse/core": "10.1.0",
+    "@vueuse/core": "10.1.2",
     "@vueuse/head": "1.1.26",
-    "@vueuse/shared": "10.1.0",
+    "@vueuse/shared": "10.1.2",
     "argparse": "2.0.1",
     "autoprefixer": "10.4.14",
     "babel-loader": "8.3.0",
     "css-loader": "6.7.3",
     "eslint": "8.39.0",
     "fs-extra": "11.1.1",
-    "pinia": "2.0.35",
     "postcss": "8.4.23",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -76,15 +76,11 @@
     "tsc-alias": "1.8.6",
     "typescript": "5.0.4",
     "unplugin-auto-import": "0.15.3",
-    "vite": "4.3.3",
+    "vite": "4.3.4",
     "vue": "2.7.14",
     "vue-demi": "0.14.0",
     "vue-loader": "17.1.0",
-    "vue-tsc": "1.6.1",
-    "webpack": "5.81.0"
-  },
-  "devDependencies": {
-    "@types/vue": "2.0.0"
+    "vue-tsc": "1.6.3"
   },
   "engines": {
     "pnpm": ">=8 <9"
