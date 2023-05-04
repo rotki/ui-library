@@ -5,6 +5,7 @@ import { defineConfig } from 'vite';
 import AutoImport from 'unplugin-auto-import/vite';
 import * as Vue3SfcCompiler from '@vue/compiler-sfc';
 import { isVue3 } from 'vue-demi';
+import { unheadVueComposablesImports } from '@vueuse/head';
 
 export default defineConfig({
   resolve: {
@@ -23,7 +24,8 @@ export default defineConfig({
       imports: [
         'vue-demi',
         '@vueuse/core',
-        { '@vueuse/shared': ['get', 'set'] }
+        { '@vueuse/shared': ['get', 'set'] },
+        unheadVueComposablesImports
       ],
       dts: './auto-imports.d.ts',
       vueTemplate: true,

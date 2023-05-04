@@ -118,9 +118,8 @@ dist
 # vuepress build output
 .vuepress/dist
 
-# vuepress v2.x temp and cache directory
+# vuepress v2.x temp
 .temp
-.cache
 
 # Docusaurus cache and generated files
 .docusaurus
@@ -151,3 +150,4 @@ dist
 auto-imports.d.ts
 
 .DS_Store
+storybook-static

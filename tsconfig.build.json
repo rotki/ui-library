@@ -1,4 +1,12 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["src/**/*.stories.ts"]
+  "exclude": ["src/**/*.stories.ts"],
+  "compilerOptions": {
+    "outDir": "dist",
+    "declaration": true,
+    "emitDeclarationOnly": true
+  },
+  "tsc-alias": {
+    "resolveFullPaths": true
+  }
 }

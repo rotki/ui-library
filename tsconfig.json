@@ -21,11 +21,8 @@
       "@/*": ["src/*"]
     },
     "lib": ["esnext", "dom"],
-    "types": ["vite/client"]
+    "types": ["node", "vue", "vite/client"]
   },
   "include": ["src/**/*", "*.d.ts"],
-  "exclude": ["node_modules", "dist"],
-  "vueCompilerOptions": {
-    "target": 2.7
-  }
+  "exclude": ["node_modules", "dist"]
 }
