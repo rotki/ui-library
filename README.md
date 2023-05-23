@@ -110,6 +110,26 @@ toggleThemeMode();
 switchThemeScheme(ThemeMode.dark);
 ```
 
+
+# Use icons
+We use remix-icons. You need to run this script to scrap the svgs data from remix-icons. (This script runs automatically on `postinstall`. Run this in case the icons aren't generated properly)
+```
+pnpm run generate:icons
+```
+
+You need to specify which icons you want to enable, when installing the RuiPlugin.
+```typescript
+import { Ri4kFill, Ri4kLine, RuiPlugin } from '@rotki/ui-library';
+
+Vue.use(RuiPlugin, {
+  icons: [Ri4kFill, Ri4kLine]
+});
+```
+
+```vue
+<rui-icons name="ri-4k-fill" />
+```
+
 ## License
 
 [AGPL-3.0](./LICENSE) License &copy; 2023- [Rotki Solutions GmbH](https://github.com/rotki)

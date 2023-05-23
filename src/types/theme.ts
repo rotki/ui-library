@@ -1,5 +1,6 @@
 import { type BasicColorSchema } from '@vueuse/core';
 import { contextColors } from '@/consts/colors';
+import { type GeneratedIcon } from '@/types/icons';
 import type { ComputedRef, Ref } from 'vue';
 
 export const enum ThemeMode {
@@ -26,6 +27,7 @@ export interface ThemeConfig {
 export interface InitThemeOptions {
   mode?: ThemeMode;
   config?: ThemeConfig;
+  icons?: GeneratedIcon[];
 }
 
 export interface ThemeContent {
