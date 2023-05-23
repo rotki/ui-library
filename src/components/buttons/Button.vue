@@ -1,14 +1,13 @@
 <script lang="ts" setup>
 import { useAttrs, useCssModule } from 'vue-demi';
+import { type ContextColorsType } from '@/consts/colors';
 
 withDefaults(
   defineProps<{
-    label?: string;
     disabled?: boolean;
     loading?: boolean;
     outlined?: boolean;
-    secondary?: boolean;
-    error?: boolean;
+    color?: ContextColorsType;
     tile?: boolean;
     elevated?: boolean;
     text?: boolean;
@@ -16,12 +15,10 @@ withDefaults(
     lg?: boolean;
   }>(),
   {
-    label: '',
     disabled: false,
     loading: false,
     outlined: false,
-    secondary: false,
-    error: false,
+    color: 'primary',
     tile: false,
     elevated: false,
     text: false,
@@ -41,12 +38,11 @@ const css = useCssModule();
     :class="[
       css.btn,
       {
-        [css.secondary]: secondary,
+        [css[color]]: true,
         [css.outlined]: outlined,
         [css.disabled]: disabled,
         [css.elevated]: elevated,
         [css.loading]: loading,
-        [css.error]: error,
         [css.tile]: tile,
         [css.text]: text,
         [css.sm]: sm,
@@ -59,16 +55,16 @@ const css = useCssModule();
     @click="emit('click', $event)"
   >
     <slot name="prefix" />
-    <span class="btn-label"> {{ label }} </span>
+    <span class="btn-label"> <slot /> </span>
     <slot name="suffix" />
   </button>
 </template>
 
 <style lang="scss" module>
 .btn {
-  @apply bg-rui-primary-500 text-white text-sm font-medium hover:bg-rui-primary-600 border border-transparent;
+  @apply text-sm font-medium border border-transparent;
   @apply dark:disabled:bg-white/[.12] dark:disabled:active:bg-white/[.12] disabled:bg-black/[.12] disabled:active:bg-black/[.12] disabled:text-black/[.26] dark:disabled:text-white/[.30] #{!important};
-  @apply px-4 py-1.5 rounded-full transition-all duration-75 focus:outline-0 focus-within:outline-0 active:bg-rui-primary-600/90;
+  @apply px-4 py-1.5 rounded-full transition-all duration-75 focus:outline-0 focus-within:outline-0;
 
   &.tile {
     @apply rounded;
@@ -89,35 +85,83 @@ const css = useCssModule();
   }
 
   &.outlined {
-    @apply border-current bg-transparent hover:bg-rui-primary-300/5 active:bg-rui-primary-300/10 border-rui-primary-500 text-rui-primary-500;
+    @apply border-current bg-transparent;
     @apply disabled:border-black/[.12] dark:disabled:border-white/[.12] #{!important};
   }
 
   &.text {
-    @apply bg-transparent text-rui-primary-500 hover:bg-rui-primary-500/[.04] active:bg-rui-primary-300/10 shadow-none;
+    @apply bg-transparent shadow-none;
   }
 
-  &.secondary {
-    @apply bg-rui-secondary-500 hover:bg-rui-secondary-600 active:bg-rui-secondary-600/90 text-white;
+  &.primary {
+    @apply bg-rui-primary hover:bg-rui-primary-darker active:bg-rui-primary-darker/90 text-white;
 
     &.outlined {
-      @apply border bg-transparent border-rui-secondary-500 hover:bg-rui-secondary-300/5 active:bg-rui-secondary-300/25 text-rui-secondary-500;
+      @apply bg-transparent hover:bg-rui-primary-lighter/5 active:bg-rui-primary-lighter/10 text-rui-primary;
     }
 
     &.text {
-      @apply bg-transparent text-rui-secondary-500 hover:bg-rui-secondary-500/[.04] active:bg-rui-secondary-300/25;
+      @apply bg-transparent text-rui-primary hover:bg-rui-primary/[.04] active:bg-rui-primary-lighter/10;
+    }
+  }
+
+  &.secondary {
+    @apply bg-rui-secondary hover:bg-rui-secondary-darker active:bg-rui-secondary-darker/90 text-white;
+
+    &.outlined {
+      @apply bg-transparent hover:bg-rui-secondary-lighter/5 active:bg-rui-secondary-lighter/25 text-rui-secondary;
+    }
+
+    &.text {
+      @apply bg-transparent text-rui-secondary hover:bg-rui-secondary/[.04] active:bg-rui-secondary-lighter/25;
     }
   }
 
   &.error {
-    @apply bg-rui-error-500 hover:bg-rui-error-600 active:bg-rui-error-600/90 text-white;
+    @apply bg-rui-error hover:bg-rui-error-darker active:bg-rui-error-darker/90 text-white;
 
     &.outlined {
-      @apply border bg-transparent border-rui-error-500 hover:bg-rui-error-300/5 active:bg-rui-error-300/10 text-rui-error-500;
+      @apply bg-transparent hover:bg-rui-error-lighter/5 active:bg-rui-error-lighter/10 text-rui-error;
     }
 
     &.text {
-      @apply bg-transparent text-rui-error-500 hover:bg-rui-error-500/[.04] active:bg-rui-error-300/10;
+      @apply bg-transparent text-rui-error hover:bg-rui-error/[.04] active:bg-rui-error-lighter/10;
+    }
+  }
+
+  &.warning {
+    @apply bg-rui-warning hover:bg-rui-warning-darker active:bg-rui-warning-darker/90 text-white;
+
+    &.outlined {
+      @apply bg-transparent hover:bg-rui-warning-lighter/5 active:bg-rui-warning-lighter/10 text-rui-warning;
+    }
+
+    &.text {
+      @apply bg-transparent text-rui-warning hover:bg-rui-warning/[.04] active:bg-rui-warning-lighter/10;
+    }
+  }
+
+  &.info {
+    @apply bg-rui-info hover:bg-rui-info-darker active:bg-rui-info-darker/90 text-white;
+
+    &.outlined {
+      @apply bg-transparent hover:bg-rui-info-lighter/5 active:bg-rui-info-lighter/10 text-rui-info;
+    }
+
+    &.text {
+      @apply bg-transparent text-rui-info hover:bg-rui-info/[.04] active:bg-rui-info-lighter/10;
+    }
+  }
+
+  &.success {
+    @apply bg-rui-success hover:bg-rui-success-darker active:bg-rui-success-darker/90 text-white;
+
+    &.outlined {
+      @apply bg-transparent hover:bg-rui-success-lighter/5 active:bg-rui-success-lighter/10 text-rui-success;
+    }
+
+    &.text {
+      @apply bg-transparent text-rui-success hover:bg-rui-success/[.04] active:bg-rui-success-lighter/10;
     }
   }
 }

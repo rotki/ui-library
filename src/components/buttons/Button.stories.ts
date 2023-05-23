@@ -1,10 +1,11 @@
 import { type Meta, type StoryFn } from '@storybook/vue';
+import { contextColors } from '@/consts/colors';
 import Button from './Button.vue';
 
 const render: StoryFn<typeof Button> = (_, { argTypes }) => ({
   components: { Button },
   props: Object.keys(argTypes),
-  template: '<Button v-bind="$props" />'
+  template: '<Button v-bind="$props">{{ $props.label }}</Button>'
 });
 
 const meta: Meta<typeof Button> = {
@@ -14,9 +15,8 @@ const meta: Meta<typeof Button> = {
   render,
   argTypes: {
     label: { control: 'text' },
+    color: { control: 'select', options: contextColors },
     outlined: { control: 'boolean', table: { category: 'Style' } },
-    secondary: { control: 'boolean', table: { category: 'Color' } },
-    error: { control: 'boolean', table: { category: 'Color' } },
     tile: { control: 'boolean', table: { category: 'Shape' } },
     elevated: { control: 'boolean', table: { category: 'Shape' } },
     text: { control: 'boolean', table: { category: 'Style' } },
@@ -94,14 +94,14 @@ export const PrimaryOutlined = {
 export const Secondary = {
   args: {
     label: 'Secondary Button',
-    secondary: true
+    color: 'secondary'
   }
 };
 
 export const SecondaryText = {
   args: {
     label: 'Secondary Button',
-    secondary: true,
+    color: 'secondary',
     text: true,
     lg: true
   }
@@ -110,7 +110,7 @@ export const SecondaryText = {
 export const SecondaryOutlined = {
   args: {
     label: 'Outlined Button',
-    secondary: true,
+    color: 'secondary',
     outlined: true
   }
 };
@@ -118,14 +118,14 @@ export const SecondaryOutlined = {
 export const ErrorButton = {
   args: {
     label: 'Error Button',
-    error: true
+    color: 'error'
   }
 };
 
 export const ErrorButtonText = {
   args: {
     label: 'Error Button',
-    error: true,
+    color: 'error',
     text: true,
     lg: true
   }
@@ -134,7 +134,7 @@ export const ErrorButtonText = {
 export const ErrorOutlined = {
   args: {
     label: 'Error Button',
-    error: true,
+    color: 'error',
     outlined: true
   }
 };
@@ -142,7 +142,7 @@ export const ErrorOutlined = {
 export const ErrorOutlinedDisabled = {
   args: {
     label: 'Error Button',
-    error: true,
+    color: 'error',
     outlined: true,
     disabled: true
   }

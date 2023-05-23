@@ -3,6 +3,7 @@ import { HeadVuePlugin, createHead } from '@vueuse/head';
 import { default as RuiButton } from '@/components/buttons/Button.vue';
 import { useRotkiTheme } from '@/composables/theme';
 import type { InitThemeOptions } from '@/types/theme';
+import './style.css';
 
 export type {
   InitThemeOptions,

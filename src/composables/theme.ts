@@ -100,19 +100,23 @@ export const useRotkiTheme = (): ThemeContent => {
         style: [
           {
             key: 'rui-root',
-            textContent: () => `
-            :root {
-              --rui-primary-light: ${get(theme).primaryLight};
-              --rui-primary: ${get(theme).primary};
-              --rui-primary-dark: ${get(theme).primaryDark};
-              --rui-secondary-light: ${get(theme).secondaryLight};
-              --rui-secondary: ${get(theme).secondary};
-              --rui-secondary-dark: ${get(theme).secondaryDark};
-              --rui-error-light: ${get(theme).errorLight};
-              --rui-error: ${get(theme).error};
-              --rui-error-dark: ${get(theme).errorDark};
+            textContent: () => {
+              const variables = Object.entries(get(theme))
+                .map(
+                  ([context, contextObject]) => `
+                  --rui-${context}-main: ${contextObject.DEFAULT};
+                  --rui-${context}-lighter: ${contextObject.lighter};
+                  --rui-${context}-darker: ${contextObject.darker};
+                `
+                )
+                .join('\n');
+
+              return `
+                :root {
+                  ${variables}
+                }
+              `;
             }
-          `
           }
         ]
       },

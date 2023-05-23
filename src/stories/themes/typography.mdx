@@ -1,0 +1,21 @@
+import listClasses from './typography-classes-list';
+import { Meta, Title } from '@storybook/blocks';
+
+<Meta title="Themes/Typography" />
+
+# Typography
+
+<table>
+  <tr>
+    <th>Class Name</th>
+    <th>Example</th>
+  </tr>
+  {listClasses.map(({ name, className}) => (
+    <tr>
+      <td><code>{className}</code></td>
+      <td className="sb-unstyled"><div className={className}>{name}</div></td>
+    </tr>
+  ))}
+  <tr>
+  </tr>
+</table>
