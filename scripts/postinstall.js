@@ -14,10 +14,10 @@ if (
 }
 
 const prodBuild = spawn('pnpm', ['build:prod'], {
-  stdio: [process.stdout, process.stderr]
+  stdio: [process.stdout, process.stderr],
 });
 
-prodBuild.on('close', code => {
+prodBuild.on('close', (code) => {
   if (code !== 0) {
     console.error('[rotki-ui] build:prod failed');
     process.exit(code);

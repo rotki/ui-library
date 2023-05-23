@@ -5,7 +5,7 @@ import Button from './Button.vue';
 const render: StoryFn<typeof Button> = (_, { argTypes }) => ({
   components: { Button },
   props: Object.keys(argTypes),
-  template: '<Button v-bind="$props">{{ $props.label }}</Button>'
+  template: '<Button v-bind="$props">{{ $props.label }}</Button>',
 });
 
 const meta: Meta<typeof Button> = {
@@ -23,49 +23,49 @@ const meta: Meta<typeof Button> = {
     sm: { control: 'boolean', table: { category: 'Size' } },
     lg: { control: 'boolean', table: { category: 'Size' } },
     disabled: { control: 'boolean', table: { category: 'State' } },
-    loading: { control: 'boolean', table: { category: 'State' } }
+    loading: { control: 'boolean', table: { category: 'State' } },
   },
   parameters: {
     docs: {
-      controls: { exclude: ['prefix', 'suffix', 'click'] }
-    }
-  }
+      controls: { exclude: ['prefix', 'suffix', 'click'] },
+    },
+  },
 };
 
 export const Primary = {
   args: {
-    label: 'Medium'
-  }
+    label: 'Medium',
+  },
 };
 
 export const PrimaryText = {
   args: {
     label: 'Large',
     text: true,
-    lg: true
-  }
+    lg: true,
+  },
 };
 
 export const PrimarySquare = {
   args: {
     label: 'Medium',
-    tile: true
-  }
+    tile: true,
+  },
 };
 
 export const PrimarySmall = {
   args: {
     label: 'Small',
-    sm: true
-  }
+    sm: true,
+  },
 };
 
 export const PrimaryLarge = {
   args: {
     label: 'Large',
     lg: true,
-    elevated: true
-  }
+    elevated: true,
+  },
 };
 
 export const PrimaryLargeSquare = {
@@ -73,29 +73,29 @@ export const PrimaryLargeSquare = {
     label: 'Large',
     tile: true,
     lg: true,
-    elevated: true
-  }
+    elevated: true,
+  },
 };
 
 export const PrimaryDisabled = {
   args: {
     label: 'Medium',
-    disabled: true
-  }
+    disabled: true,
+  },
 };
 
 export const PrimaryOutlined = {
   args: {
     label: 'Outlined Button',
-    outlined: true
-  }
+    outlined: true,
+  },
 };
 
 export const Secondary = {
   args: {
     label: 'Secondary Button',
-    color: 'secondary'
-  }
+    color: 'secondary',
+  },
 };
 
 export const SecondaryText = {
@@ -103,23 +103,23 @@ export const SecondaryText = {
     label: 'Secondary Button',
     color: 'secondary',
     text: true,
-    lg: true
-  }
+    lg: true,
+  },
 };
 
 export const SecondaryOutlined = {
   args: {
     label: 'Outlined Button',
     color: 'secondary',
-    outlined: true
-  }
+    outlined: true,
+  },
 };
 
 export const ErrorButton = {
   args: {
     label: 'Error Button',
-    color: 'error'
-  }
+    color: 'error',
+  },
 };
 
 export const ErrorButtonText = {
@@ -127,16 +127,16 @@ export const ErrorButtonText = {
     label: 'Error Button',
     color: 'error',
     text: true,
-    lg: true
-  }
+    lg: true,
+  },
 };
 
 export const ErrorOutlined = {
   args: {
     label: 'Error Button',
     color: 'error',
-    outlined: true
-  }
+    outlined: true,
+  },
 };
 
 export const ErrorOutlinedDisabled = {
@@ -144,8 +144,8 @@ export const ErrorOutlinedDisabled = {
     label: 'Error Button',
     color: 'error',
     outlined: true,
-    disabled: true
-  }
+    disabled: true,
+  },
 };
 
 export default meta;

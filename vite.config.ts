@@ -10,14 +10,14 @@ import { unheadVueComposablesImports } from '@vueuse/head';
 export default defineConfig({
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src')
-    }
+      '@': resolve(__dirname, 'src'),
+    },
   },
   plugins: [
     isVue3
       ? vue3({
           // @ts-ignore
-          compiler: Vue3SfcCompiler
+          compiler: Vue3SfcCompiler,
         })
       : vue(),
     AutoImport({
@@ -25,33 +25,33 @@ export default defineConfig({
         'vue-demi',
         '@vueuse/core',
         { '@vueuse/shared': ['get', 'set'] },
-        unheadVueComposablesImports
+        unheadVueComposablesImports,
       ],
       dts: './auto-imports.d.ts',
       vueTemplate: true,
       eslintrc: {
-        enabled: true
-      }
-    })
+        enabled: true,
+      },
+    }),
   ],
   optimizeDeps: {
-    exclude: ['vue-demi']
+    exclude: ['vue-demi'],
   },
   build: {
     outDir: `./dist/v${isVue3 ? '3' : '2'}`,
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'rotki-ui-library',
-      fileName: format => `index.${format}.js`
+      fileName: (format) => `index.${format}.js`,
     },
     rollupOptions: {
       external: ['vue', 'vue-demi'],
       output: {
         globals: {
           vue: 'vue',
-          'vue-demi': 'vue-demi'
-        }
-      }
-    }
-  }
+          'vue-demi': 'vue-demi',
+        },
+      },
+    },
+  },
 });

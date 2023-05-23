@@ -23,7 +23,7 @@ withDefaults(
     elevated: false,
     text: false,
     sm: false,
-    lg: false
+    lg: false,
   }
 );
 
@@ -46,8 +46,8 @@ const css = useCssModule();
         [css.tile]: tile,
         [css.text]: text,
         [css.sm]: sm,
-        [css.lg]: lg
-      }
+        [css.lg]: lg,
+      },
     ]"
     :disabled="disabled"
     class="btn"

@@ -16,7 +16,7 @@ export const baseColors = [
   'cyan',
   'teal',
   'blue',
-  'blue-gray'
+  'blue-gray',
 ];
 
 export const baseColorsIntensities = [
@@ -33,7 +33,7 @@ export const baseColorsIntensities = [
   'a100',
   'a200',
   'a400',
-  'a700'
+  'a700',
 ];
 
 export const contextColors = [
@@ -42,7 +42,7 @@ export const contextColors = [
   'error',
   'warning',
   'info',
-  'success'
+  'success',
 ] as const;
 
 export type ContextColorsType = (typeof contextColors)[number];
@@ -50,5 +50,5 @@ export type ContextColorsType = (typeof contextColors)[number];
 export const contextColorsIntensities = [
   { name: 'Regular', prefix: '' },
   { name: 'Darker', prefix: '-darker' },
-  { name: 'Lighter', prefix: '-lighter' }
+  { name: 'Lighter', prefix: '-lighter' },
 ];

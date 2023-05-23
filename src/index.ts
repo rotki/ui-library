@@ -10,7 +10,7 @@ export type {
   ThemeConfig,
   ThemeContent,
   ThemeData,
-  ThemeMode
+  ThemeMode,
 } from '@/types/theme';
 
 export { RuiButton, useRotkiTheme };
@@ -25,5 +25,5 @@ export const RuiPlugin = {
       app.use(head);
     }
     useRotkiTheme().init({ ...options });
-  }
+  },
 };

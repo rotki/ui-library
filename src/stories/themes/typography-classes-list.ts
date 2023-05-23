@@ -10,7 +10,7 @@ const listClasses = [
   { name: 'H3', className: 'text-h3' },
   { name: 'H4', className: 'text-h4' },
   { name: 'H5', className: 'text-h5' },
-  { name: 'H6', className: 'text-h6' }
+  { name: 'H6', className: 'text-h6' },
 ];
 
 export default listClasses;

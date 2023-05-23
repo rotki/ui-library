@@ -7,7 +7,7 @@ import {
   type ThemeContent,
   type ThemeData,
   ThemeMode,
-  defaultTheme
+  defaultTheme,
 } from '@/types/theme';
 
 const config: Ref<ThemeConfig> = ref({ ...defaultTheme });
@@ -116,9 +116,9 @@ export const useRotkiTheme = (): ThemeContent => {
                   ${variables}
                 }
               `;
-            }
-          }
-        ]
+            },
+          },
+        ],
       },
       { mode: 'client' }
     );
@@ -135,6 +135,6 @@ export const useRotkiTheme = (): ThemeContent => {
     init,
     setThemeConfig,
     toggleThemeMode,
-    switchThemeScheme
+    switchThemeScheme,
   };
 };

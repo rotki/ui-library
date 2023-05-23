@@ -14,7 +14,7 @@ function copy(version, pattern) {
   const src = path.join(dir, `v${version}`);
   const dest = path.join(dir);
   try {
-    fs.copySync(src, dest, pattern, err => {
+    fs.copySync(src, dest, pattern, (err) => {
       console.log('[rotki-ui] An error occurred while copying', err);
     });
   } catch {}

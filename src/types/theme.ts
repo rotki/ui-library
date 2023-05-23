@@ -5,7 +5,7 @@ import type { ComputedRef, Ref } from 'vue-demi';
 export const enum ThemeMode {
   auto = 'auto',
   light = 'light',
-  dark = 'dark'
+  dark = 'dark',
 }
 
 interface ColorIntensity {
@@ -44,17 +44,17 @@ export interface ThemeContent {
 
 const createDefaultTheme = (theme: 'light' | 'dark') =>
   Object.fromEntries(
-    contextColors.map(color => [
+    contextColors.map((color) => [
       color,
       {
         DEFAULT: `var(--rui-${theme}-${color}-main)`,
         lighter: `var(--rui-${theme}-${color}-lighter)`,
-        darker: `var(--rui-${theme}-${color}-darker)`
-      }
+        darker: `var(--rui-${theme}-${color}-darker)`,
+      },
     ])
   );
 
 export const defaultTheme: ThemeConfig = {
   light: createDefaultTheme('light'),
-  dark: createDefaultTheme('dark')
+  dark: createDefaultTheme('dark'),
 };
