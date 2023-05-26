@@ -1,5 +1,16 @@
 const { spawn } = require('node:child_process');
 
+const generateIcons = spawn('pnpm', ['generate-icons'], {
+  stdio: [process.stdout, process.stderr],
+});
+
+generateIcons.on('close', (code) => {
+  if (code !== 0) {
+    console.error('[rotki-ui] generate-icons failed');
+    process.exit(code);
+  }
+});
+
 const env = process.env;
 if (
   // if INIT_CWD (yarn/npm/pnpm install invocation path) and PWD

@@ -60,7 +60,7 @@ const css = useCssModule();
 <style lang="scss" module>
 .btn {
   @apply text-sm font-medium border border-transparent flex items-center space-x-2;
-  @apply dark:disabled:bg-white/[.12] dark:disabled:active:bg-white/[.12] disabled:bg-black/[.12] disabled:active:bg-black/[.12] disabled:text-black/[.26] dark:disabled:text-white/[.30] #{!important};
+  @apply disabled:bg-black/[.12] disabled:active:bg-black/[.12] disabled:text-black/[.26] #{!important};
   @apply px-4 py-1.5 rounded-full transition-all duration-75 focus:outline-0 focus-within:outline-0;
 
   &.tile {
@@ -83,7 +83,7 @@ const css = useCssModule();
 
   &.outlined {
     @apply border-current bg-transparent;
-    @apply disabled:border-black/[.12] dark:disabled:border-white/[.12] #{!important};
+    @apply disabled:border-black/[.12] #{!important};
   }
 
   &.text {
@@ -159,6 +159,16 @@ const css = useCssModule();
 
     &.text {
       @apply bg-transparent text-rui-success hover:bg-rui-success/[.04] active:bg-rui-success-lighter/10;
+    }
+  }
+}
+
+:global(.dark) {
+  .btn {
+    @apply disabled:bg-white/[.12] disabled:active:bg-white/[.12] disabled:text-white/[.30] #{!important};
+
+    &.outlined {
+      @apply disabled:border-white/[.12] #{!important};
     }
   }
 }

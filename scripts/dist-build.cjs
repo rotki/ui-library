@@ -7,27 +7,29 @@ if (fs.existsSync(dist)) {
   fs.rmSync(dist, { recursive: true });
 }
 
-const types = spawn('pnpm', ['build:types'], {
-  stdio: [process.stdout, process.stderr],
-});
-
-types.on('close', (code) => {
-  if (code !== 0) {
-    console.error('[rotki-ui] build:types failed');
-    process.exit(code);
-  }
-
-  const resolveAlias = spawn('pnpm', ['resolve:alias'], {
+const buildTypes = () => {
+  const types = spawn('pnpm', ['build:types'], {
     stdio: [process.stdout, process.stderr],
   });
 
-  resolveAlias.on('close', (code) => {
+  types.on('close', (code) => {
     if (code !== 0) {
-      console.error('[rotki-ui] resolve:alias failed');
+      console.error('[rotki-ui] build:types failed');
       process.exit(code);
     }
+
+    const resolveAlias = spawn('pnpm', ['resolve:alias'], {
+      stdio: [process.stdout, process.stderr],
+    });
+
+    resolveAlias.on('close', (code) => {
+      if (code !== 0) {
+        console.error('[rotki-ui] resolve:alias failed');
+        process.exit(code);
+      }
+    });
   });
-});
+};
 
 const build = spawn('pnpm', ['build'], {
   stdio: [process.stdout, process.stderr],
@@ -38,4 +40,5 @@ build.on('close', (code) => {
     console.error('[rotki-ui] build failed');
     process.exit(code);
   }
+  buildTypes();
 });

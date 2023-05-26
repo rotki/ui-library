@@ -8,17 +8,20 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
+      '~': resolve(__dirname),
     },
   },
   plugins: [
     vue(),
     AutoImport({
       imports: [
+        'vue',
         '@vueuse/core',
         { '@vueuse/shared': ['get', 'set'] },
         unheadVueComposablesImports,
       ],
       dts: './auto-imports.d.ts',
+      dirs: ['src/composables/**'],
       vueTemplate: true,
       eslintrc: {
         enabled: true,

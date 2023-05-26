@@ -4,7 +4,8 @@ const {
   contextColors,
 } = require('./src/consts/colors');
 
-const isDevelopment = process.env.NODE_ENV === 'development';
+const isDevelopment =
+  process.env.NODE_ENV === 'development' || process.env.STORYBOOK;
 
 const baseColorsCombination = Object.fromEntries(
   baseColors.map((color) => [
@@ -45,9 +46,18 @@ const adaptiveContextColorCombination = Object.fromEntries(
   ])
 );
 
+const safeListedColorVariants = [
+  'important',
+  'hover',
+  'disabled',
+  'active',
+  'focus',
+];
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   mode: 'jit',
+  darkMode: 'class',
   content: ['./src/**/*.vue', ...(!isDevelopment ? [] : ['./src/**/*.mdx'])],
   theme: {
     extend: {
@@ -69,7 +79,7 @@ module.exports = {
               '|'
             )})(-(${baseColorsIntensities.join('|')}))?`
           ),
-          variants: ['important', 'hover', 'disabled', 'active', 'focus'],
+          variants: safeListedColorVariants,
         },
         {
           pattern: new RegExp(
@@ -77,7 +87,7 @@ module.exports = {
               '|'
             )})(-(darker|lighter))?`
           ),
-          variants: ['important', 'hover', 'disabled', 'active', 'focus'],
+          variants: safeListedColorVariants,
         },
         {
           pattern: new RegExp(
@@ -85,7 +95,7 @@ module.exports = {
               '|'
             )})(-(darker|lighter))?`
           ),
-          variants: ['important', 'hover', 'disabled', 'active', 'focus'],
+          variants: safeListedColorVariants,
         },
       ],
   plugins: [],

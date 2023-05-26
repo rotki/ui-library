@@ -146,8 +146,9 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-.eslintrc-auto-import.json
 auto-imports.d.ts
 
 .DS_Store
 storybook-static
+
+all-icons.ts
