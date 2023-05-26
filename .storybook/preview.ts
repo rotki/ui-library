@@ -1,5 +1,5 @@
 import '../src/style.css';
-import type { Preview } from '@storybook/vue';
+import type { Preview } from '@storybook/vue3';
 import { vueInstance } from './app';
 
 const preview: Preview = {
@@ -8,14 +8,14 @@ const preview: Preview = {
     controls: {
       matchers: {
         color: /(background|color)$/i,
-        date: /Date$/
-      }
+        date: /Date$/,
+      },
     },
     vueInstance: {
       defaultValue: vueInstance,
-      control: { type: 'object' }
-    }
-  }
+      control: { type: 'object' },
+    },
+  },
 };
 
 export default preview;

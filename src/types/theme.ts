@@ -1,6 +1,6 @@
 import { type BasicColorSchema } from '@vueuse/core';
 import { contextColors } from '@/consts/colors';
-import type { ComputedRef, Ref } from 'vue-demi';
+import type { ComputedRef, Ref } from 'vue';
 
 export const enum ThemeMode {
   auto = 'auto',
@@ -8,7 +8,7 @@ export const enum ThemeMode {
   dark = 'dark',
 }
 
-interface ColorIntensity {
+export interface ColorIntensity {
   DEFAULT: string;
   lighter: string;
   darker: string;

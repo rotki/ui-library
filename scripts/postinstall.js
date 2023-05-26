@@ -6,7 +6,7 @@ if (
   // are the same, then local (dev) install/add is taking place
   env.INIT_CWD === env.PWD ||
   // local (dev) yarn install may have been run
-  // from a project subfolder
+  // from a project sub-folder
   env.INIT_CWD.indexOf(env.PWD) === 0
 ) {
   console.info('Skipping `postinstall` script on local installs');

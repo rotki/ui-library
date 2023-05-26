@@ -1,11 +1,15 @@
-import { type Meta, type StoryFn } from '@storybook/vue';
+import { type Meta, type StoryFn } from '@storybook/vue3';
 import { contextColors } from '@/consts/colors';
 import Button from './Button.vue';
 
 const render: StoryFn<typeof Button> = (_, { argTypes }) => ({
   components: { Button },
   props: Object.keys(argTypes),
-  template: '<Button v-bind="$props">{{ $props.label }}</Button>',
+  template: `<Button v-bind="$props">
+    <template #prepend></template>
+    {{ $props.label }}
+    <template #append></template>
+  </Button>`,
 });
 
 const meta: Meta<typeof Button> = {
@@ -27,7 +31,7 @@ const meta: Meta<typeof Button> = {
   },
   parameters: {
     docs: {
-      controls: { exclude: ['prefix', 'suffix', 'click'] },
+      controls: { exclude: ['prepend', 'append', 'default'] },
     },
   },
 };

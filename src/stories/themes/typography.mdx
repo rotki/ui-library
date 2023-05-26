@@ -1,21 +1,21 @@
 import listClasses from './typography-classes-list';
-import { Meta, Title } from '@storybook/blocks';
+import { Meta } from '@storybook/blocks';
 
 <Meta title="Themes/Typography" />
 
 # Typography
 
 <table>
-  <tr>
-    <th>Class Name</th>
-    <th>Example</th>
-  </tr>
-  {listClasses.map(({ name, className}) => (
+  <tbody>
     <tr>
-      <td><code>{className}</code></td>
-      <td className="sb-unstyled"><div className={className}>{name}</div></td>
+      <th>Class Name</th>
+      <th>Example</th>
     </tr>
-  ))}
-  <tr>
-  </tr>
+    {listClasses.map(({ name, className}) => (
+      <tr key={name}>
+        <td><code>{className}</code></td>
+        <td className="sb-unstyled"><div className={className}>{name}</div></td>
+      </tr>
+    ))}
+  </tbody>
 </table>

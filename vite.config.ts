@@ -1,10 +1,7 @@
 import { resolve } from 'node:path';
-import vue3 from '@vitejs/plugin-vue';
-import vue from '@vitejs/plugin-vue2';
+import vue from '@vitejs/plugin-vue';
 import { defineConfig } from 'vite';
 import AutoImport from 'unplugin-auto-import/vite';
-import * as Vue3SfcCompiler from '@vue/compiler-sfc';
-import { isVue3 } from 'vue-demi';
 import { unheadVueComposablesImports } from '@vueuse/head';
 
 export default defineConfig({
@@ -14,15 +11,9 @@ export default defineConfig({
     },
   },
   plugins: [
-    isVue3
-      ? vue3({
-          // @ts-ignore
-          compiler: Vue3SfcCompiler,
-        })
-      : vue(),
+    vue(),
     AutoImport({
       imports: [
-        'vue-demi',
         '@vueuse/core',
         { '@vueuse/shared': ['get', 'set'] },
         unheadVueComposablesImports,
@@ -34,22 +25,18 @@ export default defineConfig({
       },
     }),
   ],
-  optimizeDeps: {
-    exclude: ['vue-demi'],
-  },
   build: {
-    outDir: `./dist/v${isVue3 ? '3' : '2'}`,
+    outDir: './dist',
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'rotki-ui-library',
       fileName: (format) => `index.${format}.js`,
     },
     rollupOptions: {
-      external: ['vue', 'vue-demi'],
+      external: ['vue'],
       output: {
         globals: {
           vue: 'vue',
-          'vue-demi': 'vue-demi',
         },
       },
     },

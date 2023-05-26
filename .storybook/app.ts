@@ -1,6 +1,7 @@
-import Vue from 'vue';
+import { createApp } from 'vue';
 import { RuiPlugin } from '../src';
 
-Vue.use(RuiPlugin, {});
+const app = createApp({ template: '<div />' });
+app.use(RuiPlugin, {}).mount(null);
 
-export const vueInstance = new Vue({ template: '<div />' }).$mount();
+export const vueInstance = app;
