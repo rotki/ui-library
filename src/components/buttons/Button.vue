@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useAttrs, useCssModule } from 'vue-demi';
+import { useAttrs, useCssModule } from 'vue';
 import { type ContextColorsType } from '@/consts/colors';
 
 withDefaults(
@@ -27,8 +27,6 @@ withDefaults(
   }
 );
 
-const emit = defineEmits<{ (e: 'click', event: MouseEvent): void }>();
-
 const attrs = useAttrs();
 const css = useCssModule();
 </script>
@@ -49,20 +47,19 @@ const css = useCssModule();
         [css.lg]: lg,
       },
     ]"
-    :disabled="disabled"
+    :disabled="disabled || loading"
     class="btn"
     v-bind="attrs"
-    @click="emit('click', $event)"
   >
-    <slot name="prefix" />
+    <slot name="prepend" />
     <span class="btn-label"> <slot /> </span>
-    <slot name="suffix" />
+    <slot name="append" />
   </button>
 </template>
 
 <style lang="scss" module>
 .btn {
-  @apply text-sm font-medium border border-transparent;
+  @apply text-sm font-medium border border-transparent flex items-center space-x-2;
   @apply dark:disabled:bg-white/[.12] dark:disabled:active:bg-white/[.12] disabled:bg-black/[.12] disabled:active:bg-black/[.12] disabled:text-black/[.26] dark:disabled:text-white/[.30] #{!important};
   @apply px-4 py-1.5 rounded-full transition-all duration-75 focus:outline-0 focus-within:outline-0;
 

@@ -1,7 +1,8 @@
-import { type ComputedRef, type Ref, computed, ref } from 'vue-demi';
+import { type ComputedRef, type Ref, computed, ref } from 'vue';
 import { get, set, useColorMode } from '@vueuse/core';
 import { useHead } from '@vueuse/head';
 import {
+  type ColorIntensity,
   type InitThemeOptions,
   type ThemeConfig,
   type ThemeContent,
@@ -103,7 +104,7 @@ export const useRotkiTheme = (): ThemeContent => {
             textContent: () => {
               const variables = Object.entries(get(theme))
                 .map(
-                  ([context, contextObject]) => `
+                  ([context, contextObject]: [string, ColorIntensity]) => `
                   --rui-${context}-main: ${contextObject.DEFAULT};
                   --rui-${context}-lighter: ${contextObject.lighter};
                   --rui-${context}-darker: ${contextObject.darker};

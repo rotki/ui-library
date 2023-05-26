@@ -1,5 +1,6 @@
 import { baseColors, baseColorsIntensities, contextColors, contextColorsIntensities } from '@/consts/colors';
 import { Meta } from '@storybook/blocks';
+import { Fragment } from 'react';
 
 <Meta title="Themes/Colors" />
 
@@ -11,25 +12,27 @@ import { Meta } from '@storybook/blocks';
 
 <div className="max-w-full overflow-y-scroll">
   <table>
-    <tr>
-      <th>Color</th>
-      {baseColorsIntensities.map(intensity => (
-        <th>{intensity}</th>
-      ))}
-    </tr>
-    {baseColors.map(color => (
+    <tbody>
       <tr>
-        <td>
-          {color}
-        </td>
+        <th>Color</th>
         {baseColorsIntensities.map(intensity => (
-          <td className="sb-unstyled">
-            <div className={`w-12 h-12 rounded shadow bg-rui-${color}-${intensity}`}></div>
-            <div className="font-bold mt-2"><code>{`${color}-${intensity}`}</code></div>
-          </td>
+          <th key={intensity}>{intensity}</th>
         ))}
       </tr>
-    ))}
+      {baseColors.map(color => (
+        <tr key={color}>
+          <td>
+            {color}
+          </td>
+          {baseColorsIntensities.map(intensity => (
+            <td key={`${color}-${intensity}`} className="sb-unstyled text-center">
+              <div className={`w-12 h-12 mx-auto rounded shadow bg-rui-${color}-${intensity}`}></div>
+              <div className="font-bold mt-2"><code>{`${color}-${intensity}`}</code></div>
+            </td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
   </table>
 </div>
 
@@ -37,33 +40,35 @@ import { Meta } from '@storybook/blocks';
 ### Context Colors
 
 <table>
-  <tr>
-    <th>Context Color</th>
-    <th>Variety</th>
-    <th>Light</th>
-    <th>Dark</th>
-    <th>Adaptive (based on browser theme)</th>
-  </tr>
-  {contextColors.map(color => (
-    <>
-      {contextColorsIntensities.map(({ name, prefix }, index) => (
-        <tr>
-          {index === 0 && <td rowSpan={3}>{color}</td>}
-          <td>{name}</td>
-          <td className="sb-unstyled">
-            <div className={`w-12 h-12 rounded shadow bg-rui-light-${color}${prefix}`}></div>
-            <div className="font-bold mt-2"><code>{`light-${color}${prefix}`}</code></div>
-          </td>
-          <td className="sb-unstyled">
-            <div className={`w-12 h-12 rounded shadow bg-rui-dark-${color}${prefix}`}></div>
-            <div className="font-bold mt-2"><code>{`dark-${color}${prefix}`}</code></div>
-          </td>
-          <td className="sb-unstyled">
-            <div className={`w-12 h-12 rounded shadow bg-rui-${color}${prefix}`}></div>
-            <div className="font-bold mt-2"><code>{`${color}${prefix}`}</code></div>
-          </td>
-        </tr>
-      ))}
-    </>
-  ))}
+  <tbody>
+    <tr>
+      <th>Context Color</th>
+      <th>Variety</th>
+      <th>Light</th>
+      <th>Dark</th>
+      <th>Adaptive (based on browser theme)</th>
+    </tr>
+    {contextColors.map(color => (
+      <Fragment key={color}>
+        {contextColorsIntensities.map(({ name, prefix }, index) => (
+          <tr key={`${color}-${name}-${prefix}`}>
+            {index === 0 && <td rowSpan={3}>{color}</td>}
+            <td>{name}</td>
+            <td className="sb-unstyled text-center">
+              <div className={`w-12 h-12 mx-auto rounded shadow bg-rui-light-${color}${prefix}`}></div>
+              <div className="font-bold mt-2"><code>{`light-${color}${prefix}`}</code></div>
+            </td>
+            <td className="sb-unstyled text-center">
+              <div className={`w-12 h-12 mx-auto rounded shadow bg-rui-dark-${color}${prefix}`}></div>
+              <div className="font-bold mt-2"><code>{`dark-${color}${prefix}`}</code></div>
+            </td>
+            <td className="sb-unstyled text-center">
+              <div className={`w-12 h-12 mx-auto rounded shadow bg-rui-${color}${prefix}`}></div>
+              <div className="font-bold mt-2"><code>{`${color}${prefix}`}</code></div>
+            </td>
+          </tr>
+        ))}
+      </Fragment>
+    ))}
+  </tbody>
 </table>
