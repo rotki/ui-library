@@ -1,4 +1,3 @@
-import { resolve } from 'node:path';
 import { mergeConfig } from 'vite';
 import { configDefaults, defineConfig } from 'vitest/config';
 import viteConfig from './vite.config';
@@ -10,7 +9,6 @@ export default mergeConfig(
       globals: true,
       environment: 'jsdom',
       exclude: [...configDefaults.exclude],
-      root: resolve(__dirname),
       reporters: ['default', 'html', 'json'],
       outputFile: 'tests/html/index.html',
       coverage: {

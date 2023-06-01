@@ -12,18 +12,12 @@ pnpm install
 
 ### Compiles and minifies for production
 The following command when executed from the project root will build the `@rotki/ui-library` bundle.
-This command will create the bundle for both Vue version 2.7 and 3.
+This command will create the bundle for both Vue version >=3.4.3.
 ```
 pnpm run build:prod
 ```
 
 If you want to build for specific version, you can run:
-```
-pnpm run build:v2
-pnpm run build:v3
-```
-
-by default if you run this command, it will build the package for version 2, the version that installed by default in this package
 ```
 pnpm run build
 ```
@@ -38,12 +32,32 @@ pnpm run lint
 pnpm run lint:fix
 ```
 
+### Type check
+```
+pnpm run typecheck
+```
+
 # Storybook
 In order to run the storybook, you can run:
 
 ```
 pnpm run storybook
 ```
+
+# Testing: Unit
+In order to test the components, you can run:
+
+```
+pnpm run test
+```
+
+coverage results can be generated and previewed with:
+
+```
+pnpm run coverage
+pnpm run coverage:preview
+```
+
 
 # How to test the usage locally.
 After you build the bundle, in the `package.json` on your main project, you can add this to the dependencies:
@@ -90,7 +104,7 @@ import { RuiButton } from '@rotki/ui-library';
 
 <template>
   <v-container>
-    <rui-button label="This is button" outlined />
+    <rui-button outlined>This is button</rui-button>
   </v-container>
 </template>
 ```
