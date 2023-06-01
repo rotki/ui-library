@@ -1,7 +1,7 @@
 {
   "name": "@rotki/ui-library",
   "version": "1.0.0",
-  "packageManager": "pnpm@8.1.0",
+  "packageManager": "pnpm@8.6.0",
   "description": "A vue design system and component library for rotki",
   "keywords": [
     "vue",
@@ -69,6 +69,7 @@
     "fast-xml-parser": "4.2.2",
     "fs-extra": "11.1.1",
     "husky": "8.0.3",
+    "jsdom": "22.1.0",
     "lint-staged": "13.2.2",
     "postcss": "8.4.23",
     "react": "18.2.0",
