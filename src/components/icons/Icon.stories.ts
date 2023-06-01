@@ -1,4 +1,4 @@
-import { type Meta, type StoryFn } from '@storybook/vue';
+import { type Meta, type StoryFn } from '@storybook/vue3';
 import Icon from './Icon.vue';
 import * as Icons from '~/all-icons';
 
