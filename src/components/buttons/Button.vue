@@ -35,8 +35,8 @@ const css = useCssModule();
   <button
     :class="[
       css.btn,
+      css[color],
       {
-        [css[color]]: true,
         [css.outlined]: outlined,
         [css.disabled]: disabled,
         [css.elevated]: elevated,
@@ -59,7 +59,7 @@ const css = useCssModule();
 
 <style lang="scss" module>
 .btn {
-  @apply text-sm font-medium border border-transparent flex items-center space-x-2;
+  @apply text-sm font-medium border border-transparent flex items-center justify-center space-x-2;
   @apply disabled:bg-black/[.12] disabled:active:bg-black/[.12] disabled:text-black/[.26] #{!important};
   @apply px-4 py-1.5 rounded-full transition-all duration-75 focus:outline-0 focus-within:outline-0;
 
