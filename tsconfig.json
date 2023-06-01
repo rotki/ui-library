@@ -24,6 +24,6 @@
     "lib": ["esnext", "dom"],
     "types": ["node", "vue", "vite/client"]
   },
-  "include": ["src/**/*", "*.d.ts"],
+  "include": ["src/**/*", "*.d.ts", "auto-imports.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
