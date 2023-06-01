@@ -2,3 +2,5 @@ node_modules
 dist
 auto-imports.d.ts
 all-icons.ts
+tests/coverage
+tests/html
