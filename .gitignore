@@ -152,3 +152,4 @@ auto-imports.d.ts
 storybook-static
 
 all-icons.ts
+tests/html

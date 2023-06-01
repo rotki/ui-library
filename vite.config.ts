@@ -34,6 +34,7 @@ export default defineConfig({
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'rotki-ui-library',
       fileName: (format) => `index.${format}.js`,
+      formats: ['es'],
     },
     rollupOptions: {
       external: ['vue'],
