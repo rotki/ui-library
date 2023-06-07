@@ -85,6 +85,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
+            ~/.cache/Cypress
             ${{ steps.pnpm-cache.outputs.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
@@ -101,6 +102,25 @@ jobs:
 
       - name: Test
         run: pnpm run coverage
+
+      - name: Run cypress tests
+        run: pnpm --filter {example} build && pnpm run test:e2e
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: example/cypress/e2e/screenshots
+          retention-days: 7
+
+      - name: Upload videos
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: cypress-videos
+          path: example/cypress/e2e/videos
+          retention-days: 7
 
       - name: Upload coverage
         uses: codecov/codecov-action@v3
