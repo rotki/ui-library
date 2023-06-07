@@ -48,11 +48,10 @@ const css = useCssModule();
       },
     ]"
     :disabled="disabled || loading"
-    class="btn"
     v-bind="attrs"
   >
     <slot name="prepend" />
-    <span class="btn-label"> <slot /> </span>
+    <span :class="css.label"> <slot /> </span>
     <slot name="append" />
   </button>
 </template>
@@ -62,6 +61,10 @@ const css = useCssModule();
   @apply text-sm font-medium border border-transparent flex items-center justify-center space-x-2;
   @apply disabled:bg-black/[.12] disabled:active:bg-black/[.12] disabled:text-black/[.26] #{!important};
   @apply px-4 py-1.5 rounded-full transition-all duration-75 focus:outline-0 focus-within:outline-0;
+
+  .label {
+    @apply inline-block;
+  }
 
   &.tile {
     @apply rounded;

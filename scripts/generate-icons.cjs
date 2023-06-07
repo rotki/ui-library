@@ -5,7 +5,7 @@ const { pascalCase } = require('scule');
 const { XMLParser } = require('fast-xml-parser');
 
 const PREFIX = 'ri-';
-const TARGET = 'all-icons.ts';
+const TARGET = 'src/all-icons.ts';
 
 function resolveRoot(...dir) {
   return path.resolve(__dirname, '..', ...dir);

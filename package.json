@@ -29,6 +29,8 @@
     "test": "vitest --ui",
     "test:run": "vitest run",
     "test:ci": "vitest run",
+    "test:e2e": "pnpm --filter {example} test:e2e",
+    "test:e2e:dev": "pnpm --filter {example} test:e2e:dev",
     "coverage": "vitest run --coverage",
     "coverage:preview": "npx vite preview --open --outDir tests/coverage ",
     "typecheck": "vue-tsc --noEmit",

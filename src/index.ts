@@ -4,13 +4,15 @@ import { default as RuiButton } from '@/components/buttons/Button.vue';
 import { default as RuiIcon } from '@/components/icons/Icon.vue';
 import { useRotkiTheme } from '@/composables/theme';
 import type { InitThemeOptions } from '@/types/theme';
-import './style.css';
+import '@/style.css';
 
-export type {
-  InitThemeOptions,
-  ThemeConfig,
-  ThemeContent,
-  ThemeData,
+export * from '@/all-icons';
+
+export {
+  type InitThemeOptions,
+  type ThemeConfig,
+  type ThemeContent,
+  type ThemeData,
   ThemeMode,
 } from '@/types/theme';
 

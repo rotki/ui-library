@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
 import { RuiPlugin } from '../src';
-import * as Icons from '../all-icons';
+import * as Icons from '../src/all-icons';
 
 const app = createApp({ template: '<div />' });
 app

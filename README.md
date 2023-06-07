@@ -141,7 +141,7 @@ Vue.use(RuiPlugin, {
 ```
 
 ```vue
-<rui-icons name="ri-4k-fill" />
+<rui-icons name="4k-fill" />
 ```
 
 ## License

@@ -1,0 +1,15 @@
+@import './style.css';
+
+@layer base {
+  body {
+    @apply bg-white text-black;
+  }
+
+  .dark body {
+    @apply bg-slate-900 text-white;
+  }
+
+  .wrapper {
+    @apply max-w-7xl mx-auto w-full sm:px-6 lg:px-8 px-4;
+  }
+}

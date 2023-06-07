@@ -11,7 +11,7 @@ describe('Button', () => {
       },
     });
     expect(wrapper.text()).toContain('Primary Button');
-    expect(wrapper.classes()).toContain('btn');
+    expect(wrapper.classes()).toMatch(/_btn_/);
   });
 
   it('passes props correctly', async () => {
