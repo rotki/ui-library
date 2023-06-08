@@ -4,3 +4,4 @@ auto-imports.d.ts
 all-icons.ts
 tests/coverage
 tests/html
+storybook-static
