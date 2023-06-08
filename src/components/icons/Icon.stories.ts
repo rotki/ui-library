@@ -1,6 +1,6 @@
 import { type Meta, type StoryFn } from '@storybook/vue3';
+import * as Icons from '@/all-icons';
 import Icon from './Icon.vue';
-import * as Icons from '~/all-icons';
 
 const render: StoryFn<typeof Icon> = (_, { argTypes }) => ({
   components: { Icon },
