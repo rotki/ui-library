@@ -1,0 +1,14 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Themes/Shadow" />
+
+# Typography
+#### You also need to add class `.shadow` to use these classes.
+
+<div className="border grid grid-cols-2 md:grid-cols-4 md:gap-8 md:p-8 gap-4 p-4">
+  {[...Array(24)].map((item, i) => (
+    <div className={`h-32 shadow shadow-${i + 1} bg-white flex items-center justify-center rounded-lg font-bold`}>
+      <code>shadow-{i + 1}</code>
+    </div>
+  ))}
+</div>

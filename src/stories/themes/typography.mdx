@@ -13,7 +13,7 @@ import { Meta } from '@storybook/blocks';
     </tr>
     {listClasses.map(({ name, className}) => (
       <tr key={name}>
-        <td><code>{className}</code></td>
+        <td className="font-bold"><code>{className}</code></td>
         <td className="sb-unstyled"><div className={className}>{name}</div></td>
       </tr>
     ))}
