@@ -1,4 +1,4 @@
-import '../src/style.css';
+import '../src/style.scss';
 import type { Preview } from '@storybook/vue3';
 import { vueInstance } from './app';
 

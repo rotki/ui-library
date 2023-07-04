@@ -45,29 +45,13 @@ const path: ComputedRef<string | undefined> = computed(() => {
 </template>
 
 <style lang="scss" module>
+@use '@/styles/colors.scss' as c;
+
 .remixicon {
-  &.primary {
-    @apply text-rui-primary;
-  }
-
-  &.secondary {
-    @apply text-rui-secondary;
-  }
-
-  &.error {
-    @apply text-rui-error;
-  }
-
-  &.warning {
-    @apply text-rui-warning;
-  }
-
-  &.info {
-    @apply text-rui-info;
-  }
-
-  &.success {
-    @apply text-rui-success;
+  @each $color in c.$context-colors {
+    &.#{$color} {
+      @apply text-rui-#{$color};
+    }
   }
 }
 </style>
