@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
 import vue from '@vitejs/plugin-vue';
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import AutoImport from 'unplugin-auto-import/vite';
 import { unheadVueComposablesImports } from '@vueuse/head';
 
@@ -44,5 +44,9 @@ export default defineConfig({
         },
       },
     },
+  },
+  test: {
+    globals: true,
+    setupFiles: ['tests/setup-files/setup.ts'],
   },
 });

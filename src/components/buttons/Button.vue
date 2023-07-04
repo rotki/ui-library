@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useAttrs, useCssModule } from 'vue';
 import { type ContextColorsType } from '@/consts/colors';
 
 withDefaults(

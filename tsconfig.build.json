@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["src/**/*.stories.ts", "src/stories"],
+  "exclude": ["src/**/*.stories.ts", "src/stories", "src/**/*.spec.ts"],
   "compilerOptions": {
     "outDir": "dist",
     "declaration": true,
