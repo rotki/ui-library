@@ -11,21 +11,20 @@ const render: StoryFn<typeof Checkbox> = (_, { argTypes }) => ({
 });
 
 const meta: Meta<typeof Checkbox> = {
-  title: 'Components/Checkbox',
+  title: 'Components/Forms/Checkbox',
   component: Checkbox,
   tags: ['autodocs'],
   render,
   argTypes: {
     label: { control: 'text' },
-    value: { control: 'boolean' },
+    modelValue: { control: 'boolean' },
     indeterminate: { control: 'boolean' },
     hint: { control: 'text' },
     errorMessages: { control: 'text' },
     hideDetails: { control: 'boolean' },
     disabled: { control: 'boolean', table: { category: 'State' } },
     color: { control: 'select', options: contextColors },
-    sm: { control: 'boolean', table: { category: 'Size' } },
-    lg: { control: 'boolean', table: { category: 'Size' } },
+    size: { control: 'select', options: ['default', 'sm', 'lg'] },
   },
   parameters: {
     docs: {
@@ -36,7 +35,7 @@ const meta: Meta<typeof Checkbox> = {
 
 export const Checked = {
   args: {
-    value: true,
+    modelValue: true,
   },
 };
 
@@ -48,13 +47,13 @@ export const Indeterminate = {
 
 export const Large = {
   args: {
-    lg: true,
+    size: 'lg',
   },
 };
 
 export const Small = {
   args: {
-    sm: true,
+    size: 'sm',
   },
 };
 

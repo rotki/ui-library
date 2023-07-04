@@ -38,9 +38,9 @@ describe('Forms/Checkbox', () => {
     expect(wrapper.find('icon-stub').attributes('name')).toBe(
       'checkbox-blank-line'
     );
-    await wrapper.setProps({ value: true, indeterminate: false });
+    await wrapper.setProps({ modelValue: true, indeterminate: false });
     expect(wrapper.find('icon-stub').attributes('name')).toBe('checkbox-fill');
-    await wrapper.setProps({ value: false, indeterminate: true });
+    await wrapper.setProps({ modelValue: false, indeterminate: true });
     expect(wrapper.find('icon-stub').attributes('name')).toBe(
       'checkbox-indeterminate-fill'
     );
@@ -61,10 +61,10 @@ describe('Forms/Checkbox', () => {
   });
 
   it('passes size props', async () => {
-    const wrapper = createWrapper({ sm: true });
+    const wrapper = createWrapper({ size: 'sm' });
     expect(wrapper.find('label > div').classes()).toMatch(/_sm_/);
 
-    await wrapper.setProps({ sm: false, lg: true });
+    await wrapper.setProps({ sm: false, size: 'lg' });
     expect(wrapper.find('label > div').classes()).toMatch(/_lg_/);
   });
 
