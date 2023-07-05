@@ -30,15 +30,11 @@ const path: ComputedRef<string | undefined> = computed(() => {
   }
   return found;
 });
-
-const iconColor: ComputedRef<string | undefined> = computed(
-  () => props.color && css[props.color]
-);
 </script>
 
 <template>
   <svg
-    :class="[css.remixicon, iconColor]"
+    :class="[css.remixicon, css[color ?? '']]"
     :height="size"
     :width="size"
     viewBox="0 0 24 24"
