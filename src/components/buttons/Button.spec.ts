@@ -1,29 +1,32 @@
 import { describe, expect, it } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import Button from '@/components/buttons/Button.vue';
 
-const createWrapper = (props: Record<string, any> = {}) =>
-  mount(Button, {
-    props,
-    slots: {
-      default: () => props.label,
-    },
-  });
+const createWrapper = (options: ComponentMountingOptions<typeof Button>) =>
+  mount(Button, options);
 
 describe('Button', () => {
   it('renders properly', () => {
     const label = 'Primary Button';
-    const wrapper = createWrapper({ label });
+    const wrapper = createWrapper({
+      slots: {
+        default: () => label,
+      },
+    });
     expect(wrapper.text()).toContain(label);
     expect(wrapper.classes()).toMatch(/_btn_/);
   });
 
   it('passes props correctly', async () => {
     const wrapper = createWrapper({
-      color: 'secondary',
-      disabled: true,
-      tile: true,
-      label: 'Secondary Button',
+      props: {
+        color: 'secondary',
+        disabled: true,
+        tile: true,
+      },
+      slots: {
+        default: () => 'Secondary Button',
+      },
     });
     expect(wrapper.classes()).toMatch(/_secondary_/);
     expect(wrapper.classes()).toMatch(/_tile_/);

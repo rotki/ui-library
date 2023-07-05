@@ -3,12 +3,13 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "pnpm type-check && pnpm build-only",
+    "dev": "vite --open",
+    "build": "pnpm typecheck && pnpm build:app",
+    "build:app": "vite build",
+    "build:preview": "pnpm build:app && pnpm preview",
     "preview": "vite preview",
-    "build-only": "vite build",
-    "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
-    "test:e2e": "start-server-and-test preview http://localhost:4173 'cypress run --e2e'",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
+    "test:e2e": "start-server-and-test build:preview http://localhost:4173 'cypress run --e2e'",
     "test:e2e:dev": "start-server-and-test 'vite dev --port 4173' http://localhost:4173 'cypress open --e2e'"
   },
   "dependencies": {

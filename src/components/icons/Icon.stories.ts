@@ -1,11 +1,12 @@
 import { type Meta, type StoryFn } from '@storybook/vue3';
 import * as Icons from '@/all-icons';
+import { contextColors } from '@/consts/colors';
 import Icon from './Icon.vue';
 
 const render: StoryFn<typeof Icon> = (_, { argTypes }) => ({
   components: { Icon },
   props: Object.keys(argTypes),
-  template: '<Icon v-bind="$props" class="text-rui-primary" />',
+  template: '<Icon v-bind="$props" />',
 });
 
 const meta: Meta<typeof Icon> = {
@@ -29,6 +30,7 @@ const meta: Meta<typeof Icon> = {
     size: {
       control: 'number',
     },
+    color: { control: 'select', options: contextColors },
   },
 };
 
@@ -36,6 +38,31 @@ export const Primary = {
   args: {
     name: 'arrow-down-circle-fill',
     size: 24,
+    color: 'primary',
+  },
+};
+
+export const PrimaryLarge = {
+  args: {
+    name: 'arrow-down-circle-fill',
+    size: 48,
+    color: 'primary',
+  },
+};
+
+export const Secondary = {
+  args: {
+    name: 'arrow-down-circle-fill',
+    size: 24,
+    color: 'secondary',
+  },
+};
+
+export const SecondaryTiny = {
+  args: {
+    name: 'arrow-down-circle-fill',
+    size: 14,
+    color: 'secondary',
   },
 };
 
