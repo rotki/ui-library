@@ -1,22 +1,18 @@
 import { describe, expect, it } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import Checkbox from '@/components/forms/checkbox/Checkbox.vue';
 
-const createWrapper = (props: Record<string, any> = {}) =>
-  mount(Checkbox, {
-    props,
-    slots: {
-      default: () => props.label,
-    },
-    global: {
-      stubs: ['icon'],
-    },
-  });
+const createWrapper = (options?: ComponentMountingOptions<typeof Checkbox>) =>
+  mount(Checkbox, { ...options, global: { stubs: ['icon'] } });
 
 describe('Forms/Checkbox', () => {
   it('renders properly', () => {
     const label = 'Checkbox Label';
-    const wrapper = createWrapper({ label });
+    const wrapper = createWrapper({
+      slots: {
+        default: () => label,
+      },
+    });
     expect(wrapper.text()).toContain(label);
     expect(wrapper.get('label > div').classes()).toMatch(/_checkbox_/);
   });
@@ -61,7 +57,7 @@ describe('Forms/Checkbox', () => {
   });
 
   it('passes size props', async () => {
-    const wrapper = createWrapper({ size: 'sm' });
+    const wrapper = createWrapper({ props: { size: 'sm' } });
     expect(wrapper.find('label > div').classes()).toMatch(/_sm_/);
 
     await wrapper.setProps({ sm: false, size: 'lg' });
@@ -69,7 +65,7 @@ describe('Forms/Checkbox', () => {
   });
 
   it('passes hint props', async () => {
-    const wrapper = createWrapper({ sm: true });
+    const wrapper = createWrapper({ props: { sm: true } });
     expect(wrapper.find('label + div > div').text()).toBe('');
 
     const hint = 'Checkbox Hints';
@@ -79,7 +75,7 @@ describe('Forms/Checkbox', () => {
   });
 
   it('passes hint errorMessages', async () => {
-    const wrapper = createWrapper({ sm: true });
+    const wrapper = createWrapper({ props: { sm: true } });
     expect(wrapper.find('label + div > div').text()).toBe('');
 
     const errorMessage = 'Checkbox Hints';
@@ -92,8 +88,10 @@ describe('Forms/Checkbox', () => {
 
   it('passes hideDetails', async () => {
     const wrapper = createWrapper({
-      hint: 'This hint should not be rendered',
-      hideDetails: true,
+      props: {
+        hint: 'This hint should not be rendered',
+        hideDetails: true,
+      },
     });
     expect(wrapper.find('label + div > div').exists()).toBeFalsy();
   });
