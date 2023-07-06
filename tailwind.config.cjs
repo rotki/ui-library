@@ -96,36 +96,38 @@ module.exports = {
       },
     },
   },
-  safelist: !isDevelopment
-    ? []
-    : [
-        {
-          pattern: new RegExp(
-            `(bg|text|border)-rui-(${baseColors.join(
-              '|'
-            )})(-(${baseColorsIntensities.join('|')}))?`
-          ),
-          variants: safeListedColorVariants,
-        },
-        {
-          pattern: new RegExp(
-            `(bg|text|border)-rui-(light|dark)-(${contextColors.join(
-              '|'
-            )})(-(darker|lighter))?`
-          ),
-          variants: safeListedColorVariants,
-        },
-        {
-          pattern: new RegExp(
-            `(bg|text|border)-rui-(${contextColors.join(
-              '|'
-            )})(-(darker|lighter))?`
-          ),
-          variants: safeListedColorVariants,
-        },
-        {
-          pattern: new RegExp(`shadow-(?:[1-9]|1[0-9]|2[0-4])`),
-        },
-      ],
+  safelist: [
+    {
+      pattern: new RegExp(`shadow-(?:[1-9]|1[0-9]|2[0-4])`),
+    },
+    ...(isDevelopment
+      ? [
+          {
+            pattern: new RegExp(
+              `(bg|text|border)-rui-(${baseColors.join(
+                '|'
+              )})(-(${baseColorsIntensities.join('|')}))?`
+            ),
+            variants: safeListedColorVariants,
+          },
+          {
+            pattern: new RegExp(
+              `(bg|text|border)-rui-(light|dark)-(${contextColors.join(
+                '|'
+              )})(-(darker|lighter))?`
+            ),
+            variants: safeListedColorVariants,
+          },
+          {
+            pattern: new RegExp(
+              `(bg|text|border)-rui-(${contextColors.join(
+                '|'
+              )})(-(darker|lighter))?`
+            ),
+            variants: safeListedColorVariants,
+          },
+        ]
+      : []),
+  ],
   plugins: [],
 };

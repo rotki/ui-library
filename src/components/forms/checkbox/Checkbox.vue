@@ -61,10 +61,9 @@ const attrs = useAttrs();
     <label
       :class="[
         css.wrapper,
+        css[size ?? ''],
         {
           [css.disabled]: disabled,
-          [css.lg]: size === 'lg',
-          [css.sm]: size === 'sm',
         },
       ]"
     >
@@ -80,11 +79,10 @@ const attrs = useAttrs();
         :class="[
           css.checkbox,
           css[color],
+          css[size ?? ''],
           {
             [css.checked]: modelValue || indeterminate,
             [css.disabled]: disabled,
-            [css.lg]: size === 'lg',
-            [css.sm]: size === 'sm',
             [css['with-error']]: errorMessages.length > 0,
           },
         ]"

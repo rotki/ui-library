@@ -4,6 +4,7 @@ import '@rotki/ui-library/dist/style.css';
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import {
+  RiAddFill,
   RiArrowRightLine,
   RiMacbookLine,
   RiMoonLine,
@@ -18,7 +19,7 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 app.use(RuiPlugin, {
-  icons: [RiMoonLine, RiSunLine, RiMacbookLine, RiArrowRightLine],
+  icons: [RiMoonLine, RiSunLine, RiMacbookLine, RiArrowRightLine, RiAddFill],
 });
 
 app.mount('#app');

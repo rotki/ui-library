@@ -1,49 +1,70 @@
 <script lang="ts" setup>
 import { type ContextColorsType } from '@/consts/colors';
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     disabled?: boolean;
     loading?: boolean;
-    outlined?: boolean;
     color?: ContextColorsType;
-    tile?: boolean;
-    elevated?: boolean;
-    text?: boolean;
+    rounded?: boolean;
+    elevation?: number | string | null;
+    variant?: 'default' | 'outlined' | 'text';
+    fab?: boolean;
+    icon?: boolean;
+    size?: 'sm' | 'lg';
     sm?: boolean;
     lg?: boolean;
   }>(),
   {
     disabled: false,
     loading: false,
-    outlined: false,
-    color: 'primary',
-    tile: false,
-    elevated: false,
-    text: false,
-    sm: false,
-    lg: false,
+    color: undefined,
+    rounded: false,
+    elevation: null,
+    variant: 'default',
+    fab: false,
+    icon: false,
+    size: undefined,
   }
 );
 
+const { disabled, elevation, fab } = toRefs(props);
+
 const attrs = useAttrs();
 const css = useCssModule();
+
+const usedElevation: ComputedRef<number | string> = computed(() => {
+  if (get(disabled)) {
+    return 0;
+  }
+
+  const elevationProp = get(elevation);
+  if (elevationProp !== null) {
+    return elevationProp;
+  }
+
+  if (get(fab)) {
+    return 6;
+  }
+
+  return 0;
+});
 </script>
 
 <template>
   <button
     :class="[
       css.btn,
-      css[color],
+      css[color ?? ''],
+      css[size ?? ''],
+      css[variant],
+      `shadow-${usedElevation}`,
       {
-        [css.outlined]: outlined,
         [css.disabled]: disabled,
-        [css.elevated]: elevated,
         [css.loading]: loading,
-        [css.tile]: tile,
-        [css.text]: text,
-        [css.sm]: sm,
-        [css.lg]: lg,
+        [css._rounded]: rounded,
+        [css.fab]: fab,
+        [css.icon]: icon,
       },
     ]"
     :disabled="disabled || loading"
@@ -56,121 +77,111 @@ const css = useCssModule();
 </template>
 
 <style lang="scss" module>
+@use '@/styles/colors.scss' as c;
+
+:global(.dark) {
+  .btn {
+    @apply bg-rui-grey-300 hover:bg-rui-grey-100 active:bg-rui-grey-50;
+    @apply disabled:bg-white/[.12] disabled:active:bg-white/[.12] disabled:text-white/[.30] #{!important};
+
+    &.outlined,
+    &.text {
+      @apply active:bg-white/10 hover:bg-white/[.04] text-white;
+    }
+
+    &.outlined {
+      @apply outline-white disabled:outline-white/[.12];
+    }
+  }
+}
+
 .btn {
-  @apply text-sm font-medium border border-transparent flex items-center justify-center space-x-2;
-  @apply disabled:bg-black/[.12] disabled:active:bg-black/[.12] disabled:text-black/[.26] #{!important};
-  @apply px-4 py-1.5 rounded-full transition-all duration-75 focus:outline-0 focus-within:outline-0;
+  @apply text-sm leading-[1.5rem] font-medium outline outline-1 outline-transparent outline-offset-[-1px] flex items-center justify-center space-x-2;
+  @apply px-4 py-1.5 rounded transition-all;
+  @apply bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-black;
+  @apply disabled:bg-black/[.12] disabled:text-black/[.26] #{!important};
 
   .label {
     @apply inline-block;
   }
 
-  &.tile {
-    @apply rounded;
+  &._rounded {
+    @apply rounded-full;
   }
 
   &.sm {
-    @apply px-3 py-1 text-[.8125rem];
+    @apply px-2.5 py-1 text-[.8125rem] leading-[1.375rem];
   }
 
   &.lg {
-    @apply px-6 py-2 text-base;
+    @apply px-6 py-2 text-base leading-[1.625rem];
   }
 
-  &.elevated {
-    @apply disabled:shadow-none;
-    box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2),
-      0 6px 10px rgba(0, 0, 0, 0.14), 0 1px 13px rgba(0, 0, 0, 0.12);
+  @each $color in c.$context-colors {
+    &.#{$color} {
+      @apply bg-rui-#{$color} hover:bg-rui-#{$color}-darker active:bg-rui-#{$color}-darker/90 text-white;
+
+      &.outlined,
+      &.text {
+        @apply bg-transparent hover:bg-rui-#{$color}-lighter/[.04] active:bg-rui-#{$color}-lighter/10 text-rui-#{$color};
+      }
+
+      &.outlined {
+        @apply outline-rui-#{$color}/[0.5];
+      }
+    }
+  }
+
+  &.outlined,
+  &.text {
+    @apply bg-transparent hover:bg-black/[.04] active:bg-black/10 text-black;
+    @apply disabled:bg-transparent disabled:active:bg-transparent #{!important};
   }
 
   &.outlined {
-    @apply border-current bg-transparent;
-    @apply disabled:border-black/[.12] #{!important};
+    @apply outline-black/[.87];
+    @apply disabled:outline-black/[.12];
   }
 
   &.text {
-    @apply bg-transparent shadow-none;
-  }
+    @apply px-2;
 
-  &.primary {
-    @apply bg-rui-primary hover:bg-rui-primary-darker active:bg-rui-primary-darker/90 text-white;
-
-    &.outlined {
-      @apply bg-transparent hover:bg-rui-primary-lighter/5 active:bg-rui-primary-lighter/10 text-rui-primary;
+    &.sm {
+      @apply px-1.5;
     }
 
-    &.text {
-      @apply bg-transparent text-rui-primary hover:bg-rui-primary/[.04] active:bg-rui-primary-lighter/10;
+    &.lg {
+      @apply px-2.5;
     }
   }
 
-  &.secondary {
-    @apply bg-rui-secondary hover:bg-rui-secondary-darker active:bg-rui-secondary-darker/90 text-white;
+  &.fab {
+    @apply rounded-full py-2;
 
-    &.outlined {
-      @apply bg-transparent hover:bg-rui-secondary-lighter/5 active:bg-rui-secondary-lighter/25 text-rui-secondary;
+    &.lg {
+      @apply py-3;
     }
 
-    &.text {
-      @apply bg-transparent text-rui-secondary hover:bg-rui-secondary/[.04] active:bg-rui-secondary-lighter/25;
-    }
-  }
-
-  &.error {
-    @apply bg-rui-error hover:bg-rui-error-darker active:bg-rui-error-darker/90 text-white;
-
-    &.outlined {
-      @apply bg-transparent hover:bg-rui-error-lighter/5 active:bg-rui-error-lighter/10 text-rui-error;
-    }
-
-    &.text {
-      @apply bg-transparent text-rui-error hover:bg-rui-error/[.04] active:bg-rui-error-lighter/10;
+    &.sm {
+      @apply py-1.5 px-2;
     }
   }
 
-  &.warning {
-    @apply bg-rui-warning hover:bg-rui-warning-darker active:bg-rui-warning-darker/90 text-white;
+  &.icon {
+    @apply rounded-full px-3 py-3;
 
-    &.outlined {
-      @apply bg-transparent hover:bg-rui-warning-lighter/5 active:bg-rui-warning-lighter/10 text-rui-warning;
+    &.lg {
+      @apply px-4 py-4;
     }
 
-    &.text {
-      @apply bg-transparent text-rui-warning hover:bg-rui-warning/[.04] active:bg-rui-warning-lighter/10;
-    }
-  }
-
-  &.info {
-    @apply bg-rui-info hover:bg-rui-info-darker active:bg-rui-info-darker/90 text-white;
-
-    &.outlined {
-      @apply bg-transparent hover:bg-rui-info-lighter/5 active:bg-rui-info-lighter/10 text-rui-info;
-    }
-
-    &.text {
-      @apply bg-transparent text-rui-info hover:bg-rui-info/[.04] active:bg-rui-info-lighter/10;
+    &.sm {
+      @apply px-1 py-1;
     }
   }
 
-  &.success {
-    @apply bg-rui-success hover:bg-rui-success-darker active:bg-rui-success-darker/90 text-white;
-
-    &.outlined {
-      @apply bg-transparent hover:bg-rui-success-lighter/5 active:bg-rui-success-lighter/10 text-rui-success;
-    }
-
-    &.text {
-      @apply bg-transparent text-rui-success hover:bg-rui-success/[.04] active:bg-rui-success-lighter/10;
-    }
-  }
-}
-
-:global(.dark) {
-  .btn {
-    @apply disabled:bg-white/[.12] disabled:active:bg-white/[.12] disabled:text-white/[.30] #{!important};
-
-    &.outlined {
-      @apply disabled:border-white/[.12] #{!important};
+  &.fab.icon {
+    &.sm {
+      @apply px-2 py-2;
     }
   }
 }
