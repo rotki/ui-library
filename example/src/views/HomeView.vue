@@ -297,6 +297,90 @@ const steppers = ref([
       },
     ],
   },
+  {
+    custom: true,
+    steps: [
+      {
+        title: 'Inactive',
+        description: 'Lorem ipsum',
+        state: StepperState.inactive,
+      },
+      {
+        title: 'Active',
+        description: 'Lorem ipsum',
+        state: StepperState.active,
+      },
+      {
+        title: 'Done',
+        description: 'Lorem ipsum',
+        state: StepperState.done,
+      },
+    ],
+  },
+  {
+    custom: true,
+    orientation: 'vertical',
+    steps: [
+      {
+        title: 'Inactive',
+        description: 'Lorem ipsum',
+        state: StepperState.inactive,
+      },
+      {
+        title: 'Active',
+        description: 'Lorem ipsum',
+        state: StepperState.active,
+      },
+      {
+        title: 'Done',
+        description: 'Lorem ipsum',
+        state: StepperState.done,
+      },
+    ],
+  },
+  {
+    custom: true,
+    iconTop: true,
+    steps: [
+      {
+        title: 'Inactive',
+        description: 'Lorem ipsum',
+        state: StepperState.inactive,
+      },
+      {
+        title: 'Active',
+        description: 'Lorem ipsum',
+        state: StepperState.active,
+      },
+      {
+        title: 'Done',
+        description: 'Lorem ipsum',
+        state: StepperState.done,
+      },
+    ],
+  },
+  {
+    custom: true,
+    iconTop: true,
+    orientation: 'vertical',
+    steps: [
+      {
+        title: 'Inactive',
+        description: 'Lorem ipsum',
+        state: StepperState.inactive,
+      },
+      {
+        title: 'Active',
+        description: 'Lorem ipsum',
+        state: StepperState.active,
+      },
+      {
+        title: 'Done',
+        description: 'Lorem ipsum',
+        state: StepperState.done,
+      },
+    ],
+  },
 ]);
 </script>
 

@@ -16,6 +16,7 @@ const meta: Meta<typeof Stepper> = {
   argTypes: {
     steps: { control: 'array', table: { category: 'State' } },
     iconTop: { control: 'boolean', table: { category: 'State' } },
+    custom: { control: 'boolean', table: { category: 'State' } },
     orientation: {
       control: 'select',
       options: [StepperOrientation.horizontal, StepperOrientation.vertical],
@@ -179,6 +180,55 @@ export const StepOnlyAndVertical = {
       { state: StepperState.active },
       { state: StepperState.inactive },
       { state: StepperState.inactive },
+    ],
+  },
+};
+
+export const Custom = {
+  args: {
+    custom: true,
+    steps: [
+      { title: 'Done', description: 'Lorem ipsum', state: StepperState.done },
+      {
+        title: 'Active',
+        description: 'Lorem ipsum',
+        state: StepperState.active,
+      },
+      {
+        title: 'Inactive',
+        description: 'Lorem ipsum',
+        state: StepperState.inactive,
+      },
+      {
+        title: 'Inactive',
+        description: 'Lorem ipsum',
+        state: StepperState.inactive,
+      },
+    ],
+  },
+};
+
+export const CustomVertical = {
+  args: {
+    custom: true,
+    orientation: StepperOrientation.vertical,
+    steps: [
+      { title: 'Done', description: 'Lorem ipsum', state: StepperState.done },
+      {
+        title: 'Active',
+        description: 'Lorem ipsum',
+        state: StepperState.active,
+      },
+      {
+        title: 'Inactive',
+        description: 'Lorem ipsum',
+        state: StepperState.inactive,
+      },
+      {
+        title: 'Inactive',
+        description: 'Lorem ipsum',
+        state: StepperState.inactive,
+      },
     ],
   },
 };

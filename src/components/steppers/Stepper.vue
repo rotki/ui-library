@@ -1,20 +1,42 @@
 <script lang="ts" setup>
-import { StepperOrientation, type StepperStep } from '@/types/stepper';
+import {
+  StepperOrientation,
+  StepperState,
+  type StepperStep,
+} from '@/types/stepper';
 import StepperIcon from '@/components/steppers/StepperIcon.vue';
+import StepperCustomIcon from '@/components/steppers/StepperCustomIcon.vue';
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     steps: StepperStep[];
     iconTop?: boolean;
+    custom?: boolean;
     orientation?: StepperOrientation;
   }>(),
   {
     iconTop: false,
+    custom: false,
     orientation: StepperOrientation.horizontal,
   }
 );
 
 const css = useCssModule();
+
+const { custom, steps } = toRefs(props);
+
+// custom steps only supports 3 states.
+const filteredSteps = computed(() => {
+  if (!get(custom)) {
+    return get(steps);
+  }
+
+  return get(steps).filter((step) =>
+    [StepperState.inactive, StepperState.active, StepperState.done].includes(
+      step.state
+    )
+  );
+});
 </script>
 
 <template>
@@ -22,17 +44,22 @@ const css = useCssModule();
     :class="[
       css.stepper,
       css[orientation ?? ''],
-      { [css['icon-top']]: iconTop },
+      { [css['icon-top']]: iconTop, [css.custom]: custom },
     ]"
   >
     <template
-      v-for="({ title, description, state }, index) in steps"
+      v-for="({ title, description, state }, index) in filteredSteps"
       :key="index"
     >
       <hr v-if="index > 0" :class="css.divider" />
       <div :class="[css.step, css[state]]">
         <slot name="icon" v-bind="{ state, index: index + 1 }">
-          <stepper-icon :index="index + 1" :state="state" />
+          <stepper-custom-icon
+            v-if="custom"
+            :index="index + 1"
+            :state="state"
+          />
+          <stepper-icon v-else :index="index + 1" :state="state" />
         </slot>
         <div v-if="title || description" :class="css.label">
           <span v-if="title" class="text-subtitle-2">{{ title }}</span>
@@ -44,6 +71,7 @@ const css = useCssModule();
 </template>
 
 <style lang="scss" module>
+$colors: 'error', 'warning', 'info', 'success';
 .stepper {
   @apply flex;
 
@@ -56,6 +84,12 @@ const css = useCssModule();
 
     .divider {
       @apply block min-h-[3rem] max-h-full h-full self-start -my-4 mx-3 border-l border-rui-grey-400;
+    }
+
+    &.custom {
+      .divider {
+        @apply mx-5;
+      }
     }
 
     &.icon-top {
@@ -85,20 +119,10 @@ const css = useCssModule();
       @apply text-rui-primary;
     }
 
-    &.error {
-      @apply text-rui-error;
-    }
-
-    &.warning {
-      @apply text-rui-warning;
-    }
-
-    &.info {
-      @apply text-rui-info;
-    }
-
-    &.success {
-      @apply text-rui-success;
+    @each $color in $colors {
+      &.#{$color} {
+        @apply text-rui-#{$color};
+      }
     }
   }
 
@@ -115,6 +139,18 @@ const css = useCssModule();
   .divider {
     @apply block max-w-full h-0 max-h-0 self-center -mx-4 my-0 border-t border-rui-grey-400;
     flex: 1 1 0;
+  }
+
+  &.custom {
+    .divider {
+      @apply border-rui-primary-lighter;
+    }
+
+    .step {
+      .label {
+        @apply text-rui-primary;
+      }
+    }
   }
 }
 

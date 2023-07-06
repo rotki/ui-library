@@ -2,16 +2,10 @@
 import Icon from '@/components/icons/Icon.vue';
 import { StepperState } from '@/types/stepper';
 
-withDefaults(
-  defineProps<{
-    state: StepperState;
-    index: number;
-    disabled?: boolean;
-  }>(),
-  {
-    disabled: false,
-  }
-);
+defineProps<{
+  state: StepperState;
+  index: number;
+}>();
 
 const css = useCssModule();
 </script>
