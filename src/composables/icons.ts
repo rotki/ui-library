@@ -8,19 +8,23 @@ import {
   RiCheckboxFill,
   RiCheckboxIndeterminateFill,
   RiErrorWarningFill,
+  RiEyeLine,
+  RiEyeOffLine,
   RiInformationFill,
 } from '@/all-icons';
 
 export const useIcons = createGlobalState(() => {
   const requiredIcons: GeneratedIcon[] = [
-    RiCheckboxFill,
-    RiCheckboxCircleFill,
-    RiCheckboxIndeterminateFill,
-    RiCheckboxBlankLine,
-    RiCheckboxBlankCircleFill,
-    RiCheckLine,
-    RiErrorWarningFill,
     RiAlertFill,
+    RiCheckLine,
+    RiCheckboxBlankCircleFill,
+    RiCheckboxBlankLine,
+    RiCheckboxCircleFill,
+    RiCheckboxFill,
+    RiCheckboxIndeterminateFill,
+    RiErrorWarningFill,
+    RiEyeLine,
+    RiEyeOffLine,
     RiInformationFill,
   ];
 

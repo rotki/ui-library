@@ -3,6 +3,7 @@ import {
   RuiButton,
   RuiCheckbox,
   RuiIcon,
+  RuiRevealableTextField,
   RuiStepper,
   RuiTextField,
   StepperState,
@@ -789,6 +790,15 @@ const textFields = ref([
     append: 'Append',
   },
 ]);
+
+const revealableTextFields = ref([
+  { value: '', color: 'primary', variant: 'outlined' },
+  { value: '', color: 'secondary', variant: 'outlined' },
+  { value: '', color: 'error', variant: 'outlined' },
+  { value: '', color: 'warning', variant: 'outlined' },
+  { value: '', color: 'info', variant: 'outlined' },
+  { value: '', color: 'success', variant: 'outlined' },
+]);
 </script>
 
 <template>
@@ -862,6 +872,20 @@ const textFields = ref([
         <template v-if="field.prepend" #prepend>{{ field.prepend }}</template>
         <template v-if="field.append" #append>{{ field.append }}</template>
       </rui-text-field>
+    </div>
+  </div>
+
+  <div :class="css.section">
+    <h2 class="text-h4 mb-6" data-cy="text-fields">Revealable Text Fields</h2>
+    <div class="grid gap-4 grid-rows-2 grid-cols-3">
+      <rui-revealable-text-field
+        v-for="(field, i) in revealableTextFields"
+        :key="i"
+        v-model="field.value"
+        v-bind="field"
+        label="Password"
+        placeholder="Placeholder"
+      />
     </div>
   </div>
 </template>
