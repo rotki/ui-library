@@ -37,24 +37,33 @@ const css = useCssModule();
 <style lang="scss" module>
 .indicator {
   @apply inline-flex items-center justify-center rounded-full h-6 w-6;
-  &.inactive,
+
+  .text {
+    @apply text-white;
+  }
+
+  &.inactive {
+    @apply bg-current text-xs;
+  }
+
   &.active,
   &.done {
-    @apply bg-current rounded-full text-xs;
-
-    .text {
-      @apply text-white;
-    }
+    @apply bg-rui-primary rounded-full text-xs;
   }
 }
 
 :global(.dark) {
   .indicator {
-    &.inactive,
+    &.inactive {
+      .text {
+        @apply text-black/70;
+      }
+    }
+
     &.active,
     &.done {
       .text {
-        @apply text-black/80;
+        @apply text-black/[.87];
       }
     }
   }

@@ -12,13 +12,15 @@ const props = withDefaults(
     steps: StepperStep[];
     iconTop?: boolean;
     custom?: boolean;
-    customTitleColor?: string;
+    titleClass?: string;
+    subtitleClass?: string;
     orientation?: StepperOrientation;
   }>(),
   {
     iconTop: false,
     custom: false,
-    customTitleColor: '',
+    titleClass: '',
+    subtitleClass: '',
     orientation: StepperOrientation.horizontal,
   }
 );
@@ -66,12 +68,17 @@ const filteredSteps = computed(() => {
         <div v-if="title || description" :class="css.label">
           <span
             v-if="title"
-            :class="{ [customTitleColor]: custom }"
+            :class="{ [titleClass]: custom }"
             class="text-subtitle-2"
           >
             {{ title }}
           </span>
-          <span v-if="description" class="text-caption">{{ description }}</span>
+          <span
+            v-if="description"
+            :class="{ [subtitleClass]: custom }"
+            class="text-caption"
+            >{{ description }}</span
+          >
         </div>
       </div>
     </template>
@@ -124,7 +131,7 @@ $colors: 'error', 'warning', 'info', 'success';
 
     &.active,
     &.done {
-      @apply text-rui-primary;
+      @apply text-black/[.87];
     }
 
     @each $color in $colors {
@@ -150,13 +157,13 @@ $colors: 'error', 'warning', 'info', 'success';
   }
 
   &.custom {
-    .divider {
-      @apply border-rui-primary-lighter;
-    }
-
     .step {
-      .label {
-        @apply text-rui-primary;
+      .divider {
+        @apply border-rui-primary-lighter;
+      }
+
+      &.inactive {
+        @apply text-black/[0.87];
       }
     }
   }
@@ -167,6 +174,20 @@ $colors: 'error', 'warning', 'info', 'success';
     .step {
       &.inactive {
         @apply text-white/50;
+      }
+
+      &.inactive,
+      &.active,
+      &.done {
+        @apply text-white;
+      }
+    }
+
+    &.custom {
+      .step {
+        &.inactive {
+          @apply text-white;
+        }
       }
     }
   }

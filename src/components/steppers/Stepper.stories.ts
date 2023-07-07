@@ -25,7 +25,7 @@ const meta: Meta<typeof Stepper> = {
   },
   parameters: {
     docs: {
-      controls: { exclude: ['icon', 'customTitleColor'] },
+      controls: { exclude: ['icon', 'titleClass', 'subtitleClass'] },
     },
   },
 };
@@ -236,7 +236,8 @@ export const CustomVertical = {
 export const CustomWithColor = {
   args: {
     custom: true,
-    customTitleColor: 'text-rui-info',
+    titleClass: 'text-rui-primary',
+    subtitleClass: 'text-rui-primary/80',
     steps: [
       { title: 'Done', description: 'Lorem ipsum', state: StepperState.done },
       {
