@@ -12,11 +12,13 @@ const props = withDefaults(
     steps: StepperStep[];
     iconTop?: boolean;
     custom?: boolean;
+    customTitleColor?: string;
     orientation?: StepperOrientation;
   }>(),
   {
     iconTop: false,
     custom: false,
+    customTitleColor: '',
     orientation: StepperOrientation.horizontal,
   }
 );
@@ -62,7 +64,13 @@ const filteredSteps = computed(() => {
           <stepper-icon v-else :index="index + 1" :state="state" />
         </slot>
         <div v-if="title || description" :class="css.label">
-          <span v-if="title" class="text-subtitle-2">{{ title }}</span>
+          <span
+            v-if="title"
+            :class="{ [customTitleColor]: custom }"
+            class="text-subtitle-2"
+          >
+            {{ title }}
+          </span>
           <span v-if="description" class="text-caption">{{ description }}</span>
         </div>
       </div>

@@ -362,6 +362,28 @@ const steppers = ref([
   {
     custom: true,
     iconTop: true,
+    customTitleColor: 'text-rui-info dark:text-white',
+    steps: [
+      {
+        title: 'Inactive',
+        description: 'Lorem ipsum',
+        state: StepperState.inactive,
+      },
+      {
+        title: 'Active',
+        description: 'Lorem ipsum',
+        state: StepperState.active,
+      },
+      {
+        title: 'Done',
+        description: 'Lorem ipsum',
+        state: StepperState.done,
+      },
+    ],
+  },
+  {
+    custom: true,
+    iconTop: true,
     orientation: 'vertical',
     steps: [
       {
