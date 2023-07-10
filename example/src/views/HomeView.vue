@@ -1,5 +1,11 @@
 <script lang="ts" setup>
-import { RuiButton, RuiCheckbox, RuiIcon } from '@rotki/ui-library';
+import {
+  RuiButton,
+  RuiCheckbox,
+  RuiIcon,
+  RuiStepper,
+  StepperState,
+} from '@rotki/ui-library';
 import { ref, useCssModule } from 'vue';
 
 const css = useCssModule();
@@ -129,6 +135,276 @@ const checkboxes = ref([
   { value: false, color: 'info', errorMessages: ['Checkbox error message'] },
   { value: false, color: 'success', errorMessages: ['Checkbox error message'] },
 ]);
+
+const steppers = ref([
+  {
+    steps: [
+      {
+        title: 'Inactive',
+        description: 'Lorem ipsum',
+        state: StepperState.inactive,
+      },
+      {
+        title: 'Active',
+        description: 'Lorem ipsum',
+        state: StepperState.active,
+      },
+      {
+        title: 'Done',
+        description: 'Lorem ipsum',
+        state: StepperState.done,
+      },
+      {
+        title: 'Error',
+        description: 'Lorem ipsum',
+        state: StepperState.error,
+      },
+      {
+        title: 'Warning',
+        description: 'Lorem ipsum',
+        state: StepperState.warning,
+      },
+      {
+        title: 'Info',
+        description: 'Lorem ipsum',
+        state: StepperState.info,
+      },
+      {
+        title: 'Success',
+        description: 'Lorem ipsum',
+        state: StepperState.success,
+      },
+    ],
+  },
+  {
+    orientation: 'vertical',
+    steps: [
+      {
+        title: 'Inactive',
+        description: 'Lorem ipsum',
+        state: StepperState.inactive,
+      },
+      {
+        title: 'Active',
+        description: 'Lorem ipsum',
+        state: StepperState.active,
+      },
+      {
+        title: 'Done',
+        description: 'Lorem ipsum',
+        state: StepperState.done,
+      },
+      {
+        title: 'Error',
+        description: 'Lorem ipsum',
+        state: StepperState.error,
+      },
+      {
+        title: 'Warning',
+        description: 'Lorem ipsum',
+        state: StepperState.warning,
+      },
+      {
+        title: 'Info',
+        description: 'Lorem ipsum',
+        state: StepperState.info,
+      },
+      {
+        title: 'Success',
+        description: 'Lorem ipsum',
+        state: StepperState.success,
+      },
+    ],
+  },
+  {
+    iconTop: true,
+    steps: [
+      {
+        title: 'Inactive',
+        description: 'Lorem ipsum',
+        state: StepperState.inactive,
+      },
+      {
+        title: 'Active',
+        description: 'Lorem ipsum',
+        state: StepperState.active,
+      },
+      {
+        title: 'Done',
+        description: 'Lorem ipsum',
+        state: StepperState.done,
+      },
+      {
+        title: 'Error',
+        description: 'Lorem ipsum',
+        state: StepperState.error,
+      },
+      {
+        title: 'Warning',
+        description: 'Lorem ipsum',
+        state: StepperState.warning,
+      },
+      {
+        title: 'Info',
+        description: 'Lorem ipsum',
+        state: StepperState.info,
+      },
+      {
+        title: 'Success',
+        description: 'Lorem ipsum',
+        state: StepperState.success,
+      },
+    ],
+  },
+  {
+    iconTop: true,
+    orientation: 'vertical',
+    steps: [
+      {
+        title: 'Inactive',
+        description: 'Lorem ipsum',
+        state: StepperState.inactive,
+      },
+      {
+        title: 'Active',
+        description: 'Lorem ipsum',
+        state: StepperState.active,
+      },
+      {
+        title: 'Done',
+        description: 'Lorem ipsum',
+        state: StepperState.done,
+      },
+      {
+        title: 'Error',
+        description: 'Lorem ipsum',
+        state: StepperState.error,
+      },
+      {
+        title: 'Warning',
+        description: 'Lorem ipsum',
+        state: StepperState.warning,
+      },
+      {
+        title: 'Info',
+        description: 'Lorem ipsum',
+        state: StepperState.info,
+      },
+      {
+        title: 'Success',
+        description: 'Lorem ipsum',
+        state: StepperState.success,
+      },
+    ],
+  },
+  {
+    custom: true,
+    steps: [
+      {
+        title: 'Inactive',
+        description: 'Lorem ipsum',
+        state: StepperState.inactive,
+      },
+      {
+        title: 'Active',
+        description: 'Lorem ipsum',
+        state: StepperState.active,
+      },
+      {
+        title: 'Done',
+        description: 'Lorem ipsum',
+        state: StepperState.done,
+      },
+    ],
+  },
+  {
+    custom: true,
+    orientation: 'vertical',
+    steps: [
+      {
+        title: 'Inactive',
+        description: 'Lorem ipsum',
+        state: StepperState.inactive,
+      },
+      {
+        title: 'Active',
+        description: 'Lorem ipsum',
+        state: StepperState.active,
+      },
+      {
+        title: 'Done',
+        description: 'Lorem ipsum',
+        state: StepperState.done,
+      },
+    ],
+  },
+  {
+    custom: true,
+    iconTop: true,
+    steps: [
+      {
+        title: 'Inactive',
+        description: 'Lorem ipsum',
+        state: StepperState.inactive,
+      },
+      {
+        title: 'Active',
+        description: 'Lorem ipsum',
+        state: StepperState.active,
+      },
+      {
+        title: 'Done',
+        description: 'Lorem ipsum',
+        state: StepperState.done,
+      },
+    ],
+  },
+  {
+    custom: true,
+    iconTop: true,
+    titleClass: 'text-rui-primary',
+    subtitleClass: 'text-rui-info',
+    steps: [
+      {
+        title: 'Inactive',
+        description: 'Lorem ipsum',
+        state: StepperState.inactive,
+      },
+      {
+        title: 'Active',
+        description: 'Lorem ipsum',
+        state: StepperState.active,
+      },
+      {
+        title: 'Done',
+        description: 'Lorem ipsum',
+        state: StepperState.done,
+      },
+    ],
+  },
+  {
+    custom: true,
+    iconTop: true,
+    orientation: 'vertical',
+    steps: [
+      {
+        title: 'Inactive',
+        description: 'Lorem ipsum',
+        state: StepperState.inactive,
+      },
+      {
+        title: 'Active',
+        description: 'Lorem ipsum',
+        state: StepperState.active,
+      },
+      {
+        title: 'Done',
+        description: 'Lorem ipsum',
+        state: StepperState.done,
+      },
+    ],
+  },
+]);
 </script>
 
 <template>
@@ -172,6 +448,16 @@ const checkboxes = ref([
         <span class="capitalize"> {{ checkbox.color }} </span>
       </rui-checkbox>
     </div>
+  </div>
+
+  <div :class="css.section">
+    <h2 class="text-h4 mb-6" data-cy="steppers">Steppers</h2>
+    <rui-stepper
+      v-for="(stepper, i) in steppers"
+      :key="i"
+      v-bind="stepper"
+      class="mb-6"
+    />
   </div>
 </template>
 
