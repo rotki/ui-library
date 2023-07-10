@@ -1,27 +1,37 @@
 import { type GeneratedIcon } from '@/types/icons';
 import {
   RiAlertFill,
+  RiAlertLine,
   RiCheckLine,
   RiCheckboxBlankCircleFill,
   RiCheckboxBlankLine,
   RiCheckboxCircleFill,
+  RiCheckboxCircleLine,
   RiCheckboxFill,
   RiCheckboxIndeterminateFill,
+  RiCloseFill,
   RiErrorWarningFill,
+  RiErrorWarningLine,
   RiInformationFill,
+  RiInformationLine,
 } from '@/all-icons';
 
 export const useIcons = createGlobalState(() => {
   const requiredIcons: GeneratedIcon[] = [
-    RiCheckboxFill,
-    RiCheckboxCircleFill,
-    RiCheckboxIndeterminateFill,
-    RiCheckboxBlankLine,
-    RiCheckboxBlankCircleFill,
-    RiCheckLine,
-    RiErrorWarningFill,
     RiAlertFill,
+    RiAlertLine,
+    RiCheckLine,
+    RiCheckboxBlankCircleFill,
+    RiCheckboxBlankLine,
+    RiCheckboxCircleFill,
+    RiCheckboxCircleLine,
+    RiCheckboxFill,
+    RiCheckboxIndeterminateFill,
+    RiCloseFill,
+    RiErrorWarningFill,
+    RiErrorWarningLine,
     RiInformationFill,
+    RiInformationLine,
   ];
 
   const registeredIcons: Ref<Record<string, string>> = ref({});
