@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import {
+  RuiAlert,
   RuiButton,
   RuiCheckbox,
   RuiFooterStepper,
@@ -953,6 +954,86 @@ const revealableTextFields = ref([
   { value: '', color: 'success', variant: 'outlined' },
 ]);
 
+const alerts = ref([
+  { type: 'primary', icon: 'information-line' },
+  { type: 'secondary', icon: 'information-line' },
+  { type: 'error' },
+  { type: 'warning' },
+  { type: 'info' },
+  { type: 'success' },
+
+  { variant: 'filled', type: 'primary', icon: 'information-line' },
+  { variant: 'filled', type: 'secondary', icon: 'information-line' },
+  { variant: 'filled', type: 'error' },
+  { variant: 'filled', type: 'warning' },
+  { variant: 'filled', type: 'info' },
+  { variant: 'filled', type: 'success' },
+
+  { variant: 'outlined', type: 'primary', icon: 'information-line' },
+  {
+    variant: 'outlined',
+    type: 'secondary',
+    icon: 'information-line',
+  },
+  { variant: 'outlined', type: 'error' },
+  { variant: 'outlined', type: 'warning' },
+  { variant: 'outlined', type: 'info' },
+  { variant: 'outlined', type: 'success' },
+
+  {
+    clicks: 0,
+    type: 'primary',
+    icon: 'information-line',
+  },
+  {
+    clicks: 0,
+    type: 'secondary',
+    icon: 'information-line',
+  },
+  { clicks: 0, type: 'error' },
+  { clicks: 0, type: 'warning' },
+  { clicks: 0, type: 'info' },
+  { clicks: 0, type: 'success' },
+
+  {
+    clicks: 0,
+    closeable: true,
+    type: 'primary',
+    icon: 'information-line',
+  },
+  {
+    clicks: 0,
+    closeable: true,
+    closed: false,
+    type: 'secondary',
+    icon: 'information-line',
+  },
+  {
+    clicks: 0,
+    closeable: true,
+    closed: false,
+    type: 'error',
+  },
+  {
+    clicks: 0,
+    closeable: true,
+    closed: false,
+    type: 'warning',
+  },
+  {
+    clicks: 0,
+    closeable: true,
+    closed: false,
+    type: 'info',
+  },
+  {
+    clicks: 0,
+    closeable: true,
+    closed: false,
+    type: 'success',
+  },
+]);
+
 const radioGroups = ref([
   {
     value: 'primary',
@@ -1096,6 +1177,24 @@ const radioGroups = ref([
         v-bind="field"
         label="Password"
         placeholder="Placeholder"
+      />
+    </div>
+  </div>
+
+  <div :class="css.section">
+    <h2 class="text-h4 mb-6" data-cy="alerts">Alerts</h2>
+    <div class="grid gap-4 grid-rows-2 grid-cols-3">
+      <rui-alert
+        v-for="(alert, i) in alerts"
+        :key="i"
+        v-bind="alert"
+        :action-text="alert.clicks !== undefined && 'Action'"
+        :title="`${alert.type} ${
+          alert.clicks !== undefined ? `(${alert.clicks})` : ''
+        } ${alert.closed ? '(Closed)' : ''}`"
+        description="Description"
+        @close="alert.closed = true"
+        @action="alert.clicks !== undefined && alert.clicks++"
       />
     </div>
   </div>

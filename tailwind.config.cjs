@@ -1,3 +1,4 @@
+const plugin = require('tailwindcss/plugin');
 const {
   baseColors,
   baseColorsIntensities,
@@ -29,6 +30,8 @@ const contextColorsCombination = Object.fromEntries(
           DEFAULT: `rgba(var(--rui-${theme}-${color}-main), <alpha-value>)`,
           darker: `rgba(var(--rui-${theme}-${color}-darker), <alpha-value>)`,
           lighter: `rgba(var(--rui-${theme}-${color}-lighter), <alpha-value>)`,
+          tint: `color-mix(in srgb, white calc(<alpha-value> * 100%), rgb(var(--rui-${theme}-${color}-main)))`,
+          shade: `color-mix(in srgb, black calc(<alpha-value> * 100%), rgb(var(--rui-${theme}-${color}-main)))`,
         },
       ])
     ),
@@ -42,6 +45,8 @@ const adaptiveContextColorCombination = Object.fromEntries(
       DEFAULT: `rgba(var(--rui-${color}-main), <alpha-value>)`,
       darker: `rgba(var(--rui-${color}-darker), <alpha-value>)`,
       lighter: `rgba(var(--rui-${color}-lighter), <alpha-value>)`,
+      tint: `color-mix(in srgb, white calc(<alpha-value> * 100%), rgb(var(--rui-${color}-main)))`,
+      shade: `color-mix(in srgb, black calc(<alpha-value> * 100%), rgb(var(--rui-${color}-main)))`,
     },
   ])
 );
@@ -58,7 +63,10 @@ const safeListedColorVariants = [
 module.exports = {
   mode: 'jit',
   darkMode: 'class',
-  content: ['./src/**/*.vue', ...(!isDevelopment ? [] : ['./src/**/*.mdx'])],
+  content: [
+    './src/**/*.vue',
+    ...(!isDevelopment ? [] : ['./src/**/*.mdx', './src/**/*.stories.ts']),
+  ],
   theme: {
     extend: {
       colors: {
@@ -114,7 +122,7 @@ module.exports = {
             pattern: new RegExp(
               `(bg|text|border)-rui-(light|dark)-(${contextColors.join(
                 '|'
-              )})(-(darker|lighter))?`
+              )})(-(darker|lighter|tint|shade))?`
             ),
             variants: safeListedColorVariants,
           },
@@ -122,12 +130,26 @@ module.exports = {
             pattern: new RegExp(
               `(bg|text|border)-rui-(${contextColors.join(
                 '|'
-              )})(-(darker|lighter))?`
+              )})(-(darker|lighter|tint|shade))?`
             ),
             variants: safeListedColorVariants,
           },
         ]
       : []),
   ],
-  plugins: [],
+  plugins: [
+    plugin(({ matchUtilities, addVariant }) => {
+      matchUtilities(
+        Object.fromEntries(
+          ['bg-tint', 'bg-shade', 'text-tint', 'text-shade'].map((item) => [
+            item,
+            (value) => ({
+              animation: `${item} 1s calc(${value} * -1s) linear forwards paused`,
+            }),
+          ])
+        )
+      );
+      addVariant('color-mix-supported', '@supports (color-mix())');
+    }),
+  ],
 };

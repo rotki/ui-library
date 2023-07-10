@@ -1,5 +1,6 @@
 import { type App } from 'vue';
 import { createHead } from '@vueuse/head';
+import { default as RuiAlert } from '@/components/alerts/Alert.vue';
 import { default as RuiButton } from '@/components/buttons/Button.vue';
 import { default as RuiIcon } from '@/components/icons/Icon.vue';
 import { default as RuiCheckbox } from '@/components/forms/checkbox/Checkbox.vue';
@@ -26,6 +27,7 @@ export {
 } from '@/types/theme';
 
 export {
+  RuiAlert,
   RuiButton,
   RuiIcon,
   RuiCheckbox,
