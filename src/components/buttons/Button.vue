@@ -8,8 +8,7 @@ const props = withDefaults(
     color?: ContextColorsType;
     rounded?: boolean;
     elevation?: number | string | null;
-    variant?: 'default' | 'outlined' | 'text';
-    fab?: boolean;
+    variant?: 'default' | 'outlined' | 'text' | 'fab';
     icon?: boolean;
     size?: 'sm' | 'lg';
     sm?: boolean;
@@ -22,13 +21,12 @@ const props = withDefaults(
     rounded: false,
     elevation: null,
     variant: 'default',
-    fab: false,
     icon: false,
     size: undefined,
   }
 );
 
-const { disabled, elevation, fab } = toRefs(props);
+const { disabled, elevation, variant } = toRefs(props);
 
 const attrs = useAttrs();
 const css = useCssModule();
@@ -43,7 +41,7 @@ const usedElevation: ComputedRef<number | string> = computed(() => {
     return elevationProp;
   }
 
-  if (get(fab)) {
+  if (get(variant) === 'fab') {
     return 6;
   }
 
@@ -63,7 +61,6 @@ const usedElevation: ComputedRef<number | string> = computed(() => {
         [css.disabled]: disabled,
         [css.loading]: loading,
         [css._rounded]: rounded,
-        [css.fab]: fab,
         [css.icon]: icon,
       },
     ]"

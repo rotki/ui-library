@@ -144,25 +144,55 @@ const buttons = ref([
   { clicks: 0, color: 'info', disabled: true, rounded: true },
   { clicks: 0, color: 'success', disabled: true, rounded: true },
 
-  { clicks: 0, color: 'primary', fab: true },
-  { clicks: 0, color: 'secondary', fab: true },
-  { clicks: 0, color: 'error', fab: true },
-  { clicks: 0, color: 'warning', fab: true },
-  { clicks: 0, color: 'info', fab: true },
-  { clicks: 0, color: 'success', fab: true },
+  { clicks: 0, color: 'primary', variant: 'fab' },
+  { clicks: 0, color: 'secondary', variant: 'fab' },
+  { clicks: 0, color: 'error', variant: 'fab' },
+  { clicks: 0, color: 'warning', variant: 'fab' },
+  { clicks: 0, color: 'info', variant: 'fab' },
+  { clicks: 0, color: 'success', variant: 'fab' },
 
-  { clicks: 0, color: 'primary', fab: true, icon: true, iconName: 'add-fill' },
   {
     clicks: 0,
-    color: 'secondary',
-    fab: true,
+    color: 'primary',
+    variant: 'fab',
     icon: true,
     iconName: 'add-fill',
   },
-  { clicks: 0, color: 'error', fab: true, icon: true, iconName: 'add-fill' },
-  { clicks: 0, color: 'warning', fab: true, icon: true, iconName: 'add-fill' },
-  { clicks: 0, color: 'info', fab: true, icon: true, iconName: 'add-fill' },
-  { clicks: 0, color: 'success', fab: true, icon: true, iconName: 'add-fill' },
+  {
+    clicks: 0,
+    color: 'secondary',
+    variant: 'fab',
+    icon: true,
+    iconName: 'add-fill',
+  },
+  {
+    clicks: 0,
+    color: 'error',
+    variant: 'fab',
+    icon: true,
+    iconName: 'add-fill',
+  },
+  {
+    clicks: 0,
+    color: 'warning',
+    variant: 'fab',
+    icon: true,
+    iconName: 'add-fill',
+  },
+  {
+    clicks: 0,
+    color: 'info',
+    variant: 'fab',
+    icon: true,
+    iconName: 'add-fill',
+  },
+  {
+    clicks: 0,
+    color: 'success',
+    variant: 'fab',
+    icon: true,
+    iconName: 'add-fill',
+  },
 
   {
     clicks: 0,
@@ -768,7 +798,7 @@ const textFields = ref([
       <rui-button
         v-for="(button, i) in buttons"
         :key="i"
-        :class="{ 'w-full': !button.icon && !button.fab }"
+        :class="{ 'w-full': !button.icon && button.variant !== 'fab' }"
         v-bind="button"
         @click="button.clicks++"
       >

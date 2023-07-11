@@ -44,13 +44,15 @@ describe('Button', () => {
     expect(wrapper.find('button').classes()).toMatch(/_success_/);
   });
 
-  it('passes outlined props', async () => {
+  it('passes variant props', async () => {
     const wrapper = createWrapper();
     expect(wrapper.find('button').classes()).not.toMatch(/_outlined_/);
     await wrapper.setProps({ variant: 'outlined' });
     expect(wrapper.find('button').classes()).toMatch(/_outlined_/);
     await wrapper.setProps({ variant: 'text' });
     expect(wrapper.find('button').classes()).toMatch(/_text_/);
+    await wrapper.setProps({ variant: 'fab' });
+    expect(wrapper.find('button').classes()).toMatch(/_fab_/);
   });
 
   it('passes rounded props', async () => {
@@ -60,15 +62,6 @@ describe('Button', () => {
     expect(wrapper.find('button').classes()).toMatch(/_rounded_/);
     await wrapper.setProps({ rounded: false });
     expect(wrapper.find('button').classes()).not.toMatch(/_rounded_/);
-  });
-
-  it('passes fab props', async () => {
-    const wrapper = createWrapper();
-    expect(wrapper.find('button').classes()).not.toMatch(/_fab_/);
-    await wrapper.setProps({ fab: true });
-    expect(wrapper.find('button').classes()).toMatch(/_fab_/);
-    await wrapper.setProps({ fab: false });
-    expect(wrapper.find('button').classes()).not.toMatch(/_fab_/);
   });
 
   it('passes icon props', async () => {
@@ -93,7 +86,7 @@ describe('Button', () => {
   it('passes elevation props and set to correct classes based on the state', async () => {
     const wrapper = createWrapper();
     expect(wrapper.find('button').classes()).toMatch(/shadow-0/);
-    await wrapper.setProps({ fab: true });
+    await wrapper.setProps({ variant: 'fab' });
     expect(wrapper.find('button').classes()).toMatch(/shadow-6/);
     await wrapper.setProps({ elevation: 10 });
     expect(wrapper.find('button').classes()).toMatch(/shadow-10/);

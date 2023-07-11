@@ -22,12 +22,11 @@ const meta: Meta<typeof Button> = {
     color: { control: 'select', options: contextColors },
     variant: {
       control: 'select',
-      options: ['default', 'outlined', 'text'],
+      options: ['default', 'outlined', 'text', 'fab'],
       table: { category: 'Shape' },
     },
     rounded: { control: 'boolean', table: { category: 'Shape' } },
     elevation: { control: 'number', table: { category: 'Shape' } },
-    fab: { control: 'boolean', table: { category: 'Shape' } },
     icon: { control: 'boolean', table: { category: 'Shape' } },
     sm: { control: 'boolean', table: { category: 'Size' } },
     lg: { control: 'boolean', table: { category: 'Size' } },
@@ -180,9 +179,9 @@ export const ErrorOutlinedDisabled = {
 
 export const FloatingActionButton = {
   args: {
-    label: 'Error Button',
+    label: 'Floating Action Button',
     color: 'primary',
-    fab: true,
+    variant: 'fab',
   },
 };
 
