@@ -1,24 +1,31 @@
 import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import Checkbox from '@/components/forms/checkbox/Checkbox.vue';
+import Radio from './Radio.vue';
 
-const createWrapper = (options?: ComponentMountingOptions<typeof Checkbox>) =>
-  mount(Checkbox, { ...options, global: { stubs: ['icon'] } });
+const createWrapper = (options?: ComponentMountingOptions<typeof Radio>) =>
+  mount(Radio, { ...options, global: { stubs: ['icon'] } });
 
-describe('Forms/Checkbox', () => {
+describe('Forms/Radio', () => {
   it('renders properly', () => {
-    const label = 'Checkbox Label';
+    const label = 'Radio Label';
     const wrapper = createWrapper({
+      props: {
+        value: 'value',
+      },
       slots: {
         default: () => label,
       },
     });
     expect(wrapper.text()).toContain(label);
-    expect(wrapper.get('label > div').classes()).toMatch(/_checkbox_/);
+    expect(wrapper.get('label > div').classes()).toMatch(/_radio_/);
   });
 
   it('passes disabled props', async () => {
-    const wrapper = createWrapper();
+    const wrapper = createWrapper({
+      props: {
+        value: 'value',
+      },
+    });
     expect(wrapper.find('input').attributes('disabled')).toBeUndefined();
     expect(wrapper.get('label').classes()).not.toMatch(/_disabled_/);
     await wrapper.setProps({ disabled: true });
@@ -30,20 +37,25 @@ describe('Forms/Checkbox', () => {
   });
 
   it('render icon correctly', async () => {
-    const wrapper = createWrapper();
+    const wrapper = createWrapper({
+      props: {
+        value: 'value',
+      },
+    });
     expect(wrapper.find('icon-stub').attributes('name')).toBe(
-      'checkbox-blank-line'
+      'checkbox-blank-circle-line'
     );
-    await wrapper.setProps({ modelValue: true, indeterminate: false });
-    expect(wrapper.find('icon-stub').attributes('name')).toBe('checkbox-fill');
-    await wrapper.setProps({ modelValue: false, indeterminate: true });
+
+    await wrapper.setProps({ modelValue: 'value' });
     expect(wrapper.find('icon-stub').attributes('name')).toBe(
-      'checkbox-indeterminate-fill'
+      'radio-button-line'
     );
   });
 
   it('passes color props', async () => {
-    const wrapper = createWrapper({ props: { color: 'primary' } });
+    const wrapper = createWrapper({
+      props: { value: 'value', color: 'primary' },
+    });
     expect(wrapper.find('label > div').classes()).toMatch(/_primary_/);
 
     await wrapper.setProps({ color: 'secondary' });
@@ -57,7 +69,7 @@ describe('Forms/Checkbox', () => {
   });
 
   it('passes size props', async () => {
-    const wrapper = createWrapper({ props: { size: 'sm' } });
+    const wrapper = createWrapper({ props: { value: 'value', size: 'sm' } });
     expect(wrapper.find('label > div').classes()).toMatch(/_sm_/);
 
     await wrapper.setProps({ sm: false, size: 'lg' });
@@ -65,20 +77,28 @@ describe('Forms/Checkbox', () => {
   });
 
   it('passes hint props', async () => {
-    const wrapper = createWrapper();
+    const wrapper = createWrapper({
+      props: {
+        value: 'value',
+      },
+    });
     expect(wrapper.find('.details > div').text()).toBe('');
 
-    const hint = 'Checkbox Hints';
+    const hint = 'Radio Hints';
     await wrapper.setProps({ hint });
     expect(wrapper.find('.details > div').classes()).toMatch(/text-black/);
     expect(wrapper.find('.details > div').text()).toBe(hint);
   });
 
   it('passes hint errorMessages', async () => {
-    const wrapper = createWrapper();
+    const wrapper = createWrapper({
+      props: {
+        value: 'value',
+      },
+    });
     expect(wrapper.find('.details > div').text()).toBe('');
 
-    const errorMessage = 'Checkbox Error Message';
+    const errorMessage = 'Radio Error Message';
     await wrapper.setProps({ errorMessages: [errorMessage] });
     expect(wrapper.find('.details > div').classes()).toMatch(/text-rui-error/);
     expect(wrapper.find('.details > div').text()).toBe(errorMessage);
@@ -87,6 +107,7 @@ describe('Forms/Checkbox', () => {
   it('passes hideDetails', async () => {
     const wrapper = createWrapper({
       props: {
+        value: 'value',
         hint: 'This hint should not be rendered',
         hideDetails: true,
       },

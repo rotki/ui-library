@@ -5,8 +5,8 @@ import Icon from '@/components/icons/Icon.vue';
 
 const props = withDefaults(
   defineProps<{
-    modelValue?: boolean;
-    indeterminate?: boolean;
+    value: string;
+    modelValue?: string;
     disabled?: boolean;
     color?: ContextColorsType;
     size?: 'sm' | 'lg';
@@ -15,8 +15,7 @@ const props = withDefaults(
     hideDetails?: boolean;
   }>(),
   {
-    modelValue: false,
-    indeterminate: false,
+    modelValue: '',
     disabled: false,
     color: undefined,
     size: undefined,
@@ -26,19 +25,17 @@ const props = withDefaults(
   }
 );
 
-const { size } = toRefs(props);
+const { modelValue, size, value } = toRefs(props);
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', modelValue: boolean): void;
-  (e: 'update:indeterminate', indeterminate: boolean): void;
+  (e: 'update:modelValue', modelValue: string): void;
 }>();
 
 const input = (event: Event) => {
   const checked = (event.target as HTMLInputElement).checked;
   if (checked) {
-    emit('update:indeterminate', false);
+    emit('update:modelValue', get(value));
   }
-  emit('update:modelValue', checked);
 };
 
 const iconSize: ComputedRef<number> = computed(() => {
@@ -51,6 +48,8 @@ const iconSize: ComputedRef<number> = computed(() => {
   }
   return 24;
 });
+
+const selected = computed(() => get(modelValue) === get(value));
 
 const css = useCssModule();
 const attrs = useAttrs();
@@ -68,32 +67,28 @@ const attrs = useAttrs();
       ]"
     >
       <input
-        :checked="modelValue"
-        type="checkbox"
+        :checked="selected"
+        type="radio"
         :class="css.input"
         :disabled="disabled"
         v-bind="objectOmit(attrs, ['class'])"
+        :value="value"
         @input="input($event)"
       />
       <div
         :class="[
-          css.checkbox,
+          css.radio,
           css[color ?? ''],
           css[size ?? ''],
           {
-            [css.checked]: modelValue || indeterminate,
+            [css.checked]: selected,
             [css.disabled]: disabled,
             [css['with-error']]: errorMessages.length > 0,
           },
         ]"
       >
-        <icon
-          v-if="indeterminate"
-          name="checkbox-indeterminate-fill"
-          :size="iconSize"
-        />
-        <icon v-else-if="modelValue" name="checkbox-fill" :size="iconSize" />
-        <icon v-else name="checkbox-blank-line" :size="iconSize" />
+        <icon v-if="selected" name="radio-button-line" :size="iconSize" />
+        <icon v-else name="checkbox-blank-circle-line" :size="iconSize" />
       </div>
       <div :class="css.label" class="text-body-1">
         <slot />
@@ -121,7 +116,7 @@ const attrs = useAttrs();
   &.disabled {
     @apply cursor-not-allowed;
 
-    .checkbox {
+    .radio {
       @apply text-black/[.26];
 
       &:before {
@@ -138,7 +133,7 @@ const attrs = useAttrs();
     @apply appearance-none w-[1px] h-[1px] absolute z-[2] outline-none select-none;
 
     &:focus {
-      + .checkbox {
+      + .radio {
         &:before {
           @apply opacity-5;
         }
@@ -146,7 +141,7 @@ const attrs = useAttrs();
     }
   }
 
-  .checkbox {
+  .radio {
     @apply relative text-black/[.60] p-[9px];
 
     &:before {
@@ -226,12 +221,12 @@ const attrs = useAttrs();
 
 :global(.dark) {
   .wrapper {
-    .checkbox {
+    .radio {
       @apply relative text-white/[.70];
     }
 
     &.disabled {
-      .checkbox {
+      .radio {
         @apply text-white/[.30];
       }
 

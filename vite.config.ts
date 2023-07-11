@@ -21,7 +21,7 @@ export default defineConfig({
         unheadVueComposablesImports,
       ],
       dts: './auto-imports.d.ts',
-      dirs: ['src/composables/**'],
+      dirs: ['src/composables/**', 'src/utils/**'],
       vueTemplate: true,
       eslintrc: {
         enabled: true,
