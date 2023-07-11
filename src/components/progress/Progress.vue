@@ -6,6 +6,10 @@ const props = withDefaults(
      * @example - 0 <= value <= 1
      */
     value?: number;
+    /**
+     * required when type === buffer
+     * @example - 0 <= value <= 1
+     */
     bufferValue?: number;
     type?: 'determinate' | 'indeterminate' | 'buffer';
     color?: 'primary' | 'secondary' | 'inherit';
