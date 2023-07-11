@@ -309,6 +309,8 @@
     "watchWithFilter": true,
     "whenever": true,
     "useIcons": true,
-    "useRotkiTheme": true
+    "useRotkiTheme": true,
+    "generateId": true,
+    "useGlobalId": true
   }
 }
