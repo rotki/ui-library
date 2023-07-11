@@ -142,6 +142,8 @@ const usedElevation: ComputedRef<number | string> = computed(() => {
 
   &.text {
     @apply px-2;
+    @apply bg-transparent shadow-none;
+    @apply disabled:bg-transparent disabled:active:bg-transparent #{!important};
 
     &.sm {
       @apply px-1.5;
@@ -179,6 +181,10 @@ const usedElevation: ComputedRef<number | string> = computed(() => {
   &.fab.icon {
     &.sm {
       @apply px-2 py-2;
+    }
+
+    &.text {
+      @apply disabled:bg-transparent disabled:active:bg-transparent #{!important};
     }
   }
 }
