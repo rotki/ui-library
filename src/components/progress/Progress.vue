@@ -1,0 +1,296 @@
+<script lang="ts" setup>
+const props = withDefaults(
+  defineProps<{
+    /**
+     * required when type === determinate or buffer
+     * @example - 0 <= value <= 1
+     */
+    value?: number;
+    bufferValue?: number;
+    type?: 'determinate' | 'indeterminate' | 'buffer';
+    color?: 'primary' | 'secondary' | 'inherit';
+    circular?: boolean;
+  }>(),
+  {
+    value: 0,
+    bufferValue: 0,
+    type: 'determinate',
+    color: 'primary',
+    circular: false,
+  }
+);
+
+const css = useCssModule();
+
+const { type, value, bufferValue } = toRefs(props);
+
+// const buffer = ref(0);
+// const bufferRail = ref(0);
+// const interval = ref();
+
+// const resetBuffer = () => {
+//   set(buffer, -120);
+//   set(bufferRail, -110);
+// };
+//
+// const startBuffer = () => {
+//   resetBuffer();
+//   const id = setInterval(() => {
+//     const current = get(buffer);
+//     set(buffer, current + Math.ceil(Math.random() * 25));
+//     const newBuffer = get(buffer);
+//     if (newBuffer >= get(bufferRail)) {
+//       set(bufferRail, get(buffer) + Math.ceil(Math.random() * 15));
+//     }
+//
+//     if (newBuffer > 0) {
+//       resetBuffer();
+//     }
+//   }, 750);
+//   set(interval, id);
+// };
+//
+// onMounted(() => {
+//   if (get(type) === 'buffer') {
+//     startBuffer();
+//   }
+// });
+//
+// watch(type, (value, oldValue) => {
+//   if (value === 'buffer') {
+//     startBuffer();
+//   }
+//   if (oldValue === 'buffer') {
+//     clearInterval(get(interval));
+//     resetBuffer();
+//   }
+// });
+</script>
+
+<template>
+  <div
+    :aria-valuenow="value * 100"
+    :class="[
+      circular ? css.circular : css.progress,
+      css[type ?? ''],
+      css[color ?? ''],
+    ]"
+    aria-valuemax="100"
+    aria-valuemin="0"
+    role="progressbar"
+  >
+    <svg v-if="circular" viewBox="22 22 44 44">
+      <circle cx="44" cy="44" fill="none" r="20.2" stroke-width="4" />
+    </svg>
+    <template v-else>
+      <div v-if="type === 'buffer'" :class="css['buffer-dots']" />
+      <div :class="[css.rail, { [css['buffer-rail']]: type === 'buffer' }]" />
+      <div :class="css[type ?? '']" />
+    </template>
+  </div>
+</template>
+
+<style lang="scss" module>
+$colors: 'primary', 'secondary';
+
+.progress {
+  @apply w-full overflow-hidden relative h-1;
+
+  .rail {
+    @apply w-full h-full;
+  }
+
+  .determinate,
+  .buffer {
+    @apply transition-all duration-150 ease-in-out absolute left-0 top-0 h-full w-full;
+    transform: translateX(calc(-100% + max(0, min(v-bind(value), 1)) * 100%));
+  }
+
+  .indeterminate {
+    @apply absolute left-0 top-0 h-full w-auto transition-transform duration-200 ease-linear delay-0;
+    transform-origin: left center;
+    animation: 1.6s cubic-bezier(0.65, 0.815, 0.735, 0.395) 0s infinite normal
+      none running slide-rail;
+  }
+
+  .buffer-dots {
+    @apply absolute h-0 w-[200%] -top-px -left-[100%] border-dashed border-y-[0.2rem];
+    animation: 3s ease-in-out 3s infinite normal none running buffer-pulse;
+  }
+
+  .buffer-rail {
+    width: 100%;
+    transition: transform 0.4s linear 0s;
+    transform-origin: left center;
+    transform: translateX(
+      calc(-100% + max(0, min(v-bind(bufferValue), 1)) * 100%)
+    );
+  }
+
+  @each $color in $colors {
+    &.#{$color} {
+      .rail {
+        @apply bg-rui-#{$color}/20;
+      }
+
+      .determinate,
+      .indeterminate,
+      .buffer {
+        @apply bg-rui-#{$color};
+      }
+
+      .buffer-dots {
+        @apply border-rui-#{$color}/20;
+      }
+    }
+  }
+
+  &.inherit {
+    .rail {
+      @apply bg-current opacity-20;
+    }
+
+    .determinate,
+    .indeterminate,
+    .buffer {
+      @apply bg-current;
+    }
+
+    .buffer-dots {
+      @apply border-current opacity-20;
+    }
+  }
+}
+
+.circular {
+  @apply animate-[spin_1.4s_linear_infinite] w-8 h-8 inline-block;
+
+  @each $color in $colors {
+    &.#{$color} {
+      @apply text-rui-#{$color};
+    }
+  }
+
+  &.inherit {
+    @apply text-current;
+  }
+
+  svg {
+    @apply block;
+
+    circle {
+      stroke: currentColor;
+      stroke-dasharray: 80px, 200px;
+      stroke-dashoffset: 0;
+      -webkit-animation: collapse-stroke 1.4s ease-in-out infinite;
+      animation: collapse-stroke 1.4s ease-in-out infinite;
+    }
+  }
+}
+
+@-webkit-keyframes buffer-pulse {
+  0% {
+    opacity: 0.2;
+    left: -100%;
+  }
+  50% {
+    opacity: 1.5;
+    left: -100%;
+  }
+  60% {
+    opacity: 0.4;
+    left: -75%;
+  }
+  100% {
+    opacity: 0.2;
+    left: -100%;
+  }
+}
+
+@keyframes buffer-pulse {
+  0% {
+    opacity: 0.2;
+    left: -100%;
+  }
+  50% {
+    opacity: 1.5;
+    left: -100%;
+  }
+  60% {
+    opacity: 0.4;
+    left: -75%;
+  }
+  100% {
+    opacity: 0.2;
+    left: -100%;
+  }
+}
+
+@-webkit-keyframes slide-rail {
+  0% {
+    left: -35%;
+    right: 100%;
+  }
+
+  60% {
+    left: 100%;
+    right: -90%;
+  }
+
+  100% {
+    left: 100%;
+    right: -90%;
+  }
+}
+
+@keyframes slide-rail {
+  0% {
+    left: -35%;
+    right: 100%;
+  }
+
+  60% {
+    left: 100%;
+    right: -90%;
+  }
+
+  100% {
+    left: 100%;
+    right: -90%;
+  }
+}
+
+@-webkit-keyframes collapse-stroke {
+  0% {
+    stroke-dasharray: 1px, 200px;
+    stroke-dashoffset: 0;
+  }
+
+  50% {
+    stroke-dasharray: 100px, 200px;
+    stroke-dashoffset: -15px;
+  }
+
+  100% {
+    stroke-dasharray: 100px, 200px;
+    stroke-dashoffset: -125px;
+  }
+}
+
+@keyframes collapse-stroke {
+  0% {
+    stroke-dasharray: 1px, 200px;
+    stroke-dashoffset: 0;
+  }
+
+  50% {
+    stroke-dasharray: 100px, 200px;
+    stroke-dashoffset: -15px;
+  }
+
+  100% {
+    stroke-dasharray: 100px, 200px;
+    stroke-dashoffset: -125px;
+  }
+}
+</style>
