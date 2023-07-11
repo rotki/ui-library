@@ -12,9 +12,13 @@ describe('Progress', () => {
         value: 0.5,
       },
     });
-    expect(wrapper.classes()).toMatch(/_progress_/);
-    expect(wrapper.classes()).toMatch(/_primary_/);
-    expect(wrapper.classes()).toMatch(/_determinate_/);
+    expect(wrapper.get('div[role=progressbar]').classes()).toMatch(
+      /_progress_/
+    );
+    expect(wrapper.get('div[role=progressbar]').classes()).toMatch(/_primary_/);
+    expect(wrapper.get('div[role=progressbar]').classes()).toMatch(
+      /_determinate_/
+    );
   });
 
   it('passes props correctly', async () => {
@@ -25,13 +29,19 @@ describe('Progress', () => {
         color: 'secondary',
       },
     });
-    expect(wrapper.classes()).toMatch(/_secondary_/);
-    expect(wrapper.classes()).toMatch(/_indeterminate_/);
+    expect(wrapper.get('div[role=progressbar]').classes()).toMatch(
+      /_secondary_/
+    );
+    expect(wrapper.get('div[role=progressbar]').classes()).toMatch(
+      /_indeterminate_/
+    );
     await wrapper.setProps({ color: 'primary' });
-    expect(wrapper.classes()).toMatch(/_primary_/);
+    expect(wrapper.get('div[role=progressbar]').classes()).toMatch(/_primary_/);
     await wrapper.setProps({ color: 'inherit' });
-    expect(wrapper.classes()).toMatch(/_inherit_/);
+    expect(wrapper.get('div[role=progressbar]').classes()).toMatch(/_inherit_/);
     await wrapper.setProps({ circular: true });
-    expect(wrapper.classes()).toMatch(/_circular_/);
+    expect(wrapper.get('div[role=progressbar]').classes()).toMatch(
+      /_circular_/
+    );
   });
 });
