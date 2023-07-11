@@ -12,12 +12,19 @@ import { ref, useCssModule } from 'vue';
 const css = useCssModule();
 
 const buttons = ref([
-  { clicks: 0, color: 'primary', disabled: false },
-  { clicks: 0, color: 'secondary', disabled: false },
-  { clicks: 0, color: 'error', disabled: false },
-  { clicks: 0, color: 'warning', disabled: false },
-  { clicks: 0, color: 'info', disabled: false },
-  { clicks: 0, color: 'success', disabled: false },
+  { clicks: 0, color: 'primary' },
+  { clicks: 0, color: 'secondary' },
+  { clicks: 0, color: 'error' },
+  { clicks: 0, color: 'warning' },
+  { clicks: 0, color: 'info' },
+  { clicks: 0, color: 'success' },
+
+  { clicks: 0, color: 'primary', variant: 'outlined' },
+  { clicks: 0, color: 'secondary', variant: 'outlined' },
+  { clicks: 0, color: 'error', variant: 'outlined' },
+  { clicks: 0, color: 'warning', variant: 'outlined' },
+  { clicks: 0, color: 'info', variant: 'outlined' },
+  { clicks: 0, color: 'success', variant: 'outlined' },
 
   { clicks: 0, color: 'primary', prepend: 'arrow-right-line' },
   { clicks: 0, color: 'secondary', prepend: 'arrow-right-line' },
@@ -33,12 +40,12 @@ const buttons = ref([
   { clicks: 0, color: 'info', append: 'arrow-right-line' },
   { clicks: 0, color: 'success', append: 'arrow-right-line' },
 
-  { clicks: 0, color: 'primary', text: true },
-  { clicks: 0, color: 'secondary', text: true },
-  { clicks: 0, color: 'error', text: true },
-  { clicks: 0, color: 'warning', text: true },
-  { clicks: 0, color: 'info', text: true },
-  { clicks: 0, color: 'success', text: true },
+  { clicks: 0, color: 'primary', variant: 'text' },
+  { clicks: 0, color: 'secondary', variant: 'text' },
+  { clicks: 0, color: 'error', variant: 'text' },
+  { clicks: 0, color: 'warning', variant: 'text' },
+  { clicks: 0, color: 'info', variant: 'text' },
+  { clicks: 0, color: 'success', variant: 'text' },
 
   { clicks: 0, color: 'primary', disabled: true },
   { clicks: 0, color: 'secondary', disabled: true },
@@ -47,26 +54,231 @@ const buttons = ref([
   { clicks: 0, color: 'info', disabled: true },
   { clicks: 0, color: 'success', disabled: true },
 
-  { clicks: 0, color: 'primary', disabled: false, tile: true },
-  { clicks: 0, color: 'secondary', disabled: false, tile: true },
-  { clicks: 0, color: 'error', disabled: false, tile: true },
-  { clicks: 0, color: 'warning', disabled: false, tile: true },
-  { clicks: 0, color: 'info', disabled: false, tile: true },
-  { clicks: 0, color: 'success', disabled: false, tile: true },
+  { clicks: 0, color: 'primary', disabled: false, rounded: true },
+  { clicks: 0, color: 'secondary', disabled: false, rounded: true },
+  { clicks: 0, color: 'error', disabled: false, rounded: true },
+  { clicks: 0, color: 'warning', disabled: false, rounded: true },
+  { clicks: 0, color: 'info', disabled: false, rounded: true },
+  { clicks: 0, color: 'success', disabled: false, rounded: true },
 
-  { clicks: 0, color: 'primary', text: true, tile: true },
-  { clicks: 0, color: 'secondary', text: true, tile: true },
-  { clicks: 0, color: 'error', text: true, tile: true },
-  { clicks: 0, color: 'warning', text: true, tile: true },
-  { clicks: 0, color: 'info', text: true, tile: true },
-  { clicks: 0, color: 'success', text: true, tile: true },
+  { clicks: 0, color: 'primary', variant: 'outlined', rounded: true },
+  { clicks: 0, color: 'secondary', variant: 'outlined', rounded: true },
+  { clicks: 0, color: 'error', variant: 'outlined', rounded: true },
+  { clicks: 0, color: 'warning', variant: 'outlined', rounded: true },
+  { clicks: 0, color: 'info', variant: 'outlined', rounded: true },
+  { clicks: 0, color: 'success', variant: 'outlined', rounded: true },
 
-  { clicks: 0, color: 'primary', disabled: true, tile: true },
-  { clicks: 0, color: 'secondary', disabled: true, tile: true },
-  { clicks: 0, color: 'error', disabled: true, tile: true },
-  { clicks: 0, color: 'warning', disabled: true, tile: true },
-  { clicks: 0, color: 'info', disabled: true, tile: true },
-  { clicks: 0, color: 'success', disabled: true, tile: true },
+  {
+    clicks: 0,
+    color: 'primary',
+    variant: 'outlined',
+    rounded: true,
+    size: 'lg',
+  },
+  {
+    clicks: 0,
+    color: 'secondary',
+    variant: 'outlined',
+    rounded: true,
+    size: 'lg',
+  },
+  { clicks: 0, color: 'error', variant: 'outlined', rounded: true, size: 'lg' },
+  {
+    clicks: 0,
+    color: 'warning',
+    variant: 'outlined',
+    rounded: true,
+    size: 'lg',
+  },
+  { clicks: 0, color: 'info', variant: 'outlined', rounded: true, size: 'lg' },
+  {
+    clicks: 0,
+    color: 'success',
+    variant: 'outlined',
+    rounded: true,
+    size: 'lg',
+  },
+
+  {
+    clicks: 0,
+    color: 'primary',
+    variant: 'outlined',
+    rounded: true,
+    size: 'sm',
+  },
+  {
+    clicks: 0,
+    color: 'secondary',
+    variant: 'outlined',
+    rounded: true,
+    size: 'sm',
+  },
+  { clicks: 0, color: 'error', variant: 'outlined', rounded: true, size: 'sm' },
+  {
+    clicks: 0,
+    color: 'warning',
+    variant: 'outlined',
+    rounded: true,
+    size: 'sm',
+  },
+  { clicks: 0, color: 'info', variant: 'outlined', rounded: true, size: 'sm' },
+  {
+    clicks: 0,
+    color: 'success',
+    variant: 'outlined',
+    rounded: true,
+    size: 'sm',
+  },
+
+  { clicks: 0, color: 'primary', variant: 'text', rounded: true },
+  { clicks: 0, color: 'secondary', variant: 'text', rounded: true },
+  { clicks: 0, color: 'error', variant: 'text', rounded: true },
+  { clicks: 0, color: 'warning', variant: 'text', rounded: true },
+  { clicks: 0, color: 'info', variant: 'text', rounded: true },
+  { clicks: 0, color: 'success', variant: 'text', rounded: true },
+
+  { clicks: 0, color: 'primary', disabled: true, rounded: true },
+  { clicks: 0, color: 'secondary', disabled: true, rounded: true },
+  { clicks: 0, color: 'error', disabled: true, rounded: true },
+  { clicks: 0, color: 'warning', disabled: true, rounded: true },
+  { clicks: 0, color: 'info', disabled: true, rounded: true },
+  { clicks: 0, color: 'success', disabled: true, rounded: true },
+
+  { clicks: 0, color: 'primary', variant: 'fab' },
+  { clicks: 0, color: 'secondary', variant: 'fab' },
+  { clicks: 0, color: 'error', variant: 'fab' },
+  { clicks: 0, color: 'warning', variant: 'fab' },
+  { clicks: 0, color: 'info', variant: 'fab' },
+  { clicks: 0, color: 'success', variant: 'fab' },
+
+  {
+    clicks: 0,
+    color: 'primary',
+    variant: 'fab',
+    icon: true,
+    iconName: 'add-fill',
+  },
+  {
+    clicks: 0,
+    color: 'secondary',
+    variant: 'fab',
+    icon: true,
+    iconName: 'add-fill',
+  },
+  {
+    clicks: 0,
+    color: 'error',
+    variant: 'fab',
+    icon: true,
+    iconName: 'add-fill',
+  },
+  {
+    clicks: 0,
+    color: 'warning',
+    variant: 'fab',
+    icon: true,
+    iconName: 'add-fill',
+  },
+  {
+    clicks: 0,
+    color: 'info',
+    variant: 'fab',
+    icon: true,
+    iconName: 'add-fill',
+  },
+  {
+    clicks: 0,
+    color: 'success',
+    variant: 'fab',
+    icon: true,
+    iconName: 'add-fill',
+  },
+
+  {
+    clicks: 0,
+    color: 'primary',
+    icon: true,
+    variant: 'text',
+    iconName: 'add-fill',
+  },
+  {
+    clicks: 0,
+    color: 'secondary',
+    icon: true,
+    variant: 'text',
+    iconName: 'add-fill',
+  },
+  {
+    clicks: 0,
+    color: 'error',
+    icon: true,
+    variant: 'text',
+    iconName: 'add-fill',
+  },
+  {
+    clicks: 0,
+    color: 'warning',
+    icon: true,
+    variant: 'text',
+    iconName: 'add-fill',
+  },
+  {
+    clicks: 0,
+    color: 'info',
+    icon: true,
+    variant: 'text',
+    iconName: 'add-fill',
+  },
+  {
+    clicks: 0,
+    color: 'success',
+    icon: true,
+    variant: 'text',
+    iconName: 'add-fill',
+  },
+
+  {
+    clicks: 0,
+    color: 'primary',
+    variant: 'outlined',
+    icon: true,
+    iconName: 'add-fill',
+  },
+  {
+    clicks: 0,
+    color: 'secondary',
+    variant: 'outlined',
+    icon: true,
+    iconName: 'add-fill',
+  },
+  {
+    clicks: 0,
+    color: 'error',
+    variant: 'outlined',
+    icon: true,
+    iconName: 'add-fill',
+  },
+  {
+    clicks: 0,
+    color: 'warning',
+    variant: 'outlined',
+    icon: true,
+    iconName: 'add-fill',
+  },
+  {
+    clicks: 0,
+    color: 'info',
+    variant: 'outlined',
+    icon: true,
+    iconName: 'add-fill',
+  },
+  {
+    clicks: 0,
+    color: 'success',
+    variant: 'outlined',
+    icon: true,
+    iconName: 'add-fill',
+  },
 ]);
 
 const icons = ref([
@@ -582,17 +794,21 @@ const textFields = ref([
 <template>
   <div :class="css.section">
     <h2 class="text-h4 mb-6" data-cy="buttons">Buttons</h2>
-    <div class="grid gap-4 grid-rows-2 grid-cols-6">
+    <div class="grid gap-4 grid-rows-2 grid-cols-6 justify-items-start">
       <rui-button
         v-for="(button, i) in buttons"
         :key="i"
+        :class="{ 'w-full': !button.icon && button.variant !== 'fab' }"
         v-bind="button"
         @click="button.clicks++"
       >
         <template v-if="button.prepend" #prepend>
           <rui-icon :name="button.prepend" />
         </template>
-        <span class="capitalize"> {{ button.color }} {{ button.clicks }} </span>
+        <span v-if="!button.icon" class="capitalize">
+          {{ button.color }} {{ button.clicks }}
+        </span>
+        <rui-icon v-else :name="button.iconName" />
         <template v-if="button.append" #append>
           <rui-icon :name="button.append" />
         </template>

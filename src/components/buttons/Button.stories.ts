@@ -20,10 +20,14 @@ const meta: Meta<typeof Button> = {
   argTypes: {
     label: { control: 'text' },
     color: { control: 'select', options: contextColors },
-    outlined: { control: 'boolean', table: { category: 'Style' } },
-    tile: { control: 'boolean', table: { category: 'Shape' } },
-    elevated: { control: 'boolean', table: { category: 'Shape' } },
-    text: { control: 'boolean', table: { category: 'Style' } },
+    variant: {
+      control: 'select',
+      options: ['default', 'outlined', 'text', 'fab'],
+      table: { category: 'Shape' },
+    },
+    rounded: { control: 'boolean', table: { category: 'Shape' } },
+    elevation: { control: 'number', table: { category: 'Shape' } },
+    icon: { control: 'boolean', table: { category: 'Shape' } },
     sm: { control: 'boolean', table: { category: 'Size' } },
     lg: { control: 'boolean', table: { category: 'Size' } },
     disabled: { control: 'boolean', table: { category: 'State' } },
@@ -36,53 +40,64 @@ const meta: Meta<typeof Button> = {
   },
 };
 
+export const Default = {
+  args: {
+    label: 'Default',
+    variant: 'outlined',
+  },
+};
+
 export const Primary = {
   args: {
+    color: 'primary',
     label: 'Medium',
   },
 };
 
 export const PrimaryText = {
   args: {
+    color: 'primary',
     label: 'Large',
-    text: true,
-    lg: true,
+    variant: 'text',
   },
 };
 
-export const PrimarySquare = {
+export const PrimaryRounded = {
   args: {
+    color: 'primary',
     label: 'Medium',
-    tile: true,
+    rounded: true,
   },
 };
 
 export const PrimarySmall = {
   args: {
+    color: 'primary',
     label: 'Small',
-    sm: true,
+    size: 'sm',
   },
 };
 
 export const PrimaryLarge = {
   args: {
+    color: 'primary',
     label: 'Large',
-    lg: true,
-    elevated: true,
+    size: 'lg',
   },
 };
 
-export const PrimaryLargeSquare = {
+export const PrimaryLargeRounded = {
   args: {
+    color: 'primary',
     label: 'Large',
-    tile: true,
-    lg: true,
-    elevated: true,
+    rounded: true,
+    size: 'lg',
   },
 };
 
 export const PrimaryDisabled = {
   args: {
+    color: 'primary',
     label: 'Medium',
     disabled: true,
   },
@@ -90,8 +105,18 @@ export const PrimaryDisabled = {
 
 export const PrimaryOutlined = {
   args: {
-    label: 'Outlined Button',
-    outlined: true,
+    color: 'primary',
+    label: 'Primary Outlined',
+    variant: 'outlined',
+  },
+};
+
+export const PrimaryOutlinedWithElevation = {
+  args: {
+    color: 'primary',
+    label: 'Primary Outlined',
+    variant: 'outlined',
+    elevation: 4,
   },
 };
 
@@ -106,8 +131,8 @@ export const SecondaryText = {
   args: {
     label: 'Secondary Button',
     color: 'secondary',
-    text: true,
-    lg: true,
+    variant: 'text',
+    size: 'lg',
   },
 };
 
@@ -115,7 +140,7 @@ export const SecondaryOutlined = {
   args: {
     label: 'Outlined Button',
     color: 'secondary',
-    outlined: true,
+    variant: 'outlined',
   },
 };
 
@@ -130,8 +155,8 @@ export const ErrorButtonText = {
   args: {
     label: 'Error Button',
     color: 'error',
-    text: true,
-    lg: true,
+    variant: 'text',
+    size: 'lg',
   },
 };
 
@@ -139,7 +164,7 @@ export const ErrorOutlined = {
   args: {
     label: 'Error Button',
     color: 'error',
-    outlined: true,
+    variant: 'outlined',
   },
 };
 
@@ -147,8 +172,16 @@ export const ErrorOutlinedDisabled = {
   args: {
     label: 'Error Button',
     color: 'error',
-    outlined: true,
+    variant: 'outlined',
     disabled: true,
+  },
+};
+
+export const FloatingActionButton = {
+  args: {
+    label: 'Floating Action Button',
+    color: 'primary',
+    variant: 'fab',
   },
 };
 
