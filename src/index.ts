@@ -5,6 +5,7 @@ import { default as RuiIcon } from '@/components/icons/Icon.vue';
 import { default as RuiCheckbox } from '@/components/forms/checkbox/Checkbox.vue';
 import { default as RuiStepper } from '@/components/steppers/Stepper.vue';
 import { default as RuiTextField } from '@/components/forms/text-field/TextField.vue';
+import { default as RuiRevealableTextField } from '@/components/forms/revealable-text-field/RevealableTextField.vue';
 import { useRotkiTheme } from '@/composables/theme';
 import { StepperState } from '@/types/stepper';
 import type { InitThemeOptions } from '@/types/theme';
@@ -26,6 +27,7 @@ export {
   RuiCheckbox,
   RuiStepper,
   RuiTextField,
+  RuiRevealableTextField,
   useRotkiTheme,
 };
 
