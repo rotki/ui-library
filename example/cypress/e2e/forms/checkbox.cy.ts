@@ -3,7 +3,7 @@ describe('Forms/Checkbox', () => {
     cy.visit('/');
   });
 
-  it('checks for checkboxes and checkbox text', () => {
+  it('checks for checkboxes', () => {
     cy.contains('h2[data-cy=checkboxes]', 'Checkboxes');
 
     cy.get('input[type="checkbox"]').first().as('firstCheckbox');

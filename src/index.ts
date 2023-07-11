@@ -4,10 +4,11 @@ import { default as RuiButton } from '@/components/buttons/Button.vue';
 import { default as RuiIcon } from '@/components/icons/Icon.vue';
 import { default as RuiCheckbox } from '@/components/forms/checkbox/Checkbox.vue';
 import { default as RuiStepper } from '@/components/steppers/Stepper.vue';
+import { default as RuiTextField } from '@/components/forms/text-field/TextField.vue';
 import { useRotkiTheme } from '@/composables/theme';
 import { StepperState } from '@/types/stepper';
 import type { InitThemeOptions } from '@/types/theme';
-import '@/style.css';
+import '@/style.scss';
 
 export * from '@/all-icons';
 
@@ -19,7 +20,14 @@ export {
   ThemeMode,
 } from '@/types/theme';
 
-export { RuiButton, RuiIcon, RuiCheckbox, RuiStepper, useRotkiTheme };
+export {
+  RuiButton,
+  RuiIcon,
+  RuiCheckbox,
+  RuiStepper,
+  RuiTextField,
+  useRotkiTheme,
+};
 
 export { StepperState };
 

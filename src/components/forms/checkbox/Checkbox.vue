@@ -101,7 +101,7 @@ const attrs = useAttrs();
         <slot />
       </div>
     </label>
-    <div v-if="!hideDetails">
+    <div v-if="!hideDetails" class="details">
       <div v-if="errorMessages.length > 0" class="text-rui-error text-caption">
         {{ errorMessages[0] }}
       </div>
@@ -111,7 +111,7 @@ const attrs = useAttrs();
       >
         {{ hint }}
       </div>
-      <div v-else class="h-4" />
+      <div v-else class="h-5" />
     </div>
   </div>
 </template>
@@ -184,45 +184,14 @@ const attrs = useAttrs();
       }
     }
 
-    &.primary {
-      @apply before:bg-rui-primary;
-      &.checked {
-        @apply text-rui-primary;
-      }
-    }
+    $colors: 'primary', 'secondary', 'error', 'warning', 'info', 'success';
 
-    &.secondary {
-      @apply before:bg-rui-secondary;
-      &.checked {
-        @apply text-rui-secondary;
-      }
-    }
-
-    &.error {
-      @apply before:bg-rui-error;
-      &.checked {
-        @apply text-rui-error;
-      }
-    }
-
-    &.warning {
-      @apply before:bg-rui-warning;
-      &.checked {
-        @apply text-rui-warning;
-      }
-    }
-
-    &.info {
-      @apply before:bg-rui-info;
-      &.checked {
-        @apply text-rui-info;
-      }
-    }
-
-    &.success {
-      @apply before:bg-rui-success;
-      &.checked {
-        @apply text-rui-success;
+    @each $color in $colors {
+      &.#{$color} {
+        @apply before:bg-rui-#{$color};
+        &.checked {
+          @apply text-rui-#{$color};
+        }
       }
     }
   }
