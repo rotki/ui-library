@@ -23,48 +23,6 @@ const props = withDefaults(
 const css = useCssModule();
 
 const { type, value, bufferValue } = toRefs(props);
-
-// const buffer = ref(0);
-// const bufferRail = ref(0);
-// const interval = ref();
-
-// const resetBuffer = () => {
-//   set(buffer, -120);
-//   set(bufferRail, -110);
-// };
-//
-// const startBuffer = () => {
-//   resetBuffer();
-//   const id = setInterval(() => {
-//     const current = get(buffer);
-//     set(buffer, current + Math.ceil(Math.random() * 25));
-//     const newBuffer = get(buffer);
-//     if (newBuffer >= get(bufferRail)) {
-//       set(bufferRail, get(buffer) + Math.ceil(Math.random() * 15));
-//     }
-//
-//     if (newBuffer > 0) {
-//       resetBuffer();
-//     }
-//   }, 750);
-//   set(interval, id);
-// };
-//
-// onMounted(() => {
-//   if (get(type) === 'buffer') {
-//     startBuffer();
-//   }
-// });
-//
-// watch(type, (value, oldValue) => {
-//   if (value === 'buffer') {
-//     startBuffer();
-//   }
-//   if (oldValue === 'buffer') {
-//     clearInterval(get(interval));
-//     resetBuffer();
-//   }
-// });
 </script>
 
 <template>
