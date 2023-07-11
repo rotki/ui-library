@@ -57,7 +57,13 @@ const onClick = (index: number) => {
       </div>
     </template>
     <template v-else>
-      <rui-button :disabled="modelValue <= 1" text tile @click="onPrev()">
+      <rui-button
+        :disabled="modelValue <= 1"
+        color="primary"
+        tile
+        variant="text"
+        @click="onPrev()"
+      >
         <template #prepend>
           <rui-icon class="-ml-[.8rem]" name="arrow-left-s-line" />
         </template>
@@ -77,7 +83,13 @@ const onClick = (index: number) => {
         :class="css.progress"
         :value="modelValue / pages"
       />
-      <rui-button :disabled="modelValue >= pages" text tile @click="onNext()">
+      <rui-button
+        :disabled="modelValue >= pages"
+        color="primary"
+        tile
+        variant="text"
+        @click="onNext()"
+      >
         <span>Next</span>
       </rui-button>
     </template>

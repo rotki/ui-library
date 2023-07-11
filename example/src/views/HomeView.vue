@@ -828,6 +828,20 @@ const progress = ref([
   },
   {
     value: 0.4,
+    showLabel: true,
+  },
+  {
+    value: 0.4,
+    color: 'secondary',
+    showLabel: true,
+  },
+  {
+    value: 0.4,
+    color: 'inherit',
+    showLabel: true,
+  },
+  {
+    value: 0.4,
     type: 'indeterminate',
   },
   {
@@ -859,17 +873,71 @@ const progress = ref([
   },
   {
     value: 0.4,
+    bufferValue: 0.55,
+    type: 'buffer',
+    showLabel: true,
+  },
+  {
+    value: 0.4,
+    bufferValue: 0.55,
+    color: 'secondary',
+    type: 'buffer',
+    showLabel: true,
+  },
+  {
+    value: 0.4,
+    bufferValue: 0.55,
+    color: 'inherit',
+    type: 'buffer',
+    showLabel: true,
+  },
+  {
+    value: 0.4,
     circular: true,
+  },
+  {
+    value: 0.8,
+    color: 'secondary',
+    circular: true,
+  },
+  {
+    value: 1,
+    color: 'inherit',
+    circular: true,
+  },
+  {
+    value: 0.4,
+    circular: true,
+    showLabel: true,
+  },
+  {
+    value: 0.8,
+    color: 'secondary',
+    circular: true,
+    showLabel: true,
+  },
+  {
+    value: 1,
+    color: 'inherit',
+    circular: true,
+    showLabel: true,
+  },
+  {
+    value: 0.4,
+    circular: true,
+    type: 'indeterminate',
   },
   {
     value: 0.4,
     color: 'secondary',
     circular: true,
+    type: 'indeterminate',
   },
   {
     value: 0.4,
     color: 'inherit',
     circular: true,
+    type: 'indeterminate',
   },
 ]);
 </script>

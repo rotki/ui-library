@@ -14,6 +14,7 @@ const props = withDefaults(
     type?: 'determinate' | 'indeterminate' | 'buffer';
     color?: 'primary' | 'secondary' | 'inherit';
     circular?: boolean;
+    showLabel?: boolean;
   }>(),
   {
     value: 0,
@@ -21,131 +22,191 @@ const props = withDefaults(
     type: 'determinate',
     color: 'primary',
     circular: false,
+    showLabel: false,
   }
 );
 
 const css = useCssModule();
 
 const { type, value, bufferValue } = toRefs(props);
+
+const currentValue = computed(
+  () => Math.max(0, Math.min(get(value) ?? 1, 1)) * 100
+);
+
+const label = computed(() => `${Math.floor(get(currentValue))}%`);
+
+const progress = computed(() => -100 + get(currentValue));
+
+const valuePercent = computed(() => `${get(progress)}%`);
+
+const bufferPercent = computed(
+  () => `${-100 + Math.max(0, Math.min(get(bufferValue) ?? 1, 1)) * 100}%`
+);
 </script>
 
 <template>
   <div
-    :aria-valuenow="value * 100"
     :class="[
-      circular ? css.circular : css.progress,
-      css[type ?? ''],
-      css[color ?? ''],
+      css.wrapper,
+      circular ? 'w-8' : 'w-full',
+      { [css['has-label']]: showLabel && type !== 'indeterminate' },
     ]"
-    aria-valuemax="100"
-    aria-valuemin="0"
-    role="progressbar"
   >
-    <svg v-if="circular" viewBox="22 22 44 44">
-      <circle cx="44" cy="44" fill="none" r="20.2" stroke-width="4" />
-    </svg>
-    <template v-else>
-      <div v-if="type === 'buffer'" :class="css['buffer-dots']" />
-      <div :class="[css.rail, { [css['buffer-rail']]: type === 'buffer' }]" />
-      <div :class="css[type ?? '']" />
-    </template>
+    <div
+      :aria-valuenow="value * 100"
+      :class="[
+        circular && type !== 'buffer' ? css.circular : css.progress,
+        css[type ?? ''],
+        css[color ?? ''],
+      ]"
+      aria-valuemax="100"
+      aria-valuemin="0"
+      role="progressbar"
+    >
+      <svg v-if="circular && type !== 'buffer'" viewBox="22 22 44 44">
+        <circle cx="44" cy="44" fill="none" r="20.2" stroke-width="4" />
+      </svg>
+      <template v-else>
+        <div v-if="type === 'buffer'" :class="css['buffer-dots']" />
+        <div :class="[css.rail, { [css['buffer-rail']]: type === 'buffer' }]" />
+        <div :class="css[type ?? '']" />
+      </template>
+    </div>
+    <div v-if="showLabel && type !== 'indeterminate'" :class="css.label">
+      {{ label }}
+    </div>
   </div>
 </template>
 
 <style lang="scss" module>
 $colors: 'primary', 'secondary';
 
-.progress {
-  @apply w-full overflow-hidden relative h-1;
+.wrapper {
+  &.has-label {
+    @apply inline-flex items-center relative;
 
-  .rail {
-    @apply w-full h-full;
+    .label {
+      @apply block text-sm ml-4;
+    }
+
+    .circular ~ .label {
+      @apply absolute flex w-full h-full items-center justify-center text-[0.625rem] ml-0;
+    }
   }
 
-  .determinate,
-  .buffer {
-    @apply transition-all duration-150 ease-in-out absolute left-0 top-0 h-full w-full;
-    transform: translateX(calc(-100% + max(0, min(v-bind(value), 1)) * 100%));
-  }
+  .progress {
+    @apply w-full overflow-hidden relative;
 
-  .indeterminate {
-    @apply absolute left-0 top-0 h-full w-auto transition-transform duration-200 ease-linear delay-0;
-    transform-origin: left center;
-    animation: 1.6s cubic-bezier(0.65, 0.815, 0.735, 0.395) 0s infinite normal
-      none running slide-rail;
-  }
+    .rail {
+      @apply w-full h-1;
+    }
 
-  .buffer-dots {
-    @apply absolute h-0 w-[200%] -top-px -left-[100%] border-dashed border-y-[0.2rem];
-    animation: 3s ease-in-out 3s infinite normal none running buffer-pulse;
-  }
+    .determinate,
+    .buffer {
+      @apply transition-all duration-150 ease-in-out absolute left-0 top-0 h-1 w-full;
+      transform: translateX(v-bind(valuePercent));
+    }
 
-  .buffer-rail {
-    width: 100%;
-    transition: transform 0.4s linear 0s;
-    transform-origin: left center;
-    transform: translateX(
-      calc(-100% + max(0, min(v-bind(bufferValue), 1)) * 100%)
-    );
-  }
+    .indeterminate {
+      @apply absolute left-0 top-0 h-1 w-auto transition-transform duration-200 ease-linear delay-0;
+      transform-origin: left center;
+      animation: 1.6s cubic-bezier(0.65, 0.815, 0.735, 0.395) 0s infinite normal
+        none running slide-rail;
+    }
 
-  @each $color in $colors {
-    &.#{$color} {
+    .buffer-dots {
+      @apply absolute h-0 w-[200%] -top-px -left-[100%] border-dashed border-y-[0.2rem];
+      animation: 3s ease-in-out 3s infinite normal none running buffer-pulse;
+    }
+
+    .buffer-rail {
+      @apply w-full transition-transform duration-200 ease-linear delay-0;
+      transform-origin: left center;
+      transform: translateX(v-bind(bufferPercent));
+    }
+
+    @each $color in $colors {
+      &.#{$color} {
+        .rail {
+          @apply bg-rui-#{$color}/20;
+        }
+
+        .determinate,
+        .indeterminate,
+        .buffer {
+          @apply bg-rui-#{$color};
+        }
+
+        .buffer-dots {
+          @apply border-rui-#{$color}/20;
+        }
+      }
+    }
+
+    &.inherit {
       .rail {
-        @apply bg-rui-#{$color}/20;
+        @apply bg-current opacity-20;
       }
 
       .determinate,
       .indeterminate,
       .buffer {
-        @apply bg-rui-#{$color};
+        @apply bg-current;
       }
 
       .buffer-dots {
-        @apply border-rui-#{$color}/20;
+        @apply border-current opacity-20;
       }
     }
   }
 
-  &.inherit {
-    .rail {
-      @apply bg-current opacity-20;
+  .circular {
+    @apply w-8 h-8 inline-block;
+
+    @each $color in $colors {
+      &.#{$color} {
+        @apply text-rui-#{$color};
+      }
     }
 
-    .determinate,
-    .indeterminate,
-    .buffer {
-      @apply bg-current;
+    &.indeterminate {
+      @apply animate-[spin_1.4s_linear_infinite];
+
+      svg {
+        circle {
+          stroke-dasharray: 80px, 200px;
+          stroke-dashoffset: 0;
+          -webkit-animation: collapse-stroke 1.4s ease-in-out infinite;
+          animation: collapse-stroke 1.4s ease-in-out infinite;
+        }
+      }
     }
 
-    .buffer-dots {
-      @apply border-current opacity-20;
+    &.determinate {
+      @apply -rotate-90;
+
+      svg {
+        circle {
+          stroke-dasharray: 126.92;
+          stroke-dashoffset: calc(v-bind(progress) / 100 * -126.92);
+          -webkit-transition: stroke-dashoffset 300ms
+            cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+          transition: stroke-dashoffset 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+        }
+      }
     }
-  }
-}
 
-.circular {
-  @apply animate-[spin_1.4s_linear_infinite] w-8 h-8 inline-block;
-
-  @each $color in $colors {
-    &.#{$color} {
-      @apply text-rui-#{$color};
+    &.inherit {
+      @apply text-current;
     }
-  }
 
-  &.inherit {
-    @apply text-current;
-  }
+    svg {
+      @apply block;
 
-  svg {
-    @apply block;
-
-    circle {
-      stroke: currentColor;
-      stroke-dasharray: 80px, 200px;
-      stroke-dashoffset: 0;
-      -webkit-animation: collapse-stroke 1.4s ease-in-out infinite;
-      animation: collapse-stroke 1.4s ease-in-out infinite;
+      circle {
+        stroke: currentColor;
+      }
     }
   }
 }

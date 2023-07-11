@@ -28,7 +28,8 @@ const meta: Meta<typeof Progress> = {
       control: 'select',
       options: ['determinate', 'indeterminate', 'buffer'],
     },
-    circular: { control: 'boolean', default: true },
+    circular: { control: 'boolean' },
+    showLabel: { control: 'boolean' },
   },
   parameters: {
     docs: {
@@ -44,6 +45,14 @@ export const Primary = {
     type: 'determinate',
     color: 'primary',
     circular: false,
+    showLabel: false,
+  },
+};
+
+export const PrimaryWithLabel = {
+  args: {
+    value: 0.5,
+    showLabel: true,
   },
 };
 
@@ -76,10 +85,36 @@ export const PrimaryBuffer = {
   },
 };
 
+export const BufferWithLabel = {
+  args: {
+    value: 0.5,
+    bufferValue: 0.7,
+    type: 'buffer',
+    showLabel: true,
+  },
+};
+
 export const PrimaryCircular = {
   args: {
     value: 0.5,
-    type: 'circular',
+    circular: true,
+  },
+};
+
+export const CircularIndeterminate = {
+  args: {
+    value: 0.5,
+    type: 'indeterminate',
+    circular: true,
+  },
+};
+
+export const CircularWithLabel = {
+  args: {
+    value: 1,
+    type: 'determinate',
+    circular: true,
+    showLabel: true,
   },
 };
 
