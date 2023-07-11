@@ -1,7 +1,7 @@
 import { type Meta, type StoryFn } from '@storybook/vue3';
 import FooterStepper from './FooterStepper.vue';
 
-const render: StoryFn<typeof FooterStepper> = (_, { argTypes, args }) => ({
+const render: StoryFn<typeof FooterStepper> = (_, { argTypes }) => ({
   components: { FooterStepper },
   props: Object.keys(argTypes),
   template: `
@@ -14,11 +14,9 @@ const meta: Meta<typeof FooterStepper> = {
   tags: ['autodocs'],
   render,
   argTypes: {
-    pages: { control: 'number', min: 0, table: { category: 'State' } },
+    pages: { control: 'number', table: { category: 'State' } },
     modelValue: {
       control: 'number',
-      min: 0,
-      step: 2,
       table: { category: 'State' },
     },
     type: {
@@ -27,12 +25,18 @@ const meta: Meta<typeof FooterStepper> = {
       table: { category: 'State' },
     },
   },
+  parameters: {
+    docs: {
+      controls: { exclude: ['update:modelValue'] },
+    },
+  },
 };
 
 export const Default = {
   args: {
     pages: 5,
     modelValue: 1,
+    type: 'numeric',
   },
 };
 

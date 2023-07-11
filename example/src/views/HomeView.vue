@@ -2,7 +2,9 @@
 import {
   RuiButton,
   RuiCheckbox,
+  RuiFooterStepper,
   RuiIcon,
+  RuiProgress,
   RuiStepper,
   RuiTextField,
   StepperState,
@@ -789,6 +791,87 @@ const textFields = ref([
     append: 'Append',
   },
 ]);
+
+const footerSteppers = ref([
+  {
+    value: 1,
+    pages: 5,
+  },
+  {
+    value: 2,
+    pages: 5,
+    type: 'bullet',
+  },
+  {
+    value: 3,
+    pages: 5,
+    type: 'progress',
+  },
+  {
+    value: 4,
+    pages: 5,
+    type: 'pill',
+  },
+]);
+
+const progress = ref([
+  {
+    value: 0.4,
+  },
+  {
+    value: 0.4,
+    color: 'secondary',
+  },
+  {
+    value: 0.4,
+    color: 'inherit',
+  },
+  {
+    value: 0.4,
+    type: 'indeterminate',
+  },
+  {
+    value: 0.4,
+    color: 'secondary',
+    type: 'indeterminate',
+  },
+  {
+    value: 0.4,
+    color: 'inherit',
+    type: 'indeterminate',
+  },
+  {
+    value: 0.4,
+    bufferValue: 0.55,
+    type: 'buffer',
+  },
+  {
+    value: 0.4,
+    bufferValue: 0.55,
+    color: 'secondary',
+    type: 'buffer',
+  },
+  {
+    value: 0.4,
+    bufferValue: 0.55,
+    color: 'inherit',
+    type: 'buffer',
+  },
+  {
+    value: 0.4,
+    circular: true,
+  },
+  {
+    value: 0.4,
+    color: 'secondary',
+    circular: true,
+  },
+  {
+    value: 0.4,
+    color: 'inherit',
+    circular: true,
+  },
+]);
 </script>
 
 <template>
@@ -862,6 +945,28 @@ const textFields = ref([
         <template v-if="field.prepend" #prepend>{{ field.prepend }}</template>
         <template v-if="field.append" #append>{{ field.append }}</template>
       </rui-text-field>
+    </div>
+  </div>
+  <div :class="css.section">
+    <h2 class="text-h4 mb-6" data-cy="footer-steppers">Footer Steppers</h2>
+    <rui-footer-stepper
+      v-for="(stepper, i) in footerSteppers"
+      :key="i"
+      v-model="stepper.value"
+      class="mb-6"
+      v-bind="stepper"
+    />
+  </div>
+
+  <div :class="css.section">
+    <h2 class="text-h4 mb-6" data-cy="progress">Progress</h2>
+    <div class="grid gap-4 grid-cols-3">
+      <rui-progress
+        v-for="(item, i) in progress"
+        :key="i"
+        class="mb-6"
+        v-bind="item"
+      />
     </div>
   </div>
 </template>

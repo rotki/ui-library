@@ -40,6 +40,10 @@ const meta: Meta<typeof Progress> = {
 export const Primary = {
   args: {
     value: 0.5,
+    bufferValue: 0.6,
+    type: 'determinate',
+    color: 'primary',
+    circular: false,
   },
 };
 
