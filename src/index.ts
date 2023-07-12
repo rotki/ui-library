@@ -7,6 +7,7 @@ import { default as RuiStepper } from '@/components/steppers/Stepper.vue';
 import { default as RuiTextField } from '@/components/forms/text-field/TextField.vue';
 import { default as RuiFooterStepper } from '@/components/steppers/FooterStepper.vue';
 import { default as RuiProgress } from '@/components/progress/Progress.vue';
+import { default as RuiRevealableTextField } from '@/components/forms/revealable-text-field/RevealableTextField.vue';
 import { useRotkiTheme } from '@/composables/theme';
 import { StepperState } from '@/types/stepper';
 import type { InitThemeOptions } from '@/types/theme';
@@ -30,6 +31,7 @@ export {
   RuiTextField,
   RuiFooterStepper,
   RuiProgress,
+  RuiRevealableTextField,
   useRotkiTheme,
 };
 
