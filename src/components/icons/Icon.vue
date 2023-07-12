@@ -4,7 +4,7 @@ import { type ContextColorsType } from '@/consts/colors';
 const props = withDefaults(
   defineProps<{
     name: string;
-    size?: number;
+    size?: number | string;
     color?: ContextColorsType;
   }>(),
   {

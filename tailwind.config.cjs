@@ -29,6 +29,10 @@ const contextColorsCombination = Object.fromEntries(
           DEFAULT: `rgba(var(--rui-${theme}-${color}-main), <alpha-value>)`,
           darker: `rgba(var(--rui-${theme}-${color}-darker), <alpha-value>)`,
           lighter: `rgba(var(--rui-${theme}-${color}-lighter), <alpha-value>)`,
+          'tint-60': `color-mod(rgb(var(--rui-${theme}-${color}-main)) tint(60%))`,
+          'tint-90': `color-mod(rgb(var(--rui-${theme}-${color}-main)) tint(90%))`,
+          'shade-60': `color-mod(rgb(var(--rui-${theme}-${color}-main)) shade(60%))`,
+          'shade-90': `color-mod(rgb(var(--rui-${theme}-${color}-main)) shade(90%))`,
         },
       ])
     ),
@@ -58,7 +62,10 @@ const safeListedColorVariants = [
 module.exports = {
   mode: 'jit',
   darkMode: 'class',
-  content: ['./src/**/*.vue', ...(!isDevelopment ? [] : ['./src/**/*.mdx'])],
+  content: [
+    './src/**/*.vue',
+    ...(!isDevelopment ? [] : ['./src/**/*.mdx', './src/**/*.stories.ts']),
+  ],
   theme: {
     extend: {
       colors: {
@@ -114,7 +121,7 @@ module.exports = {
             pattern: new RegExp(
               `(bg|text|border)-rui-(light|dark)-(${contextColors.join(
                 '|'
-              )})(-(darker|lighter))?`
+              )})(-(darker|lighter|tint|shade))?(-(?:[2-8]|[1-8][0-9])0)?`
             ),
             variants: safeListedColorVariants,
           },
