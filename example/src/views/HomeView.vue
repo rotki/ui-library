@@ -5,6 +5,7 @@ import {
   RuiFooterStepper,
   RuiIcon,
   RuiProgress,
+  RuiRevealableTextField,
   RuiStepper,
   RuiTextField,
   StepperState,
@@ -940,6 +941,15 @@ const progress = ref([
     variant: 'indeterminate',
   },
 ]);
+
+const revealableTextFields = ref([
+  { value: '', color: 'primary', variant: 'outlined' },
+  { value: '', color: 'secondary', variant: 'outlined' },
+  { value: '', color: 'error', variant: 'outlined' },
+  { value: '', color: 'warning', variant: 'outlined' },
+  { value: '', color: 'info', variant: 'outlined' },
+  { value: '', color: 'success', variant: 'outlined' },
+]);
 </script>
 
 <template>
@@ -1034,6 +1044,20 @@ const progress = ref([
         :key="i"
         class="mb-6"
         v-bind="item"
+      />
+    </div>
+  </div>
+
+  <div :class="css.section">
+    <h2 class="text-h4 mb-6" data-cy="text-fields">Revealable Text Fields</h2>
+    <div class="grid gap-4 grid-rows-2 grid-cols-3">
+      <rui-revealable-text-field
+        v-for="(field, i) in revealableTextFields"
+        :key="i"
+        v-model="field.value"
+        v-bind="field"
+        label="Password"
+        placeholder="Placeholder"
       />
     </div>
   </div>
