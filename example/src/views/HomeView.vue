@@ -800,17 +800,17 @@ const footerSteppers = ref([
   {
     value: 2,
     pages: 5,
-    type: 'bullet',
+    variant: 'bullet',
   },
   {
     value: 3,
     pages: 5,
-    type: 'progress',
+    variant: 'progress',
   },
   {
     value: 4,
     pages: 5,
-    type: 'pill',
+    variant: 'pill',
   },
 ]);
 
@@ -842,53 +842,53 @@ const progress = ref([
   },
   {
     value: 0.4,
-    type: 'indeterminate',
+    variant: 'indeterminate',
   },
   {
     value: 0.4,
     color: 'secondary',
-    type: 'indeterminate',
+    variant: 'indeterminate',
   },
   {
     value: 0.4,
     color: 'inherit',
-    type: 'indeterminate',
+    variant: 'indeterminate',
   },
   {
     value: 0.4,
     bufferValue: 0.55,
-    type: 'buffer',
+    variant: 'buffer',
   },
   {
     value: 0.4,
     bufferValue: 0.55,
     color: 'secondary',
-    type: 'buffer',
+    variant: 'buffer',
   },
   {
     value: 0.4,
     bufferValue: 0.55,
     color: 'inherit',
-    type: 'buffer',
+    variant: 'buffer',
   },
   {
     value: 0.4,
     bufferValue: 0.55,
-    type: 'buffer',
+    variant: 'buffer',
     showLabel: true,
   },
   {
     value: 0.4,
     bufferValue: 0.55,
     color: 'secondary',
-    type: 'buffer',
+    variant: 'buffer',
     showLabel: true,
   },
   {
     value: 0.4,
     bufferValue: 0.55,
     color: 'inherit',
-    type: 'buffer',
+    variant: 'buffer',
     showLabel: true,
   },
   {
@@ -925,19 +925,19 @@ const progress = ref([
   {
     value: 0.4,
     circular: true,
-    type: 'indeterminate',
+    variant: 'indeterminate',
   },
   {
     value: 0.4,
     color: 'secondary',
     circular: true,
-    type: 'indeterminate',
+    variant: 'indeterminate',
   },
   {
     value: 0.4,
     color: 'inherit',
     circular: true,
-    type: 'indeterminate',
+    variant: 'indeterminate',
   },
 ]);
 </script>

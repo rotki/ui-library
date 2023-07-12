@@ -2,16 +2,16 @@
 const props = withDefaults(
   defineProps<{
     /**
-     * required when type === determinate or buffer
+     * required when variant === determinate or buffer
      * @example - 0 <= value <= 1
      */
     value?: number;
     /**
-     * required when type === buffer
+     * required when variant === buffer
      * @example - 0 <= value <= 1
      */
     bufferValue?: number;
-    type?: 'determinate' | 'indeterminate' | 'buffer';
+    variant?: 'determinate' | 'indeterminate' | 'buffer';
     color?: 'primary' | 'secondary' | 'inherit';
     circular?: boolean;
     showLabel?: boolean;
@@ -19,7 +19,7 @@ const props = withDefaults(
   {
     value: 0,
     bufferValue: 0,
-    type: 'determinate',
+    variant: 'determinate',
     color: 'primary',
     circular: false,
     showLabel: false,
@@ -28,7 +28,7 @@ const props = withDefaults(
 
 const css = useCssModule();
 
-const { type, value, bufferValue } = toRefs(props);
+const { variant, value, bufferValue } = toRefs(props);
 
 const currentValue = computed(
   () => Math.max(0, Math.min(get(value) ?? 1, 1)) * 100
@@ -50,30 +50,32 @@ const bufferPercent = computed(
     :class="[
       css.wrapper,
       circular ? 'w-8' : 'w-full',
-      { [css['has-label']]: showLabel && type !== 'indeterminate' },
+      { [css['has-label']]: showLabel && variant !== 'indeterminate' },
     ]"
   >
     <div
       :aria-valuenow="value * 100"
       :class="[
-        circular && type !== 'buffer' ? css.circular : css.progress,
-        css[type ?? ''],
+        circular && variant !== 'buffer' ? css.circular : css.progress,
+        css[variant ?? ''],
         css[color ?? ''],
       ]"
       aria-valuemax="100"
       aria-valuemin="0"
       role="progressbar"
     >
-      <svg v-if="circular && type !== 'buffer'" viewBox="22 22 44 44">
+      <svg v-if="circular && variant !== 'buffer'" viewBox="22 22 44 44">
         <circle cx="44" cy="44" fill="none" r="20.2" stroke-width="4" />
       </svg>
       <template v-else>
-        <div v-if="type === 'buffer'" :class="css['buffer-dots']" />
-        <div :class="[css.rail, { [css['buffer-rail']]: type === 'buffer' }]" />
-        <div :class="css[type ?? '']" />
+        <div v-if="variant === 'buffer'" :class="css['buffer-dots']" />
+        <div
+          :class="[css.rail, { [css['buffer-rail']]: variant === 'buffer' }]"
+        />
+        <div :class="css[variant ?? '']" />
       </template>
     </div>
-    <div v-if="showLabel && type !== 'indeterminate'" :class="css.label">
+    <div v-if="showLabel && variant !== 'indeterminate'" :class="css.label">
       {{ label }}
     </div>
   </div>

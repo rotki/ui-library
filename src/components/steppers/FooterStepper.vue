@@ -7,10 +7,10 @@ const props = withDefaults(
   defineProps<{
     pages: number;
     modelValue: number;
-    type?: 'numeric' | 'bullet' | 'progress' | 'pill';
+    variant?: 'numeric' | 'bullet' | 'progress' | 'pill';
   }>(),
   {
-    type: 'numeric',
+    variant: 'numeric',
   }
 );
 
@@ -45,8 +45,8 @@ const onClick = (index: number) => {
 </script>
 
 <template>
-  <div :class="[css['footer-stepper'], css[type ?? '']]">
-    <template v-if="type === 'pill'">
+  <div :class="[css['footer-stepper'], css[variant ?? '']]">
+    <template v-if="variant === 'pill'">
       <div :class="css.pills">
         <span
           v-for="i in pages"
@@ -69,10 +69,10 @@ const onClick = (index: number) => {
         </template>
         <span>Back</span>
       </rui-button>
-      <span v-if="type === 'numeric'" :class="css.numeric">
+      <span v-if="variant === 'numeric'" :class="css.numeric">
         {{ modelValue }}/{{ pages }}
       </span>
-      <div v-else-if="type === 'bullet'" :class="css.bullets">
+      <div v-else-if="variant === 'bullet'" :class="css.bullets">
         <span
           v-for="i in pages"
           :key="i"
@@ -81,7 +81,7 @@ const onClick = (index: number) => {
         />
       </div>
       <rui-progress
-        v-else-if="type === 'progress'"
+        v-else-if="variant === 'progress'"
         :class="css.progress"
         :value="modelValue / pages"
       />

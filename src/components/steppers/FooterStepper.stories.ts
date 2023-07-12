@@ -19,7 +19,7 @@ const meta: Meta<typeof FooterStepper> = {
       control: 'number',
       table: { category: 'State' },
     },
-    type: {
+    variant: {
       control: 'select',
       options: ['numeric', 'bullet', 'progress', 'pill'],
       table: { category: 'State' },
@@ -36,7 +36,7 @@ export const Default = {
   args: {
     pages: 5,
     modelValue: 1,
-    type: 'numeric',
+    variant: 'numeric',
   },
 };
 
@@ -44,7 +44,7 @@ export const Bullet = {
   args: {
     pages: 5,
     modelValue: 1,
-    type: 'bullet',
+    variant: 'bullet',
   },
 };
 
@@ -52,7 +52,7 @@ export const Progress = {
   args: {
     pages: 5,
     modelValue: 1,
-    type: 'progress',
+    variant: 'progress',
   },
 };
 
@@ -60,7 +60,7 @@ export const Pills = {
   args: {
     pages: 5,
     modelValue: 1,
-    type: 'pill',
+    variant: 'pill',
   },
 };
 

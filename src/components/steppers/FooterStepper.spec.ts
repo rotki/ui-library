@@ -22,18 +22,18 @@ describe('FooterStepper', () => {
     const wrapper = createWrapper({
       props: {
         pages: 5,
-        type: 'bullet',
+        variant: 'bullet',
         modelValue: 1,
       },
     });
 
-    await wrapper.setProps({ type: 'progress' });
+    await wrapper.setProps({ variant: 'progress' });
     expect(wrapper.classes()).toMatch(/_progress_/);
 
     const next = wrapper.find('button ~ button span[class*=_label] span');
     expect(next.exists()).toBeTruthy();
 
-    await wrapper.setProps({ type: 'pill' });
+    await wrapper.setProps({ variant: 'pill' });
     expect(wrapper.classes()).toMatch(/_pill_/);
   });
 });

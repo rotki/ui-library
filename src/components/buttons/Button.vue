@@ -182,10 +182,6 @@ const usedElevation: ComputedRef<number | string> = computed(() => {
     &.sm {
       @apply px-2 py-2;
     }
-
-    &.text {
-      @apply disabled:bg-transparent disabled:active:bg-transparent #{!important};
-    }
   }
 }
 </style>

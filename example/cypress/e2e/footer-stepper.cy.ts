@@ -8,19 +8,19 @@ describe('FooterStepper', () => {
   it('checks for footer steppers and stepper text', () => {
     cy.contains('h2[data-cy=footer-steppers]', 'Footer Steppers');
 
-    cy.get('div[class*=_footer-stepper][class*=_numeric')
+    cy.get('div[class*=_footer-stepper][class*=_numeric]')
       .first()
       .as('numericStepper');
 
-    cy.get('div[class*=_footer-stepper][class*=_bullet')
+    cy.get('div[class*=_footer-stepper][class*=_bullet]')
       .first()
       .as('bulletStepper');
 
-    cy.get('div[class*=_footer-stepper][class*=_progress')
+    cy.get('div[class*=_footer-stepper][class*=_progress]')
       .first()
       .as('progressStepper');
 
-    cy.get('div[class*=_footer-stepper][class*=_pill')
+    cy.get('div[class*=_footer-stepper][class*=_pill]')
       .first()
       .as('pillStepper');
 

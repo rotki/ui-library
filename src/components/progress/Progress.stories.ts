@@ -24,7 +24,7 @@ const meta: Meta<typeof Progress> = {
       options: ['primary', 'secondary', 'inherit'],
       selected: 'primary',
     },
-    type: {
+    variant: {
       control: 'select',
       options: ['determinate', 'indeterminate', 'buffer'],
     },
@@ -42,7 +42,7 @@ export const Primary = {
   args: {
     value: 0.5,
     bufferValue: 0.6,
-    type: 'determinate',
+    variant: 'determinate',
     color: 'primary',
     circular: false,
     showLabel: false,
@@ -73,7 +73,7 @@ export const Inherit = {
 export const PrimaryIndeterminate = {
   args: {
     value: 0.5,
-    type: 'indeterminate',
+    variant: 'indeterminate',
   },
 };
 
@@ -81,7 +81,7 @@ export const PrimaryBuffer = {
   args: {
     value: 0.5,
     bufferValue: 0.7,
-    type: 'buffer',
+    variant: 'buffer',
   },
 };
 
@@ -89,7 +89,7 @@ export const BufferWithLabel = {
   args: {
     value: 0.5,
     bufferValue: 0.7,
-    type: 'buffer',
+    variant: 'buffer',
     showLabel: true,
   },
 };
@@ -104,7 +104,7 @@ export const PrimaryCircular = {
 export const CircularIndeterminate = {
   args: {
     value: 0.5,
-    type: 'indeterminate',
+    variant: 'indeterminate',
     circular: true,
   },
 };
@@ -112,7 +112,7 @@ export const CircularIndeterminate = {
 export const CircularWithLabel = {
   args: {
     value: 1,
-    type: 'determinate',
+    variant: 'determinate',
     circular: true,
     showLabel: true,
   },

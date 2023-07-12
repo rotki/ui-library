@@ -25,7 +25,7 @@ describe('Progress', () => {
     const wrapper = createWrapper({
       props: {
         value: 0.5,
-        type: 'indeterminate',
+        variant: 'indeterminate',
         color: 'secondary',
       },
     });
