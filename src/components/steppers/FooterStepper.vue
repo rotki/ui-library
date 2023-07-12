@@ -65,11 +65,13 @@ const onClick = (index: number) => {
         @click="onPrev()"
       >
         <template #prepend>
-          <rui-icon class="-ml-[.8rem]" name="arrow-left-s-line" />
+          <rui-icon :size="18" name="arrow-left-s-line" />
         </template>
         <span>Back</span>
       </rui-button>
-      <span v-if="type === 'numeric'"> {{ modelValue }}/{{ pages }} </span>
+      <span v-if="type === 'numeric'" :class="css.numeric">
+        {{ modelValue }}/{{ pages }}
+      </span>
       <div v-else-if="type === 'bullet'" :class="css.bullets">
         <span
           v-for="i in pages"
@@ -101,7 +103,7 @@ const onClick = (index: number) => {
   @apply flex items-center justify-between transition-all duration-150;
 
   .numeric {
-    @apply flex;
+    @apply text-black/[0.87];
   }
 
   .bullets,
@@ -110,11 +112,15 @@ const onClick = (index: number) => {
 
     .bullet,
     .pill {
-      @apply rounded-full h-2 bg-black/[0.26] cursor-pointer;
+      @apply rounded-full h-2 bg-black/[0.26] hover:bg-rui-grey-300 cursor-pointer transition-colors;
 
       &.active {
-        @apply bg-rui-primary;
+        @apply bg-rui-primary hover:bg-rui-primary;
       }
+    }
+
+    .pill {
+      @apply bg-rui-grey-200;
     }
   }
 
@@ -136,6 +142,32 @@ const onClick = (index: number) => {
 
   .progress {
     @apply max-w-[60%] mx-4;
+  }
+}
+
+:global(.dark) {
+  .footer-stepper {
+    .numeric {
+      @apply text-white;
+    }
+
+    .bullets,
+    .pills {
+      .bullet,
+      .pill {
+        @apply bg-rui-grey-300 hover:bg-rui-grey-400;
+
+        &.active {
+          @apply bg-rui-primary hover:bg-rui-primary;
+        }
+      }
+    }
+
+    .bullets {
+      .bullet {
+        @apply bg-white/30;
+      }
+    }
   }
 }
 </style>

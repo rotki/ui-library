@@ -211,6 +211,16 @@ $colors: 'primary', 'secondary';
   }
 }
 
+:global(.dark) {
+  .wrapper {
+    &.has-label {
+      .label {
+        @apply text-white;
+      }
+    }
+  }
+}
+
 @-webkit-keyframes buffer-pulse {
   0% {
     opacity: 0.2;
