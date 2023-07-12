@@ -142,6 +142,8 @@ const usedElevation: ComputedRef<number | string> = computed(() => {
 
   &.text {
     @apply px-2;
+    @apply bg-transparent shadow-none;
+    @apply disabled:bg-transparent disabled:active:bg-transparent #{!important};
 
     &.sm {
       @apply px-1.5;

@@ -1,6 +1,7 @@
 import { type GeneratedIcon } from '@/types/icons';
 import {
   RiAlertFill,
+  RiArrowLeftSLine,
   RiCheckLine,
   RiCheckboxBlankCircleFill,
   RiCheckboxBlankLine,
@@ -21,6 +22,7 @@ export const useIcons = createGlobalState(() => {
     RiCheckLine,
     RiErrorWarningFill,
     RiAlertFill,
+    RiArrowLeftSLine,
     RiInformationFill,
   ];
 
