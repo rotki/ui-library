@@ -197,7 +197,7 @@ const slots = useSlots();
   @apply relative w-full min-w-[200px] flex items-center pt-3;
 
   .input {
-    @apply leading-6 text-black/[0.87] w-full bg-transparent py-1.5 pr-3 outline-0 transition-all placeholder:opacity-0 focus:placeholder:opacity-100;
+    @apply leading-6 text-black/[0.87] w-full bg-transparent py-1.5 pr-3 outline-0 outline-none transition-all placeholder:opacity-0 focus:placeholder:opacity-100;
 
     &:focus {
       @apply outline-0;
