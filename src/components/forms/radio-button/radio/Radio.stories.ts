@@ -1,24 +1,24 @@
 import { type Meta, type StoryFn } from '@storybook/vue3';
 import { contextColors } from '@/consts/colors';
-import Checkbox from './Checkbox.vue';
+import Radio from './Radio.vue';
 
-const render: StoryFn<typeof Checkbox> = (_, { argTypes }) => ({
-  components: { Checkbox },
+const render: StoryFn<typeof Radio> = (_, { argTypes }) => ({
+  components: { Radio },
   props: Object.keys(argTypes),
-  template: `<Checkbox v-bind="$props" :error-messages="$props.errorMessages ? [$props.errorMessages] : []">
+  template: `<Radio v-bind="$props" :error-messages="$props.errorMessages ? [$props.errorMessages] : []">
     {{ $props.label }}
-  </Checkbox>`,
+  </Radio>`,
 });
 
-const meta: Meta<typeof Checkbox> = {
-  title: 'Components/Forms/Checkbox',
-  component: Checkbox,
+const meta: Meta<typeof Radio> = {
+  title: 'Components/Forms/Radio/Radio',
+  component: Radio,
   tags: ['autodocs'],
   render,
   argTypes: {
     label: { control: 'text' },
-    modelValue: { control: 'boolean' },
-    indeterminate: { control: 'boolean' },
+    modelValue: { control: 'text' },
+    value: { control: 'text' },
     hint: { control: 'text' },
     errorMessages: { control: 'text' },
     hideDetails: { control: 'boolean' },
@@ -35,13 +35,8 @@ const meta: Meta<typeof Checkbox> = {
 
 export const Checked = {
   args: {
-    modelValue: true,
-  },
-};
-
-export const Indeterminate = {
-  args: {
-    indeterminate: true,
+    modelValue: 'test',
+    value: 'test',
   },
 };
 
