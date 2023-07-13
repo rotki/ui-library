@@ -7,6 +7,8 @@ import { default as RuiStepper } from '@/components/steppers/Stepper.vue';
 import { default as RuiTextField } from '@/components/forms/text-field/TextField.vue';
 import { default as RuiFooterStepper } from '@/components/steppers/FooterStepper.vue';
 import { default as RuiProgress } from '@/components/progress/Progress.vue';
+import { default as RuiRadioGroup } from '@/components/forms/radio-button/radio-group/RadioGroup.vue';
+import { default as RuiRadio } from '@/components/forms/radio-button/radio/Radio.vue';
 import { default as RuiRevealableTextField } from '@/components/forms/revealable-text-field/RevealableTextField.vue';
 import { useRotkiTheme } from '@/composables/theme';
 import { StepperState } from '@/types/stepper';
@@ -29,6 +31,8 @@ export {
   RuiCheckbox,
   RuiStepper,
   RuiTextField,
+  RuiRadioGroup,
+  RuiRadio,
   RuiFooterStepper,
   RuiProgress,
   RuiRevealableTextField,

@@ -5,6 +5,8 @@ import {
   RuiFooterStepper,
   RuiIcon,
   RuiProgress,
+  RuiRadio,
+  RuiRadioGroup,
   RuiRevealableTextField,
   RuiStepper,
   RuiTextField,
@@ -950,6 +952,42 @@ const revealableTextFields = ref([
   { value: '', color: 'info', variant: 'outlined' },
   { value: '', color: 'success', variant: 'outlined' },
 ]);
+
+const radioGroups = ref([
+  {
+    value: 'primary',
+    options: [
+      { color: 'primary' },
+      { color: 'secondary' },
+      { color: 'error' },
+      { color: 'warning' },
+      { color: 'info' },
+      { color: 'success' },
+    ],
+  },
+  {
+    value: 'primary',
+    options: [
+      { color: 'primary', size: 'sm' },
+      { color: 'secondary', size: 'sm' },
+      { color: 'error', size: 'sm' },
+      { color: 'warning', size: 'sm' },
+      { color: 'info', size: 'sm' },
+      { color: 'success', size: 'sm' },
+    ],
+  },
+  {
+    value: 'primary',
+    options: [
+      { color: 'primary', size: 'lg' },
+      { color: 'secondary', size: 'lg', disabled: true },
+      { color: 'error', size: 'lg', disabled: true },
+      { color: 'warning', size: 'lg', disabled: true },
+      { color: 'info', size: 'lg', disabled: true },
+      { color: 'success', size: 'lg' },
+    ],
+  },
+]);
 </script>
 
 <template>
@@ -1059,6 +1097,28 @@ const revealableTextFields = ref([
         label="Password"
         placeholder="Placeholder"
       />
+    </div>
+  </div>
+
+  <div :class="css.section">
+    <h2 class="text-h4 mb-6" data-cy="radio-buttons">Radio Buttons</h2>
+    <div class="grid gap-8">
+      <rui-radio-group
+        v-for="(radioGroup, i) in radioGroups"
+        :key="i"
+        v-model="radioGroup.value"
+        inline
+        :hint="`Selected value: ${radioGroup.value}`"
+      >
+        <rui-radio
+          v-for="(radio, j) in radioGroup.options"
+          :key="j"
+          v-bind="radio"
+          :value="radio.color"
+        >
+          <span class="capitalize"> {{ radio.color }} </span>
+        </rui-radio>
+      </rui-radio-group>
     </div>
   </div>
 </template>

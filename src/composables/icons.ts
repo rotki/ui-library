@@ -4,6 +4,7 @@ import {
   RiArrowLeftSLine,
   RiCheckLine,
   RiCheckboxBlankCircleFill,
+  RiCheckboxBlankCircleLine,
   RiCheckboxBlankLine,
   RiCheckboxCircleFill,
   RiCheckboxFill,
@@ -12,6 +13,7 @@ import {
   RiEyeLine,
   RiEyeOffLine,
   RiInformationFill,
+  RiRadioButtonLine,
 } from '@/all-icons';
 
 export const useIcons = createGlobalState(() => {
@@ -20,6 +22,7 @@ export const useIcons = createGlobalState(() => {
     RiArrowLeftSLine,
     RiCheckLine,
     RiCheckboxBlankCircleFill,
+    RiCheckboxBlankCircleLine,
     RiCheckboxBlankLine,
     RiCheckboxCircleFill,
     RiCheckboxFill,
@@ -28,6 +31,7 @@ export const useIcons = createGlobalState(() => {
     RiEyeLine,
     RiEyeOffLine,
     RiInformationFill,
+    RiRadioButtonLine,
   ];
 
   const registeredIcons: Ref<Record<string, string>> = ref({});
