@@ -1,15 +1,17 @@
-import { type Meta, type StoryFn } from '@storybook/vue3';
+import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { contextColors } from '@/consts/colors';
 import * as Icons from '@/all-icons';
-import Alert from './Alert.vue';
+import { default as Alert, type Props } from './Alert.vue';
 
-const render: StoryFn<typeof Alert> = (_, { argTypes }) => ({
+const render: StoryFn<Props> = (args) => ({
   components: { Alert },
-  props: Object.keys(argTypes),
-  template: `<Alert v-bind="$props" class="w-[400px]" />`,
+  setup() {
+    return { args };
+  },
+  template: `<Alert v-bind="args" class="w-[400px]" />`,
 });
 
-const meta: Meta<typeof Alert> = {
+const meta: Meta<Props> = {
   title: 'Components/Alert',
   component: Alert,
   tags: ['autodocs'],
@@ -31,14 +33,15 @@ const meta: Meta<typeof Alert> = {
   },
 };
 
-export const Default = {
+type Story = StoryObj<Props>;
+export const Default: Story = {
   args: {
     title: 'Title',
     description: 'Description',
   },
 };
 
-export const Error = {
+export const Error: Story = {
   args: {
     title: 'Title',
     description: 'Description',
@@ -46,7 +49,7 @@ export const Error = {
   },
 };
 
-export const Warning = {
+export const Warning: Story = {
   args: {
     title: 'Title',
     description: 'Description',
@@ -54,7 +57,7 @@ export const Warning = {
   },
 };
 
-export const Info = {
+export const Info: Story = {
   args: {
     title: 'Title',
     description: 'Description',
@@ -62,7 +65,7 @@ export const Info = {
   },
 };
 
-export const Success = {
+export const Success: Story = {
   args: {
     title: 'Title',
     description: 'Description',
@@ -70,7 +73,7 @@ export const Success = {
   },
 };
 
-export const Filled = {
+export const Filled: Story = {
   args: {
     title: 'Title',
     description: 'Description',
@@ -79,7 +82,7 @@ export const Filled = {
   },
 };
 
-export const Outlined = {
+export const Outlined: Story = {
   args: {
     title: 'Title',
     description: 'Description',
@@ -88,7 +91,7 @@ export const Outlined = {
   },
 };
 
-export const WithActionButton = {
+export const WithActionButton: Story = {
   args: {
     title: 'Title',
     description: 'Description',

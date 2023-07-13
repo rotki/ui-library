@@ -1,14 +1,16 @@
-import { type Meta, type StoryFn } from '@storybook/vue3';
+import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { StepperOrientation, StepperState } from '@/types/stepper';
-import Stepper from './Stepper.vue';
+import { type Props, default as Stepper } from './Stepper.vue';
 
-const render: StoryFn<typeof Stepper> = (_, { argTypes }) => ({
+const render: StoryFn<Props> = (args) => ({
   components: { Stepper },
-  props: Object.keys(argTypes),
-  template: `<Stepper v-bind="$props" />`,
+  setup() {
+    return { args };
+  },
+  template: `<Stepper v-bind="args" />`,
 });
 
-const meta: Meta<typeof Stepper> = {
+const meta: Meta<Props> = {
   title: 'Components/Stepper',
   component: Stepper,
   tags: ['autodocs'],
@@ -30,7 +32,9 @@ const meta: Meta<typeof Stepper> = {
   },
 };
 
-export const Default = {
+type Story = StoryObj<Props>;
+
+export const Default: Story = {
   args: {
     steps: [
       {
@@ -72,7 +76,7 @@ export const Default = {
   },
 };
 
-export const VerticalOrientation = {
+export const VerticalOrientation: Story = {
   args: {
     orientation: StepperOrientation.vertical,
     steps: [
@@ -115,7 +119,7 @@ export const VerticalOrientation = {
   },
 };
 
-export const TitleOnly = {
+export const TitleOnly: Story = {
   args: {
     steps: [
       { title: 'Step', state: StepperState.done },
@@ -126,7 +130,7 @@ export const TitleOnly = {
   },
 };
 
-export const TitleOnlyAndVertical = {
+export const TitleOnlyAndVertical: Story = {
   args: {
     orientation: StepperOrientation.vertical,
     steps: [
@@ -138,7 +142,7 @@ export const TitleOnlyAndVertical = {
   },
 };
 
-export const DescriptionOnly = {
+export const DescriptionOnly: Story = {
   args: {
     steps: [
       { description: 'Lorem ipsum', state: StepperState.done },
@@ -149,7 +153,7 @@ export const DescriptionOnly = {
   },
 };
 
-export const DescriptionOnlyAndVertical = {
+export const DescriptionOnlyAndVertical: Story = {
   args: {
     orientation: StepperOrientation.vertical,
     steps: [
@@ -161,7 +165,7 @@ export const DescriptionOnlyAndVertical = {
   },
 };
 
-export const StepOnly = {
+export const StepOnly: Story = {
   args: {
     steps: [
       { state: StepperState.done },
@@ -172,7 +176,7 @@ export const StepOnly = {
   },
 };
 
-export const StepOnlyAndVertical = {
+export const StepOnlyAndVertical: Story = {
   args: {
     orientation: StepperOrientation.vertical,
     steps: [
@@ -184,7 +188,7 @@ export const StepOnlyAndVertical = {
   },
 };
 
-export const Custom = {
+export const Custom: Story = {
   args: {
     custom: true,
     steps: [
@@ -208,7 +212,7 @@ export const Custom = {
   },
 };
 
-export const CustomVertical = {
+export const CustomVertical: Story = {
   args: {
     custom: true,
     orientation: StepperOrientation.vertical,
@@ -233,7 +237,7 @@ export const CustomVertical = {
   },
 };
 
-export const CustomWithColor = {
+export const CustomWithColor: Story = {
   args: {
     custom: true,
     titleClass: 'text-rui-primary',

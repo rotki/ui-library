@@ -1,16 +1,37 @@
-import { type Meta, type StoryFn } from '@storybook/vue3';
+import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { contextColors } from '@/consts/colors';
-import Checkbox from './Checkbox.vue';
+import { default as Checkbox, type Props } from './Checkbox.vue';
 
-const render: StoryFn<typeof Checkbox> = (_, { argTypes }) => ({
+type PropsAndLabel = Props & { label: string };
+
+const render: StoryFn<PropsAndLabel> = (args) => ({
   components: { Checkbox },
-  props: Object.keys(argTypes),
-  template: `<Checkbox v-bind="$props" :error-messages="$props.errorMessages ? [$props.errorMessages] : []">
-    {{ $props.label }}
+  setup() {
+    const modelValue = computed({
+      get() {
+        return args.modelValue;
+      },
+      set(val) {
+        args.modelValue = val;
+      },
+    });
+
+    const indeterminate = computed({
+      get() {
+        return args.indeterminate;
+      },
+      set(val) {
+        args.indeterminate = val;
+      },
+    });
+    return { args, modelValue, indeterminate };
+  },
+  template: `<Checkbox v-bind="args" v-model="modelValue" v-model:indeterminate="indeterminate">
+    {{ args.label }}
   </Checkbox>`,
 });
 
-const meta: Meta<typeof Checkbox> = {
+const meta: Meta<PropsAndLabel> = {
   title: 'Components/Forms/Checkbox',
   component: Checkbox,
   tags: ['autodocs'],
@@ -20,7 +41,7 @@ const meta: Meta<typeof Checkbox> = {
     modelValue: { control: 'boolean' },
     indeterminate: { control: 'boolean' },
     hint: { control: 'text' },
-    errorMessages: { control: 'text' },
+    errorMessages: { control: 'array', defaultValue: [] },
     hideDetails: { control: 'boolean' },
     disabled: { control: 'boolean', table: { category: 'State' } },
     color: { control: 'select', options: contextColors },
@@ -33,64 +54,66 @@ const meta: Meta<typeof Checkbox> = {
   },
 };
 
-export const Checked = {
+type Story = StoryObj<PropsAndLabel>;
+
+export const Checked: Story = {
   args: {
     modelValue: true,
   },
 };
 
-export const Indeterminate = {
+export const Indeterminate: Story = {
   args: {
     indeterminate: true,
   },
 };
 
-export const Large = {
+export const Large: Story = {
   args: {
     size: 'lg',
   },
 };
 
-export const Small = {
+export const Small: Story = {
   args: {
     size: 'sm',
   },
 };
 
-export const Primary = {
+export const Primary: Story = {
   args: {
     color: 'primary',
   },
 };
 
-export const WithLabel = {
+export const WithLabel: Story = {
   args: {
     label: 'With Label',
   },
 };
 
-export const Disabled = {
+export const Disabled: Story = {
   args: {
     disabled: true,
     label: 'Disabled',
   },
 };
 
-export const WithErrorMessage = {
+export const WithErrorMessage: Story = {
   args: {
     label: 'Label',
-    errorMessages: 'With error messages',
+    errorMessages: ['With error messages'],
   },
 };
 
-export const WithHint = {
+export const WithHint: Story = {
   args: {
     label: 'Label',
     hint: 'With hint',
   },
 };
 
-export const HideDetails = {
+export const HideDetails: Story = {
   args: {
     label: 'Label',
     hint: 'Hint (should be invisible)',

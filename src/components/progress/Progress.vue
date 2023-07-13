@@ -1,30 +1,29 @@
 <script lang="ts" setup>
-const props = withDefaults(
-  defineProps<{
-    /**
-     * required when variant === determinate or buffer
-     * @example - 0 <= value <= 1
-     */
-    value?: number;
-    /**
-     * required when variant === buffer
-     * @example - 0 <= value <= 1
-     */
-    bufferValue?: number;
-    variant?: 'determinate' | 'indeterminate' | 'buffer';
-    color?: 'primary' | 'secondary' | 'inherit';
-    circular?: boolean;
-    showLabel?: boolean;
-  }>(),
-  {
-    value: 0,
-    bufferValue: 0,
-    variant: 'determinate',
-    color: 'primary',
-    circular: false,
-    showLabel: false,
-  }
-);
+export interface Props {
+  /**
+   * required when variant === determinate or buffer
+   * @example - 0 <= value <= 1
+   */
+  value?: number;
+  /**
+   * required when variant === buffer
+   * @example - 0 <= value <= 1
+   */
+  bufferValue?: number;
+  variant?: 'determinate' | 'indeterminate' | 'buffer';
+  color?: 'primary' | 'secondary' | 'inherit';
+  circular?: boolean;
+  showLabel?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  value: 0,
+  bufferValue: 0,
+  variant: 'determinate',
+  color: 'primary',
+  circular: false,
+  showLabel: false,
+});
 
 const css = useCssModule();
 

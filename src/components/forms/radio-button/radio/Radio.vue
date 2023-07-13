@@ -3,27 +3,26 @@ import { objectOmit } from '@vueuse/shared';
 import { type ContextColorsType } from '@/consts/colors';
 import Icon from '@/components/icons/Icon.vue';
 
-const props = withDefaults(
-  defineProps<{
-    value: string;
-    modelValue?: string;
-    disabled?: boolean;
-    color?: ContextColorsType;
-    size?: 'sm' | 'lg';
-    hint?: string;
-    errorMessages?: string[];
-    hideDetails?: boolean;
-  }>(),
-  {
-    modelValue: '',
-    disabled: false,
-    color: undefined,
-    size: undefined,
-    hint: '',
-    errorMessages: () => [],
-    hideDetails: false,
-  }
-);
+export interface Props {
+  value: string;
+  modelValue?: string;
+  disabled?: boolean;
+  color?: ContextColorsType;
+  size?: 'sm' | 'lg';
+  hint?: string;
+  errorMessages?: string[];
+  hideDetails?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: '',
+  disabled: false,
+  color: undefined,
+  size: undefined,
+  hint: '',
+  errorMessages: () => [],
+  hideDetails: false,
+});
 
 const { modelValue, size, value } = toRefs(props);
 

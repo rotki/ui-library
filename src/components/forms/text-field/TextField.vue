@@ -3,36 +3,35 @@ import { objectOmit } from '@vueuse/shared';
 import { type ContextColorsType } from '@/consts/colors';
 import Icon from '@/components/icons/Icon.vue';
 
-const props = withDefaults(
-  defineProps<{
-    modelValue?: string;
-    label?: string;
-    placeholder?: string;
-    disabled?: boolean;
-    variant?: 'default' | 'filled' | 'outlined';
-    color?: 'grey' | ContextColorsType;
-    dense?: boolean;
-    hint?: string;
-    errorMessages?: string[];
-    hideDetails?: boolean;
-    prependIcon?: string;
-    appendIcon?: string;
-  }>(),
-  {
-    modelValue: '',
-    label: '',
-    placeholder: '',
-    disabled: false,
-    variant: 'default',
-    color: 'grey',
-    dense: false,
-    hint: '',
-    errorMessages: () => [],
-    hideDetails: false,
-    prependIcon: '',
-    appendIcon: '',
-  }
-);
+export interface Props {
+  modelValue?: string;
+  label?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  variant?: 'default' | 'filled' | 'outlined';
+  color?: 'grey' | ContextColorsType;
+  dense?: boolean;
+  hint?: string;
+  errorMessages?: string[];
+  hideDetails?: boolean;
+  prependIcon?: string;
+  appendIcon?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: '',
+  label: '',
+  placeholder: '',
+  disabled: false,
+  variant: 'default',
+  color: 'grey',
+  dense: false,
+  hint: '',
+  errorMessages: () => [],
+  hideDetails: false,
+  prependIcon: '',
+  appendIcon: '',
+});
 
 const { label } = toRefs(props);
 

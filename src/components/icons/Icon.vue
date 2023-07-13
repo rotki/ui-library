@@ -1,17 +1,16 @@
 <script lang="ts" setup>
 import { type ContextColorsType } from '@/consts/colors';
 
-const props = withDefaults(
-  defineProps<{
-    name: string;
-    size?: number | string;
-    color?: ContextColorsType;
-  }>(),
-  {
-    size: 24,
-    color: undefined,
-  }
-);
+export interface Props {
+  name: string;
+  size?: number | string;
+  color?: ContextColorsType;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  size: 24,
+  color: undefined,
+});
 
 const css = useCssModule();
 const { registeredIcons } = useIcons();

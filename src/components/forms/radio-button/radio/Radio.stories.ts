@@ -1,16 +1,28 @@
-import { type Meta, type StoryFn } from '@storybook/vue3';
+import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { contextColors } from '@/consts/colors';
-import Radio from './Radio.vue';
+import { type Props, default as Radio } from './Radio.vue';
 
-const render: StoryFn<typeof Radio> = (_, { argTypes }) => ({
+type PropsAndLabel = Props & { label: string };
+
+const render: StoryFn<PropsAndLabel> = (args) => ({
   components: { Radio },
-  props: Object.keys(argTypes),
-  template: `<Radio v-bind="$props" :error-messages="$props.errorMessages ? [$props.errorMessages] : []">
-    {{ $props.label }}
+  setup() {
+    const modelValue = computed({
+      get() {
+        return args.modelValue;
+      },
+      set(val) {
+        args.modelValue = val;
+      },
+    });
+    return { args, modelValue };
+  },
+  template: `<Radio v-bind="args" v-model="modelValue">
+  {{ args.default }}
   </Radio>`,
 });
 
-const meta: Meta<typeof Radio> = {
+const meta: Meta<PropsAndLabel> = {
   title: 'Components/Forms/Radio/Radio',
   component: Radio,
   tags: ['autodocs'],
@@ -20,7 +32,7 @@ const meta: Meta<typeof Radio> = {
     modelValue: { control: 'text' },
     value: { control: 'text' },
     hint: { control: 'text' },
-    errorMessages: { control: 'text' },
+    errorMessages: { control: 'array', defaultValue: [] },
     hideDetails: { control: 'boolean' },
     disabled: { control: 'boolean', table: { category: 'State' } },
     color: { control: 'select', options: contextColors },
@@ -33,59 +45,61 @@ const meta: Meta<typeof Radio> = {
   },
 };
 
-export const Checked = {
+type Story = StoryObj<PropsAndLabel>;
+
+export const Checked: Story = {
   args: {
     modelValue: 'test',
     value: 'test',
   },
 };
 
-export const Large = {
+export const Large: Story = {
   args: {
     size: 'lg',
   },
 };
 
-export const Small = {
+export const Small: Story = {
   args: {
     size: 'sm',
   },
 };
 
-export const Primary = {
+export const Primary: Story = {
   args: {
     color: 'primary',
   },
 };
 
-export const WithLabel = {
+export const WithLabel: Story = {
   args: {
     label: 'With Label',
   },
 };
 
-export const Disabled = {
+export const Disabled: Story = {
   args: {
     disabled: true,
     label: 'Disabled',
   },
 };
 
-export const WithErrorMessage = {
+export const WithErrorMessage: Story = {
   args: {
     label: 'Label',
-    errorMessages: 'With error messages',
+    errorMessages: ['With error messages'],
   },
 };
 
-export const WithHint = {
+export const WithHint: Story = {
   args: {
     label: 'Label',
     hint: 'With hint',
   },
 };
 
-export const HideDetails = {
+export const HideDetails: Story = {
   args: {
     label: 'Label',
     hint: 'Hint (should be invisible)',

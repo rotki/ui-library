@@ -1,14 +1,25 @@
-import { type Meta, type StoryFn } from '@storybook/vue3';
-import FooterStepper from './FooterStepper.vue';
+import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
+import { default as FooterStepper, type Props } from './FooterStepper.vue';
 
-const render: StoryFn<typeof FooterStepper> = (_, { argTypes }) => ({
+const render: StoryFn<Props> = (args) => ({
   components: { FooterStepper },
-  props: Object.keys(argTypes),
+  setup() {
+    const modelValue = computed({
+      get() {
+        return args.modelValue;
+      },
+      set(val) {
+        args.modelValue = val;
+      },
+    });
+
+    return { modelValue, args };
+  },
   template: `
-    <FooterStepper v-bind="$props" />`,
+    <FooterStepper v-model="modelValue" v-bind="args" />`,
 });
 
-const meta: Meta<typeof FooterStepper> = {
+const meta: Meta<Props> = {
   title: 'Components/FooterStepper',
   component: FooterStepper,
   tags: ['autodocs'],
@@ -32,7 +43,9 @@ const meta: Meta<typeof FooterStepper> = {
   },
 };
 
-export const Default = {
+type Story = StoryObj<Props>;
+
+export const Default: Story = {
   args: {
     pages: 5,
     modelValue: 1,
@@ -40,7 +53,7 @@ export const Default = {
   },
 };
 
-export const Bullet = {
+export const Bullet: Story = {
   args: {
     pages: 5,
     modelValue: 1,
@@ -48,7 +61,7 @@ export const Bullet = {
   },
 };
 
-export const Progress = {
+export const Progress: Story = {
   args: {
     pages: 5,
     modelValue: 1,
@@ -56,7 +69,7 @@ export const Progress = {
   },
 };
 
-export const Pills = {
+export const Pills: Story = {
   args: {
     pages: 5,
     modelValue: 1,

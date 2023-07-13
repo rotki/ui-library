@@ -7,23 +7,22 @@ import {
 import StepperIcon from '@/components/steppers/StepperIcon.vue';
 import StepperCustomIcon from '@/components/steppers/StepperCustomIcon.vue';
 
-const props = withDefaults(
-  defineProps<{
-    steps: StepperStep[];
-    iconTop?: boolean;
-    custom?: boolean;
-    titleClass?: string;
-    subtitleClass?: string;
-    orientation?: StepperOrientation;
-  }>(),
-  {
-    iconTop: false,
-    custom: false,
-    titleClass: '',
-    subtitleClass: '',
-    orientation: StepperOrientation.horizontal,
-  }
-);
+export interface Props {
+  steps: StepperStep[];
+  iconTop?: boolean;
+  custom?: boolean;
+  titleClass?: string;
+  subtitleClass?: string;
+  orientation?: StepperOrientation;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  iconTop: false,
+  custom: false,
+  titleClass: '',
+  subtitleClass: '',
+  orientation: StepperOrientation.horizontal,
+});
 
 const css = useCssModule();
 

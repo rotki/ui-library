@@ -1,18 +1,23 @@
-import { type Meta, type StoryFn } from '@storybook/vue3';
+import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { contextColors } from '@/consts/colors';
-import Button from './Button.vue';
+import { default as Button, type Props } from './Button.vue';
 
-const render: StoryFn<typeof Button> = (_, { argTypes }) => ({
+type PropsAndLabel = Props & { label: string };
+
+const render: StoryFn<PropsAndLabel> = (args) => ({
   components: { Button },
-  props: Object.keys(argTypes),
-  template: `<Button v-bind="$props">
+  setup() {
+    const clicks = ref(0);
+    return { clicks, args };
+  },
+  template: `<Button v-bind="args" @click="clicks++">
     <template #prepend></template>
-    {{ $props.label }}
+    {{ args.label }}
     <template #append></template>
-  </Button>`,
+  </Button><div class='mt-4'>Clicked: {{ clicks }} times</div>`,
 });
 
-const meta: Meta<typeof Button> = {
+const meta: Meta<PropsAndLabel> = {
   title: 'Components/Button',
   component: Button,
   tags: ['autodocs'],
@@ -40,21 +45,22 @@ const meta: Meta<typeof Button> = {
   },
 };
 
-export const Default = {
+type Story = StoryObj<PropsAndLabel>;
+export const Default: Story = {
   args: {
     label: 'Default',
     variant: 'outlined',
   },
 };
 
-export const Primary = {
+export const Primary: Story = {
   args: {
     color: 'primary',
     label: 'Medium',
   },
 };
 
-export const PrimaryText = {
+export const PrimaryText: Story = {
   args: {
     color: 'primary',
     label: 'Large',
@@ -62,7 +68,7 @@ export const PrimaryText = {
   },
 };
 
-export const PrimaryRounded = {
+export const PrimaryRounded: Story = {
   args: {
     color: 'primary',
     label: 'Medium',
@@ -70,7 +76,7 @@ export const PrimaryRounded = {
   },
 };
 
-export const PrimarySmall = {
+export const PrimarySmall: Story = {
   args: {
     color: 'primary',
     label: 'Small',
@@ -78,7 +84,7 @@ export const PrimarySmall = {
   },
 };
 
-export const PrimaryLarge = {
+export const PrimaryLarge: Story = {
   args: {
     color: 'primary',
     label: 'Large',
@@ -86,7 +92,7 @@ export const PrimaryLarge = {
   },
 };
 
-export const PrimaryLargeRounded = {
+export const PrimaryLargeRounded: Story = {
   args: {
     color: 'primary',
     label: 'Large',
@@ -95,7 +101,7 @@ export const PrimaryLargeRounded = {
   },
 };
 
-export const PrimaryDisabled = {
+export const PrimaryDisabled: Story = {
   args: {
     color: 'primary',
     label: 'Medium',
@@ -103,7 +109,7 @@ export const PrimaryDisabled = {
   },
 };
 
-export const PrimaryOutlined = {
+export const PrimaryOutlined: Story = {
   args: {
     color: 'primary',
     label: 'Primary Outlined',
@@ -111,7 +117,7 @@ export const PrimaryOutlined = {
   },
 };
 
-export const PrimaryOutlinedWithElevation = {
+export const PrimaryOutlinedWithElevation: Story = {
   args: {
     color: 'primary',
     label: 'Primary Outlined',
@@ -120,14 +126,14 @@ export const PrimaryOutlinedWithElevation = {
   },
 };
 
-export const Secondary = {
+export const Secondary: Story = {
   args: {
     label: 'Secondary Button',
     color: 'secondary',
   },
 };
 
-export const SecondaryText = {
+export const SecondaryText: Story = {
   args: {
     label: 'Secondary Button',
     color: 'secondary',
@@ -136,7 +142,7 @@ export const SecondaryText = {
   },
 };
 
-export const SecondaryOutlined = {
+export const SecondaryOutlined: Story = {
   args: {
     label: 'Outlined Button',
     color: 'secondary',
@@ -144,14 +150,14 @@ export const SecondaryOutlined = {
   },
 };
 
-export const ErrorButton = {
+export const ErrorButton: Story = {
   args: {
     label: 'Error Button',
     color: 'error',
   },
 };
 
-export const ErrorButtonText = {
+export const ErrorButtonText: Story = {
   args: {
     label: 'Error Button',
     color: 'error',
@@ -160,7 +166,7 @@ export const ErrorButtonText = {
   },
 };
 
-export const ErrorOutlined = {
+export const ErrorOutlined: Story = {
   args: {
     label: 'Error Button',
     color: 'error',
@@ -168,7 +174,7 @@ export const ErrorOutlined = {
   },
 };
 
-export const ErrorOutlinedDisabled = {
+export const ErrorOutlinedDisabled: Story = {
   args: {
     label: 'Error Button',
     color: 'error',
@@ -177,7 +183,7 @@ export const ErrorOutlinedDisabled = {
   },
 };
 
-export const FloatingActionButton = {
+export const FloatingActionButton: Story = {
   args: {
     label: 'Floating Action Button',
     color: 'primary',
