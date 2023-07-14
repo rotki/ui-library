@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { default as RuiTextField } from '@/components/forms/text-field/TextField.vue';
-import { default as RuiButton } from '@/components/buttons/Button.vue';
+import { default as RuiButton } from '@/components/buttons/button/Button.vue';
 import { default as RuiIcon } from '@/components/icons/Icon.vue';
 
 const hidden: Ref<boolean> = ref(true);

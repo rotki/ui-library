@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import RuiIcon from '@/components/icons/Icon.vue';
-import RuiButton from '@/components/buttons/Button.vue';
+import RuiButton from '@/components/buttons/button/Button.vue';
 import RuiProgress from '@/components/progress/Progress.vue';
 
 export interface Props {

@@ -5,7 +5,7 @@ import Radio from './Radio.vue';
 const createWrapper = (options?: ComponentMountingOptions<typeof Radio>) =>
   mount(Radio, { ...options, global: { stubs: ['icon'] } });
 
-describe('Forms/Radio', () => {
+describe('Forms/RadioButton/Radio', () => {
   it('renders properly', () => {
     const label = 'Radio Label';
     const wrapper = createWrapper({

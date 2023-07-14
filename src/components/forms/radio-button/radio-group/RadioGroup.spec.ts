@@ -5,7 +5,7 @@ import RadioGroup from './RadioGroup.vue';
 const createWrapper = (options?: ComponentMountingOptions<typeof RadioGroup>) =>
   mount(RadioGroup, { ...options, global: { stubs: ['icon'] } });
 
-describe('Forms/RadioGroup', () => {
+describe('Forms/RadioButton/RadioGroup', () => {
   it('passes inline props', async () => {
     const wrapper = createWrapper();
     expect(wrapper.find('div[class*=wrapper]').classes()).not.toMatch(/inline/);
