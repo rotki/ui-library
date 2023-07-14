@@ -119,6 +119,14 @@ export const PrimaryOutlined: Story = {
   },
 };
 
+export const PrimaryLoading: Story = {
+  args: {
+    color: 'primary',
+    label: 'Primary Loading',
+    loading: true,
+  },
+};
+
 export const PrimaryOutlinedWithElevation: Story = {
   args: {
     color: 'primary',

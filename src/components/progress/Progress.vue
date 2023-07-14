@@ -1,36 +1,48 @@
 <script lang="ts" setup>
+import { type ContextColorsType } from '@/consts/colors';
+
 export interface Props {
   /**
-   * required when variant === determinate or buffer
-   * @example - 0 <= value <= 1
+   * in percentage value, required when variant === determinate or buffer
+   * @example - 0 <= value <= 100
    */
   value?: number;
   /**
-   * required when variant === buffer
-   * @example - 0 <= value <= 1
+   * in percentage value, required when variant === buffer
+   * @example - 0 <= value <= 100
    */
   bufferValue?: number;
   variant?: 'determinate' | 'indeterminate' | 'buffer';
-  color?: 'primary' | 'secondary' | 'inherit';
+  color?: ContextColorsType | 'inherit';
   circular?: boolean;
   showLabel?: boolean;
+  /**
+   * Sets the stroke thickness in pixels
+   */
+  thickness?: number | string;
+  /**
+   * only used for circular progress
+   */
+  size?: number | string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   value: 0,
   bufferValue: 0,
   variant: 'determinate',
-  color: 'primary',
+  color: 'inherit',
   circular: false,
   showLabel: false,
+  thickness: 4,
+  size: 32,
 });
 
 const css = useCssModule();
 
-const { variant, value, bufferValue } = toRefs(props);
+const { variant, value, bufferValue, thickness, size } = toRefs(props);
 
-const currentValue = computed(
-  () => Math.max(0, Math.min(get(value) ?? 1, 1)) * 100,
+const currentValue = computed(() =>
+  Math.max(0, Math.min(get(value) ?? 100, 100)),
 );
 
 const label = computed(() => `${Math.floor(get(currentValue))}%`);
@@ -40,20 +52,26 @@ const progress = computed(() => -100 + get(currentValue));
 const valuePercent = computed(() => `${get(progress)}%`);
 
 const bufferPercent = computed(
-  () => `${-100 + Math.max(0, Math.min(get(bufferValue) ?? 1, 1)) * 100}%`,
+  () => `${-100 + Math.max(0, Math.min(get(bufferValue) ?? 100, 100))}%`,
 );
+
+const circularScaledThickness = computed(
+  () => (+get(thickness) * 32) / +get(size),
+);
+
+const circularViewSize = computed(() => 40 + get(circularScaledThickness));
 </script>
 
 <template>
   <div
     :class="[
       css.wrapper,
-      circular ? 'w-8' : 'w-full',
+      circular ? 'inline-flex' : 'w-full',
       { [css['has-label']]: showLabel && variant !== 'indeterminate' },
     ]"
   >
     <div
-      :aria-valuenow="value * 100"
+      :aria-valuenow="value"
       :class="[
         circular && variant !== 'buffer' ? css.circular : css.progress,
         css[variant ?? ''],
@@ -63,8 +81,17 @@ const bufferPercent = computed(
       aria-valuemin="0"
       role="progressbar"
     >
-      <svg v-if="circular && variant !== 'buffer'" viewBox="22 22 44 44">
-        <circle cx="44" cy="44" fill="none" r="20.2" stroke-width="4" />
+      <svg
+        v-if="circular && variant !== 'buffer'"
+        :viewBox="`0 0 ${circularViewSize} ${circularViewSize}`"
+      >
+        <circle
+          cx="50%"
+          cy="50%"
+          fill="none"
+          r="20"
+          :stroke-width="circularScaledThickness"
+        />
       </svg>
       <template v-else>
         <div v-if="variant === 'buffer'" :class="css['buffer-dots']" />
@@ -98,20 +125,20 @@ $colors: 'primary', 'secondary';
 
   .progress {
     @apply w-full overflow-hidden relative;
+    height: calc(v-bind(thickness) * 1px);
 
     .rail {
-      @apply w-full h-1;
+      @apply w-full h-full;
     }
 
     .determinate,
     .buffer {
-      @apply transition-all duration-150 ease-in-out absolute left-0 top-0 h-1 w-full;
+      @apply transition-all duration-150 ease-in-out absolute left-0 top-0 h-full w-full;
       transform: translateX(v-bind(valuePercent));
     }
 
     .indeterminate {
-      @apply absolute left-0 top-0 h-1 w-auto transition-transform duration-200 ease-linear delay-0;
-      transform-origin: left center;
+      @apply absolute left-0 top-0 h-full w-auto transition-transform duration-200 ease-linear delay-0 origin-left;
       animation: 1.6s cubic-bezier(0.65, 0.815, 0.735, 0.395) 0s infinite normal
         none running slide-rail;
     }
@@ -122,8 +149,7 @@ $colors: 'primary', 'secondary';
     }
 
     .buffer-rail {
-      @apply w-full transition-transform duration-200 ease-linear delay-0;
-      transform-origin: left center;
+      @apply w-full transition-transform duration-200 ease-linear delay-0 origin-left;
       transform: translateX(v-bind(bufferPercent));
     }
 
@@ -163,7 +189,9 @@ $colors: 'primary', 'secondary';
   }
 
   .circular {
-    @apply w-8 h-8 inline-block;
+    @apply inline-block;
+    width: calc(v-bind(size) * 1px);
+    height: calc(v-bind(size) * 1px);
 
     @each $color in $colors {
       &.#{$color} {
@@ -178,6 +206,7 @@ $colors: 'primary', 'secondary';
         circle {
           stroke-dasharray: 80px, 200px;
           stroke-dashoffset: 0;
+          stroke-linecap: round;
           -webkit-animation: collapse-stroke 1.4s ease-in-out infinite;
           animation: collapse-stroke 1.4s ease-in-out infinite;
         }

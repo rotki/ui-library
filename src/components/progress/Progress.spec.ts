@@ -9,13 +9,13 @@ describe('Progress', () => {
   it('renders properly', () => {
     const wrapper = createWrapper({
       props: {
-        value: 0.5,
+        value: 50,
       },
     });
     expect(wrapper.get('div[role=progressbar]').classes()).toMatch(
       /_progress_/,
     );
-    expect(wrapper.get('div[role=progressbar]').classes()).toMatch(/_primary_/);
+    expect(wrapper.get('div[role=progressbar]').classes()).toMatch(/_inherit_/);
     expect(wrapper.get('div[role=progressbar]').classes()).toMatch(
       /_determinate_/,
     );
@@ -24,7 +24,7 @@ describe('Progress', () => {
   it('passes props correctly', async () => {
     const wrapper = createWrapper({
       props: {
-        value: 0.5,
+        value: 50,
         variant: 'indeterminate',
         color: 'secondary',
       },
@@ -42,6 +42,31 @@ describe('Progress', () => {
     await wrapper.setProps({ circular: true });
     expect(wrapper.get('div[role=progressbar]').classes()).toMatch(
       /_circular_/,
+    );
+  });
+
+  it('passes color props', async () => {
+    const wrapper = createWrapper();
+    expect(wrapper.find('div[role=progressbar]').classes()).toMatch(
+      /_inherit_/,
+    );
+
+    await wrapper.setProps({ color: 'primary' });
+    expect(wrapper.find('div[role=progressbar]').classes()).toMatch(
+      /_primary_/,
+    );
+
+    await wrapper.setProps({ color: 'secondary' });
+    expect(wrapper.find('div[role=progressbar]').classes()).toMatch(
+      /_secondary_/,
+    );
+
+    await wrapper.setProps({ color: 'error' });
+    expect(wrapper.find('div[role=progressbar]').classes()).toMatch(/_error_/);
+
+    await wrapper.setProps({ color: 'success' });
+    expect(wrapper.find('div[role=progressbar]').classes()).toMatch(
+      /_success_/,
     );
   });
 });
