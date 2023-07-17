@@ -57,24 +57,28 @@ export const Checked: Story = {
 export const Large: Story = {
   args: {
     size: 'lg',
+    value: 'test',
   },
 };
 
 export const Small: Story = {
   args: {
     size: 'sm',
+    value: 'test',
   },
 };
 
 export const Primary: Story = {
   args: {
     color: 'primary',
+    value: 'test',
   },
 };
 
 export const WithLabel: Story = {
   args: {
     label: 'With Label',
+    value: 'test',
   },
 };
 
@@ -82,6 +86,7 @@ export const Disabled: Story = {
   args: {
     disabled: true,
     label: 'Disabled',
+    value: 'test',
   },
 };
 
@@ -89,6 +94,7 @@ export const WithErrorMessage: Story = {
   args: {
     label: 'Label',
     errorMessages: ['With error messages'],
+    value: 'test',
   },
 };
 
@@ -96,6 +102,7 @@ export const WithHint: Story = {
   args: {
     label: 'Label',
     hint: 'With hint',
+    value: 'test',
   },
 };
 
@@ -104,6 +111,7 @@ export const HideDetails: Story = {
     label: 'Label',
     hint: 'Hint (should be invisible)',
     hideDetails: true,
+    value: 'test',
   },
 };
 
