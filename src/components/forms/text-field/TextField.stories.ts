@@ -1,14 +1,25 @@
-import { type Meta, type StoryFn } from '@storybook/vue3';
+import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { contextColors } from '@/consts/colors';
-import TextField from './TextField.vue';
+import { type Props, default as TextField } from './TextField.vue';
 
-const render: StoryFn<typeof TextField> = (_, { argTypes }) => ({
+const render: StoryFn<Props> = (args) => ({
   components: { TextField },
-  props: Object.keys(argTypes),
-  template: `<TextField v-bind="$props" :error-messages="$props.errorMessages ? [$props.errorMessages] : []" />`,
+  setup() {
+    const modelValue = computed({
+      get() {
+        return args.modelValue;
+      },
+      set(val) {
+        args.modelValue = val;
+      },
+    });
+
+    return { args, modelValue };
+  },
+  template: `<TextField v-model="modelValue" v-bind="args" />`,
 });
 
-const meta: Meta<typeof TextField> = {
+const meta: Meta<Props> = {
   title: 'Components/Forms/TextField',
   component: TextField,
   tags: ['autodocs'],
@@ -20,7 +31,7 @@ const meta: Meta<typeof TextField> = {
     hint: { control: 'text' },
     appendIcon: { control: 'text' },
     prependIcon: { control: 'text' },
-    errorMessages: { control: 'text' },
+    errorMessages: { control: 'array', defaultValue: [] },
     hideDetails: { control: 'boolean', table: { category: 'State' } },
     dense: { control: 'boolean', table: { category: 'State' } },
     variant: {
@@ -42,14 +53,16 @@ const meta: Meta<typeof TextField> = {
   },
 };
 
-export const Default = {
+type Story = StoryObj<Props>;
+
+export const Default: Story = {
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
   },
 };
 
-export const Filled = {
+export const Filled: Story = {
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
@@ -57,7 +70,7 @@ export const Filled = {
   },
 };
 
-export const Outlined = {
+export const Outlined: Story = {
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
@@ -65,7 +78,7 @@ export const Outlined = {
   },
 };
 
-export const Primary = {
+export const Primary: Story = {
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
@@ -74,7 +87,7 @@ export const Primary = {
   },
 };
 
-export const Dense = {
+export const Dense: Story = {
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
@@ -83,7 +96,7 @@ export const Dense = {
   },
 };
 
-export const Disabled = {
+export const Disabled: Story = {
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
@@ -92,7 +105,7 @@ export const Disabled = {
   },
 };
 
-export const WithErrorMessage = {
+export const WithErrorMessage: Story = {
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
@@ -101,7 +114,7 @@ export const WithErrorMessage = {
   },
 };
 
-export const WithHint = {
+export const WithHint: Story = {
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
@@ -110,7 +123,7 @@ export const WithHint = {
   },
 };
 
-export const HideDetails = {
+export const HideDetails: Story = {
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
@@ -120,7 +133,7 @@ export const HideDetails = {
   },
 };
 
-export const WithPrependIcon = {
+export const WithPrependIcon: Story = {
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
@@ -129,7 +142,7 @@ export const WithPrependIcon = {
   },
 };
 
-export const WithAppendIcon = {
+export const WithAppendIcon: Story = {
   args: {
     label: 'Label',
     placeholder: 'Placeholder',

@@ -1,30 +1,29 @@
 <script lang="ts" setup>
 import { type ContextColorsType } from '@/consts/colors';
 
-const props = withDefaults(
-  defineProps<{
-    disabled?: boolean;
-    loading?: boolean;
-    color?: ContextColorsType;
-    rounded?: boolean;
-    elevation?: number | string | null;
-    variant?: 'default' | 'outlined' | 'text' | 'fab';
-    icon?: boolean;
-    size?: 'sm' | 'lg';
-    sm?: boolean;
-    lg?: boolean;
-  }>(),
-  {
-    disabled: false,
-    loading: false,
-    color: undefined,
-    rounded: false,
-    elevation: null,
-    variant: 'default',
-    icon: false,
-    size: undefined,
-  }
-);
+export interface Props {
+  disabled?: boolean;
+  loading?: boolean;
+  color?: ContextColorsType;
+  rounded?: boolean;
+  elevation?: number | string | null;
+  variant?: 'default' | 'outlined' | 'text' | 'fab';
+  icon?: boolean;
+  size?: 'sm' | 'lg';
+  sm?: boolean;
+  lg?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  disabled: false,
+  loading: false,
+  color: undefined,
+  rounded: false,
+  elevation: null,
+  variant: 'default',
+  icon: false,
+  size: undefined,
+});
 
 const { disabled, elevation, variant } = toRefs(props);
 

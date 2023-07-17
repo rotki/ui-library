@@ -3,16 +3,16 @@ import RuiIcon from '@/components/icons/Icon.vue';
 import RuiButton from '@/components/buttons/Button.vue';
 import RuiProgress from '@/components/progress/Progress.vue';
 
-const props = withDefaults(
-  defineProps<{
-    pages: number;
-    modelValue: number;
-    variant?: 'numeric' | 'bullet' | 'progress' | 'pill';
-  }>(),
-  {
-    variant: 'numeric',
-  }
-);
+export interface Props {
+  pages: number;
+  modelValue?: number;
+  variant?: 'numeric' | 'bullet' | 'progress' | 'pill';
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: 1,
+  variant: 'numeric',
+});
 
 const emit = defineEmits<{
   (event: 'update:modelValue', modelValue: number): void;

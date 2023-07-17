@@ -1,13 +1,15 @@
-import { type Meta, type StoryFn } from '@storybook/vue3';
-import Progress from './Progress.vue';
+import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
+import { default as Progress, type Props } from './Progress.vue';
 
-const render: StoryFn<typeof Progress> = (_, { argTypes }) => ({
+const render: StoryFn<Props> = (args) => ({
   components: { Progress },
-  props: Object.keys(argTypes),
-  template: '<Progress v-bind="$props" />',
+  setup() {
+    return { args };
+  },
+  template: '<Progress v-bind="args" />',
 });
 
-const meta: Meta<typeof Progress> = {
+const meta: Meta<Props> = {
   title: 'Components/Progress',
   component: Progress,
   tags: ['autodocs'],
@@ -38,7 +40,9 @@ const meta: Meta<typeof Progress> = {
   },
 };
 
-export const Primary = {
+type Story = StoryObj<Props>;
+
+export const Primary: Story = {
   args: {
     value: 0.5,
     bufferValue: 0.6,
@@ -49,35 +53,35 @@ export const Primary = {
   },
 };
 
-export const PrimaryWithLabel = {
+export const PrimaryWithLabel: Story = {
   args: {
     value: 0.5,
     showLabel: true,
   },
 };
 
-export const Secondary = {
+export const Secondary: Story = {
   args: {
     value: 0.5,
     color: 'secondary',
   },
 };
 
-export const Inherit = {
+export const Inherit: Story = {
   args: {
     value: 0.5,
     color: 'inherit',
   },
 };
 
-export const PrimaryIndeterminate = {
+export const PrimaryIndeterminate: Story = {
   args: {
     value: 0.5,
     variant: 'indeterminate',
   },
 };
 
-export const PrimaryBuffer = {
+export const PrimaryBuffer: Story = {
   args: {
     value: 0.5,
     bufferValue: 0.7,
@@ -85,7 +89,7 @@ export const PrimaryBuffer = {
   },
 };
 
-export const BufferWithLabel = {
+export const BufferWithLabel: Story = {
   args: {
     value: 0.5,
     bufferValue: 0.7,
@@ -94,14 +98,14 @@ export const BufferWithLabel = {
   },
 };
 
-export const PrimaryCircular = {
+export const PrimaryCircular: Story = {
   args: {
     value: 0.5,
     circular: true,
   },
 };
 
-export const CircularIndeterminate = {
+export const CircularIndeterminate: Story = {
   args: {
     value: 0.5,
     variant: 'indeterminate',
@@ -109,7 +113,7 @@ export const CircularIndeterminate = {
   },
 };
 
-export const CircularWithLabel = {
+export const CircularWithLabel: Story = {
   args: {
     value: 1,
     variant: 'determinate',

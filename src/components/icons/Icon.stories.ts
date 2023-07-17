@@ -1,15 +1,17 @@
-import { type Meta, type StoryFn } from '@storybook/vue3';
+import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import * as Icons from '@/all-icons';
 import { contextColors } from '@/consts/colors';
-import Icon from './Icon.vue';
+import { default as Icon, type Props } from './Icon.vue';
 
-const render: StoryFn<typeof Icon> = (_, { argTypes }) => ({
+const render: StoryFn<Props> = (args) => ({
   components: { Icon },
-  props: Object.keys(argTypes),
-  template: '<Icon v-bind="$props" />',
+  setup() {
+    return { args };
+  },
+  template: '<Icon v-bind="args" />',
 });
 
-const meta: Meta<typeof Icon> = {
+const meta: Meta<Props> = {
   title: 'Components/Icon',
   component: Icon,
   parameters: {
@@ -34,7 +36,9 @@ const meta: Meta<typeof Icon> = {
   },
 };
 
-export const Primary = {
+type Story = StoryObj<Props>;
+
+export const Primary: Story = {
   args: {
     name: 'arrow-down-circle-fill',
     size: 24,
@@ -42,7 +46,7 @@ export const Primary = {
   },
 };
 
-export const PrimaryLarge = {
+export const PrimaryLarge: Story = {
   args: {
     name: 'arrow-down-circle-fill',
     size: 48,
@@ -50,7 +54,7 @@ export const PrimaryLarge = {
   },
 };
 
-export const Secondary = {
+export const Secondary: Story = {
   args: {
     name: 'arrow-down-circle-fill',
     size: 24,
@@ -58,7 +62,7 @@ export const Secondary = {
   },
 };
 
-export const SecondaryTiny = {
+export const SecondaryTiny: Story = {
   args: {
     name: 'arrow-down-circle-fill',
     size: 14,

@@ -3,25 +3,24 @@ import { type ContextColorsType } from '@/consts/colors';
 import { default as RuiButton } from '@/components/buttons/Button.vue';
 import { default as RuiIcon } from '@/components/icons/Icon.vue';
 
-const props = withDefaults(
-  defineProps<{
-    title: string;
-    description?: string;
-    type?: ContextColorsType;
-    icon?: string;
-    variant?: 'default' | 'filled' | 'outlined';
-    actionText?: string;
-    closeable?: boolean;
-  }>(),
-  {
-    description: '',
-    type: 'primary',
-    icon: '',
-    variant: 'default',
-    actionText: '',
-    closeable: false,
-  }
-);
+export interface Props {
+  title: string;
+  description?: string;
+  type?: ContextColorsType;
+  icon?: string;
+  variant?: 'default' | 'filled' | 'outlined';
+  actionText?: string;
+  closeable?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  description: '',
+  type: 'primary',
+  icon: '',
+  variant: 'default',
+  actionText: '',
+  closeable: false,
+});
 
 const emit = defineEmits<{
   (e: 'action'): void;

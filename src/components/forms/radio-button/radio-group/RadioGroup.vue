@@ -1,22 +1,21 @@
 <script setup lang="ts">
 const radioGroupName = ref('');
 
-withDefaults(
-  defineProps<{
-    modelValue?: string;
-    inline?: boolean;
-    hint?: string;
-    errorMessages?: string[];
-    hideDetails?: boolean;
-  }>(),
-  {
-    modelValue: '',
-    inline: false,
-    hint: '',
-    errorMessages: () => [],
-    hideDetails: false,
-  }
-);
+export interface Props {
+  modelValue?: string;
+  inline?: boolean;
+  hint?: string;
+  errorMessages?: string[];
+  hideDetails?: boolean;
+}
+
+withDefaults(defineProps<Props>(), {
+  modelValue: '',
+  inline: false,
+  hint: '',
+  errorMessages: () => [],
+  hideDetails: false,
+});
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void;
@@ -35,15 +34,15 @@ const css = useCssModule();
 <template>
   <div>
     <div :class="[css.wrapper, { [css.wrapper__inline]: inline }]">
-      <div v-for="(child, i) in children" :key="i">
-        <component
-          :is="child"
-          :model-value="modelValue"
-          hide-details
-          :name="radioGroupName"
-          @update:model-value="emit('update:modelValue', $event)"
-        />
-      </div>
+      <component
+        :is="child"
+        v-for="(child, i) in children"
+        :key="i"
+        :model-value="modelValue"
+        hide-details
+        :name="radioGroupName"
+        @update:model-value="emit('update:modelValue', $event)"
+      />
     </div>
     <div v-if="!hideDetails" class="details">
       <div v-if="errorMessages.length > 0" class="text-rui-error text-caption">
