@@ -51,6 +51,13 @@ In order to test the components, you can run:
 pnpm run test
 ```
 
+# Testing: end-to-end
+In order to test the components in use in a vue 3 project, you can run:
+
+```
+pnpm run test:e2e
+```
+
 coverage results can be generated and previewed with:
 
 ```
@@ -68,7 +75,7 @@ After you build the bundle, in the `package.json` on your main project, you can 
 }
 ```
 
-When the dependency installed on the main project, it will run the `postinstall` script to determine which dist version will be used, based on the Vue version on the main project.
+When the dependency installed on the main project, it will run the `postinstall` script.
 
 Don't forget to import the `style.css` file from `@rotki/ui-library` in the project root (e.g main.ts)
 
@@ -76,16 +83,7 @@ Don't forget to import the `style.css` file from `@rotki/ui-library` in the proj
 import '@rotki/ui-library/dist/style.css';
 ```
 
-Also, import the library plugin and use, depending on app version:
-
-Vue 2
-```typescript
-import { RuiPlugin } from "@rotki/ui-library";
-
-...
-
-Vue.use(RuiPlugin, {});
-```
+Also, import the library plugin use:
 
 Vue 3
 ```typescript
@@ -141,7 +139,16 @@ Vue.use(RuiPlugin, {
 ```
 
 ```vue
-<rui-icons name="4k-fill" />
+<script lang="ts" setup>
+import { RuiIcon } from '@rotki/ui-library';
+</script>
+
+<template>
+  <VContainer>
+    <RuiIcon name="4k-fill" />
+    <RuiIcon name="4k-line" />
+  </VContainer>
+</template>
 ```
 
 ## License
