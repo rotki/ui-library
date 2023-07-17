@@ -15,9 +15,9 @@ const baseColorsCombination = Object.fromEntries(
       baseColorsIntensities.map((intensity) => [
         intensity,
         `rgba(var(--rui-${color}-${intensity}), <alpha-value>)`,
-      ])
+      ]),
     ),
-  ])
+  ]),
 );
 
 const contextColorsCombination = Object.fromEntries(
@@ -33,9 +33,9 @@ const contextColorsCombination = Object.fromEntries(
           tint: `color-mix(in srgb, white calc(<alpha-value> * 100%), rgb(var(--rui-${theme}-${color}-main)))`,
           shade: `color-mix(in srgb, black calc(<alpha-value> * 100%), rgb(var(--rui-${theme}-${color}-main)))`,
         },
-      ])
+      ]),
     ),
-  ])
+  ]),
 );
 
 const adaptiveContextColorCombination = Object.fromEntries(
@@ -48,7 +48,7 @@ const adaptiveContextColorCombination = Object.fromEntries(
       tint: `color-mix(in srgb, white calc(<alpha-value> * 100%), rgb(var(--rui-${color}-main)))`,
       shade: `color-mix(in srgb, black calc(<alpha-value> * 100%), rgb(var(--rui-${color}-main)))`,
     },
-  ])
+  ]),
 );
 
 const safeListedColorVariants = [
@@ -113,24 +113,24 @@ module.exports = {
           {
             pattern: new RegExp(
               `(bg|text|border)-rui-(${baseColors.join(
-                '|'
-              )})(-(${baseColorsIntensities.join('|')}))?`
+                '|',
+              )})(-(${baseColorsIntensities.join('|')}))?`,
             ),
             variants: safeListedColorVariants,
           },
           {
             pattern: new RegExp(
               `(bg|text|border)-rui-(light|dark)-(${contextColors.join(
-                '|'
-              )})(-(darker|lighter|tint|shade))?`
+                '|',
+              )})(-(darker|lighter|tint|shade))?`,
             ),
             variants: safeListedColorVariants,
           },
           {
             pattern: new RegExp(
               `(bg|text|border)-rui-(${contextColors.join(
-                '|'
-              )})(-(darker|lighter|tint|shade))?`
+                '|',
+              )})(-(darker|lighter|tint|shade))?`,
             ),
             variants: safeListedColorVariants,
           },
@@ -146,8 +146,8 @@ module.exports = {
             (value) => ({
               animation: `${item} 1s calc(${value} * -1s) linear forwards paused`,
             }),
-          ])
-        )
+          ]),
+        ),
       );
       addVariant('color-mix-supported', '@supports (color-mix())');
     }),

@@ -50,7 +50,7 @@ describe('Forms/Alert', () => {
 
     await wrapper.setProps({ type: 'error' });
     expect(wrapper.find('rui-icon-stub').attributes('name')).toBe(
-      'error-warning-line'
+      'error-warning-line',
     );
 
     await wrapper.setProps({ type: 'warning' });
@@ -58,12 +58,12 @@ describe('Forms/Alert', () => {
 
     await wrapper.setProps({ type: 'info' });
     expect(wrapper.find('rui-icon-stub').attributes('name')).toBe(
-      'information-line'
+      'information-line',
     );
 
     await wrapper.setProps({ type: 'success' });
     expect(wrapper.find('rui-icon-stub').attributes('name')).toBe(
-      'checkbox-circle-line'
+      'checkbox-circle-line',
     );
 
     await wrapper.setProps({ icon: 'other-icon' });

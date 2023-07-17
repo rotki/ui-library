@@ -53,7 +53,7 @@ const createDefaultTheme = (theme: 'light' | 'dark') =>
         lighter: `var(--rui-${theme}-${color}-lighter)`,
         darker: `var(--rui-${theme}-${color}-darker)`,
       },
-    ])
+    ]),
   );
 
 export const defaultTheme: ThemeConfig = {

@@ -24,7 +24,7 @@ const path: ComputedRef<string | undefined> = computed(() => {
 
   if (!found) {
     console.error(
-      `Icons "${nameVal}" not found. Make sure that you have register the icon when installing the RuiPlugin`
+      `Icons "${nameVal}" not found. Make sure that you have register the icon when installing the RuiPlugin`,
     );
   }
   return found;

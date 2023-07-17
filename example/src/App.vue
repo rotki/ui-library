@@ -8,11 +8,11 @@ const css = useCssModule();
 </script>
 
 <template>
-  <app-nav />
+  <AppNav />
   <main :class="css.main" class="wrapper">
-    <router-view />
+    <RouterView />
   </main>
-  <app-footer />
+  <AppFooter />
 </template>
 
 <style lang="scss" module>

@@ -33,11 +33,11 @@ const props = withDefaults(defineProps<Props>(), {
   appendIcon: '',
 });
 
-const { label } = toRefs(props);
-
 const emit = defineEmits<{
   (e: 'update:modelValue', modelValue: string): void;
 }>();
+
+const { label } = toRefs(props);
 
 const input = (event: Event) => {
   const value = (event.target as HTMLInputElement).value;
@@ -60,10 +60,10 @@ const { left: innerWrapperLeft, right: innerWrapperRight } =
   useElementBounding(innerWrapper);
 
 const prependLength = computed(
-  () => `${get(innerWrapperLeft) - get(wrapperLeft)}px`
+  () => `${get(innerWrapperLeft) - get(wrapperLeft)}px`,
 );
 const appendLength = computed(
-  () => `${get(wrapperRight) - get(innerWrapperRight)}px`
+  () => `${get(wrapperRight) - get(innerWrapperRight)}px`,
 );
 
 const css = useCssModule();
@@ -91,7 +91,7 @@ const slots = useSlots();
           <slot name="prepend" />
         </div>
         <div v-else-if="prependIcon" :class="[css.icon, css.prepend]">
-          <icon :name="prependIcon" />
+          <Icon :name="prependIcon" />
         </div>
       </div>
       <div ref="innerWrapper" class="flex-grow">
@@ -115,7 +115,7 @@ const slots = useSlots();
           <slot name="append" />
         </div>
         <div v-else-if="appendIcon" :class="[css.icon, css.append]">
-          <icon :name="appendIcon" />
+          <Icon :name="appendIcon" />
         </div>
       </div>
     </div>

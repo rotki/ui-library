@@ -18,19 +18,19 @@ const css = useCssModule();
     >
       {{ index }}
     </span>
-    <icon
+    <Icon
       v-else-if="state === StepperState.done"
       :class="css.text"
       :size="20"
       name="check-line"
     />
-    <icon
+    <Icon
       v-else-if="state === StepperState.success"
       name="checkbox-circle-fill"
     />
-    <icon v-else-if="state === StepperState.error" name="error-warning-fill" />
-    <icon v-else-if="state === StepperState.warning" name="alert-fill" />
-    <icon v-else-if="state === StepperState.info" name="information-fill" />
+    <Icon v-else-if="state === StepperState.error" name="error-warning-fill" />
+    <Icon v-else-if="state === StepperState.warning" name="alert-fill" />
+    <Icon v-else-if="state === StepperState.info" name="information-fill" />
   </span>
 </template>
 

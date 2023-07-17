@@ -43,12 +43,12 @@ describe('Forms/Radio', () => {
       },
     });
     expect(wrapper.find('icon-stub').attributes('name')).toBe(
-      'checkbox-blank-circle-line'
+      'checkbox-blank-circle-line',
     );
 
     await wrapper.setProps({ modelValue: 'value' });
     expect(wrapper.find('icon-stub').attributes('name')).toBe(
-      'radio-button-line'
+      'radio-button-line',
     );
   });
 

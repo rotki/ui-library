@@ -34,7 +34,7 @@ describe('Forms/TextField', () => {
 
     await wrapper.setProps({ color: 'secondary' });
     expect(wrapper.find('div[class*=wrapper]').classes()).toMatch(
-      /_secondary_/
+      /_secondary_/,
     );
 
     await wrapper.setProps({ color: 'error' });
@@ -58,7 +58,7 @@ describe('Forms/TextField', () => {
   it('passes dense props', async () => {
     const wrapper = createWrapper();
     expect(wrapper.find('div[class*=wrapper]').classes()).not.toMatch(
-      /_dense_/
+      /_dense_/,
     );
 
     await wrapper.setProps({ dense: true });
@@ -66,7 +66,7 @@ describe('Forms/TextField', () => {
 
     await wrapper.setProps({ dense: false });
     expect(wrapper.find('div[class*=wrapper]').classes()).not.toMatch(
-      /_dense_/
+      /_dense_/,
     );
   });
 
@@ -109,7 +109,7 @@ describe('Forms/TextField', () => {
     });
 
     expect(
-      wrapper.find('div[class*=prepend] icon-stub').attributes('name')
+      wrapper.find('div[class*=prepend] icon-stub').attributes('name'),
     ).toBe(icon);
   });
 
@@ -122,7 +122,7 @@ describe('Forms/TextField', () => {
     });
 
     expect(
-      wrapper.find('div[class*=append] icon-stub').attributes('name')
+      wrapper.find('div[class*=append] icon-stub').attributes('name'),
     ).toBe(icon);
   });
 

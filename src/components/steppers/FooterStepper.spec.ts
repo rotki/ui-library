@@ -3,7 +3,7 @@ import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import FooterStepper from '@/components/steppers/FooterStepper.vue';
 
 const createWrapper = (
-  options: ComponentMountingOptions<typeof FooterStepper>
+  options: ComponentMountingOptions<typeof FooterStepper>,
 ) => mount(FooterStepper, options);
 
 describe('FooterStepper', () => {

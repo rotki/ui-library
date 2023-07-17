@@ -25,7 +25,7 @@ export const useRotkiTheme = (): ThemeContent => {
    * @type {ComputedRef<boolean>}
    */
   const isAutoControlled: ComputedRef<boolean> = computed(
-    () => get(store) === ThemeMode.auto
+    () => get(store) === ThemeMode.auto,
   );
 
   /**
@@ -33,7 +33,7 @@ export const useRotkiTheme = (): ThemeContent => {
    * @type {ComputedRef<boolean>}
    */
   const isLight: ComputedRef<boolean> = computed(
-    () => get(state) === ThemeMode.light
+    () => get(state) === ThemeMode.light,
   );
 
   /**
@@ -41,7 +41,7 @@ export const useRotkiTheme = (): ThemeContent => {
    * @type {ComputedRef<boolean>}
    */
   const isDark: ComputedRef<boolean> = computed(
-    () => get(state) === ThemeMode.dark
+    () => get(state) === ThemeMode.dark,
   );
 
   /**
@@ -108,7 +108,7 @@ export const useRotkiTheme = (): ThemeContent => {
                   --rui-${context}-main: ${contextObject.DEFAULT};
                   --rui-${context}-lighter: ${contextObject.lighter};
                   --rui-${context}-darker: ${contextObject.darker};
-                `
+                `,
                 )
                 .join('\n');
 
@@ -121,7 +121,7 @@ export const useRotkiTheme = (): ThemeContent => {
           },
         ],
       },
-      { mode: 'client' }
+      { mode: 'client' },
     );
   };
 

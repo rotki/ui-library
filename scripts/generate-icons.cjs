@@ -18,7 +18,7 @@ function resolveRemixIconDir(...dir) {
     'node_modules',
     'remixicon',
     'icons',
-    ...dir
+    ...dir,
   );
 }
 
@@ -48,7 +48,7 @@ async function collectAllIconMetas() {
       const generatedName = pascalCase(name);
       const svg = await readFile(
         resolveRemixIconDir(categoryDir, iconName),
-        'utf8'
+        'utf8',
       );
       const svgPath = getPathFromSvgString(svg);
 

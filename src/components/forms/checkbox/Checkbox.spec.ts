@@ -32,13 +32,13 @@ describe('Forms/Checkbox', () => {
   it('render icon correctly', async () => {
     const wrapper = createWrapper();
     expect(wrapper.find('icon-stub').attributes('name')).toBe(
-      'checkbox-blank-line'
+      'checkbox-blank-line',
     );
     await wrapper.setProps({ modelValue: true, indeterminate: false });
     expect(wrapper.find('icon-stub').attributes('name')).toBe('checkbox-fill');
     await wrapper.setProps({ modelValue: false, indeterminate: true });
     expect(wrapper.find('icon-stub').attributes('name')).toBe(
-      'checkbox-indeterminate-fill'
+      'checkbox-indeterminate-fill',
     );
   });
 

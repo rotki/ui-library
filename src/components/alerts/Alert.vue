@@ -55,7 +55,7 @@ const attrs = useAttrs();
   <div :class="[css.alert, css[type], css[variant]]" v-bind="attrs">
     <div class="flex space-x-3 py-1 flex-grow">
       <div v-if="usedIcon" :class="css.icon">
-        <rui-icon :name="usedIcon" size="22" />
+        <RuiIcon :name="usedIcon" size="22" />
       </div>
       <div class="space-y-1 flex-grow" :class="css.texts">
         <div class="font-medium">{{ title }}</div>
@@ -63,7 +63,7 @@ const attrs = useAttrs();
       </div>
     </div>
     <div v-if="actionText">
-      <rui-button
+      <RuiButton
         variant="text"
         size="sm"
         :color="variant === 'filled' ? undefined : type"
@@ -71,10 +71,10 @@ const attrs = useAttrs();
         @click="emit('action')"
       >
         {{ actionText }}
-      </rui-button>
+      </RuiButton>
     </div>
     <div v-if="closeable">
-      <rui-button
+      <RuiButton
         :color="variant === 'filled' ? undefined : type"
         size="sm"
         icon
@@ -82,8 +82,8 @@ const attrs = useAttrs();
         :class="css.close"
         @click="emit('close')"
       >
-        <rui-icon name="close-fill" size="20" />
-      </rui-button>
+        <RuiIcon name="close-fill" size="20" />
+      </RuiButton>
     </div>
   </div>
 </template>

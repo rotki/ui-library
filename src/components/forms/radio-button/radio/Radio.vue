@@ -24,11 +24,11 @@ const props = withDefaults(defineProps<Props>(), {
   hideDetails: false,
 });
 
-const { modelValue, size, value } = toRefs(props);
-
 const emit = defineEmits<{
   (e: 'update:modelValue', modelValue: string): void;
 }>();
+
+const { modelValue, size, value } = toRefs(props);
 
 const input = (event: Event) => {
   const checked = (event.target as HTMLInputElement).checked;
@@ -86,8 +86,8 @@ const attrs = useAttrs();
           },
         ]"
       >
-        <icon v-if="selected" name="radio-button-line" :size="iconSize" />
-        <icon v-else name="checkbox-blank-circle-line" :size="iconSize" />
+        <Icon v-if="selected" name="radio-button-line" :size="iconSize" />
+        <Icon v-else name="checkbox-blank-circle-line" :size="iconSize" />
       </div>
       <div :class="css.label" class="text-body-1">
         <slot />

@@ -35,7 +35,7 @@ describe('FooterStepper', () => {
     cy.get('@progressStepper').find('button').contains('span', 'Back');
     cy.get('@progressStepper').find('button').contains('span', 'Next');
     cy.get('@progressStepper').find(
-      'div[class*=_progress] div[class*=_determinate]'
+      'div[class*=_progress] div[class*=_determinate]',
     );
 
     cy.get('@pillStepper').contains('button span', 'Back').should('not.exist');

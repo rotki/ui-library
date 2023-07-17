@@ -46,6 +46,7 @@ const meta: Meta<PropsAndLabel> = {
 };
 
 type Story = StoryObj<PropsAndLabel>;
+
 export const Default: Story = {
   args: {
     label: 'Default',

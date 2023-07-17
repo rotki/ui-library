@@ -39,7 +39,7 @@ export const useIcons = createGlobalState(() => {
     set(registeredIcons, {
       ...get(registeredIcons),
       ...Object.fromEntries(
-        [...requiredIcons, ...iconsToAdd].map(({ name, path }) => [name, path])
+        [...requiredIcons, ...iconsToAdd].map(({ name, path }) => [name, path]),
       ),
     });
   };

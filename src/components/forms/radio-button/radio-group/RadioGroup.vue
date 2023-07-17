@@ -1,14 +1,4 @@
 <script setup lang="ts">
-const radioGroupName = ref('');
-
-export interface Props {
-  modelValue?: string;
-  inline?: boolean;
-  hint?: string;
-  errorMessages?: string[];
-  hideDetails?: boolean;
-}
-
 withDefaults(defineProps<Props>(), {
   modelValue: '',
   inline: false,
@@ -20,6 +10,16 @@ withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void;
 }>();
+
+const radioGroupName = ref('');
+
+export interface Props {
+  modelValue?: string;
+  inline?: boolean;
+  hint?: string;
+  errorMessages?: string[];
+  hideDetails?: boolean;
+}
 
 onMounted(() => {
   set(radioGroupName, generateId('radio-group'));
@@ -34,7 +34,7 @@ const css = useCssModule();
 <template>
   <div>
     <div :class="[css.wrapper, { [css.wrapper__inline]: inline }]">
-      <component
+      <Component
         :is="child"
         v-for="(child, i) in children"
         :key="i"

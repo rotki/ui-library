@@ -10,27 +10,27 @@ const slots = useSlots();
 </script>
 
 <template>
-  <rui-text-field v-bind="attrs" :type="hidden ? 'password' : 'text'">
+  <RuiTextField v-bind="attrs" :type="hidden ? 'password' : 'text'">
     <template v-if="slots.prepend" #prepend>
       <slot name="prepend" />
     </template>
     <template #append>
       <div class="flex items-center">
-        <rui-button
+        <RuiButton
           variant="text"
           icon
           class="-mr-1 !p-2"
           @click="hidden = !hidden"
         >
-          <rui-icon
+          <RuiIcon
             class="text-black/[.54] dark:text-white/[.56]"
             size="20"
             :name="hidden ? 'eye-off-line' : 'eye-line'"
           />
-        </rui-button>
+        </RuiButton>
 
         <slot name="append" />
       </div>
     </template>
-  </rui-text-field>
+  </RuiTextField>
 </template>

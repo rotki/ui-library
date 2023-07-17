@@ -13,11 +13,11 @@ describe('Progress', () => {
       },
     });
     expect(wrapper.get('div[role=progressbar]').classes()).toMatch(
-      /_progress_/
+      /_progress_/,
     );
     expect(wrapper.get('div[role=progressbar]').classes()).toMatch(/_primary_/);
     expect(wrapper.get('div[role=progressbar]').classes()).toMatch(
-      /_determinate_/
+      /_determinate_/,
     );
   });
 
@@ -30,10 +30,10 @@ describe('Progress', () => {
       },
     });
     expect(wrapper.get('div[role=progressbar]').classes()).toMatch(
-      /_secondary_/
+      /_secondary_/,
     );
     expect(wrapper.get('div[role=progressbar]').classes()).toMatch(
-      /_indeterminate_/
+      /_indeterminate_/,
     );
     await wrapper.setProps({ color: 'primary' });
     expect(wrapper.get('div[role=progressbar]').classes()).toMatch(/_primary_/);
@@ -41,7 +41,7 @@ describe('Progress', () => {
     expect(wrapper.get('div[role=progressbar]').classes()).toMatch(/_inherit_/);
     await wrapper.setProps({ circular: true });
     expect(wrapper.get('div[role=progressbar]').classes()).toMatch(
-      /_circular_/
+      /_circular_/,
     );
   });
 });

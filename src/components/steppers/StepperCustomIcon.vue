@@ -15,12 +15,12 @@ const css = useCssModule();
     <span v-if="state === StepperState.inactive" :class="css.text">
       {{ index }}
     </span>
-    <icon
+    <Icon
       v-else-if="state === StepperState.active"
       name="checkbox-blank-circle-fill"
       :size="20"
     />
-    <icon
+    <Icon
       v-else-if="state === StepperState.done"
       :class="css.text"
       :size="20"

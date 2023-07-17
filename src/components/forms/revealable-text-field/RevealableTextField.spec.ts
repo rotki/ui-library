@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import RevealableTextField from '@/components/forms/revealable-text-field/RevealableTextField.vue';
 
 const createWrapper = (
-  options?: ComponentMountingOptions<typeof RevealableTextField>
+  options?: ComponentMountingOptions<typeof RevealableTextField>,
 ) =>
   mount(RevealableTextField, { ...options, global: { stubs: ['rui-icon'] } });
 
@@ -23,7 +23,7 @@ describe('Forms/RevealableTextField', () => {
 
     expect(wrapper.find('input').attributes().type).toBe('password');
     expect(wrapper.find('rui-icon-stub').attributes().name).toBe(
-      'eye-off-line'
+      'eye-off-line',
     );
 
     await wrapper.find('button').trigger('click');
@@ -33,7 +33,7 @@ describe('Forms/RevealableTextField', () => {
     await wrapper.find('button').trigger('click');
     expect(wrapper.find('input').attributes().type).toBe('password');
     expect(wrapper.find('rui-icon-stub').attributes().name).toBe(
-      'eye-off-line'
+      'eye-off-line',
     );
   });
 });

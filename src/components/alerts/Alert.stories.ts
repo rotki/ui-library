@@ -34,6 +34,7 @@ const meta: Meta<Props> = {
 };
 
 type Story = StoryObj<Props>;
+
 export const Default: Story = {
   args: {
     title: 'Title',

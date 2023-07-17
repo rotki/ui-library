@@ -57,7 +57,7 @@ const onClick = (index: number) => {
       </div>
     </template>
     <template v-else>
-      <rui-button
+      <RuiButton
         :disabled="modelValue <= 1"
         color="primary"
         tile
@@ -65,10 +65,10 @@ const onClick = (index: number) => {
         @click="onPrev()"
       >
         <template #prepend>
-          <rui-icon :size="18" name="arrow-left-s-line" />
+          <RuiIcon :size="18" name="arrow-left-s-line" />
         </template>
         <span>Back</span>
-      </rui-button>
+      </RuiButton>
       <span v-if="variant === 'numeric'" :class="css.numeric">
         {{ modelValue }}/{{ pages }}
       </span>
@@ -80,12 +80,12 @@ const onClick = (index: number) => {
           @click="onClick(i)"
         />
       </div>
-      <rui-progress
+      <RuiProgress
         v-else-if="variant === 'progress'"
         :class="css.progress"
         :value="modelValue / pages"
       />
-      <rui-button
+      <RuiButton
         :disabled="modelValue >= pages"
         color="primary"
         tile
@@ -93,7 +93,7 @@ const onClick = (index: number) => {
         @click="onNext()"
       >
         <span>Next</span>
-      </rui-button>
+      </RuiButton>
     </template>
   </div>
 </template>

@@ -36,8 +36,8 @@ const filteredSteps = computed(() => {
 
   return get(steps).filter((step) =>
     [StepperState.inactive, StepperState.active, StepperState.done].includes(
-      step.state
-    )
+      step.state,
+    ),
   );
 });
 </script>
@@ -57,12 +57,8 @@ const filteredSteps = computed(() => {
       <hr v-if="index > 0" :class="css.divider" />
       <div :class="[css.step, css[state]]">
         <slot name="icon" v-bind="{ state, index: index + 1 }">
-          <stepper-custom-icon
-            v-if="custom"
-            :index="index + 1"
-            :state="state"
-          />
-          <stepper-icon v-else :index="index + 1" :state="state" />
+          <StepperCustomIcon v-if="custom" :index="index + 1" :state="state" />
+          <StepperIcon v-else :index="index + 1" :state="state" />
         </slot>
         <div v-if="title || description" :class="css.label">
           <span

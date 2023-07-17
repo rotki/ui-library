@@ -30,7 +30,7 @@ const css = useCssModule();
 const { variant, value, bufferValue } = toRefs(props);
 
 const currentValue = computed(
-  () => Math.max(0, Math.min(get(value) ?? 1, 1)) * 100
+  () => Math.max(0, Math.min(get(value) ?? 1, 1)) * 100,
 );
 
 const label = computed(() => `${Math.floor(get(currentValue))}%`);
@@ -40,7 +40,7 @@ const progress = computed(() => -100 + get(currentValue));
 const valuePercent = computed(() => `${get(progress)}%`);
 
 const bufferPercent = computed(
-  () => `${-100 + Math.max(0, Math.min(get(bufferValue) ?? 1, 1)) * 100}%`
+  () => `${-100 + Math.max(0, Math.min(get(bufferValue) ?? 1, 1)) * 100}%`,
 );
 </script>
 

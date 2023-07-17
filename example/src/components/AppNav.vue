@@ -26,7 +26,7 @@ const themes: Theme[] = [
 ];
 
 const selectedTheme = computed<Theme | null>(
-  () => themes.find((theme) => theme.value === get(state)) ?? null
+  () => themes.find((theme) => theme.value === get(state)) ?? null,
 );
 
 const defaultTheme = themes.find((theme) => theme.value === get(state));
@@ -37,17 +37,17 @@ const onSwitchTheme = ({ value }: Theme) => switchThemeScheme(value);
 <template>
   <header :class="css.header">
     <div :class="css['header-wrapper']" class="wrapper">
-      <router-link
+      <RouterLink
         :to="{ name: 'home' }"
         aria-label="Home page"
         class="flex items-center space-x-3"
       >
         <img alt="rotki" class="h-8" src="../assets/logo.png" />
-      </router-link>
+      </RouterLink>
       <div
         class="relative flex basis-0 justify-end gap-6 sm:gap-8 md:flex-grow"
       >
-        <listbox
+        <Listbox
           :default-value="defaultTheme"
           :value="selectedTheme"
           as="div"
@@ -55,21 +55,21 @@ const onSwitchTheme = ({ value }: Theme) => switchThemeScheme(value);
           class="relative"
           @update:model-value="onSwitchTheme($event)"
         >
-          <listbox-label class="sr-only">Theme</listbox-label>
-          <listbox-button :aria-label="selectedTheme?.name" :class="css.toggle">
-            <rui-icon
+          <ListboxLabel class="sr-only">Theme</ListboxLabel>
+          <ListboxButton :aria-label="selectedTheme?.name" :class="css.toggle">
+            <RuiIcon
               :class="[css['toggle-icon'], css.light]"
               :size="32"
               name="sun-line"
             />
-            <rui-icon
+            <RuiIcon
               :class="[css['toggle-icon'], css.dark]"
               :size="32"
               name="moon-line"
             />
-          </listbox-button>
-          <listbox-options :class="css.options">
-            <listbox-option
+          </ListboxButton>
+          <ListboxOptions :class="css.options">
+            <ListboxOption
               v-for="theme in themes"
               :key="theme.value"
               #default="{ active, selected }"
@@ -91,14 +91,14 @@ const onSwitchTheme = ({ value }: Theme) => switchThemeScheme(value);
                     ]"
                     class="h-4 w-4"
                   >
-                    <rui-icon :name="theme.icon" :size="16" />
+                    <RuiIcon :name="theme.icon" :size="16" />
                   </span>
                 </div>
                 <div class="ml-3">{{ theme.name }}</div>
               </div>
-            </listbox-option>
-          </listbox-options>
-        </listbox>
+            </ListboxOption>
+          </ListboxOptions>
+        </Listbox>
       </div>
     </div>
   </header>

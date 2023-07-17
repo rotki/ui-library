@@ -103,9 +103,9 @@ import { RuiButton } from '@rotki/ui-library';
 </script>
 
 <template>
-  <v-container>
-    <rui-button outlined>This is button</rui-button>
-  </v-container>
+  <VContainer>
+    <RuiButton outlined>This is button</RuiButton>
+  </VContainer>
 </template>
 ```
 

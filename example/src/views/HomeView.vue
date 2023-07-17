@@ -1075,7 +1075,7 @@ const radioGroups = ref([
   <div :class="css.section">
     <h2 class="text-h4 mb-6" data-cy="buttons">Buttons</h2>
     <div class="grid gap-4 grid-rows-2 grid-cols-6 justify-items-start">
-      <rui-button
+      <RuiButton
         v-for="(button, i) in buttons"
         :key="i"
         :class="{ 'w-full': !button.icon && button.variant !== 'fab' }"
@@ -1083,30 +1083,30 @@ const radioGroups = ref([
         @click="button.clicks++"
       >
         <template v-if="button.prepend" #prepend>
-          <rui-icon :name="button.prepend" />
+          <RuiIcon :name="button.prepend" />
         </template>
         <span v-if="!button.icon" class="capitalize">
           {{ button.color }} {{ button.clicks }}
         </span>
-        <rui-icon v-else :name="button.iconName" />
+        <RuiIcon v-else :name="button.iconName" />
         <template v-if="button.append" #append>
-          <rui-icon :name="button.append" />
+          <RuiIcon :name="button.append" />
         </template>
-      </rui-button>
+      </RuiButton>
     </div>
   </div>
 
   <div :class="css.section">
     <h2 class="text-h4 mb-6" data-cy="icons">Icons</h2>
     <div class="grid gap-4 grid-rows-2 grid-cols-6">
-      <rui-icon v-for="(icon, i) in icons" :key="i" v-bind="icon" />
+      <RuiIcon v-for="(icon, i) in icons" :key="i" v-bind="icon" />
     </div>
   </div>
 
   <div :class="css.section">
     <h2 class="text-h4 mb-6" data-cy="checkboxes">Checkboxes</h2>
     <div class="grid gap-1 grid-rows-2 grid-cols-6">
-      <rui-checkbox
+      <RuiCheckbox
         v-for="(checkbox, i) in checkboxes"
         :key="i"
         v-bind="checkbox"
@@ -1114,13 +1114,13 @@ const radioGroups = ref([
         v-model:indeterminate="checkbox.indeterminate"
       >
         <span class="capitalize"> {{ checkbox.color }} </span>
-      </rui-checkbox>
+      </RuiCheckbox>
     </div>
   </div>
 
   <div :class="css.section">
     <h2 class="text-h4 mb-6" data-cy="steppers">Steppers</h2>
-    <rui-stepper
+    <RuiStepper
       v-for="(stepper, i) in steppers"
       :key="i"
       v-bind="stepper"
@@ -1131,7 +1131,7 @@ const radioGroups = ref([
   <div :class="css.section">
     <h2 class="text-h4 mb-6" data-cy="text-fields">Text Fields</h2>
     <div class="grid gap-4 grid-rows-2 grid-cols-3">
-      <rui-text-field
+      <RuiTextField
         v-for="(field, i) in textFields"
         :key="i"
         v-model="field.value"
@@ -1141,12 +1141,12 @@ const radioGroups = ref([
       >
         <template v-if="field.prepend" #prepend>{{ field.prepend }}</template>
         <template v-if="field.append" #append>{{ field.append }}</template>
-      </rui-text-field>
+      </RuiTextField>
     </div>
   </div>
   <div :class="css.section">
     <h2 class="text-h4 mb-6" data-cy="footer-steppers">Footer Steppers</h2>
-    <rui-footer-stepper
+    <RuiFooterStepper
       v-for="(stepper, i) in footerSteppers"
       :key="i"
       v-model="stepper.value"
@@ -1158,7 +1158,7 @@ const radioGroups = ref([
   <div :class="css.section">
     <h2 class="text-h4 mb-6" data-cy="progress">Progress</h2>
     <div class="grid gap-4 grid-cols-3">
-      <rui-progress
+      <RuiProgress
         v-for="(item, i) in progress"
         :key="i"
         class="mb-6"
@@ -1170,7 +1170,7 @@ const radioGroups = ref([
   <div :class="css.section">
     <h2 class="text-h4 mb-6" data-cy="text-fields">Revealable Text Fields</h2>
     <div class="grid gap-4 grid-rows-2 grid-cols-3">
-      <rui-revealable-text-field
+      <RuiRevealableTextField
         v-for="(field, i) in revealableTextFields"
         :key="i"
         v-model="field.value"
@@ -1184,7 +1184,7 @@ const radioGroups = ref([
   <div :class="css.section">
     <h2 class="text-h4 mb-6" data-cy="alerts">Alerts</h2>
     <div class="grid gap-4 grid-rows-2 grid-cols-3">
-      <rui-alert
+      <RuiAlert
         v-for="(alert, i) in alerts"
         :key="i"
         v-bind="alert"
@@ -1202,22 +1202,22 @@ const radioGroups = ref([
   <div :class="css.section">
     <h2 class="text-h4 mb-6" data-cy="radio-buttons">Radio Buttons</h2>
     <div class="grid gap-8">
-      <rui-radio-group
+      <RuiRadioGroup
         v-for="(radioGroup, i) in radioGroups"
         :key="i"
         v-model="radioGroup.value"
         inline
         :hint="`Selected value: ${radioGroup.value}`"
       >
-        <rui-radio
+        <RuiRadio
           v-for="(radio, j) in radioGroup.options"
           :key="j"
           v-bind="radio"
           :value="radio.color"
         >
           <span class="capitalize"> {{ radio.color }} </span>
-        </rui-radio>
-      </rui-radio-group>
+        </RuiRadio>
+      </RuiRadioGroup>
     </div>
   </div>
 </template>

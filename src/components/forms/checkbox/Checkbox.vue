@@ -25,12 +25,12 @@ const props = withDefaults(defineProps<Props>(), {
   hideDetails: false,
 });
 
-const { size } = toRefs(props);
-
 const emit = defineEmits<{
   (e: 'update:modelValue', modelValue: boolean): void;
   (e: 'update:indeterminate', indeterminate: boolean): void;
 }>();
+
+const { size } = toRefs(props);
 
 const input = (event: Event) => {
   const checked = (event.target as HTMLInputElement).checked;
@@ -86,13 +86,13 @@ const attrs = useAttrs();
           },
         ]"
       >
-        <icon
+        <Icon
           v-if="indeterminate"
           name="checkbox-indeterminate-fill"
           :size="iconSize"
         />
-        <icon v-else-if="modelValue" name="checkbox-fill" :size="iconSize" />
-        <icon v-else name="checkbox-blank-line" :size="iconSize" />
+        <Icon v-else-if="modelValue" name="checkbox-fill" :size="iconSize" />
+        <Icon v-else name="checkbox-blank-line" :size="iconSize" />
       </div>
       <div :class="css.label" class="text-body-1">
         <slot />
