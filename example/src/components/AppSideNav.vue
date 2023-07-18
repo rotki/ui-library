@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { useCssModule } from 'vue';
-import { type RouteLocationNamedRaw, useRoute } from 'vue-router';
+import { useRoute } from 'vue-router';
+import { type SideNavLink } from '@/types';
 
 defineProps<{
   navigation: Array<{
     title: string;
-    links: Array<{ to: RouteLocationNamedRaw; title: string }>;
+    links: SideNavLink[];
   }>;
 }>();
 

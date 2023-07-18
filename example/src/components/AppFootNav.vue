@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import { computed, toRefs, useCssModule } from 'vue';
-import { type RouteLocationNamedRaw, useRoute } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { get } from '@vueuse/shared';
+import { type SideNavLink } from '@/types';
 
 const props = defineProps<{
   navigation: Array<{
     title: string;
-    links: Array<{ to: RouteLocationNamedRaw; title: string }>;
+    links: SideNavLink[];
   }>;
 }>();
 
@@ -20,7 +21,10 @@ const links = computed(() =>
 const currentPage = computed(() =>
   get(links).find((link) => link.to.name === route.name),
 );
-const currentPageIndex = computed(() => get(links).indexOf(get(currentPage)));
+const currentPageIndex = computed(() => {
+  const current = get(currentPage);
+  return current ? get(links).indexOf(current) : -1;
+});
 
 const hasPrev = computed(() => get(currentPageIndex) > 0);
 const hasNext = computed(() => get(currentPageIndex) < get(links).length);
