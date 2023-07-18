@@ -1,6 +1,6 @@
 describe('Alerts', () => {
   beforeEach(() => {
-    cy.visit('/');
+    cy.visit('/alerts');
   });
 
   it('checks for alerts and alert text', () => {

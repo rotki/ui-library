@@ -2,7 +2,7 @@
 
 describe('Progress', () => {
   beforeEach(() => {
-    cy.visit('/');
+    cy.visit('/progress');
   });
 
   it('checks for progress and the variants', () => {

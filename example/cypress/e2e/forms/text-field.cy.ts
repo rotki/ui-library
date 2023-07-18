@@ -1,6 +1,6 @@
 describe('Forms/TextField', () => {
   beforeEach(() => {
-    cy.visit('/');
+    cy.visit('/text-fields');
   });
 
   it('checks for text-fields and', () => {

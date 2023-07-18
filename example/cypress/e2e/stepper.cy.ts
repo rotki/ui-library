@@ -2,7 +2,7 @@
 
 describe('Stepper', () => {
   beforeEach(() => {
-    cy.visit('/');
+    cy.visit('/steppers');
   });
 
   it('checks for steppers and stepper text', () => {
