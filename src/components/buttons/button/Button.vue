@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { type ContextColorsType } from '@/consts/colors';
+import { default as RuiProgress } from '@/components/progress/Progress.vue';
 
 export interface Props {
   disabled?: boolean;
@@ -23,7 +24,7 @@ const props = withDefaults(defineProps<Props>(), {
   size: undefined,
 });
 
-const { disabled, elevation, variant } = toRefs(props);
+const { disabled, elevation, variant, size } = toRefs(props);
 
 const attrs = useAttrs();
 const css = useCssModule();
@@ -44,6 +45,17 @@ const usedElevation: ComputedRef<number | string> = computed(() => {
 
   return 0;
 });
+
+const spinnerSize: ComputedRef<number> = computed(() => {
+  const sizeVal = get(size);
+  if (sizeVal === 'lg') {
+    return 26;
+  }
+  if (sizeVal === 'sm') {
+    return 18;
+  }
+  return 22;
+});
 </script>
 
 <template>
@@ -61,12 +73,19 @@ const usedElevation: ComputedRef<number | string> = computed(() => {
         [css.icon]: icon,
       },
     ]"
-    :disabled="disabled || loading"
+    :disabled="disabled"
     v-bind="attrs"
   >
     <slot name="prepend" />
     <span :class="css.label"> <slot /> </span>
     <slot name="append" />
+    <RuiProgress
+      v-if="loading"
+      circular
+      :class="css.spinner"
+      variant="indeterminate"
+      :size="spinnerSize"
+    />
   </button>
 </template>
 
@@ -100,7 +119,7 @@ const usedElevation: ComputedRef<number | string> = computed(() => {
 }
 
 .btn {
-  @apply text-sm leading-[1.5rem] font-medium outline outline-1 outline-transparent outline-offset-[-1px] flex items-center justify-center space-x-2;
+  @apply text-sm leading-[1.5rem] font-medium outline outline-1 outline-transparent outline-offset-[-1px] flex items-center justify-center space-x-2 relative;
   @apply px-4 py-1.5 rounded transition-all;
   @apply bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-black;
   @apply disabled:bg-black/[.12] disabled:text-black/[.26] #{!important};
@@ -187,6 +206,18 @@ const usedElevation: ComputedRef<number | string> = computed(() => {
     &.sm {
       @apply px-2 py-2;
     }
+  }
+
+  &.loading {
+    @apply space-x-0;
+
+    > *:not(.spinner) {
+      @apply opacity-0 invisible;
+    }
+  }
+
+  .spinner {
+    @apply absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2;
   }
 }
 </style>

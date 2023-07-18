@@ -26,6 +26,20 @@ describe('Button/Button', () => {
     expect(wrapper.find('button').attributes('disabled')).toBeUndefined();
   });
 
+  it('passes loading props', async () => {
+    const wrapper = createWrapper();
+    expect(wrapper.find('button').classes()).not.toMatch(/_loading_/);
+    expect(wrapper.find('div[class*=spinner]').exists()).toBeFalsy();
+
+    await wrapper.setProps({ loading: true });
+    expect(wrapper.find('button').classes()).toMatch(/_loading_/);
+    expect(wrapper.find('div[class*=spinner]').exists()).toBeTruthy();
+
+    await wrapper.setProps({ loading: false });
+    expect(wrapper.find('button').classes()).not.toMatch(/_loading_/);
+    expect(wrapper.find('div[class*=spinner]').exists()).toBeFalsy();
+  });
+
   it('passes color props', async () => {
     const wrapper = createWrapper({
       props: {

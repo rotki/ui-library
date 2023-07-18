@@ -248,9 +248,9 @@
     --rui-light-primary-main: 126, 74, 59;
     --rui-light-primary-darker: 99, 58, 46;
     --rui-light-primary-lighter: 176, 107, 87;
-    --rui-light-secondary-main: 156, 146, 180;
-    --rui-light-secondary-darker: 120, 112, 140;
-    --rui-light-secondary-lighter: 186, 174, 214;
+    --rui-light-secondary-main: var(--rui-blue-300);
+    --rui-light-secondary-darker: var(--rui-blue-800);
+    --rui-light-secondary-lighter: var(--rui-blue-400);
     --rui-light-error-main: 211, 47, 47;
     --rui-light-error-darker: var(--rui-red-800);
     --rui-light-error-lighter: var(--rui-red-400);

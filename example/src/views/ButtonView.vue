@@ -135,6 +135,13 @@ const buttons = ref([
   { clicks: 0, color: 'info', disabled: true, rounded: true },
   { clicks: 0, color: 'success', disabled: true, rounded: true },
 
+  { clicks: 0, color: 'primary', loading: true, rounded: true },
+  { clicks: 0, color: 'secondary', loading: true, rounded: true },
+  { clicks: 0, color: 'error', loading: true, rounded: true },
+  { clicks: 0, color: 'warning', loading: true, rounded: true },
+  { clicks: 0, color: 'info', loading: true, rounded: true },
+  { clicks: 0, color: 'success', loading: true, rounded: true },
+
   { clicks: 0, color: 'primary', variant: 'fab' },
   { clicks: 0, color: 'secondary', variant: 'fab' },
   { clicks: 0, color: 'error', variant: 'fab' },

@@ -1,4 +1,5 @@
 import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
+import { contextColors } from '@/consts/colors';
 import { default as Progress, type Props } from './Progress.vue';
 
 const render: StoryFn<Props> = (args) => ({
@@ -6,7 +7,8 @@ const render: StoryFn<Props> = (args) => ({
   setup() {
     return { args };
   },
-  template: '<Progress v-bind="args" />',
+  template:
+    '<div class="text-black dark:text-white"><Progress v-bind="args" /></div>',
 });
 
 const meta: Meta<Props> = {
@@ -23,8 +25,8 @@ const meta: Meta<Props> = {
     },
     color: {
       control: 'select',
-      options: ['primary', 'secondary', 'inherit'],
-      selected: 'primary',
+      options: ['inherit', ...contextColors],
+      selected: 'inherit',
     },
     variant: {
       control: 'select',
@@ -32,6 +34,12 @@ const meta: Meta<Props> = {
     },
     circular: { control: 'boolean' },
     showLabel: { control: 'boolean' },
+    thickness: { control: 'number' },
+    size: { control: 'number' },
+  },
+  args: {
+    thickness: 4,
+    size: 32,
   },
   parameters: {
     docs: {
@@ -42,10 +50,20 @@ const meta: Meta<Props> = {
 
 type Story = StoryObj<Props>;
 
+export const Default: Story = {
+  args: {
+    value: 50,
+    bufferValue: 60,
+    variant: 'determinate',
+    circular: false,
+    showLabel: false,
+  },
+};
+
 export const Primary: Story = {
   args: {
-    value: 0.5,
-    bufferValue: 0.6,
+    value: 50,
+    bufferValue: 60,
     variant: 'determinate',
     color: 'primary',
     circular: false,
@@ -53,61 +71,62 @@ export const Primary: Story = {
   },
 };
 
-export const PrimaryWithLabel: Story = {
+export const WithLabel: Story = {
   args: {
-    value: 0.5,
+    value: 50,
     showLabel: true,
   },
 };
 
 export const Secondary: Story = {
   args: {
-    value: 0.5,
+    value: 50,
     color: 'secondary',
   },
 };
 
-export const Inherit: Story = {
+export const Indeterminate: Story = {
   args: {
-    value: 0.5,
-    color: 'inherit',
-  },
-};
-
-export const PrimaryIndeterminate: Story = {
-  args: {
-    value: 0.5,
+    value: 50,
     variant: 'indeterminate',
   },
 };
 
-export const PrimaryBuffer: Story = {
+export const Buffer: Story = {
   args: {
-    value: 0.5,
-    bufferValue: 0.7,
+    value: 50,
+    bufferValue: 70,
     variant: 'buffer',
   },
 };
 
 export const BufferWithLabel: Story = {
   args: {
-    value: 0.5,
-    bufferValue: 0.7,
+    value: 50,
+    bufferValue: 70,
     variant: 'buffer',
     showLabel: true,
   },
 };
 
-export const PrimaryCircular: Story = {
+export const Circular: Story = {
   args: {
-    value: 0.5,
+    value: 50,
     circular: true,
+  },
+};
+
+export const CircularPrimary: Story = {
+  args: {
+    value: 50,
+    circular: true,
+    color: 'primary',
   },
 };
 
 export const CircularIndeterminate: Story = {
   args: {
-    value: 0.5,
+    value: 50,
     variant: 'indeterminate',
     circular: true,
   },
@@ -115,7 +134,7 @@ export const CircularIndeterminate: Story = {
 
 export const CircularWithLabel: Story = {
   args: {
-    value: 1,
+    value: 100,
     variant: 'determinate',
     circular: true,
     showLabel: true,
