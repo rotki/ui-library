@@ -1,6 +1,6 @@
 describe('Forms/Checkbox', () => {
   beforeEach(() => {
-    cy.visit('/');
+    cy.visit('/checkboxes');
   });
 
   it('checks for checkboxes', () => {

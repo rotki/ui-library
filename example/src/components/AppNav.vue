@@ -38,7 +38,7 @@ const onSwitchTheme = ({ value }: Theme) => switchThemeScheme(value);
   <header :class="css.header">
     <div :class="css['header-wrapper']" class="wrapper">
       <RouterLink
-        :to="{ name: 'home' }"
+        :to="{ name: 'buttons' }"
         aria-label="Home page"
         class="flex items-center space-x-3"
       >

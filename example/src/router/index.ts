@@ -1,13 +1,60 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '@/views/HomeView.vue';
+import ButtonView from '@/views/ButtonView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  scrollBehavior: (to, from, savedPosition) => {
+    if (savedPosition) {
+      return new Promise((resolve) => {
+        savedPosition.behavior = 'smooth';
+        setTimeout(() => resolve(savedPosition), 100);
+      });
+    }
+
+    return new Promise((resolve) => {
+      setTimeout(() => resolve({ left: 0, top: 0, behavior: 'smooth' }), 100);
+    });
+  },
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView,
+      name: 'buttons',
+      component: ButtonView,
+    },
+    {
+      path: '/icons',
+      name: 'icons',
+      component: () => import('@/views/IconView.vue'),
+    },
+    {
+      path: '/checkboxes',
+      name: 'checkboxes',
+      component: () => import('@/views/CheckboxView.vue'),
+    },
+    {
+      path: '/radios',
+      name: 'radios',
+      component: () => import('@/views/RadioView.vue'),
+    },
+    {
+      path: '/text-fields',
+      name: 'text-fields',
+      component: () => import('@/views/TextFieldView.vue'),
+    },
+    {
+      path: '/steppers',
+      name: 'steppers',
+      component: () => import('@/views/StepperView.vue'),
+    },
+    {
+      path: '/progress',
+      name: 'progress',
+      component: () => import('@/views/ProgressView.vue'),
+    },
+    {
+      path: '/alerts',
+      name: 'alerts',
+      component: () => import('@/views/AlertView.vue'),
     },
   ],
 });
