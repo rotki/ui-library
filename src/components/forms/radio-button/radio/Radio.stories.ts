@@ -36,7 +36,7 @@ const meta: Meta<PropsAndLabel> = {
     hideDetails: { control: 'boolean' },
     disabled: { control: 'boolean', table: { category: 'State' } },
     color: { control: 'select', options: contextColors },
-    size: { control: 'select', options: ['default', 'sm', 'lg'] },
+    size: { control: 'select', options: ['medium', 'sm', 'lg'] },
   },
   parameters: {
     docs: {

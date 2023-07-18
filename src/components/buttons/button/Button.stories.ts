@@ -10,15 +10,18 @@ const render: StoryFn<PropsAndLabel> = (args) => ({
     const clicks = ref(0);
     return { clicks, args };
   },
-  template: `<Button v-bind="args" @click="clicks++">
-    <template #prepend></template>
-    {{ args.label }}
-    <template #append></template>
-  </Button><div class='mt-4'>Clicked: {{ clicks }} times</div>`,
+  template: `
+    <Button v-bind="args" @click="clicks++">
+      <template #prepend></template>
+      {{ args.label }}
+      <template #append></template>
+    </Button>
+    <div class='mt-4'>Clicked: {{ clicks }} times</div>
+  `,
 });
 
 const meta: Meta<PropsAndLabel> = {
-  title: 'Components/Button',
+  title: 'Components/Button/Button',
   component: Button,
   tags: ['autodocs'],
   render,
@@ -33,8 +36,7 @@ const meta: Meta<PropsAndLabel> = {
     rounded: { control: 'boolean', table: { category: 'Shape' } },
     elevation: { control: 'number', table: { category: 'Shape' } },
     icon: { control: 'boolean', table: { category: 'Shape' } },
-    sm: { control: 'boolean', table: { category: 'Size' } },
-    lg: { control: 'boolean', table: { category: 'Size' } },
+    size: { control: 'select', options: ['medium', 'sm', 'lg'] },
     disabled: { control: 'boolean', table: { category: 'State' } },
     loading: { control: 'boolean', table: { category: 'State' } },
   },
@@ -50,7 +52,6 @@ type Story = StoryObj<PropsAndLabel>;
 export const Default: Story = {
   args: {
     label: 'Default',
-    variant: 'outlined',
   },
 };
 

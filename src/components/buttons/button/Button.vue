@@ -10,8 +10,6 @@ export interface Props {
   variant?: 'default' | 'outlined' | 'text' | 'fab';
   icon?: boolean;
   size?: 'sm' | 'lg';
-  sm?: boolean;
-  lg?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -77,8 +75,18 @@ const usedElevation: ComputedRef<number | string> = computed(() => {
 
 :global(.dark) {
   .btn {
-    @apply bg-rui-grey-300 hover:bg-rui-grey-100 active:bg-rui-grey-50;
+    @apply bg-rui-grey-300 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-black;
     @apply disabled:bg-white/[.12] disabled:active:bg-white/[.12] disabled:text-white/[.30] #{!important};
+
+    @each $color in c.$context-colors {
+      &.#{$color} {
+        @apply text-black;
+
+        @if $color == error {
+          @apply text-white;
+        }
+      }
+    }
 
     &.outlined,
     &.text {

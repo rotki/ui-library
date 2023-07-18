@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RuiButton, RuiIcon } from '@rotki/ui-library';
+import { RuiButton, RuiButtonGroup, RuiIcon } from '@rotki/ui-library';
 import { ref } from 'vue';
 
 const buttons = ref([
@@ -271,12 +271,96 @@ const buttons = ref([
     iconName: 'add-fill',
   },
 ]);
+
+const buttonGroups = ref([
+  { count: 0, color: 'primary' },
+  { count: 0, color: 'secondary' },
+  { count: 0, color: 'error' },
+  { count: 0, color: 'warning' },
+  { count: 0, color: 'info' },
+  { count: 0, color: 'success' },
+
+  { count: 0, color: 'primary', vertical: true },
+  { count: 0, color: 'secondary', vertical: true },
+  { count: 0, color: 'error', vertical: true },
+  { count: 0, color: 'warning', vertical: true },
+  { count: 0, color: 'info', vertical: true },
+  { count: 0, color: 'success', vertical: true },
+
+  { count: 0, color: 'primary', variant: 'outlined' },
+  { count: 0, color: 'secondary', variant: 'outlined' },
+  { count: 0, color: 'error', variant: 'outlined' },
+  { count: 0, color: 'warning', variant: 'outlined' },
+  { count: 0, color: 'info', variant: 'outlined' },
+  { count: 0, color: 'success', variant: 'outlined' },
+
+  { count: 0, color: 'primary', variant: 'text' },
+  { count: 0, color: 'secondary', variant: 'text' },
+  { count: 0, color: 'error', variant: 'text' },
+  { count: 0, color: 'warning', variant: 'text' },
+  { count: 0, color: 'info', variant: 'text' },
+  { count: 0, color: 'success', variant: 'text' },
+
+  {
+    count: 0,
+    color: 'primary',
+    variant: 'outlined',
+    size: 'lg',
+  },
+  {
+    count: 0,
+    color: 'secondary',
+    variant: 'outlined',
+    size: 'lg',
+  },
+  { count: 0, color: 'error', variant: 'outlined', rounded: true, size: 'lg' },
+  {
+    count: 0,
+    color: 'warning',
+    variant: 'outlined',
+    size: 'lg',
+  },
+  { count: 0, color: 'info', variant: 'outlined', rounded: true, size: 'lg' },
+  {
+    count: 0,
+    color: 'success',
+    variant: 'outlined',
+    size: 'lg',
+  },
+
+  {
+    count: 0,
+    color: 'primary',
+    variant: 'outlined',
+    size: 'sm',
+  },
+  {
+    count: 0,
+    color: 'secondary',
+    variant: 'outlined',
+    size: 'sm',
+  },
+  { count: 0, color: 'error', variant: 'outlined', rounded: true, size: 'sm' },
+  {
+    count: 0,
+    color: 'warning',
+    variant: 'outlined',
+    size: 'sm',
+  },
+  { count: 0, color: 'info', variant: 'outlined', size: 'sm' },
+  {
+    count: 0,
+    color: 'success',
+    variant: 'outlined',
+    size: 'sm',
+  },
+]);
 </script>
 
 <template>
   <div>
     <h2 class="text-h4 mb-6" data-cy="buttons">Buttons</h2>
-    <div class="grid gap-4 grid-rows-2 grid-cols-6 justify-items-start">
+    <div class="grid gap-4 grid-rows-2 grid-cols-6 justify-items-start mb-14">
       <RuiButton
         v-for="(button, i) in buttons"
         :key="i"
@@ -295,6 +379,19 @@ const buttons = ref([
           <RuiIcon :name="button.append" />
         </template>
       </RuiButton>
+    </div>
+    <h2 class="text-h4 mb-6" data-cy="button-groups">Button Groups</h2>
+    <div class="grid gap-4 grid-rows-2 grid-cols-2 justify-items-start">
+      <div v-for="(buttonGroup, i) in buttonGroups" :key="i">
+        <RuiButtonGroup v-bind="buttonGroup">
+          <RuiButton @click="buttonGroup.count--">Decrease</RuiButton>
+          <RuiButton @click="buttonGroup.count++">Increase</RuiButton>
+          <RuiButton @click="buttonGroup.count++">
+            <RuiIcon name="add-fill" />
+          </RuiButton>
+        </RuiButtonGroup>
+        <div class="mt-2">Counts: {{ buttonGroup.count }}</div>
+      </div>
     </div>
   </div>
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type ContextColorsType } from '@/consts/colors';
-import { default as RuiButton } from '@/components/buttons/Button.vue';
+import { default as RuiButton } from '@/components/buttons/button/Button.vue';
 import { default as RuiIcon } from '@/components/icons/Icon.vue';
 
 export interface Props {

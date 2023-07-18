@@ -1,7 +1,8 @@
 import { type App } from 'vue';
 import { createHead } from '@vueuse/head';
 import { default as RuiAlert } from '@/components/alerts/Alert.vue';
-import { default as RuiButton } from '@/components/buttons/Button.vue';
+import { default as RuiButton } from '@/components/buttons/button/Button.vue';
+import { default as RuiButtonGroup } from '@/components/buttons/button-group/ButtonGroup.vue';
 import { default as RuiIcon } from '@/components/icons/Icon.vue';
 import { default as RuiCheckbox } from '@/components/forms/checkbox/Checkbox.vue';
 import { default as RuiStepper } from '@/components/steppers/Stepper.vue';
@@ -11,6 +12,7 @@ import { default as RuiProgress } from '@/components/progress/Progress.vue';
 import { default as RuiRadioGroup } from '@/components/forms/radio-button/radio-group/RadioGroup.vue';
 import { default as RuiRadio } from '@/components/forms/radio-button/radio/Radio.vue';
 import { default as RuiRevealableTextField } from '@/components/forms/revealable-text-field/RevealableTextField.vue';
+import { default as RuiLogo } from '@/components/logos/Logo.vue';
 import { useRotkiTheme } from '@/composables/theme';
 import { StepperState } from '@/types/stepper';
 import type { InitThemeOptions } from '@/types/theme';
@@ -29,15 +31,17 @@ export {
 export {
   RuiAlert,
   RuiButton,
-  RuiIcon,
+  RuiButtonGroup,
   RuiCheckbox,
+  RuiFooterStepper,
+  RuiIcon,
+  RuiLogo,
+  RuiProgress,
+  RuiRadio,
+  RuiRadioGroup,
+  RuiRevealableTextField,
   RuiStepper,
   RuiTextField,
-  RuiRadioGroup,
-  RuiRadio,
-  RuiFooterStepper,
-  RuiProgress,
-  RuiRevealableTextField,
   useRotkiTheme,
 };
 
