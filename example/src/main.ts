@@ -5,7 +5,12 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import {
   RiAddFill,
+  RiAlertLine,
   RiArrowRightLine,
+  RiCheckboxCircleLine,
+  RiCloseFill,
+  RiErrorWarningLine,
+  RiInformationLine,
   RiMacbookLine,
   RiMoonLine,
   RiSunLine,
@@ -19,7 +24,18 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 app.use(RuiPlugin, {
-  icons: [RiMoonLine, RiSunLine, RiMacbookLine, RiArrowRightLine, RiAddFill],
+  icons: [
+    RiMoonLine,
+    RiSunLine,
+    RiMacbookLine,
+    RiArrowRightLine,
+    RiAddFill,
+    RiAlertLine,
+    RiCheckboxCircleLine,
+    RiCloseFill,
+    RiInformationLine,
+    RiErrorWarningLine,
+  ],
 });
 
 app.mount('#app');
