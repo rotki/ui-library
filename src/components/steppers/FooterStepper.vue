@@ -83,7 +83,7 @@ const onClick = (index: number) => {
       <RuiProgress
         v-else-if="variant === 'progress'"
         :class="css.progress"
-        :value="modelValue / pages"
+        :value="(modelValue / pages) * 100"
       />
       <RuiButton
         :disabled="modelValue >= pages"

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines,import/max-dependencies */
 import { type App } from 'vue';
 import { createHead } from '@vueuse/head';
 import { default as RuiAlert } from '@/components/alerts/Alert.vue';
@@ -17,6 +18,14 @@ import { useRotkiTheme } from '@/composables/theme';
 import { StepperState } from '@/types/stepper';
 import type { InitThemeOptions } from '@/types/theme';
 import '@/style.scss';
+
+import '@fontsource/roboto';
+import '@fontsource/roboto/100.css';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import '@fontsource/roboto/900.css';
 
 export * from '@/all-icons';
 
