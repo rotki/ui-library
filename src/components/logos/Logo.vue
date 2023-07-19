@@ -9,8 +9,8 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <div class="space-x-4 flex items-center">
-    <img class="h-full" src="/images/logo.svg" alt="Rotki" />
+  <div class="h-12 space-x-4 flex items-center">
+    <img class="h-full" src="./logo.svg" alt="Rotki" />
     <div v-if="text" class="text-h4 text-rui-light-primary">rotki</div>
   </div>
 </template>
