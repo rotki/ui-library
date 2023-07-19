@@ -12,7 +12,7 @@ export default mergeConfig(
       reporters: ['default', 'html', 'json'],
       outputFile: 'tests/html/index.html',
       coverage: {
-        provider: 'c8',
+        provider: 'v8',
         reportsDirectory: 'tests/coverage',
         reporter: ['html', 'json'],
         include: ['src/*'],
