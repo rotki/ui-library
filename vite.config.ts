@@ -37,7 +37,7 @@ export default defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
-      external: ['vue'],
+      external: ['vue', '@fontsource/roboto'],
       output: {
         globals: {
           vue: 'vue',

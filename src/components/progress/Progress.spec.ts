@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import Progress from '@/components/progress/Progress.vue';
 
-const createWrapper = (options: ComponentMountingOptions<typeof Progress>) =>
+const createWrapper = (options?: ComponentMountingOptions<typeof Progress>) =>
   mount(Progress, options);
 
 describe('Progress', () => {

@@ -20,6 +20,9 @@ importers:
       '@commitlint/config-conventional':
         specifier: 17.6.7
         version: 17.6.7
+      '@fontsource/roboto':
+        specifier: 5.0.5
+        version: 5.0.5
       '@rotki/eslint-config':
         specifier: 1.1.0
         version: 1.1.0(eslint@8.45.0)(vue@3.3.4)
@@ -159,10 +162,10 @@ importers:
   example:
     dependencies:
       '@headlessui/vue':
-        specifier: ^1.7.14
+        specifier: 1.7.14
         version: 1.7.14(vue@3.3.4)
       '@rotki/ui-library':
-        specifier: ../
+        specifier: workspace:*
         version: link:..
       pinia:
         specifier: 2.1.4
@@ -2394,6 +2397,10 @@ packages:
 
   /@fal-works/esbuild-plugin-global-externals@2.1.2:
     resolution: {integrity: sha512-cEee/Z+I12mZcFJshKcCqC8tuX5hG3s+d+9nZ3LabqKF1vKdF41B92pJVCBggjAGORAeOzyyDDKrZwIkLffeOQ==}
+    dev: true
+
+  /@fontsource/roboto@5.0.5:
+    resolution: {integrity: sha512-IMXFq5AMgGx0sgNLfwWsmPuy3qa7lmDmQcXXihqwF4mT2UpD725cbxZj93ERY793OWon+6V1ANax02I3nt9+4w==}
     dev: true
 
   /@hapi/hoek@9.3.0:
