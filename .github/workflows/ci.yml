@@ -34,21 +34,6 @@ jobs:
           cache: pnpm
           node-version-file: .nvmrc
 
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
       - name: Install dependencies 👨🏻‍💻
         run: pnpm install --frozen-lockfile
 
@@ -106,8 +91,20 @@ jobs:
       - name: Test
         run: pnpm run coverage
 
+      - name: Install cypress binary
+        working-directory: example
+        run: pnpm exec cypress install
+
       - name: Run cypress tests
-        run: pnpm --filter {example} build && pnpm run test:e2e
+        uses: cypress-io/github-action@v5
+        with:
+          install: false
+          working-directory: example
+          build: pnpm run build:app
+          command: pnpm exec cypress run --e2e
+          start: pnpm run preview --host
+          browser: chrome
+          wait-on: http://127.0.0.1:4173
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v3
