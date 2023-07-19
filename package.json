@@ -1,7 +1,7 @@
 {
   "name": "@rotki/ui-library",
-  "version": "1.0.0",
-  "packageManager": "pnpm@8.6.0",
+  "version": "0.0.1",
+  "packageManager": "pnpm@8.6.9",
   "description": "A vue design system and component library for rotki",
   "keywords": [
     "vue",
@@ -10,7 +10,18 @@
     "rotki"
   ],
   "license": "AGPL-3.0",
+  "homepage": "https://github.com/rotki/ui-library#readme",
+  "bugs": {
+    "url": "https://github.com/rotki/ui-library/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rotki/ui-library.git"
+  },
   "author": "Rotki Solutions GmbH <info@rotki.com>",
+  "files": [
+    "/dist"
+  ],
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
   "scripts": {

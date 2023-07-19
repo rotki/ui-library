@@ -15,8 +15,46 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 18.x
+          node-version-file: .nvmrc
 
       - run: npx changelogithub
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+  publish:
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies 👨🏻‍💻
+        run: pnpm install --frozen-lockfile
+
+      - name: Build 👨🏻‍💻
+        run: pnpm run build:prod
+
+      - name: publish to npm
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
+          echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
+          echo "always-auth=true" >> ~/.npmrc
+          npm whoami
+
+          pnpm -r publish --access=public --no-git-checks
+          rm ~/.npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true

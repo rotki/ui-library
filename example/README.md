@@ -24,7 +24,7 @@ See [Vite Configuration Reference](https://vitejs.dev/config/).
 ## Project Setup
 
 ```sh
-pnpm install
+pnpm install --frozen-lockfile
 ```
 
 ### Compile and Hot-Reload for Development

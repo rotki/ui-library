@@ -7,7 +7,7 @@ A vue component library and design system for rotki
 To install the dependencies you need to run on the root of the repository
 
 ```
-pnpm install
+pnpm install --frozen-lockfile
 ```
 
 ### Compiles and minifies for production
