@@ -3,11 +3,13 @@ import { contextColors } from '@/consts/colors';
 import { type GeneratedIcon } from '@/types/icons';
 import type { ComputedRef, Ref } from 'vue';
 
-export const enum ThemeMode {
-  auto = 'auto',
-  light = 'light',
-  dark = 'dark',
-}
+export const ThemeMode = {
+  auto: 'auto',
+  light: 'light',
+  dark: 'dark',
+} as const;
+
+export type ThemeMode = (typeof ThemeMode)[keyof typeof ThemeMode];
 
 export interface ColorIntensity {
   DEFAULT: string;

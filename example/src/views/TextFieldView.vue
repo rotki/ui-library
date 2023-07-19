@@ -1,8 +1,11 @@
 <script lang="ts" setup>
 import { RuiRevealableTextField, RuiTextField } from '@rotki/ui-library';
 import { ref } from 'vue';
+import { type DataType, type Slots } from '@/types';
 
-const textFields = ref([
+type TextFieldData = DataType<typeof RuiTextField, string> & Slots;
+
+const textFields = ref<TextFieldData[]>([
   { value: '', color: 'primary' },
   { value: '', color: 'secondary' },
   { value: '', color: 'error' },

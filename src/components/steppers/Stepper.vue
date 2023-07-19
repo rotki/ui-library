@@ -34,11 +34,12 @@ const filteredSteps = computed(() => {
     return get(steps);
   }
 
-  return get(steps).filter((step) =>
-    [StepperState.inactive, StepperState.active, StepperState.done].includes(
-      step.state,
-    ),
-  );
+  const expectedStates: StepperState[] = [
+    StepperState.inactive,
+    StepperState.active,
+    StepperState.done,
+  ];
+  return get(steps).filter((step) => expectedStates.includes(step.state));
 });
 </script>
 

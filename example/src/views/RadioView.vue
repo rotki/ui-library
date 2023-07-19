@@ -1,8 +1,14 @@
 <script lang="ts" setup>
 import { RuiRadio, RuiRadioGroup } from '@rotki/ui-library';
 import { ref } from 'vue';
+import { type DataType } from '@/types';
 
-const radios = ref([
+type RadioData = DataType<typeof RuiRadio, string> & {
+  modelValue?: string;
+  label?: string;
+};
+
+const radios = ref<RadioData[]>([
   {
     value: 'primary',
     modelValue: 'primary',
@@ -174,7 +180,16 @@ const radios = ref([
   },
 ]);
 
-const radioGroups = ref([
+const radioGroups = ref<
+  {
+    value: string;
+    options: {
+      color: RadioData['color'];
+      size?: RadioData['size'];
+      disabled?: boolean;
+    }[];
+  }[]
+>([
   {
     value: 'primary',
     options: [

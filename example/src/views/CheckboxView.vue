@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { RuiCheckbox } from '@rotki/ui-library';
 import { ref } from 'vue';
+import { type DataType } from '@/types';
 
-const checkboxes = ref([
+const checkboxes = ref<DataType<typeof RuiCheckbox, boolean>[]>([
   { value: false, color: 'primary' },
   { value: false, color: 'secondary' },
   { value: false, color: 'error' },

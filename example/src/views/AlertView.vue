@@ -1,8 +1,14 @@
 <script lang="ts" setup>
 import { RuiAlert } from '@rotki/ui-library';
 import { ref } from 'vue';
+import { type DataType } from '@/types';
 
-const alerts = ref([
+type AlertData = Omit<
+  DataType<typeof RuiAlert> & { clicks?: number; closed?: boolean },
+  'title' | 'description'
+>;
+
+const alerts = ref<AlertData[]>([
   { type: 'primary', icon: 'information-line' },
   { type: 'secondary', icon: 'information-line' },
   { type: 'error' },
@@ -90,7 +96,7 @@ const alerts = ref([
       <RuiAlert
         v-for="(alert, i) in alerts"
         :key="i"
-        :action-text="alert.clicks !== undefined && 'Action'"
+        :action-text="alert.clicks !== undefined ? 'Action' : ''"
         :title="`${alert.type} ${
           alert.clicks !== undefined ? `(${alert.clicks})` : ''
         } ${alert.closed ? '(Closed)' : ''}`"

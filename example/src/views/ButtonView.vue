@@ -1,8 +1,18 @@
 <script lang="ts" setup>
 import { RuiButton, RuiButtonGroup, RuiIcon } from '@rotki/ui-library';
 import { ref } from 'vue';
+import { type DataType, type ExtractComponentProps } from '@/types';
 
-const buttons = ref([
+type ExtraProperties = {
+  clicks: number;
+  prepend?: string;
+  append?: string;
+  iconName?: string;
+};
+
+type ButtonData = ExtractComponentProps<typeof RuiButton> & ExtraProperties;
+
+const buttons = ref<ButtonData[]>([
   { clicks: 0, color: 'primary' },
   { clicks: 0, color: 'secondary' },
   { clicks: 0, color: 'error' },
@@ -279,7 +289,12 @@ const buttons = ref([
   },
 ]);
 
-const buttonGroups = ref([
+type ButtonGroupData = DataType<typeof RuiButtonGroup> & {
+  count: number;
+  rounded?: boolean;
+};
+
+const buttonGroups = ref<ButtonGroupData[]>([
   { count: 0, color: 'primary' },
   { count: 0, color: 'secondary' },
   { count: 0, color: 'error' },
