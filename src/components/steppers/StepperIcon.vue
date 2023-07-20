@@ -39,7 +39,7 @@ const css = useCssModule();
   @apply inline-flex items-center justify-center rounded-full h-6 w-6;
 
   .text {
-    @apply text-white;
+    @apply text-rui-dark-text;
   }
 
   &.inactive {
@@ -56,14 +56,14 @@ const css = useCssModule();
   .indicator {
     &.inactive {
       .text {
-        @apply text-black/70;
+        @apply text-rui-light-text-secondary;
       }
     }
 
     &.active,
     &.done {
       .text {
-        @apply text-black/[.87];
+        @apply text-rui-light-text;
       }
     }
   }

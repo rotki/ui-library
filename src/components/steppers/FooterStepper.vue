@@ -103,7 +103,7 @@ const onClick = (index: number) => {
   @apply flex items-center justify-between transition-all duration-150;
 
   .numeric {
-    @apply text-black/[0.87];
+    @apply text-rui-text;
   }
 
   .bullets,
@@ -147,10 +147,6 @@ const onClick = (index: number) => {
 
 :global(.dark) {
   .footer-stepper {
-    .numeric {
-      @apply text-white;
-    }
-
     .bullets,
     .pills {
       .bullet,

@@ -94,22 +94,22 @@ const spinnerSize: ComputedRef<number> = computed(() => {
 
 :global(.dark) {
   .btn {
-    @apply bg-rui-grey-300 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-black;
-    @apply disabled:bg-white/[.12] disabled:active:bg-white/[.12] disabled:text-white/[.30] #{!important};
+    @apply bg-rui-grey-300 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-light-text;
+    @apply disabled:bg-white/[.12] #{!important};
 
     @each $color in c.$context-colors {
       &.#{$color} {
-        @apply text-black;
+        @apply text-rui-text;
 
-        @if $color == error {
-          @apply text-white;
+        @if ($color == info) or ($color == success) {
+          @apply text-rui-light-text;
         }
       }
     }
 
     &.outlined,
     &.text {
-      @apply active:bg-white/10 hover:bg-white/[.04] text-white;
+      @apply active:bg-white/10 hover:bg-white/[.04] text-rui-text;
     }
 
     &.outlined {
@@ -121,8 +121,8 @@ const spinnerSize: ComputedRef<number> = computed(() => {
 .btn {
   @apply text-sm leading-[1.5rem] font-medium outline outline-1 outline-transparent outline-offset-[-1px] flex items-center justify-center space-x-2 relative;
   @apply px-4 py-1.5 rounded transition-all;
-  @apply bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-black;
-  @apply disabled:bg-black/[.12] disabled:text-black/[.26] #{!important};
+  @apply bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-text;
+  @apply disabled:bg-black/[.12] disabled:text-rui-text-disabled disabled:active:text-rui-text-disabled #{!important};
 
   .label {
     @apply inline-block;
@@ -142,7 +142,7 @@ const spinnerSize: ComputedRef<number> = computed(() => {
 
   @each $color in c.$context-colors {
     &.#{$color} {
-      @apply bg-rui-#{$color} hover:bg-rui-#{$color}-darker active:bg-rui-#{$color}-darker/90 text-white;
+      @apply bg-rui-#{$color} hover:bg-rui-#{$color}-darker active:bg-rui-#{$color}-darker/90 text-rui-dark-text;
 
       &.outlined,
       &.text {
@@ -157,7 +157,7 @@ const spinnerSize: ComputedRef<number> = computed(() => {
 
   &.outlined,
   &.text {
-    @apply bg-transparent hover:bg-black/[.04] active:bg-black/10 text-black;
+    @apply bg-transparent hover:bg-black/[.04] active:bg-black/10 text-rui-text-secondary;
     @apply disabled:bg-transparent disabled:active:bg-transparent #{!important};
   }
 

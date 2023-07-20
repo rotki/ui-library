@@ -64,14 +64,14 @@ const filteredSteps = computed(() => {
         <div v-if="title || description" :class="css.label">
           <span
             v-if="title"
-            :class="{ [titleClass]: custom }"
+            :class="[css.title, { [titleClass]: custom }]"
             class="text-subtitle-2"
           >
             {{ title }}
           </span>
           <span
             v-if="description"
-            :class="{ [subtitleClass]: custom }"
+            :class="[css.subtitle, { [subtitleClass]: custom }]"
             class="text-caption"
             >{{ description }}</span
           >
@@ -122,12 +122,24 @@ $colors: 'error', 'warning', 'info', 'success';
     }
 
     &.inactive {
-      @apply text-black/40;
+      @apply text-rui-text-disabled;
+
+      .title {
+        @apply text-rui-text-secondary;
+      }
+
+      .subtitle {
+        @apply text-rui-text;
+      }
     }
 
     &.active,
     &.done {
-      @apply text-black/[.87];
+      @apply text-rui-text;
+
+      .subtitle {
+        @apply text-rui-text-secondary;
+      }
     }
 
     @each $color in $colors {
@@ -159,31 +171,7 @@ $colors: 'error', 'warning', 'info', 'success';
       }
 
       &.inactive {
-        @apply text-black/[0.87];
-      }
-    }
-  }
-}
-
-:global(.dark) {
-  .stepper {
-    .step {
-      &.inactive {
-        @apply text-white/50;
-      }
-
-      &.inactive,
-      &.active,
-      &.done {
-        @apply text-white;
-      }
-    }
-
-    &.custom {
-      .step {
-        &.inactive {
-          @apply text-white;
-        }
+        @apply text-rui-text;
       }
     }
   }
