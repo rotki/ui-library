@@ -2,6 +2,7 @@
 import { type App } from 'vue';
 import { createHead } from '@unhead/vue';
 import { default as RuiAlert } from '@/components/alerts/Alert.vue';
+import { default as RuiAutoComplete } from '@/components/forms/auto-complete/AutoComplete.vue';
 import { default as RuiButton } from '@/components/buttons/button/Button.vue';
 import { default as RuiButtonGroup } from '@/components/buttons/button-group/ButtonGroup.vue';
 import { default as RuiIcon } from '@/components/icons/Icon.vue';
@@ -40,6 +41,7 @@ export {
 
 export {
   RuiAlert,
+  RuiAutoComplete,
   RuiButton,
   RuiButtonGroup,
   RuiCheckbox,
