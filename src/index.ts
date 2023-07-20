@@ -1,6 +1,6 @@
 /* eslint-disable max-lines,import/max-dependencies */
 import { type App } from 'vue';
-import { createHead } from '@vueuse/head';
+import { createHead } from '@unhead/vue';
 import { default as RuiAlert } from '@/components/alerts/Alert.vue';
 import { default as RuiButton } from '@/components/buttons/button/Button.vue';
 import { default as RuiButtonGroup } from '@/components/buttons/button-group/ButtonGroup.vue';

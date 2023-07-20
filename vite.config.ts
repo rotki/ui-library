@@ -2,7 +2,7 @@ import { resolve } from 'node:path';
 import vue from '@vitejs/plugin-vue';
 import { defineConfig } from 'vitest/config';
 import AutoImport from 'unplugin-auto-import/vite';
-import { unheadVueComposablesImports } from '@vueuse/head';
+import { unheadVueComposablesImports } from '@unhead/vue';
 
 export default defineConfig({
   resolve: {

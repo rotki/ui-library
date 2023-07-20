@@ -1,6 +1,5 @@
 import { type ComputedRef, type Ref, computed, ref } from 'vue';
-import { get, set, useColorMode } from '@vueuse/core';
-import { useHead } from '@vueuse/head';
+import { useColorMode } from '@vueuse/core';
 import {
   type ColorIntensity,
   type InitThemeOptions,
@@ -87,7 +86,7 @@ export const useRotkiTheme = (): ThemeContent => {
 
   /**
    * theme initializer, must be called once from the app's entry
-   * after initializing @vueuse/head
+   * after initializing @unhead/vue
    * @param {InitThemeOptions} options
    */
   const init = (options: InitThemeOptions) => {
