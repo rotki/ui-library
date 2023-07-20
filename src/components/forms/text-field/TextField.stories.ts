@@ -42,13 +42,13 @@ const meta: Meta<Props> = {
     disabled: { control: 'boolean', table: { category: 'State' } },
     color: {
       control: 'select',
-      options: contextColors,
+      options: ['grey', ...contextColors],
       table: { category: 'State' },
     },
   },
   parameters: {
     docs: {
-      controls: { exclude: ['default'] },
+      controls: { exclude: ['default', 'as'] },
     },
   },
 };
