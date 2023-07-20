@@ -17,6 +17,7 @@ const navigation = ref([
       { to: { name: 'text-fields' }, title: 'Text Fields' },
       { to: { name: 'steppers' }, title: 'Steppers' },
       { to: { name: 'progress' }, title: 'Progress' },
+      { to: { name: 'chips' }, title: 'Chips' },
       { to: { name: 'alerts' }, title: 'Alerts' },
     ],
   },

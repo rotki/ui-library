@@ -52,6 +52,11 @@ const router = createRouter({
       component: () => import('@/views/ProgressView.vue'),
     },
     {
+      path: '/chips',
+      name: 'chips',
+      component: () => import('@/views/ChipView.vue'),
+    },
+    {
       path: '/alerts',
       name: 'alerts',
       component: () => import('@/views/AlertView.vue'),

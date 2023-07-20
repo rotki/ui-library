@@ -6,6 +6,7 @@ import { default as RuiButton } from '@/components/buttons/button/Button.vue';
 import { default as RuiButtonGroup } from '@/components/buttons/button-group/ButtonGroup.vue';
 import { default as RuiIcon } from '@/components/icons/Icon.vue';
 import { default as RuiCheckbox } from '@/components/forms/checkbox/Checkbox.vue';
+import { default as RuiChip } from '@/components/chips/Chip.vue';
 import { default as RuiStepper } from '@/components/steppers/Stepper.vue';
 import { default as RuiTextField } from '@/components/forms/text-field/TextField.vue';
 import { default as RuiFooterStepper } from '@/components/steppers/FooterStepper.vue';
@@ -42,6 +43,7 @@ export {
   RuiButton,
   RuiButtonGroup,
   RuiCheckbox,
+  RuiChip,
   RuiFooterStepper,
   RuiIcon,
   RuiLogo,
