@@ -24,6 +24,19 @@
   ],
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    "./*": {
+      "default": "./"
+    },
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.es.js"
+    },
+    "./theme": {
+      "types": "./dist/theme.d.ts",
+      "default": "./dist/theme.es.js"
+    }
+  },
   "scripts": {
     "postinstall": "node scripts/postinstall.cjs",
     "build:prod": "node scripts/dist-build.cjs",

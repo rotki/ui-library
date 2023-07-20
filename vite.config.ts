@@ -31,13 +31,15 @@ export default defineConfig({
   build: {
     outDir: './dist',
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
-      name: 'rotki-ui-library',
-      fileName: (format) => `index.${format}.js`,
+      entry: {
+        index: resolve(__dirname, 'src/index.ts'),
+        theme: resolve(__dirname, 'src/theme/index.ts'),
+      },
+      fileName: (format, entryName) => `${entryName}.${format}.js`,
       formats: ['es'],
     },
     rollupOptions: {
-      external: ['vue', '@fontsource/roboto'],
+      external: ['vue', '@fontsource/roboto', 'tailwindcss/plugin'],
       output: {
         globals: {
           vue: 'vue',

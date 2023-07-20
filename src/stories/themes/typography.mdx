@@ -1,4 +1,4 @@
-import listClasses from './typography-classes-list';
+import typographyClasses from '@/consts/typography';
 import { Meta } from '@storybook/blocks';
 
 <Meta title="Themes/Typography" />
@@ -11,7 +11,7 @@ import { Meta } from '@storybook/blocks';
       <th>Class Name</th>
       <th>Example</th>
     </tr>
-    {listClasses.map(({ name, className}) => (
+    {typographyClasses.map(({ name, className}) => (
       <tr key={name}>
         <td className="font-bold"><code>{className}</code></td>
         <td className="sb-unstyled"><div className={className}>{name}</div></td>
