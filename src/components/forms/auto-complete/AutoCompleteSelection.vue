@@ -36,7 +36,6 @@ const innerWrapper = ref<HTMLDivElement>();
 const more = ref<HTMLDivElement>();
 const minInputWidth = ref(120);
 const maxChipsToRender = ref(0);
-const showMoreText = ref(true);
 
 const multiple = computed(() => Array.isArray(get(data)));
 
@@ -74,7 +73,6 @@ const setMaxChips = async () => {
   // if available space cannot contain more indicator, just show only the count
   if (get(maxInnerWidth) < maxMore) {
     set(maxChipsToRender, 0);
-    set(showMoreText, false);
     set(minInputWidth, get(wrapperWidth) - maxMore);
     return;
   }
@@ -132,9 +130,7 @@ watch([data, wrapperWidth], () => {
         >
           <Chip
             :class="css.chip"
-            :label="`+${data.length - maxChipsToRender}${
-              showMoreText ? ' more' : ''
-            }`"
+            :label="`+${data.length - maxChipsToRender}`"
             :size="dense ? 'sm' : 'md'"
             color="info"
           />
