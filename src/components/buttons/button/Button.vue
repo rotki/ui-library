@@ -67,13 +67,12 @@ const spinnerSize: ComputedRef<number> = computed(() => {
       css[variant],
       `shadow-${usedElevation}`,
       {
-        [css.disabled]: disabled,
         [css.loading]: loading,
         [css._rounded]: rounded,
         [css.icon]: icon,
       },
     ]"
-    :disabled="disabled"
+    :disabled="disabled || loading"
     v-bind="attrs"
   >
     <slot name="prepend" />

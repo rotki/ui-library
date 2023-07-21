@@ -12,6 +12,7 @@ export interface Props {
   color?: 'grey' | ContextColorsType;
   dense?: boolean;
   hint?: string;
+  as?: string | object;
   errorMessages?: string[];
   hideDetails?: boolean;
   prependIcon?: string;
@@ -27,6 +28,7 @@ const props = withDefaults(defineProps<Props>(), {
   color: 'grey',
   dense: false,
   hint: '',
+  as: 'input',
   errorMessages: () => [],
   hideDetails: false,
   prependIcon: '',
@@ -35,6 +37,9 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   (e: 'update:modelValue', modelValue: string): void;
+  (e: 'focus-input', event: Event): void;
+  (e: 'blur', event: Event): void;
+  (e: 'remove', value: unknown): void;
 }>();
 
 const { label } = toRefs(props);
@@ -56,8 +61,11 @@ const wrapper = ref<HTMLDivElement>();
 const innerWrapper = ref<HTMLDivElement>();
 
 const { left: wrapperLeft, right: wrapperRight } = useElementBounding(wrapper);
-const { left: innerWrapperLeft, right: innerWrapperRight } =
-  useElementBounding(innerWrapper);
+const {
+  left: innerWrapperLeft,
+  right: innerWrapperRight,
+  width,
+} = useElementBounding(innerWrapper);
 
 const prependLength = computed(
   () => `${get(innerWrapperLeft) - get(wrapperLeft)}px`,
@@ -86,7 +94,7 @@ const slots = useSlots();
         },
       ]"
     >
-      <div class="flex items-center">
+      <div class="flex items-center shrink-0">
         <div v-if="slots.prepend" :class="css.prepend">
           <slot name="prepend" />
         </div>
@@ -94,14 +102,25 @@ const slots = useSlots();
           <Icon :name="prependIcon" />
         </div>
       </div>
-      <div ref="innerWrapper" class="flex-grow">
-        <input
+      <div
+        ref="innerWrapper"
+        class="flex flex-1 overflow-hidden"
+        tabindex="0"
+        @click="emit('focus-input', $event)"
+      >
+        <Component
+          :is="as"
           :value="modelValue"
           :placeholder="placeholder || ' '"
           :class="css.input"
           :disabled="disabled"
+          :dense="dense"
+          :variant="variant"
+          :wrapper-width="width"
           v-bind="objectOmit(attrs, ['class'])"
           @input="input($event)"
+          @blur="emit('blur', $event)"
+          @remove="emit('remove', $event)"
         />
         <label :class="css.label">
           {{ label }}
@@ -110,7 +129,7 @@ const slots = useSlots();
           <legend />
         </fieldset>
       </div>
-      <div class="flex items-center">
+      <div class="flex items-center shrink-0">
         <div v-if="slots.append" :class="css.append">
           <slot name="append" />
         </div>
@@ -192,6 +211,7 @@ const slots = useSlots();
     }
 
     &:not(:placeholder-shown),
+    &[data-has-value='true'],
     &:focus {
       + .label {
         @apply text-xs leading-tight;
@@ -323,6 +343,7 @@ const slots = useSlots();
       }
 
       &:not(:placeholder-shown),
+      &[data-has-value='true'],
       &:focus {
         + .label {
           @apply leading-[2.5];
@@ -347,6 +368,7 @@ const slots = useSlots();
       }
 
       &:not(:placeholder-shown),
+      &[data-has-value='true'],
       &:focus {
         + .label {
           @apply leading-[2.25];
@@ -378,6 +400,7 @@ const slots = useSlots();
       }
 
       &:not(:placeholder-shown),
+      &[data-has-value='true'],
       &:focus {
         @apply border-t-transparent;
 

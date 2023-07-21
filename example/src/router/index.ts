@@ -42,6 +42,11 @@ const router = createRouter({
       component: () => import('@/views/TextFieldView.vue'),
     },
     {
+      path: '/auto-complete',
+      name: 'auto-complete',
+      component: () => import('@/views/AutoCompleteView.vue'),
+    },
+    {
       path: '/steppers',
       name: 'steppers',
       component: () => import('@/views/StepperView.vue'),
@@ -50,6 +55,11 @@ const router = createRouter({
       path: '/progress',
       name: 'progress',
       component: () => import('@/views/ProgressView.vue'),
+    },
+    {
+      path: '/chips',
+      name: 'chips',
+      component: () => import('@/views/ChipView.vue'),
     },
     {
       path: '/alerts',

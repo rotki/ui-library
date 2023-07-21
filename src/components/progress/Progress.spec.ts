@@ -46,7 +46,7 @@ describe('Progress', () => {
   });
 
   it('passes color props', async () => {
-    const wrapper = createWrapper();
+    const wrapper = createWrapper({});
     expect(wrapper.find('div[role=progressbar]').classes()).toMatch(
       /_inherit_/,
     );

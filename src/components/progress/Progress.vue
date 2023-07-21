@@ -119,7 +119,9 @@ $colors: 'primary', 'secondary';
     }
 
     .circular ~ .label {
-      @apply absolute flex w-full h-full items-center justify-center text-[0.625rem] ml-0;
+      @apply absolute flex items-center justify-center text-[0.625rem] ml-0;
+      width: calc(v-bind(size) * 1px);
+      height: calc(v-bind(size) * 1px);
     }
   }
 
