@@ -59,7 +59,8 @@
     "coverage": "vitest run --coverage",
     "coverage:preview": "npx vite preview --open --outDir tests/coverage",
     "typecheck": "vue-tsc --noEmit",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "release": "bumpp -r --no-push"
   },
   "peerDependencies": {
     "@fontsource/roboto": ">=5.0.5",
@@ -94,6 +95,7 @@
     "argparse": "2.0.1",
     "autoprefixer": "10.4.14",
     "babel-loader": "8.3.0",
+    "bumpp": "9.1.1",
     "css-loader": "6.8.1",
     "eslint": "8.45.0",
     "fast-xml-parser": "4.2.6",
