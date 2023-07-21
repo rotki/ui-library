@@ -4,7 +4,7 @@ import { default as RuiButton } from '@/components/buttons/button/Button.vue';
 import { default as RuiIcon } from '@/components/icons/Icon.vue';
 
 export interface Props {
-  title: string;
+  title?: string;
   description?: string;
   type?: ContextColorsType;
   icon?: string;
@@ -14,6 +14,7 @@ export interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  title: '',
   description: '',
   type: 'primary',
   icon: '',
@@ -58,7 +59,7 @@ const attrs = useAttrs();
         <RuiIcon :name="usedIcon" size="22" />
       </div>
       <div class="space-y-1 flex-grow" :class="css.texts">
-        <div class="font-medium">{{ title }}</div>
+        <div v-if="title" class="font-medium">{{ title }}</div>
         <div class="text-body-2">{{ description }}</div>
       </div>
     </div>
