@@ -80,16 +80,20 @@ const themePlugin = plugin(
         '@apply text-sm': {},
       },
       '.text-subtitle-1': {
-        '@apply text-base leading-7': {},
+        '@apply text-base': {},
+        'line-height': '1.75rem',
       },
       '.text-subtitle-2': {
-        '@apply text-sm leading-5 font-medium': {},
+        '@apply text-sm font-medium': {},
+        'line-height': '1.25rem',
       },
       '.text-caption': {
-        '@apply text-xs leading-5': {},
+        '@apply text-xs': {},
+        'line-height': '1.25rem',
       },
       '.text-overline': {
-        '@apply text-xs leading-8 uppercase': {},
+        '@apply text-xs uppercase': {},
+        'line-height': '2rem',
       },
       '.text-h1': {
         '@apply text-8xl font-light': {},
@@ -108,10 +112,12 @@ const themePlugin = plugin(
         'line-height': '2.625rem',
       },
       '.text-h5': {
-        '@apply text-2xl leading-8': {},
+        '@apply text-2xl': {},
+        'line-height': '2rem',
       },
       '.text-h6': {
-        '@apply text-xl leading-8': {},
+        '@apply text-xl': {},
+        'line-height': '2rem',
       },
     });
 
