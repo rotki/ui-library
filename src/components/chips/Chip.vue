@@ -88,6 +88,10 @@ const slots = useSlots();
     }
   }
 
+  &.md {
+    @apply min-h-[2.26rem];
+  }
+
   &.sm {
     @apply py-[0.19rem];
 

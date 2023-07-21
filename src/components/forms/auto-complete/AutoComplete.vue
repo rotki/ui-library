@@ -309,6 +309,10 @@ watch(multiple, (newVal) => {
     &__selected {
       @apply bg-gray-100/50;
 
+      &.option__disabled {
+        @apply hover:bg-gray-100/50;
+      }
+
       &_icon {
         @apply absolute inset-y-0 right-0 flex items-center pr-3 text-rui-primary;
       }
