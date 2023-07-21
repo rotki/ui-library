@@ -151,6 +151,19 @@ import { RuiIcon } from '@rotki/ui-library';
 </template>
 ```
 
+# Use @rotki/ui-library theme
+You can extend @rotki/ui-library tailwind theme configuration by adding these to your tailwind config. It will provide you the classes for the colors, typography, and shadow.
+
+```javascript
+// tailwind.config.js
+
+module.exports = {
+    // ... your tailwind configs,
+    plugins: [require('@rotki/ui-library/theme')]
+}
+```
+
+
 ## License
 
 [AGPL-3.0](./LICENSE) License &copy; 2023- [Rotki Solutions GmbH](https://github.com/rotki)

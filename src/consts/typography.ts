@@ -1,4 +1,4 @@
-const listClasses = [
+const typographyClasses = [
   { name: 'Body 1', className: 'text-body-1' },
   { name: 'Body 2', className: 'text-body-2' },
   { name: 'Subtitle 1', className: 'text-subtitle-1' },
@@ -13,4 +13,4 @@ const listClasses = [
   { name: 'H6', className: 'text-h6' },
 ];
 
-export default listClasses;
+export default typographyClasses;
