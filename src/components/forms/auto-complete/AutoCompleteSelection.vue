@@ -132,7 +132,7 @@ watch([data, wrapperWidth], () => {
             :class="css.chip"
             :label="`+${data.length - maxChipsToRender}`"
             :size="dense ? 'sm' : 'md'"
-            color="info"
+            color="secondary"
           />
         </div>
       </div>
