@@ -101,7 +101,7 @@ export const useRotkiTheme = (): ThemeContent => {
           {
             key: 'rui-root',
             textContent: () => {
-              const variables = Object.entries(get(theme))
+              const contextVariables = Object.entries(get(theme))
                 .map(
                   ([context, contextObject]: [string, ColorIntensity]) => `
                   --rui-${context}-main: ${contextObject.DEFAULT};
@@ -111,9 +111,18 @@ export const useRotkiTheme = (): ThemeContent => {
                 )
                 .join('\n');
 
+              const stateVal = get(state) || ThemeMode.light;
+
+              const textColorsVariables = `
+                --rui-text-primary: var(--rui-${stateVal}-text-primary);
+                --rui-text-secondary: var(--rui-${stateVal}-text-secondary);
+                --rui-text-disabled: var(--rui-${stateVal}-text-disabled);
+              `;
+
               return `
                 :root {
-                  ${variables}
+                  ${contextVariables}
+                  ${textColorsVariables}
                 }
               `;
             },

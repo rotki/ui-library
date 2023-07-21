@@ -284,6 +284,12 @@
     --rui-shadow-primary: rgba(0, 0, 0, 0.2);
     --rui-shadow-secondary: rgba(0, 0, 0, 0.14);
     --rui-shadow-tertiary: rgba(0, 0, 0, 0.12);
+    --rui-light-text-primary: rgba(0, 0, 0, 0.87);
+    --rui-light-text-secondary: rgba(0, 0, 0, 0.6);
+    --rui-light-text-disabled: rgba(0, 0, 0, 0.38);
+    --rui-dark-text-primary: rgb(255, 255, 255);
+    --rui-dark-text-secondary: rgba(255, 255, 255, 0.7);
+    --rui-dark-text-disabled: rgba(255, 255, 255, 0.5);
 }
 
 $context-colors: 'primary', 'secondary', 'error', 'warning', 'info', 'success';

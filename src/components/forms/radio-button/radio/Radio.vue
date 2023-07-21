@@ -97,10 +97,7 @@ const attrs = useAttrs();
       <div v-if="errorMessages.length > 0" class="text-rui-error text-caption">
         {{ errorMessages[0] }}
       </div>
-      <div
-        v-else-if="hint"
-        class="text-black/[0.6] dark:text-white text-caption"
-      >
+      <div v-else-if="hint" class="text-rui-text-secondary text-caption">
         {{ hint }}
       </div>
       <div v-else class="h-5" />
@@ -116,7 +113,7 @@ const attrs = useAttrs();
     @apply cursor-not-allowed;
 
     .radio {
-      @apply text-black/[.26];
+      @apply text-rui-text-disabled;
 
       &:before {
         content: none !important;
@@ -124,7 +121,7 @@ const attrs = useAttrs();
     }
 
     .label {
-      @apply text-black/[.26];
+      @apply text-rui-text-disabled;
     }
   }
 
@@ -141,16 +138,12 @@ const attrs = useAttrs();
   }
 
   .radio {
-    @apply relative text-black/[.60] p-[9px];
+    @apply relative text-rui-text-secondary p-[9px];
 
     &:before {
       content: '';
       @apply absolute top-1/2 left-1/2 block h-[42px] w-[42px] -translate-y-1/2 -translate-x-1/2 rounded-full opacity-0 transition-opacity;
       @apply bg-black;
-    }
-
-    &.checked {
-      @apply text-rui-grey-700;
     }
 
     &.with-error {
@@ -194,7 +187,7 @@ const attrs = useAttrs();
   }
 
   .label {
-    @apply flex-1 text-black/[.87];
+    @apply flex-1 text-rui-text;
 
     &:not(:empty) {
       @apply mt-[9px];
@@ -214,28 +207,6 @@ const attrs = useAttrs();
       &:not(:empty) {
         @apply mt-[11px];
       }
-    }
-  }
-}
-
-:global(.dark) {
-  .wrapper {
-    .radio {
-      @apply relative text-white/[.70];
-    }
-
-    &.disabled {
-      .radio {
-        @apply text-white/[.30];
-      }
-
-      .label {
-        @apply text-white/[.30];
-      }
-    }
-
-    .label {
-      @apply text-white;
     }
   }
 }

@@ -48,10 +48,7 @@ const css = useCssModule();
       <div v-if="errorMessages.length > 0" class="text-rui-error text-caption">
         {{ errorMessages[0] }}
       </div>
-      <div
-        v-else-if="hint"
-        class="text-black/[0.6] dark:text-white text-caption"
-      >
+      <div v-else-if="hint" class="text-rui-text-secondary text-caption">
         {{ hint }}
       </div>
       <div v-else class="h-5" />

@@ -123,10 +123,7 @@ const slots = useSlots();
       <div v-if="errorMessages.length > 0" class="text-rui-error text-caption">
         {{ errorMessages[0] }}
       </div>
-      <div
-        v-else-if="hint"
-        class="text-black/[0.6] dark:text-white text-caption"
-      >
+      <div v-else-if="hint" class="text-rui-text-secondary text-caption">
         {{ hint }}
       </div>
       <div v-else class="h-5" />
@@ -139,19 +136,8 @@ const slots = useSlots();
 
 :global(.dark) {
   .wrapper {
-    .input {
-      @apply text-white;
-
-      &:disabled {
-        &,
-        + .label {
-          @apply text-white/[0.5];
-        }
-      }
-    }
-
     .label {
-      @apply text-white/[0.7] border-white/[0.42];
+      @apply border-white/[0.42];
 
       &:after {
         @apply border-white;
@@ -196,7 +182,7 @@ const slots = useSlots();
   @apply relative w-full min-w-[200px] flex items-center pt-3;
 
   .input {
-    @apply leading-6 text-black/[0.87] w-full bg-transparent py-1.5 pr-3 outline-0 outline-none transition-all placeholder:opacity-0 focus:placeholder:opacity-100;
+    @apply leading-6 text-rui-text w-full bg-transparent py-1.5 pr-3 outline-0 outline-none transition-all placeholder:opacity-0 focus:placeholder:opacity-100;
 
     &:focus {
       @apply outline-0;
@@ -219,7 +205,7 @@ const slots = useSlots();
 
       &,
       + .label {
-        @apply text-black/[0.38];
+        @apply text-rui-text-disabled;
       }
 
       ~ .fieldset {
@@ -229,7 +215,7 @@ const slots = useSlots();
   }
 
   .label {
-    @apply left-0 text-base leading-[3.75] text-black/[0.6] pointer-events-none absolute top-0 flex h-full w-full select-none transition-all border-b border-black/[0.42];
+    @apply left-0 text-base leading-[3.75] text-rui-text-secondary pointer-events-none absolute top-0 flex h-full w-full select-none transition-all border-b border-black/[0.42];
 
     --x-padding: 0px;
 

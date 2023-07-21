@@ -86,7 +86,9 @@ describe('Forms/RadioButton/Radio', () => {
 
     const hint = 'Radio Hints';
     await wrapper.setProps({ hint });
-    expect(wrapper.find('.details > div').classes()).toMatch(/text-black/);
+    expect(wrapper.find('.details > div').classes()).toMatch(
+      /text-rui-text-secondary/,
+    );
     expect(wrapper.find('.details > div').text()).toBe(hint);
   });
 

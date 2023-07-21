@@ -70,7 +70,9 @@ describe('Forms/Checkbox', () => {
 
     const hint = 'Checkbox Hints';
     await wrapper.setProps({ hint });
-    expect(wrapper.find('.details > div').classes()).toMatch(/text-black/);
+    expect(wrapper.find('.details > div').classes()).toMatch(
+      /text-rui-text-secondary/,
+    );
     expect(wrapper.find('.details > div').text()).toBe(hint);
   });
 

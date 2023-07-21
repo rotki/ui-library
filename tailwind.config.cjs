@@ -51,6 +51,27 @@ const adaptiveContextColorCombination = Object.fromEntries(
   ]),
 );
 
+const textColorsCombination = Object.fromEntries(
+  ['light', 'dark'].map((theme) => [
+    theme,
+    {
+      text: {
+        DEFAULT: `var(--rui-${theme}-text-primary)`,
+        secondary: `var(--rui-${theme}-text-secondary)`,
+        disabled: `var(--rui-${theme}-text-disabled)`,
+      },
+    },
+  ]),
+);
+
+const adaptiveTextColorsCombination = {
+  text: {
+    DEFAULT: `var(--rui-text-primary)`,
+    secondary: `var(--rui-text-secondary)`,
+    disabled: `var(--rui-text-disabled)`,
+  },
+};
+
 const safeListedColorVariants = [
   'important',
   'hover',
@@ -73,7 +94,17 @@ module.exports = {
         rui: {
           ...baseColorsCombination,
           ...contextColorsCombination,
+          ...textColorsCombination,
+          light: {
+            ...contextColorsCombination.light,
+            ...textColorsCombination.light,
+          },
+          dark: {
+            ...contextColorsCombination.dark,
+            ...textColorsCombination.dark,
+          },
           ...adaptiveContextColorCombination,
+          ...adaptiveTextColorsCombination,
         },
       },
       boxShadow: {
