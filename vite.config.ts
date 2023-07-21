@@ -39,7 +39,11 @@ export default defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
-      external: ['vue', '@fontsource/roboto', 'tailwindcss/plugin'],
+      external: [
+        'vue',
+        'tailwindcss/plugin',
+        new RegExp('^@fontsource\\/roboto'),
+      ],
       output: {
         globals: {
           vue: 'vue',
