@@ -7,6 +7,7 @@ export interface Props {
   dismissible?: boolean;
   disabled?: boolean;
   size?: 'sm' | 'md';
+  variant?: 'filled' | 'outlined';
   color?: 'grey' | ContextColorsType;
 }
 
@@ -15,6 +16,7 @@ withDefaults(defineProps<Props>(), {
   color: 'grey',
   dismissible: false,
   disabled: false,
+  variant: 'filled',
 });
 
 const emit = defineEmits<{ (event: 'remove'): void }>();
@@ -29,6 +31,7 @@ const slots = useSlots();
       css.chip,
       css[color ?? ''],
       css[size ?? ''],
+      css[variant ?? ''],
       { [css.disabled]: disabled },
     ]"
     role="button"
@@ -61,18 +64,32 @@ const slots = useSlots();
   @apply max-w-full truncate;
 
   &.grey {
-    @apply text-black bg-black/[0.08];
+    @apply text-black;
+
+    &.filled {
+      @apply bg-black/[0.08] hover:bg-black/[0.12] focus:bg-black/[0.20];
+    }
+
+    &.outlined {
+      @apply border border-black/[0.26] bg-transparent hover:bg-black/[0.04] focus:bg-black/[0.12];
+    }
   }
 
   @each $color in c.$context-colors {
     &.#{$color} {
-      @apply text-rui-#{$color} bg-rui-#{$color}/[0.10];
+      &.filled {
+        @apply text-white bg-rui-#{$color} hover:bg-rui-#{$color}-darker;
+      }
+
+      &.outlined {
+        @apply border text-rui-#{$color} border-rui-#{$color}/50 bg-transparent hover:bg-rui-#{$color}/[0.04];
+      }
     }
   }
 
   &__prepend {
-    @apply rounded-full flex items-center justify-center p-[0.13rem] pr-0 w-6 h-6;
-    @apply text-[0.6rem] text-white bg-gray-400 -ml-0.5;
+    @apply rounded-full flex items-center justify-center pr-0 w-6 h-6;
+    @apply text-[0.6rem] text-white bg-gray-400 -ml-0.5 overflow-hidden;
   }
 
   &__label {
@@ -112,7 +129,29 @@ const slots = useSlots();
 
 .disabled {
   &.chip {
-    @apply opacity-50;
+    @apply opacity-40 cursor-default;
+
+    &.grey {
+      &.filled {
+        @apply hover:bg-black/[0.08] focus:bg-black/[0.08];
+      }
+
+      &.outlined {
+        @apply hover:bg-transparent focus:bg-transparent;
+      }
+    }
+
+    @each $color in c.$context-colors {
+      &.#{$color} {
+        &.filled {
+          @apply hover:bg-rui-#{$color};
+        }
+
+        &.outlined {
+          @apply hover:bg-transparent;
+        }
+      }
+    }
 
     &__close {
       @apply cursor-default;
@@ -128,6 +167,14 @@ const slots = useSlots();
   .chip {
     &.grey {
       @apply text-white bg-white/[0.16];
+    }
+
+    @each $color in 'warning', 'success' {
+      &.#{$color} {
+        &.filled {
+          @apply text-black/[0.87];
+        }
+      }
     }
 
     &__prepend {
