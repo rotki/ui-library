@@ -33,6 +33,10 @@ export interface Props {
   errorMessages?: string[];
 }
 
+defineOptions({
+  name: 'RuiAutoComplete',
+});
+
 const props = withDefaults(defineProps<Props>(), {
   keyProp: 'id',
   textProp: 'text',
@@ -265,7 +269,7 @@ watch(multiple, (newVal) => {
 
 <style lang="scss" module>
 .toggle_icon {
-  @apply text-gray-400 hover:text-gray-600 transition-all;
+  @apply text-rui-grey-600 hover:text-rui-grey-800 transition-all;
 }
 
 .clear {
@@ -274,7 +278,7 @@ watch(multiple, (newVal) => {
   }
 
   &_icon {
-    @apply text-gray-400 hover:text-gray-500;
+    @apply text-rui-grey-600 hover:text-rui-grey-800;
   }
 }
 
@@ -299,18 +303,18 @@ watch(multiple, (newVal) => {
   @apply absolute z-[999] mt-1 max-h-60 w-full overflow-auto rounded-md bg-white shadow-8;
 
   .empty {
-    @apply relative cursor-default select-none py-2 px-4 text-gray-700 pointer-events-none;
+    @apply relative cursor-default select-none py-2 px-4 text-rui-grey-700 pointer-events-none;
   }
 
   .option {
-    @apply relative cursor-pointer select-none py-2 pr-10 pl-4 text-gray-900;
-    @apply hover:bg-gray-100;
+    @apply relative cursor-pointer select-none py-2 pr-10 pl-4 text-rui-grey-900;
+    @apply hover:bg-rui-grey-100;
 
     &__selected {
-      @apply bg-gray-100/50;
+      @apply bg-rui-grey-300/50;
 
       &.option__disabled {
-        @apply hover:bg-gray-100/50;
+        @apply hover:bg-rui-grey-300/50;
       }
 
       &_icon {
@@ -319,7 +323,7 @@ watch(multiple, (newVal) => {
     }
 
     &__disabled {
-      @apply cursor-default hover:bg-transparent text-gray-400;
+      @apply cursor-default hover:bg-transparent text-rui-grey-500;
     }
 
     &__prefixed {
@@ -331,12 +335,12 @@ watch(multiple, (newVal) => {
 :global(.dark) {
   .clear {
     &_icon {
-      @apply hover:text-gray-300;
+      @apply text-rui-grey-400 hover:text-rui-grey-300;
     }
   }
 
   .toggle_icon {
-    @apply hover:text-gray-300;
+    @apply text-rui-grey-400 hover:text-rui-grey-300;
   }
 
   .options {
@@ -349,18 +353,18 @@ watch(multiple, (newVal) => {
       #121212;
 
     .empty {
-      @apply text-gray-300;
+      @apply text-rui-grey-500;
     }
 
     .option {
-      @apply text-white hover:bg-gray-100/20;
+      @apply text-white hover:bg-rui-grey-300/20;
 
       &__selected {
-        @apply bg-gray-100/10;
-        @apply hover:bg-gray-100/20;
+        @apply bg-rui-grey-300/10;
+        @apply hover:bg-rui-grey-300/20;
 
         &.option__disabled {
-          @apply hover:bg-gray-100/10;
+          @apply hover:bg-rui-grey-300/10;
         }
 
         &_icon {

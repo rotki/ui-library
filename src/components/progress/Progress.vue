@@ -26,6 +26,10 @@ export interface Props {
   size?: number | string;
 }
 
+defineOptions({
+  name: 'RuiProgress',
+});
+
 const props = withDefaults(defineProps<Props>(), {
   value: 0,
   bufferValue: 0,

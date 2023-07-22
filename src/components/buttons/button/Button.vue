@@ -13,6 +13,10 @@ export interface Props {
   size?: 'sm' | 'lg';
 }
 
+defineOptions({
+  name: 'RuiButton',
+});
+
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   loading: false,
@@ -110,10 +114,6 @@ const spinnerSize: ComputedRef<number> = computed(() => {
     &.text {
       @apply active:bg-white/10 hover:bg-white/[.04] text-rui-text;
     }
-
-    &.outlined {
-      @apply outline-white disabled:outline-white/[.12];
-    }
   }
 }
 
@@ -161,8 +161,7 @@ const spinnerSize: ComputedRef<number> = computed(() => {
   }
 
   &.outlined {
-    @apply outline-black/[.87];
-    @apply disabled:outline-black/[.12];
+    @apply outline-rui-text disabled:outline-rui-text-disabled;
   }
 
   &.text {

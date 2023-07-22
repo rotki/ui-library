@@ -14,6 +14,10 @@ export interface Props {
   hideDetails?: boolean;
 }
 
+defineOptions({
+  name: 'RuiCheckbox',
+});
+
 const props = withDefaults(defineProps<Props>(), {
   modelValue: false,
   indeterminate: false,

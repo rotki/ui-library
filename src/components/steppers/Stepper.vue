@@ -16,6 +16,10 @@ export interface Props {
   orientation?: StepperOrientation;
 }
 
+defineOptions({
+  name: 'RuiStepper',
+});
+
 const props = withDefaults(defineProps<Props>(), {
   iconTop: false,
   custom: false,

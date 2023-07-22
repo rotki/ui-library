@@ -8,6 +8,10 @@ export interface Props {
   size?: 'sm' | 'lg';
 }
 
+defineOptions({
+  name: 'RuiButtonGroup',
+});
+
 withDefaults(defineProps<Props>(), {
   vertical: false,
   color: undefined,
@@ -47,14 +51,6 @@ const css = useCssModule();
 <style lang="scss" module>
 @use '@/styles/colors.scss' as c;
 
-:global(.dark) {
-  .wrapper {
-    &.outlined {
-      @apply outline-white divide-white;
-    }
-  }
-}
-
 .wrapper {
   @apply inline-flex rounded overflow-hidden divide-x divide-rui-grey-400;
   @apply outline outline-1 outline-transparent outline-offset-[-1px];
@@ -87,7 +83,7 @@ const css = useCssModule();
   }
 
   &.outlined {
-    @apply outline-black/[.87] divide-black/[0.87];
+    @apply outline-rui-text divide-rui-text;
   }
 }
 </style>

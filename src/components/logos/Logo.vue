@@ -3,6 +3,10 @@ export interface Props {
   text?: boolean;
 }
 
+defineOptions({
+  name: 'RuiLogo',
+});
+
 withDefaults(defineProps<Props>(), {
   text: false,
 });

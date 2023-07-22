@@ -13,6 +13,10 @@ export interface Props {
   closeable?: boolean;
 }
 
+defineOptions({
+  name: 'RuiAlert',
+});
+
 const props = withDefaults(defineProps<Props>(), {
   title: '',
   description: '',

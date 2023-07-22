@@ -20,7 +20,7 @@ if (
   // from a project sub-folder
   env.INIT_CWD.indexOf(env.PWD) === 0
 ) {
-  console.info('Skipping `postinstall` script on local installs');
+  console.info('Skipping `prepare` script on local installs');
   process.exit(0);
 }
 

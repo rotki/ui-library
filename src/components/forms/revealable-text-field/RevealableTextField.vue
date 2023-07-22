@@ -3,6 +3,10 @@ import { default as RuiTextField } from '@/components/forms/text-field/TextField
 import { default as RuiButton } from '@/components/buttons/button/Button.vue';
 import { default as RuiIcon } from '@/components/icons/Icon.vue';
 
+defineOptions({
+  name: 'RuiRevealableTextField',
+});
+
 const hidden: Ref<boolean> = ref(true);
 
 const attrs = useAttrs();

@@ -7,6 +7,10 @@ export interface Props {
   color?: ContextColorsType;
 }
 
+defineOptions({
+  name: 'RuiIcon',
+});
+
 const props = withDefaults(defineProps<Props>(), {
   size: 24,
   color: undefined,
