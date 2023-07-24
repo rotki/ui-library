@@ -109,7 +109,6 @@ const slots = useSlots();
       <div
         ref="innerWrapper"
         class="flex flex-1 overflow-hidden"
-        tabindex="0"
         @click="emit('focus-input', $event)"
       >
         <Component
