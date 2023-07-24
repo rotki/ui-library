@@ -9,6 +9,10 @@ export interface Props {
   variant?: 'numeric' | 'bullet' | 'progress' | 'pill';
 }
 
+defineOptions({
+  name: 'RuiFooterStepper',
+});
+
 const props = withDefaults(defineProps<Props>(), {
   modelValue: 1,
   variant: 'numeric',

@@ -1,4 +1,16 @@
 <script setup lang="ts">
+export interface Props {
+  modelValue?: string;
+  inline?: boolean;
+  hint?: string;
+  errorMessages?: string[];
+  hideDetails?: boolean;
+}
+
+defineOptions({
+  name: 'RuiRadioGroup',
+});
+
 withDefaults(defineProps<Props>(), {
   modelValue: '',
   inline: false,
@@ -12,14 +24,6 @@ const emit = defineEmits<{
 }>();
 
 const radioGroupName = ref('');
-
-export interface Props {
-  modelValue?: string;
-  inline?: boolean;
-  hint?: string;
-  errorMessages?: string[];
-  hideDetails?: boolean;
-}
 
 onMounted(() => {
   set(radioGroupName, generateId('radio-group'));

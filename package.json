@@ -38,7 +38,6 @@
     }
   },
   "scripts": {
-    "postinstall": "node scripts/postinstall.cjs",
     "build:prod": "node scripts/dist-build.cjs",
     "build": "vite build",
     "build:storybook": "STORYBOOK=true storybook build",
@@ -59,7 +58,7 @@
     "coverage": "vitest run --coverage",
     "coverage:preview": "npx vite preview --open --outDir tests/coverage",
     "typecheck": "vue-tsc --noEmit",
-    "prepare": "husky install",
+    "prepare": "husky install && node scripts/prepare.cjs",
     "release": "bumpp -r --no-push"
   },
   "peerDependencies": {

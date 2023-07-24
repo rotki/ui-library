@@ -11,6 +11,10 @@ export interface Props {
   color?: 'grey' | ContextColorsType;
 }
 
+defineOptions({
+  name: 'RuiChip',
+});
+
 withDefaults(defineProps<Props>(), {
   size: 'md',
   color: 'grey',
@@ -64,7 +68,7 @@ const slots = useSlots();
   @apply max-w-full truncate;
 
   &.grey {
-    @apply text-black;
+    @apply text-rui-text;
 
     &.filled {
       @apply bg-black/[0.08] hover:bg-black/[0.12] focus:bg-black/[0.20];
@@ -78,7 +82,7 @@ const slots = useSlots();
   @each $color in c.$context-colors {
     &.#{$color} {
       &.filled {
-        @apply text-white bg-rui-#{$color} hover:bg-rui-#{$color}-darker;
+        @apply text-rui-dark-text bg-rui-#{$color} hover:bg-rui-#{$color}-darker;
       }
 
       &.outlined {
@@ -89,7 +93,7 @@ const slots = useSlots();
 
   &__prepend {
     @apply rounded-full flex items-center justify-center pr-0 w-6 h-6;
-    @apply text-[0.6rem] text-white bg-gray-400 -ml-0.5 overflow-hidden;
+    @apply text-[0.6rem] text-white bg-rui-grey-400 -ml-0.5 overflow-hidden;
   }
 
   &__label {
@@ -166,24 +170,24 @@ const slots = useSlots();
 :global(.dark) {
   .chip {
     &.grey {
-      @apply text-white bg-white/[0.16];
+      @apply bg-white/[0.16] hover:bg-white/[0.20] focus:bg-white/[0.24];
     }
 
     @each $color in 'warning', 'success' {
       &.#{$color} {
         &.filled {
-          @apply text-black/[0.87];
+          @apply text-rui-light-text;
         }
       }
     }
 
     &__prepend {
-      @apply bg-gray-700;
+      @apply bg-rui-grey-700;
     }
 
     &__close {
       &_icon {
-        @apply hover:text-gray-300;
+        @apply hover:text-rui-grey-300;
       }
     }
   }

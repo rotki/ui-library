@@ -14,6 +14,10 @@ export interface Props {
   hideDetails?: boolean;
 }
 
+defineOptions({
+  name: 'RuiRadio',
+});
+
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
   disabled: false,

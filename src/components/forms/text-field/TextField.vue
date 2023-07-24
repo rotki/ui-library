@@ -19,6 +19,10 @@ export interface Props {
   appendIcon?: string;
 }
 
+defineOptions({
+  name: 'RuiTextField',
+});
+
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
   label: '',
@@ -67,10 +71,10 @@ const {
   width,
 } = useElementBounding(innerWrapper);
 
-const prependLength = computed(
+const prependWidth = computed(
   () => `${get(innerWrapperLeft) - get(wrapperLeft)}px`,
 );
-const appendLength = computed(
+const appendWidth = computed(
   () => `${get(wrapperRight) - get(innerWrapperRight)}px`,
 );
 
@@ -238,9 +242,11 @@ const slots = useSlots();
     @apply left-0 text-base leading-[3.75] text-rui-text-secondary pointer-events-none absolute top-0 flex h-full w-full select-none transition-all border-b border-black/[0.42];
 
     --x-padding: 0px;
+    --prepend-width: v-bind(prependWidth);
+    --append-width: v-bind(appendWidth);
 
-    padding-left: calc(var(--x-padding) + v-bind(prependLength));
-    padding-right: calc(var(--x-padding) + v-bind(appendLength));
+    padding-left: calc(var(--x-padding) + var(--prepend-width, 0px));
+    padding-right: calc(var(--x-padding) + var(--append-width, 0px));
 
     &:after {
       content: '';
@@ -348,8 +354,8 @@ const slots = useSlots();
         + .label {
           @apply leading-[2.5];
 
-          padding-left: calc(var(--x-padding) + v-bind(prependLength));
-          padding-right: calc(var(--x-padding) + v-bind(appendLength));
+          padding-left: calc(var(--x-padding) + var(--prepend-width, 0px));
+          padding-right: calc(var(--x-padding) + var(--append-width, 0px));
         }
       }
     }

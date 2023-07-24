@@ -47,15 +47,7 @@ export default {
           },
           {
             pattern: new RegExp(
-              `(bg|text|border)-rui-(light|dark)-(${contextColors.join(
-                '|',
-              )})(-(darker|lighter|tint|shade))?`,
-            ),
-            variants: safeListedColorVariants,
-          },
-          {
-            pattern: new RegExp(
-              `(bg|text|border)-rui-(${contextColors.join(
+              `(bg|text|border)-rui(-(light|dark))?-(${contextColors.join(
                 '|',
               )})(-(darker|lighter|tint|shade))?`,
             ),
