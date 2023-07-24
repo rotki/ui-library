@@ -62,7 +62,6 @@
     "release": "bumpp -r --no-push"
   },
   "peerDependencies": {
-    "@fontsource/roboto": ">=5.0.5",
     "vue": ">=3.3.4"
   },
   "devDependencies": {

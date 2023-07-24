@@ -1,5 +1,6 @@
 import '../src/style.scss';
 import './preview.scss';
+import '@fontsource/roboto/latin.css';
 import type { Preview } from '@storybook/vue3';
 import { vueInstance } from './app';
 

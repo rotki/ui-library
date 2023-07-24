@@ -1,5 +1,6 @@
 import '@/assets/main.css';
 import '@rotki/ui-library/dist/style.css';
+import '@fontsource/roboto/latin.css';
 
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
