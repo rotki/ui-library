@@ -26,7 +26,7 @@
   "types": "dist/index.d.ts",
   "exports": {
     "./*": {
-      "default": "./"
+      "default": "./dist/"
     },
     ".": {
       "types": "./dist/index.d.ts",
