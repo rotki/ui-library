@@ -7,6 +7,7 @@ import { createPinia } from 'pinia';
 import {
   RiAddFill,
   RiAlertLine,
+  RiArrowLeftLine,
   RiArrowRightLine,
   RiCheckboxCircleLine,
   RiCloseFill,
@@ -29,6 +30,7 @@ app.use(RuiPlugin, {
     RiMoonLine,
     RiSunLine,
     RiMacbookLine,
+    RiArrowLeftLine,
     RiArrowRightLine,
     RiAddFill,
     RiAlertLine,
