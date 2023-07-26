@@ -214,6 +214,8 @@ const slots = useSlots();
     }
 
     &:not(:placeholder-shown),
+    &:autofill,
+    &:-webkit-autofill,
     &[data-has-value='true'],
     &:focus {
       + .label {
@@ -348,6 +350,8 @@ const slots = useSlots();
       }
 
       &:not(:placeholder-shown),
+      &:autofill,
+      &:-webkit-autofill,
       &[data-has-value='true'],
       &:focus {
         + .label {
@@ -373,6 +377,8 @@ const slots = useSlots();
       }
 
       &:not(:placeholder-shown),
+      &:autofill,
+      &:-webkit-autofill,
       &[data-has-value='true'],
       &:focus {
         + .label {
@@ -405,6 +411,8 @@ const slots = useSlots();
       }
 
       &:not(:placeholder-shown),
+      &:autofill,
+      &:-webkit-autofill,
       &[data-has-value='true'],
       &:focus {
         @apply border-t-transparent;
