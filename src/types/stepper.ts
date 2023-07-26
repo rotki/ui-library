@@ -13,7 +13,7 @@ export type StepperState = (typeof StepperState)[keyof typeof StepperState];
 export interface StepperStep {
   title?: string;
   description?: string;
-  state: StepperState;
+  state?: StepperState;
 }
 
 export const StepperOrientation = {
