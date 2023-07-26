@@ -17,7 +17,7 @@ const config: Ref<ThemeConfig> = ref({ ...defaultTheme });
  * @returns {ThemeContent}
  */
 export const useRotkiTheme = (): ThemeContent => {
-  const { store, state } = useColorMode<ThemeMode>();
+  const { store, state, system } = useColorMode<ThemeMode>();
 
   /**
    * whether the current theme is controlled by system or user
@@ -32,7 +32,9 @@ export const useRotkiTheme = (): ThemeContent => {
    * @type {ComputedRef<boolean>}
    */
   const isLight: ComputedRef<boolean> = computed(
-    () => get(state) === ThemeMode.light,
+    () =>
+      (get(isAutoControlled) && get(system) === ThemeMode.light) ||
+      get(state) === ThemeMode.light,
   );
 
   /**
@@ -40,7 +42,9 @@ export const useRotkiTheme = (): ThemeContent => {
    * @type {ComputedRef<boolean>}
    */
   const isDark: ComputedRef<boolean> = computed(
-    () => get(state) === ThemeMode.dark,
+    () =>
+      (get(isAutoControlled) && get(system) === ThemeMode.dark) ||
+      get(state) === ThemeMode.dark,
   );
 
   /**
@@ -60,7 +64,7 @@ export const useRotkiTheme = (): ThemeContent => {
    * @param {ThemeMode} mode
    */
   const switchThemeScheme = (mode: ThemeMode) => {
-    set(store, mode);
+    set(store, mode || ThemeMode.auto);
   };
 
   /**
@@ -86,51 +90,41 @@ export const useRotkiTheme = (): ThemeContent => {
 
   /**
    * theme initializer, must be called once from the app's entry
-   * after initializing @unhead/vue
    * @param {InitThemeOptions} options
    */
   const init = (options: InitThemeOptions) => {
     switchThemeScheme(options.mode ?? ThemeMode.auto);
     setThemeConfig(options.config ?? { ...defaultTheme });
 
-    // here, we can add all the variables we need to use in styling our components
-    // these keys must match what is also in the tailwind.config.css file
-    useHead(
-      {
-        style: [
-          {
-            key: 'rui-root',
-            textContent: () => {
-              const contextVariables = Object.entries(get(theme))
-                .map(
-                  ([context, contextObject]: [string, ColorIntensity]) => `
-                  --rui-${context}-main: ${contextObject.DEFAULT};
-                  --rui-${context}-lighter: ${contextObject.lighter};
-                  --rui-${context}-darker: ${contextObject.darker};
-                `,
-                )
-                .join('\n');
+    if (typeof window !== 'undefined') {
+      watch(
+        isLight,
+        (isLight) => {
+          const contextVariables = Object.entries(get(theme))
+            .map(([context, contextObject]: [string, ColorIntensity]) => ({
+              [`--rui-${context}-main`]: contextObject.DEFAULT,
+              [`--rui-${context}-lighter`]: contextObject.lighter,
+              [`--rui-${context}-darker`]: contextObject.darker,
+            }))
+            .reduce((acc, obj) => ({ ...acc, ...obj }), {});
 
-              const stateVal = get(state) || ThemeMode.light;
+          const state = isLight ? ThemeMode.light : ThemeMode.dark;
+          const textColorsVariables = {
+            '--rui-text-primary': `var(--rui-${state}-text-primary)`,
+            '--rui-text-secondary': `var(--rui-${state}-text-secondary)`,
+            '--rui-text-disabled': `var(--rui-${state}-text-disabled)`,
+          };
 
-              const textColorsVariables = `
-                --rui-text-primary: var(--rui-${stateVal}-text-primary);
-                --rui-text-secondary: var(--rui-${stateVal}-text-secondary);
-                --rui-text-disabled: var(--rui-${stateVal}-text-disabled);
-              `;
-
-              return `
-                :root {
-                  ${contextVariables}
-                  ${textColorsVariables}
-                }
-              `;
-            },
-          },
-        ],
-      },
-      { mode: 'client' },
-    );
+          Object.entries({
+            ...contextVariables,
+            ...textColorsVariables,
+          }).forEach(([variableName, value]) => {
+            document.documentElement.style.setProperty(variableName, value);
+          });
+        },
+        { immediate: true },
+      );
+    }
   };
 
   return {

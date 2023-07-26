@@ -16,7 +16,7 @@ const render: StoryFn<PropsAndLabel> = (args) => ({
       {{ args.label }}
       <template #append></template>
     </Button>
-    <div class='mt-4'>Clicked: {{ clicks }} times</div>
+    <div class='mt-4 text-rui-text'>Clicked: {{ clicks }} times</div>
   `,
 });
 

@@ -18,7 +18,7 @@ const render: StoryFn<Props> = (args) => ({
         <Icon name="add-line"></Icon>
       </Button>
     </ButtonGroup>
-    <div class='mt-4'>Count: {{ count }}</div>
+    <div class='mt-4 text-rui-text'>Count: {{ count }}</div>
   `,
 });
 

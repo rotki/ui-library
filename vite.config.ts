@@ -2,7 +2,6 @@ import { resolve } from 'node:path';
 import vue from '@vitejs/plugin-vue';
 import { defineConfig } from 'vitest/config';
 import AutoImport from 'unplugin-auto-import/vite';
-import { unheadVueComposablesImports } from '@unhead/vue';
 
 export default defineConfig({
   resolve: {
@@ -14,12 +13,7 @@ export default defineConfig({
   plugins: [
     vue(),
     AutoImport({
-      imports: [
-        'vue',
-        '@vueuse/core',
-        { '@vueuse/shared': ['get', 'set'] },
-        unheadVueComposablesImports,
-      ],
+      imports: ['vue', '@vueuse/core', { '@vueuse/shared': ['get', 'set'] }],
       dts: './auto-imports.d.ts',
       dirs: ['src/composables/**', 'src/utils/**'],
       vueTemplate: true,
