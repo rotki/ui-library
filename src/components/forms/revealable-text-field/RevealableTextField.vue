@@ -21,7 +21,9 @@ const slots = useSlots();
     <template #append>
       <div class="flex items-center">
         <RuiButton
+          tabindex="-1"
           variant="text"
+          type="button"
           icon
           class="-mr-1 !p-2"
           @click="hidden = !hidden"

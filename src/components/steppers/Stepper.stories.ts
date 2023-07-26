@@ -16,6 +16,7 @@ const meta: Meta<Props> = {
   tags: ['autodocs'],
   render,
   argTypes: {
+    step: { control: 'number', table: { category: 'State' } },
     steps: { control: 'array', table: { category: 'State' } },
     iconTop: { control: 'boolean', table: { category: 'State' } },
     custom: { control: 'boolean', table: { category: 'State' } },
@@ -191,22 +192,20 @@ export const StepOnlyAndVertical: Story = {
 export const Custom: Story = {
   args: {
     custom: true,
+    step: 1,
     steps: [
       { title: 'Done', description: 'Lorem ipsum', state: StepperState.done },
       {
         title: 'Active',
         description: 'Lorem ipsum',
-        state: StepperState.active,
       },
       {
         title: 'Inactive',
         description: 'Lorem ipsum',
-        state: StepperState.inactive,
       },
       {
         title: 'Inactive',
         description: 'Lorem ipsum',
-        state: StepperState.inactive,
       },
     ],
   },
@@ -215,23 +214,21 @@ export const Custom: Story = {
 export const CustomVertical: Story = {
   args: {
     custom: true,
+    step: 1,
     orientation: StepperOrientation.vertical,
     steps: [
       { title: 'Done', description: 'Lorem ipsum', state: StepperState.done },
       {
         title: 'Active',
         description: 'Lorem ipsum',
-        state: StepperState.active,
       },
       {
         title: 'Inactive',
         description: 'Lorem ipsum',
-        state: StepperState.inactive,
       },
       {
         title: 'Inactive',
         description: 'Lorem ipsum',
-        state: StepperState.inactive,
       },
     ],
   },
@@ -240,6 +237,7 @@ export const CustomVertical: Story = {
 export const CustomWithColor: Story = {
   args: {
     custom: true,
+    step: 1,
     titleClass: 'text-rui-primary',
     subtitleClass: 'text-rui-primary/80',
     steps: [
@@ -247,17 +245,14 @@ export const CustomWithColor: Story = {
       {
         title: 'Active',
         description: 'Lorem ipsum',
-        state: StepperState.active,
       },
       {
         title: 'Inactive',
         description: 'Lorem ipsum',
-        state: StepperState.inactive,
       },
       {
         title: 'Inactive',
         description: 'Lorem ipsum',
-        state: StepperState.inactive,
       },
     ],
   },

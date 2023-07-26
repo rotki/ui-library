@@ -66,7 +66,7 @@ const spinnerSize: ComputedRef<number> = computed(() => {
   <button
     :class="[
       css.btn,
-      css[color ?? ''],
+      css[color ?? 'grey'],
       css[size ?? ''],
       css[variant],
       `shadow-${usedElevation}`,
@@ -97,7 +97,6 @@ const spinnerSize: ComputedRef<number> = computed(() => {
 
 :global(.dark) {
   .btn {
-    @apply bg-rui-grey-300 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-light-text;
     @apply disabled:bg-white/[.12] #{!important};
 
     @each $color in c.$context-colors {
@@ -110,9 +109,13 @@ const spinnerSize: ComputedRef<number> = computed(() => {
       }
     }
 
-    &.outlined,
-    &.text {
-      @apply active:bg-white/10 hover:bg-white/[.04] text-rui-text;
+    &.grey {
+      @apply bg-rui-grey-300 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-light-text;
+
+      &.outlined,
+      &.text {
+        @apply active:bg-white/10 hover:bg-white/[.04] text-rui-text;
+      }
     }
   }
 }
@@ -120,7 +123,6 @@ const spinnerSize: ComputedRef<number> = computed(() => {
 .btn {
   @apply text-sm leading-[1.5rem] font-medium outline outline-1 outline-transparent outline-offset-[-1px] flex items-center justify-center space-x-2 relative;
   @apply px-4 py-1.5 rounded transition-all;
-  @apply bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-text;
   @apply disabled:bg-black/[.12] disabled:text-rui-text-disabled disabled:active:text-rui-text-disabled #{!important};
 
   .label {
@@ -154,14 +156,30 @@ const spinnerSize: ComputedRef<number> = computed(() => {
     }
   }
 
+  &.grey {
+    @apply bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-text;
+
+    &.outlined,
+    &.text {
+      @apply bg-transparent hover:bg-black/[.04] active:bg-black/10;
+    }
+
+    &.outlined {
+      @apply outline-rui-text;
+    }
+
+    &.text {
+      @apply text-rui-text-secondary;
+    }
+  }
+
   &.outlined,
   &.text {
-    @apply bg-transparent hover:bg-black/[.04] active:bg-black/10 text-rui-text-secondary;
     @apply disabled:bg-transparent disabled:active:bg-transparent #{!important};
   }
 
   &.outlined {
-    @apply outline-rui-text disabled:outline-rui-text-disabled;
+    @apply disabled:outline-rui-text-disabled;
   }
 
   &.text {

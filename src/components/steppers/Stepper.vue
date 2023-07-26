@@ -8,6 +8,7 @@ import StepperIcon from '@/components/steppers/StepperIcon.vue';
 import StepperCustomIcon from '@/components/steppers/StepperCustomIcon.vue';
 
 export interface Props {
+  step?: number;
   steps: StepperStep[];
   iconTop?: boolean;
   custom?: boolean;
@@ -21,6 +22,7 @@ defineOptions({
 });
 
 const props = withDefaults(defineProps<Props>(), {
+  step: 0,
   iconTop: false,
   custom: false,
   titleClass: '',
@@ -30,20 +32,31 @@ const props = withDefaults(defineProps<Props>(), {
 
 const css = useCssModule();
 
-const { custom, steps } = toRefs(props);
+const { custom, steps, step } = toRefs(props);
 
-// custom steps only supports 3 states.
-const filteredSteps = computed(() => {
+// automatically set step state to custom stepper.
+const renderedStep = computed(() => {
   if (!get(custom)) {
     return get(steps);
   }
 
-  const expectedStates: StepperState[] = [
-    StepperState.inactive,
-    StepperState.active,
-    StepperState.done,
-  ];
-  return get(steps).filter((step) => expectedStates.includes(step.state));
+  const currentStep = get(step);
+  return get(steps).map((text, index) => {
+    let stepStatus: StepperState = StepperState.inactive;
+
+    if (index + 1 === currentStep) {
+      stepStatus = StepperState.active;
+    }
+
+    if (index + 1 < currentStep) {
+      stepStatus = StepperState.done;
+    }
+
+    return {
+      ...text,
+      state: stepStatus,
+    };
+  });
 });
 </script>
 
@@ -56,11 +69,11 @@ const filteredSteps = computed(() => {
     ]"
   >
     <template
-      v-for="({ title, description, state }, index) in filteredSteps"
+      v-for="({ title, description, state }, index) in renderedStep"
       :key="index"
     >
       <hr v-if="index > 0" :class="css.divider" />
-      <div :class="[css.step, css[state]]">
+      <div :class="[css.step, css[state ?? StepperState.inactive]]">
         <slot name="icon" v-bind="{ state, index: index + 1 }">
           <StepperCustomIcon v-if="custom" :index="index + 1" :state="state" />
           <StepperIcon v-else :index="index + 1" :state="state" />
@@ -118,7 +131,7 @@ $colors: 'error', 'warning', 'info', 'success';
     @apply flex items-center px-6 relative;
 
     .indicator {
-      @apply inline-flex items-center justify-center rounded-full h-6 w-6;
+      @apply inline-flex items-center justify-center rounded-full h-6 w-6 min-w-[1.5rem];
     }
 
     .label {
