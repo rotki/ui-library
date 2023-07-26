@@ -147,6 +147,34 @@ watch(multiple, (newVal) => {
     emit('update:modelValue', null);
   }
 });
+
+const { list, containerProps, wrapperProps, scrollTo } = useVirtualList<Option>(
+  filtered,
+  {
+    itemHeight: 40,
+    overscan: 1,
+  },
+);
+
+watch(filtered, () => {
+  scrollTo(0);
+});
+
+const renderedData = useArrayMap(list, ({ data }) => data);
+
+const updateOpen = (open: boolean) => {
+  if (!open && get(hasValue)) {
+    const value = get(modelValue);
+    const key = get(keyProp);
+    const lastKey = Array.isArray(value)
+      ? value[value.length - 1][key]
+      : value![key];
+
+    nextTick(() => {
+      scrollTo(get(filtered).findIndex((item) => item[key] === lastKey));
+    });
+  }
+};
 </script>
 
 <template>
@@ -203,6 +231,7 @@ watch(multiple, (newVal) => {
                 ref="button"
                 :class="[{ [css.toggle_disabled]: disabled }]"
                 :disabled="disabled"
+                @click="updateOpen(open)"
               >
                 <Icon
                   :class="[css.toggle_icon, { 'rotate-180': open }]"
@@ -228,38 +257,50 @@ watch(multiple, (newVal) => {
             >
               Nothing options found.
             </div>
-            <ComboboxOption
-              v-for="item in filtered"
-              :key="item[keyProp]"
-              #default="{ selected, disabled: itemDisabled }"
-              :disabled="!!itemDisabledProp && item[itemDisabledProp]"
-              :value="item"
-              as="template"
-            >
-              <li
-                :class="[
-                  css.option,
-                  {
-                    [css.option__disabled]: itemDisabled,
-                    [css.option__selected]: selected,
-                    [css.option__prefixed]: !!slots.prefix,
-                  },
-                ]"
-              >
-                <span v-if="!!slots.prefix" :class="{ prefix: !!slots.prefix }">
-                  <slot class="prefix" name="prefix" v-bind="item" />
-                </span>
-                <span class="block truncate">
-                  <template v-if="slots.default">
-                    <slot v-bind="item" />
-                  </template>
-                  <template v-else> {{ item[textProp] }} </template>
-                </span>
-                <span v-if="selected" :class="css.option__selected_icon">
-                  <Icon aria-hidden="true" class="h-5 w-5" name="check-line" />
-                </span>
-              </li>
-            </ComboboxOption>
+            <div v-else v-bind="containerProps" class="max-h-60">
+              <div v-bind="wrapperProps">
+                <ComboboxOption
+                  v-for="item in renderedData"
+                  :key="item[keyProp]"
+                  #default="{ selected, disabled: itemDisabled }"
+                  class="h-10"
+                  :disabled="!!itemDisabledProp && item[itemDisabledProp]"
+                  :value="item"
+                  as="template"
+                >
+                  <li
+                    :class="[
+                      css.option,
+                      {
+                        [css.option__disabled]: itemDisabled,
+                        [css.option__selected]: selected,
+                        [css.option__prefixed]: !!slots.prefix,
+                      },
+                    ]"
+                  >
+                    <span
+                      v-if="!!slots.prefix"
+                      :class="{ prefix: !!slots.prefix }"
+                    >
+                      <slot class="prefix" name="prefix" v-bind="item" />
+                    </span>
+                    <span class="block truncate">
+                      <template v-if="slots.default">
+                        <slot v-bind="item" />
+                      </template>
+                      <template v-else> {{ item[textProp] }} </template>
+                    </span>
+                    <span v-if="selected" :class="css.option__selected_icon">
+                      <Icon
+                        aria-hidden="true"
+                        class="h-5 w-5"
+                        name="check-line"
+                      />
+                    </span>
+                  </li>
+                </ComboboxOption>
+              </div>
+            </div>
           </ComboboxOptions>
         </Transition>
       </div>

@@ -69,13 +69,11 @@ const data = [
   { id: '7', text: 'Hello 7', disabled: false },
   { id: '8', text: 'Hello 8', disabled: true },
   { id: '9', text: 'Hello 9', disabled: false },
-  { id: '10', text: 'Hello 10', disabled: false },
-  { id: '11', text: 'Hello 11', disabled: false },
-  { id: '12', text: 'Hello 12', disabled: false },
-  { id: '13', text: 'Hello 13', disabled: false },
-  { id: '14', text: 'Hello 14', disabled: false },
-  { id: '15', text: 'Hello 15', disabled: false },
-  { id: '16', text: 'Hello 16', disabled: false },
+  ...[...new Array(300).keys()].map((i, index) => ({
+    id: `${index + 10}`,
+    text: `Hello ${index + 10}`,
+    disabled: false,
+  })),
 ];
 
 export const Default: Story = {
