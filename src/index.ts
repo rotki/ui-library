@@ -1,6 +1,5 @@
 /* eslint-disable max-lines,import/max-dependencies */
 import { type App } from 'vue';
-import { createHead } from '@unhead/vue';
 import { default as RuiAlert } from '@/components/alerts/Alert.vue';
 import { default as RuiAutoComplete } from '@/components/forms/auto-complete/AutoComplete.vue';
 import { default as RuiButton } from '@/components/buttons/button/Button.vue';
@@ -54,7 +53,6 @@ export { StepperState };
 
 export const RuiPlugin = {
   install: (app: App, options?: InitThemeOptions) => {
-    app.use(createHead());
     const { registerIcons } = useIcons();
     registerIcons(options?.icons || []);
     useRotkiTheme().init({ ...options });

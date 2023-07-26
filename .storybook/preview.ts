@@ -35,13 +35,14 @@ const preview: Preview = {
   globalTypes: {
     theme: {
       description: 'Global theme for components',
-      defaultValue: 'light',
+      defaultValue: 'auto',
       toolbar: {
         // The label to show for this toolbar item
         title: 'Theme',
         icon: 'circlehollow',
         // Array of plain string values or MenuItem shape (see below)
         items: [
+          { value: 'auto', title: 'Auto' },
           { value: 'light', icon: 'sun', title: 'Light' },
           { value: 'dark', icon: 'moon', title: 'Dark' }
         ],
