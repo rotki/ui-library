@@ -307,6 +307,28 @@ const footerSteppers = ref<FooterStepperData[]>([
     pages: 5,
     variant: 'pill',
   },
+  {
+    value: 1,
+    pages: 5,
+    arrowButtons: true,
+  },
+  {
+    value: 2,
+    pages: 5,
+    variant: 'bullet',
+    arrowButtons: true,
+  },
+  {
+    value: 3,
+    pages: 5,
+    variant: 'progress',
+    arrowButtons: true,
+  },
+  {
+    value: 4,
+    pages: 5,
+    variant: 'pill',
+  },
 ]);
 </script>
 

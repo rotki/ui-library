@@ -35,6 +35,7 @@ const meta: Meta<Props> = {
       options: ['numeric', 'bullet', 'progress', 'pill'],
       table: { category: 'State' },
     },
+    arrowButtons: { control: 'boolean', table: { category: 'State' } },
   },
   parameters: {
     docs: {
@@ -49,6 +50,7 @@ export const Default: Story = {
   args: {
     pages: 5,
     modelValue: 1,
+    arrowButtons: false,
     variant: 'numeric',
   },
 };
@@ -57,6 +59,7 @@ export const Bullet: Story = {
   args: {
     pages: 5,
     modelValue: 1,
+    arrowButtons: false,
     variant: 'bullet',
   },
 };
@@ -65,6 +68,7 @@ export const Progress: Story = {
   args: {
     pages: 5,
     modelValue: 1,
+    arrowButtons: false,
     variant: 'progress',
   },
 };
@@ -73,7 +77,35 @@ export const Pills: Story = {
   args: {
     pages: 5,
     modelValue: 1,
+    arrowButtons: false,
     variant: 'pill',
+  },
+};
+
+export const ArrowButtons: Story = {
+  args: {
+    pages: 5,
+    modelValue: 1,
+    arrowButtons: true,
+    variant: 'numeric',
+  },
+};
+
+export const BulletWithArrows: Story = {
+  args: {
+    pages: 5,
+    modelValue: 1,
+    arrowButtons: true,
+    variant: 'bullet',
+  },
+};
+
+export const ProgressWithArrows: Story = {
+  args: {
+    pages: 5,
+    modelValue: 1,
+    arrowButtons: true,
+    variant: 'progress',
   },
 };
 

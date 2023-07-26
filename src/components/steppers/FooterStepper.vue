@@ -7,6 +7,7 @@ export interface Props {
   pages: number;
   modelValue?: number;
   variant?: 'numeric' | 'bullet' | 'progress' | 'pill';
+  arrowButtons?: boolean;
 }
 
 defineOptions({
@@ -16,6 +17,7 @@ defineOptions({
 const props = withDefaults(defineProps<Props>(), {
   modelValue: 1,
   variant: 'numeric',
+  arrowButtons: false,
 });
 
 const emit = defineEmits<{
@@ -62,16 +64,18 @@ const onClick = (index: number) => {
     </template>
     <template v-else>
       <RuiButton
+        :class="{ [css.arrow__button]: arrowButtons }"
         :disabled="modelValue <= 1"
+        :icon="arrowButtons"
+        :variant="arrowButtons ? 'outlined' : 'text'"
         color="primary"
-        tile
-        variant="text"
         @click="onPrev()"
       >
-        <template #prepend>
+        <template v-if="!arrowButtons" #prepend>
           <RuiIcon :size="18" name="arrow-left-s-line" />
         </template>
-        <span>Back</span>
+        <span v-if="!arrowButtons">Back</span>
+        <RuiIcon v-else :size="24" name="arrow-left-line" />
       </RuiButton>
       <span v-if="variant === 'numeric'" :class="css.numeric">
         {{ modelValue }}/{{ pages }}
@@ -90,13 +94,18 @@ const onClick = (index: number) => {
         :value="(modelValue / pages) * 100"
       />
       <RuiButton
+        :class="{ [css.arrow__button]: arrowButtons }"
         :disabled="modelValue >= pages"
+        :icon="arrowButtons"
+        :variant="arrowButtons ? 'outlined' : 'text'"
         color="primary"
-        tile
-        variant="text"
         @click="onNext()"
       >
-        <span>Next</span>
+        <span v-if="!arrowButtons">Next</span>
+        <RuiIcon v-else :size="24" name="arrow-right-line" />
+        <template v-if="!arrowButtons" #append>
+          <RuiIcon :size="18" name="arrow-right-s-line" />
+        </template>
       </RuiButton>
     </template>
   </div>
@@ -147,6 +156,10 @@ const onClick = (index: number) => {
   .progress {
     @apply max-w-[60%] mx-4;
   }
+
+  .arrow__button {
+    @apply bg-white disabled:bg-white/60 #{!important};
+  }
 }
 
 :global(.dark) {
@@ -167,6 +180,10 @@ const onClick = (index: number) => {
       .bullet {
         @apply bg-white/30;
       }
+    }
+
+    .arrow__button {
+      @apply disabled:bg-[rgb(50,50,50)] #{!important};
     }
   }
 }
