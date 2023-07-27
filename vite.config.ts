@@ -28,6 +28,8 @@ export default defineConfig({
       entry: {
         index: resolve(__dirname, 'src/index.ts'),
         theme: resolve(__dirname, 'src/theme/index.ts'),
+        components: resolve(__dirname, 'src/components/index.ts'),
+        composables: resolve(__dirname, 'src/composables/index.ts'),
       },
       fileName: (format, entryName) => `${entryName}.${format}.js`,
       formats: ['es'],
