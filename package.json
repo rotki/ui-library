@@ -24,25 +24,42 @@
   ],
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "theme": [
+        "./dist/theme/index.d.ts"
+      ],
+      "composables": [
+        "./dist/composables/index.d.ts"
+      ],
+      "components": [
+        "./dist/components/index.d.ts"
+      ]
+    }
+  },
   "exports": {
-    "./*": {
-      "default": "./dist/"
-    },
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.es.js"
+      "import": "./dist/index.es.js",
+      "default": "./dist/index.es.js",
+      "types": "./dist/index.d.ts"
     },
     "./theme": {
-      "types": "./dist/theme.d.ts",
-      "default": "./dist/theme.es.js"
+      "import": "./dist/theme/index.es.js",
+      "default": "./dist/theme/index.es.js",
+      "types": "./dist/theme/index.d.ts"
     },
     "./components": {
-      "types": "./dist/components/index.d.ts",
-      "default": "./dist/components.es.js"
+      "import": "./dist/components/index.es.js",
+      "default": "./dist/components/index.es.js",
+      "types": "./dist/components/index.d.ts"
     },
     "./composables": {
-      "types": "./dist/composables/index.d.ts",
-      "default": "./dist/composables.es.js"
+      "import": "./dist/composables/index.es.js",
+      "default": "./dist/composables/index.es.js",
+      "types": "./dist/composables/index.d.ts"
+    },
+    "./style.css": {
+      "default": "./dist/style.css"
     }
   },
   "scripts": {
@@ -70,6 +87,8 @@
     "release": "bumpp -r --no-push"
   },
   "peerDependencies": {
+    "@vueuse/core": ">10.0.0",
+    "@vueuse/shared": ">10.0.0",
     "vue": ">=3.3.4"
   },
   "devDependencies": {
@@ -103,6 +122,7 @@
     "bumpp": "9.1.1",
     "css-loader": "6.8.1",
     "eslint": "8.45.0",
+    "fast-glob": "3.3.1",
     "fast-xml-parser": "4.2.6",
     "fs-extra": "11.1.1",
     "husky": "8.0.3",
