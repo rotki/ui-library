@@ -15,6 +15,7 @@ export interface Props {
   titleClass?: string;
   subtitleClass?: string;
   orientation?: StepperOrientation;
+  keepActiveVisible?: boolean;
 }
 
 defineOptions({
@@ -28,11 +29,12 @@ const props = withDefaults(defineProps<Props>(), {
   titleClass: '',
   subtitleClass: '',
   orientation: StepperOrientation.horizontal,
+  keepActiveVisible: true,
 });
 
 const css = useCssModule();
 
-const { custom, steps, step } = toRefs(props);
+const { custom, steps, step, orientation, keepActiveVisible } = toRefs(props);
 
 // automatically set step state to custom stepper.
 const renderedStep = computed(() => {
@@ -58,22 +60,54 @@ const renderedStep = computed(() => {
     };
   });
 });
+
+const wrapperRef = ref<HTMLDivElement>();
+
+watch(step, () => {
+  if (
+    !get(keepActiveVisible) ||
+    get(orientation) !== StepperOrientation.horizontal
+  ) {
+    return;
+  }
+
+  nextTick(() => {
+    const elem = get(wrapperRef);
+    if (elem) {
+      const activeStep = elem.querySelector('.active-step');
+      activeStep?.scrollIntoView?.({
+        behavior: 'smooth',
+        inline: 'center',
+      });
+    }
+  });
+});
 </script>
 
 <template>
   <div
+    ref="wrapperRef"
     :class="[
       css.stepper,
       css[orientation ?? ''],
       { [css['icon-top']]: iconTop, [css.custom]: custom },
     ]"
+    class="no-scrollbar overflow-auto"
   >
     <template
       v-for="({ title, description, state }, index) in renderedStep"
       :key="index"
     >
       <hr v-if="index > 0" :class="css.divider" />
-      <div :class="[css.step, css[state ?? StepperState.inactive]]">
+      <div
+        :class="[
+          css.step,
+          css[state ?? StepperState.inactive],
+          {
+            'active-step': state === StepperState.active,
+          },
+        ]"
+      >
         <slot name="icon" v-bind="{ state, index: index + 1 }">
           <StepperCustomIcon v-if="custom" :index="index + 1" :state="state" />
           <StepperIcon v-else :index="index + 1" :state="state" />
@@ -103,6 +137,10 @@ $colors: 'error', 'warning', 'info', 'success';
 .stepper {
   @apply flex;
 
+  &.horizontal {
+    @apply whitespace-nowrap lg:whitespace-normal;
+  }
+
   &.vertical {
     @apply flex-col inline-flex;
 
@@ -111,7 +149,7 @@ $colors: 'error', 'warning', 'info', 'success';
     }
 
     .divider {
-      @apply block min-h-[3rem] max-h-full h-full self-start -my-4 mx-3 border-l border-rui-grey-400;
+      @apply block min-h-[3rem] min-w-0 max-h-full h-full self-start -my-4 mx-3 border-l border-rui-grey-400;
     }
 
     &.custom {
@@ -177,7 +215,7 @@ $colors: 'error', 'warning', 'info', 'success';
   }
 
   .divider {
-    @apply block max-w-full h-0 max-h-0 self-center -mx-4 my-0 border-t border-rui-grey-400;
+    @apply block max-w-full min-w-[1rem] h-0 max-h-0 self-center -mx-4 my-0 border-t border-rui-grey-400;
     flex: 1 1 0;
   }
 
