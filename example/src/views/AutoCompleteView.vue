@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { RuiAutoComplete } from '@rotki/ui-library';
+import { type AutoCompleteProps, RuiAutoComplete } from '@rotki/ui-library';
+import { objectOmit } from '@vueuse/shared';
 
 const data = [
   { id: '1', text: 'Hello 1', disabled: false },
@@ -21,10 +22,10 @@ const data = [
   { id: '16', text: 'Hello 16', disabled: false },
 ];
 
-const autoCompleteFields = ref([
+const autoCompleteFields = ref<AutoCompleteProps[]>([
   {
     data,
-    value: [
+    modelValue: [
       { id: '4', text: 'Hello 4', disabled: true },
       { id: '5', text: 'Hello 5', disabled: true },
       { id: '6', text: 'Hello 6', disabled: false },
@@ -40,7 +41,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: [
+    modelValue: [
       { id: '4', text: 'Hello 4', disabled: true },
       { id: '5', text: 'Hello 5', disabled: true },
       { id: '6', text: 'Hello 6', disabled: false },
@@ -56,7 +57,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: [
+    modelValue: [
       { id: '4', text: 'Hello 4', disabled: true },
       { id: '5', text: 'Hello 5', disabled: true },
       { id: '6', text: 'Hello 6', disabled: false },
@@ -72,7 +73,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: [
+    modelValue: [
       { id: '4', text: 'Hello 4', disabled: true },
       { id: '5', text: 'Hello 5', disabled: true },
       { id: '6', text: 'Hello 6', disabled: false },
@@ -88,7 +89,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: [
+    modelValue: [
       { id: '4', text: 'Hello 4', disabled: true },
       { id: '5', text: 'Hello 5', disabled: true },
       { id: '6', text: 'Hello 6', disabled: false },
@@ -104,7 +105,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: [
+    modelValue: [
       { id: '4', text: 'Hello 4', disabled: true },
       { id: '5', text: 'Hello 5', disabled: true },
       { id: '6', text: 'Hello 6', disabled: false },
@@ -120,7 +121,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: null,
+    modelValue: null,
     placeholder: 'Placeholder',
     color: 'primary',
     variant: 'outlined',
@@ -129,7 +130,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: null,
+    modelValue: null,
     placeholder: 'Placeholder',
     color: 'secondary',
     variant: 'outlined',
@@ -138,7 +139,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: null,
+    modelValue: null,
     placeholder: 'Placeholder',
     color: 'error',
     variant: 'outlined',
@@ -147,7 +148,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: null,
+    modelValue: null,
     placeholder: 'Placeholder',
     color: 'warning',
     variant: 'outlined',
@@ -156,7 +157,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: null,
+    modelValue: null,
     placeholder: 'Placeholder',
     color: 'info',
     variant: 'outlined',
@@ -165,7 +166,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: null,
+    modelValue: null,
     placeholder: 'Placeholder',
     color: 'success',
     variant: 'outlined',
@@ -174,7 +175,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: [
+    modelValue: [
       { id: '4', text: 'Hello 4', disabled: true },
       { id: '5', text: 'Hello 5', disabled: true },
       { id: '6', text: 'Hello 6', disabled: false },
@@ -190,7 +191,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: [
+    modelValue: [
       { id: '4', text: 'Hello 4', disabled: true },
       { id: '5', text: 'Hello 5', disabled: true },
       { id: '6', text: 'Hello 6', disabled: false },
@@ -206,7 +207,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: [
+    modelValue: [
       { id: '4', text: 'Hello 4', disabled: true },
       { id: '5', text: 'Hello 5', disabled: true },
       { id: '6', text: 'Hello 6', disabled: false },
@@ -222,7 +223,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: [
+    modelValue: [
       { id: '4', text: 'Hello 4', disabled: true },
       { id: '5', text: 'Hello 5', disabled: true },
       { id: '6', text: 'Hello 6', disabled: false },
@@ -238,7 +239,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: [
+    modelValue: [
       { id: '4', text: 'Hello 4', disabled: true },
       { id: '5', text: 'Hello 5', disabled: true },
       { id: '6', text: 'Hello 6', disabled: false },
@@ -253,7 +254,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: [
+    modelValue: [
       { id: '4', text: 'Hello 4', disabled: true },
       { id: '5', text: 'Hello 5', disabled: true },
       { id: '6', text: 'Hello 6', disabled: false },
@@ -270,7 +271,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: null,
+    modelValue: null,
     placeholder: 'Placeholder',
     color: 'primary',
     variant: 'default',
@@ -280,7 +281,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: null,
+    modelValue: null,
     placeholder: 'Placeholder',
     color: 'secondary',
     variant: 'default',
@@ -290,7 +291,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: null,
+    modelValue: null,
     placeholder: 'Placeholder',
     color: 'error',
     variant: 'default',
@@ -300,7 +301,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: null,
+    modelValue: null,
     placeholder: 'Placeholder',
     color: 'warning',
     variant: 'default',
@@ -310,7 +311,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: null,
+    modelValue: null,
     placeholder: 'Placeholder',
     color: 'info',
     variant: 'default',
@@ -320,7 +321,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: null,
+    modelValue: null,
     placeholder: 'Placeholder',
     color: 'success',
     variant: 'default',
@@ -330,7 +331,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: [
+    modelValue: [
       { id: '4', text: 'Hello 4', disabled: true },
       { id: '5', text: 'Hello 5', disabled: true },
       { id: '6', text: 'Hello 6', disabled: false },
@@ -347,7 +348,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: [
+    modelValue: [
       { id: '4', text: 'Hello 4', disabled: true },
       { id: '5', text: 'Hello 5', disabled: true },
       { id: '6', text: 'Hello 6', disabled: false },
@@ -364,7 +365,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: [
+    modelValue: [
       { id: '4', text: 'Hello 4', disabled: true },
       { id: '5', text: 'Hello 5', disabled: true },
       { id: '6', text: 'Hello 6', disabled: false },
@@ -381,7 +382,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: [
+    modelValue: [
       { id: '4', text: 'Hello 4', disabled: true },
       { id: '5', text: 'Hello 5', disabled: true },
       { id: '6', text: 'Hello 6', disabled: false },
@@ -398,7 +399,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: [
+    modelValue: [
       { id: '4', text: 'Hello 4', disabled: true },
       { id: '5', text: 'Hello 5', disabled: true },
       { id: '6', text: 'Hello 6', disabled: false },
@@ -415,7 +416,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: [
+    modelValue: [
       { id: '4', text: 'Hello 4', disabled: true },
       { id: '5', text: 'Hello 5', disabled: true },
       { id: '6', text: 'Hello 6', disabled: false },
@@ -432,7 +433,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: null,
+    modelValue: null,
     placeholder: 'Placeholder',
     color: 'primary',
     variant: 'filled',
@@ -442,7 +443,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: null,
+    modelValue: null,
     placeholder: 'Placeholder',
     color: 'secondary',
     variant: 'filled',
@@ -452,7 +453,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: null,
+    modelValue: null,
     placeholder: 'Placeholder',
     color: 'error',
     variant: 'filled',
@@ -462,7 +463,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: null,
+    modelValue: null,
     placeholder: 'Placeholder',
     color: 'warning',
     variant: 'filled',
@@ -472,7 +473,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: null,
+    modelValue: null,
     placeholder: 'Placeholder',
     color: 'info',
     variant: 'filled',
@@ -482,7 +483,7 @@ const autoCompleteFields = ref([
   },
   {
     data,
-    value: null,
+    modelValue: null,
     placeholder: 'Placeholder',
     color: 'success',
     variant: 'filled',
@@ -500,9 +501,9 @@ const autoCompleteFields = ref([
       <RuiAutoComplete
         v-for="(field, i) in autoCompleteFields"
         :key="i"
-        v-model="field.value"
+        v-model="field.modelValue"
         :data-cy="`auto-complete-${i}`"
-        v-bind="field"
+        v-bind="objectOmit(field, ['modelValue'])"
       />
     </div>
   </div>

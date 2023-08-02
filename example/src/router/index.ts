@@ -66,6 +66,11 @@ const router = createRouter({
       name: 'alerts',
       component: () => import('@/views/AlertView.vue'),
     },
+    {
+      path: '/tooltips',
+      name: 'tooltips',
+      component: () => import('@/views/TooltipView.vue'),
+    },
   ],
 });
 

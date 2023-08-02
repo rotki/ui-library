@@ -8,6 +8,7 @@ type ProgressData = DataType<typeof RuiProgress, number>;
 const progress = ref<ProgressData[]>([
   {
     value: 40,
+    color: 'primary',
   },
   {
     value: 40,
@@ -19,6 +20,7 @@ const progress = ref<ProgressData[]>([
   },
   {
     value: 40,
+    color: 'primary',
     showLabel: true,
   },
   {
@@ -33,6 +35,7 @@ const progress = ref<ProgressData[]>([
   },
   {
     value: 40,
+    color: 'primary',
     variant: 'indeterminate',
   },
   {
@@ -48,6 +51,7 @@ const progress = ref<ProgressData[]>([
   {
     value: 40,
     bufferValue: 55,
+    color: 'primary',
     variant: 'buffer',
   },
   {
@@ -65,6 +69,7 @@ const progress = ref<ProgressData[]>([
   {
     value: 40,
     bufferValue: 55,
+    color: 'primary',
     variant: 'buffer',
     showLabel: true,
   },
@@ -84,6 +89,7 @@ const progress = ref<ProgressData[]>([
   },
   {
     value: 40,
+    color: 'primary',
     circular: true,
   },
   {
@@ -98,6 +104,7 @@ const progress = ref<ProgressData[]>([
   },
   {
     value: 40,
+    color: 'primary',
     circular: true,
     showLabel: true,
   },
@@ -115,6 +122,7 @@ const progress = ref<ProgressData[]>([
   },
   {
     value: 40,
+    color: 'primary',
     circular: true,
     variant: 'indeterminate',
   },

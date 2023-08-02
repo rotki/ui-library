@@ -311,6 +311,9 @@
     "useIcons": true,
     "useRotkiTheme": true,
     "generateId": true,
-    "useGlobalId": true
+    "useGlobalId": true,
+    "createPopper": true,
+    "usePopper": true,
+    "DEFAULT_POPPER_OPTIONS": true
   }
 }

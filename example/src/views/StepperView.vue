@@ -324,11 +324,6 @@ const footerSteppers = ref<FooterStepperData[]>([
     variant: 'progress',
     arrowButtons: true,
   },
-  {
-    value: 4,
-    pages: 5,
-    variant: 'pill',
-  },
 ]);
 </script>
 

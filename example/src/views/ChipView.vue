@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
-import { RuiChip } from '@rotki/ui-library';
+import { type ChipProps, RuiChip } from '@rotki/ui-library';
 
 const dismissed = reactive<Record<string | number, number>>({});
 
-const chips = ref([
+const chips = ref<ChipProps[]>([
   {
     disabled: false,
     color: 'primary',
@@ -535,7 +535,7 @@ const chips = ref([
   },
 ]);
 
-const prependChips = ref([
+const prependChips = ref<ChipProps[]>([
   {
     disabled: false,
     color: 'primary',

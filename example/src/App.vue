@@ -20,6 +20,7 @@ const navigation = ref([
       { to: { name: 'progress' }, title: 'Progress' },
       { to: { name: 'chips' }, title: 'Chips' },
       { to: { name: 'alerts' }, title: 'Alerts' },
+      { to: { name: 'tooltips' }, title: 'Tooltips' },
     ],
   },
 ]);
