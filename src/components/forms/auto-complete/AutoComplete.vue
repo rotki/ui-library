@@ -255,7 +255,7 @@ const updateOpen = (open: boolean) => {
               v-if="filtered.length === 0 && query !== ''"
               :class="css.empty"
             >
-              Nothing options found.
+              <slot name="no-data"> No options found </slot>
             </div>
             <div v-else v-bind="containerProps" class="max-h-60">
               <div v-bind="wrapperProps">
