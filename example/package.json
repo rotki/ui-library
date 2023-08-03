@@ -13,24 +13,24 @@
     "test:e2e:dev": "start-server-and-test 'vite dev --port 4173' http://localhost:4173 'cypress open --e2e'"
   },
   "dependencies": {
-    "@headlessui/vue": "1.7.14",
+    "@headlessui/vue": "1.7.15",
     "@rotki/ui-library": "workspace:*",
-    "pinia": "2.1.4",
+    "pinia": "2.1.6",
     "tailwindcss": "3.3.3",
     "vue": "3.3.4",
     "vue-router": "4.2.4"
   },
   "devDependencies": {
-    "@tsconfig/node18": "2.0.1",
+    "@tsconfig/node18": "18.2.0",
     "@types/node": "18.16.8",
     "@vitejs/plugin-vue": "4.2.3",
     "@vue/tsconfig": "0.4.0",
     "autoprefixer": "10.4.14",
-    "cypress": "12.17.1",
-    "postcss": "8.4.26",
+    "cypress": "12.17.3",
+    "postcss": "8.4.27",
     "start-server-and-test": "2.0.0",
     "typescript": "5.1.6",
-    "vite": "4.4.4",
-    "vue-tsc": "1.8.5"
+    "vite": "4.4.8",
+    "vue-tsc": "1.8.8"
   }
 }
