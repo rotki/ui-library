@@ -24,6 +24,7 @@ import {
   RiEyeOffLine,
   RiInformationFill,
   RiInformationLine,
+  RiMoreFill,
   RiRadioButtonLine,
 } from '@/all-icons';
 
@@ -54,6 +55,7 @@ export const useIcons = createGlobalState(() => {
     RiInformationFill,
     RiInformationLine,
     RiRadioButtonLine,
+    RiMoreFill,
   ];
 
   const registeredIcons: Ref<Record<string, string>> = ref({});
