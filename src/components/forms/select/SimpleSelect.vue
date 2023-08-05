@@ -1,0 +1,98 @@
+<script lang="ts" setup>
+import Icon from '@/components/icons/Icon.vue';
+
+export interface Props {
+  modelValue: string | number;
+  options: string[] | number[];
+  disabled?: boolean;
+  name?: string;
+  variant?: 'default' | 'outlined';
+}
+
+defineOptions({
+  name: 'RuiSimpleSelect',
+});
+
+const props = withDefaults(defineProps<Props>(), {
+  disabled: false,
+  name: '',
+  variant: 'default',
+});
+
+const emit = defineEmits<{
+  (e: 'update:modelValue', value?: string | number): void;
+}>();
+
+const { modelValue } = toRefs(props);
+
+const css = useCssModule();
+
+const value = computed({
+  get: () => get(modelValue),
+  set: (value) => emit('update:modelValue', value),
+});
+</script>
+
+<template>
+  <div :class="css.wrapper">
+    <select
+      v-model="value"
+      :class="[
+        css.select,
+        css[variant ?? 'default'],
+        { [css.disabled]: disabled },
+      ]"
+      :name="name"
+      :disabled="disabled"
+    >
+      <option v-for="(option, i) in options" :key="i" :value="option">
+        {{ option }}
+      </option>
+    </select>
+    <Icon :class="css.icon" name="arrow-drop-down-fill" size="24" />
+  </div>
+</template>
+
+<style module lang="scss">
+.wrapper {
+  @apply relative;
+
+  .select {
+    @apply outline-none focus:outline-none appearance-none cursor-pointer pl-2 py-1 pr-6 rounded;
+    @apply m-0 w-full bg-white hover:bg-gray-50 transition;
+    @apply disabled:bg-black/[.12] disabled:text-rui-text-disabled disabled:active:text-rui-text-disabled disabled:cursor-default;
+
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+
+    &::-ms-expand {
+      display: none;
+    }
+
+    &.outlined {
+      @apply border border-rui-text-disabled disabled:border-transparent;
+    }
+  }
+
+  .icon {
+    @apply absolute right-0 top-px bottom-0 text-rui-text-disabled pointer-events-none;
+  }
+}
+
+:global(.dark) {
+  .wrapper {
+    .select {
+      @apply bg-transparent hover:bg-white/10 text-rui-text-disabled;
+
+      &.outlined {
+        @apply border border-rui-text-disabled;
+      }
+    }
+
+    .icon {
+      @apply text-rui-text-disabled;
+    }
+  }
+}
+</style>
