@@ -27,6 +27,10 @@ import {
   default as RuiSimpleSelect,
   type Props as SimpleSelectProps,
 } from '@/components/forms/select/SimpleSelect.vue';
+import {
+  type Props as DataTableProps,
+  default as RuiDataTable,
+} from '@/components/tables/DataTable.vue';
 
 export {
   RuiAlert,
@@ -45,9 +49,11 @@ export {
   RuiStepper,
   RuiTextField,
   RuiTooltip,
+  RuiDataTable,
   RuiSimpleSelect,
   AutoCompleteProps,
   ChipProps,
   TooltipProps,
   SimpleSelectProps,
+  DataTableProps,
 };
