@@ -24,9 +24,9 @@ export interface SortColumn {
 export interface Props {
   rows: Array<Record<string, any>>;
   modelValue?: string[];
-  by?: string;
+  rowAttr?: string;
   pagination?: TablePaginationData;
-  sort?: SortColumn;
+  sort?: SortColumn[];
   cols?: Array<TableColumn>;
   columnAttr?: string;
   dense?: boolean;
@@ -40,22 +40,22 @@ defineOptions({
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,
-  by: '',
+  rowAttr: '',
   rows: () => [],
   cols: undefined,
   pagination: undefined,
   columnAttr: 'label',
-  sort: () => ({ direction: 'asc' }),
+  sort: undefined,
   loading: false,
 });
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value?: string[]): void;
   (e: 'update:pagination', value?: TablePaginationData): void;
-  (e: 'update:sort', value?: SortColumn): void;
+  (e: 'update:sort', value?: SortColumn[]): void;
 }>();
 
-const { cols, rows, modelValue, columnAttr, by, pagination, sort } =
+const { cols, rows, modelValue, columnAttr, rowAttr, pagination, sort } =
   toRefs(props);
 
 const css = useCssModule();
@@ -98,14 +98,25 @@ const sortData = computed({
   },
 });
 
+const sortedMap = computed(() => {
+  const mapped: Record<string, SortColumn> = {};
+  return (get(sort) ?? []).reduce((acc, curr) => {
+    if (!curr.column) {
+      return acc;
+    }
+
+    return { ...acc, [curr.column]: curr };
+  }, mapped);
+});
+
 const allIdentifiers = computed(() => {
-  const selectBy = get(by);
+  const selectBy = get(rowAttr);
 
   if (!selectBy) {
     return [];
   }
 
-  return get(rows)?.map((row) => row[get(by)]) ?? [];
+  return get(rows)?.map((row) => row[selectBy]) ?? [];
 });
 
 const isAllSelected = computed(() => {
@@ -125,13 +136,13 @@ const indeterminate = computed(() => {
   return selectedRows.length > 0 && !get(isAllSelected);
 });
 
-const isSortedBy = (key: string) => {
-  const sortBy = get(sortData);
-  if (!sortBy) {
-    return false;
-  }
+const isSortedBy = (key: string) => key in get(sortedMap);
 
-  return sortBy.column === key;
+const getSortIndex = (key: string) => {
+  if (!isSortedBy(key)) {
+    return -1;
+  }
+  return get(sortData)?.findIndex((sort) => sort.column === key) ?? -1;
 };
 
 const isSelected = (identifier: string) => {
@@ -158,20 +169,24 @@ const onSort = ({
   key: string;
   direction?: 'asc' | 'desc';
 }) => {
-  const sortBy = get(sortData);
-  if (sortBy.column === key) {
+  const allSortBy = [...(get(sortData) ?? [])];
+  if (isSortedBy(key)) {
     const newDirection = !direction || direction === 'asc' ? 'desc' : 'asc';
 
+    const index = getSortIndex(key);
+    const sortBy = allSortBy[index];
+
     if (sortBy.direction === newDirection) {
-      set(sortData, { ...sortBy, column: undefined, direction: 'asc' });
+      allSortBy.splice(index, 1);
     } else {
-      set(sortData, {
-        ...sortBy,
-        direction: sortBy.direction === 'asc' ? 'desc' : 'asc',
-      });
+      sortBy.direction = sortBy.direction === 'asc' ? 'desc' : 'asc';
     }
+    set(sortData, allSortBy);
   } else {
-    set(sortData, { column: key, direction: direction || 'asc' });
+    set(sortData, [
+      ...allSortBy,
+      { column: key, direction: direction || 'asc' },
+    ]);
   }
 };
 
@@ -229,7 +244,8 @@ const onSelect = (checked: boolean, value: string) => {
                   css.sort__button,
                   {
                     [css.sort__active]: isSortedBy(column.key),
-                    [css[`sort__${sort?.direction}`]]: isSortedBy(column.key),
+                    [css[`sort__${sortedMap[column.key]?.direction}`]]:
+                      isSortedBy(column.key),
                   },
                 ]"
                 size="sm"
@@ -276,14 +292,14 @@ const onSelect = (checked: boolean, value: string) => {
         <tr
           v-for="(row, index) in rows"
           :key="index"
-          :class="[css.tr, { [css.tr__selected]: isSelected(row[by]) }]"
+          :class="[css.tr, { [css.tr__selected]: isSelected(row[rowAttr]) }]"
         >
           <td v-if="selectedData" :class="css.checkbox">
             <Checkbox
-              :model-value="isSelected(row[by])"
+              :model-value="isSelected(row[rowAttr])"
               hide-details
               color="primary"
-              @update:model-value="onSelect($event, row[by])"
+              @update:model-value="onSelect($event, row[rowAttr])"
             />
           </td>
 

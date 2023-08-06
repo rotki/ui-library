@@ -99,9 +99,11 @@ const columns: TableColumn[] = [
   {
     key: 'email',
     label: 'Email address',
+    sortable: true,
   },
   {
     key: 'role',
+    sortable: true,
   },
   {
     key: 'action',
@@ -116,7 +118,7 @@ const meta: Meta<Props> = {
   argTypes: {},
   args: {
     modelValue: undefined,
-    by: 'id',
+    rowAttr: 'id',
     rows: [],
     columnAttr: 'label',
     loading: false,
@@ -146,7 +148,7 @@ export const Default: Story = {
   args: {
     rows: data,
     cols: columns,
-    sort: { column: 'name', direction: 'asc' },
+    sort: [{ column: 'name', direction: 'asc' }],
     pagination: { limit: 15, page: 1, total: 150 },
   },
 };
@@ -222,7 +224,7 @@ export const PaginationAndSort: Story = {
     modelValue: [],
     cols: columns,
     pagination: { limit: 15, page: 1, total: 150 },
-    sort: { column: 'name', direction: 'asc' },
+    sort: [{ column: 'name', direction: 'asc' }],
   },
 };
 
