@@ -25,6 +25,7 @@ export interface SortColumn {
 export interface Props {
   rows: Array<Record<string, any>>;
   modelValue?: string[];
+  search?: string;
   rowAttr?: string;
   pagination?: TablePaginationData;
   sort?: SortColumn | SortColumn[];
@@ -42,7 +43,7 @@ defineOptions({
 const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,
   rowAttr: '',
-  rows: () => [],
+  search: '',
   cols: undefined,
   pagination: undefined,
   columnAttr: 'label',
@@ -56,8 +57,16 @@ const emit = defineEmits<{
   (e: 'update:sort', value?: SortColumn | SortColumn[]): void;
 }>();
 
-const { cols, rows, modelValue, columnAttr, rowAttr, pagination, sort } =
-  toRefs(props);
+const {
+  cols,
+  rows,
+  modelValue,
+  columnAttr,
+  rowAttr,
+  pagination,
+  search,
+  sort,
+} = toRefs(props);
 
 const css = useCssModule();
 
@@ -139,6 +148,19 @@ const isAllSelected = computed(() => {
   }
 
   return selectedRows.length > 0 && selectedRows.length === get(rows).length;
+});
+
+const filtered = computed(() => {
+  const query = get(search)?.toLocaleLowerCase();
+  if (!query) {
+    return get(rows);
+  }
+
+  return get(rows).filter((row) =>
+    Object.keys(row).some((key) =>
+      `${row[key]}`.toLocaleLowerCase().includes(query),
+    ),
+  );
 });
 
 const indeterminate = computed(() => {
@@ -251,7 +273,7 @@ const onSelect = (checked: boolean, value: string) => {
             <Checkbox
               :model-value="indeterminate || isAllSelected"
               :indeterminate="indeterminate"
-              :disabled="!rows?.length"
+              :disabled="!filtered?.length"
               hide-details
               color="primary"
               @update:model-value="onToggleAll($event)"
@@ -342,7 +364,7 @@ const onSelect = (checked: boolean, value: string) => {
       </thead>
       <tbody :class="css.tbody">
         <tr
-          v-for="(row, index) in rows"
+          v-for="(row, index) in filtered"
           :key="index"
           :class="[css.tr, { [css.tr__selected]: isSelected(row[rowAttr]) }]"
         >

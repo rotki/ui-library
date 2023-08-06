@@ -1,10 +1,11 @@
 import Button from '@/components/buttons/button/Button.vue';
+import TextField from '@/components/forms/text-field/TextField.vue';
 import Icon from '@/components/icons/Icon.vue';
 import DataTable, { type Props, type TableColumn } from './DataTable.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 const render: StoryFn<Props> = (args) => ({
-  components: { DataTable, Button, Icon },
+  components: { DataTable, Button, Icon, TextField },
   setup() {
     const modelValue = computed({
       get() {
@@ -30,17 +31,43 @@ const render: StoryFn<Props> = (args) => ({
         args.sort = val;
       },
     });
+    const search = computed({
+      get() {
+        return args.search;
+      },
+      set(val) {
+        args.search = val;
+      },
+    });
 
-    return { args, modelValue, pagination, sort };
+    return { args, modelValue, pagination, search, sort };
   },
   template: `<div class="flex flex-col space-y-4">
-  <span v-if="modelValue">selected: {{ modelValue.length }}</span>
-  <DataTable v-bind="args" v-model="modelValue" v-model:pagination="pagination" v-model:sort="sort">
-    <template #action-data>
-    <Button icon variant="text" size="sm"><Icon name="more-fill" color="primary" /></Button>
-    </template>
-  </DataTable>
-  </div>`,
+      <div class="flex justify-between items-center space-x-4">
+        <TextField
+          v-model="search"
+          placeholder="search"
+          label="search"
+          class="w-1/2 lg:w-2/5"
+          variant="outlined"
+          color="primary"
+        />
+        <span v-if="modelValue">selected: {{ modelValue.length }}</span>
+      </div>
+      <DataTable
+        v-bind="args"
+        v-model="modelValue"
+        v-model:pagination="pagination"
+        v-model:sort="sort"
+        :search="search"
+      >
+        <template #action-data>
+          <Button icon variant="text" size="sm"
+            ><Icon name="more-fill" color="primary"
+          /></Button>
+        </template>
+      </DataTable>
+    </div>`,
 });
 
 const data = [
@@ -51,9 +78,6 @@ const data = [
     email: 'lindsay.walton@example.com',
     role: 'Member',
     date: '10.09.2023',
-    'created at': '10.09.2023',
-    'updated at': '10.09.2023',
-    'deleted at': '10.09.2023',
   },
   {
     id: 2,
@@ -62,9 +86,6 @@ const data = [
     email: 'courtney.henry@example.com',
     role: 'Admin',
     date: '10.09.2023',
-    'created at': '10.09.2023',
-    'updated at': '10.09.2023',
-    'deleted at': '10.09.2023',
   },
   {
     id: 3,
@@ -73,9 +94,110 @@ const data = [
     email: 'tom.cook@example.com',
     role: 'Member',
     date: '10.09.2023',
-    'created at': '10.09.2023',
-    'updated at': '10.09.2023',
-    'deleted at': '10.09.2023',
+  },
+  {
+    id: 4,
+    name: 'Tom Barners Lee',
+    title: 'Director of Product',
+    email: 'tom.cook@example.com',
+    role: 'Member',
+    date: '10.09.2023',
+  },
+  {
+    id: 5,
+    name: 'Johny Ivy',
+    title: 'Director of Product',
+    email: 'tom.cook@example.com',
+    role: 'Member',
+    date: '10.09.2023',
+  },
+  {
+    id: 6,
+    name: 'Lefteris',
+    title: 'Director of Product',
+    email: 'tom.cook@example.com',
+    role: 'Member',
+    date: '10.09.2023',
+  },
+  {
+    id: 7,
+    name: 'Kelsos',
+    title: 'Director of Product',
+    email: 'tom.cook@example.com',
+    role: 'Member',
+    date: '10.09.2023',
+  },
+  {
+    id: 8,
+    name: 'Yabir',
+    title: 'Director of Product',
+    email: 'tom.cook@example.com',
+    role: 'Member',
+    date: '10.09.2023',
+  },
+  {
+    id: 9,
+    name: 'Luki',
+    title: 'Director of Product',
+    email: 'tom.cook@example.com',
+    role: 'Member',
+    date: '10.09.2023',
+  },
+  {
+    id: 10,
+    name: 'Celina',
+    title: 'Director of Product',
+    email: 'tom.cook@example.com',
+    role: 'Member',
+    date: '10.09.2023',
+  },
+  {
+    id: 11,
+    name: 'Joseph',
+    title: 'Director of Product',
+    email: 'tom.cook@example.com',
+    role: 'Member',
+    date: '10.09.2023',
+  },
+  {
+    id: 12,
+    name: 'Dimitry',
+    title: 'Director of Product',
+    email: 'tom.cook@example.com',
+    role: 'Member',
+    date: '10.09.2023',
+  },
+  {
+    id: 13,
+    name: 'Isaac',
+    title: 'Director of Product',
+    email: 'tom.cook@example.com',
+    role: 'Member',
+    date: '10.09.2023',
+  },
+  {
+    id: 14,
+    name: 'Alex',
+    title: 'Director of Product',
+    email: 'tom.cook@example.com',
+    role: 'Member',
+    date: '10.09.2023',
+  },
+  {
+    id: 15,
+    name: 'Alex',
+    title: 'Director of Product',
+    email: 'tom.cook@example.com',
+    role: 'Member',
+    date: '10.09.2023',
+  },
+  {
+    id: 16,
+    name: 'Alex',
+    title: 'Director of Product',
+    email: 'tom.cook@example.com',
+    role: 'Member',
+    date: '10.09.2023',
   },
 ];
 
@@ -162,7 +284,7 @@ export const Dense: Story = {
 
 export const Loading: Story = {
   args: {
-    rows: data,
+    rows: [],
     loading: true,
   },
 };
