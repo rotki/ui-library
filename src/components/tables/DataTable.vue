@@ -22,6 +22,11 @@ export interface SortColumn {
   direction: 'asc' | 'desc';
 }
 
+export interface TableOptions {
+  pagination?: TablePaginationData;
+  sort?: SortColumn | SortColumn[];
+}
+
 export interface Props {
   rows: Array<Record<string, any>>;
   modelValue?: string[];
@@ -55,6 +60,7 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value?: string[]): void;
   (e: 'update:pagination', value?: TablePaginationData): void;
   (e: 'update:sort', value?: SortColumn | SortColumn[]): void;
+  (e: 'update:options', value?: TableOptions): void;
 }>();
 
 const {
@@ -81,6 +87,11 @@ const columns = computed(
     })),
 );
 
+const options = computed<TableOptions>(() => ({
+  pagination: get(pagination),
+  sort: get(sort),
+}));
+
 const selectedData = computed({
   get() {
     return get(modelValue);
@@ -96,6 +107,7 @@ const paginationData = computed({
   },
   set(value) {
     emit('update:pagination', value);
+    emit('update:options', get(options));
   },
 });
 
@@ -105,6 +117,7 @@ const sortData = computed({
   },
   set(value) {
     emit('update:sort', value);
+    emit('update:options', get(options));
   },
 });
 
@@ -138,7 +151,7 @@ const allIdentifiers = computed(() => {
     return [];
   }
 
-  return get(rows)?.map((row) => row[selectBy]) ?? [];
+  return get(filtered)?.map((row) => row[selectBy]) ?? [];
 });
 
 const isAllSelected = computed(() => {
@@ -147,7 +160,11 @@ const isAllSelected = computed(() => {
     return false;
   }
 
-  return selectedRows.length > 0 && selectedRows.length === get(rows).length;
+  return (
+    selectedRows.length > 0 &&
+    (selectedRows.length === get(filtered).length ||
+      get(allIdentifiers).every((id) => selectedRows.includes(id)))
+  );
 });
 
 const filtered = computed(() => {
@@ -276,140 +293,144 @@ const onSelect = (checked: boolean, value: string) => {
 
 <template>
   <div :class="[css.wrapper, { [css.outlined]: outlined }]">
-    <table :class="[css.base, { [css.dense]: dense }]">
-      <thead :class="css.thead">
-        <tr :class="css.tr">
-          <th v-if="selectedData" scope="col" :class="css.checkbox">
-            <Checkbox
-              :model-value="indeterminate || isAllSelected"
-              :indeterminate="indeterminate"
-              :disabled="!filtered?.length"
-              hide-details
-              color="primary"
-              @update:model-value="onToggleAll($event)"
-            />
-          </th>
+    <div :class="css.scroller">
+      <table :class="[css.base, { [css.dense]: dense }]">
+        <thead :class="css.thead">
+          <tr :class="css.tr">
+            <th v-if="selectedData" scope="col" :class="css.checkbox">
+              <Checkbox
+                :model-value="isAllSelected"
+                :indeterminate="indeterminate"
+                :disabled="!filtered?.length"
+                hide-details
+                color="primary"
+                @update:model-value="onToggleAll($event)"
+              />
+            </th>
 
-          <th
-            v-for="(column, index) in columns"
-            :key="index"
-            scope="col"
-            :class="[
-              css.th,
-              column.class,
-              column.align === 'right' ? css.align__right : css.align__left,
-              {
-                capitalize: !cols,
-                [css.sortable]: column.sortable,
-              },
-            ]"
-          >
-            <slot :name="`${column.key}-header`" :column="column">
-              <Button
-                v-if="column.sortable"
-                :class="[
-                  css.sort__button,
-                  {
-                    [css.sort__active]: isSortedBy(column.key),
-                    [css[`sort__${sortedMap[column.key]?.direction}`]]:
-                      isSortedBy(column.key),
-                  },
-                ]"
-                size="sm"
-                variant="text"
-                @click="onSort(column)"
-              >
-                <span :class="css.column__text">{{ column[columnAttr] }}</span>
-
-                <template v-if="column.align === 'right'" #prepend>
-                  <Icon
-                    :class="css.sort__icon"
-                    name="arrow-down-line"
-                    size="18"
-                  />
-                </template>
-
-                <template
-                  v-if="!column.align || column.align === 'left'"
-                  #append
-                >
-                  <Icon
-                    :class="css.sort__icon"
-                    name="arrow-down-line"
-                    size="18"
-                  />
-                  <Chip
-                    v-if="getSortIndex(column.key) >= 0"
-                    :label="`${getSortIndex(column.key) + 1}`"
-                    size="sm"
-                    color="grey"
-                  />
-                </template>
-
-                <template v-else-if="getSortIndex(column.key) >= 0" #append>
-                  <Chip
-                    :label="`${getSortIndex(column.key) + 1}`"
-                    size="sm"
-                    color="grey"
-                  />
-                </template>
-              </Button>
-              <span v-else :class="css.column__text">
-                {{ column[columnAttr] }}
-              </span>
-            </slot>
-          </th>
-        </tr>
-        <tr v-if="loading" :class="css.thead__loader">
-          <th
-            scope="col"
-            :class="css.progress"
-            :colspan="columns.length + (selectedData ? 1 : 0)"
-          >
-            <div class="h-0">
-              <Progress variant="indeterminate" color="primary" />
-            </div>
-          </th>
-        </tr>
-      </thead>
-      <tbody :class="css.tbody">
-        <tr
-          v-for="(row, index) in filtered"
-          :key="index"
-          :class="[css.tr, { [css.tr__selected]: isSelected(row[rowAttr]) }]"
-        >
-          <td v-if="selectedData" :class="css.checkbox">
-            <Checkbox
-              :model-value="isSelected(row[rowAttr])"
-              hide-details
-              color="primary"
-              @update:model-value="onSelect($event, row[rowAttr])"
-            />
-          </td>
-
-          <td
-            v-for="(column, subIndex) in columns"
-            :key="subIndex"
-            :class="[
-              css.td,
-              column.align === 'right' ? css.align__right : css.align__left,
-            ]"
-          >
-            <slot
-              :name="`${column.key}-data`"
-              :column="column"
-              :row="row"
-              :index="index"
+            <th
+              v-for="(column, index) in columns"
+              :key="index"
+              scope="col"
+              :class="[
+                css.th,
+                column.class,
+                column.align === 'right' ? css.align__right : css.align__left,
+                {
+                  capitalize: !cols,
+                  [css.sortable]: column.sortable,
+                },
+              ]"
             >
-              {{ row[column.key] }}
-            </slot>
-          </td>
-        </tr>
-      </tbody>
-      <tfoot>
-        <slot name="tfoot" />
-      </tfoot>
-    </table>
+              <slot :name="`${column.key}-header`" :column="column">
+                <Button
+                  v-if="column.sortable"
+                  :class="[
+                    css.sort__button,
+                    {
+                      [css.sort__active]: isSortedBy(column.key),
+                      [css[`sort__${sortedMap[column.key]?.direction}`]]:
+                        isSortedBy(column.key),
+                    },
+                  ]"
+                  size="sm"
+                  variant="text"
+                  @click="onSort(column)"
+                >
+                  <span :class="css.column__text">
+                    {{ column[columnAttr] }}
+                  </span>
+
+                  <template v-if="column.align === 'right'" #prepend>
+                    <Icon
+                      :class="css.sort__icon"
+                      name="arrow-down-line"
+                      size="18"
+                    />
+                  </template>
+
+                  <template
+                    v-if="!column.align || column.align === 'left'"
+                    #append
+                  >
+                    <Icon
+                      :class="css.sort__icon"
+                      name="arrow-down-line"
+                      size="18"
+                    />
+                    <Chip
+                      v-if="getSortIndex(column.key) >= 0"
+                      :label="`${getSortIndex(column.key) + 1}`"
+                      size="sm"
+                      color="grey"
+                    />
+                  </template>
+
+                  <template v-else-if="getSortIndex(column.key) >= 0" #append>
+                    <Chip
+                      :label="`${getSortIndex(column.key) + 1}`"
+                      size="sm"
+                      color="grey"
+                    />
+                  </template>
+                </Button>
+                <span v-else :class="css.column__text">
+                  {{ column[columnAttr] }}
+                </span>
+              </slot>
+            </th>
+          </tr>
+          <tr v-if="loading" :class="css.thead__loader">
+            <th
+              scope="col"
+              :class="css.progress"
+              :colspan="columns.length + (selectedData ? 1 : 0)"
+            >
+              <div class="h-0">
+                <Progress variant="indeterminate" color="primary" />
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody :class="css.tbody">
+          <tr
+            v-for="(row, index) in filtered"
+            :key="index"
+            :class="[css.tr, { [css.tr__selected]: isSelected(row[rowAttr]) }]"
+          >
+            <td v-if="selectedData" :class="css.checkbox">
+              <Checkbox
+                :model-value="isSelected(row[rowAttr])"
+                hide-details
+                color="primary"
+                @update:model-value="onSelect($event, row[rowAttr])"
+              />
+            </td>
+
+            <td
+              v-for="(column, subIndex) in columns"
+              :key="subIndex"
+              :class="[
+                css.td,
+                column.align === 'right' ? css.align__right : css.align__left,
+              ]"
+            >
+              <slot
+                :name="`${column.key}-data`"
+                :column="column"
+                :row="row"
+                :index="index"
+              >
+                {{ row[column.key] }}
+              </slot>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <slot name="tfoot" />
+        </tfoot>
+      </table>
+    </div>
     <TablePagination
       v-if="paginationData"
       v-model="paginationData"
@@ -420,12 +441,17 @@ const onSelect = (checked: boolean, value: string) => {
 
 <style module lang="scss">
 .wrapper {
-  @apply relative divide-y divide-gray-300;
+  @apply relative divide-y divide-black/[0.12];
   &.outlined {
     @apply rounded-xl border border-black/[0.12];
   }
+
+  .scroller {
+    @apply overflow-x-auto overflow-y-hidden;
+  }
+
   .base {
-    @apply min-w-full table-fixed divide-y divide-gray-300 whitespace-nowrap overflow-x-auto mx-auto my-0;
+    @apply min-w-full table-fixed divide-y divide-black/[0.12] whitespace-nowrap mx-auto my-0;
     max-width: fit-content;
 
     .thead {
@@ -502,7 +528,7 @@ const onSelect = (checked: boolean, value: string) => {
     }
 
     .tbody {
-      @apply divide-y divide-gray-200;
+      @apply divide-y divide-black/[0.12];
       .tr {
         @apply hover:bg-black/[0.04];
 
@@ -548,6 +574,12 @@ const onSelect = (checked: boolean, value: string) => {
 
 :global(.dark) {
   .wrapper {
+    @apply divide-white/[0.12];
+
+    &.outlined {
+      @apply rounded-xl border border-white/[0.12];
+    }
+
     .base {
       @apply divide-gray-700;
       .thead {
@@ -559,10 +591,10 @@ const onSelect = (checked: boolean, value: string) => {
       }
 
       .tbody {
-        @apply divide-gray-800;
+        @apply divide-white/[0.12];
         .tr {
           &__selected {
-            @apply bg-gray-800/50;
+            @apply bg-rui-dark-primary/[0.08];
           }
         }
 

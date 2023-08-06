@@ -28,7 +28,9 @@ import {
   type Props as SimpleSelectProps,
 } from '@/components/forms/select/SimpleSelect.vue';
 import {
+  type TableColumn as DataTableColumn,
   type Props as DataTableProps,
+  type SortColumn as DataTableSort,
   default as RuiDataTable,
 } from '@/components/tables/DataTable.vue';
 
@@ -56,4 +58,6 @@ export {
   TooltipProps,
   SimpleSelectProps,
   DataTableProps,
+  DataTableColumn,
+  DataTableSort,
 };

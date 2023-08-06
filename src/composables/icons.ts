@@ -2,6 +2,7 @@ import { type GeneratedIcon } from '@/types/icons';
 import {
   RiAlertFill,
   RiAlertLine,
+  RiArrowDownLine,
   RiArrowDropDownFill,
   RiArrowLeftLine,
   RiArrowLeftSLine,
@@ -32,6 +33,7 @@ export const useIcons = createGlobalState(() => {
   const requiredIcons: GeneratedIcon[] = [
     RiAlertFill,
     RiAlertLine,
+    RiArrowDownLine,
     RiArrowDropDownFill,
     RiArrowLeftLine,
     RiArrowLeftSLine,
