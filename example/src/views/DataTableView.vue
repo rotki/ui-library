@@ -5,11 +5,10 @@ import {
   RuiButton,
   RuiDataTable,
   RuiIcon,
+  RuiTextField,
 } from '@rotki/ui-library/components';
 import { objectOmit } from '@vueuse/shared';
 import { ref } from 'vue';
-
-const selected = ref([]);
 
 const data = [
   {
@@ -18,7 +17,7 @@ const data = [
     title: 'Director of Product',
     email: 'Lefteris@example.com',
     role: 'Member',
-    salary: '100000',
+    salary: 1000000,
     date: '10.09.2023',
     date1: '10.09.2023',
     date2: '10.09.2023',
@@ -40,7 +39,7 @@ const data = [
     title: 'Director of Product',
     email: 'Kelsos@example.com',
     role: 'Member',
-    salary: '100000',
+    salary: 900000,
     date: '10.09.2023',
   },
   {
@@ -49,7 +48,7 @@ const data = [
     title: 'Director of Product',
     email: 'Yabir@example.com',
     role: 'Member',
-    salary: '100000',
+    salary: 800000,
     date: '10.09.2023',
   },
   {
@@ -58,7 +57,7 @@ const data = [
     title: 'Director of Product',
     email: 'Luki@example.com',
     role: 'Member',
-    salary: '100000',
+    salary: 700000,
     date: '10.09.2023',
   },
   {
@@ -67,7 +66,7 @@ const data = [
     title: 'Director of Product',
     email: 'Celina@example.com',
     role: 'Member',
-    salary: '100000',
+    salary: 600000,
     date: '10.09.2023',
   },
   {
@@ -76,7 +75,7 @@ const data = [
     title: 'Director of Product',
     email: 'Joseph@example.com',
     role: 'Member',
-    salary: '100000',
+    salary: 500000,
     date: '10.09.2023',
   },
   {
@@ -85,7 +84,7 @@ const data = [
     title: 'Director of Product',
     email: 'Dimitry@example.com',
     role: 'Member',
-    salary: '100000',
+    salary: 400000,
     date: '10.09.2023',
   },
   ...[...new Array(43)].map((_, index) => ({
@@ -94,7 +93,7 @@ const data = [
     title: 'Front-end Developer',
     email: 'lindsay.walton@example.com',
     role: 'Member',
-    salary: '100000',
+    salary: 1000 * (1 + index),
     date: '10.09.2023',
   })),
 ];
@@ -134,27 +133,57 @@ const columns: DataTableColumn[] = [
   },
 ];
 
-const datatables = ref<DataTableProps[]>([
-  { rowAttr: 'id', rows: data.slice(0, 5), cols: columns },
-  { rowAttr: 'id', rows: data.slice(0, 5) },
-  { rowAttr: 'id', rows: data.slice(0, 5), loading: true },
-  { rowAttr: 'id', rows: data.slice(0, 5), loading: true, outlined: true },
-  { rowAttr: 'id', rows: data.slice(0, 5), loading: true, outlined: true },
+const datatables = ref<{ title: string; table: DataTableProps }[]>([
   {
-    rowAttr: 'id',
-    rows: data.slice(0, 5),
-    cols: columns,
-    outlined: true,
-    sort: [{ column: 'name', direction: 'asc' }],
+    title: 'With Column definitions',
+    table: { rowAttr: 'id', rows: data.slice(0, 5), cols: columns },
   },
   {
-    rowAttr: 'id',
-    modelValue: [],
-    rows: data,
-    cols: columns,
-    outlined: true,
-    sort: [{ column: 'name', direction: 'asc' }],
-    pagination: { limit: 10, page: 1, total: 50 },
+    title: 'No Columns',
+    table: { rowAttr: 'id', rows: data.slice(0, 5) },
+  },
+  {
+    title: 'Loading',
+    table: { rowAttr: 'id', rows: data.slice(0, 5), loading: true },
+  },
+  {
+    title: 'Outlined',
+    table: { rowAttr: 'id', rows: data.slice(0, 5), outlined: true },
+  },
+  {
+    title: 'Sortable',
+    table: {
+      rowAttr: 'id',
+      rows: data.slice(0, 5),
+      cols: columns,
+      outlined: true,
+      sort: [{ column: 'name', direction: 'asc' }],
+    },
+  },
+  {
+    title: 'Sort and Pagination',
+    table: {
+      rowAttr: 'id',
+      modelValue: [],
+      rows: data,
+      cols: columns,
+      outlined: true,
+      sort: [{ column: 'name', direction: 'asc' }],
+      pagination: { limit: 10, page: 1, total: 50 },
+    },
+  },
+  {
+    title: 'Search',
+    table: {
+      rowAttr: 'id',
+      modelValue: [],
+      rows: data,
+      cols: columns,
+      outlined: true,
+      sort: [],
+      pagination: { limit: 10, page: 1, total: 50 },
+      search: '',
+    },
   },
 ]);
 </script>
@@ -163,7 +192,27 @@ const datatables = ref<DataTableProps[]>([
   <div>
     <h2 class="text-h4 mb-6" data-cy="datatables">Data Tables</h2>
     <div class="grid grid-cols-1 gap-12">
-      <div v-for="(table, i) in datatables" :key="i">
+      <div
+        v-for="({ title, table }, i) in datatables"
+        :key="i"
+        class="flex flex-col space-y-3"
+      >
+        <h4>{{ title }}</h4>
+        <div class="flex space-x-4 items-center">
+          <RuiTextField
+            v-if="table.search !== undefined"
+            v-model="table.search"
+            placeholder="search"
+            label="search"
+            class="w-1/2 lg:w-2/5"
+            variant="outlined"
+            color="primary"
+            hide-details
+          />
+          <span v-if="table.modelValue">
+            selected: {{ table.modelValue.length }}
+          </span>
+        </div>
         <RuiDataTable
           v-bind="objectOmit(table, ['modelValue', 'pagination', 'sort'])"
           v-model="table.modelValue"

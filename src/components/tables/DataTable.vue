@@ -144,7 +144,7 @@ const sortedMap = computed(() => {
   }, mapped);
 });
 
-const allIdentifiers = computed(() => {
+const visibleIdentifiers = computed(() => {
   const selectBy = get(rowAttr);
 
   if (!selectBy) {
@@ -162,18 +162,59 @@ const isAllSelected = computed(() => {
 
   return (
     selectedRows.length > 0 &&
-    (selectedRows.length === get(filtered).length ||
-      get(allIdentifiers).every((id) => selectedRows.includes(id)))
+    get(visibleIdentifiers).every((id) => selectedRows.includes(id))
   );
+});
+
+const sorted = computed(() => {
+  const sortBy = get(sortData);
+  const data = [...get(rows)];
+  if (!sortBy) {
+    return data;
+  }
+
+  const sortOptions: Intl.CollatorOptions = {
+    numeric: true,
+    ignorePunctuation: true,
+  };
+
+  const sort = (by: SortColumn) => {
+    data.sort((a, b) => {
+      if (!by.column) {
+        return 0;
+      }
+      if (by.direction === 'desc') {
+        return `${b[by.column]}`.localeCompare(
+          `${a[by.column]}`,
+          undefined,
+          sortOptions,
+        );
+      }
+
+      return `${a[by.column]}`.localeCompare(
+        `${b[by.column]}`,
+        undefined,
+        sortOptions,
+      );
+    });
+  };
+
+  if (!Array.isArray(sortBy)) {
+    sort(sortBy);
+  } else {
+    sortBy.forEach(sort);
+  }
+
+  return data;
 });
 
 const filtered = computed(() => {
   const query = get(search)?.toLocaleLowerCase();
   let result = [];
   if (!query) {
-    result = get(rows);
+    result = get(sorted);
   } else {
-    result = get(rows).filter((row) =>
+    result = get(sorted).filter((row) =>
       Object.keys(row).some((key) =>
         `${row[key]}`.toLocaleLowerCase().includes(query),
       ),
@@ -221,7 +262,12 @@ const isSelected = (identifier: string) => {
 
 const onToggleAll = (checked: boolean) => {
   if (checked) {
-    set(selectedData, get(allIdentifiers));
+    set(
+      selectedData,
+      Array.from(
+        new Set([...(get(selectedData) ?? []), ...get(visibleIdentifiers)]),
+      ),
+    );
   } else {
     set(selectedData, []);
   }
