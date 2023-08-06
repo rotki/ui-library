@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import Button from '@/components/buttons/button/Button.vue';
 import Checkbox from '@/components/forms/checkbox/Checkbox.vue';
+import Chip from '@/components/chips/Chip.vue';
 import Icon from '@/components/icons/Icon.vue';
 import Progress from '@/components/progress/Progress.vue';
 import TablePagination, {
@@ -207,24 +208,20 @@ const onSort = ({
     return;
   }
 
-  const allSortBy = [...(sortBy ?? [])];
   if (isSortedBy(key)) {
     const newDirection = !direction || direction === 'asc' ? 'desc' : 'asc';
 
     const index = getSortIndex(key);
-    const sortBy = allSortBy[index];
+    const sortByCol = sortBy[index];
 
-    if (sortBy.direction === newDirection) {
-      allSortBy.splice(index, 1);
+    if (sortByCol.direction === newDirection) {
+      sortBy.splice(index, 1);
     } else {
-      sortBy.direction = sortBy.direction === 'asc' ? 'desc' : 'asc';
+      sortByCol.direction = sortByCol.direction === 'asc' ? 'desc' : 'asc';
     }
-    set(sortData, allSortBy);
+    set(sortData, sortBy);
   } else {
-    set(sortData, [
-      ...allSortBy,
-      { column: key, direction: direction || 'asc' },
-    ]);
+    set(sortData, [...sortBy, { column: key, direction: direction || 'asc' }]);
   }
 };
 
@@ -300,11 +297,28 @@ const onSelect = (checked: boolean, value: string) => {
                   />
                 </template>
 
-                <template v-else #append>
+                <template
+                  v-if="!column.align || column.align === 'left'"
+                  #append
+                >
                   <Icon
                     :class="css.sort__icon"
                     name="arrow-down-line"
                     size="18"
+                  />
+                  <Chip
+                    v-if="getSortIndex(column.key) >= 0"
+                    :label="`${getSortIndex(column.key) + 1}`"
+                    size="sm"
+                    color="grey"
+                  />
+                </template>
+
+                <template v-else-if="getSortIndex(column.key) >= 0" #append>
+                  <Chip
+                    :label="`${getSortIndex(column.key) + 1}`"
+                    size="sm"
+                    color="grey"
                   />
                 </template>
               </Button>
