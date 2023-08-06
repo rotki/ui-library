@@ -36,7 +36,11 @@ const limits = computed(() => get(modelValue).limits ?? get(defaultLimits));
 const currentLimit = computed({
   get: () => get(modelValue).limit,
   set: (value) =>
-    emit('update:modelValue', { ...get(modelValue), limit: Number(value) }),
+    emit('update:modelValue', {
+      ...get(modelValue),
+      limit: Number(value),
+      page: 1,
+    }),
 });
 
 const pages = computed(() => {

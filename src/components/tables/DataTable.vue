@@ -152,15 +152,25 @@ const isAllSelected = computed(() => {
 
 const filtered = computed(() => {
   const query = get(search)?.toLocaleLowerCase();
+  let result = [];
   if (!query) {
-    return get(rows);
+    result = get(rows);
+  } else {
+    result = get(rows).filter((row) =>
+      Object.keys(row).some((key) =>
+        `${row[key]}`.toLocaleLowerCase().includes(query),
+      ),
+    );
   }
 
-  return get(rows).filter((row) =>
-    Object.keys(row).some((key) =>
-      `${row[key]}`.toLocaleLowerCase().includes(query),
-    ),
-  );
+  const paginated = get(pagination);
+  if (paginated) {
+    const start = (paginated.page - 1) * paginated.limit;
+    const end = start + paginated.limit;
+    return result.slice(start, end);
+  }
+
+  return result;
 });
 
 const indeterminate = computed(() => {
