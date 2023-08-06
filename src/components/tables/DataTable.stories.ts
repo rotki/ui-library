@@ -218,13 +218,26 @@ export const Outlined: Story = {
   },
 };
 
-export const PaginationAndSort: Story = {
+export const SingleSort: Story = {
   args: {
     rows: data,
     modelValue: [],
     cols: columns,
     pagination: { limit: 15, page: 1, total: 150 },
-    sort: [{ column: 'name', direction: 'asc' }],
+    sort: { column: 'name', direction: 'asc' },
+  },
+};
+
+export const MultipleSort: Story = {
+  args: {
+    rows: data,
+    modelValue: [],
+    cols: columns,
+    pagination: { limit: 15, page: 1, total: 150 },
+    sort: [
+      { column: 'name', direction: 'asc' },
+      { column: 'email', direction: 'asc' },
+    ],
   },
 };
 

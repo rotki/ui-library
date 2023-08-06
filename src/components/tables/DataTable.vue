@@ -26,7 +26,7 @@ export interface Props {
   modelValue?: string[];
   rowAttr?: string;
   pagination?: TablePaginationData;
-  sort?: SortColumn[];
+  sort?: SortColumn | SortColumn[];
   cols?: Array<TableColumn>;
   columnAttr?: string;
   dense?: boolean;
@@ -52,7 +52,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   (e: 'update:modelValue', value?: string[]): void;
   (e: 'update:pagination', value?: TablePaginationData): void;
-  (e: 'update:sort', value?: SortColumn[]): void;
+  (e: 'update:sort', value?: SortColumn | SortColumn[]): void;
 }>();
 
 const { cols, rows, modelValue, columnAttr, rowAttr, pagination, sort } =
@@ -100,7 +100,19 @@ const sortData = computed({
 
 const sortedMap = computed(() => {
   const mapped: Record<string, SortColumn> = {};
-  return (get(sort) ?? []).reduce((acc, curr) => {
+  const sortBy = get(sortData);
+  if (!sortBy) {
+    return mapped;
+  }
+
+  if (!Array.isArray(sortBy)) {
+    if (sortBy.column) {
+      mapped[sortBy.column] = sortBy;
+    }
+    return mapped;
+  }
+
+  return sortBy.reduce((acc, curr) => {
     if (!curr.column) {
       return acc;
     }
@@ -139,10 +151,13 @@ const indeterminate = computed(() => {
 const isSortedBy = (key: string) => key in get(sortedMap);
 
 const getSortIndex = (key: string) => {
-  if (!isSortedBy(key)) {
+  const sortBy = get(sortData);
+
+  if (!sortBy || !Array.isArray(sortBy) || !isSortedBy(key)) {
     return -1;
   }
-  return get(sortData)?.findIndex((sort) => sort.column === key) ?? -1;
+
+  return sortBy.findIndex((sort) => sort.column === key) ?? -1;
 };
 
 const isSelected = (identifier: string) => {
@@ -169,7 +184,30 @@ const onSort = ({
   key: string;
   direction?: 'asc' | 'desc';
 }) => {
-  const allSortBy = [...(get(sortData) ?? [])];
+  const sortBy = get(sortData);
+  if (!sortBy) {
+    return;
+  }
+
+  if (!Array.isArray(sortBy)) {
+    if (isSortedBy(key)) {
+      const newDirection = !direction || direction === 'asc' ? 'desc' : 'asc';
+
+      if (sortBy.direction === newDirection) {
+        set(sortData, { ...sortBy, column: undefined, direction: 'asc' });
+      } else {
+        set(sortData, {
+          ...sortBy,
+          direction: sortBy.direction === 'asc' ? 'desc' : 'asc',
+        });
+      }
+    } else {
+      set(sortData, { column: key, direction: direction || 'asc' });
+    }
+    return;
+  }
+
+  const allSortBy = [...(sortBy ?? [])];
   if (isSortedBy(key)) {
     const newDirection = !direction || direction === 'asc' ? 'desc' : 'asc';
 
