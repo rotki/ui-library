@@ -104,7 +104,17 @@ const selectedData = computed({
 
 const paginationData = computed({
   get() {
-    return get(pagination);
+    const paginated = get(pagination);
+    if (!paginated || !get(search)) {
+      return paginated;
+    }
+
+    return {
+      total: get(searchData).length,
+      limit: paginated.limit,
+      page: paginated.page,
+      limits: paginated.limits,
+    };
   },
   set(value) {
     emit('update:pagination', value);
@@ -354,6 +364,13 @@ const onSelect = (checked: boolean, value: string) => {
     );
   }
 };
+
+watch(search, () => {
+  const pagination = get(paginationData);
+  if (pagination) {
+    pagination.page = 1;
+  }
+});
 </script>
 
 <template>

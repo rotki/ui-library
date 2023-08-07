@@ -424,7 +424,10 @@ const fakeFetch = async (
     }
   }
 
-  return { data: result, total: [...(get(users) ?? [])].length };
+  return {
+    data: result,
+    total: search ? result.length : [...(get(users) ?? [])].length,
+  };
 };
 
 const fetchData = async (
@@ -461,6 +464,7 @@ const onSearch = useDebounceFn(async (query: string, index: number) => {
     index,
     { pagination: table.pagination, sort: table.sort },
     query,
+    true,
   );
 
   // reset to page 1 on search
