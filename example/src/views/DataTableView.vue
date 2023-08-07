@@ -469,7 +469,7 @@ const onSearch = useDebounceFn(async (query: string, index: number) => {
   }
 }, 500);
 
-onBeforeMount(async () => {
+onBeforeMount(() => {
   get(datatables).forEach((row, i) => {
     fetchData(
       i,

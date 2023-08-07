@@ -173,9 +173,22 @@ const isAllSelected = computed(() => {
   );
 });
 
+const searchData = computed(() => {
+  const query = get(search)?.toLocaleLowerCase();
+  if (!query) {
+    return get(rows);
+  }
+
+  return get(rows).filter((row) =>
+    Object.keys(row).some((key) =>
+      `${row[key]}`.toLocaleLowerCase().includes(query),
+    ),
+  );
+});
+
 const sorted = computed(() => {
   const sortBy = get(sortData);
-  const data = [...get(rows)];
+  const data = [...get(searchData)];
   if (!sortBy || get(sortModifiers)?.external) {
     return data;
   }
@@ -216,18 +229,7 @@ const sorted = computed(() => {
 });
 
 const filtered = computed(() => {
-  const query = get(search)?.toLocaleLowerCase();
-  let result = [];
-  if (!query) {
-    // todo: search before sorting
-    result = get(sorted);
-  } else {
-    result = get(sorted).filter((row) =>
-      Object.keys(row).some((key) =>
-        `${row[key]}`.toLocaleLowerCase().includes(query),
-      ),
-    );
-  }
+  const result = get(sorted);
 
   const paginated = get(pagination);
   if (paginated && !get(paginationModifiers)?.external) {
