@@ -43,6 +43,7 @@ export interface Props {
 
 defineOptions({
   name: 'RuiDataTable',
+  inheritAttrs: false,
 });
 
 const props = withDefaults(defineProps<Props>(), {
@@ -57,10 +58,10 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value?: string[]): void;
-  (e: 'update:pagination', value?: TablePaginationData): void;
-  (e: 'update:sort', value?: SortColumn | SortColumn[]): void;
-  (e: 'update:options', value?: TableOptions): void;
+  'update:model-value': [value?: string[]];
+  'update:pagination': [value?: TablePaginationData];
+  'update:sort': [value?: SortColumn | SortColumn[]];
+  'update:options': [value?: TableOptions];
 }>();
 
 const {
@@ -87,17 +88,12 @@ const columns = computed(
     })),
 );
 
-const options = computed<TableOptions>(() => ({
-  pagination: get(pagination),
-  sort: get(sort),
-}));
-
 const selectedData = computed({
   get() {
     return get(modelValue);
   },
   set(value) {
-    emit('update:modelValue', value);
+    emit('update:model-value', value);
   },
 });
 
@@ -107,7 +103,10 @@ const paginationData = computed({
   },
   set(value) {
     emit('update:pagination', value);
-    emit('update:options', get(options));
+    emit('update:options', {
+      pagination: value,
+      sort: get(sort),
+    });
   },
 });
 
@@ -117,7 +116,10 @@ const sortData = computed({
   },
   set(value) {
     emit('update:sort', value);
-    emit('update:options', get(options));
+    emit('update:options', {
+      sort: value,
+      pagination: get(pagination),
+    });
   },
 });
 
@@ -481,6 +483,7 @@ const onSelect = (checked: boolean, value: string) => {
       v-if="paginationData"
       v-model="paginationData"
       :loading="loading"
+      :dense="dense"
     />
   </div>
 </template>
@@ -565,10 +568,6 @@ const onSelect = (checked: boolean, value: string) => {
 
         .progress {
           @apply p-0 relative w-full h-0;
-
-          &__bar {
-            @apply fixed left-[0.6125rem] right-[0.6125rem];
-          }
         }
       }
     }

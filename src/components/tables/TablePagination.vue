@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: TablePaginationData): void;
+  (e: 'update:model-value', value: TablePaginationData): void;
 }>();
 
 const { dense, modelValue } = toRefs(props);
@@ -36,7 +36,7 @@ const limits = computed(() => get(modelValue).limits ?? get(defaultLimits));
 const currentLimit = computed({
   get: () => get(modelValue).limit,
   set: (value) =>
-    emit('update:modelValue', {
+    emit('update:model-value', {
       ...get(modelValue),
       limit: Number(value),
       page: 1,
@@ -63,7 +63,7 @@ const hasPrev = computed(() => get(modelValue).page > 1);
 const hasNext = computed(() => get(pages) > get(modelValue).page);
 
 const onNavigate = (delta: number) => {
-  emit('update:modelValue', {
+  emit('update:model-value', {
     ...get(modelValue),
     page: get(modelValue).page + delta,
   });

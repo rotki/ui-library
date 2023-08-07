@@ -29,6 +29,7 @@ import {
 } from '@/components/forms/select/SimpleSelect.vue';
 import {
   type TableColumn as DataTableColumn,
+  type TableOptions as DataTableOptions,
   type Props as DataTableProps,
   type SortColumn as DataTableSort,
   default as RuiDataTable,
@@ -60,4 +61,5 @@ export {
   DataTableProps,
   DataTableColumn,
   DataTableSort,
+  DataTableOptions,
 };

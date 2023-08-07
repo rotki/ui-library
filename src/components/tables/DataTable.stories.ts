@@ -45,7 +45,7 @@ const render: StoryFn<Props> = (args) => ({
   template: `<div class="flex flex-col space-y-4">
       <div class="flex items-center space-x-4">
         <TextField
-        v-if="search !== undefined"
+          v-if="search !== undefined"
           v-model="search"
           placeholder="search"
           label="search"
