@@ -505,7 +505,7 @@ const onSelect = (checked: boolean, value: string) => {
 
 <style module lang="scss">
 .wrapper {
-  @apply relative divide-y divide-black/[0.12];
+  @apply relative divide-y divide-black/[0.12] overflow-hidden;
   &.outlined {
     @apply rounded-xl border border-black/[0.12];
   }
