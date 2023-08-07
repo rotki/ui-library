@@ -49,16 +49,18 @@ const value = computed({
         {{ option }}
       </option>
     </select>
-    <Icon :class="css.icon" name="arrow-drop-down-fill" size="24" />
+    <span :class="css.icon__wrapper">
+      <Icon :class="css.icon" name="arrow-drop-down-fill" size="24" />
+    </span>
   </div>
 </template>
 
 <style module lang="scss">
 .wrapper {
-  @apply relative;
+  @apply relative inline-flex;
 
   .select {
-    @apply outline-none focus:outline-none appearance-none cursor-pointer pl-2 py-1 pr-6 rounded;
+    @apply outline-none focus:outline-none appearance-none cursor-pointer pl-2 py-1 pr-8 rounded;
     @apply m-0 w-full bg-white hover:bg-gray-50 transition;
     @apply disabled:bg-black/[.12] disabled:text-rui-text-disabled disabled:active:text-rui-text-disabled disabled:cursor-default;
 
@@ -76,14 +78,19 @@ const value = computed({
   }
 
   .icon {
-    @apply absolute right-0 top-px bottom-0 text-rui-text-disabled pointer-events-none;
+    @apply text-rui-text-disabled pointer-events-none;
+
+    &__wrapper {
+      @apply flex items-center justify-end;
+      @apply absolute right-1 top-px bottom-0 pointer-events-none;
+    }
   }
 }
 
 :global(.dark) {
   .wrapper {
     .select {
-      @apply bg-transparent hover:bg-white/10 text-rui-text-disabled;
+      @apply bg-transparent hover:bg-white/10 disabled:bg-white/10 text-rui-text-disabled;
 
       &.outlined {
         @apply border border-rui-text-disabled;

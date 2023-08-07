@@ -190,7 +190,7 @@ const meta: Meta<Props> = {
       controls: {
         exclude: [
           'default',
-          'update:modelValue',
+          'update:model-value',
           'update:pagination',
           'update:sort',
           'tfoot',
