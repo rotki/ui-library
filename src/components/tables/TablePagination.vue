@@ -25,11 +25,11 @@ const emit = defineEmits<{
   (e: 'update:model-value', value: TablePaginationData): void;
 }>();
 
-const { dense, modelValue } = toRefs(props);
+const { modelValue } = toRefs(props);
 
 const css = useCssModule();
 
-const defaultLimits = ref([10, 15, 25, 50, 100]);
+const defaultLimits = ref([5, 10, 15, 25, 50, 100]);
 
 const limits = computed(() => get(modelValue).limits ?? get(defaultLimits));
 

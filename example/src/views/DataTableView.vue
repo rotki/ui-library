@@ -3,13 +3,14 @@ import {
   type DataTableColumn,
   type DataTableOptions,
   type DataTableProps,
+  type DataTableSortColumn,
   RuiButton,
   RuiDataTable,
   RuiIcon,
   RuiTextField,
 } from '@rotki/ui-library/components';
 import { get, objectOmit, useDebounceFn } from '@vueuse/shared';
-import { ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 
 const data: Record<string, any>[] = [
   {
@@ -134,6 +135,37 @@ const columns: DataTableColumn[] = [
   },
 ];
 
+const fixedColumns: DataTableColumn[] = [
+  {
+    key: 'id',
+    label: 'ID',
+  },
+  {
+    key: 'name',
+    label: 'Full name',
+  },
+  {
+    key: 'title',
+    label: 'Job position',
+  },
+  {
+    key: 'email',
+    label: 'Email address',
+  },
+  {
+    key: 'role',
+    label: 'Role',
+  },
+  {
+    label: 'Salary',
+    key: 'salary',
+    align: 'right',
+  },
+  {
+    key: 'action',
+  },
+];
+
 const datatables = ref<{ title: string; table: DataTableProps }[]>([
   {
     title: 'With Column definitions',
@@ -237,17 +269,17 @@ const datatables = ref<{ title: string; table: DataTableProps }[]>([
 const apiDatatables = ref<{ title: string; table: DataTableProps }[]>([
   {
     title: 'API: With Column definitions',
-    table: { rowAttr: 'id', rows: data.slice(0, 5), cols: columns },
+    table: { rowAttr: 'id', rows: [], cols: fixedColumns },
   },
   {
     title: 'API: No Column definitions',
-    table: { rowAttr: 'id', rows: data.slice(0, 5) },
+    table: { rowAttr: 'id', rows: [] },
   },
   {
     title: 'API: Sortable',
     table: {
       rowAttr: 'id',
-      rows: data.slice(0, 5),
+      rows: [],
       cols: columns,
       outlined: true,
       sort: [{ column: 'name', direction: 'asc' }],
@@ -258,10 +290,10 @@ const apiDatatables = ref<{ title: string; table: DataTableProps }[]>([
     table: {
       rowAttr: 'id',
       modelValue: [],
-      rows: data,
+      rows: [],
       cols: columns,
       outlined: true,
-      pagination: { limit: 10, page: 1, total: 50 },
+      pagination: { limit: 5, page: 1, total: 10 },
     },
   },
   {
@@ -269,7 +301,7 @@ const apiDatatables = ref<{ title: string; table: DataTableProps }[]>([
     table: {
       rowAttr: 'id',
       modelValue: [],
-      rows: data.slice(0, 10),
+      rows: [],
       cols: columns,
       outlined: true,
       search: '',
@@ -280,11 +312,11 @@ const apiDatatables = ref<{ title: string; table: DataTableProps }[]>([
     table: {
       rowAttr: 'id',
       modelValue: [],
-      rows: data,
+      rows: [],
       cols: columns,
       outlined: true,
       sort: [{ column: 'name', direction: 'asc' }],
-      pagination: { limit: 10, page: 1, total: 50 },
+      pagination: { limit: 5, page: 1, total: 10 },
     },
   },
   {
@@ -292,11 +324,11 @@ const apiDatatables = ref<{ title: string; table: DataTableProps }[]>([
     table: {
       rowAttr: 'id',
       modelValue: [],
-      rows: data,
+      rows: [],
       cols: columns,
       outlined: true,
       search: '',
-      pagination: { limit: 10, page: 1, total: 50 },
+      pagination: { limit: 5, page: 1, total: 10 },
     },
   },
   {
@@ -304,7 +336,7 @@ const apiDatatables = ref<{ title: string; table: DataTableProps }[]>([
     table: {
       rowAttr: 'id',
       modelValue: [],
-      rows: data.slice(0, 10),
+      rows: [],
       cols: columns,
       outlined: true,
       search: '',
@@ -316,12 +348,12 @@ const apiDatatables = ref<{ title: string; table: DataTableProps }[]>([
     table: {
       rowAttr: 'id',
       modelValue: [],
-      rows: data,
+      rows: [],
       cols: columns,
       outlined: true,
       search: '',
       sort: { column: 'name', direction: 'asc' },
-      pagination: { limit: 10, page: 1, total: 50 },
+      pagination: { limit: 5, page: 1, total: 10 },
     },
   },
   {
@@ -329,31 +361,84 @@ const apiDatatables = ref<{ title: string; table: DataTableProps }[]>([
     table: {
       rowAttr: 'id',
       modelValue: [],
-      rows: data,
+      rows: [],
       cols: columns,
       outlined: true,
       search: '',
       sort: [{ column: 'name', direction: 'asc' }],
-      pagination: { limit: 10, page: 1, total: 50 },
+      pagination: { limit: 5, page: 1, total: 10 },
     },
   },
 ]);
 
-const fakeFetch = async (options?: DataTableOptions, search?: string) => {
+const fakeFetch = async (
+  options?: DataTableOptions,
+  search?: string,
+): Promise<{ data: Record<string, any>[] }> => {
   await new Promise((resolve) => {
-    setTimeout(resolve, 5000);
+    setTimeout(resolve, 1500);
   });
 
-  // todo: make rows sort/search/paginate based on params
+  let result = [...data.slice(0, 10)];
 
-  return {
-    ...options,
-    search,
-    rows: get(data).slice(0, 20),
+  const query = search?.toLocaleLowerCase();
+  const sortBy = options?.sort;
+  const sortOptions: Intl.CollatorOptions = {
+    numeric: true,
+    ignorePunctuation: true,
   };
+  const paginated = options?.pagination;
+
+  const sort = (by: DataTableSortColumn) => {
+    result.sort((a, b) => {
+      if (!by.column) {
+        return 0;
+      }
+      if (by.direction === 'desc') {
+        return `${b[by.column]}`.localeCompare(
+          `${a[by.column]}`,
+          undefined,
+          sortOptions,
+        );
+      }
+
+      return `${a[by.column]}`.localeCompare(
+        `${b[by.column]}`,
+        undefined,
+        sortOptions,
+      );
+    });
+  };
+
+  // search
+  if (query) {
+    result = result.filter((row) =>
+      Object.keys(row).some((key) =>
+        `${row[key]}`.toLocaleLowerCase().includes(query),
+      ),
+    );
+  }
+
+  // sort
+  if (sortBy) {
+    if (!Array.isArray(sortBy)) {
+      sort(sortBy);
+    } else {
+      sortBy.forEach(sort);
+    }
+  }
+
+  // paginate
+  if (paginated) {
+    const start = (paginated.page - 1) * paginated.limit;
+    const end = start + paginated.limit;
+    result = result.slice(start, end);
+  }
+
+  return { data: result };
 };
 
-const onOptionsChange = async (
+const fetchData = async (
   index: number,
   options?: DataTableOptions,
   search?: string,
@@ -367,14 +452,35 @@ const onOptionsChange = async (
     row.table.sort = options.sort;
   }
   const response = await fakeFetch(options, search);
-  row.table.rows = response.rows;
+  row.table.rows = response.data;
 
   row.table.loading = false;
 };
 
-const onSearch = useDebounceFn((query: string, index: number) => {
-  onOptionsChange(index, undefined, query);
+const onSearch = useDebounceFn(async (query: string, index: number) => {
+  const { table } = get(apiDatatables)[index];
+
+  await fetchData(
+    index,
+    { pagination: table.pagination, sort: table.sort },
+    query,
+  );
+
+  // reset to page 1 on search
+  if (table.pagination) {
+    table.pagination.page = 1;
+  }
 }, 500);
+
+onBeforeMount(() => {
+  get(apiDatatables).forEach((row, i) => {
+    fetchData(
+      i,
+      { pagination: row.table.pagination, sort: row.table.sort },
+      row.table.search,
+    );
+  });
+});
 </script>
 
 <template>
@@ -439,18 +545,16 @@ const onSearch = useDebounceFn((query: string, index: number) => {
           <span v-if="table.modelValue">
             selected: {{ table.modelValue.length }}
           </span>
-          <input
-            v-model="table.loading"
-            type="checkbox"
-            :true-value="true"
-            :false-value="false"
-          />
         </div>
         <RuiDataTable
-          v-bind="objectOmit(table, ['modelValue', 'search'])"
+          v-bind="
+            objectOmit(table, ['modelValue', 'pagination', 'sort', 'search'])
+          "
           v-model="table.modelValue"
+          v-model:pagination.external="table.pagination"
+          v-model:sort.external="table.sort"
           :data-cy="`table-${i}`"
-          @update:options="onOptionsChange(i, $event, table.search)"
+          @update:options="fetchData(i, $event, table.search)"
         >
           <template #action-data>
             <RuiButton icon variant="text" size="sm">

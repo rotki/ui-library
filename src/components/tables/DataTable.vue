@@ -33,8 +33,10 @@ export interface Props {
   search?: string;
   rowAttr?: string;
   pagination?: TablePaginationData;
+  paginationModifiers?: { external: boolean };
   sort?: SortColumn | SortColumn[];
   cols?: Array<TableColumn>;
+  sortModifiers?: { external: boolean };
   columnAttr?: string;
   dense?: boolean;
   outlined?: boolean;
@@ -43,7 +45,6 @@ export interface Props {
 
 defineOptions({
   name: 'RuiDataTable',
-  inheritAttrs: false,
 });
 
 const props = withDefaults(defineProps<Props>(), {
@@ -55,13 +56,15 @@ const props = withDefaults(defineProps<Props>(), {
   columnAttr: 'label',
   sort: undefined,
   loading: false,
+  paginationModifiers: undefined,
+  sortModifiers: undefined,
 });
 
 const emit = defineEmits<{
-  'update:model-value': [value?: string[]];
-  'update:pagination': [value?: TablePaginationData];
-  'update:sort': [value?: SortColumn | SortColumn[]];
-  'update:options': [value?: TableOptions];
+  (e: 'update:model-value', value?: string[]): void;
+  (e: 'update:pagination', value?: TablePaginationData): void;
+  (e: 'update:sort', value?: SortColumn | SortColumn[]): void;
+  (e: 'update:options', value?: TableOptions): void;
 }>();
 
 const {
@@ -71,8 +74,10 @@ const {
   columnAttr,
   rowAttr,
   pagination,
+  paginationModifiers,
   search,
   sort,
+  sortModifiers,
 } = toRefs(props);
 
 const css = useCssModule();
@@ -171,7 +176,7 @@ const isAllSelected = computed(() => {
 const sorted = computed(() => {
   const sortBy = get(sortData);
   const data = [...get(rows)];
-  if (!sortBy) {
+  if (!sortBy || get(sortModifiers)?.external) {
     return data;
   }
 
@@ -214,6 +219,7 @@ const filtered = computed(() => {
   const query = get(search)?.toLocaleLowerCase();
   let result = [];
   if (!query) {
+    // todo: search before sorting
     result = get(sorted);
   } else {
     result = get(sorted).filter((row) =>
@@ -224,7 +230,7 @@ const filtered = computed(() => {
   }
 
   const paginated = get(pagination);
-  if (paginated) {
+  if (paginated && !get(paginationModifiers)?.external) {
     const start = (paginated.page - 1) * paginated.limit;
     const end = start + paginated.limit;
     return result.slice(start, end);
@@ -232,6 +238,10 @@ const filtered = computed(() => {
 
   return result;
 });
+
+const filteredMap = computed(() =>
+  get(filtered).map((row) => row[get(rowAttr)]),
+);
 
 const indeterminate = computed(() => {
   const selectedRows = get(selectedData);
@@ -260,19 +270,6 @@ const isSelected = (identifier: string) => {
   }
 
   return selection.includes(identifier);
-};
-
-const onToggleAll = (checked: boolean) => {
-  if (checked) {
-    set(
-      selectedData,
-      Array.from(
-        new Set([...(get(selectedData) ?? []), ...get(visibleIdentifiers)]),
-      ),
-    );
-  } else {
-    set(selectedData, []);
-  }
 };
 
 const onSort = ({
@@ -319,6 +316,24 @@ const onSort = ({
     set(sortData, sortBy);
   } else {
     set(sortData, [...sortBy, { column: key, direction: direction || 'asc' }]);
+  }
+};
+
+const onToggleAll = (checked: boolean) => {
+  if (checked) {
+    set(
+      selectedData,
+      Array.from(
+        new Set([...(get(selectedData) ?? []), ...get(visibleIdentifiers)]),
+      ),
+    );
+  } else {
+    set(
+      selectedData,
+      get(selectedData)?.filter(
+        (identifier) => !get(filteredMap).includes(identifier),
+      ),
+    );
   }
 };
 
@@ -434,7 +449,7 @@ const onSelect = (checked: boolean, value: string) => {
               :class="css.progress"
               :colspan="columns.length + (selectedData ? 1 : 0)"
             >
-              <div class="h-0">
+              <div class="h-0 -mt-1">
                 <Progress variant="indeterminate" color="primary" />
               </div>
             </th>

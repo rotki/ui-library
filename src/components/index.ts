@@ -31,7 +31,7 @@ import {
   type TableColumn as DataTableColumn,
   type TableOptions as DataTableOptions,
   type Props as DataTableProps,
-  type SortColumn as DataTableSort,
+  type SortColumn as DataTableSortColumn,
   default as RuiDataTable,
 } from '@/components/tables/DataTable.vue';
 
@@ -60,6 +60,6 @@ export {
   SimpleSelectProps,
   DataTableProps,
   DataTableColumn,
-  DataTableSort,
+  DataTableSortColumn,
   DataTableOptions,
 };
