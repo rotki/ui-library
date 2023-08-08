@@ -33,7 +33,7 @@ export interface Props {
    */
   rows: Array<Record<string, any>>;
   /**
-   * the attribute used to identify each row uniquely, usually `id`
+   * the attribute used to identify each row uniquely for selection, usually `id`
    */
   rowAttr: string;
   /**
@@ -107,7 +107,6 @@ defineOptions({
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,
-  rowAttr: '',
   search: '',
   cols: undefined,
   pagination: undefined,
