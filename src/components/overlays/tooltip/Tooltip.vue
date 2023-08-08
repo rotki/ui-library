@@ -88,7 +88,7 @@ const {
     @apply z-20;
 
     .base {
-      @apply invisible lg:visible h-6 px-2 py-1 text-xs font-normal truncate;
+      @apply h-6 px-2 py-1 text-xs font-normal truncate;
       @apply bg-rui-grey-700/90 text-white rounded shadow;
     }
 
