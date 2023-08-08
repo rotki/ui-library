@@ -223,6 +223,7 @@ export const Dense: Story = {
 export const Loading: Story = {
   args: {
     rows: [],
+    cols: columns,
     loading: true,
   },
 };
