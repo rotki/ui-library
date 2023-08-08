@@ -28,19 +28,77 @@ export interface TableOptions {
 }
 
 export interface Props {
+  /**
+   * list of items for each row
+   */
   rows: Array<Record<string, any>>;
+  /**
+   * the attribute used to identify each row uniquely, usually `id`
+   */
+  rowAttr: string;
+  /**
+   * model for selected rows, add a v-model to support row selection
+   */
   modelValue?: string[];
+  /**
+   * model for insternal searching
+   */
   search?: string;
-  rowAttr?: string;
+  /**
+   * model for paginating data
+   * @example v-model:pagination="{ total: 10, limit: 5, page: 1 }"
+   */
   pagination?: TablePaginationData;
+  /**
+   * modifiers for specifying externally paginated tables
+   * use this when api controls pagination
+   * @example v-model:pagination.external="{ total: 10, limit: 5, page: 1 }"
+   */
   paginationModifiers?: { external: boolean };
+  /**
+   * model for sort column/columns data
+   * single column sort
+   * @example v-model:sort="{ column: 'name', direction: 'asc' }"
+   * multi columns sort
+   * @example v-model:sort="[{ column: 'name', direction: 'asc' }]"
+   */
   sort?: SortColumn | SortColumn[];
-  cols?: Array<TableColumn>;
+  /**
+   * modifiers for specifying externally sorted tables
+   * use this when api controls sorting
+   * single column sort
+   * @example v-model:sort.external="{ column: 'name', direction: 'asc' }"
+   * multi columns sort
+   * @example v-model:sort.external="[{ column: 'name', direction: 'asc' }]"
+   */
   sortModifiers?: { external: boolean };
+  /**
+   * list of column definitions
+   */
+  cols?: Array<TableColumn>;
+  /**
+   * attribute to use from column definitions to display column titles
+   */
   columnAttr?: string;
+  /**
+   * flag to show a more or less spaceous table
+   */
   dense?: boolean;
+  /**
+   * flag to outline the flag with a border
+   */
   outlined?: boolean;
+  /**
+   * flag to show loading state of the table
+   * triggers an indefinite progress at the bottom of the table header
+   */
   loading?: boolean;
+  /**
+   * data to display for empty state
+   * text and icon
+   * @example :empty="{ icon: 'transactions-line', label: 'No transactions found' }"
+   */
+  empty?: { icon?: string; label?: string };
 }
 
 defineOptions({
@@ -58,6 +116,7 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   paginationModifiers: undefined,
   sortModifiers: undefined,
+  empty: () => ({ icon: 'database-2-line', label: 'No items' }),
 });
 
 const emit = defineEmits<{
@@ -77,11 +136,15 @@ const {
   paginationModifiers,
   search,
   sort,
+  loading,
   sortModifiers,
 } = toRefs(props);
 
 const css = useCssModule();
 
+/**
+ * Prepare the columns from props or generate using first item in the list
+ */
 const columns = computed(
   () =>
     get(cols) ??
@@ -102,6 +165,11 @@ const selectedData = computed({
   },
 });
 
+/**
+ * Pagination is different for search
+ * since search is only used for internal filtering
+ * we return the length of search results as total
+ */
 const paginationData = computed({
   get() {
     const paginated = get(pagination);
@@ -138,6 +206,10 @@ const sortData = computed({
   },
 });
 
+/**
+ * A mapping of the sort columns
+ * for easily checking if a column is sorted instead of looping through the array
+ */
 const sortedMap = computed(() => {
   const mapped: Record<string, SortColumn> = {};
   const sortBy = get(sortData);
@@ -161,6 +233,9 @@ const sortedMap = computed(() => {
   }, mapped);
 });
 
+/**
+ * list if ids of the visible table rows used for check-all and uncheck-all
+ */
 const visibleIdentifiers = computed(() => {
   const selectBy = get(rowAttr);
 
@@ -171,6 +246,9 @@ const visibleIdentifiers = computed(() => {
   return get(filtered)?.map((row) => row[selectBy]) ?? [];
 });
 
+/**
+ * Flag to know when all rows are selected for the current screen
+ */
 const isAllSelected = computed(() => {
   const selectedRows = get(selectedData);
   if (!selectedRows) {
@@ -183,6 +261,9 @@ const isAllSelected = computed(() => {
   );
 });
 
+/**
+ * rows filtered based on search query if it exists
+ */
 const searchData = computed(() => {
   const query = get(search)?.toLocaleLowerCase();
   if (!query) {
@@ -196,6 +277,9 @@ const searchData = computed(() => {
   );
 });
 
+/**
+ * sort the search results
+ */
 const sorted = computed(() => {
   const sortBy = get(sortData);
   const data = [...get(searchData)];
@@ -238,6 +322,9 @@ const sorted = computed(() => {
   return data;
 });
 
+/**
+ * comprises of search, sorted and paginated data
+ */
 const filtered = computed(() => {
   const result = get(sorted);
 
@@ -263,6 +350,8 @@ const indeterminate = computed(() => {
   return selectedRows.length > 0 && !get(isAllSelected);
 });
 
+const noData = computed(() => !get(loading) && get(rows).length === 0);
+
 const isSortedBy = (key: string) => key in get(sortedMap);
 
 const getSortIndex = (key: string) => {
@@ -284,6 +373,9 @@ const isSelected = (identifier: string) => {
   return selection.includes(identifier);
 };
 
+/**
+ * Sort to handle single sort or multiple sort columns
+ */
 const onSort = ({
   key,
   direction,
@@ -331,6 +423,10 @@ const onSort = ({
   }
 };
 
+/**
+ * toggles selected rows
+ * @param {boolean} checked checkbox state
+ */
 const onToggleAll = (checked: boolean) => {
   if (checked) {
     set(
@@ -349,6 +445,11 @@ const onToggleAll = (checked: boolean) => {
   }
 };
 
+/**
+ * toggles a single row
+ * @param {boolean} checked checkbox state
+ * @param {string} value the id of the selected row
+ */
 const onSelect = (checked: boolean, value: string) => {
   const selectedRows = get(selectedData);
   if (!selectedRows) {
@@ -365,6 +466,9 @@ const onSelect = (checked: boolean, value: string) => {
   }
 };
 
+/**
+ * on changing search query, need to reset pagination page to 1
+ */
 watch(search, () => {
   const pagination = get(paginationData);
   if (pagination) {
@@ -376,7 +480,7 @@ watch(search, () => {
 <template>
   <div :class="[css.wrapper, { [css.outlined]: outlined }]">
     <div :class="css.scroller">
-      <table :class="[css.base, { [css.dense]: dense }]">
+      <table :class="[css.table, { [css.dense]: dense }]">
         <thead :class="css.thead">
           <tr :class="css.tr">
             <th v-if="selectedData" scope="col" :class="css.checkbox">
@@ -507,6 +611,36 @@ watch(search, () => {
               </slot>
             </td>
           </tr>
+          <tr v-if="noData && empty" :class="[css.tr, css.tr__empty]">
+            <Transition
+              appear
+              enter-active-class="transition ease-out duration-200 delay-200"
+              enter-from-class="opacity-0 translate-y-1"
+              enter-to-class="opacity-100 translate-y-0"
+              leave-active-class="transition ease-in duration-150"
+              leave-from-class="opacity-100 translate-y-0"
+              leave-to-class="opacity-0 translate-y-1"
+            >
+              <td
+                :colspan="columns.length + (selectedData ? 1 : 0)"
+                :class="css.td"
+              >
+                <slot name="no-data">
+                  <div :class="css.empty">
+                    <Icon
+                      v-if="empty.icon"
+                      :name="empty.icon"
+                      :class="css.empty__icon"
+                      aria-hidden="true"
+                    />
+                    <p v-if="empty.label" :class="css.empty__label">
+                      {{ empty.label }}
+                    </p>
+                  </div>
+                </slot>
+              </td>
+            </Transition>
+          </tr>
         </tbody>
         <tfoot>
           <slot name="tfoot" />
@@ -533,7 +667,7 @@ watch(search, () => {
     @apply overflow-x-auto overflow-y-hidden;
   }
 
-  .base {
+  .table {
     @apply min-w-full table-fixed divide-y divide-black/[0.12] whitespace-nowrap mx-auto my-0;
     max-width: fit-content;
 
@@ -614,6 +748,10 @@ watch(search, () => {
         &__selected {
           @apply bg-rui-primary/[0.08];
         }
+
+        &__empty {
+          @apply hover:bg-transparent;
+        }
       }
 
       .td {
@@ -625,6 +763,18 @@ watch(search, () => {
 
         &.align__right {
           @apply text-right rtl:text-left;
+        }
+
+        .empty {
+          @apply flex flex-col space-y-4 items-center justify-center flex-1 px-6 py-14 sm:px-14;
+
+          &__icon {
+            @apply w-6 h-6 mx-auto text-current;
+          }
+
+          &__label {
+            @apply text-sm text-center text-current;
+          }
         }
       }
     }
@@ -659,7 +809,7 @@ watch(search, () => {
       @apply rounded-xl border border-white/[0.12];
     }
 
-    .base {
+    .table {
       @apply divide-gray-700;
       .thead {
         .tr {
