@@ -501,6 +501,7 @@ onBeforeMount(() => {
           v-for="({ title, table }, i) in datatables"
           :key="i"
           class="flex flex-col space-y-3"
+          :data-cy="title"
         >
           <h4>{{ title }}</h4>
           <div class="flex space-x-4 items-center">
@@ -538,6 +539,7 @@ onBeforeMount(() => {
           v-for="({ title, table }, i) in apiDatatables"
           :key="i"
           class="flex flex-col space-y-3"
+          :data-cy="title"
         >
           <h4>{{ title }}</h4>
           <div class="flex space-x-4 items-center">
@@ -563,7 +565,7 @@ onBeforeMount(() => {
             v-model="table.modelValue"
             v-model:pagination.external="table.pagination"
             v-model:sort.external="table.sort"
-            :data-cy="`table-${i}`"
+            :data-cy="`table-api-${i}`"
             @update:options="fetchData(i, $event, table.search, true)"
           >
             <template #action-data>
