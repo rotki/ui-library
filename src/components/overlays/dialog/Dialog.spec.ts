@@ -7,17 +7,6 @@ import {
 import Dialog from '@/components/overlays/dialog/Dialog.vue';
 import Button from '@/components/buttons/button/Button.vue';
 
-/**
- * quick polyfill
- */
-class ResizeObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-}
-
-window.ResizeObserver = ResizeObserver;
-
 const createWrapper = (options: ComponentMountingOptions<typeof Dialog>) =>
   mount(Dialog, { ...options, global: { stubs: { 'rui-button': Button } } });
 
