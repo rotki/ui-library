@@ -31,4 +31,11 @@ export const WithText: Story = {
   },
 };
 
+export const WithCustomSrc: Story = {
+  args: {
+    customSrc:
+      'https://raw.githubusercontent.com/rotki/data/hohoho/assets/icons/drawer_logo.png',
+  },
+};
+
 export default meta;
