@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { promiseTimeout } from '@vueuse/core';
 import Button from '@/components/buttons/button/Button.vue';
 import Tooltip from '@/components/overlays/tooltip/Tooltip.vue';
 
@@ -14,10 +15,7 @@ const createWrapper = (options?: ComponentMountingOptions<typeof Tooltip>) =>
     },
   });
 
-const delay = (time: number = 100) =>
-  new Promise((resolve) => {
-    setTimeout(resolve, time);
-  });
+const delay = (time: number = 100) => promiseTimeout(time);
 
 describe('Tooltip', () => {
   it('renders properly', async () => {

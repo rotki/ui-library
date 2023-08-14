@@ -295,14 +295,18 @@ const sections = ref<
   <div>
     <h2 class="text-h4 mb-6" data-cy="dialogs">Dialogs</h2>
     <div
-      v-for="{ title, dialogs } in sections"
+      v-for="({ title, dialogs }, i) in sections"
       :key="title"
       class="flex flex-col space-y-3 mb-14"
     >
       <h4>{{ title }}</h4>
       <div class="grid gap-2 grid-cols-5">
-        <div v-for="(dialog, i) in dialogs" :key="i">
-          <RuiButton color="primary" @click="dialog.modelValue = true">
+        <div v-for="(dialog, j) in dialogs" :key="j">
+          <RuiButton
+            color="primary"
+            :data-cy="`dialog-trigger-${i}-${j}`"
+            @click="dialog.modelValue = true"
+          >
             {{ dialog.triggerText }}
           </RuiButton>
           <RuiDialog
@@ -310,7 +314,7 @@ const sections = ref<
               objectOmit(dialog, ['title', 'description', 'content', 'actions'])
             "
             v-model="dialog.modelValue"
-            :data-cy="`dialog-${i}`"
+            :data-cy="`dialog-${i}-${j}`"
           >
             <template v-if="dialog.description" #description>
               {{ dialog.description }}
@@ -319,9 +323,10 @@ const sections = ref<
             <p v-if="dialog.content">{{ dialog.content }}</p>
             <template v-if="dialog.actions" #actions>
               <RuiButton
-                v-for="(action, j) in dialog.actions"
+                v-for="(action, k) in dialog.actions"
                 v-bind="action"
-                :key="j"
+                :key="k"
+                :data-cy="`dialog-action-${i}-${j}-${k}`"
                 @click="dialog.modelValue = false"
               >
                 {{ action.text }}

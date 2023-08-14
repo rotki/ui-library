@@ -4,16 +4,14 @@ import {
   DOMWrapper,
   mount,
 } from '@vue/test-utils';
+import { promiseTimeout } from '@vueuse/core';
 import Dialog from '@/components/overlays/dialog/Dialog.vue';
 import Button from '@/components/buttons/button/Button.vue';
 
 const createWrapper = (options: ComponentMountingOptions<typeof Dialog>) =>
   mount(Dialog, { ...options, global: { stubs: { 'rui-button': Button } } });
 
-const delay = (time: number = 100) =>
-  new Promise((resolve) => {
-    setTimeout(resolve, time);
-  });
+const delay = (time: number = 100) => promiseTimeout(time);
 
 const getPortal = () =>
   new DOMWrapper(
