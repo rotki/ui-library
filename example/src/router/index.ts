@@ -76,6 +76,11 @@ const router = createRouter({
       name: 'data-tables',
       component: () => import('@/views/DataTableView.vue'),
     },
+    {
+      path: '/dialogs',
+      name: 'dialogs',
+      component: () => import('@/views/DialogView.vue'),
+    },
   ],
 });
 

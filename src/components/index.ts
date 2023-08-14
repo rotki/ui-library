@@ -3,7 +3,10 @@ import {
   type Props as AutoCompleteProps,
   default as RuiAutoComplete,
 } from '@/components/forms/auto-complete/AutoComplete.vue';
-import { default as RuiButton } from '@/components/buttons/button/Button.vue';
+import {
+  type Props as ButtonProps,
+  default as RuiButton,
+} from '@/components/buttons/button/Button.vue';
 import { default as RuiButtonGroup } from '@/components/buttons/button-group/ButtonGroup.vue';
 import { default as RuiIcon } from '@/components/icons/Icon.vue';
 import { default as RuiCheckbox } from '@/components/forms/checkbox/Checkbox.vue';
@@ -17,6 +20,10 @@ import {
   default as RuiTooltip,
   type Props as TooltipProps,
 } from '@/components/overlays/tooltip/Tooltip.vue';
+import {
+  type Props as DialogProps,
+  default as RuiDialog,
+} from '@/components/overlays/dialog/Dialog.vue';
 import { default as RuiFooterStepper } from '@/components/steppers/FooterStepper.vue';
 import { default as RuiProgress } from '@/components/progress/Progress.vue';
 import { default as RuiRadioGroup } from '@/components/forms/radio-button/radio-group/RadioGroup.vue';
@@ -54,6 +61,7 @@ export {
   RuiTooltip,
   RuiDataTable,
   RuiSimpleSelect,
+  RuiDialog,
   AutoCompleteProps,
   ChipProps,
   TooltipProps,
@@ -62,4 +70,6 @@ export {
   DataTableColumn,
   DataTableSortColumn,
   DataTableOptions,
+  DialogProps,
+  ButtonProps,
 };
