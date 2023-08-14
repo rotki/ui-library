@@ -23,6 +23,17 @@ import { default as RuiRadioGroup } from '@/components/forms/radio-button/radio-
 import { default as RuiRadio } from '@/components/forms/radio-button/radio/Radio.vue';
 import { default as RuiRevealableTextField } from '@/components/forms/revealable-text-field/RevealableTextField.vue';
 import { default as RuiLogo } from '@/components/logos/Logo.vue';
+import {
+  default as RuiSimpleSelect,
+  type Props as SimpleSelectProps,
+} from '@/components/forms/select/SimpleSelect.vue';
+import {
+  type TableColumn as DataTableColumn,
+  type TableOptions as DataTableOptions,
+  type Props as DataTableProps,
+  type SortColumn as DataTableSortColumn,
+  default as RuiDataTable,
+} from '@/components/tables/DataTable.vue';
 
 export {
   RuiAlert,
@@ -41,7 +52,14 @@ export {
   RuiStepper,
   RuiTextField,
   RuiTooltip,
+  RuiDataTable,
+  RuiSimpleSelect,
   AutoCompleteProps,
   ChipProps,
   TooltipProps,
+  SimpleSelectProps,
+  DataTableProps,
+  DataTableColumn,
+  DataTableSortColumn,
+  DataTableOptions,
 };

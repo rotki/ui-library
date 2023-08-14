@@ -21,6 +21,7 @@ const navigation = ref([
       { to: { name: 'chips' }, title: 'Chips' },
       { to: { name: 'alerts' }, title: 'Alerts' },
       { to: { name: 'tooltips' }, title: 'Tooltips' },
+      { to: { name: 'data-tables' }, title: 'Data Tables' },
     ],
   },
 ]);

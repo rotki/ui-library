@@ -314,6 +314,9 @@
     "useGlobalId": true,
     "createPopper": true,
     "usePopper": true,
-    "DEFAULT_POPPER_OPTIONS": true
+    "DEFAULT_POPPER_OPTIONS": true,
+    "formatCurrency": true,
+    "formatNumber": true,
+    "formatInteger": true
   }
 }

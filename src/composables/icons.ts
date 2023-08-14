@@ -2,6 +2,7 @@ import { type GeneratedIcon } from '@/types/icons';
 import {
   RiAlertFill,
   RiAlertLine,
+  RiArrowDownLine,
   RiArrowDropDownFill,
   RiArrowLeftLine,
   RiArrowLeftSLine,
@@ -18,12 +19,14 @@ import {
   RiCloseCircleLine,
   RiCloseFill,
   RiCloseLine,
+  RiDatabase2Line,
   RiErrorWarningFill,
   RiErrorWarningLine,
   RiEyeLine,
   RiEyeOffLine,
   RiInformationFill,
   RiInformationLine,
+  RiMoreFill,
   RiRadioButtonLine,
 } from '@/all-icons';
 
@@ -31,6 +34,7 @@ export const useIcons = createGlobalState(() => {
   const requiredIcons: GeneratedIcon[] = [
     RiAlertFill,
     RiAlertLine,
+    RiArrowDownLine,
     RiArrowDropDownFill,
     RiArrowLeftLine,
     RiArrowLeftSLine,
@@ -47,6 +51,7 @@ export const useIcons = createGlobalState(() => {
     RiCloseCircleLine,
     RiCloseFill,
     RiCloseLine,
+    RiDatabase2Line,
     RiErrorWarningFill,
     RiErrorWarningLine,
     RiEyeLine,
@@ -54,6 +59,7 @@ export const useIcons = createGlobalState(() => {
     RiInformationFill,
     RiInformationLine,
     RiRadioButtonLine,
+    RiMoreFill,
   ];
 
   const registeredIcons: Ref<Record<string, string>> = ref({});
