@@ -54,6 +54,8 @@ const usedIcon: ComputedRef<string> = computed(() => {
 
 const css = useCssModule();
 const attrs = useAttrs();
+
+const slots = useSlots();
 </script>
 
 <template>
@@ -63,8 +65,22 @@ const attrs = useAttrs();
         <RuiIcon :name="usedIcon" size="22" />
       </div>
       <div class="space-y-1 flex-grow" :class="css.texts">
-        <div v-if="title" class="font-medium">{{ title }}</div>
-        <div class="text-body-2">{{ description }}</div>
+        <div
+          v-if="slots.title || title"
+          :class="{
+            'font-medium': !!title,
+          }"
+        >
+          <slot name="title">
+            {{ title }}
+          </slot>
+        </div>
+
+        <div class="text-body-2">
+          <slot>
+            {{ description }}
+          </slot>
+        </div>
       </div>
     </div>
     <div v-if="actionText">

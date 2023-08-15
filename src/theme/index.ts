@@ -116,7 +116,7 @@ const themePlugin = plugin(
         'line-height': '2rem',
       },
       '.text-h6': {
-        '@apply text-xl': {},
+        '@apply text-xl font-medium': {},
         'line-height': '2rem',
       },
     });
