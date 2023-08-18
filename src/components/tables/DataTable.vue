@@ -98,7 +98,7 @@ export interface Props {
    * text and icon
    * @example :empty="{ icon: 'transactions-line', label: 'No transactions found' }"
    */
-  empty?: { icon?: string; label?: string };
+  empty?: { label?: string; description?: string };
 }
 
 defineOptions({
@@ -115,7 +115,7 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   paginationModifiers: undefined,
   sortModifiers: undefined,
-  empty: () => ({ icon: 'database-2-line', label: 'No items' }),
+  empty: () => ({ label: 'No item found' }),
 });
 
 const emit = defineEmits<{
@@ -349,7 +349,7 @@ const indeterminate = computed(() => {
   return selectedRows.length > 0 && !get(isAllSelected);
 });
 
-const noData = computed(() => !get(loading) && get(rows).length === 0);
+const noData = computed(() => get(filtered).length === 0);
 
 const isSortedBy = (key: string) => key in get(sortedMap);
 
@@ -489,6 +489,7 @@ watch(search, () => {
                 :disabled="!filtered?.length"
                 hide-details
                 color="primary"
+                data-cy="table-toggle-check-all"
                 @update:model-value="onToggleAll($event)"
               />
             </th>
@@ -565,14 +566,24 @@ watch(search, () => {
               </slot>
             </th>
           </tr>
-          <tr v-if="loading" :class="css.thead__loader">
+          <tr
+            v-if="loading"
+            :class="[
+              css.thead__loader,
+              { [css.thead__loader_linear]: !noData },
+            ]"
+          >
             <th
               scope="col"
               :class="css.progress"
               :colspan="columns.length + (selectedData ? 1 : 0)"
             >
-              <div class="h-0 -mt-1">
-                <Progress variant="indeterminate" color="primary" />
+              <div :class="css.progress__wrapper">
+                <Progress
+                  variant="indeterminate"
+                  color="primary"
+                  :circular="noData"
+                />
               </div>
             </th>
           </tr>
@@ -588,6 +599,7 @@ watch(search, () => {
                 :model-value="isSelected(row[rowAttr])"
                 hide-details
                 color="primary"
+                :data-cy="`table-toggle-check-${index}`"
                 @update:model-value="onSelect($event, row[rowAttr])"
               />
             </td>
@@ -610,7 +622,10 @@ watch(search, () => {
               </slot>
             </td>
           </tr>
-          <tr v-if="noData && empty" :class="[css.tr, css.tr__empty]">
+          <tr
+            v-if="noData && empty && !loading"
+            :class="[css.tr, css.tr__empty]"
+          >
             <Transition
               appear
               enter-active-class="transition ease-out duration-200 delay-200"
@@ -626,15 +641,18 @@ watch(search, () => {
               >
                 <slot name="no-data">
                   <div :class="css.empty">
-                    <Icon
-                      v-if="empty.icon"
-                      :name="empty.icon"
-                      :class="css.empty__icon"
-                      aria-hidden="true"
-                    />
                     <p v-if="empty.label" :class="css.empty__label">
                       {{ empty.label }}
                     </p>
+
+                    <slot name="empty-description">
+                      <p
+                        v-if="empty.description"
+                        :class="css.empty__description"
+                      >
+                        {{ empty.description }}
+                      </p>
+                    </slot>
                   </div>
                 </slot>
               </td>
@@ -651,6 +669,7 @@ watch(search, () => {
       v-model="paginationData"
       :loading="loading"
       :dense="dense"
+      data-cy="table-pagination"
     />
   </div>
 </template>
@@ -671,6 +690,7 @@ watch(search, () => {
     max-width: fit-content;
 
     .thead {
+      @apply divide-y divide-black/[0.12];
       .tr {
         .th {
           @apply p-4;
@@ -731,10 +751,20 @@ watch(search, () => {
       }
 
       &__loader {
-        @apply border-none;
-
         .progress {
-          @apply p-0 relative w-full h-0;
+          @apply relative w-full py-8;
+        }
+
+        &_linear {
+          @apply border-none;
+
+          .progress {
+            @apply p-0 h-0;
+          }
+
+          .progress__wrapper {
+            @apply h-0 -mt-1;
+          }
         }
       }
     }
@@ -765,14 +795,14 @@ watch(search, () => {
         }
 
         .empty {
-          @apply flex flex-col space-y-4 items-center justify-center flex-1 px-6 py-14 sm:px-14;
-
-          &__icon {
-            @apply w-6 h-6 mx-auto text-current;
-          }
+          @apply flex flex-col space-y-3 items-center justify-center flex-1 py-2;
 
           &__label {
-            @apply text-sm text-center text-current;
+            @apply text-body-1 font-bold text-center text-current;
+          }
+
+          &__description {
+            @apply text-body-2 text-center text-rui-text-secondary;
           }
         }
       }
@@ -811,6 +841,7 @@ watch(search, () => {
     .table {
       @apply divide-gray-700;
       .thead {
+        @apply divide-y divide-gray-700;
         .tr {
           .th {
             @apply text-white;

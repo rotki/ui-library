@@ -194,6 +194,8 @@ const meta: Meta<Props> = {
           'update:pagination',
           'update:sort',
           'tfoot',
+          'no-data',
+          'empty-description',
           '`${column.key}-header`',
           '`${column.key}-data`',
         ],
@@ -295,6 +297,54 @@ export const MultipleSort: Story = {
     modelValue: [],
     cols: columns,
     pagination: { limit: 10, page: 1, total: 50 },
+    sort: [
+      { column: 'name', direction: 'asc' },
+      { column: 'email', direction: 'asc' },
+    ],
+  },
+};
+
+export const LoadingWithData: Story = {
+  args: {
+    rows: data,
+    modelValue: [],
+    cols: columns,
+    loading: true,
+    outlined: true,
+    pagination: { limit: 5, page: 1, total: 50 },
+    sort: [
+      { column: 'name', direction: 'asc' },
+      { column: 'email', direction: 'asc' },
+    ],
+  },
+};
+
+export const LoadingWithoutData: Story = {
+  args: {
+    rows: [],
+    modelValue: [],
+    cols: columns,
+    loading: true,
+    outlined: true,
+    pagination: { limit: 5, page: 1, total: 0 },
+    sort: [
+      { column: 'name', direction: 'asc' },
+      { column: 'email', direction: 'asc' },
+    ],
+  },
+};
+
+export const EmptyState: Story = {
+  args: {
+    rows: [],
+    modelValue: [],
+    cols: columns,
+    outlined: true,
+    pagination: { limit: 5, page: 1, total: 0 },
+    empty: {
+      label: 'No item found',
+      description: 'Start by adding an account',
+    },
     sort: [
       { column: 'name', direction: 'asc' },
       { column: 'email', direction: 'asc' },
