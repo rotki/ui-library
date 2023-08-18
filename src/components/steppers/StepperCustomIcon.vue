@@ -39,7 +39,7 @@ const css = useCssModule();
 
 <style lang="scss" module>
 .indicator {
-  @apply inline-flex items-center justify-center rounded-full h-10 w-10 border text-white bg-rui-light-primary border-rui-light-primary;
+  @apply inline-flex items-center justify-center rounded-full h-10 w-10 border text-white bg-rui-primary border-rui-primary;
 
   &.inactive {
     @apply text-xs bg-white;
@@ -52,10 +52,10 @@ const css = useCssModule();
 
 :global(.dark) {
   .indicator {
-    @apply bg-white text-rui-light-primary;
+    @apply bg-white text-rui-primary;
 
     &.inactive {
-      @apply text-white border-white bg-rui-light-primary;
+      @apply text-white border-white bg-rui-primary;
 
       .text {
         @apply text-white;

@@ -19,7 +19,7 @@ withDefaults(defineProps<Props>(), {
 <template>
   <div class="h-12 space-x-4 flex items-center">
     <img class="h-full" :src="customSrc ?? logo" alt="Rotki" />
-    <div v-if="text" class="text-h4 text-rui-light-primary dark:text-white">
+    <div v-if="text" class="text-h4 text-rui-primary dark:text-white">
       rotki
     </div>
   </div>

@@ -98,9 +98,9 @@ export const useRotkiTheme = (): ThemeContent => {
 
     if (typeof window !== 'undefined') {
       watch(
-        isLight,
-        (isLight) => {
-          const contextVariables = Object.entries(get(theme))
+        [isLight, theme],
+        ([isLight, theme]) => {
+          const contextVariables = Object.entries(theme)
             .map(([context, contextObject]: [string, ColorIntensity]) => ({
               [`--rui-${context}-main`]: contextObject.DEFAULT,
               [`--rui-${context}-lighter`]: contextObject.lighter,
