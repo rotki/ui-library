@@ -132,6 +132,121 @@ const fixedColumns: DataTableColumn[] = [
   },
 ];
 
+const emptyTables = ref<
+  { title: string; table: DataTableProps; emptySlot?: boolean }[]
+>([
+  {
+    title: 'Empty table',
+    table: {
+      rowAttr: 'id',
+      rows: [],
+      cols: fixedColumns,
+      outlined: true,
+      sort: [{ column: 'name', direction: 'asc' }],
+      pagination: { limit: 5, page: 1, total: 0 },
+      empty: {
+        label: 'No item found',
+        description: 'No user found',
+      },
+    },
+  },
+  {
+    title: 'Empty table (with action slot)',
+    emptySlot: true,
+    table: {
+      rowAttr: 'id',
+      rows: [],
+      cols: fixedColumns,
+      outlined: true,
+      sort: [{ column: 'name', direction: 'asc' }],
+      pagination: { limit: 5, page: 1, total: 0 },
+      empty: {
+        label: 'No item found',
+      },
+    },
+  },
+  {
+    title: 'Loading without Data',
+    table: {
+      rowAttr: 'id',
+      rows: [],
+      cols: fixedColumns,
+      loading: true,
+      outlined: true,
+      sort: [{ column: 'name', direction: 'asc' }],
+      pagination: { limit: 5, page: 1, total: 0 },
+    },
+  },
+  {
+    title: 'Loading with Data',
+    table: {
+      rowAttr: 'id',
+      rows: [
+        {
+          id: 5,
+          name: 'Chelsey Dietrich',
+          username: 'Kamren',
+          email: 'Lucio_Hettinger@annie.ca',
+          phone: '(254)954-1289',
+          website: 'demarco.info',
+          'address.street': 'Skiles Walks',
+          'address.city': 'Roscoeview',
+          'company.name': 'Keebler LLC',
+        },
+        {
+          id: 10,
+          name: 'Clementina DuBuque',
+          username: 'Moriah.Stanton',
+          email: 'Rey.Padberg@karina.biz',
+          phone: '024-648-3804',
+          website: 'ambrose.net',
+          'address.street': 'Kattie Turnpike',
+          'address.city': 'Lebsackbury',
+          'company.name': 'Hoeger LLC',
+        },
+        {
+          id: 3,
+          name: 'Clementine Bauch',
+          username: 'Samantha',
+          email: 'Nathan@yesenia.net',
+          phone: '1-463-123-4447',
+          website: 'ramiro.info',
+          'address.street': 'Douglas Extension',
+          'address.city': 'McKenziehaven',
+          'company.name': 'Romaguera-Jacobson',
+        },
+        {
+          id: 2,
+          name: 'Ervin Howell',
+          username: 'Antonette',
+          email: 'Shanna@melissa.tv',
+          phone: '010-692-6593 x09125',
+          website: 'anastasia.net',
+          'address.street': 'Victor Plains',
+          'address.city': 'Wisokyburgh',
+          'company.name': 'Deckow-Crist',
+        },
+        {
+          id: 9,
+          name: 'Glenna Reichert',
+          username: 'Delphine',
+          email: 'Chaim_McDermott@dana.io',
+          phone: '(775)976-6794 x41206',
+          website: 'conrad.com',
+          'address.street': 'Dayna Park',
+          'address.city': 'Bartholomebury',
+          'company.name': 'Yost and Sons',
+        },
+      ],
+      cols: fixedColumns,
+      loading: true,
+      outlined: true,
+      sort: [{ column: 'name', direction: 'asc' }],
+      pagination: { limit: 5, page: 1, total: 5 },
+    },
+  },
+]);
+
 const datatables = ref<{ title: string; table: DataTableProps }[]>([
   {
     title: 'With Column definitions',
@@ -140,10 +255,6 @@ const datatables = ref<{ title: string; table: DataTableProps }[]>([
   {
     title: 'No Column definitions',
     table: { rowAttr: 'id', rows: [] },
-  },
-  {
-    title: 'Loading',
-    table: { rowAttr: 'id', rows: [], cols: fixedColumns, loading: true },
   },
   {
     title: 'Outlined',
@@ -497,6 +608,39 @@ onBeforeMount(() => {
     <h2 class="text-h4 mb-6" data-cy="datatables">Data Tables</h2>
     <template v-if="!isFetching">
       <div class="grid grid-cols-1 gap-12 mb-14">
+        <div
+          v-for="({ title, table, emptySlot }, i) in emptyTables"
+          :key="i"
+          class="flex flex-col space-y-3"
+          :data-cy="title"
+        >
+          <h4>{{ title }}</h4>
+          <RuiDataTable
+            v-bind="objectOmit(table, ['modelValue', 'pagination', 'sort'])"
+            v-model="table.modelValue"
+            v-model:pagination="table.pagination"
+            v-model:sort="table.sort"
+            :data-cy="`table-empty-${i}`"
+          >
+            <template #action-data>
+              <RuiButton icon variant="text" size="sm">
+                <RuiIcon name="more-fill" color="primary" />
+              </RuiButton>
+            </template>
+            <template v-if="emptySlot" #empty-description>
+              <div class="flex space-x-1 items-center">
+                <span>No user found,</span>
+                <RuiButton variant="text" size="sm">
+                  create users
+                  <template #append>
+                    <RuiIcon name="add-fill" color="primary" />
+                  </template>
+                </RuiButton>
+              </div>
+            </template>
+          </RuiDataTable>
+        </div>
+
         <div
           v-for="({ title, table }, i) in datatables"
           :key="i"
