@@ -2,12 +2,13 @@
 import { type ContextColorsType } from '@/consts/colors';
 import { default as RuiButton } from '@/components/buttons/button/Button.vue';
 import { default as RuiIcon } from '@/components/icons/Icon.vue';
+import { type RuiIcons } from '~/src';
 
 export interface Props {
   title?: string;
   description?: string;
   type?: ContextColorsType;
-  icon?: string;
+  icon?: RuiIcons;
   variant?: 'default' | 'filled' | 'outlined';
   actionText?: string;
   closeable?: boolean;
@@ -21,7 +22,7 @@ const props = withDefaults(defineProps<Props>(), {
   title: '',
   description: '',
   type: 'primary',
-  icon: '',
+  icon: undefined,
   variant: 'default',
   actionText: '',
   closeable: false,
@@ -34,22 +35,22 @@ const emit = defineEmits<{
 
 const { icon, type } = toRefs(props);
 
-const usedIcon: ComputedRef<string> = computed(() => {
+const usedIcon: ComputedRef<RuiIcons | undefined> = computed(() => {
   const iconVal = get(icon);
   if (iconVal) {
     return iconVal;
   }
 
-  const iconMap: Record<ContextColorsType, string> = {
-    primary: '',
-    secondary: '',
+  const iconMap: Record<ContextColorsType, RuiIcons | undefined> = {
+    primary: undefined,
+    secondary: undefined,
     warning: 'alert-line',
     info: 'information-line',
     error: 'error-warning-line',
     success: 'checkbox-circle-line',
   };
 
-  return iconMap[get(type)] ?? '';
+  return iconMap[get(type)];
 });
 
 const css = useCssModule();

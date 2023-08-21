@@ -2,6 +2,7 @@
 import { objectOmit } from '@vueuse/shared';
 import { type ContextColorsType } from '@/consts/colors';
 import Icon from '@/components/icons/Icon.vue';
+import { type RuiIcons } from '~/src';
 
 export interface Props {
   modelValue?: string;
@@ -15,8 +16,8 @@ export interface Props {
   as?: string | object;
   errorMessages?: string[];
   hideDetails?: boolean;
-  prependIcon?: string;
-  appendIcon?: string;
+  prependIcon?: RuiIcons;
+  appendIcon?: RuiIcons;
 }
 
 defineOptions({
@@ -35,8 +36,8 @@ const props = withDefaults(defineProps<Props>(), {
   as: 'input',
   errorMessages: () => [],
   hideDetails: false,
-  prependIcon: '',
-  appendIcon: '',
+  prependIcon: undefined,
+  appendIcon: undefined,
 });
 
 const emit = defineEmits<{

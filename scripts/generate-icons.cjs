@@ -76,12 +76,20 @@ async function collectIconConstantString(icons) {
 import { type GeneratedIcon } from '@/types/icons';\n
 `;
 
+  const names = [];
+
   await loop(icons, (icon) => {
     iconsFile += `export const ${icon.generatedName}: GeneratedIcon = {
   name: '${icon.name}',
   path: '${icon.svgPath}',
 };\n`;
+
+    names.push(icon.name);
   });
+
+  iconsFile += `export type RuiIcons = ${names
+    .map((x) => `"${x.replace('ri-', '')}"`)
+    .join(' | ')};\n`;
 
   return iconsFile;
 }
