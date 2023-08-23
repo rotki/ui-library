@@ -63,7 +63,7 @@ const hasHeadContent = computed(() => !!slots.header || !!slots.subheader);
 
 <style lang="scss" module>
 .card {
-  @apply flex flex-col h-full w-full rounded;
+  @apply flex flex-col h-full w-full rounded bg-white;
 
   .content {
     @apply p-4 text-body-1 text-rui-light-text overflow-y-auto;
@@ -98,6 +98,7 @@ const hasHeadContent = computed(() => !!slots.header || !!slots.subheader);
 
 :global(.dark) {
   .card {
+    @apply bg-white/[0.05];
     .content {
       @apply text-rui-dark-text;
     }
