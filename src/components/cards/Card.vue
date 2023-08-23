@@ -65,6 +65,10 @@ const hasHeadContent = computed(() => !!slots.header || !!slots.subheader);
 .card {
   @apply flex flex-col h-full w-full rounded bg-white;
 
+  .image {
+    @apply rounded-t overflow-hidden;
+  }
+
   .content {
     @apply p-4 text-body-1 text-rui-light-text overflow-y-auto;
   }

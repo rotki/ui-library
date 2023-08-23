@@ -17,7 +17,7 @@ const sections = ref<
       subheader?: string;
       content?: string;
       prepend?: string;
-      actions?: (ButtonProps & { text: string })[];
+      actions?: (ButtonProps & { text: string; clicks: number })[];
     })[];
   }[]
 >([
@@ -29,8 +29,8 @@ const sections = ref<
         header: 'Card header',
         subheader: 'Card subheader',
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
       },
       {
@@ -39,8 +39,8 @@ const sections = ref<
         subheader: 'Card subheader',
         divide: true,
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
       },
       {
@@ -49,8 +49,20 @@ const sections = ref<
         subheader: 'Card subheader',
         dense: true,
         actions: [
-          { size: 'sm', variant: 'text', text: 'Action 1', color: 'secondary' },
-          { size: 'sm', variant: 'text', text: 'Action 2', color: 'primary' },
+          {
+            size: 'sm',
+            variant: 'text',
+            text: 'Action 1',
+            color: 'secondary',
+            clicks: 0,
+          },
+          {
+            size: 'sm',
+            variant: 'text',
+            text: 'Action 2',
+            color: 'primary',
+            clicks: 0,
+          },
         ],
       },
       {
@@ -60,8 +72,20 @@ const sections = ref<
         dense: true,
         divide: true,
         actions: [
-          { size: 'sm', variant: 'text', text: 'Action 1', color: 'secondary' },
-          { size: 'sm', variant: 'text', text: 'Action 2', color: 'primary' },
+          {
+            size: 'sm',
+            variant: 'text',
+            text: 'Action 1',
+            color: 'secondary',
+            clicks: 0,
+          },
+          {
+            size: 'sm',
+            variant: 'text',
+            text: 'Action 2',
+            color: 'primary',
+            clicks: 0,
+          },
         ],
       },
       {
@@ -70,8 +94,8 @@ const sections = ref<
         subheader: 'Card subheader',
         elevation: 1,
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
       },
       {
@@ -81,8 +105,8 @@ const sections = ref<
         elevation: 1,
         divide: true,
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
       },
       {
@@ -91,8 +115,8 @@ const sections = ref<
         subheader: 'Card subheader',
         image: 'https://placehold.co/480x160',
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
       },
       {
@@ -102,8 +126,8 @@ const sections = ref<
         image: 'https://placehold.co/480x160',
         divide: true,
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
       },
       {
@@ -112,8 +136,8 @@ const sections = ref<
         subheader: 'Card subheader',
         prepend: 'OP',
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
       },
       {
@@ -123,8 +147,8 @@ const sections = ref<
         prepend: 'OP',
         divide: true,
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
       },
       {
@@ -134,8 +158,8 @@ const sections = ref<
         prepend: 'OP',
         dense: true,
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
       },
       {
@@ -146,9 +170,48 @@ const sections = ref<
         divide: true,
         dense: true,
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Card without footer',
+        subheader: 'Card subheader',
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Divided Card without footer',
+        subheader: 'Card subheader',
+        divide: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Card without footer',
+        subheader: 'Card subheader',
+        prepend: 'OP',
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Divided Card without footer',
+        subheader: 'Card subheader',
+        prepend: 'OP',
+        divide: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Dense Card without footer',
+        subheader: 'Card subheader',
+        prepend: 'OP',
+        dense: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Dense Divided Card without footer',
+        subheader: 'Card subheader',
+        prepend: 'OP',
+        divide: true,
+        dense: true,
       },
     ],
   },
@@ -161,8 +224,8 @@ const sections = ref<
         header: 'Card header',
         subheader: 'Card subheader',
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
       },
       {
@@ -172,8 +235,8 @@ const sections = ref<
         subheader: 'Card subheader',
         divide: true,
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
       },
       {
@@ -183,8 +246,20 @@ const sections = ref<
         subheader: 'Card subheader',
         dense: true,
         actions: [
-          { size: 'sm', variant: 'text', text: 'Action 1', color: 'secondary' },
-          { size: 'sm', variant: 'text', text: 'Action 2', color: 'primary' },
+          {
+            size: 'sm',
+            variant: 'text',
+            text: 'Action 1',
+            color: 'secondary',
+            clicks: 0,
+          },
+          {
+            size: 'sm',
+            variant: 'text',
+            text: 'Action 2',
+            color: 'primary',
+            clicks: 0,
+          },
         ],
       },
       {
@@ -195,8 +270,20 @@ const sections = ref<
         dense: true,
         divide: true,
         actions: [
-          { size: 'sm', variant: 'text', text: 'Action 1', color: 'secondary' },
-          { size: 'sm', variant: 'text', text: 'Action 2', color: 'primary' },
+          {
+            size: 'sm',
+            variant: 'text',
+            text: 'Action 1',
+            color: 'secondary',
+            clicks: 0,
+          },
+          {
+            size: 'sm',
+            variant: 'text',
+            text: 'Action 2',
+            color: 'primary',
+            clicks: 0,
+          },
         ],
       },
       {
@@ -206,8 +293,8 @@ const sections = ref<
         subheader: 'Card subheader',
         elevation: 1,
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
       },
       {
@@ -218,8 +305,8 @@ const sections = ref<
         elevation: 1,
         divide: true,
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
       },
       {
@@ -229,8 +316,8 @@ const sections = ref<
         subheader: 'Card subheader',
         image: 'https://placehold.co/480x160',
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
       },
       {
@@ -241,8 +328,8 @@ const sections = ref<
         image: 'https://placehold.co/480x160',
         divide: true,
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
       },
       {
@@ -252,8 +339,8 @@ const sections = ref<
         subheader: 'Card subheader',
         prepend: 'OP',
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
       },
       {
@@ -264,8 +351,8 @@ const sections = ref<
         prepend: 'OP',
         divide: true,
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
       },
       {
@@ -276,8 +363,8 @@ const sections = ref<
         prepend: 'OP',
         dense: true,
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
       },
       {
@@ -289,9 +376,54 @@ const sections = ref<
         divide: true,
         dense: true,
         actions: [
-          { variant: 'text', text: 'Action 1', color: 'secondary' },
-          { variant: 'text', text: 'Action 2', color: 'primary' },
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
         ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Card without footer',
+        subheader: 'Card subheader',
+        variant: 'flat',
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Divided Card without footer',
+        subheader: 'Card subheader',
+        variant: 'flat',
+        divide: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Card without footer',
+        subheader: 'Card subheader',
+        variant: 'flat',
+        prepend: 'OP',
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Divided Card without footer',
+        subheader: 'Card subheader',
+        variant: 'flat',
+        prepend: 'OP',
+        divide: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Dense Card without footer',
+        subheader: 'Card subheader',
+        variant: 'flat',
+        prepend: 'OP',
+        dense: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Dense Divided Card without footer',
+        subheader: 'Card subheader',
+        variant: 'flat',
+        prepend: 'OP',
+        divide: true,
+        dense: true,
       },
     ],
   },
@@ -338,10 +470,13 @@ const sections = ref<
             <template v-if="card.actions" #footer>
               <RuiButton
                 v-for="(action, k) in card.actions"
-                v-bind="action"
+                v-bind="objectOmit(action, ['clicks', 'text'])"
                 :key="k"
+                :data-cy="`card-action-${k}`"
+                @click="action.clicks++"
               >
                 {{ action.text }}
+                {{ action.clicks ? ` [clicks: ${action.clicks}]` : '' }}
               </RuiButton>
             </template>
           </RuiCard>
