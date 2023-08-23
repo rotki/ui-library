@@ -41,6 +41,10 @@ import {
   type SortColumn as DataTableSortColumn,
   default as RuiDataTable,
 } from '@/components/tables/DataTable.vue';
+import {
+  type Props as CardProps,
+  default as RuiCard,
+} from '@/components/cards/Card.vue';
 
 export {
   RuiAlert,
@@ -62,6 +66,7 @@ export {
   RuiDataTable,
   RuiSimpleSelect,
   RuiDialog,
+  RuiCard,
   AutoCompleteProps,
   ChipProps,
   TooltipProps,
@@ -72,4 +77,5 @@ export {
   DataTableOptions,
   DialogProps,
   ButtonProps,
+  CardProps,
 };
