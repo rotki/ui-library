@@ -14,6 +14,7 @@ const sections = ref<
     cards: (CardProps & {
       image?: string;
       header?: string;
+      customHeader?: string;
       subheader?: string;
       content?: string;
       prepend?: string;
@@ -210,6 +211,17 @@ const sections = ref<
         header: 'Dense Divided Card without footer',
         subheader: 'Card subheader',
         prepend: 'OP',
+        divide: true,
+        dense: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        customHeader: 'Dense with Custom header',
+        dense: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        customHeader: 'Divided with Custom header',
         divide: true,
         dense: true,
       },
@@ -425,6 +437,19 @@ const sections = ref<
         divide: true,
         dense: true,
       },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        customHeader: 'Dense with Custom header',
+        variant: 'flat',
+        dense: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        customHeader: 'Divided with Custom header',
+        variant: 'flat',
+        divide: true,
+        dense: true,
+      },
     ],
   },
 ]);
@@ -455,6 +480,12 @@ const sections = ref<
           >
             <template v-if="card.image" #image>
               <img :src="card.image" alt="card image" />
+            </template>
+
+            <template v-if="card.customHeader" #custom-header>
+              <h5 class="p-4 text-rui-error text-h5">
+                {{ card.customHeader }}
+              </h5>
             </template>
 
             <template v-if="card.prepend" #prepend>{{ card.prepend }}</template>

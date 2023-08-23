@@ -8,6 +8,7 @@ import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 type Props = CardProps & {
   image?: string;
   header?: string;
+  customHeader?: string;
   subheader?: string;
   content?: string;
   prepend?: string;
@@ -29,6 +30,7 @@ const render: StoryFn<Props> = (args) => ({
       <template v-if="args.image" #image><img :src="args.image" alt="card image" /></template>
       <template v-if="args.prepend" #prepend>{{ args.prepend }}</template>
       <template v-if="args.header" #header>{{ args.header }}</template>
+      <template v-if="args.customHeader" #custom-header><h5 class="p-4 text-rui-error text-h5">{{ args.customHeader }}</h5></template>
       <template v-if="args.subheader" #subheader>
         {{ args.subheader }}
       </template>
@@ -60,6 +62,7 @@ const meta: Meta<Props> = {
     elevation: { control: 'number', max: 24, min: 1 },
     subheader: { control: 'text' },
     content: { control: 'text' },
+    customHeader: { control: 'text' },
     variant: {
       control: 'select',
       options: ['flat', 'outlined'],
@@ -75,6 +78,7 @@ const meta: Meta<Props> = {
     subheader: '',
     image: '',
     prepend: '',
+    customHeader: '',
   },
   parameters: {
     docs: {
@@ -259,6 +263,29 @@ export const HighElevation: Story = {
     content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
     header: 'Card header',
     subheader: 'Card subheader',
+    variant: 'flat',
+    elevation: 4,
+    actions: [
+      {
+        variant: 'text',
+        text: 'Action 1',
+        color: 'secondary',
+      },
+      {
+        variant: 'text',
+        text: 'Action 2',
+        color: 'primary',
+      },
+    ],
+  },
+};
+
+export const CustomHeader: Story = {
+  args: {
+    content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
+    header: 'Card header',
+    subheader: 'Card subheader',
+    customHeader: 'Custom header',
     variant: 'flat',
     elevation: 4,
     actions: [
