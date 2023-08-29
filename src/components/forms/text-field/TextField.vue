@@ -18,6 +18,7 @@ export interface Props {
   hideDetails?: boolean;
   prependIcon?: RuiIcons;
   appendIcon?: RuiIcons;
+  readonly?: boolean;
 }
 
 defineOptions({
@@ -38,6 +39,7 @@ const props = withDefaults(defineProps<Props>(), {
   hideDetails: false,
   prependIcon: undefined,
   appendIcon: undefined,
+  readonly: false,
 });
 
 const emit = defineEmits<{
@@ -120,6 +122,7 @@ const slots = useSlots();
           :disabled="disabled"
           :dense="dense"
           :variant="variant"
+          :readonly="readonly"
           :wrapper-width="width"
           v-bind="objectOmit(attrs, ['class'])"
           @input="input($event)"

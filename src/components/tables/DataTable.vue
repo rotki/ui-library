@@ -14,6 +14,7 @@ export interface TableColumn {
   direction?: 'asc' | 'desc';
   align?: 'left' | 'right';
   class?: string;
+  cellClass?: string;
   [key: string]: any;
 }
 
@@ -609,6 +610,7 @@ watch(search, () => {
               :key="subIndex"
               :class="[
                 css.td,
+                column.cellClass,
                 column.align === 'right' ? css.align__right : css.align__left,
               ]"
             >

@@ -40,6 +40,7 @@ const meta: Meta<Props> = {
       table: { category: 'State' },
     },
     disabled: { control: 'boolean', table: { category: 'State' } },
+    readonly: { control: 'boolean', table: { category: 'State' } },
     color: {
       control: 'select',
       options: ['grey', ...contextColors],
@@ -102,6 +103,16 @@ export const Disabled: Story = {
     placeholder: 'Placeholder',
     variant: 'outlined',
     disabled: true,
+  },
+};
+
+export const Readonly: Story = {
+  args: {
+    label: 'Label',
+    placeholder: 'Placeholder',
+    variant: 'outlined',
+    readonly: true,
+    modelValue: 'Readonly text',
   },
 };
 

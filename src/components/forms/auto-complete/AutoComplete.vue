@@ -175,6 +175,8 @@ const updateOpen = (open: boolean) => {
     });
   }
 };
+
+const attrs = useAttrs();
 </script>
 
 <template>
@@ -198,6 +200,7 @@ const updateOpen = (open: boolean) => {
         <TextField
           v-model="query"
           :as="AutoCompleteSelection"
+          v-bind="attrs"
           :color="color"
           :data="modelValue"
           :dense="dense"

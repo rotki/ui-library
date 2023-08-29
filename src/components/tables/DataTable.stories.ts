@@ -64,9 +64,9 @@ const render: StoryFn<Props> = (args) => ({
         :search="search"
       >
         <template #action-data>
-          <Button icon variant="text" size="sm"
-            ><Icon name="more-fill" color="primary"
-          /></Button>
+          <Button icon variant="text" size="sm">
+            <Icon name="more-fill" color="primary" />
+          </Button>
         </template>
       </DataTable>
     </div>`,

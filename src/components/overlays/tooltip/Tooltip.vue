@@ -8,6 +8,7 @@ export interface Props {
   openDelay?: number;
   closeDelay?: number;
   popper?: PopperOptions;
+  tooltipClass?: string;
 }
 
 defineOptions({
@@ -21,6 +22,7 @@ const props = withDefaults(defineProps<Props>(), {
   openDelay: 0,
   closeDelay: 500,
   popper: () => ({}),
+  tooltipClass: '',
 });
 
 const css = useCssModule();
@@ -28,7 +30,7 @@ const css = useCssModule();
 const { closeDelay, openDelay, popper, disabled } = toRefs(props);
 
 const {
-  reference: trigger,
+  reference: activator,
   popper: tooltip,
   open,
   onMouseOver,
@@ -38,19 +40,19 @@ const {
 
 <template>
   <div
-    ref="trigger"
+    ref="activator"
     :class="css.wrapper"
     :data-tooltip-disabled="disabled"
     @mouseover="onMouseOver()"
     @mouseleave="onMouseLeave()"
   >
-    <div :class="css.trigger">
-      <slot :open="open" />
+    <div :class="css.activator">
+      <slot name="activator" :open="open" />
     </div>
     <div
       v-if="open && !disabled"
       ref="tooltip"
-      :class="css.tooltip"
+      :class="[css.tooltip, tooltipClass]"
       role="tooltip"
     >
       <Transition
@@ -64,7 +66,7 @@ const {
       >
         <div>
           <div :class="css.base">
-            <slot name="text">
+            <slot>
               {{ text }}
             </slot>
           </div>
@@ -79,16 +81,15 @@ const {
 .wrapper {
   @apply relative inline-flex;
 
-  .trigger {
+  .activator {
     @apply inline;
   }
 
   .tooltip {
-    @apply max-w-xs;
     @apply z-20;
 
     .base {
-      @apply h-6 px-2 py-1 text-xs font-normal truncate;
+      @apply h-6 px-2 py-1 text-xs font-normal;
       @apply bg-rui-grey-700/90 text-white rounded shadow;
     }
 

@@ -109,7 +109,7 @@ const onClose = () => {
                 <DialogTitle v-if="slots.title" as="h6" :class="css.title">
                   <slot name="title" />
                 </DialogTitle>
-                <div v-if="!(slots.title && slots.description)" class="pt-6" />
+                <div v-if="!(slots.title || slots.description)" class="pt-6" />
                 <div v-if="slots.default" :class="css.content">
                   <slot />
                 </div>

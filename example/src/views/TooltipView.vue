@@ -107,9 +107,12 @@ const tooltips = ref<
           v-bind="objectOmit(tooltip, ['buttonColor'])"
           :data-cy="`tooltip-${i}`"
         >
-          <RuiButton :color="tooltip.buttonColor">
-            {{ tooltip.text }}
-          </RuiButton>
+          <template #activator>
+            <RuiButton :color="tooltip.buttonColor">
+              {{ tooltip.text }}
+            </RuiButton>
+          </template>
+          {{ tooltip.text }}
         </RuiTooltip>
       </div>
     </div>
