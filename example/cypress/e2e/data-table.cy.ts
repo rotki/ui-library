@@ -16,7 +16,7 @@ describe('DataTable', () => {
       .should('not.exist');
 
     cy.get('@columnsDefined')
-      .find('table tbody td[class*=_align__left_]')
+      .find('table tbody td[class*=_align__start_]')
       .contains('1')
       .should('exist');
 
@@ -42,7 +42,7 @@ describe('DataTable', () => {
       .should('exist');
 
     cy.get('@columnsNotDefined')
-      .find('table tbody td[class*=_align__left_]')
+      .find('table tbody td[class*=_align__start_]')
       .contains('1')
       .should('exist');
   });

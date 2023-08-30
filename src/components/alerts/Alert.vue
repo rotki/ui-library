@@ -77,7 +77,7 @@ const slots = useSlots();
           </slot>
         </div>
 
-        <div class="text-body-2">
+        <div v-if="slots.default || description" class="text-body-2">
           <slot>
             {{ description }}
           </slot>

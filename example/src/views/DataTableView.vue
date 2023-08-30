@@ -82,7 +82,7 @@ const columns: DataTableColumn[] = [
   {
     key: 'phone',
     label: 'Phone',
-    align: 'right',
+    align: 'end',
   },
   {
     key: 'action',
@@ -125,7 +125,7 @@ const fixedColumns: DataTableColumn[] = [
   {
     key: 'phone',
     label: 'Phone',
-    align: 'right',
+    align: 'end',
   },
   {
     key: 'action',
@@ -622,7 +622,7 @@ onBeforeMount(() => {
             v-model:sort="table.sort"
             :data-cy="`table-empty-${i}`"
           >
-            <template #action-data>
+            <template #item.action>
               <RuiButton icon variant="text" size="sm">
                 <RuiIcon name="more-fill" color="primary" />
               </RuiButton>
@@ -670,7 +670,7 @@ onBeforeMount(() => {
             v-model:sort="table.sort"
             :data-cy="`table-${i}`"
           >
-            <template #action-data>
+            <template #item.action>
               <RuiButton icon variant="text" size="sm">
                 <RuiIcon name="more-fill" color="primary" />
               </RuiButton>
@@ -712,7 +712,7 @@ onBeforeMount(() => {
             :data-cy="`table-api-${i}`"
             @update:options="fetchData(i, $event, table.search, true)"
           >
-            <template #action-data>
+            <template #item.action>
               <RuiButton icon variant="text" size="sm">
                 <RuiIcon name="more-fill" color="primary" />
               </RuiButton>

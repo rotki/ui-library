@@ -63,7 +63,7 @@ const render: StoryFn<Props> = (args) => ({
         v-model:sort="sort"
         :search="search"
       >
-        <template #action-data>
+        <template #item.action>
           <Button icon variant="text" size="sm">
             <Icon name="more-fill" color="primary" />
           </Button>
@@ -196,8 +196,8 @@ const meta: Meta<Props> = {
           'tfoot',
           'no-data',
           'empty-description',
-          '`${column.key}-header`',
-          '`${column.key}-data`',
+          'header.`${column.key}`',
+          'item.`${column.key}`',
         ],
       },
     },
