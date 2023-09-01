@@ -86,6 +86,11 @@ const router = createRouter({
       name: 'cards',
       component: () => import('@/views/CardView.vue'),
     },
+    {
+      path: '/tabs',
+      name: 'tabs',
+      component: () => import('@/views/TabView.vue'),
+    },
   ],
 });
 

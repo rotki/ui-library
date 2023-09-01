@@ -11,6 +11,7 @@ export interface Props {
   variant?: 'default' | 'outlined' | 'text' | 'fab';
   icon?: boolean;
   size?: 'sm' | 'lg';
+  tag?: string;
 }
 
 defineOptions({
@@ -26,6 +27,7 @@ const props = withDefaults(defineProps<Props>(), {
   variant: 'default',
   icon: false,
   size: undefined,
+  tag: 'button',
 });
 
 const { disabled, elevation, variant, size } = toRefs(props);
@@ -63,7 +65,8 @@ const spinnerSize: ComputedRef<number> = computed(() => {
 </script>
 
 <template>
-  <button
+  <Component
+    :is="tag"
     :class="[
       css.btn,
       css[color ?? 'grey'],
@@ -89,7 +92,7 @@ const spinnerSize: ComputedRef<number> = computed(() => {
       variant="indeterminate"
       :size="spinnerSize"
     />
-  </button>
+  </Component>
 </template>
 
 <style lang="scss" module>
