@@ -536,22 +536,15 @@ watch(search, () => {
                     />
                   </template>
 
-                  <template v-if="column.align !== 'end'" #append>
+                  <template #append>
                     <Icon
+                      v-if="column.align !== 'end'"
                       :class="css.sort__icon"
                       name="arrow-down-line"
                       size="18"
                     />
                     <Chip
                       v-if="getSortIndex(column.key) >= 0"
-                      :label="`${getSortIndex(column.key) + 1}`"
-                      size="sm"
-                      color="grey"
-                    />
-                  </template>
-
-                  <template v-else-if="getSortIndex(column.key) >= 0" #append>
-                    <Chip
                       :label="`${getSortIndex(column.key) + 1}`"
                       size="sm"
                       color="grey"
