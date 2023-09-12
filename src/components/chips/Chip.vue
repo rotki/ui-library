@@ -44,7 +44,9 @@ const slots = useSlots();
     <div v-if="slots.prepend" :class="css.chip__prepend">
       <slot name="prepend" />
     </div>
-    <span :class="css.chip__label">{{ label }}</span>
+    <span :class="css.chip__label">
+      <slot>{{ label }}</slot>
+    </span>
     <button
       v-if="dismissible"
       :class="css.chip__close"
