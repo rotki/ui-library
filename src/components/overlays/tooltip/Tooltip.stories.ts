@@ -7,8 +7,15 @@ const render: StoryFn<Props> = (args) => ({
   setup() {
     return { args };
   },
-  template:
-    '<div class="text-center p-4"><Tooltip v-bind="args"><span class="text-rui-primary"> Tooltip </span></Tooltip></div>',
+  template: `
+    <div class="text-center p-4">
+      <Tooltip v-bind="args">
+        <template #activator>
+          <span class="text-rui-primary"> Tooltip </span>
+        </template>
+        {{ args.text }}
+      </Tooltip>
+    </div>`,
 });
 
 const meta: Meta<Props> = {
