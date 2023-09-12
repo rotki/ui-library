@@ -7,8 +7,12 @@ import { createPinia } from 'pinia';
 import {
   RiAddFill,
   RiAlertLine,
+  RiArrowDownSLine,
   RiArrowLeftLine,
+  RiArrowLeftSLine,
   RiArrowRightLine,
+  RiArrowRightSLine,
+  RiArrowUpSLine,
   RiCheckboxCircleLine,
   RiCloseFill,
   RiErrorWarningLine,
@@ -38,6 +42,10 @@ app.use(RuiPlugin, {
     RiCloseFill,
     RiInformationLine,
     RiErrorWarningLine,
+    RiArrowLeftSLine,
+    RiArrowRightSLine,
+    RiArrowUpSLine,
+    RiArrowDownSLine,
   ],
 });
 

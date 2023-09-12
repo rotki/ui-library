@@ -39,7 +39,7 @@ const css = useCssModule();
 
 <style lang="scss" module>
 .indicator {
-  @apply inline-flex items-center justify-center rounded-full h-10 w-10 border text-white bg-rui-primary border-rui-primary;
+  @apply inline-flex items-center justify-center rounded-full h-10 w-10 shrink-0 border text-white bg-rui-primary border-rui-primary;
 
   &.inactive {
     @apply text-xs bg-white;

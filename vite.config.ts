@@ -49,7 +49,13 @@ export default defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
-      external: ['vue', 'tailwindcss/plugin', '@vueuse/core', '@vueuse/shared'],
+      external: [
+        'vue',
+        'vue-router',
+        'tailwindcss/plugin',
+        '@vueuse/core',
+        '@vueuse/shared',
+      ],
       output: {
         globals: {
           vue: 'vue',
