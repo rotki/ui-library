@@ -11,7 +11,7 @@ export interface Props {
   variant?: 'default' | 'outlined' | 'text' | 'fab';
   icon?: boolean;
   size?: 'sm' | 'lg';
-  tag?: string;
+  tag?: 'button' | 'a';
 }
 
 defineOptions({
