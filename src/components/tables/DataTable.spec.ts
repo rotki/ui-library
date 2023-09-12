@@ -24,13 +24,13 @@ describe('DataTable', () => {
       key: 'name',
       label: 'Full name',
       sortable: true,
-      align: 'right',
+      align: 'end',
     },
     {
       key: 'title',
       label: 'Job position',
       sortable: true,
-      align: 'left',
+      align: 'start',
     },
     {
       key: 'email',
@@ -77,10 +77,10 @@ describe('DataTable', () => {
       wrapper.find('table tbody td[class*=_checkbox_]').exists(),
     ).toBeTruthy();
     expect(
-      wrapper.find('table tbody td[class*=_align__left_]').exists(),
+      wrapper.find('table tbody td[class*=_align__start_]').exists(),
     ).toBeTruthy();
     expect(
-      wrapper.find('table tbody td[class*=_align__left_]').exists(),
+      wrapper.find('table tbody td[class*=_align__start_]').exists(),
     ).toBeTruthy();
     expect(wrapper.find('div div[class*=_limit_]').exists()).toBeTruthy();
     expect(wrapper.find('div div[class*=_limit_]').exists()).toBeTruthy();
