@@ -25,6 +25,15 @@ describe('Forms/TextField', () => {
     expect(wrapper.find('input').attributes('disabled')).toBeUndefined();
   });
 
+  it('passes readonly props', async () => {
+    const wrapper = createWrapper();
+    expect(wrapper.find('input').attributes('readonly')).toBeUndefined();
+    await wrapper.setProps({ readonly: true });
+    expect(wrapper.find('input').attributes('readonly')).toBeDefined();
+    await wrapper.setProps({ readonly: false });
+    expect(wrapper.find('input').attributes('readonly')).toBeUndefined();
+  });
+
   it('passes color props', async () => {
     const wrapper = createWrapper();
     expect(wrapper.find('div[class*=wrapper]').classes()).toMatch(/_grey_/);
