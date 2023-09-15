@@ -22,6 +22,10 @@ import {
   type Props as TooltipProps,
 } from '@/components/overlays/tooltip/Tooltip.vue';
 import {
+  type Props as BadgeProps,
+  default as RuiBadge,
+} from '@/components/overlays/badge/Badge.vue';
+import {
   type Props as DialogProps,
   default as RuiDialog,
 } from '@/components/overlays/dialog/Dialog.vue';
@@ -54,6 +58,7 @@ import { default as RuiTabItem } from '@/components/tabs/tab-item/TabItem.vue';
 export {
   RuiAlert,
   RuiAutoComplete,
+  RuiBadge,
   RuiButton,
   RuiButtonGroup,
   RuiCheckbox,
@@ -87,4 +92,5 @@ export {
   DialogProps,
   ButtonProps,
   CardProps,
+  BadgeProps,
 };

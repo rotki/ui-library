@@ -91,6 +91,11 @@ const router = createRouter({
       name: 'tabs',
       component: () => import('@/views/TabView.vue'),
     },
+    {
+      path: '/badges',
+      name: 'badges',
+      component: () => import('@/views/BadgeView.vue'),
+    },
   ],
 });
 
