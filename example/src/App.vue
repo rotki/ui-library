@@ -25,6 +25,7 @@ const navigation = ref([
       { to: { name: 'dialogs' }, title: 'Dialogs' },
       { to: { name: 'cards' }, title: 'Cards' },
       { to: { name: 'tabs' }, title: 'Tabs' },
+      { to: { name: 'badges' }, title: 'Badges' },
     ],
   },
 ]);

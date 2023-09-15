@@ -19,6 +19,7 @@ import {
   RiInformationLine,
   RiMacbookLine,
   RiMoonLine,
+  RiStarFill,
   RiSunLine,
   RuiPlugin,
 } from '@rotki/ui-library';
@@ -32,6 +33,7 @@ app.use(router);
 app.use(RuiPlugin, {
   icons: [
     RiMoonLine,
+    RiStarFill,
     RiSunLine,
     RiMacbookLine,
     RiArrowLeftLine,
