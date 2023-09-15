@@ -15,7 +15,7 @@ const createWrapper = (options?: ComponentMountingOptions<typeof Badge>) =>
   });
 
 describe('Badge', () => {
-  it.only('renders properly', async () => {
+  it('renders properly', async () => {
     const wrapper = createWrapper({
       props: {
         text: 'Badge content',
@@ -40,7 +40,7 @@ describe('Badge', () => {
     expect(wrapper.get('div[role=status]').classes()).toMatch(/_primary_/);
   });
 
-  it.only('passes props correctly', async () => {
+  it('passes props correctly', async () => {
     const wrapper = createWrapper({
       props: {
         text: 'Badge content',
