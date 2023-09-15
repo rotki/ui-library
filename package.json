@@ -120,6 +120,7 @@
     "@vue/test-utils": "2.4.1",
     "@vue/tsconfig": "0.4.0",
     "@vueuse/core": "10.3.0",
+    "@vueuse/math": "10.4.1",
     "@vueuse/shared": "10.3.0",
     "argparse": "2.0.1",
     "autoprefixer": "10.4.14",
