@@ -1,4 +1,8 @@
-<script lang="ts" setup>
+<script
+  lang="ts"
+  setup
+  generic="T extends object, IdType extends keyof T = keyof T"
+>
 import Button from '@/components/buttons/button/Button.vue';
 import Checkbox from '@/components/forms/checkbox/Checkbox.vue';
 import Chip from '@/components/chips/Chip.vue';
@@ -8,9 +12,23 @@ import TablePagination, {
   type TablePaginationData,
 } from './TablePagination.vue';
 
-export interface TableColumn {
-  key: string;
-  sortable?: boolean;
+/**
+ * Represents a sortable column name for a given type.
+ * The column name must be a key of the passed data object type.
+ * @template T - The type of the data in the column.
+ */
+export type SortableColumnName<T> = keyof T;
+
+/**
+ * Represents the name of a column in a dataset.
+ *
+ * The `ColumnName` type can either be a `SortableColumnName` or a string.
+ *
+ * @typeparam T - The type of the dataset containing the column name.
+ */
+export type ColumnName<T> = SortableColumnName<T> | string;
+
+export interface BaseTableColumn {
   direction?: 'asc' | 'desc';
   align?: 'start' | 'center' | 'end';
   class?: string;
@@ -18,31 +36,58 @@ export interface TableColumn {
   [key: string]: any;
 }
 
-export interface SortColumn {
-  column?: string;
+/**
+ * Represents a sortable table column.
+ * This is used to ensure that when using sortable with a true value,
+ * the key matches to an actual property of the object passed.
+ *
+ * @template T - The type of data in the table column.
+ */
+export interface SortableTableColumn<T> extends BaseTableColumn {
+  key: SortableColumnName<T>;
+  sortable: true;
+}
+
+/**
+ * An interface representing a column in a table that cannot be sorted.
+ * This can be mapped to an actual property of the object or to a virtual column.
+ *
+ * @typeparam T - The type of data in the table.
+ */
+export interface NoneSortableTableColumn<T> extends BaseTableColumn {
+  key: string | SortableColumnName<T>;
+  sortable?: false;
+}
+
+export type TableColumn<T> =
+  | SortableTableColumn<T>
+  | NoneSortableTableColumn<T>;
+
+export interface SortColumn<T> {
+  column?: SortableColumnName<T>;
   direction: 'asc' | 'desc';
 }
 
-export interface TableOptions {
+export interface TableOptions<T> {
   pagination?: TablePaginationData;
-  sort?: SortColumn | SortColumn[];
+  sort?: SortColumn<T> | SortColumn<T>[];
 }
 
-export interface Props {
+export interface Props<T, K extends keyof T> {
   /**
    * list of items for each row
    */
-  rows: Array<Record<string, any>>;
+  rows: T[];
   /**
    * the attribute used to identify each row uniquely for selection, usually `id`
    */
-  rowAttr: string;
+  rowAttr: K;
   /**
    * model for selected rows, add a v-model to support row selection
    */
-  modelValue?: string[];
+  modelValue?: T[K][];
   /**
-   * model for insternal searching
+   * model for internal searching
    */
   search?: string;
   /**
@@ -68,7 +113,7 @@ export interface Props {
    * multi columns sort
    * @example v-model:sort="[{ column: 'name', direction: 'asc' }]"
    */
-  sort?: SortColumn | SortColumn[];
+  sort?: SortColumn<T> | SortColumn<T>[];
   /**
    * modifiers for specifying externally sorted tables
    * use this when api controls sorting
@@ -81,7 +126,7 @@ export interface Props {
   /**
    * list of column definitions
    */
-  cols?: Array<TableColumn>;
+  cols?: TableColumn<T>[];
   /**
    * attribute to use from column definitions to display column titles
    */
@@ -117,7 +162,7 @@ defineOptions({
   name: 'RuiDataTable',
 });
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props<T, IdType>>(), {
   modelValue: undefined,
   search: '',
   cols: undefined,
@@ -126,6 +171,8 @@ const props = withDefaults(defineProps<Props>(), {
   columnAttr: 'label',
   sort: undefined,
   loading: false,
+  dense: false,
+  outlined: false,
   paginationModifiers: undefined,
   sortModifiers: undefined,
   empty: () => ({ label: 'No item found' }),
@@ -134,53 +181,47 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'update:model-value', value?: string[]): void;
+  (e: 'update:model-value', value?: T[IdType][]): void;
   (e: 'update:pagination', value: TablePaginationData): void;
-  (e: 'update:sort', value?: SortColumn | SortColumn[]): void;
-  (e: 'update:options', value: TableOptions): void;
+  (e: 'update:sort', value?: SortColumn<T> | SortColumn<T>[]): void;
+  (e: 'update:options', value: TableOptions<T>): void;
 }>();
 
-const {
-  cols,
-  rows,
-  modelValue,
-  columnAttr,
-  rowAttr,
-  itemsPerPage,
-  pagination,
-  paginationModifiers,
-  search,
-  sort,
-  loading,
-  sortModifiers,
-} = toRefs(props);
-
 const css = useCssModule();
+
+const getKeys = <T extends object>(t: T) =>
+  Object.keys(t) as SortableColumnName<T>[];
 
 /**
  * Prepare the columns from props or generate using first item in the list
  */
-const columns = computed(
+const columns = computed<TableColumn<T>[]>(
   () =>
-    get(cols) ??
-    Object.keys(get(rows)[0] ?? {}).map((key) => ({
-      key,
-      [get(columnAttr)]: key,
-      sortable: false,
-      class: '',
-    })),
+    props.cols ??
+    getKeys(props.rows[0] ?? {}).map(
+      (key) =>
+        ({
+          key: key.toString(),
+          [props.columnAttr]: key.toString(),
+          class: '',
+        }) satisfies NoneSortableTableColumn<T>,
+    ),
 );
 
-const selectedData = computed({
+const selectedData = computed<T[IdType][] | undefined>({
   get() {
-    return get(modelValue);
+    return props.modelValue;
   },
   set(value) {
     emit('update:model-value', value);
   },
 });
 
+const rowIdentifier = computed(() => props.rowAttr);
+
 const internalPaginationState: Ref<TablePaginationData | undefined> = ref();
+
+const pagination = computed(() => props.pagination);
 
 watchImmediate(pagination, (pagination) => {
   set(internalPaginationState, pagination);
@@ -197,7 +238,7 @@ const paginationData: Ref<TablePaginationData> = computed({
     if (!paginated) {
       return {
         total: get(searchData).length,
-        limit: get(itemsPerPage),
+        limit: props.itemsPerPage,
         page: 1,
       };
     }
@@ -214,14 +255,14 @@ const paginationData: Ref<TablePaginationData> = computed({
     emit('update:pagination', value);
     emit('update:options', {
       pagination: value,
-      sort: get(sort),
+      sort: props.sort,
     });
   },
 });
 
 const sortData = computed({
   get() {
-    return get(sort);
+    return props.sort;
   },
   set(value) {
     emit('update:sort', value);
@@ -237,7 +278,7 @@ const sortData = computed({
  * for easily checking if a column is sorted instead of looping through the array
  */
 const sortedMap = computed(() => {
-  const mapped: Record<string, SortColumn> = {};
+  const mapped: Partial<Record<SortableColumnName<T>, SortColumn<T>>> = {};
   const sortBy = get(sortData);
   if (!sortBy) {
     return mapped;
@@ -263,7 +304,7 @@ const sortedMap = computed(() => {
  * list if ids of the visible table rows used for check-all and uncheck-all
  */
 const visibleIdentifiers = computed(() => {
-  const selectBy = get(rowAttr);
+  const selectBy = props.rowAttr;
 
   if (!selectBy) {
     return [];
@@ -291,13 +332,13 @@ const isAllSelected = computed(() => {
  * rows filtered based on search query if it exists
  */
 const searchData = computed(() => {
-  const query = get(search)?.toLocaleLowerCase();
+  const query = props.search?.toLocaleLowerCase();
   if (!query) {
-    return get(rows);
+    return props.rows;
   }
 
-  return get(rows).filter((row) =>
-    Object.keys(row).some((key) =>
+  return props.rows.filter((row) =>
+    getKeys(row).some((key) =>
       `${row[key]}`.toLocaleLowerCase().includes(query),
     ),
   );
@@ -309,7 +350,7 @@ const searchData = computed(() => {
 const sorted = computed(() => {
   const sortBy = get(sortData);
   const data = [...get(searchData)];
-  if (!sortBy || get(sortModifiers)?.external) {
+  if (!sortBy || props.sortModifiers?.external) {
     return data;
   }
 
@@ -318,7 +359,7 @@ const sorted = computed(() => {
     ignorePunctuation: true,
   };
 
-  const sort = (by: SortColumn) => {
+  const sort = (by: SortColumn<T>) => {
     data.sort((a, b) => {
       const column = by.column;
       if (!column) {
@@ -357,7 +398,7 @@ const filtered = computed(() => {
 
   const paginated = get(paginationData);
   const limit = paginated.limit;
-  if (paginated && !get(paginationModifiers)?.external) {
+  if (paginated && !props.paginationModifiers?.external) {
     const start = (paginated.page - 1) * limit;
     const end = start + limit;
     return result.slice(start, end);
@@ -367,7 +408,7 @@ const filtered = computed(() => {
 });
 
 const filteredMap = computed(() =>
-  get(filtered).map((row) => row[get(rowAttr)]),
+  get(filtered).map((row) => row[props.rowAttr]),
 );
 
 const indeterminate = computed(() => {
@@ -380,9 +421,9 @@ const indeterminate = computed(() => {
 
 const noData = computed(() => get(filtered).length === 0);
 
-const isSortedBy = (key: string) => key in get(sortedMap);
+const isSortedBy = (key: ColumnName<T>) => key in get(sortedMap);
 
-const getSortIndex = (key: string) => {
+const getSortIndex = (key: ColumnName<T>) => {
   const sortBy = get(sortData);
 
   if (!sortBy || !Array.isArray(sortBy) || !isSortedBy(key)) {
@@ -392,7 +433,7 @@ const getSortIndex = (key: string) => {
   return sortBy.findIndex((sort) => sort.column === key) ?? -1;
 };
 
-const isSelected = (identifier: string) => {
+const isSelected = (identifier: T[IdType]) => {
   const selection = get(selectedData);
   if (!selection) {
     return false;
@@ -408,7 +449,7 @@ const onSort = ({
   key,
   direction,
 }: {
-  key: string;
+  key: SortableColumnName<T>;
   direction?: 'asc' | 'desc';
 }) => {
   const sortBy = get(sortData);
@@ -478,7 +519,7 @@ const onToggleAll = (checked: boolean) => {
  * @param {boolean} checked checkbox state
  * @param {string} value the id of the selected row
  */
-const onSelect = (checked: boolean, value: string) => {
+const onSelect = (checked: boolean, value: T[typeof props.rowAttr]) => {
   const selectedRows = get(selectedData);
   if (!selectedRows) {
     return false;
@@ -494,8 +535,9 @@ const onSelect = (checked: boolean, value: string) => {
   }
 };
 
+const search = computed(() => props.search);
 /**
- * on changing search query, need to reset pagination page to 1
+ * When the search query changes, we reset the current page to 1
  */
 watch(search, () => {
   const pagination = get(paginationData);
@@ -543,7 +585,7 @@ watch(search, () => {
                 },
               ]"
             >
-              <slot :name="`header.${column.key}`" :column="column">
+              <slot :name="`header.${column.key.toString()}`" :column="column">
                 <Button
                   v-if="column.sortable"
                   :class="[
@@ -617,15 +659,18 @@ watch(search, () => {
           <tr
             v-for="(row, index) in filtered"
             :key="index"
-            :class="[css.tr, { [css.tr__selected]: isSelected(row[rowAttr]) }]"
+            :class="[
+              css.tr,
+              { [css.tr__selected]: isSelected(row[rowIdentifier]) },
+            ]"
           >
             <td v-if="selectedData" :class="css.checkbox">
               <Checkbox
-                :model-value="isSelected(row[rowAttr])"
+                :model-value="isSelected(row[rowIdentifier])"
                 hide-details
                 color="primary"
                 :data-cy="`table-toggle-check-${index}`"
-                @update:model-value="onSelect($event, row[rowAttr])"
+                @update:model-value="onSelect($event, row[rowIdentifier])"
               />
             </td>
 
@@ -639,12 +684,12 @@ watch(search, () => {
               ]"
             >
               <slot
-                :name="`item.${column.key}`"
+                :name="`item.${column.key.toString()}`"
                 :column="column"
                 :row="row"
                 :index="index"
               >
-                {{ row[column.key] }}
+                {{ row[column.key as keyof T] ?? '' }}
               </slot>
             </td>
           </tr>

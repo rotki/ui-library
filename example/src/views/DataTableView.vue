@@ -41,7 +41,16 @@ const { data: _users, isFetching } = useFetch<string>(
   'https://jsonplaceholder.typicode.com/users',
 );
 
-const columns: DataTableColumn[] = [
+interface BaseUser {
+  id: number;
+  name: string;
+  username: string;
+  email: string;
+  'address.street': string;
+  'address.city': string;
+}
+
+const columns: DataTableColumn<BaseUser>[] = [
   {
     key: 'id',
     label: 'ID',
@@ -89,7 +98,7 @@ const columns: DataTableColumn[] = [
   },
 ];
 
-const fixedColumns: DataTableColumn[] = [
+const fixedColumns: DataTableColumn<BaseUser>[] = [
   {
     key: 'id',
     label: 'ID',
@@ -131,9 +140,19 @@ const fixedColumns: DataTableColumn[] = [
     key: 'action',
   },
 ];
+
+interface ExtendedUser extends BaseUser {
+  phone: string;
+  website: string;
+  'company.name': string;
+}
 
 const emptyTables = ref<
-  { title: string; table: DataTableProps; emptySlot?: boolean }[]
+  {
+    title: string;
+    table: DataTableProps<ExtendedUser, 'id'>;
+    emptySlot?: boolean;
+  }[]
 >([
   {
     title: 'Empty table',
@@ -250,7 +269,9 @@ const emptyTables = ref<
   },
 ]);
 
-const datatables = ref<{ title: string; table: DataTableProps }[]>([
+const datatables = ref<
+  { title: string; table: DataTableProps<ExtendedUser, 'id'> }[]
+>([
   {
     title: 'With Column definitions',
     table: {
@@ -351,7 +372,9 @@ const datatables = ref<{ title: string; table: DataTableProps }[]>([
   },
 ]);
 
-const apiDatatables = ref<{ title: string; table: DataTableProps }[]>([
+const apiDatatables = ref<
+  { title: string; table: DataTableProps<ExtendedUser, 'id'> }[]
+>([
   {
     title: 'API: With Column definitions',
     table: { rowAttr: 'id', rows: [], cols: fixedColumns },
@@ -456,7 +479,7 @@ const apiDatatables = ref<{ title: string; table: DataTableProps }[]>([
   },
 ]);
 
-const users = computed<Record<string, any>[]>(() =>
+const users = computed<ExtendedUser[]>(() =>
   JSON.parse(get(_users) ?? '[]').map(normalize),
 );
 
@@ -477,10 +500,10 @@ const normalize = (user: _User): Record<string, any> => {
 };
 
 const fakeFetch = async (
-  options?: DataTableOptions,
+  options?: DataTableOptions<ExtendedUser>,
   search?: string,
   api?: boolean,
-): Promise<{ data: Record<string, any>[]; total: number }> => {
+): Promise<{ data: ExtendedUser[]; total: number }> => {
   await new Promise((resolve) => {
     setTimeout(resolve, 1500);
   });
@@ -496,7 +519,7 @@ const fakeFetch = async (
     };
     const paginated = options?.pagination;
 
-    const sort = (by: DataTableSortColumn) => {
+    const sort = (by: DataTableSortColumn<ExtendedUser>) => {
       result.sort((a, b) => {
         if (!by.column) {
           return 0;
@@ -520,7 +543,7 @@ const fakeFetch = async (
     // search
     if (query) {
       result = result.filter((row) =>
-        Object.keys(row).some((key) =>
+        (Object.keys(row) as (keyof ExtendedUser)[]).some((key) =>
           `${row[key]}`.toLocaleLowerCase().includes(query),
         ),
       );
@@ -551,7 +574,7 @@ const fakeFetch = async (
 
 const fetchData = async (
   index: number,
-  options?: DataTableOptions,
+  options?: DataTableOptions<ExtendedUser>,
   search?: string,
   api?: boolean,
 ) => {
@@ -609,6 +632,22 @@ onBeforeMount(() => {
     );
   });
 });
+
+const data = [
+  {
+    id: 1,
+    name: 'Chelsey Dietrich',
+    username: 'Kamren',
+    email: 'Lucio_Hettinger@annie.ca',
+    phone: '(254)954-1289',
+    website: 'demarco.info',
+    'address.street': 'Skiles Walks',
+    'address.city': 'Roscoeview',
+    'company.name': 'Keebler LLC',
+  },
+];
+
+const selection = ref<number[]>([]);
 </script>
 
 <template>
@@ -720,6 +759,15 @@ onBeforeMount(() => {
             :data-cy="`table-api-${i}`"
             @update:options="fetchData(i, $event, table.search, true)"
           >
+            <template #item.action>
+              <RuiButton icon variant="text" size="sm">
+                <RuiIcon name="more-fill" color="primary" />
+              </RuiButton>
+            </template>
+          </RuiDataTable>
+
+          <!-- check types -->
+          <RuiDataTable v-model="selection" row-attr="id" :rows="data">
             <template #item.action>
               <RuiButton icon variant="text" size="sm">
                 <RuiIcon name="more-fill" color="primary" />
