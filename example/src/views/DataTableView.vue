@@ -142,6 +142,7 @@ const emptyTables = ref<
       rows: [],
       cols: fixedColumns,
       outlined: true,
+      rounded: 'sm',
       sort: [{ column: 'name', direction: 'asc' }],
       pagination: { limit: 5, page: 1, total: 0 },
       empty: {
@@ -158,6 +159,7 @@ const emptyTables = ref<
       rows: [],
       cols: fixedColumns,
       outlined: true,
+      rounded: 'md',
       sort: [{ column: 'name', direction: 'asc' }],
       pagination: { limit: 5, page: 1, total: 0 },
       empty: {
@@ -173,6 +175,7 @@ const emptyTables = ref<
       cols: fixedColumns,
       loading: true,
       outlined: true,
+      rounded: 'lg',
       sort: [{ column: 'name', direction: 'asc' }],
       pagination: { limit: 5, page: 1, total: 0 },
     },

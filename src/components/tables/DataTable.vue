@@ -109,6 +109,8 @@ export interface Props {
    * should hide the footer
    */
   hideDefaultFooter?: boolean;
+
+  rounded?: 'sm' | 'md' | 'lg';
 }
 
 defineOptions({
@@ -128,6 +130,7 @@ const props = withDefaults(defineProps<Props>(), {
   sortModifiers: undefined,
   empty: () => ({ label: 'No item found' }),
   hideDefaultFooter: false,
+  rounded: 'md',
 });
 
 const emit = defineEmits<{
@@ -503,7 +506,13 @@ watch(search, () => {
 </script>
 
 <template>
-  <div :class="[css.wrapper, { [css.outlined]: outlined }]">
+  <div
+    :class="[
+      css.wrapper,
+      css[`rounded__${rounded}`],
+      { [css.outlined]: outlined },
+    ]"
+  >
     <div :class="css.scroller">
       <table :class="[css.table, { [css.dense]: dense }]">
         <thead :class="css.thead">
@@ -698,6 +707,28 @@ watch(search, () => {
     @apply rounded-xl border border-black/[0.12];
   }
 
+  &.rounded__sm {
+    @apply rounded-[.25rem];
+
+    .image {
+      @apply rounded-t-[.25rem];
+    }
+  }
+  &.rounded__md {
+    @apply rounded-[.75rem];
+
+    .image {
+      @apply rounded-t-[.75rem];
+    }
+  }
+  &.rounded__lg {
+    @apply rounded-[1rem];
+
+    .image {
+      @apply rounded-t-[1rem];
+    }
+  }
+
   .scroller {
     @apply overflow-x-auto overflow-y-hidden;
   }
@@ -864,7 +895,7 @@ watch(search, () => {
     @apply divide-white/[0.12];
 
     &.outlined {
-      @apply rounded-xl border border-white/[0.12];
+      @apply border-white/[0.12];
     }
 
     .table {
