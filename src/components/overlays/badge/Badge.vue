@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { logicAnd, logicOr } from '@vueuse/math';
 import { type ContextColorsType } from '@/consts/colors';
 import Icon from '@/components/icons/Icon.vue';
 import { type RuiIcons } from '~/src';
@@ -39,11 +40,11 @@ const slots = useSlots();
 
 const { modelValue, offsetX, offsetY, icon, text } = toRefs(props);
 
-const hasIcon = computed(() => !!get(icon) || !!slots.icon);
+const hasIcon = logicOr(icon, slots.icon);
 
-const hasText = computed(() => !!get(text) || !!slots.badge);
+const hasText = logicOr(text, slots.badge);
 
-const hasIconAndText = computed(() => get(hasIcon) && get(hasText));
+const hasIconAndText = logicAnd(hasIcon, hasText);
 </script>
 
 <template>
