@@ -46,6 +46,7 @@ import {
   type SortColumn as DataTableSortColumn,
   default as RuiDataTable,
 } from '@/components/tables/DataTable.vue';
+import { type TablePaginationData } from '@/components/tables/TablePagination.vue';
 import {
   type Props as CardProps,
   default as RuiCard,
@@ -89,6 +90,7 @@ export {
   DataTableColumn,
   DataTableSortColumn,
   DataTableOptions,
+  TablePaginationData,
   DialogProps,
   ButtonProps,
   CardProps,
