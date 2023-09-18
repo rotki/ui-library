@@ -6,7 +6,7 @@ export interface Props {
   color?: ContextColorsType;
   disabled?: boolean;
   grow?: boolean;
-  tabValue: number | string;
+  tabValue?: number | string;
   active?: boolean;
   link?: boolean;
   target?: string;
@@ -25,6 +25,7 @@ const props = withDefaults(defineProps<Props>(), {
   color: undefined,
   disabled: false,
   grow: false,
+  tabValue: generateId(),
   active: false,
   link: false,
   to: '',
