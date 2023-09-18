@@ -46,6 +46,11 @@ export interface Props {
    */
   search?: string;
   /**
+   * model for items per page
+   * will be used if the `pagination` model isn't specified
+   */
+  itemsPerPage?: number;
+  /**
    * model for paginating data
    * @example v-model:pagination="{ total: 10, limit: 5, page: 1 }"
    */
@@ -100,6 +105,10 @@ export interface Props {
    * @example :empty="{ icon: 'transactions-line', label: 'No transactions found' }"
    */
   empty?: { label?: string; description?: string };
+  /**
+   * should hide the footer
+   */
+  hideDefaultFooter?: boolean;
 }
 
 defineOptions({
@@ -110,6 +119,7 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,
   search: '',
   cols: undefined,
+  itemsPerPage: 10,
   pagination: undefined,
   columnAttr: 'label',
   sort: undefined,
@@ -117,13 +127,14 @@ const props = withDefaults(defineProps<Props>(), {
   paginationModifiers: undefined,
   sortModifiers: undefined,
   empty: () => ({ label: 'No item found' }),
+  hideDefaultFooter: false,
 });
 
 const emit = defineEmits<{
   (e: 'update:model-value', value?: string[]): void;
-  (e: 'update:pagination', value?: TablePaginationData): void;
+  (e: 'update:pagination', value: TablePaginationData): void;
   (e: 'update:sort', value?: SortColumn | SortColumn[]): void;
-  (e: 'update:options', value?: TableOptions): void;
+  (e: 'update:options', value: TableOptions): void;
 }>();
 
 const {
@@ -132,6 +143,7 @@ const {
   modelValue,
   columnAttr,
   rowAttr,
+  itemsPerPage,
   pagination,
   paginationModifiers,
   search,
@@ -165,16 +177,26 @@ const selectedData = computed({
   },
 });
 
+const internalPaginationState: Ref<TablePaginationData | undefined> = ref();
+
+watchImmediate(pagination, (pagination) => {
+  set(internalPaginationState, pagination);
+});
+
 /**
  * Pagination is different for search
  * since search is only used for internal filtering
  * we return the length of search results as total
  */
-const paginationData = computed({
+const paginationData: Ref<TablePaginationData> = computed({
   get() {
-    const paginated = get(pagination);
-    if (!paginated || !get(search)) {
-      return paginated;
+    const paginated = get(internalPaginationState);
+    if (!paginated) {
+      return {
+        total: get(searchData).length,
+        limit: get(itemsPerPage),
+        page: 1,
+      };
     }
 
     return {
@@ -184,7 +206,8 @@ const paginationData = computed({
       limits: paginated.limits,
     };
   },
-  set(value) {
+  set(value: TablePaginationData) {
+    set(internalPaginationState, value);
     emit('update:pagination', value);
     emit('update:options', {
       pagination: value,
@@ -294,19 +317,20 @@ const sorted = computed(() => {
 
   const sort = (by: SortColumn) => {
     data.sort((a, b) => {
-      if (!by.column) {
+      const column = by.column;
+      if (!column) {
         return 0;
       }
       if (by.direction === 'desc') {
-        return `${b[by.column]}`.localeCompare(
-          `${a[by.column]}`,
+        return `${b[column]}`.localeCompare(
+          `${a[column]}`,
           undefined,
           sortOptions,
         );
       }
 
-      return `${a[by.column]}`.localeCompare(
-        `${b[by.column]}`,
+      return `${a[column]}`.localeCompare(
+        `${b[column]}`,
         undefined,
         sortOptions,
       );
@@ -323,15 +347,16 @@ const sorted = computed(() => {
 });
 
 /**
- * comprises of search, sorted and paginated data
+ * comprises search, sorted and paginated data
  */
 const filtered = computed(() => {
   const result = get(sorted);
 
-  const paginated = get(pagination);
+  const paginated = get(paginationData);
+  const limit = paginated.limit;
   if (paginated && !get(paginationModifiers)?.external) {
-    const start = (paginated.page - 1) * paginated.limit;
-    const end = start + paginated.limit;
+    const start = (paginated.page - 1) * limit;
+    const end = start + limit;
     return result.slice(start, end);
   }
 
@@ -657,7 +682,7 @@ watch(search, () => {
       </table>
     </div>
     <TablePagination
-      v-if="paginationData"
+      v-if="paginationData && !hideDefaultFooter"
       v-model="paginationData"
       :loading="loading"
       :dense="dense"

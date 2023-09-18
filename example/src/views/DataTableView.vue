@@ -250,7 +250,12 @@ const emptyTables = ref<
 const datatables = ref<{ title: string; table: DataTableProps }[]>([
   {
     title: 'With Column definitions',
-    table: { rowAttr: 'id', rows: [], cols: fixedColumns },
+    table: {
+      rowAttr: 'id',
+      rows: [],
+      cols: fixedColumns,
+      hideDefaultFooter: true,
+    },
   },
   {
     title: 'No Column definitions',
