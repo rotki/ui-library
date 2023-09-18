@@ -3,7 +3,7 @@ import { type ContextColorsType } from '@/consts/colors';
 import Icon from '@/components/icons/Icon.vue';
 
 export interface Props {
-  label: string;
+  label?: string;
   dismissible?: boolean;
   disabled?: boolean;
   size?: 'sm' | 'md';
@@ -16,6 +16,7 @@ defineOptions({
 });
 
 withDefaults(defineProps<Props>(), {
+  label: '',
   size: 'md',
   color: 'grey',
   dismissible: false,
