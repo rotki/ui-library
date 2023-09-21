@@ -37,7 +37,7 @@ export const DEFAULT_POPPER_OPTIONS: PopperOptions = {
   scroll: true,
   resize: true,
   placement: 'bottom',
-  strategy: 'fixed',
+  strategy: 'absolute',
 };
 
 export const createPopper = popperGenerator({
@@ -59,12 +59,21 @@ export const usePopper = (
   closeDelay: Ref<number> = ref(0),
   virtualReference?: Ref<Element | VirtualElement>,
 ) => {
-  const reference = ref<MaybeElement>(null);
-  const popper = ref<MaybeElement>(null);
-  const instance = ref<Instance | null>(null);
-  const open = ref(false);
-  const openTimeout = ref<NodeJS.Timeout>();
-  const closeTimeout = ref<NodeJS.Timeout>();
+  const reference: Ref<MaybeElement | null> = ref(null);
+  const popper: Ref<MaybeElement | null> = ref(null);
+  const instance: Ref<Instance | null> = ref(null);
+  const open: Ref<boolean> = ref(false);
+  const openTimeout: Ref<NodeJS.Timeout | undefined> = ref();
+  const closeTimeout: Ref<NodeJS.Timeout | undefined> = ref();
+  const popperEnter: Ref<boolean> = ref(false);
+
+  const onPopperLeave = () => {
+    set(popperEnter, false);
+  };
+
+  const updatePopper = () => {
+    get(instance)?.update();
+  };
 
   const onMouseOver = () => {
     if (get(disabled)) {
@@ -75,9 +84,7 @@ export const usePopper = (
       set(closeTimeout, undefined);
     }
 
-    if (get(open)) {
-      return;
-    }
+    set(popperEnter, true);
 
     const timeout = setTimeout(() => {
       set(open, true);
@@ -88,13 +95,12 @@ export const usePopper = (
   };
 
   const onMouseLeave = () => {
+    if (get(disabled)) {
+      return;
+    }
     if (get(openTimeout)) {
       clearTimeout(get(openTimeout));
       set(openTimeout, undefined);
-    }
-
-    if (!get(open)) {
-      return;
     }
 
     const timeout = setTimeout(() => {
@@ -171,6 +177,12 @@ export const usePopper = (
               resize,
             },
           },
+          {
+            name: 'arrow',
+            options: {
+              padding: 4,
+            },
+          },
         ],
       });
 
@@ -180,5 +192,15 @@ export const usePopper = (
     });
   });
 
-  return { reference, popper, instance, open, onMouseOver, onMouseLeave };
+  return {
+    reference,
+    popper,
+    instance,
+    open,
+    popperEnter,
+    onMouseOver,
+    onMouseLeave,
+    onPopperLeave,
+    updatePopper,
+  };
 };
