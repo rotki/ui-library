@@ -86,6 +86,9 @@ jobs:
       - name: Test
         run: pnpm run coverage
 
+      - name: Typecheck example
+        run: pnpm run --filter {example} typecheck
+
       - name: Install cypress binary
         working-directory: example
         run: pnpm exec cypress install
