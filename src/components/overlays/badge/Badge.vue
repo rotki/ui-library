@@ -28,6 +28,7 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: true,
   dot: false,
   placement: 'top',
+  left: false,
   size: 'md',
   rounded: 'full',
   color: 'primary',
