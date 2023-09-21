@@ -9,7 +9,10 @@ import { ref } from 'vue';
 import { type DataType } from '@/types';
 
 const tooltips = ref<
-  (TooltipProps & { buttonColor?: DataType<typeof RuiButton>['color'] })[]
+  (TooltipProps & {
+    buttonColor?: DataType<typeof RuiButton>['color'];
+    buttonText?: string;
+  })[]
 >([
   {
     disabled: false,
@@ -68,6 +71,42 @@ const tooltips = ref<
     popper: { placement: 'right' },
   },
   {
+    disabled: false,
+    hideArrow: false,
+    text: 'Lorem ipsum dolor sit amet consecteur '.repeat(6),
+    buttonText: 'Bottom With long content',
+    buttonColor: 'primary',
+    popper: { placement: 'bottom' },
+    tooltipClass: 'max-w-sm',
+  },
+  {
+    disabled: false,
+    hideArrow: false,
+    text: 'Lorem ipsum dolor sit amet consecteur '.repeat(6),
+    buttonText: 'Top With long content',
+    buttonColor: 'secondary',
+    popper: { placement: 'top' },
+    tooltipClass: 'max-w-sm',
+  },
+  {
+    disabled: false,
+    hideArrow: false,
+    text: 'Lorem ipsum dolor sit amet consecteur '.repeat(6),
+    buttonText: 'Left With long content',
+    buttonColor: 'error',
+    popper: { placement: 'left' },
+    tooltipClass: 'max-w-sm',
+  },
+  {
+    disabled: false,
+    hideArrow: false,
+    text: 'Lorem ipsum dolor sit amet consecteur '.repeat(6),
+    buttonText: 'Right With long content',
+    buttonColor: 'info',
+    popper: { placement: 'right' },
+    tooltipClass: 'max-w-sm',
+  },
+  {
     disabled: true,
     hideArrow: false,
     text: 'Tooltip disabled',
@@ -109,12 +148,29 @@ const tooltips = ref<
         >
           <template #activator>
             <RuiButton :color="tooltip.buttonColor">
-              {{ tooltip.text }}
+              {{ tooltip.buttonText ?? tooltip.text }}
             </RuiButton>
           </template>
           {{ tooltip.text }}
         </RuiTooltip>
       </div>
+    </div>
+    <h6 class="text-h6 mt-14 mb-6" data-cy="tooltips">Full width content</h6>
+    <div class="flex space-x-4">
+      <RuiTooltip
+        v-for="(tooltip, i) in tooltips.slice(0, 4)"
+        :key="i"
+        v-bind="objectOmit(tooltip, ['buttonColor'])"
+        class="w-full"
+        :data-cy="`tooltip-full-${i}`"
+      >
+        <template #activator>
+          <RuiButton :color="tooltip.buttonColor" class="w-full">
+            {{ tooltip.buttonText ?? tooltip.text }}
+          </RuiButton>
+        </template>
+        {{ tooltip.text }}
+      </RuiTooltip>
     </div>
   </div>
 </template>

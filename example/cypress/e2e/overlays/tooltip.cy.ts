@@ -12,9 +12,9 @@ describe('Tooltip', () => {
 
     cy.get('@defaultTooltip').find('div[class*=_activator_]');
     cy.get('@defaultTooltip').trigger('mouseover');
-    cy.get('@defaultTooltip').find('div[role=tooltip]');
+    cy.get('body').find('div[role=tooltip]');
     cy.get('@defaultTooltip').trigger('mouseleave');
-    cy.get('@defaultTooltip').find('div[role=tooltip]').should('not.exist');
+    cy.get('body').find('div[role=tooltip-content]').should('not.exist');
   });
 
   it('checks for and trigger arrow tooltip', () => {
@@ -22,13 +22,11 @@ describe('Tooltip', () => {
 
     cy.get('@tooltipWithArrow').find('div[class*=_activator_]');
     cy.get('@tooltipWithArrow').trigger('mouseover');
-    cy.get('@tooltipWithArrow').find('div[role=tooltip]');
-    cy.get('@tooltipWithArrow').find('span[data-popper-arrow]');
+    cy.get('body').find('div[role=tooltip]').as('tooltip');
+    cy.get('@tooltip').find('span[data-popper-arrow]');
     cy.get('@tooltipWithArrow').trigger('mouseleave');
-    cy.get('@tooltipWithArrow').find('div[role=tooltip]').should('not.exist');
-    cy.get('@tooltipWithArrow')
-      .find('span[data-popper-arrow]')
-      .should('not.exist');
+    cy.get('body').find('div[role=tooltip-content]').should('not.exist');
+    cy.get('body').find('span[data-popper-arrow]').should('not.exist');
   });
 
   it('disabled should not trigger tooltip', () => {
@@ -36,6 +34,6 @@ describe('Tooltip', () => {
 
     cy.get('@disabledTooltip').find('div[class*=_activator_]');
     cy.get('@disabledTooltip').trigger('mouseover');
-    cy.get('@disabledTooltip').find('div[role=tooltip]').should('not.exist');
+    cy.get('body').find('div[role=tooltip-content]').should('not.exist');
   });
 });
