@@ -3,7 +3,7 @@ import { TransitionRoot } from '@headlessui/vue';
 
 export interface Props {
   active?: boolean;
-  value: number | string;
+  value?: number | string;
   eager?: boolean;
   reverse?: boolean;
 }
@@ -13,6 +13,7 @@ defineOptions({
 });
 
 withDefaults(defineProps<Props>(), {
+  value: undefined,
   eager: false,
   active: false,
   reverse: false,

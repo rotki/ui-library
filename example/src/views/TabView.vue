@@ -10,50 +10,64 @@ import {
 import { ref } from 'vue';
 import { type DataType } from '@/types';
 
-type TabsData = DataType<typeof RuiTabs, string>;
+type TabsData = DataType<typeof RuiTabs, string> & {
+  modelValue: string | number | undefined;
+};
 
 const tabs = ref<TabsData[]>([
   {
     color: 'primary',
+    modelValue: undefined,
   },
   {
     color: 'secondary',
+    modelValue: undefined,
   },
   {
     color: 'error',
+    modelValue: undefined,
   },
   {
     color: 'warning',
+    modelValue: undefined,
   },
   {
     color: 'info',
+    modelValue: '',
   },
   {
     color: 'success',
+    modelValue: undefined,
   },
   {
     color: 'primary',
     vertical: true,
+    modelValue: undefined,
   },
   {
     color: 'secondary',
     vertical: true,
+    modelValue: undefined,
   },
   {
     color: 'error',
     vertical: true,
+    modelValue: undefined,
   },
   {
     color: 'warning',
     vertical: true,
+    modelValue: undefined,
   },
   {
     color: 'info',
     vertical: true,
+    modelValue: undefined,
   },
   {
     color: 'success',
     vertical: true,
+    modelValue: undefined,
   },
 ]);
 </script>
