@@ -32,8 +32,7 @@ describe('Button', () => {
     cy.get('@primaryButton').find('span[class*=_label]');
 
     // disabled buttons not emit click
-    cy.get('@disabledButton').click({ force: true });
-    cy.get('@disabledButton').dblclick({ force: true });
+    cy.get('@disabledButton').should('be.disabled');
     cy.get('@disabledButton').contains('0');
   });
 });

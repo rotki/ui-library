@@ -1,12 +1,18 @@
 export const useGlobalId = createGlobalState(() => {
   const count = ref(0);
-  return { count };
+
+  const nextId = () => {
+    const countVal = get(count) + 1;
+    set(count, countVal);
+
+    return countVal;
+  };
+
+  return { count, nextId };
 });
 
 export const generateId = (prefix = '') => {
-  const { count } = useGlobalId();
-  const countVal = get(count);
-  set(count, countVal + 1);
+  const { nextId } = useGlobalId();
 
-  return `${prefix}-${get(count)}`;
+  return `${prefix}-${nextId()}`;
 };
