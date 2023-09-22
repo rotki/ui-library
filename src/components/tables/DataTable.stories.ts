@@ -1,11 +1,25 @@
 import Button from '@/components/buttons/button/Button.vue';
 import TextField from '@/components/forms/text-field/TextField.vue';
 import Icon from '@/components/icons/Icon.vue';
-import DataTable, { type Props, type TableColumn } from './DataTable.vue';
+import DataTable, {
+  type TableColumn,
+  type Props as TableProps,
+} from './DataTable.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
+type User = {
+  id: number;
+  name: string;
+  title: string;
+  email: string;
+  role: string;
+  date: string;
+};
+
+type Props = TableProps<User, 'id'>;
+
 const render: StoryFn<Props> = (args) => ({
-  components: { DataTable, Button, Icon, TextField },
+  components: { DataTable: DataTable<User, 'id'>, Button, Icon, TextField },
   setup() {
     const modelValue = computed({
       get() {
@@ -139,7 +153,7 @@ const data = [
   })),
 ];
 
-const columns: TableColumn[] = [
+const columns: TableColumn<User>[] = [
   {
     key: 'id',
     label: 'ID',
@@ -172,7 +186,7 @@ const columns: TableColumn[] = [
 
 const meta: Meta<Props> = {
   title: 'Components/Tables/DataTable',
-  component: DataTable,
+  component: DataTable<User, 'id'> as any,
   tags: ['autodocs'],
   render,
   argTypes: {
@@ -203,8 +217,8 @@ const meta: Meta<Props> = {
           'tfoot',
           'no-data',
           'empty-description',
-          '`header.${column.key}`',
-          '`item.${column.key}`',
+          '`header.${column.key.toString()}`',
+          '`item.${column.key.toString()}`',
         ],
       },
     },
