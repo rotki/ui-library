@@ -13,14 +13,15 @@ const createWrapper = (options?: ComponentMountingOptions<typeof Tabs>) =>
     global: {
       stubs: {
         RouterLink: RouterLinkStub,
+        Tab,
       },
     },
     slots: {
       default: [
-        h(Tab, [h('div', 'Tab 1')]),
-        h(Tab, [h('div', 'Tab 2')]),
-        h(Tab, [h('div', 'Tab 3')]),
-        h(Tab, [h('div', 'Tab 4')]),
+        { template: '<Tab><div>Tab 1</div></Tab>' },
+        { template: '<Tab><div>Tab 2</div></Tab>' },
+        { template: '<Tab><div>Tab 3</div></Tab>' },
+        { template: '<Tab><div>Tab 4</div></Tab>' },
       ],
     },
   });
@@ -30,7 +31,7 @@ describe('Tabs/Tabs', () => {
     const modelValue = ref();
     const wrapper = createWrapper({
       props: {
-        modelValue,
+        modelValue: get(modelValue),
         'onUpdate:modelValue': (e: any) => set(modelValue, e),
       },
     });
@@ -105,7 +106,7 @@ describe('Tabs/Tabs', () => {
     const modelValue = ref();
     const wrapper = createWrapper({
       props: {
-        modelValue,
+        modelValue: get(modelValue),
         'onUpdate:modelValue': (e: any) => set(modelValue, e),
       },
     });

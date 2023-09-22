@@ -16,22 +16,22 @@ vi.mock('@headlessui/vue', () => ({
 const createWrapper = (options?: ComponentMountingOptions<typeof TabItems>) =>
   mount(TabItems, {
     ...options,
+    global: { stubs: { TabItem } },
     slots: {
       default: [
-        h(TabItem, [h('div', 'Tab Content 1')]),
-        h(TabItem, [h('div', 'Tab Content 2')]),
-        h(TabItem, [h('div', 'Tab Content 3')]),
-        h(TabItem, [h('div', 'Tab Content 4')]),
+        { template: '<TabItem><div>Tab Content 1</div></TabItem>' },
+        { template: '<TabItem><div>Tab Content 2</div></TabItem>' },
+        { template: '<TabItem><div>Tab Content 3</div></TabItem>' },
+        { template: '<TabItem><div>Tab Content 4</div></TabItem>' },
       ],
     },
   });
 
 describe('Tabs/TabItems', () => {
   it('renders properly', async () => {
-    const modelValue = ref(0);
     const wrapper = createWrapper({
       props: {
-        modelValue,
+        modelValue: 0,
       },
     });
 
@@ -39,10 +39,10 @@ describe('Tabs/TabItems', () => {
     await nextTick();
     expect(wrapper.text()).toBe('Tab Content 1');
 
-    set(modelValue, 1);
+    await wrapper.setProps({ modelValue: 1 });
     await nextTick();
     await nextTick();
-    await nextTick();
+
     expect(wrapper.text()).toBe('Tab Content 2');
   });
 });
