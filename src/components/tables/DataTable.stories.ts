@@ -19,7 +19,7 @@ type User = {
 type Props = TableProps<User, 'id'>;
 
 const render: StoryFn<Props> = (args) => ({
-  components: { DataTable: DataTable<User, 'id'>, Button, Icon, TextField },
+  components: { DataTable: DataTable<User>, Button, Icon, TextField },
   setup() {
     const modelValue = computed({
       get() {
@@ -186,7 +186,7 @@ const columns: TableColumn<User>[] = [
 
 const meta: Meta<Props> = {
   title: 'Components/Tables/DataTable',
-  component: DataTable<User, 'id'> as any,
+  component: DataTable as any,
   tags: ['autodocs'],
   render,
   argTypes: {

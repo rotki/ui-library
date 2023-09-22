@@ -74,9 +74,6 @@ jobs:
       - name: Install dependencies 👨🏻‍💻
         run: pnpm install --frozen-lockfile
 
-      - name: Typecheck
-        run: pnpm run typecheck
-
       - name: Run linter 👀
         run: pnpm run lint
 
@@ -88,6 +85,9 @@ jobs:
 
       - name: Test
         run: pnpm run coverage
+
+      - name: Typecheck
+        run: pnpm run typecheck
 
       - name: Typecheck example
         run: pnpm run --filter {example} typecheck
