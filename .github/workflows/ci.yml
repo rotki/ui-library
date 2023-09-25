@@ -86,6 +86,9 @@ jobs:
       - name: Test
         run: pnpm run coverage
 
+      - name: Typecheck
+        run: pnpm run typecheck
+
       - name: Typecheck example
         run: pnpm run --filter {example} typecheck
 

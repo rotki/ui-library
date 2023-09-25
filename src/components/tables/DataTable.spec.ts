@@ -2,11 +2,19 @@ import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import DataTable, { type TableColumn } from '@/components/tables/DataTable.vue';
 
-const createWrapper = (options?: ComponentMountingOptions<typeof DataTable>) =>
-  mount(DataTable, options);
+type User = {
+  id: number;
+  name: string;
+  title: string;
+  email: string;
+};
+
+const createWrapper = (
+  options?: ComponentMountingOptions<typeof DataTable<User>>,
+) => mount(DataTable<User>, options);
 
 describe('DataTable', () => {
-  const data = [
+  const data: User[] = [
     ...[...new Array(50)].map((_, index) => ({
       id: index + 1,
       name: `Lindsay Walton ${index}`,
@@ -15,7 +23,7 @@ describe('DataTable', () => {
     })),
   ];
 
-  const columns: TableColumn[] = [
+  const columns: TableColumn<User>[] = [
     {
       key: 'id',
       label: 'ID',
