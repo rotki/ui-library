@@ -104,7 +104,8 @@ const hasHeadContent = computed(() => !!slots.header || !!slots.subheader);
 
 :global(.dark) {
   .card {
-    @apply bg-white/[0.05];
+    @apply bg-[#1E1E1E];
+
     .content {
       @apply text-rui-dark-text;
     }
