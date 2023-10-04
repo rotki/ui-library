@@ -86,12 +86,14 @@ export const usePopper = (
 
     set(popperEnter, true);
 
-    const timeout = setTimeout(() => {
-      set(open, true);
-      set(openTimeout, undefined);
-    }, get(openDelay));
+    if (!get(openTimeout)) {
+      const timeout = setTimeout(() => {
+        set(open, true);
+        set(openTimeout, undefined);
+      }, get(openDelay));
 
-    set(openTimeout, get(openTimeout) || timeout);
+      set(openTimeout, timeout);
+    }
   };
 
   const onMouseLeave = () => {
@@ -103,12 +105,14 @@ export const usePopper = (
       set(openTimeout, undefined);
     }
 
-    const timeout = setTimeout(() => {
-      set(open, false);
-      set(closeTimeout, undefined);
-    }, get(closeDelay));
+    if (!get(closeTimeout)) {
+      const timeout = setTimeout(() => {
+        set(open, false);
+        set(closeTimeout, undefined);
+      }, get(closeDelay));
 
-    set(closeTimeout, get(closeTimeout) || timeout);
+      set(closeTimeout, timeout);
+    }
   };
 
   onMounted(() => {
