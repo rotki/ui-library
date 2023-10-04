@@ -159,13 +159,13 @@ const onLast = () => {
 
 <style module lang="scss">
 .wrapper {
-  @apply relative flex items-center justify-end space-x-6;
+  @apply relative flex flex-wrap items-center justify-end space-x-6;
 
   .limit {
     @apply flex items-center space-x-2 text-caption;
 
     &__text {
-      @apply text-rui-text-secondary whitespace-nowrap;
+      @apply text-rui-text-secondary whitespace-nowrap py-4;
     }
   }
 
