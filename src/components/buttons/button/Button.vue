@@ -62,6 +62,8 @@ const spinnerSize: ComputedRef<number> = computed(() => {
   }
   return 22;
 });
+
+const slots = useSlots();
 </script>
 
 <template>
@@ -82,14 +84,15 @@ const spinnerSize: ComputedRef<number> = computed(() => {
     :disabled="disabled || loading"
     v-bind="attrs"
   >
-    <slot name="prepend" />
-    <span :class="css.label"> <slot /> </span>
-    <slot name="append" />
+    <slot v-if="slots.prepend" name="prepend" />
+    <span v-if="slots.default" :class="css.label"> <slot /> </span>
+    <slot v-if="slots.append" name="append" />
     <RuiProgress
       v-if="loading"
       circular
       :class="css.spinner"
       variant="indeterminate"
+      thickness="2"
       :size="spinnerSize"
     />
   </Component>
@@ -124,7 +127,7 @@ const spinnerSize: ComputedRef<number> = computed(() => {
 }
 
 .btn {
-  @apply text-sm leading-[1.5rem] font-medium outline outline-1 outline-transparent outline-offset-[-1px] flex items-center justify-center space-x-2 relative;
+  @apply text-sm leading-[1.5rem] font-medium outline outline-1 outline-transparent outline-offset-[-1px] flex items-center justify-center gap-x-2 relative;
   @apply px-4 py-1.5 rounded transition-all;
   @apply disabled:bg-black/[.12] disabled:text-rui-text-disabled disabled:active:text-rui-text-disabled #{!important};
 
