@@ -19,10 +19,12 @@ const createWrapper = (options?: ComponentMountingOptions<typeof Tooltip>) =>
 const delay = (time: number = 100) => promiseTimeout(time);
 
 describe('Tooltip', () => {
+  const text = 'Tooltip content';
+
   it('renders properly', async () => {
     const wrapper = createWrapper({
       props: {
-        text: 'Tooltip content',
+        text,
       },
     });
 
@@ -43,7 +45,7 @@ describe('Tooltip', () => {
   it('passes props correctly', async () => {
     const wrapper = createWrapper({
       props: {
-        text: 'Tooltip content',
+        text,
         disabled: true,
       },
     });
@@ -55,7 +57,7 @@ describe('Tooltip', () => {
   it('disabled does not trigger tooltip', async () => {
     const wrapper = createWrapper({
       props: {
-        text: 'Tooltip content',
+        text,
         disabled: true,
       },
     });
@@ -86,11 +88,49 @@ describe('Tooltip', () => {
     wrapper.unmount();
   });
 
-  it('tooltip disappears after close timeout', async () => {
+  it('tooltip only appears after `openDelay` timeout', async () => {
+    const wrapper = createWrapper({
+      props: {
+        text,
+        openDelay: 400,
+        closeDelay: 50000,
+      },
+    });
+
+    await wrapper.trigger('mouseover');
+    await delay();
+
+    const tooltip = document.body.querySelector('div[role=tooltip]');
+
+    expect(tooltip).toBeTruthy();
+    expect(tooltip?.classList).toMatch(/_tooltip_/);
+    expect(
+      document.body.querySelector('div[data-popper-placement=bottom]'),
+    ).toBeTruthy();
+    expect(tooltip?.querySelector('span[data-popper-arrow]')).toBeTruthy();
+
+    // Tooltip shouldn't appear if the mouseleave happens before the timer ends.
+    await delay(100);
+    await wrapper.trigger('mouseleave');
+    await delay(500);
+    expect(document.body.innerHTML).not.toMatch(new RegExp(text));
+
+    await wrapper.trigger('mouseover');
+    await delay(100);
+    expect(document.body.innerHTML).not.toMatch(new RegExp(text));
+
+    await wrapper.trigger('mouseover');
+    await delay(350);
+    expect(document.body.innerHTML).toMatch(new RegExp(text));
+
+    wrapper.unmount();
+  });
+
+  it('tooltip disappears after `closeDelay` timeout', async () => {
     expect(document.body.querySelector('div[role=tooltip]')).toBeFalsy();
     const wrapper = createWrapper({
       props: {
-        text: 'Tooltip content',
+        text,
         closeDelay: 1000,
       },
     });
