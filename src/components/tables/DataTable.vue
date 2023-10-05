@@ -545,6 +545,8 @@ watch(search, () => {
     pagination.page = 1;
   }
 });
+
+const slots = useSlots();
 </script>
 
 <template>
@@ -729,6 +731,10 @@ watch(search, () => {
               </td>
             </Transition>
           </tr>
+          <slot
+            v-if="slots['body.append'] && !(loading && noData)"
+            name="body.append"
+          />
         </tbody>
         <tfoot>
           <slot name="tfoot" />
