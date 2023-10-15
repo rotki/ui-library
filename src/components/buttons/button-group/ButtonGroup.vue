@@ -6,21 +6,59 @@ export interface Props {
   color?: ContextColorsType;
   variant?: 'default' | 'outlined' | 'text';
   size?: 'sm' | 'lg';
+  required?: boolean;
+  modelValue?: number | number[];
+  disabled?: boolean;
 }
 
 defineOptions({
   name: 'RuiButtonGroup',
 });
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   vertical: false,
   color: undefined,
   variant: 'default',
   size: undefined,
+  modelValue: undefined,
 });
 
+const emit = defineEmits<{
+  (e: 'update:modelValue', modelValue: number | number[] | undefined): void;
+}>();
+
 const slots = useSlots();
+const { modelValue, required } = toRefs(props);
 const children = computed(() => slots.default?.() ?? []);
+
+const activeItem = (id: number) => {
+  const selected = get(modelValue);
+  if (Array.isArray(selected)) {
+    return selected.includes(id);
+  }
+
+  return selected === id;
+};
+
+const onClick = (id: number) => {
+  const selected = get(modelValue);
+  const mandatory = get(required);
+  if (Array.isArray(selected)) {
+    const index = selected.indexOf(id);
+    if (index >= 0) {
+      if (!mandatory || selected.length !== 1) {
+        selected.splice(index, 1);
+      }
+    } else {
+      selected.push(id);
+    }
+    emit('update:modelValue', selected);
+  } else if (mandatory) {
+    emit('update:modelValue', id);
+  } else {
+    emit('update:modelValue', activeItem(id) ? undefined : id);
+  }
+};
 
 const css = useCssModule();
 </script>
@@ -39,10 +77,13 @@ const css = useCssModule();
         :is="child"
         v-for="(child, i) in children"
         :key="i"
-        :color="color"
-        :variant="variant"
-        :size="size"
+        :active="activeItem(i)"
         :class="css.button"
+        :color="color"
+        :size="size"
+        :disabled="disabled"
+        :variant="variant"
+        @click="onClick(i)"
       />
     </div>
   </div>

@@ -11,14 +11,33 @@ const render: StoryFn<Props> = (args) => ({
     return { count, args };
   },
   template: `
+    <div v-if="'modelValue' in args">
+    <ButtonGroup v-bind="args" v-model="args.modelValue">
+      <Button>
+        <Icon name="align-left" />
+      </Button>
+      <Button>
+        <Icon name="align-center" />
+      </Button>
+      <Button>
+        <Icon name="align-right" />
+      </Button>
+      <Button>
+        <Icon name="align-justify" />
+      </Button>
+    </ButtonGroup>
+    <div v-if="args.required" class="mt-4 text-rui-error">required: *</div>
+    </div>
+    <div v-else>
     <ButtonGroup v-bind="args">
       <Button @click="count--">Decrease</Button>
       <Button @click="count++">Increase</Button>
-      <Button @click='count++'>
+      <Button @click="count++">
         <Icon name="add-line"></Icon>
       </Button>
     </ButtonGroup>
-    <div class='mt-4 text-rui-text'>Count: {{ count }}</div>
+    <div class="mt-4 text-rui-text">Count: {{ count }}</div>
+    </div>
   `,
 });
 
@@ -66,6 +85,98 @@ export const Outlined: Story = {
 export const Text: Story = {
   args: {
     variant: 'text',
+  },
+};
+
+export const DefaultToggle: Story = {
+  args: {
+    modelValue: 0,
+    color: 'primary',
+  },
+};
+
+export const ToggleRequired: Story = {
+  args: {
+    required: true,
+    modelValue: 0,
+    color: 'primary',
+  },
+};
+
+export const VerticalToggle: Story = {
+  args: {
+    vertical: true,
+    modelValue: 0,
+    color: 'primary',
+  },
+};
+
+export const Toggle: Story = {
+  args: {
+    color: 'primary',
+    modelValue: 0,
+  },
+};
+
+export const OutlinedToggle: Story = {
+  args: {
+    variant: 'outlined',
+    modelValue: 0,
+    color: 'primary',
+  },
+};
+
+export const TextToggle: Story = {
+  args: {
+    variant: 'text',
+    modelValue: 0,
+    color: 'primary',
+  },
+};
+
+export const DefaultToggleMultiple: Story = {
+  args: {
+    modelValue: [0],
+    color: 'primary',
+  },
+};
+
+export const ToggleMultipleRequired: Story = {
+  args: {
+    required: true,
+    modelValue: [0],
+    color: 'primary',
+  },
+};
+
+export const VerticalToggleMultiple: Story = {
+  args: {
+    vertical: true,
+    modelValue: [0],
+    color: 'primary',
+  },
+};
+
+export const ToggleMultiple: Story = {
+  args: {
+    color: 'primary',
+    modelValue: [0],
+  },
+};
+
+export const OutlinedToggleMultiple: Story = {
+  args: {
+    variant: 'outlined',
+    modelValue: [0],
+    color: 'primary',
+  },
+};
+
+export const TextToggleMultiple: Story = {
+  args: {
+    variant: 'text',
+    modelValue: [0],
+    color: 'primary',
   },
 };
 

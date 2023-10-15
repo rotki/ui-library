@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import Button from '@/components/buttons/button/Button.vue';
 import ButtonGroup from './ButtonGroup.vue';
@@ -6,12 +6,21 @@ import ButtonGroup from './ButtonGroup.vue';
 const createWrapper = (
   options?: ComponentMountingOptions<typeof ButtonGroup>,
 ) =>
-  mount(ButtonGroup, {
-    ...options,
-    slots: {
-      default: [h(Button), h(Button)],
+  mount(
+    {
+      template:
+        '<ButtonGroup v-model="selected"><Button /><Button /><Button /></ButtonGroup>',
+      components: { ButtonGroup, Button },
+      data() {
+        return {
+          selected: null,
+        };
+      },
     },
-  });
+    {
+      ...options,
+    },
+  );
 
 describe('Button/ButtonGroup', () => {
   it('passes vertical props', async () => {
@@ -69,5 +78,126 @@ describe('Button/ButtonGroup', () => {
     expect(wrapper.find('button').classes()).toMatch(/_sm_/);
     await wrapper.setProps({ size: 'lg' });
     expect(wrapper.find('button').classes()).toMatch(/_lg_/);
+  });
+
+  it('toggleable button group', async () => {
+    const modelValue = ref(0);
+    const updateModelValue = vi.fn((value?: number) => set(modelValue, value));
+    const wrapper = createWrapper({
+      props: {
+        'onUpdate:modelValue': (e: any) => updateModelValue(e),
+      },
+      data() {
+        return { selected: get(modelValue) };
+      },
+    });
+
+    const buttons = wrapper.findAll('button');
+
+    // only first button active
+    expect(buttons[0].classes()).toMatch(/_active_/);
+    expect(buttons[1].classes()).not.toMatch(/_active_/);
+    expect(buttons[2].classes()).not.toMatch(/_active_/);
+
+    // on click, second button should take active state
+    await buttons[1].trigger('click');
+    expect(get(modelValue)).toEqual(1);
+    expect(updateModelValue).toHaveBeenCalledOnce();
+
+    expect(buttons[0].classes()).not.toMatch(/_active_/);
+    expect(buttons[1].classes()).toMatch(/_active_/);
+    expect(buttons[2].classes()).not.toMatch(/_active_/);
+
+    // on click, third button should take active state
+    await buttons[2].trigger('click');
+    expect(get(modelValue)).toEqual(2);
+    expect(updateModelValue).toHaveBeenCalledTimes(2);
+    const clickEvent = wrapper.emitted('click');
+    expect(clickEvent).toHaveLength(2);
+
+    expect(buttons[0].classes()).not.toMatch(/_active_/);
+    expect(buttons[1].classes()).not.toMatch(/_active_/);
+    expect(buttons[2].classes()).toMatch(/_active_/);
+
+    // on click, active button should lose state
+    await buttons[2].trigger('click');
+    expect(buttons[0].classes()).not.toMatch(/_active_/);
+    expect(buttons[1].classes()).not.toMatch(/_active_/);
+    expect(buttons[2].classes()).not.toMatch(/_active_/);
+    expect(get(modelValue)).toBeUndefined();
+
+    // set as required
+    await wrapper.setProps({ required: true });
+    await buttons[2].trigger('click');
+    expect(buttons[0].classes()).not.toMatch(/_active_/);
+    expect(buttons[1].classes()).not.toMatch(/_active_/);
+    expect(buttons[2].classes()).toMatch(/_active_/);
+    expect(get(modelValue)).toEqual(2);
+
+    // required so, can't deselect the active item
+    await buttons[2].trigger('click');
+    expect(buttons[2].classes()).toMatch(/_active_/);
+    expect(get(modelValue)).toEqual(2);
+  });
+
+  it('multiple toggleable button group', async () => {
+    const modelValue = ref([0]);
+    const updateModelValue = vi.fn((value: number[]) => set(modelValue, value));
+    const wrapper = createWrapper({
+      props: {
+        'onUpdate:modelValue': (e: any) => updateModelValue(e),
+      },
+      data() {
+        return { selected: get(modelValue) };
+      },
+    });
+
+    const buttons = wrapper.findAll('button');
+
+    expect(buttons[0].classes()).toMatch(/_active_/);
+    expect(buttons[1].classes()).not.toMatch(/_active_/);
+    expect(buttons[2].classes()).not.toMatch(/_active_/);
+
+    // on click, second button should also be active
+    await buttons[1].trigger('click');
+    expect(get(modelValue)).toEqual([0, 1]);
+    expect(updateModelValue).toHaveBeenCalledOnce();
+
+    expect(buttons[0].classes()).toMatch(/_active_/);
+    expect(buttons[1].classes()).toMatch(/_active_/);
+    expect(buttons[2].classes()).not.toMatch(/_active_/);
+
+    // on click, third button should also be active
+    await buttons[2].trigger('click');
+    expect(get(modelValue)).toEqual([0, 1, 2]);
+    expect(updateModelValue).toHaveBeenCalledTimes(2);
+    const clickEvent = wrapper.emitted('click');
+    expect(clickEvent).toHaveLength(2);
+
+    expect(buttons[0].classes()).toMatch(/_active_/);
+    expect(buttons[1].classes()).toMatch(/_active_/);
+    expect(buttons[2].classes()).toMatch(/_active_/);
+
+    await buttons[0].trigger('click');
+    await buttons[1].trigger('click');
+    await buttons[2].trigger('click');
+
+    expect(buttons[0].classes()).not.toMatch(/_active_/);
+    expect(buttons[1].classes()).not.toMatch(/_active_/);
+    expect(buttons[2].classes()).not.toMatch(/_active_/);
+    expect(get(modelValue)).toEqual([]);
+
+    // set required
+    await wrapper.setProps({ required: true });
+    await buttons[2].trigger('click');
+    expect(buttons[0].classes()).not.toMatch(/_active_/);
+    expect(buttons[1].classes()).not.toMatch(/_active_/);
+    expect(buttons[2].classes()).toMatch(/_active_/);
+    expect(get(modelValue)).toEqual([2]);
+
+    // required so, can't deselect the active only item
+    await buttons[2].trigger('click');
+    expect(buttons[2].classes()).toMatch(/_active_/);
+    expect(get(modelValue)).toEqual([2]);
   });
 });

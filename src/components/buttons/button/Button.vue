@@ -10,6 +10,7 @@ export interface Props {
   elevation?: number | string | null;
   variant?: 'default' | 'outlined' | 'text' | 'fab';
   icon?: boolean;
+  active?: boolean;
   size?: 'sm' | 'lg';
   tag?: 'button' | 'a';
 }
@@ -79,6 +80,7 @@ const slots = useSlots();
         [css.loading]: loading,
         [css._rounded]: rounded,
         [css.icon]: icon,
+        [css.active]: active,
       },
     ]"
     :disabled="disabled || loading"
@@ -118,9 +120,17 @@ const slots = useSlots();
     &.grey {
       @apply bg-rui-grey-300 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-light-text;
 
+      &.active {
+        @apply bg-rui-grey-50;
+      }
+
       &.outlined,
       &.text {
         @apply active:bg-white/10 hover:bg-white/[.04] text-rui-text;
+
+        &.active {
+          @apply bg-white/10;
+        }
       }
     }
   }
@@ -151,9 +161,17 @@ const slots = useSlots();
     &.#{$color} {
       @apply bg-rui-#{$color} hover:bg-rui-#{$color}-darker active:bg-rui-#{$color}-darker/90 text-rui-dark-text;
 
+      &.active {
+        @apply bg-rui-#{$color}-darker/90;
+      }
+
       &.outlined,
       &.text {
         @apply bg-transparent hover:bg-rui-#{$color}-lighter/[.04] active:bg-rui-#{$color}-lighter/10 text-rui-#{$color};
+
+        &.active {
+          @apply bg-rui-#{$color}-lighter/10;
+        }
       }
 
       &.outlined {
@@ -165,9 +183,17 @@ const slots = useSlots();
   &.grey {
     @apply bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-text;
 
+    &.active {
+      @apply bg-rui-grey-50;
+    }
+
     &.outlined,
     &.text {
       @apply bg-transparent hover:bg-black/[.04] active:bg-black/10;
+
+      &.active {
+        @apply bg-black/10;
+      }
     }
 
     &.outlined {

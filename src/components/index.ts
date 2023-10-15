@@ -8,7 +8,10 @@ import {
   type Props as ButtonProps,
   default as RuiButton,
 } from '@/components/buttons/button/Button.vue';
-import { default as RuiButtonGroup } from '@/components/buttons/button-group/ButtonGroup.vue';
+import {
+  type Props as ButtonGroupProps,
+  default as RuiButtonGroup,
+} from '@/components/buttons/button-group/ButtonGroup.vue';
 import { default as RuiIcon } from '@/components/icons/Icon.vue';
 import { default as RuiCheckbox } from '@/components/forms/checkbox/Checkbox.vue';
 import {
@@ -51,6 +54,10 @@ import {
   type Props as CardProps,
   default as RuiCard,
 } from '@/components/cards/Card.vue';
+import {
+  type Props as CardHeaderProps,
+  default as RuiCardHeader,
+} from '@/components/cards/CardHeader.vue';
 import { default as RuiTabs } from '@/components/tabs/tabs/Tabs.vue';
 import { default as RuiTab } from '@/components/tabs/tab/Tab.vue';
 import { default as RuiTabItems } from '@/components/tabs/tab-items/TabItems.vue';
@@ -78,6 +85,7 @@ export {
   RuiSimpleSelect,
   RuiDialog,
   RuiCard,
+  RuiCardHeader,
   RuiTabs,
   RuiTab,
   RuiTabItems,
@@ -93,6 +101,8 @@ export {
   TablePaginationData,
   DialogProps,
   ButtonProps,
+  ButtonGroupProps,
   CardProps,
+  CardHeaderProps,
   BadgeProps,
 };
