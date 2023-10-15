@@ -78,7 +78,7 @@ const attrs = useAttrs();
         v-bind="objectOmit(attrs, ['class'])"
         @input="input($event)"
       />
-      <div
+      <span
         :class="[
           css.checkbox,
           css[color ?? ''],
@@ -97,10 +97,10 @@ const attrs = useAttrs();
         />
         <Icon v-else-if="modelValue" name="checkbox-fill" :size="iconSize" />
         <Icon v-else name="checkbox-blank-line" :size="iconSize" />
-      </div>
-      <div :class="css.label" class="text-body-1">
+      </span>
+      <span :class="css.label" class="text-body-1">
         <slot />
-      </div>
+      </span>
     </label>
     <div v-if="!hideDetails" class="details">
       <div v-if="errorMessages.length > 0" class="text-rui-error text-caption">

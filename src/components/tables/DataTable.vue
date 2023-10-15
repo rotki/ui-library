@@ -5,9 +5,9 @@
 >
 import Button from '@/components/buttons/button/Button.vue';
 import Checkbox from '@/components/forms/checkbox/Checkbox.vue';
-import Chip from '@/components/chips/Chip.vue';
 import Icon from '@/components/icons/Icon.vue';
 import Progress from '@/components/progress/Progress.vue';
+import RuiBadge from '@/components/overlays/badge/Badge.vue';
 import TablePagination, {
   type TablePaginationData,
 } from './TablePagination.vue';
@@ -33,6 +33,7 @@ export interface BaseTableColumn {
   align?: 'start' | 'center' | 'end';
   class?: string;
   cellClass?: string;
+
   [key: string]: any;
 }
 
@@ -558,7 +559,7 @@ const slots = useSlots();
     ]"
   >
     <div :class="css.scroller">
-      <table :class="[css.table, { [css.dense]: dense }]">
+      <table :class="[css.table, { [css.dense]: dense }]" aria-label="">
         <thead :class="css.thead">
           <tr :class="css.tr">
             <th v-if="selectedData" scope="col" :class="css.checkbox">
@@ -588,47 +589,48 @@ const slots = useSlots();
               ]"
             >
               <slot :name="`header.${column.key.toString()}`" :column="column">
-                <Button
+                <RuiBadge
                   v-if="column.sortable"
-                  :class="[
-                    css.sort__button,
-                    {
-                      [css.sort__active]: isSortedBy(column.key),
-                      [css[`sort__${sortedMap[column.key]?.direction}`]]:
-                        isSortedBy(column.key),
-                    },
-                  ]"
+                  :model-value="getSortIndex(column.key) >= 0"
+                  :text="`${getSortIndex(column.key) + 1}`"
+                  color="secondary"
                   size="sm"
-                  variant="text"
-                  @click="onSort(column)"
                 >
-                  <span :class="css.column__text">
-                    {{ column[columnAttr] }}
-                  </span>
+                  <Button
+                    :class="[
+                      css.sort__button,
+                      {
+                        [css.sort__active]: isSortedBy(column.key),
+                        [css[`sort__${sortedMap[column.key]?.direction}`]]:
+                          isSortedBy(column.key),
+                      },
+                    ]"
+                    size="sm"
+                    variant="text"
+                    @click="onSort(column)"
+                  >
+                    <span :class="css.column__text">
+                      {{ column[columnAttr] }}
+                    </span>
 
-                  <template v-if="column.align === 'end'" #prepend>
-                    <Icon
-                      :class="css.sort__icon"
-                      name="arrow-down-line"
-                      size="18"
-                    />
-                  </template>
+                    <template v-if="column.align === 'end'" #prepend>
+                      <Icon
+                        :class="css.sort__icon"
+                        name="arrow-down-line"
+                        size="18"
+                      />
+                    </template>
 
-                  <template #append>
-                    <Icon
-                      v-if="column.align !== 'end'"
-                      :class="css.sort__icon"
-                      name="arrow-down-line"
-                      size="18"
-                    />
-                    <Chip
-                      v-if="getSortIndex(column.key) >= 0"
-                      :label="`${getSortIndex(column.key) + 1}`"
-                      size="sm"
-                      color="grey"
-                    />
-                  </template>
-                </Button>
+                    <template #append>
+                      <Icon
+                        v-if="column.align !== 'end'"
+                        :class="css.sort__icon"
+                        name="arrow-down-line"
+                        size="18"
+                      />
+                    </template>
+                  </Button>
+                </RuiBadge>
                 <span v-else :class="css.column__text">
                   {{ column[columnAttr] }}
                 </span>
@@ -765,6 +767,7 @@ const slots = useSlots();
       @apply rounded-t-[.25rem];
     }
   }
+
   &.rounded__md {
     @apply rounded-[.75rem];
 
@@ -772,6 +775,7 @@ const slots = useSlots();
       @apply rounded-t-[.75rem];
     }
   }
+
   &.rounded__lg {
     @apply rounded-[1rem];
 
@@ -832,6 +836,7 @@ const slots = useSlots();
                     @apply opacity-100;
                   }
                 }
+
                 &__desc {
                   .sort__icon {
                     @apply rotate-0;

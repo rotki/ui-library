@@ -24,7 +24,7 @@ const render: StoryFn<Props> = (args) => ({
     return { args, modelValue };
   },
   template: `
-    <div class="flex" :class="args.vertical ? 'flex-row' : 'flex-col'">
+    <div class="flex" :class="args.vertical ? 'flex-row gap-x-6' : 'flex-col'">
       <Tabs v-bind="args" v-model='modelValue'>
         <Tab>
           <template #prepend>

@@ -14,7 +14,7 @@ describe('Forms/Checkbox', () => {
       },
     });
     expect(wrapper.text()).toContain(label);
-    expect(wrapper.get('label > div').classes()).toMatch(/_checkbox_/);
+    expect(wrapper.get('label > span').classes()).toMatch(/_checkbox_/);
   });
 
   it('passes disabled props', async () => {
@@ -44,24 +44,24 @@ describe('Forms/Checkbox', () => {
 
   it('passes color props', async () => {
     const wrapper = createWrapper({ props: { color: 'primary' } });
-    expect(wrapper.find('label > div').classes()).toMatch(/_primary_/);
+    expect(wrapper.find('label > span').classes()).toMatch(/_primary_/);
 
     await wrapper.setProps({ color: 'secondary' });
-    expect(wrapper.find('label > div').classes()).toMatch(/_secondary_/);
+    expect(wrapper.find('label > span').classes()).toMatch(/_secondary_/);
 
     await wrapper.setProps({ color: 'error' });
-    expect(wrapper.find('label > div').classes()).toMatch(/_error_/);
+    expect(wrapper.find('label > span').classes()).toMatch(/_error_/);
 
     await wrapper.setProps({ color: 'success' });
-    expect(wrapper.find('label > div').classes()).toMatch(/_success_/);
+    expect(wrapper.find('label > span').classes()).toMatch(/_success_/);
   });
 
   it('passes size props', async () => {
     const wrapper = createWrapper({ props: { size: 'sm' } });
-    expect(wrapper.find('label > div').classes()).toMatch(/_sm_/);
+    expect(wrapper.find('label > span').classes()).toMatch(/_sm_/);
 
     await wrapper.setProps({ sm: false, size: 'lg' });
-    expect(wrapper.find('label > div').classes()).toMatch(/_lg_/);
+    expect(wrapper.find('label > span').classes()).toMatch(/_lg_/);
   });
 
   it('passes hint props', async () => {
