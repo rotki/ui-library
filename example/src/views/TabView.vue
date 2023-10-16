@@ -6,15 +6,11 @@ import {
   RuiTabItem,
   RuiTabItems,
   RuiTabs,
+  type TabsProps,
 } from '@rotki/ui-library';
 import { ref } from 'vue';
-import { type DataType } from '@/types';
 
-type TabsData = DataType<typeof RuiTabs, string> & {
-  modelValue: string | number | undefined;
-};
-
-const tabs = ref<TabsData[]>([
+const tabs = ref<TabsProps[]>([
   {
     color: 'primary',
     modelValue: undefined,

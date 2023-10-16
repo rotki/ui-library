@@ -1,10 +1,8 @@
 <script lang="ts" setup>
-import { RuiRadio, RuiRadioGroup } from '@rotki/ui-library';
+import { type RadioProps, RuiRadio, RuiRadioGroup } from '@rotki/ui-library';
 import { ref } from 'vue';
-import { type DataType } from '@/types';
 
-type RadioData = DataType<typeof RuiRadio, string> & {
-  modelValue?: string;
+type RadioData = RadioProps & {
   label?: string;
 };
 

@@ -295,7 +295,7 @@ const buttons = ref<ButtonData[]>([
   },
 ]);
 
-type ButtonGroupData = ButtonGroupProps & {
+type ButtonGroupData = ButtonGroupProps<number | string> & {
   count: number;
   rounded?: boolean;
 };
@@ -471,96 +471,96 @@ const toggleButtons = ref<ButtonGroupData[]>([
 ]);
 
 const multipleToggleButtons = ref<ButtonGroupData[]>([
-  { count: 0, color: 'primary', modelValue: [] },
+  { count: 0, color: 'primary', modelValue: ['center'] },
   {
     count: 0,
     color: 'secondary',
 
     required: true,
-    modelValue: [],
+    modelValue: ['center'],
   },
-  { count: 0, color: 'primary', modelValue: [], disabled: true },
+  { count: 0, color: 'primary', modelValue: ['center'], disabled: true },
   {
     count: 0,
     color: 'secondary',
 
     required: true,
-    modelValue: [],
+    modelValue: ['center'],
     disabled: true,
   },
-  { count: 0, color: 'error', modelValue: [] },
-  { count: 0, color: 'warning', required: true, modelValue: [] },
-  { count: 0, color: 'info', modelValue: [] },
-  { count: 0, color: 'success', required: true, modelValue: [] },
+  { count: 0, color: 'error', modelValue: ['center'] },
+  { count: 0, color: 'warning', required: true, modelValue: ['center'] },
+  { count: 0, color: 'info', modelValue: ['center'] },
+  { count: 0, color: 'success', required: true, modelValue: ['center'] },
 
-  { count: 0, color: 'primary', vertical: true, modelValue: [] },
+  { count: 0, color: 'primary', vertical: true, modelValue: ['center'] },
   {
     count: 0,
     color: 'secondary',
     vertical: true,
 
-    modelValue: [],
+    modelValue: ['center'],
   },
-  { count: 0, color: 'error', vertical: true, modelValue: [] },
-  { count: 0, color: 'warning', vertical: true, modelValue: [] },
-  { count: 0, color: 'info', vertical: true, modelValue: [] },
-  { count: 0, color: 'success', vertical: true, modelValue: [] },
+  { count: 0, color: 'error', vertical: true, modelValue: ['center'] },
+  { count: 0, color: 'warning', vertical: true, modelValue: ['center'] },
+  { count: 0, color: 'info', vertical: true, modelValue: ['center'] },
+  { count: 0, color: 'success', vertical: true, modelValue: ['center'] },
 
   {
     count: 0,
     color: 'primary',
     variant: 'outlined',
 
-    modelValue: [],
+    modelValue: ['center'],
   },
   {
     count: 0,
     color: 'secondary',
     variant: 'outlined',
 
-    modelValue: [],
+    modelValue: ['center'],
   },
   {
     count: 0,
     color: 'error',
     variant: 'outlined',
 
-    modelValue: [],
+    modelValue: ['center'],
   },
   {
     count: 0,
     color: 'warning',
     variant: 'outlined',
 
-    modelValue: [],
+    modelValue: ['center'],
   },
   {
     count: 0,
     color: 'info',
     variant: 'outlined',
 
-    modelValue: [],
+    modelValue: ['center'],
   },
   {
     count: 0,
     color: 'success',
     variant: 'outlined',
 
-    modelValue: [],
+    modelValue: ['center'],
   },
 
-  { count: 0, color: 'primary', variant: 'text', modelValue: [] },
+  { count: 0, color: 'primary', variant: 'text', modelValue: ['center'] },
   {
     count: 0,
     color: 'secondary',
     variant: 'text',
 
-    modelValue: [],
+    modelValue: ['center'],
   },
-  { count: 0, color: 'error', variant: 'text', modelValue: [] },
-  { count: 0, color: 'warning', variant: 'text', modelValue: [] },
-  { count: 0, color: 'info', variant: 'text', modelValue: [] },
-  { count: 0, color: 'success', variant: 'text', modelValue: [] },
+  { count: 0, color: 'error', variant: 'text', modelValue: ['center'] },
+  { count: 0, color: 'warning', variant: 'text', modelValue: ['center'] },
+  { count: 0, color: 'info', variant: 'text', modelValue: ['center'] },
+  { count: 0, color: 'success', variant: 'text', modelValue: ['center'] },
 ]);
 </script>
 
@@ -636,16 +636,16 @@ const multipleToggleButtons = ref<ButtonGroupData[]>([
           v-bind="objectOmit(buttonGroup, ['modelValue', 'count', 'rounded'])"
           v-model="buttonGroup.modelValue"
         >
-          <RuiButton>
+          <RuiButton value="left">
             <RuiIcon name="align-left" />
           </RuiButton>
-          <RuiButton>
+          <RuiButton value="center">
             <RuiIcon name="align-center" />
           </RuiButton>
-          <RuiButton>
+          <RuiButton value="right">
             <RuiIcon name="align-right" />
           </RuiButton>
-          <RuiButton>
+          <RuiButton value="justify">
             <RuiIcon name="align-justify" />
           </RuiButton>
         </RuiButtonGroup>

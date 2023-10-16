@@ -2,7 +2,12 @@ import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import Button from '@/components/buttons/button/Button.vue';
 import Icon from '@/components/icons/Icon.vue';
 import { contextColors } from '@/consts/colors';
-import { default as ButtonGroup, type Props } from './ButtonGroup.vue';
+import {
+  default as ButtonGroup,
+  type Props as ButtonProps,
+} from './ButtonGroup.vue';
+
+type Props = ButtonProps<string | number>;
 
 const render: StoryFn<Props> = (args) => ({
   components: { ButtonGroup, Button, Icon },
@@ -12,38 +17,38 @@ const render: StoryFn<Props> = (args) => ({
   },
   template: `
     <div v-if="'modelValue' in args">
-    <ButtonGroup v-bind="args" v-model="args.modelValue">
-      <Button>
-        <Icon name="align-left" />
-      </Button>
-      <Button>
-        <Icon name="align-center" />
-      </Button>
-      <Button>
-        <Icon name="align-right" />
-      </Button>
-      <Button>
-        <Icon name="align-justify" />
-      </Button>
-    </ButtonGroup>
-    <div v-if="args.required" class="mt-4 text-rui-error">required: *</div>
+      <ButtonGroup v-bind="args" v-model="args.modelValue">
+        <Button>
+          <Icon name="align-left" />
+        </Button>
+        <Button>
+          <Icon name="align-center" />
+        </Button>
+        <Button>
+          <Icon name="align-right" />
+        </Button>
+        <Button>
+          <Icon name="align-justify" />
+        </Button>
+      </ButtonGroup>
+      <div v-if="args.required" class="mt-4 text-rui-error">required: *</div>
     </div>
     <div v-else>
-    <ButtonGroup v-bind="args">
-      <Button @click="count--">Decrease</Button>
-      <Button @click="count++">Increase</Button>
-      <Button @click="count++">
-        <Icon name="add-line"></Icon>
-      </Button>
-    </ButtonGroup>
-    <div class="mt-4 text-rui-text">Count: {{ count }}</div>
+      <ButtonGroup v-bind="args">
+        <Button @click="count--">Decrease</Button>
+        <Button @click="count++">Increase</Button>
+        <Button @click="count++">
+          <Icon name="add-line"></Icon>
+        </Button>
+      </ButtonGroup>
+      <div class="mt-4 text-rui-text">Count: {{ count }}</div>
     </div>
   `,
 });
 
 const meta: Meta<Props> = {
   title: 'Components/Button/ButtonGroup',
-  component: ButtonGroup,
+  component: ButtonGroup as any,
   tags: ['autodocs'],
   render,
   argTypes: {

@@ -1,5 +1,8 @@
 /* eslint-disable max-lines,import/max-dependencies */
-import { default as RuiAlert } from '@/components/alerts/Alert.vue';
+import {
+  type Props as AlertProps,
+  default as RuiAlert,
+} from '@/components/alerts/Alert.vue';
 import {
   type Props as AutoCompleteProps,
   default as RuiAutoComplete,
@@ -12,14 +15,26 @@ import {
   type Props as ButtonGroupProps,
   default as RuiButtonGroup,
 } from '@/components/buttons/button-group/ButtonGroup.vue';
-import { default as RuiIcon } from '@/components/icons/Icon.vue';
-import { default as RuiCheckbox } from '@/components/forms/checkbox/Checkbox.vue';
+import {
+  type Props as IconProps,
+  default as RuiIcon,
+} from '@/components/icons/Icon.vue';
+import {
+  type Props as CheckboxProps,
+  default as RuiCheckbox,
+} from '@/components/forms/checkbox/Checkbox.vue';
 import {
   type Props as ChipProps,
   default as RuiChip,
 } from '@/components/chips/Chip.vue';
-import { default as RuiStepper } from '@/components/steppers/Stepper.vue';
-import { default as RuiTextField } from '@/components/forms/text-field/TextField.vue';
+import {
+  default as RuiStepper,
+  type Props as StepperProps,
+} from '@/components/steppers/Stepper.vue';
+import {
+  default as RuiTextField,
+  type Props as TextFieldProps,
+} from '@/components/forms/text-field/TextField.vue';
 import {
   default as RuiTooltip,
   type Props as TooltipProps,
@@ -32,12 +47,27 @@ import {
   type Props as DialogProps,
   default as RuiDialog,
 } from '@/components/overlays/dialog/Dialog.vue';
-import { default as RuiFooterStepper } from '@/components/steppers/FooterStepper.vue';
-import { default as RuiProgress } from '@/components/progress/Progress.vue';
-import { default as RuiRadioGroup } from '@/components/forms/radio-button/radio-group/RadioGroup.vue';
-import { default as RuiRadio } from '@/components/forms/radio-button/radio/Radio.vue';
+import {
+  type Props as FooterStepperProps,
+  default as RuiFooterStepper,
+} from '@/components/steppers/FooterStepper.vue';
+import {
+  type Props as ProgressProps,
+  default as RuiProgress,
+} from '@/components/progress/Progress.vue';
+import {
+  type Props as RadioGroupProps,
+  default as RuiRadioGroup,
+} from '@/components/forms/radio-button/radio-group/RadioGroup.vue';
+import {
+  type Props as RadioProps,
+  default as RuiRadio,
+} from '@/components/forms/radio-button/radio/Radio.vue';
 import { default as RuiRevealableTextField } from '@/components/forms/revealable-text-field/RevealableTextField.vue';
-import { default as RuiLogo } from '@/components/logos/Logo.vue';
+import {
+  type Props as LogoProps,
+  default as RuiLogo,
+} from '@/components/logos/Logo.vue';
 import {
   default as RuiSimpleSelect,
   type Props as SimpleSelectProps,
@@ -49,7 +79,11 @@ import {
   type SortColumn as DataTableSortColumn,
   default as RuiDataTable,
 } from '@/components/tables/DataTable.vue';
-import { type TablePaginationData } from '@/components/tables/TablePagination.vue';
+import {
+  default as RuiTablePagination,
+  type TablePaginationData,
+  type Props as TablePaginationProps,
+} from '@/components/tables/TablePagination.vue';
 import {
   type Props as CardProps,
   default as RuiCard,
@@ -58,10 +92,22 @@ import {
   type Props as CardHeaderProps,
   default as RuiCardHeader,
 } from '@/components/cards/CardHeader.vue';
-import { default as RuiTabs } from '@/components/tabs/tabs/Tabs.vue';
-import { default as RuiTab } from '@/components/tabs/tab/Tab.vue';
-import { default as RuiTabItems } from '@/components/tabs/tab-items/TabItems.vue';
-import { default as RuiTabItem } from '@/components/tabs/tab-item/TabItem.vue';
+import {
+  default as RuiTabs,
+  type Props as TabsProps,
+} from '@/components/tabs/tabs/Tabs.vue';
+import {
+  default as RuiTab,
+  type Props as TabProps,
+} from '@/components/tabs/tab/Tab.vue';
+import {
+  default as RuiTabItems,
+  type Props as TabItemsProps,
+} from '@/components/tabs/tab-items/TabItems.vue';
+import {
+  default as RuiTabItem,
+  type Props as TabItemProps,
+} from '@/components/tabs/tab-item/TabItem.vue';
 
 export {
   RuiAlert,
@@ -90,6 +136,7 @@ export {
   RuiTab,
   RuiTabItems,
   RuiTabItem,
+  RuiTablePagination,
   AutoCompleteProps,
   ChipProps,
   TooltipProps,
@@ -105,4 +152,19 @@ export {
   CardProps,
   CardHeaderProps,
   BadgeProps,
+  AlertProps,
+  CheckboxProps,
+  ProgressProps,
+  RadioGroupProps,
+  RadioProps,
+  LogoProps,
+  StepperProps,
+  TextFieldProps,
+  IconProps,
+  FooterStepperProps,
+  TabsProps,
+  TabProps,
+  TabItemsProps,
+  TabItemProps,
+  TablePaginationProps,
 };

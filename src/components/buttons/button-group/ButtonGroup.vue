@@ -1,13 +1,13 @@
-<script lang="ts" setup>
+<script lang="ts" generic="T = undefined" setup>
 import { type ContextColorsType } from '@/consts/colors';
 
-export interface Props {
+export interface Props<T = undefined> {
   vertical?: boolean;
   color?: ContextColorsType;
   variant?: 'default' | 'outlined' | 'text';
   size?: 'sm' | 'lg';
   required?: boolean;
-  modelValue?: number | number[];
+  modelValue?: T | T[];
   disabled?: boolean;
 }
 
@@ -15,7 +15,7 @@ defineOptions({
   name: 'RuiButtonGroup',
 });
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props<T>>(), {
   vertical: false,
   color: undefined,
   variant: 'default',
@@ -24,14 +24,14 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', modelValue: number | number[] | undefined): void;
+  (e: 'update:modelValue', modelValue: T | T[] | undefined): void;
 }>();
 
 const slots = useSlots();
 const { modelValue, required } = toRefs(props);
 const children = computed(() => slots.default?.() ?? []);
 
-const activeItem = (id: number) => {
+const activeItem = (id: T) => {
   const selected = get(modelValue);
   if (Array.isArray(selected)) {
     return selected.includes(id);
@@ -40,7 +40,7 @@ const activeItem = (id: number) => {
   return selected === id;
 };
 
-const onClick = (id: number) => {
+const onClick = (id: T) => {
   const selected = get(modelValue);
   const mandatory = get(required);
   if (Array.isArray(selected)) {
@@ -77,13 +77,13 @@ const css = useCssModule();
         :is="child"
         v-for="(child, i) in children"
         :key="i"
-        :active="activeItem(i)"
+        :active="activeItem(child.props?.value ?? i)"
         :class="css.button"
         :color="color"
-        :size="size"
         :disabled="disabled"
+        :size="size"
         :variant="variant"
-        @click="onClick(i)"
+        @update:value="onClick(child.props?.value ?? i)"
       />
     </div>
   </div>

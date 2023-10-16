@@ -1,21 +1,14 @@
 <script lang="ts" setup>
-import { RuiFooterStepper, RuiStepper, StepperState } from '@rotki/ui-library';
+import {
+  type FooterStepperProps,
+  RuiFooterStepper,
+  RuiStepper,
+  type StepperProps,
+  StepperState,
+} from '@rotki/ui-library';
 import { ref } from 'vue';
-import { type DataType } from '@/types';
 
-type StepData = {
-  iconTop?: boolean;
-  custom?: boolean;
-  orientation?: DataType<typeof RuiStepper>['orientation'];
-  titleClass?: string;
-  subtitleClass?: string;
-  steps: {
-    title: string;
-    description: string;
-    state: StepperState;
-  }[];
-};
-const steppers = ref<StepData[]>([
+const steppers = ref<StepperProps[]>([
   {
     steps: [
       {
@@ -285,7 +278,7 @@ const steppers = ref<StepData[]>([
   },
 ]);
 
-type FooterStepperData = DataType<typeof RuiFooterStepper, number>;
+type FooterStepperData = FooterStepperProps & { value?: number };
 
 const footerSteppers = ref<FooterStepperData[]>([
   {

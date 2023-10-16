@@ -2,7 +2,9 @@ import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { contextColors } from '@/consts/colors';
 import { default as Button, type Props } from './Button.vue';
 
-type PropsAndLabel = Props & { label: string };
+type PropsAndLabel = Props & {
+  label: string;
+};
 
 const render: StoryFn<PropsAndLabel> = (args) => ({
   components: { Button },
@@ -16,13 +18,13 @@ const render: StoryFn<PropsAndLabel> = (args) => ({
       {{ args.label }}
       <template #append></template>
     </Button>
-    <div class='mt-4 text-rui-text'>Clicked: {{ clicks }} times</div>
+    <div class="mt-4 text-rui-text">Clicked: {{ clicks }} times</div>
   `,
 });
 
 const meta: Meta<PropsAndLabel> = {
   title: 'Components/Button/Button',
-  component: Button,
+  component: Button as any,
   tags: ['autodocs'],
   render,
   argTypes: {

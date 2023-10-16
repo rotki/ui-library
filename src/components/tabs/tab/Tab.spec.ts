@@ -1,7 +1,11 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import {
+  type ComponentMountingOptions,
+  RouterLinkStub,
+  mount,
+} from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
-import { RouterLinkStub } from '@vue/test-utils';
 import Tab from '@/components/tabs/tab/Tab.vue';
+
 const createWrapper = (options?: ComponentMountingOptions<typeof Tab>) =>
   mount(Tab, {
     ...options,

@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import { RuiAlert } from '@rotki/ui-library';
+import { type AlertProps, RuiAlert } from '@rotki/ui-library';
 import { ref } from 'vue';
-import { type DataType } from '@/types';
 
 type AlertData = Omit<
-  DataType<typeof RuiAlert> & { clicks?: number; closed?: boolean },
+  AlertProps & { clicks?: number; closed?: boolean },
   'title' | 'description'
 >;
 

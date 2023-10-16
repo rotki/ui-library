@@ -40,6 +40,12 @@ const emit = defineEmits<{
   (e: 'click', tabValue: string | number): void;
 }>();
 
+const slots = defineSlots<{
+  default?(props?: object): any;
+  prepend?(props?: object): any;
+  append?(props?: object): any;
+}>();
+
 const { target, grow, active, disabled, vertical, align, tabValue } =
   toRefs(props);
 
@@ -58,7 +64,6 @@ const tabClass = computed(() => [
   },
 ]);
 
-const slots = useSlots();
 const attrs = useAttrs();
 
 const click = () => {
@@ -81,11 +86,11 @@ const click = () => {
   </Button>
   <Button
     v-else-if="!link"
-    v-bind="attrs"
-    role="tab"
     :class="tabClass"
-    variant="text"
     :color="active ? color : undefined"
+    role="tab"
+    v-bind="attrs"
+    variant="text"
     @click="click()"
   >
     <template v-for="(_, name) in slots" #[name]="slotData">
@@ -101,8 +106,6 @@ const click = () => {
     custom
   >
     <Button
-      role="tab"
-      v-bind="attrs"
       :class="[
         ...tabClass,
         {
@@ -111,11 +114,13 @@ const click = () => {
             : isActive,
         },
       ]"
-      tag="a"
-      :target="target"
-      :href="isSelf ? undefined : href"
-      variant="text"
       :color="active || (exact ? isExactActive : isActive) ? color : undefined"
+      :href="isSelf ? undefined : href"
+      :target="target"
+      role="tab"
+      tag="a"
+      v-bind="attrs"
+      variant="text"
       @click="
         click();
         isSelf ? navigate($event) : undefined;

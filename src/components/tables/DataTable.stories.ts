@@ -56,7 +56,8 @@ const render: StoryFn<Props> = (args) => ({
 
     return { args, modelValue, pagination, search, sort };
   },
-  template: `<div class="flex flex-col space-y-4">
+  template: `
+    <div class="flex flex-col space-y-4">
       <div class="flex items-center space-x-4">
         <TextField
           v-if="search !== undefined"

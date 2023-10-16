@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import {
+  type ButtonProps,
   RuiButton,
   RuiTooltip,
   type TooltipProps,
 } from '@rotki/ui-library/components';
 import { objectOmit } from '@vueuse/shared';
 import { ref } from 'vue';
-import { type DataType } from '@/types';
 
 const tooltips = ref<
   (TooltipProps & {
-    buttonColor?: DataType<typeof RuiButton>['color'];
+    buttonColor?: ButtonProps<undefined>['color'];
     buttonText?: string;
   })[]
 >([

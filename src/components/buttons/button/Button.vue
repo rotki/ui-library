@@ -1,8 +1,8 @@
-<script lang="ts" setup>
+<script lang="ts" generic="T = undefined" setup>
 import { type ContextColorsType } from '@/consts/colors';
 import { default as RuiProgress } from '@/components/progress/Progress.vue';
 
-export interface Props {
+export interface Props<T = undefined> {
   disabled?: boolean;
   loading?: boolean;
   color?: ContextColorsType;
@@ -13,13 +13,14 @@ export interface Props {
   active?: boolean;
   size?: 'sm' | 'lg';
   tag?: 'button' | 'a';
+  value?: T;
 }
 
 defineOptions({
   name: 'RuiButton',
 });
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props<T>>(), {
   disabled: false,
   loading: false,
   color: undefined,
@@ -29,9 +30,16 @@ const props = withDefaults(defineProps<Props>(), {
   icon: false,
   size: undefined,
   tag: 'button',
+  target: undefined,
+  value: undefined,
 });
 
+const emit = defineEmits<{
+  (e: 'update:value', value?: T): void;
+}>();
+
 const { disabled, elevation, variant, size } = toRefs(props);
+const btnValue = computed(() => props.value);
 
 const attrs = useAttrs();
 const css = useCssModule();
@@ -85,6 +93,7 @@ const slots = useSlots();
     ]"
     :disabled="disabled || loading"
     v-bind="attrs"
+    @click="emit('update:value', btnValue)"
   >
     <slot v-if="slots.prepend" name="prepend" />
     <span v-if="slots.default" :class="css.label"> <slot /> </span>
@@ -129,7 +138,7 @@ const slots = useSlots();
         @apply active:bg-white/10 hover:bg-white/[.04] text-rui-text;
 
         &.active {
-          @apply bg-white/10;
+          @apply bg-white/30;
         }
       }
     }
@@ -162,7 +171,7 @@ const slots = useSlots();
       @apply bg-rui-#{$color} hover:bg-rui-#{$color}-darker active:bg-rui-#{$color}-darker/90 text-rui-dark-text;
 
       &.active {
-        @apply bg-rui-#{$color}-darker/90;
+        @apply bg-rui-#{$color}-darker;
       }
 
       &.outlined,
@@ -170,7 +179,7 @@ const slots = useSlots();
         @apply bg-transparent hover:bg-rui-#{$color}-lighter/[.04] active:bg-rui-#{$color}-lighter/10 text-rui-#{$color};
 
         &.active {
-          @apply bg-rui-#{$color}-lighter/10;
+          @apply bg-rui-#{$color}-lighter/30;
         }
       }
 
