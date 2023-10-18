@@ -29,7 +29,16 @@ const emit = defineEmits<{
 
 const slots = useSlots();
 const { modelValue, required } = toRefs(props);
-const children = computed(() => slots.default?.() ?? []);
+const children = computed(() =>
+  (slots.default?.() ?? []).map((child, i) => {
+    child.props = {
+      ...child.props,
+      active: activeItem(child.props?.value ?? i),
+    };
+
+    return child;
+  }),
+);
 
 const activeItem = (id: T) => {
   const selected = get(modelValue);
@@ -77,13 +86,12 @@ const css = useCssModule();
         :is="child"
         v-for="(child, i) in children"
         :key="i"
-        :active="activeItem(child.props?.value ?? i)"
         :class="css.button"
         :color="color"
         :disabled="disabled"
         :size="size"
         :variant="variant"
-        @update:value="onClick(child.props?.value ?? i)"
+        @update:value="onClick($event ?? i)"
       />
     </div>
   </div>

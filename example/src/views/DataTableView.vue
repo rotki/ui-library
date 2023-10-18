@@ -37,9 +37,11 @@ interface _User {
   };
 }
 
-const { data: _users, isFetching } = useFetch<string>(
-  'https://jsonplaceholder.typicode.com/users',
-);
+const {
+  data: _users,
+  isFetching,
+  execute,
+} = useFetch<string>('https://jsonplaceholder.typicode.com/users');
 
 interface BaseUser {
   id: number;
@@ -270,7 +272,10 @@ const emptyTables = ref<
 ]);
 
 const datatables = ref<
-  { title: string; table: DataTableProps<ExtendedUser, 'id'> }[]
+  {
+    title: string;
+    table: DataTableProps<ExtendedUser, 'id'>;
+  }[]
 >([
   {
     title: 'With Column definitions',
@@ -373,7 +378,10 @@ const datatables = ref<
 ]);
 
 const apiDatatables = ref<
-  { title: string; table: DataTableProps<ExtendedUser, 'id'> }[]
+  {
+    title: string;
+    table: DataTableProps<ExtendedUser, 'id'>;
+  }[]
 >([
   {
     title: 'API: With Column definitions',
@@ -503,7 +511,10 @@ const fakeFetch = async (
   options?: DataTableOptions<ExtendedUser>,
   search?: string,
   api?: boolean,
-): Promise<{ data: ExtendedUser[]; total: number }> => {
+): Promise<{
+  data: ExtendedUser[];
+  total: number;
+}> => {
   await new Promise((resolve) => {
     setTimeout(resolve, 1500);
   });
@@ -615,7 +626,11 @@ const onSearch = useDebounceFn(async (query: string, index: number) => {
   }
 }, 500);
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
+  if (get(isFetching)) {
+    await execute().catch();
+  }
+
   get(datatables).forEach((row, i) => {
     fetchData(
       i,
