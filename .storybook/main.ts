@@ -11,7 +11,8 @@ const config: StorybookConfig = {
       options: {
         backgrounds: false
       }
-    }
+    },
+    '@storybook/addon-mdx-gfm'
   ],
   framework: {
     name: '@storybook/vue3-vite',
