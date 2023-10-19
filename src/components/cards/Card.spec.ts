@@ -47,7 +47,7 @@ describe('Card', () => {
 
     expect(wrapper.find('div[class*=_image_').exists()).toBeTruthy();
     expect(wrapper.find('div[class*=_prepend_').exists()).toBeTruthy();
-    expect(wrapper.find('h5[class*=_header_').exists()).toBeTruthy();
+    expect(wrapper.find('h6[class*=_header_').exists()).toBeTruthy();
     expect(wrapper.find('p[class*=_subheader_').exists()).toBeTruthy();
     expect(wrapper.find('div[class*=_content_').exists()).toBeTruthy();
     expect(wrapper.find('div[class*=_footer_').exists()).toBeTruthy();
