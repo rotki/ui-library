@@ -303,6 +303,16 @@ export const Outlined: Story = {
   },
 };
 
+export const Striped: Story = {
+  args: {
+    rows: data,
+    cols: columns,
+    modelValue: [],
+    striped: true,
+    pagination: { limit: 10, page: 1, total: 50 },
+  },
+};
+
 export const SingleSort: Story = {
   args: {
     rows: data,

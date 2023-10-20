@@ -141,6 +141,10 @@ export interface Props<T, K extends keyof T> {
    */
   outlined?: boolean;
   /**
+   * should add zebra-striping to the table row
+   */
+  striped?: boolean;
+  /**
    * flag to show loading state of the table
    * triggers an indefinite progress at the bottom of the table header
    */
@@ -174,6 +178,7 @@ const props = withDefaults(defineProps<Props<T, IdType>>(), {
   loading: false,
   dense: false,
   outlined: false,
+  striped: false,
   paginationModifiers: undefined,
   sortModifiers: undefined,
   empty: () => ({ label: 'No item found' }),
@@ -659,7 +664,7 @@ const slots = useSlots();
             </th>
           </tr>
         </thead>
-        <tbody :class="css.tbody">
+        <tbody :class="[css.tbody, { [css['tbody--striped']]: striped }]">
           <tr
             v-for="(row, index) in filtered"
             :key="index"
@@ -883,6 +888,15 @@ const slots = useSlots();
 
     .tbody {
       @apply divide-y divide-black/[0.12];
+
+      &--striped {
+        .tr {
+          &:nth-child(even) {
+            @apply bg-rui-grey-50;
+          }
+        }
+      }
+
       .tr {
         @apply hover:bg-black/[0.04];
 
@@ -967,6 +981,15 @@ const slots = useSlots();
 
       .tbody {
         @apply divide-white/[0.12];
+
+        &--striped {
+          .tr {
+            &:nth-child(even) {
+              @apply bg-rui-grey-900;
+            }
+          }
+        }
+
         .tr {
           &__selected {
             @apply bg-rui-dark-primary/[0.08];
