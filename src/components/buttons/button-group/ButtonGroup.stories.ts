@@ -59,7 +59,8 @@ const meta: Meta<Props> = {
       options: ['default', 'outlined', 'text'],
       table: { category: 'Shape' },
     },
-    size: { control: 'select', options: ['medium', 'sm', 'lg'] },
+    size: { control: 'select', options: ['md', 'sm', 'lg'] },
+    gap: { control: 'select', options: ['md', 'sm', 'lg'] },
   },
 };
 

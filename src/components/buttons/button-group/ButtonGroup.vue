@@ -6,6 +6,7 @@ export interface Props<T = undefined> {
   color?: ContextColorsType;
   variant?: 'default' | 'outlined' | 'text';
   size?: 'sm' | 'lg';
+  gap?: 'sm' | 'md' | 'lg';
   required?: boolean;
   modelValue?: T | T[];
   disabled?: boolean;
@@ -20,6 +21,7 @@ const props = withDefaults(defineProps<Props<T>>(), {
   color: undefined,
   variant: 'default',
   size: undefined,
+  gap: undefined,
   modelValue: undefined,
 });
 
@@ -28,13 +30,23 @@ const emit = defineEmits<{
 }>();
 
 const slots = useSlots();
-const { modelValue, required } = toRefs(props);
+const { modelValue, required, disabled, color, variant, size } = toRefs(props);
 const children = computed(() =>
   (slots.default?.() ?? []).map((child, i) => {
     child.props = {
       ...child.props,
       active: activeItem(child.props?.value ?? i),
     };
+
+    // if group is disabled, disable child buttons
+    if (get(disabled)) {
+      child.props.disabled = true;
+    }
+    const rootColor = get(color);
+    // if given root color, use it
+    if (rootColor) {
+      child.props.color = rootColor;
+    }
 
     return child;
   }),
@@ -73,27 +85,27 @@ const css = useCssModule();
 </script>
 
 <template>
-  <div>
-    <div
-      :class="[
-        css.wrapper,
-        css[color ?? ''],
-        css[variant],
-        { [css.wrapper__vertical]: vertical },
-      ]"
-    >
-      <Component
-        :is="child"
-        v-for="(child, i) in children"
-        :key="i"
-        :class="css.button"
-        :color="color"
-        :disabled="disabled"
-        :size="size"
-        :variant="variant"
-        @update:value="onClick($event ?? i)"
-      />
-    </div>
+  <div
+    :class="[
+      css.wrapper,
+      css[color ?? ''],
+      css[variant],
+      {
+        [css.wrapper__vertical]: vertical,
+        [css.separated]: !!gap,
+        [css[`separated__${gap}`]]: !!gap,
+      },
+    ]"
+  >
+    <Component
+      :is="child"
+      v-for="(child, i) in children"
+      :key="i"
+      :class="css.button"
+      :size="size"
+      :variant="variant"
+      @update:value="onClick($event ?? i)"
+    />
   </div>
 </template>
 
@@ -112,8 +124,31 @@ const css = useCssModule();
     }
   }
 
+  &.separated {
+    @apply divide-x-0 divide-y-0 outline-0;
+    &__sm {
+      @apply gap-2;
+    }
+
+    &__md {
+      @apply gap-4;
+    }
+
+    &__lg {
+      @apply gap-6;
+    }
+
+    .button {
+      @apply outline-1;
+    }
+  }
+
+  &:not(.separated) .button {
+    @apply rounded-none;
+  }
+
   .button {
-    @apply rounded-none border-0 outline-0;
+    @apply border-0 outline-0;
   }
 
   @each $color in c.$context-colors {

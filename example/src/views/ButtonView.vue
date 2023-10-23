@@ -385,9 +385,9 @@ const buttonGroups = ref<ButtonGroupData[]>([
 ]);
 
 const toggleButtons = ref<ButtonGroupData[]>([
-  { count: 0, color: 'primary', modelValue: 0 },
-  { count: 0, color: 'secondary', required: true, modelValue: 0 },
-  { count: 0, color: 'primary', modelValue: 0, disabled: true },
+  { count: 0, color: 'primary', modelValue: 0, gap: 'sm' },
+  { count: 0, color: 'secondary', required: true, modelValue: 0, gap: 'md' },
+  { count: 0, color: 'primary', modelValue: 0, disabled: true, gap: 'lg' },
   {
     count: 0,
     color: 'secondary',
@@ -400,15 +400,15 @@ const toggleButtons = ref<ButtonGroupData[]>([
   { count: 0, color: 'info', modelValue: 0 },
   { count: 0, color: 'success', required: true, modelValue: 0 },
 
-  { count: 0, color: 'primary', vertical: true, modelValue: 0 },
+  { count: 0, color: 'primary', vertical: true, modelValue: 0, gap: 'sm' },
   {
     count: 0,
     color: 'secondary',
     vertical: true,
-
+    gap: 'md',
     modelValue: 0,
   },
-  { count: 0, color: 'error', vertical: true, modelValue: 0 },
+  { count: 0, color: 'error', vertical: true, modelValue: 0, gap: 'lg' },
   { count: 0, color: 'warning', vertical: true, modelValue: 0 },
   { count: 0, color: 'info', vertical: true, modelValue: 0 },
   { count: 0, color: 'success', vertical: true, modelValue: 0 },
@@ -417,42 +417,39 @@ const toggleButtons = ref<ButtonGroupData[]>([
     count: 0,
     color: 'primary',
     variant: 'outlined',
-
     modelValue: 0,
+    gap: 'sm',
   },
   {
     count: 0,
     color: 'secondary',
     variant: 'outlined',
-
     modelValue: 0,
+    gap: 'md',
   },
   {
     count: 0,
     color: 'error',
     variant: 'outlined',
-
     modelValue: 0,
+    gap: 'lg',
   },
   {
     count: 0,
     color: 'warning',
     variant: 'outlined',
-
     modelValue: 0,
   },
   {
     count: 0,
     color: 'info',
     variant: 'outlined',
-
     modelValue: 0,
   },
   {
     count: 0,
     color: 'success',
     variant: 'outlined',
-
     modelValue: 0,
   },
 
@@ -461,7 +458,6 @@ const toggleButtons = ref<ButtonGroupData[]>([
     count: 0,
     color: 'secondary',
     variant: 'text',
-
     modelValue: 0,
   },
   { count: 0, color: 'error', variant: 'text', modelValue: 0 },
@@ -475,7 +471,6 @@ const multipleToggleButtons = ref<ButtonGroupData[]>([
   {
     count: 0,
     color: 'secondary',
-
     required: true,
     modelValue: ['center'],
   },
@@ -483,7 +478,6 @@ const multipleToggleButtons = ref<ButtonGroupData[]>([
   {
     count: 0,
     color: 'secondary',
-
     required: true,
     modelValue: ['center'],
     disabled: true,
@@ -498,7 +492,6 @@ const multipleToggleButtons = ref<ButtonGroupData[]>([
     count: 0,
     color: 'secondary',
     vertical: true,
-
     modelValue: ['center'],
   },
   { count: 0, color: 'error', vertical: true, modelValue: ['center'] },
@@ -510,54 +503,60 @@ const multipleToggleButtons = ref<ButtonGroupData[]>([
     count: 0,
     color: 'primary',
     variant: 'outlined',
-
     modelValue: ['center'],
   },
   {
     count: 0,
     color: 'secondary',
     variant: 'outlined',
-
     modelValue: ['center'],
   },
   {
     count: 0,
     color: 'error',
     variant: 'outlined',
-
     modelValue: ['center'],
   },
   {
     count: 0,
     color: 'warning',
     variant: 'outlined',
-
     modelValue: ['center'],
   },
   {
     count: 0,
     color: 'info',
     variant: 'outlined',
-
     modelValue: ['center'],
   },
   {
     count: 0,
     color: 'success',
     variant: 'outlined',
-
     modelValue: ['center'],
   },
 
-  { count: 0, color: 'primary', variant: 'text', modelValue: ['center'] },
+  {
+    count: 0,
+    color: 'primary',
+    variant: 'text',
+    modelValue: ['center'],
+    gap: 'sm',
+  },
   {
     count: 0,
     color: 'secondary',
     variant: 'text',
-
     modelValue: ['center'],
+    gap: 'md',
   },
-  { count: 0, color: 'error', variant: 'text', modelValue: ['center'] },
+  {
+    count: 0,
+    color: 'error',
+    variant: 'text',
+    modelValue: ['center'],
+    gap: 'lg',
+  },
   { count: 0, color: 'warning', variant: 'text', modelValue: ['center'] },
   { count: 0, color: 'info', variant: 'text', modelValue: ['center'] },
   { count: 0, color: 'success', variant: 'text', modelValue: ['center'] },
