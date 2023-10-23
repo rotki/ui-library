@@ -33,7 +33,7 @@ import {
 } from '@/components/steppers/Stepper.vue';
 import {
   default as RuiTextField,
-  type Props as TextFieldProps,
+  type TextFieldProps,
 } from '@/components/forms/text-field/TextField.vue';
 import {
   default as RuiTooltip,
@@ -63,7 +63,10 @@ import {
   type Props as RadioProps,
   default as RuiRadio,
 } from '@/components/forms/radio-button/radio/Radio.vue';
-import { default as RuiRevealableTextField } from '@/components/forms/revealable-text-field/RevealableTextField.vue';
+import {
+  type Props as RevealableTextFieldProps,
+  default as RuiRevealableTextField,
+} from '@/components/forms/revealable-text-field/RevealableTextField.vue';
 import {
   type Props as LogoProps,
   default as RuiLogo,
@@ -167,4 +170,5 @@ export {
   TabItemsProps,
   TabItemProps,
   TablePaginationProps,
+  RevealableTextFieldProps,
 };

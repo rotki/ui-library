@@ -35,6 +35,7 @@ export interface Props {
 
 defineOptions({
   name: 'RuiAutoComplete',
+  inheritAttrs: false,
 });
 
 const props = withDefaults(defineProps<Props>(), {
@@ -74,7 +75,9 @@ const {
 } = toRefs(props);
 
 const query = ref(get(searchQuery) ?? '');
-const button = ref<{ el: HTMLButtonElement }>();
+const button = ref<{
+  el: HTMLButtonElement;
+}>();
 
 const filtered = computed(() => {
   const search = get(query)?.toLowerCase();
@@ -258,7 +261,7 @@ const attrs = useAttrs();
               v-if="filtered.length === 0 && query !== ''"
               :class="css.empty"
             >
-              <slot name="no-data"> No options found </slot>
+              <slot name="no-data">No options found</slot>
             </div>
             <div v-else v-bind="containerProps" class="max-h-60">
               <div v-bind="wrapperProps">

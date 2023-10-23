@@ -39,8 +39,8 @@ describe('Forms/AutoComplete', () => {
       },
     });
     expect(wrapper.find('label').text()).toContain(label);
-    expect(wrapper.find('.details > .text-caption').text()).toContain(hint);
-    expect(wrapper.find('.details > .text-caption').text()).toContain(hint);
+    expect(wrapper.find('.details .text-caption').text()).toContain(hint);
+    expect(wrapper.find('.details .text-caption').text()).toContain(hint);
   });
 
   it('error has more priority over hint', async () => {
@@ -52,13 +52,13 @@ describe('Forms/AutoComplete', () => {
       },
     });
 
-    expect(wrapper.find('.details > .text-caption').text()).toContain(hint);
+    expect(wrapper.find('.details .text-caption').text()).toContain(hint);
 
     await wrapper.setProps({ errorMessages: [errorMessage] });
 
-    expect(wrapper.find('.details > .text-caption').text()).not.toContain(hint);
+    expect(wrapper.find('.details .text-caption').text()).not.toContain(hint);
 
-    expect(wrapper.find('.details > .text-caption').text()).toContain(
+    expect(wrapper.find('.details .text-caption').text()).toContain(
       errorMessage,
     );
   });

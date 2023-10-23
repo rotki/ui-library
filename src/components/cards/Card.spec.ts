@@ -35,7 +35,7 @@ describe('Card', () => {
       },
       slots: {
         header: ({ text = 'Card header' }: { text?: string }) => text,
-        image: { template: `<img src="https://placehold.co/960x320" />` },
+        image: { template: `<img src="https://placehold.co/960x320" alt />` },
         prepend: ({ text = 'OP' }: { text?: string }) => text,
         subheader: ({ text = 'Card subheader' }: { text?: string }) => text,
         default: { template: `<p>Lorem ipsum dolor sit amet</p>` },

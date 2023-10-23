@@ -18,6 +18,11 @@ export interface Props
   wrapperWidth: number;
 }
 
+defineOptions({
+  name: 'RuiAutoCompleteSelection',
+  inheritAttrs: false,
+});
+
 const props = withDefaults(defineProps<Props>(), {
   keyProp: 'id',
   textProp: 'text',
@@ -25,7 +30,9 @@ const props = withDefaults(defineProps<Props>(), {
   dense: false,
 });
 
-const emit = defineEmits<{ (e: 'remove', option: Option): void }>();
+const emit = defineEmits<{
+  (e: 'remove', option: Option): void;
+}>();
 
 const css = useCssModule();
 const attrs = useAttrs();
@@ -146,7 +153,7 @@ watch([data, wrapperWidth], () => {
     ]"
     :data-has-value="hasValue"
     :display-value="(_) => displayValue"
-    v-bind="objectOmit(attrs, ['value', 'dense'])"
+    v-bind="objectOmit(attrs, ['value'])"
   />
 </template>
 
