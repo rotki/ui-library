@@ -1,7 +1,6 @@
 import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { contextColors } from '@/consts/colors';
-import { type Props } from '@/components/forms/text-field/TextField.vue';
-import RevealableTextField from './RevealableTextField.vue';
+import RevealableTextField, { type Props } from './RevealableTextField.vue';
 
 const render: StoryFn<Props> = (args) => ({
   components: { RevealableTextField },
@@ -17,7 +16,8 @@ const render: StoryFn<Props> = (args) => ({
 
     return { args, modelValue };
   },
-  template: `<RevealableTextField v-model="modelValue" v-bind="args" />`,
+  template: `
+    <RevealableTextField v-model="modelValue" v-bind="args" />`,
 });
 
 const meta: Meta<Props> = {
@@ -33,6 +33,7 @@ const meta: Meta<Props> = {
     appendIcon: { control: 'text' },
     prependIcon: { control: 'text' },
     errorMessages: { control: 'array', defaultValue: [] },
+    successMessages: { control: 'array', defaultValue: [] },
     hideDetails: { control: 'boolean', table: { category: 'State' } },
     dense: { control: 'boolean', table: { category: 'State' } },
     variant: {
@@ -42,6 +43,11 @@ const meta: Meta<Props> = {
     },
     disabled: { control: 'boolean', table: { category: 'State' } },
     color: {
+      control: 'select',
+      options: contextColors,
+      table: { category: 'State' },
+    },
+    textColor: {
       control: 'select',
       options: contextColors,
       table: { category: 'State' },
@@ -61,6 +67,53 @@ export const Default: Story = {
     label: 'Password',
     placeholder: 'Placeholder',
     variant: 'outlined',
+  },
+};
+
+export const PrimaryText: Story = {
+  args: {
+    label: 'Password',
+    placeholder: 'Placeholder',
+    variant: 'outlined',
+    textColor: 'primary',
+    appendIcon: 'eye-line',
+  },
+};
+
+export const SuccessText: Story = {
+  args: {
+    label: 'Password',
+    placeholder: 'Placeholder',
+    variant: 'outlined',
+    textColor: 'success',
+    appendIcon: 'eye-line',
+  },
+};
+
+export const ErrorsMessage: Story = {
+  args: {
+    label: 'Password',
+    placeholder: 'Placeholder',
+    variant: 'outlined',
+    errorMessages: ['Lorem ipsum dolor'],
+  },
+};
+
+export const SuccessMessage: Story = {
+  args: {
+    label: 'Password',
+    placeholder: 'Placeholder',
+    variant: 'outlined',
+    successMessages: ['Lorem ipsum dolor'],
+  },
+};
+
+export const Hinted: Story = {
+  args: {
+    label: 'Password',
+    placeholder: 'Placeholder',
+    variant: 'outlined',
+    hint: 'Lorem ipsum dolor',
   },
 };
 

@@ -1,20 +1,23 @@
 <script lang="ts" setup>
+import { logicOr } from '@vueuse/math';
 import { objectOmit } from '@vueuse/shared';
 import { type ContextColorsType } from '@/consts/colors';
 import Icon from '@/components/icons/Icon.vue';
 import { type RuiIcons } from '~/src';
 
-export interface Props {
+export interface TextFieldProps {
   modelValue?: string;
   label?: string;
   placeholder?: string;
   disabled?: boolean;
   variant?: 'default' | 'filled' | 'outlined';
   color?: 'grey' | ContextColorsType;
+  textColor?: 'grey' | ContextColorsType;
   dense?: boolean;
   hint?: string;
   as?: string | object;
   errorMessages?: string[];
+  successMessages?: string[];
   hideDetails?: boolean;
   prependIcon?: RuiIcons;
   appendIcon?: RuiIcons;
@@ -23,19 +26,22 @@ export interface Props {
 
 defineOptions({
   name: 'RuiTextField',
+  inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<TextFieldProps>(), {
   modelValue: '',
   label: '',
   placeholder: '',
   disabled: false,
   variant: 'default',
   color: 'grey',
+  textColor: undefined,
   dense: false,
   hint: '',
   as: 'input',
   errorMessages: () => [],
+  successMessages: () => [],
   hideDetails: false,
   prependIcon: undefined,
   appendIcon: undefined,
@@ -49,7 +55,7 @@ const emit = defineEmits<{
   (e: 'remove', value: unknown): void;
 }>();
 
-const { label } = toRefs(props);
+const { label, modelValue, errorMessages, successMessages } = toRefs(props);
 
 const input = (event: Event) => {
   const value = (event.target as HTMLInputElement).value;
@@ -80,6 +86,9 @@ const prependWidth = computed(
 const appendWidth = computed(
   () => `${get(wrapperRight) - get(innerWrapperRight)}px`,
 );
+const hasError = computed(() => get(errorMessages).length > 0);
+const hasSuccess = computed(() => get(successMessages).length > 0);
+const hasMessages = logicOr(hasError, hasSuccess);
 
 const css = useCssModule();
 const attrs = useAttrs();
@@ -96,8 +105,11 @@ const slots = useSlots();
         css[variant],
         {
           [css.dense]: dense,
-          [css['with-error']]: errorMessages.length > 0,
+          [css.disabled]: disabled,
           [css['no-label']]: !label,
+          [css['with-error']]: hasError,
+          [css['with-success']]: hasSuccess && !hasError,
+          [css[`text_${textColor}`]]: textColor && !hasMessages,
         },
       ]"
     >
@@ -145,14 +157,34 @@ const slots = useSlots();
         </div>
       </div>
     </div>
-    <div v-if="!hideDetails" class="details pt-1">
-      <div v-if="errorMessages.length > 0" class="text-rui-error text-caption">
-        {{ errorMessages[0] }}
-      </div>
-      <div v-else-if="hint" class="text-rui-text-secondary text-caption">
-        {{ hint }}
-      </div>
-      <div v-else class="h-5" />
+    <div v-if="!hideDetails" class="details pt-1 min-h-[1.25rem]">
+      <TransitionGroup
+        enter-from-class="opacity-0 -translate-y-2 h-0"
+        enter-active-class="transform transition"
+        enter-to-class="opacity-100 translate-y-0"
+        leave-from-class="opacity-100 -translate-y-2"
+        leave-active-class="transform transition"
+        leave-to-class="opacity-0 -translate-y-2 h-0"
+        appear
+      >
+        <div v-if="hasError" key="error" class="text-rui-error text-caption">
+          {{ errorMessages[0] }}
+        </div>
+        <div
+          v-else-if="hasSuccess"
+          key="success"
+          class="text-rui-success text-caption"
+        >
+          {{ successMessages[0] }}
+        </div>
+        <div
+          v-else-if="hint"
+          key="hint"
+          class="text-rui-text-secondary text-caption"
+        >
+          {{ hint }}
+        </div>
+      </TransitionGroup>
     </div>
   </div>
 </template>
@@ -295,19 +327,35 @@ const slots = useSlots();
         }
       }
     }
+
+    &.text_#{$color},
+    &.with-#{$color} {
+      .prepend,
+      .append,
+      .input {
+        @apply text-rui-#{$color};
+      }
+
+      &:not(.disabled) .prepend svg,
+      &:not(.disabled) .append svg {
+        @apply text-rui-#{$color};
+      }
+    }
   }
 
-  &.with-error {
-    .input {
-      @apply border-rui-error #{!important};
-    }
+  @each $color in 'error', 'success' {
+    &.with-#{$color} {
+      .input {
+        @apply border-rui-#{$color} #{!important};
+      }
 
-    .label {
-      @apply text-rui-error after:border-rui-error #{!important};
-    }
+      .label {
+        @apply text-rui-#{$color} after:border-rui-#{$color} #{!important};
+      }
 
-    .fieldset {
-      @apply border-rui-error #{!important};
+      .fieldset {
+        @apply border-rui-#{$color} #{!important};
+      }
     }
   }
 

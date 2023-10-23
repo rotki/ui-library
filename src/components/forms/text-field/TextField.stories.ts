@@ -1,8 +1,8 @@
 import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { contextColors } from '@/consts/colors';
-import { type Props, default as TextField } from './TextField.vue';
+import { default as TextField, type TextFieldProps } from './TextField.vue';
 
-const render: StoryFn<Props> = (args) => ({
+const render: StoryFn<TextFieldProps> = (args) => ({
   components: { TextField },
   setup() {
     const modelValue = computed({
@@ -16,10 +16,11 @@ const render: StoryFn<Props> = (args) => ({
 
     return { args, modelValue };
   },
-  template: `<TextField v-model="modelValue" v-bind="args" />`,
+  template: `
+    <TextField v-model="modelValue" v-bind="args" />`,
 });
 
-const meta: Meta<Props> = {
+const meta: Meta<TextFieldProps> = {
   title: 'Components/Forms/TextField',
   component: TextField,
   tags: ['autodocs'],
@@ -32,6 +33,7 @@ const meta: Meta<Props> = {
     appendIcon: { control: 'text' },
     prependIcon: { control: 'text' },
     errorMessages: { control: 'array', defaultValue: [] },
+    successMessages: { control: 'array', defaultValue: [] },
     hideDetails: { control: 'boolean', table: { category: 'State' } },
     dense: { control: 'boolean', table: { category: 'State' } },
     variant: {
@@ -46,6 +48,11 @@ const meta: Meta<Props> = {
       options: ['grey', ...contextColors],
       table: { category: 'State' },
     },
+    textColor: {
+      control: 'select',
+      options: contextColors,
+      table: { category: 'State' },
+    },
   },
   parameters: {
     docs: {
@@ -54,7 +61,7 @@ const meta: Meta<Props> = {
   },
 };
 
-type Story = StoryObj<Props>;
+type Story = StoryObj<TextFieldProps>;
 
 export const Default: Story = {
   args: {
@@ -121,7 +128,16 @@ export const WithErrorMessage: Story = {
     label: 'Label',
     placeholder: 'Placeholder',
     variant: 'outlined',
-    hint: 'With error messages',
+    errorMessages: ['With error messages'],
+  },
+};
+
+export const WithSuccessMessage: Story = {
+  args: {
+    label: 'Label',
+    placeholder: 'Placeholder',
+    variant: 'outlined',
+    successMessages: ['With success messages'],
   },
 };
 

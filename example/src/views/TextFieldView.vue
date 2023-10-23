@@ -1,13 +1,23 @@
 <script lang="ts" setup>
 import {
+  type RevealableTextFieldProps,
   RuiRevealableTextField,
   RuiTextField,
   type TextFieldProps,
 } from '@rotki/ui-library';
 import { ref } from 'vue';
+import { objectOmit } from '@vueuse/shared';
 import { type Slots } from '@/types';
 
-type TextFieldData = TextFieldProps & Slots & { value?: string };
+type TextFieldData = TextFieldProps &
+  Slots & {
+    value?: string;
+  };
+
+type RevealableTextFieldData = RevealableTextFieldProps &
+  Slots & {
+    value?: string;
+  };
 
 const textFields = ref<TextFieldData[]>([
   { value: '', color: 'primary' },
@@ -180,13 +190,55 @@ const textFields = ref<TextFieldData[]>([
   },
 ]);
 
-const revealableTextFields = ref([
-  { value: '', color: 'primary', variant: 'outlined', label: 'Password' },
-  { value: '', color: 'secondary', variant: 'outlined', label: 'Password' },
-  { value: '', color: 'error', variant: 'outlined', label: 'Password' },
-  { value: '', color: 'warning', variant: 'outlined', label: 'Password' },
-  { value: '', color: 'info', variant: 'outlined', label: 'API Key' },
-  { value: '', color: 'success', variant: 'outlined', label: 'API Secret' },
+const revealableTextFields = ref<RevealableTextFieldData[]>([
+  {
+    value: '',
+    color: 'primary',
+    variant: 'outlined',
+    label: 'Password',
+    textColor: 'primary',
+  },
+  {
+    value: '',
+    color: 'secondary',
+    variant: 'outlined',
+    label: 'Password',
+    textColor: 'secondary',
+  },
+  {
+    value: '',
+    color: 'error',
+    variant: 'outlined',
+    label: 'Password',
+    textColor: 'error',
+  },
+  {
+    value: '',
+    color: 'warning',
+    variant: 'outlined',
+    label: 'Password',
+    textColor: 'warning',
+  },
+  {
+    value: '',
+    color: 'info',
+    variant: 'outlined',
+    label: 'API Key',
+    textColor: 'info',
+    disabled: true,
+  },
+  {
+    value: 'some secret key',
+    color: 'success',
+    variant: 'outlined',
+    label: 'API Secret',
+    textColor: 'success',
+    prependIcon: 'arrow-right-line',
+    successMessages: ['lorem ipsum success message'],
+    errorMessages: ['lorem ipsum error message'],
+    hint: 'lorem ipsum hint',
+    disabled: false,
+  },
 ]);
 </script>
 
@@ -215,7 +267,7 @@ const revealableTextFields = ref([
         :key="i"
         v-model="field.value"
         placeholder="Placeholder"
-        v-bind="field"
+        v-bind="objectOmit(field, ['value', 'append', 'prepend'])"
       />
     </div>
   </div>

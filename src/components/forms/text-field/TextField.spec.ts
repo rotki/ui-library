@@ -81,24 +81,34 @@ describe('Forms/TextField', () => {
 
   it('passes hint props', async () => {
     const wrapper = createWrapper();
-    expect(wrapper.find('.details > div').text()).toBe('');
+    expect(wrapper.find('.details div').exists()).toBeFalsy();
 
     const hint = 'Text Fields Hints';
     await wrapper.setProps({ hint });
-    expect(wrapper.find('.details > div').classes()).toMatch(
+    expect(wrapper.find('.details div').classes()).toMatch(
       /text-rui-text-secondary/,
     );
-    expect(wrapper.find('.details > div').text()).toBe(hint);
+    expect(wrapper.find('.details div').text()).toBe(hint);
   });
 
   it('passes hint errorMessages', async () => {
     const wrapper = createWrapper();
-    expect(wrapper.find('.details > div').text()).toBe('');
+    expect(wrapper.find('.details div').exists()).toBeFalsy();
 
     const errorMessage = 'Text Fields Error Message';
     await wrapper.setProps({ errorMessages: [errorMessage] });
-    expect(wrapper.find('.details > div').classes()).toMatch(/text-rui-error/);
-    expect(wrapper.find('.details > div').text()).toBe(errorMessage);
+    expect(wrapper.find('.details div').classes()).toMatch(/text-rui-error/);
+    expect(wrapper.find('.details div').text()).toBe(errorMessage);
+  });
+
+  it('passes hint successMessages', async () => {
+    const wrapper = createWrapper();
+    expect(wrapper.find('.details div').exists()).toBeFalsy();
+
+    const successMessage = 'Text Fields Error Message';
+    await wrapper.setProps({ successMessages: [successMessage] });
+    expect(wrapper.find('.details div').classes()).toMatch(/text-rui-success/);
+    expect(wrapper.find('.details div').text()).toBe(successMessage);
   });
 
   it('passes hideDetails', async () => {
@@ -108,7 +118,7 @@ describe('Forms/TextField', () => {
         hideDetails: true,
       },
     });
-    expect(wrapper.find('.details > div').exists()).toBeFalsy();
+    expect(wrapper.find('.details div').exists()).toBeFalsy();
   });
 
   it('passes prependIcon', async () => {

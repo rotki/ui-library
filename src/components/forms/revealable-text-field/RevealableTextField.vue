@@ -1,10 +1,35 @@
 <script setup lang="ts">
-import { default as RuiTextField } from '@/components/forms/text-field/TextField.vue';
+import {
+  default as RuiTextField,
+  type TextFieldProps,
+} from '@/components/forms/text-field/TextField.vue';
 import { default as RuiButton } from '@/components/buttons/button/Button.vue';
 import { default as RuiIcon } from '@/components/icons/Icon.vue';
 
+export interface Props extends TextFieldProps {}
+
 defineOptions({
   name: 'RuiRevealableTextField',
+  inheritAttrs: false,
+});
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: '',
+  label: '',
+  placeholder: '',
+  disabled: false,
+  variant: 'default',
+  color: 'grey',
+  textColor: undefined,
+  dense: false,
+  hint: '',
+  as: undefined,
+  errorMessages: () => [],
+  successMessages: () => [],
+  hideDetails: false,
+  prependIcon: undefined,
+  appendIcon: undefined,
+  readonly: false,
 });
 
 const hidden: Ref<boolean> = ref(true);
@@ -14,7 +39,10 @@ const slots = useSlots();
 </script>
 
 <template>
-  <RuiTextField v-bind="attrs" :type="hidden ? 'password' : 'text'">
+  <RuiTextField
+    v-bind="{ ...props, ...attrs }"
+    :type="hidden ? 'password' : 'text'"
+  >
     <template v-if="slots.prepend" #prepend>
       <slot name="prepend" />
     </template>
