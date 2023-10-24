@@ -28,9 +28,9 @@ const props = withDefaults(defineProps<Props<T>>(), {
   elevation: null,
   variant: 'default',
   icon: false,
+  active: false,
   size: undefined,
   tag: 'button',
-  target: undefined,
   value: undefined,
 });
 
@@ -38,23 +38,21 @@ const emit = defineEmits<{
   (e: 'update:value', value?: T): void;
 }>();
 
-const { disabled, elevation, variant, size } = toRefs(props);
 const btnValue = computed(() => props.value);
 
 const attrs = useAttrs();
 const css = useCssModule();
 
 const usedElevation: ComputedRef<number | string> = computed(() => {
-  if (get(disabled)) {
+  if (props.disabled) {
     return 0;
   }
 
-  const elevationProp = get(elevation);
-  if (elevationProp !== null) {
-    return elevationProp;
+  if (props.elevation !== null) {
+    return props.elevation;
   }
 
-  if (get(variant) === 'fab') {
+  if (props.variant === 'fab') {
     return 6;
   }
 
@@ -62,11 +60,11 @@ const usedElevation: ComputedRef<number | string> = computed(() => {
 });
 
 const spinnerSize: ComputedRef<number> = computed(() => {
-  const sizeVal = get(size);
-  if (sizeVal === 'lg') {
+  const size = props.size;
+  if (size === 'lg') {
     return 26;
   }
-  if (sizeVal === 'sm') {
+  if (size === 'sm') {
     return 18;
   }
   return 22;
