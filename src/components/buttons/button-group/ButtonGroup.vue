@@ -22,7 +22,9 @@ const props = withDefaults(defineProps<Props<T>>(), {
   variant: 'default',
   size: undefined,
   gap: undefined,
+  required: false,
   modelValue: undefined,
+  disabled: false,
 });
 
 const emit = defineEmits<{
