@@ -8,7 +8,7 @@ const createWrapper = (options?: ComponentMountingOptions<typeof Tooltip>) =>
   mount(Tooltip, {
     ...options,
     slots: {
-      activator: '<rui-button>Tooltip trigger</rui-button>',
+      activator: '<rui-button id="activator">Tooltip trigger</rui-button>',
       default: options?.props?.text ?? '',
     },
     global: {
@@ -49,7 +49,7 @@ describe('Tooltip', () => {
         disabled: true,
       },
     });
-    expect(wrapper.get('div[class*=_activator_]')).toBeTruthy();
+    expect(wrapper.get('#activator')).toBeTruthy();
     expect(document.body.querySelector('div[role=tooltip]')).toBeFalsy();
     wrapper.unmount();
   });

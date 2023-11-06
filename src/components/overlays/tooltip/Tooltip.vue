@@ -49,9 +49,7 @@ const {
     @mouseover="onMouseOver()"
     @mouseleave="onMouseLeave()"
   >
-    <div :class="css.activator">
-      <slot name="activator" :open="open" />
-    </div>
+    <slot name="activator" :open="open" />
 
     <Teleport v-if="!disabled" to="body">
       <div
@@ -94,12 +92,6 @@ const {
 $arrowSize: 0.625rem;
 .wrapper {
   @apply relative inline-flex;
-
-  .activator {
-    @apply inline;
-
-    width: inherit;
-  }
 }
 
 .tooltip {

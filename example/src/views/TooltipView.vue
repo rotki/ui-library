@@ -147,7 +147,7 @@ const tooltips = ref<
           :data-cy="`tooltip-${i}`"
         >
           <template #activator>
-            <RuiButton :color="tooltip.buttonColor">
+            <RuiButton id="activator" :color="tooltip.buttonColor">
               {{ tooltip.buttonText ?? tooltip.text }}
             </RuiButton>
           </template>
@@ -165,7 +165,7 @@ const tooltips = ref<
         :data-cy="`tooltip-full-${i}`"
       >
         <template #activator>
-          <RuiButton :color="tooltip.buttonColor" class="w-full">
+          <RuiButton id="activator" :color="tooltip.buttonColor" class="w-full">
             {{ tooltip.buttonText ?? tooltip.text }}
           </RuiButton>
         </template>
