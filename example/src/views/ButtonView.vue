@@ -389,7 +389,6 @@ const toggleButtons = ref<ButtonGroupData[]>([
     count: 0,
     color: 'primary',
     modelValue: 0,
-    gap: 'sm',
     activeColor: 'warning',
   },
   {
@@ -431,7 +430,6 @@ const toggleButtons = ref<ButtonGroupData[]>([
     color: 'primary',
     variant: 'outlined',
     modelValue: 0,
-    gap: 'sm',
   },
   {
     count: 0,

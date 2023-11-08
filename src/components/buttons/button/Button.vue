@@ -121,6 +121,15 @@ const slots = useSlots();
         @if ($color == info) or ($color == success) {
           @apply text-rui-light-text;
         }
+
+        @if ($color == primary) or ($color == secondary) {
+          &.outlined,
+          &.text {
+            &.active {
+              @apply bg-rui-#{$color}-darker/60 text-rui-#{$color}-lighter;
+            }
+          }
+        }
       }
     }
 
