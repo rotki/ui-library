@@ -118,11 +118,11 @@ const slots = useSlots();
       &.#{$color} {
         @apply text-rui-text;
 
-        @if ($color == info) or ($color == success) {
+        @if index((warning, success, info), $color) {
           @apply text-rui-light-text;
         }
 
-        @if ($color == primary) or ($color == secondary) {
+        @if index((primary, secondary), $color) {
           &.outlined,
           &.text {
             &.active {

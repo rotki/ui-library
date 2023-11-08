@@ -117,7 +117,7 @@ const attrs = useAttrs();
     @apply cursor-not-allowed;
 
     .radio {
-      @apply text-rui-text-disabled;
+      @apply opacity-50;
 
       &:before {
         content: none !important;

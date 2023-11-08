@@ -176,7 +176,7 @@ const slots = useSlots();
       @apply bg-white/[0.16] hover:bg-white/[0.20] focus:bg-white/[0.24];
     }
 
-    @each $color in 'warning', 'success' {
+    @each $color in (warning, success, info) {
       &.#{$color} {
         &.filled {
           @apply text-rui-light-text;

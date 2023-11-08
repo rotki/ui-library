@@ -226,7 +226,7 @@ $sizes: sm, md, lg;
       @apply text-rui-text;
 
       @each $color in c.$context-colors {
-        @if ($color == warning) or ($color == info) or ($color == success) {
+        @if index((warning, success, info), $color) {
           &.#{$color} {
             @apply text-rui-light-text;
           }

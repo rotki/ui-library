@@ -122,7 +122,7 @@ const attrs = useAttrs();
     @apply cursor-not-allowed;
 
     .checkbox {
-      @apply text-rui-text-disabled;
+      @apply opacity-50;
 
       &:before {
         content: none !important;

@@ -47,6 +47,13 @@ const checkboxes = ref<CheckboxData[]>([
   { value: false, color: 'info', disabled: true },
   { value: false, color: 'success', disabled: true },
 
+  { value: true, color: 'primary', disabled: true },
+  { value: true, color: 'secondary', disabled: true },
+  { value: true, color: 'error', disabled: true },
+  { value: true, color: 'warning', disabled: true },
+  { value: true, color: 'info', disabled: true },
+  { value: true, color: 'success', disabled: true },
+
   { value: false, color: 'primary', hint: 'Checkbox hint' },
   { value: false, color: 'secondary', hint: 'Checkbox hint' },
   { value: false, color: 'error', hint: 'Checkbox hint' },
