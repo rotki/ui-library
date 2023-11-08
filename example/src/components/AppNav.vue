@@ -165,7 +165,7 @@ const onSwitchTheme = ({ value }: Theme) => switchThemeScheme(value);
 
 :global(.dark) {
   .header {
-    @apply bg-slate-900 shadow-none;
+    @apply bg-[#272727] shadow-none;
   }
 
   .toggle {

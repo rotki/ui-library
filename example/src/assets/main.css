@@ -6,7 +6,7 @@
   }
 
   .dark body {
-    @apply bg-slate-900 text-white;
+    @apply bg-[#121212] text-white;
   }
 
   .wrapper {
