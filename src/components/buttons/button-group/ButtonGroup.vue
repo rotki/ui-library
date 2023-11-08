@@ -4,6 +4,7 @@ import { type ContextColorsType } from '@/consts/colors';
 export interface Props<T = undefined> {
   vertical?: boolean;
   color?: ContextColorsType;
+  activeColor?: ContextColorsType;
   variant?: 'default' | 'outlined' | 'text';
   size?: 'sm' | 'lg';
   gap?: 'sm' | 'md' | 'lg';
@@ -19,6 +20,7 @@ defineOptions({
 const props = withDefaults(defineProps<Props<T>>(), {
   vertical: false,
   color: undefined,
+  activeColor: undefined,
   variant: 'default',
   size: undefined,
   gap: undefined,
@@ -48,6 +50,10 @@ const children = computed(() =>
     // if given root color, use it
     if (rootColor) {
       child.props.color = rootColor;
+    }
+
+    if (child.props.active && props.activeColor) {
+      child.props.color = props.activeColor;
     }
 
     return child;

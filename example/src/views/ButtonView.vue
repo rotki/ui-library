@@ -385,8 +385,21 @@ const buttonGroups = ref<ButtonGroupData[]>([
 ]);
 
 const toggleButtons = ref<ButtonGroupData[]>([
-  { count: 0, color: 'primary', modelValue: 0, gap: 'sm' },
-  { count: 0, color: 'secondary', required: true, modelValue: 0, gap: 'md' },
+  {
+    count: 0,
+    color: 'primary',
+    modelValue: 0,
+    gap: 'sm',
+    activeColor: 'warning',
+  },
+  {
+    count: 0,
+    color: 'secondary',
+    required: true,
+    modelValue: 0,
+    gap: 'md',
+    activeColor: 'warning',
+  },
   { count: 0, color: 'primary', modelValue: 0, disabled: true, gap: 'lg' },
   {
     count: 0,
@@ -467,12 +480,19 @@ const toggleButtons = ref<ButtonGroupData[]>([
 ]);
 
 const multipleToggleButtons = ref<ButtonGroupData[]>([
-  { count: 0, color: 'primary', modelValue: ['center'] },
+  {
+    count: 0,
+    color: 'primary',
+    modelValue: ['center'],
+    gap: 'sm',
+    activeColor: 'warning',
+  },
   {
     count: 0,
     color: 'secondary',
     required: true,
     modelValue: ['center'],
+    activeColor: 'warning',
   },
   { count: 0, color: 'primary', modelValue: ['center'], disabled: true },
   {
