@@ -58,7 +58,6 @@ const onClick = (index: number) => {
           v-for="i in pages"
           :key="i"
           :class="[css.pill, { [css.active]: modelValue === i }]"
-          @click="onClick(i)"
         />
       </div>
     </template>
@@ -126,10 +125,18 @@ const onClick = (index: number) => {
 
     .bullet,
     .pill {
-      @apply rounded-full h-2 bg-black/[0.26] hover:bg-rui-grey-300 cursor-pointer transition-colors;
+      @apply rounded-full h-2 bg-black/[0.26] transition-colors;
 
       &.active {
-        @apply bg-rui-primary hover:bg-rui-primary;
+        @apply bg-rui-primary;
+      }
+    }
+
+    .bullet {
+      @apply hover:bg-rui-grey-300 cursor-pointer;
+
+      &.active {
+        @apply hover:bg-rui-primary;
       }
     }
 
@@ -169,10 +176,18 @@ const onClick = (index: number) => {
     .pills {
       .bullet,
       .pill {
-        @apply bg-rui-grey-300 hover:bg-rui-grey-400;
+        @apply bg-rui-grey-300;
 
         &.active {
-          @apply bg-rui-primary hover:bg-rui-primary;
+          @apply bg-rui-primary;
+        }
+      }
+
+      .bullet {
+        @apply hover:bg-rui-grey-400;
+
+        &.active {
+          @apply hover:bg-rui-primary;
         }
       }
     }
