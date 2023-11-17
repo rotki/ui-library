@@ -111,6 +111,10 @@ import {
   default as RuiTabItem,
   type Props as TabItemProps,
 } from '@/components/tabs/tab-item/TabItem.vue';
+import {
+  default as RuiSkeletonLoader,
+  type Props as SkeletonLoaderProps,
+} from '@/components/loaders/Skeleton.vue';
 
 export {
   RuiAlert,
@@ -140,6 +144,7 @@ export {
   RuiTabItems,
   RuiTabItem,
   RuiTablePagination,
+  RuiSkeletonLoader,
   AutoCompleteProps,
   ChipProps,
   TooltipProps,
@@ -171,4 +176,5 @@ export {
   TabItemProps,
   TablePaginationProps,
   RevealableTextFieldProps,
+  SkeletonLoaderProps,
 };
