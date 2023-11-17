@@ -18,6 +18,7 @@ const navigation = ref([
       { to: { name: 'auto-complete' }, title: 'Auto Complete' },
       { to: { name: 'steppers' }, title: 'Steppers' },
       { to: { name: 'progress' }, title: 'Progress' },
+      { to: { name: 'loaders' }, title: 'Loaders' },
       { to: { name: 'chips' }, title: 'Chips' },
       { to: { name: 'alerts' }, title: 'Alerts' },
       { to: { name: 'tooltips' }, title: 'Tooltips' },
