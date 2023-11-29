@@ -66,7 +66,7 @@ describe('Forms/Checkbox', () => {
 
   it('passes hint props', async () => {
     const wrapper = createWrapper();
-    expect(wrapper.find('.details > div').text()).toBe('');
+    expect(wrapper.find('.details > div').exists()).toBeFalsy();
 
     const hint = 'Checkbox Hints';
     await wrapper.setProps({ hint });
@@ -78,7 +78,7 @@ describe('Forms/Checkbox', () => {
 
   it('passes hint errorMessages', async () => {
     const wrapper = createWrapper();
-    expect(wrapper.find('.details > div').text()).toBe('');
+    expect(wrapper.find('.details > div').exists()).toBeFalsy();
 
     const errorMessage = 'Checkbox Error Message';
     await wrapper.setProps({ errorMessages: [errorMessage] });
