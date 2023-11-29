@@ -27,7 +27,7 @@ export interface Props {
   textProp?: string;
   itemDisabledProp?: string;
   variant?: 'default' | 'filled' | 'outlined';
-  color?: 'grey' | ContextColorsType;
+  color?: ContextColorsType;
   dense?: boolean;
   hint?: string;
   errorMessages?: string[];
@@ -49,7 +49,7 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   nullable: false,
   variant: 'default',
-  color: 'grey',
+  color: undefined,
   dense: false,
   hint: '',
   errorMessages: () => [],

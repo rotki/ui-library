@@ -18,7 +18,10 @@ const sections = ref<
       subheader?: string;
       content?: string;
       prepend?: string;
-      actions?: (ButtonProps & { text: string; clicks: number })[];
+      actions?: (ButtonProps & {
+        text: string;
+        clicks: number;
+      })[];
     })[];
   }[]
 >([
@@ -449,6 +452,41 @@ const sections = ref<
         variant: 'flat',
         divide: true,
         dense: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Card with small border radius',
+        subheader: 'Card subheader',
+        variant: 'outlined',
+        prepend: 'OP',
+        rounded: 'sm',
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Divided Card with large border radius',
+        subheader: 'Card subheader',
+        variant: 'outlined',
+        prepend: 'OP',
+        rounded: 'lg',
+        divide: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Card with image and small border radius',
+        subheader: 'Card subheader',
+        variant: 'outlined',
+        prepend: 'OP',
+        rounded: 'sm',
+        image: 'https://placehold.co/480x160',
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Card with image and large border radius',
+        subheader: 'Card subheader',
+        variant: 'outlined',
+        prepend: 'OP',
+        rounded: 'lg',
+        image: 'https://placehold.co/480x160',
       },
     ],
   },

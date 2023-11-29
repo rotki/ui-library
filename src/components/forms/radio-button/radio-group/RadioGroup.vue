@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import FormTextDetail from '@/components/helpers/FormTextDetail.vue';
+
 export interface Props {
   modelValue?: string;
   inline?: boolean;
   hint?: string;
-  errorMessages?: string[];
+  errorMessages?: string | string[];
+  successMessages?: string | string[];
   hideDetails?: boolean;
 }
 
@@ -16,6 +19,7 @@ withDefaults(defineProps<Props>(), {
   inline: false,
   hint: '',
   errorMessages: () => [],
+  successMessages: () => [],
   hideDetails: false,
 });
 
@@ -48,15 +52,12 @@ const css = useCssModule();
         @update:model-value="emit('update:modelValue', $event)"
       />
     </div>
-    <div v-if="!hideDetails" class="details">
-      <div v-if="errorMessages.length > 0" class="text-rui-error text-caption">
-        {{ errorMessages[0] }}
-      </div>
-      <div v-else-if="hint" class="text-rui-text-secondary text-caption">
-        {{ hint }}
-      </div>
-      <div v-else class="h-5" />
-    </div>
+    <FormTextDetail
+      v-if="!hideDetails"
+      :error-messages="errorMessages"
+      :success-messages="successMessages"
+      :hint="hint"
+    />
   </div>
 </template>
 

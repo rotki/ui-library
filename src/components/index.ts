@@ -28,6 +28,10 @@ import {
   default as RuiChip,
 } from '@/components/chips/Chip.vue';
 import {
+  type Props as DividerProps,
+  default as RuiDivider,
+} from '@/components/divider/Divider.vue';
+import {
   default as RuiStepper,
   type Props as StepperProps,
 } from '@/components/steppers/Stepper.vue';
@@ -145,6 +149,7 @@ export {
   RuiTabItem,
   RuiTablePagination,
   RuiSkeletonLoader,
+  RuiDivider,
   AutoCompleteProps,
   ChipProps,
   TooltipProps,
@@ -177,4 +182,5 @@ export {
   TablePaginationProps,
   RevealableTextFieldProps,
   SkeletonLoaderProps,
+  DividerProps,
 };
