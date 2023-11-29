@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
   placeholder: '',
   disabled: false,
   variant: 'default',
-  color: 'grey',
+  color: undefined,
   textColor: undefined,
   dense: false,
   hint: '',
@@ -30,6 +30,7 @@ const props = withDefaults(defineProps<Props>(), {
   prependIcon: undefined,
   appendIcon: undefined,
   readonly: false,
+  clearable: false,
 });
 
 const hidden: Ref<boolean> = ref(true);

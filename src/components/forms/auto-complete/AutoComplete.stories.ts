@@ -20,7 +20,7 @@ const render: StoryFn<Props> = (args) => ({
   },
   template: `
     <div class="mb-60">
-    <AutoComplete v-model="modelValue" v-bind="args" />
+      <AutoComplete v-model="modelValue" v-bind="args" />
     </div>
   `,
 });
@@ -44,7 +44,7 @@ const meta: Meta<Props> = {
     disabled: { control: 'boolean', table: { category: 'State' } },
     color: {
       control: 'select',
-      options: ['grey', ...contextColors],
+      options: contextColors,
       table: { category: 'State' },
     },
   },

@@ -7,6 +7,8 @@ export interface Props {
   divide?: boolean;
   elevation?: number;
   variant?: 'flat' | 'outlined';
+  rounded?: 'sm' | 'md' | 'lg';
+  noPadding?: boolean;
 }
 
 defineOptions({
@@ -18,6 +20,8 @@ withDefaults(defineProps<Props>(), {
   dense: false,
   elevation: 0,
   variant: 'outlined',
+  rounded: 'md',
+  noPadding: false,
 });
 
 const css = useCssModule();
@@ -31,10 +35,12 @@ const hasHeadContent = computed(() => !!slots.header || !!slots.subheader);
     :class="[
       css.card,
       `shadow-${elevation}`,
+      css[`rounded__${rounded}`],
       {
         [css.outlined]: variant === 'outlined',
         [css.dense]: dense,
         [css.divide]: divide,
+        [css['no-padding']]: noPadding,
       },
     ]"
   >
@@ -65,10 +71,33 @@ const hasHeadContent = computed(() => !!slots.header || !!slots.subheader);
 
 <style lang="scss" module>
 .card {
-  @apply flex flex-col h-full w-full rounded bg-white;
+  @apply flex flex-col h-full w-full bg-white;
+  &.rounded__sm {
+    @apply rounded-[.25rem];
+
+    .image {
+      @apply rounded-t-[.25rem];
+    }
+  }
+
+  &.rounded__md {
+    @apply rounded-[.5rem];
+
+    .image {
+      @apply rounded-t-[.5rem];
+    }
+  }
+
+  &.rounded__lg {
+    @apply rounded-[1rem];
+
+    .image {
+      @apply rounded-t-[1rem];
+    }
+  }
 
   .image {
-    @apply rounded-t overflow-hidden;
+    @apply overflow-hidden;
   }
 
   .content {
@@ -98,6 +127,12 @@ const hasHeadContent = computed(() => !!slots.header || !!slots.subheader);
 
     .footer {
       @apply py-1 flex space-x-2;
+    }
+  }
+
+  &.no-padding {
+    .content {
+      @apply p-0;
     }
   }
 }

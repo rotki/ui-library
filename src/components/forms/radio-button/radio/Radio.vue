@@ -2,6 +2,7 @@
 import { objectOmit } from '@vueuse/shared';
 import { type ContextColorsType } from '@/consts/colors';
 import Icon from '@/components/icons/Icon.vue';
+import FormTextDetail from '@/components/helpers/FormTextDetail.vue';
 
 export interface Props {
   value: string;
@@ -9,8 +10,10 @@ export interface Props {
   disabled?: boolean;
   color?: ContextColorsType;
   size?: 'sm' | 'lg';
+  label?: string;
   hint?: string;
-  errorMessages?: string[];
+  errorMessages?: string | string[];
+  successMessages?: string | string[];
   hideDetails?: boolean;
 }
 
@@ -23,8 +26,10 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   color: undefined,
   size: undefined,
+  label: '',
   hint: '',
   errorMessages: () => [],
+  successMessages: () => [],
   hideDetails: false,
 });
 
@@ -32,7 +37,8 @@ const emit = defineEmits<{
   (e: 'update:modelValue', modelValue: string): void;
 }>();
 
-const { modelValue, size, value } = toRefs(props);
+const { modelValue, size, value, successMessages, errorMessages } =
+  toRefs(props);
 
 const input = (event: Event) => {
   const checked = (event.target as HTMLInputElement).checked;
@@ -56,6 +62,11 @@ const selected = computed(() => get(modelValue) === get(value));
 
 const css = useCssModule();
 const attrs = useAttrs();
+
+const { hasError, hasSuccess } = useFormTextDetail(
+  errorMessages,
+  successMessages,
+);
 </script>
 
 <template>
@@ -86,7 +97,8 @@ const attrs = useAttrs();
           {
             [css.checked]: selected,
             [css.disabled]: disabled,
-            [css['with-error']]: errorMessages.length > 0,
+            [css['with-error']]: hasError,
+            [css['with-success']]: hasSuccess && !hasError,
           },
         ]"
       >
@@ -94,18 +106,15 @@ const attrs = useAttrs();
         <Icon v-else name="checkbox-blank-circle-line" :size="iconSize" />
       </div>
       <div :class="css.label" class="text-body-1">
-        <slot />
+        <slot>{{ label }}</slot>
       </div>
     </label>
-    <div v-if="!hideDetails" class="details">
-      <div v-if="errorMessages.length > 0" class="text-rui-error text-caption">
-        {{ errorMessages[0] }}
-      </div>
-      <div v-else-if="hint" class="text-rui-text-secondary text-caption">
-        {{ hint }}
-      </div>
-      <div v-else class="h-5" />
-    </div>
+    <FormTextDetail
+      v-if="!hideDetails"
+      :error-messages="errorMessages"
+      :success-messages="successMessages"
+      :hint="hint"
+    />
   </div>
 </template>
 
@@ -152,6 +161,10 @@ const attrs = useAttrs();
 
     &.with-error {
       @apply text-rui-error #{!important};
+    }
+
+    &.with-success {
+      @apply text-rui-success #{!important};
     }
 
     &:hover {

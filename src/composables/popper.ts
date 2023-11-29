@@ -11,8 +11,8 @@ import preventOverflow from '@popperjs/core/lib/modifiers/preventOverflow';
 import computeStyles from '@popperjs/core/lib/modifiers/computeStyles';
 import eventListeners from '@popperjs/core/lib/modifiers/eventListeners';
 import { type MaybeElement, unrefElement } from '@vueuse/core';
-import type { Instance, Placement, PositioningStrategy } from '@popperjs/core';
 import type { Ref } from 'vue';
+import type { Instance, Placement, PositioningStrategy } from '@popperjs/core';
 
 export interface PopperOptions {
   locked?: boolean;
@@ -84,9 +84,9 @@ export const usePopper = (
       set(closeTimeout, undefined);
     }
 
-    set(popperEnter, true);
-
     if (!get(openTimeout)) {
+      set(popperEnter, true);
+
       const timeout = setTimeout(() => {
         set(open, true);
         set(openTimeout, undefined);
@@ -107,6 +107,9 @@ export const usePopper = (
 
     if (!get(closeTimeout)) {
       const timeout = setTimeout(() => {
+        if (!get(open)) {
+          onPopperLeave();
+        }
         set(open, false);
         set(closeTimeout, undefined);
       }, get(closeDelay));

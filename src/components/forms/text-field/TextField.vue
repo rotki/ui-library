@@ -1,8 +1,10 @@
 <script lang="ts" setup>
-import { logicOr } from '@vueuse/math';
 import { objectOmit } from '@vueuse/shared';
+import { logicAnd, logicNot } from '@vueuse/math';
 import { type ContextColorsType } from '@/consts/colors';
 import Icon from '@/components/icons/Icon.vue';
+import Button from '@/components/buttons/button/Button.vue';
+import FormTextDetail from '@/components/helpers/FormTextDetail.vue';
 import { type RuiIcons } from '~/src';
 
 export interface TextFieldProps {
@@ -11,17 +13,18 @@ export interface TextFieldProps {
   placeholder?: string;
   disabled?: boolean;
   variant?: 'default' | 'filled' | 'outlined';
-  color?: 'grey' | ContextColorsType;
-  textColor?: 'grey' | ContextColorsType;
+  color?: ContextColorsType;
+  textColor?: ContextColorsType;
   dense?: boolean;
   hint?: string;
   as?: string | object;
-  errorMessages?: string[];
-  successMessages?: string[];
+  errorMessages?: string | string[];
+  successMessages?: string | string[];
   hideDetails?: boolean;
   prependIcon?: RuiIcons;
   appendIcon?: RuiIcons;
   readonly?: boolean;
+  clearable?: boolean;
 }
 
 defineOptions({
@@ -35,7 +38,7 @@ const props = withDefaults(defineProps<TextFieldProps>(), {
   placeholder: '',
   disabled: false,
   variant: 'default',
-  color: 'grey',
+  color: undefined,
   textColor: undefined,
   dense: false,
   hint: '',
@@ -46,6 +49,7 @@ const props = withDefaults(defineProps<TextFieldProps>(), {
   prependIcon: undefined,
   appendIcon: undefined,
   readonly: false,
+  clearable: false,
 });
 
 const emit = defineEmits<{
@@ -53,9 +57,18 @@ const emit = defineEmits<{
   (e: 'focus-input', event: Event): void;
   (e: 'blur', event: Event): void;
   (e: 'remove', value: unknown): void;
+  (e: 'clear'): void;
 }>();
 
-const { label, modelValue, errorMessages, successMessages } = toRefs(props);
+const {
+  label,
+  modelValue,
+  clearable,
+  disabled,
+  readonly,
+  errorMessages,
+  successMessages,
+} = toRefs(props);
 
 const input = (event: Event) => {
   const value = (event.target as HTMLInputElement).value;
@@ -72,6 +85,7 @@ const labelWithQuote = computed(() => {
 
 const wrapper = ref<HTMLDivElement>();
 const innerWrapper = ref<HTMLDivElement>();
+const inputRef = ref();
 
 const { left: wrapperLeft, right: wrapperRight } = useElementBounding(wrapper);
 const {
@@ -86,13 +100,28 @@ const prependWidth = computed(
 const appendWidth = computed(
   () => `${get(wrapperRight) - get(innerWrapperRight)}px`,
 );
-const hasError = computed(() => get(errorMessages).length > 0);
-const hasSuccess = computed(() => get(successMessages).length > 0);
-const hasMessages = logicOr(hasError, hasSuccess);
+
+const { hasError, hasSuccess, hasMessages } = useFormTextDetail(
+  errorMessages,
+  successMessages,
+);
 
 const css = useCssModule();
 const attrs = useAttrs();
 const slots = useSlots();
+const { focused } = useFocus(inputRef);
+
+const showClearIcon = logicAnd(
+  clearable,
+  modelValue,
+  logicNot(disabled),
+  logicNot(readonly),
+);
+
+const clearIconClicked = () => {
+  emit('update:modelValue', '');
+  emit('clear');
+};
 </script>
 
 <template>
@@ -101,7 +130,7 @@ const slots = useSlots();
       ref="wrapper"
       :class="[
         css.wrapper,
-        css[color],
+        css[color ?? ''],
         css[variant],
         {
           [css.dense]: dense,
@@ -113,11 +142,11 @@ const slots = useSlots();
         },
       ]"
     >
-      <div class="flex items-center shrink-0">
-        <div v-if="slots.prepend" :class="css.prepend">
+      <div class="flex items-center gap-1 shrink-0" :class="css.prepend">
+        <div v-if="slots.prepend">
           <slot name="prepend" />
         </div>
-        <div v-else-if="prependIcon" :class="[css.icon, css.prepend]">
+        <div v-else-if="prependIcon" :class="[css.icon]">
           <Icon :name="prependIcon" />
         </div>
       </div>
@@ -148,44 +177,34 @@ const slots = useSlots();
           <legend />
         </fieldset>
       </div>
-      <div class="flex items-center shrink-0">
-        <div v-if="slots.append" :class="css.append">
+      <div class="flex items-center gap-1 shrink-0" :class="css.append">
+        <Button
+          v-if="showClearIcon"
+          :class="{ hidden: !focused }"
+          variant="text"
+          type="button"
+          icon
+          class="!p-2"
+          :color="color"
+          @click.stop="clearIconClicked()"
+        >
+          <Icon name="close-line" size="20" />
+        </Button>
+        <div v-if="slots.append">
           <slot name="append" />
         </div>
-        <div v-else-if="appendIcon" :class="[css.icon, css.append]">
+        <div v-else-if="appendIcon" :class="[css.icon]">
           <Icon :name="appendIcon" />
         </div>
       </div>
     </div>
-    <div v-if="!hideDetails" class="details pt-1 min-h-[1.25rem]">
-      <TransitionGroup
-        enter-from-class="opacity-0 -translate-y-2 h-0"
-        enter-active-class="transform transition"
-        enter-to-class="opacity-100 translate-y-0"
-        leave-from-class="opacity-100 -translate-y-2"
-        leave-active-class="transform transition"
-        leave-to-class="opacity-0 -translate-y-2 h-0"
-        appear
-      >
-        <div v-if="hasError" key="error" class="text-rui-error text-caption">
-          {{ errorMessages[0] }}
-        </div>
-        <div
-          v-else-if="hasSuccess"
-          key="success"
-          class="text-rui-success text-caption"
-        >
-          {{ successMessages[0] }}
-        </div>
-        <div
-          v-else-if="hint"
-          key="hint"
-          class="text-rui-text-secondary text-caption"
-        >
-          {{ hint }}
-        </div>
-      </TransitionGroup>
-    </div>
+    <FormTextDetail
+      v-if="!hideDetails"
+      class="pt-1 px-3"
+      :error-messages="errorMessages"
+      :success-messages="successMessages"
+      :hint="hint"
+    />
   </div>
 </template>
 
@@ -296,11 +315,15 @@ const slots = useSlots();
   }
 
   .prepend {
-    @apply mr-2;
+    &:not(:empty) {
+      @apply mr-2;
+    }
   }
 
   .append {
-    @apply ml-2;
+    &:not(:empty) {
+      @apply ml-2;
+    }
   }
 
   @each $color in c.$context-colors {
@@ -374,11 +397,15 @@ const slots = useSlots();
     @apply pt-0;
 
     .prepend {
-      @apply ml-3 mr-0;
+      &:not(:empty) {
+        @apply ml-3 mr-0;
+      }
     }
 
     .append {
-      @apply mr-3 ml-0;
+      &:not(:empty) {
+        @apply mr-3 ml-0;
+      }
     }
 
     .input {
