@@ -82,7 +82,7 @@ describe('Forms/RadioButton/Radio', () => {
         value: 'value',
       },
     });
-    expect(wrapper.find('.details > div').text()).toBe('');
+    expect(wrapper.find('.details > div').exists()).toBeFalsy();
 
     const hint = 'Radio Hints';
     await wrapper.setProps({ hint });
@@ -98,7 +98,7 @@ describe('Forms/RadioButton/Radio', () => {
         value: 'value',
       },
     });
-    expect(wrapper.find('.details > div').text()).toBe('');
+    expect(wrapper.find('.details > div').exists()).toBeFalsy();
 
     const errorMessage = 'Radio Error Message';
     await wrapper.setProps({ errorMessages: [errorMessage] });

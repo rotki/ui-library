@@ -9,7 +9,7 @@ describe('Dialog', () => {
     cy.contains('h2[data-cy=cards]', 'Cards');
 
     cy.get('div[data-cy=card-0-0]').as('card');
-    cy.get('@card').find('h6[class*=_header_]').as('header');
+    cy.get('@card').find('h5[class*=_header_]').as('header');
     cy.get('@card').find('p[class*=_subheader_]');
     cy.get('@card').find('div[class*=_content_]');
     cy.get('@card').find('div[class*=_footer_]');
