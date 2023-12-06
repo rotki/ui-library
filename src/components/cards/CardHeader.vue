@@ -26,9 +26,9 @@ const slots = useSlots();
       <slot name="prepend" />
     </div>
     <div :class="css.headers">
-      <h6 v-if="slots.header" :class="css.header">
+      <h5 v-if="slots.header" :class="css.header">
         <slot name="header" />
-      </h6>
+      </h5>
       <p v-if="slots.subheader" :class="css.subheader">
         <slot name="subheader" />
       </p>
@@ -54,7 +54,7 @@ const slots = useSlots();
   }
 
   .subheader {
-    @apply text-rui-text-secondary text-body-2;
+    @apply text-rui-text-secondary text-body-2 mb-0;
   }
 
   &.has_prepend {
@@ -77,6 +77,7 @@ const slots = useSlots();
     .prepend {
       @apply bg-rui-grey-700 text-black/90;
     }
+
     .header {
       @apply text-rui-dark-text;
     }
