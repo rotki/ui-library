@@ -910,7 +910,8 @@ const slots = useSlots();
       }
 
       .td {
-        @apply whitespace-nowrap p-4 text-rui-text text-body-2;
+        @apply p-4 text-rui-text text-body-2;
+        text-wrap: initial;
 
         &.align__start {
           @apply text-left rtl:text-right;
