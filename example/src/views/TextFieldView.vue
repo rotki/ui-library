@@ -190,6 +190,28 @@ const textFields = ref<TextFieldData[]>([
     color: 'primary',
     variant: 'outlined',
     append: 'Append',
+    textColor: 'primary',
+  },
+  {
+    value: '',
+    color: 'primary',
+    append: 'Append',
+    clearable: true,
+  },
+  {
+    value: '',
+    color: 'primary',
+    variant: 'filled',
+    append: 'Append',
+    clearable: true,
+  },
+  {
+    value: '',
+    color: 'primary',
+    variant: 'outlined',
+    append: 'Append',
+    clearable: true,
+    textColor: 'primary',
   },
 ]);
 
@@ -241,6 +263,14 @@ const revealableTextFields = ref<RevealableTextFieldData[]>([
     errorMessages: ['lorem ipsum error message'],
     hint: 'lorem ipsum hint',
     disabled: false,
+  },
+  {
+    color: 'info',
+    variant: 'outlined',
+    label: 'API Key',
+    textColor: 'info',
+    clearable: true,
+    value: 'some values',
   },
 ]);
 </script>
