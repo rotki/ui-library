@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
   placeholder: '',
   disabled: false,
   variant: 'default',
-  color: 'grey',
+  color: undefined,
   textColor: undefined,
   dense: false,
   hint: '',

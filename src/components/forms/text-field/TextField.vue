@@ -11,8 +11,8 @@ export interface TextFieldProps {
   placeholder?: string;
   disabled?: boolean;
   variant?: 'default' | 'filled' | 'outlined';
-  color?: 'grey' | ContextColorsType;
-  textColor?: 'grey' | ContextColorsType;
+  color?: ContextColorsType;
+  textColor?: ContextColorsType;
   dense?: boolean;
   hint?: string;
   as?: string | object;
@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<TextFieldProps>(), {
   placeholder: '',
   disabled: false,
   variant: 'default',
-  color: 'grey',
+  color: undefined,
   textColor: undefined,
   dense: false,
   hint: '',
@@ -101,7 +101,7 @@ const slots = useSlots();
       ref="wrapper"
       :class="[
         css.wrapper,
-        css[color],
+        css[color ?? ''],
         css[variant],
         {
           [css.dense]: dense,

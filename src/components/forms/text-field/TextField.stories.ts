@@ -45,7 +45,7 @@ const meta: Meta<TextFieldProps> = {
     readonly: { control: 'boolean', table: { category: 'State' } },
     color: {
       control: 'select',
-      options: ['grey', ...contextColors],
+      options: contextColors,
       table: { category: 'State' },
     },
     textColor: {

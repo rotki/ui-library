@@ -20,12 +20,12 @@ type RevealableTextFieldData = RevealableTextFieldProps &
   };
 
 const textFields = ref<TextFieldData[]>([
-  { value: '', color: 'primary' },
-  { value: '', color: 'secondary' },
-  { value: '', color: 'error' },
-  { value: '', color: 'warning' },
-  { value: '', color: 'info' },
-  { value: '', color: 'success' },
+  { value: '', color: 'primary', textColor: 'primary' },
+  { value: '', color: 'secondary', textColor: 'secondary' },
+  { value: '', color: 'error', textColor: 'error' },
+  { value: '', color: 'warning', textColor: 'warning' },
+  { value: '', color: 'info', textColor: 'info' },
+  { value: '', color: 'success', textColor: 'success' },
 
   { value: '', color: 'primary', dense: true },
   { value: '', color: 'secondary', dense: true },
@@ -134,6 +134,7 @@ const textFields = ref<TextFieldData[]>([
     color: 'primary',
     variant: 'outlined',
     appendIcon: 'arrow-right-line',
+    textColor: 'primary',
   },
 
   {
@@ -152,6 +153,7 @@ const textFields = ref<TextFieldData[]>([
     color: 'primary',
     variant: 'outlined',
     prependIcon: 'arrow-right-line',
+    textColor: 'primary',
   },
 
   {
@@ -164,6 +166,7 @@ const textFields = ref<TextFieldData[]>([
     color: 'primary',
     variant: 'filled',
     prepend: 'Prepend',
+    textColor: 'primary',
   },
   {
     value: '',
