@@ -9,6 +9,7 @@ export interface Props {
   disabled?: boolean;
   color?: ContextColorsType;
   size?: 'sm' | 'lg';
+  label?: string;
   hint?: string;
   errorMessages?: string[];
   hideDetails?: boolean;
@@ -23,6 +24,7 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   color: undefined,
   size: undefined,
+  label: '',
   hint: '',
   errorMessages: () => [],
   hideDetails: false,
@@ -94,7 +96,7 @@ const attrs = useAttrs();
         <Icon v-else name="checkbox-blank-circle-line" :size="iconSize" />
       </div>
       <div :class="css.label" class="text-body-1">
-        <slot />
+        <slot>{{ label }}</slot>
       </div>
     </label>
     <div v-if="!hideDetails" class="details">
