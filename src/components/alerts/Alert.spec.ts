@@ -66,8 +66,8 @@ describe('Forms/Alert', () => {
       'checkbox-circle-line',
     );
 
-    await wrapper.setProps({ icon: 'other-icon' });
-    expect(wrapper.find('rui-icon-stub').attributes('name')).toBe('other-icon');
+    await wrapper.setProps({ icon: 'line-fill' });
+    expect(wrapper.find('rui-icon-stub').attributes('name')).toBe('line-fill');
   });
 
   it('passes action text and the callback', async () => {

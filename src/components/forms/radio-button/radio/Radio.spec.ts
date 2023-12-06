@@ -72,7 +72,7 @@ describe('Forms/RadioButton/Radio', () => {
     const wrapper = createWrapper({ props: { value: 'value', size: 'sm' } });
     expect(wrapper.find('label > div').classes()).toMatch(/_sm_/);
 
-    await wrapper.setProps({ sm: false, size: 'lg' });
+    await wrapper.setProps({ size: 'lg' });
     expect(wrapper.find('label > div').classes()).toMatch(/_lg_/);
   });
 
