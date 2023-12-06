@@ -90,14 +90,18 @@ const onClick = (id: T) => {
 };
 
 const css = useCssModule();
+const colorClass = computed(() => (props.color ? css[props.color] : undefined));
+const variantClass = computed(() =>
+  props.variant ? css[props.variant] : undefined,
+);
 </script>
 
 <template>
   <div
     :class="[
       css.wrapper,
-      css[color ?? ''],
-      css[variant],
+      colorClass,
+      variantClass,
       {
         [css.wrapper__vertical]: vertical,
         [css.separated]: !!gap,

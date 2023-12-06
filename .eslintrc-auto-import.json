@@ -324,6 +324,7 @@
     "WritableComputedRef": true,
     "injectLocal": true,
     "provideLocal": true,
-    "useFormTextDetail": true
+    "useFormTextDetail": true,
+    "useClipboardItems": true
   }
 }

@@ -1,26 +1,17 @@
 import { describe, expect, it, vi } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import Button from '@/components/buttons/button/Button.vue';
+import Button from '../button/Button.vue';
 import ButtonGroup from './ButtonGroup.vue';
 
 const createWrapper = (
   options?: ComponentMountingOptions<typeof ButtonGroup>,
 ) =>
-  mount(
-    {
-      template:
-        '<ButtonGroup v-model="selected"><Button /><Button /><Button /></ButtonGroup>',
-      components: { ButtonGroup, Button },
-      data() {
-        return {
-          selected: null,
-        };
-      },
+  mount(ButtonGroup, {
+    slots: {
+      default: [Button, Button, Button],
     },
-    {
-      ...options,
-    },
-  );
+    ...options,
+  });
 
 describe('Button/ButtonGroup', () => {
   it('passes vertical props', async () => {
@@ -75,14 +66,10 @@ describe('Button/ButtonGroup', () => {
   });
 
   it('toggleable button group', async () => {
-    const modelValue = ref(0);
-    const updateModelValue = vi.fn((value?: number) => set(modelValue, value));
     const wrapper = createWrapper({
       props: {
-        'onUpdate:modelValue': (e: any) => updateModelValue(e),
-      },
-      data() {
-        return { selected: get(modelValue) };
+        modelValue: 0,
+        'onUpdate:modelValue': (e: any) => wrapper.setProps({ modelValue: e }),
       },
     });
 
@@ -95,8 +82,7 @@ describe('Button/ButtonGroup', () => {
 
     // on click, second button should take active state
     await buttons[1].trigger('click');
-    expect(get(modelValue)).toEqual(1);
-    expect(updateModelValue).toHaveBeenCalledOnce();
+    expect(wrapper.props('modelValue')).toEqual(1);
 
     expect(buttons[0].classes()).not.toMatch(/_active_/);
     expect(buttons[1].classes()).toMatch(/_active_/);
@@ -104,8 +90,7 @@ describe('Button/ButtonGroup', () => {
 
     // on click, third button should take active state
     await buttons[2].trigger('click');
-    expect(get(modelValue)).toEqual(2);
-    expect(updateModelValue).toHaveBeenCalledTimes(2);
+    expect(wrapper.props('modelValue')).toEqual(2);
     const clickEvent = wrapper.emitted('click');
     expect(clickEvent).toHaveLength(2);
 
@@ -118,7 +103,7 @@ describe('Button/ButtonGroup', () => {
     expect(buttons[0].classes()).not.toMatch(/_active_/);
     expect(buttons[1].classes()).not.toMatch(/_active_/);
     expect(buttons[2].classes()).not.toMatch(/_active_/);
-    expect(get(modelValue)).toBeUndefined();
+    expect(wrapper.props('modelValue')).toBeUndefined();
 
     // set as required
     await wrapper.setProps({ required: true });
@@ -126,23 +111,19 @@ describe('Button/ButtonGroup', () => {
     expect(buttons[0].classes()).not.toMatch(/_active_/);
     expect(buttons[1].classes()).not.toMatch(/_active_/);
     expect(buttons[2].classes()).toMatch(/_active_/);
-    expect(get(modelValue)).toEqual(2);
+    expect(wrapper.props('modelValue')).toEqual(2);
 
     // required so, can't deselect the active item
     await buttons[2].trigger('click');
     expect(buttons[2].classes()).toMatch(/_active_/);
-    expect(get(modelValue)).toEqual(2);
+    expect(wrapper.props('modelValue')).toEqual(2);
   });
 
   it('multiple toggleable button group', async () => {
-    const modelValue = ref([0]);
-    const updateModelValue = vi.fn((value: number[]) => set(modelValue, value));
     const wrapper = createWrapper({
       props: {
-        'onUpdate:modelValue': (e: any) => updateModelValue(e),
-      },
-      data() {
-        return { selected: get(modelValue) };
+        modelValue: [0],
+        'onUpdate:modelValue': (e: any) => wrapper.setProps({ modelValue: e }),
       },
     });
 
@@ -154,8 +135,7 @@ describe('Button/ButtonGroup', () => {
 
     // on click, second button should also be active
     await buttons[1].trigger('click');
-    expect(get(modelValue)).toEqual([0, 1]);
-    expect(updateModelValue).toHaveBeenCalledOnce();
+    expect(wrapper.props('modelValue')).toEqual([0, 1]);
 
     expect(buttons[0].classes()).toMatch(/_active_/);
     expect(buttons[1].classes()).toMatch(/_active_/);
@@ -163,8 +143,7 @@ describe('Button/ButtonGroup', () => {
 
     // on click, third button should also be active
     await buttons[2].trigger('click');
-    expect(get(modelValue)).toEqual([0, 1, 2]);
-    expect(updateModelValue).toHaveBeenCalledTimes(2);
+    expect(wrapper.props('modelValue')).toEqual([0, 1, 2]);
     const clickEvent = wrapper.emitted('click');
     expect(clickEvent).toHaveLength(2);
 
@@ -179,7 +158,7 @@ describe('Button/ButtonGroup', () => {
     expect(buttons[0].classes()).not.toMatch(/_active_/);
     expect(buttons[1].classes()).not.toMatch(/_active_/);
     expect(buttons[2].classes()).not.toMatch(/_active_/);
-    expect(get(modelValue)).toEqual([]);
+    expect(wrapper.props('modelValue')).toEqual([]);
 
     // set required
     await wrapper.setProps({ required: true });
@@ -187,12 +166,12 @@ describe('Button/ButtonGroup', () => {
     expect(buttons[0].classes()).not.toMatch(/_active_/);
     expect(buttons[1].classes()).not.toMatch(/_active_/);
     expect(buttons[2].classes()).toMatch(/_active_/);
-    expect(get(modelValue)).toEqual([2]);
+    expect(wrapper.props('modelValue')).toEqual([2]);
 
     // required so, can't deselect the active only item
     await buttons[2].trigger('click');
     expect(buttons[2].classes()).toMatch(/_active_/);
-    expect(get(modelValue)).toEqual([2]);
+    expect(wrapper.props('modelValue')).toEqual([2]);
 
     await wrapper.setProps({ gap: 'md' });
     expect(wrapper.classes()).toMatch(/_separated_/);

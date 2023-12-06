@@ -60,7 +60,7 @@ describe('Forms/Checkbox', () => {
     const wrapper = createWrapper({ props: { size: 'sm' } });
     expect(wrapper.find('label > span').classes()).toMatch(/_sm_/);
 
-    await wrapper.setProps({ sm: false, size: 'lg' });
+    await wrapper.setProps({ size: 'lg' });
     expect(wrapper.find('label > span').classes()).toMatch(/_lg_/);
   });
 
