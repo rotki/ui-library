@@ -6,6 +6,7 @@ import { type ContextColorsType } from '~/src';
 export interface Props {
   modelValue?: string;
   inline?: boolean;
+  label?: string;
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
@@ -22,6 +23,7 @@ defineOptions({
 withDefaults(defineProps<Props>(), {
   modelValue: '',
   inline: false,
+  label: '',
   hint: '',
   errorMessages: () => [],
   successMessages: () => [],
@@ -49,6 +51,9 @@ const css = useCssModule();
 
 <template>
   <div>
+    <div v-if="label" class="text-rui-text-secondary text-body-1">
+      {{ label }}
+    </div>
     <div :class="[css.wrapper, { [css.wrapper__inline]: inline }]">
       <Component
         :is="child"
