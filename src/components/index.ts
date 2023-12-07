@@ -36,6 +36,10 @@ import {
   type Props as StepperProps,
 } from '@/components/steppers/Stepper.vue';
 import {
+  default as RuiTextArea,
+  type Props as TextAreaProps,
+} from '@/components/forms/text-area/TextArea.vue';
+import {
   default as RuiTextField,
   type TextFieldProps,
 } from '@/components/forms/text-field/TextField.vue';
@@ -149,6 +153,7 @@ export {
   RuiTabItem,
   RuiTablePagination,
   RuiSkeletonLoader,
+  RuiTextArea,
   RuiDivider,
   AutoCompleteProps,
   ChipProps,
@@ -183,4 +188,5 @@ export {
   RevealableTextFieldProps,
   SkeletonLoaderProps,
   DividerProps,
+  TextAreaProps,
 };

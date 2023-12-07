@@ -42,6 +42,11 @@ const router = createRouter({
       component: () => import('@/views/TextFieldView.vue'),
     },
     {
+      path: '/text-areas',
+      name: 'text-areas',
+      component: () => import('@/views/TextAreaView.vue'),
+    },
+    {
       path: '/auto-complete',
       name: 'auto-complete',
       component: () => import('@/views/AutoCompleteView.vue'),

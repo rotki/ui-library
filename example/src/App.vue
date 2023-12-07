@@ -15,6 +15,7 @@ const navigation = ref([
       { to: { name: 'checkboxes' }, title: 'Checkboxes' },
       { to: { name: 'radios' }, title: 'Radio' },
       { to: { name: 'text-fields' }, title: 'Text Fields' },
+      { to: { name: 'text-areas' }, title: 'Text Areas' },
       { to: { name: 'auto-complete' }, title: 'Auto Complete' },
       { to: { name: 'steppers' }, title: 'Steppers' },
       { to: { name: 'progress' }, title: 'Progress' },
