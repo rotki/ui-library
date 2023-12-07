@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { objectOmit } from '@vueuse/shared';
 import { logicAnd, logicNot } from '@vueuse/math';
 import { type ContextColorsType } from '@/consts/colors';
 import RuiIcon from '@/components/icons/Icon.vue';
@@ -21,7 +20,6 @@ export interface Props {
   successMessages?: string | string[];
   hideDetails?: boolean;
   prependIcon?: RuiIcons;
-  prependOuterIcon?: RuiIcons;
   appendIcon?: RuiIcons;
   readonly?: boolean;
   clearable?: boolean;
@@ -51,7 +49,6 @@ const props = withDefaults(defineProps<Props>(), {
   successMessages: () => [],
   hideDetails: false,
   prependIcon: undefined,
-  prependOuterIcon: undefined,
   appendIcon: undefined,
   readonly: false,
   clearable: false,
@@ -190,7 +187,7 @@ onMounted(computeFieldHeight);
 </script>
 
 <template>
-  <div>
+  <div v-bind="getRootAttrs(attrs)">
     <div
       :class="[
         css.wrapper,
@@ -212,9 +209,7 @@ onMounted(computeFieldHeight);
         class="flex items-center gap-1 shrink-0"
         :class="css.prepend"
       >
-        <div v-if="slots.prepend">
-          <slot name="prepend" />
-        </div>
+        <slot v-if="slots.prepend" name="prepend" />
         <div v-else-if="prependIcon" :class="[css.icon]">
           <RuiIcon :name="prependIcon" />
         </div>
@@ -238,7 +233,7 @@ onMounted(computeFieldHeight);
           :style="fieldStyles"
           :disabled="disabled"
           :readonly="readonly"
-          v-bind="objectOmit(attrs, ['class'])"
+          v-bind="getNonRootAttrs(attrs)"
         />
         <label :class="css.label">
           {{ label }}
@@ -265,9 +260,7 @@ onMounted(computeFieldHeight);
         >
           <RuiIcon name="close-line" size="20" />
         </RuiButton>
-        <div v-if="slots.append">
-          <slot name="append" />
-        </div>
+        <slot v-if="slots.append" name="append" />
         <div v-else-if="appendIcon" :class="[css.icon]">
           <RuiIcon :name="appendIcon" />
         </div>
