@@ -121,17 +121,17 @@ const hasHeadContent = computed(() => !!slots.header || !!slots.subheader);
   }
 
   &.dense {
-    .content {
+    > .content {
       @apply p-3;
     }
 
-    .footer {
+    > .footer {
       @apply py-1 flex space-x-2;
     }
   }
 
   &.no-padding {
-    .content {
+    > .content {
       @apply p-0;
     }
   }
