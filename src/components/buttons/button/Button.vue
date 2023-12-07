@@ -13,6 +13,7 @@ export interface Props<T = undefined> {
   active?: boolean;
   size?: 'sm' | 'lg';
   tag?: 'button' | 'a';
+  type?: 'button' | 'submit';
   value?: T;
 }
 
@@ -31,6 +32,7 @@ const props = withDefaults(defineProps<Props<T>>(), {
   active: false,
   size: undefined,
   tag: 'button',
+  type: 'button',
   value: undefined,
 });
 
@@ -90,6 +92,7 @@ const slots = useSlots();
       },
     ]"
     :disabled="disabled || loading"
+    :type="tag === 'button' ? type : undefined"
     v-bind="attrs"
     @click="emit('update:value', btnValue)"
   >

@@ -39,6 +39,7 @@ const meta: Meta<PropsAndLabel> = {
     elevation: { control: 'number', table: { category: 'Shape' } },
     icon: { control: 'boolean', table: { category: 'Shape' } },
     size: { control: 'select', options: ['medium', 'sm', 'lg'] },
+    type: { control: 'select', options: ['button', 'submit'] },
     disabled: { control: 'boolean', table: { category: 'State' } },
     loading: { control: 'boolean', table: { category: 'State' } },
   },
