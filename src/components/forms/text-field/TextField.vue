@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { objectOmit } from '@vueuse/shared';
 import { logicAnd, logicNot } from '@vueuse/math';
+import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 import { type ContextColorsType } from '@/consts/colors';
 import Icon from '@/components/icons/Icon.vue';
 import Button from '@/components/buttons/button/Button.vue';
@@ -125,7 +125,7 @@ const clearIconClicked = () => {
 </script>
 
 <template>
-  <div :class="attrs.class">
+  <div v-bind="getRootAttrs(attrs)">
     <div
       ref="wrapper"
       :class="[
@@ -147,9 +147,7 @@ const clearIconClicked = () => {
         class="flex items-center gap-1 shrink-0"
         :class="css.prepend"
       >
-        <div v-if="slots.prepend">
-          <slot name="prepend" />
-        </div>
+        <slot v-if="slots.prepend" name="prepend" />
         <div v-else-if="prependIcon" :class="[css.icon]">
           <Icon :name="prependIcon" />
         </div>
@@ -169,7 +167,7 @@ const clearIconClicked = () => {
           :variant="variant"
           :readonly="readonly"
           :wrapper-width="width"
-          v-bind="objectOmit(attrs, ['class'])"
+          v-bind="getNonRootAttrs(attrs)"
           @input="input($event)"
           @blur="emit('blur', $event)"
           @remove="emit('remove', $event)"
@@ -198,9 +196,7 @@ const clearIconClicked = () => {
         >
           <Icon name="close-line" size="20" />
         </Button>
-        <div v-if="slots.append">
-          <slot name="append" />
-        </div>
+        <slot v-if="slots.append" name="append" />
         <div v-else-if="appendIcon" :class="[css.icon]">
           <Icon :name="appendIcon" />
         </div>
