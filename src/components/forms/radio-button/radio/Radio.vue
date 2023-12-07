@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { objectOmit } from '@vueuse/shared';
+import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 import { type ContextColorsType } from '@/consts/colors';
 import Icon from '@/components/icons/Icon.vue';
 import FormTextDetail from '@/components/helpers/FormTextDetail.vue';
@@ -19,6 +19,7 @@ export interface RadioProps {
 
 defineOptions({
   name: 'RuiRadio',
+  inheritAttrs: false,
 });
 
 const props = withDefaults(defineProps<RadioProps>(), {
@@ -70,7 +71,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
 </script>
 
 <template>
-  <div :class="attrs.class">
+  <div v-bind="getRootAttrs(attrs)">
     <label
       :class="[
         css.wrapper,
@@ -85,7 +86,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
         type="radio"
         :class="css.input"
         :disabled="disabled"
-        v-bind="objectOmit(attrs, ['class'])"
+        v-bind="getNonRootAttrs(attrs)"
         :value="value"
         @input="input($event)"
       />
