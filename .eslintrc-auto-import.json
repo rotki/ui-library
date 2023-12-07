@@ -325,6 +325,9 @@
     "injectLocal": true,
     "provideLocal": true,
     "useFormTextDetail": true,
-    "useClipboardItems": true
+    "useClipboardItems": true,
+    "getNonRootAttrs": true,
+    "getRootAttrs": true,
+    "getRootKeys": true
   }
 }
