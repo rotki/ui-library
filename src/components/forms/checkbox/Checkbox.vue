@@ -211,7 +211,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
     @apply flex-1 text-rui-text;
 
     &:not(:empty) {
-      @apply mt-[9px];
+      @apply mt-[9px] mb-1;
     }
   }
 

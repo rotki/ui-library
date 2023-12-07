@@ -64,7 +64,7 @@ import {
   default as RuiRadioGroup,
 } from '@/components/forms/radio-button/radio-group/RadioGroup.vue';
 import {
-  type Props as RadioProps,
+  type RadioProps as RadioProps,
   default as RuiRadio,
 } from '@/components/forms/radio-button/radio/Radio.vue';
 import {

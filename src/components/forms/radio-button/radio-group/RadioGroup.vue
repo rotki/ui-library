@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { objectPick } from '@vueuse/shared';
 import FormTextDetail from '@/components/helpers/FormTextDetail.vue';
+import { type ContextColorsType } from '~/src';
 
 export interface Props {
   modelValue?: string;
@@ -8,6 +10,9 @@ export interface Props {
   errorMessages?: string | string[];
   successMessages?: string | string[];
   hideDetails?: boolean;
+  disabled?: boolean;
+  color?: ContextColorsType;
+  size?: 'sm' | 'lg';
 }
 
 defineOptions({
@@ -21,6 +26,9 @@ withDefaults(defineProps<Props>(), {
   errorMessages: () => [],
   successMessages: () => [],
   hideDetails: false,
+  disabled: false,
+  color: undefined,
+  size: undefined,
 });
 
 const emit = defineEmits<{
@@ -45,6 +53,7 @@ const css = useCssModule();
       <Component
         :is="child"
         v-for="(child, i) in children"
+        v-bind="objectPick($props, ['disabled', 'color', 'size'])"
         :key="i"
         :model-value="modelValue"
         hide-details

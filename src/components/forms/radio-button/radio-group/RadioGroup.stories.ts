@@ -1,5 +1,6 @@
 import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import Radio from '@/components/forms/radio-button/radio/Radio.vue';
+import { contextColors } from '@/consts/colors';
 import { type Props, default as RadioGroup } from './RadioGroup.vue';
 
 const render: StoryFn<Props> = (args) => ({
@@ -17,10 +18,8 @@ const render: StoryFn<Props> = (args) => ({
     return { args, modelValue };
   },
   template: `<RadioGroup v-bind="args" v-model="modelValue">
-    <div>
-      <Radio value="yes">yes</Radio>
-      <Radio value="no">no</Radio>
-    </div>
+    <Radio value="yes">yes</Radio>
+    <Radio value="no">no</Radio>
   </RadioGroup>`,
 });
 
@@ -33,8 +32,12 @@ const meta: Meta<Props> = {
     modelValue: { control: 'text' },
     inline: { control: 'boolean' },
     hint: { control: 'text' },
-    errorMessages: { control: 'array', defaultValue: [] },
+    errorMessages: { control: 'object' },
+    successMessages: { control: 'object' },
     hideDetails: { control: 'boolean' },
+    disabled: { control: 'boolean', table: { category: 'State' } },
+    color: { control: 'select', options: contextColors },
+    size: { control: 'select', options: ['medium', 'sm', 'lg'] },
   },
 };
 

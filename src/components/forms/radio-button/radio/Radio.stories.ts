@@ -1,8 +1,8 @@
 import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { contextColors } from '@/consts/colors';
-import { type Props, default as Radio } from './Radio.vue';
+import { default as Radio, type RadioProps } from './Radio.vue';
 
-type PropsAndLabel = Props & { label: string };
+type PropsAndLabel = RadioProps & { label: string };
 
 const render: StoryFn<PropsAndLabel> = (args) => ({
   components: { Radio },

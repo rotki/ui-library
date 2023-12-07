@@ -181,10 +181,10 @@ const radios = ref<RadioData[]>([
 const radioGroups = ref<
   {
     value: string;
+    disabled?: boolean;
+    size?: RadioData['size'];
     options: {
       color: RadioData['color'];
-      size?: RadioData['size'];
-      disabled?: boolean;
     }[];
   }[]
 >([
@@ -201,24 +201,27 @@ const radioGroups = ref<
   },
   {
     value: 'primary',
+    size: 'sm',
     options: [
-      { color: 'primary', size: 'sm' },
-      { color: 'secondary', size: 'sm' },
-      { color: 'error', size: 'sm' },
-      { color: 'warning', size: 'sm' },
-      { color: 'info', size: 'sm' },
-      { color: 'success', size: 'sm' },
+      { color: 'primary' },
+      { color: 'secondary' },
+      { color: 'error' },
+      { color: 'warning' },
+      { color: 'info' },
+      { color: 'success' },
     ],
   },
   {
     value: 'primary',
+    disabled: true,
+    size: 'lg',
     options: [
-      { color: 'primary', size: 'lg' },
-      { color: 'secondary', size: 'lg', disabled: true },
-      { color: 'error', size: 'lg', disabled: true },
-      { color: 'warning', size: 'lg', disabled: true },
-      { color: 'info', size: 'lg', disabled: true },
-      { color: 'success', size: 'lg' },
+      { color: 'primary' },
+      { color: 'secondary' },
+      { color: 'error' },
+      { color: 'warning' },
+      { color: 'info' },
+      { color: 'success' },
     ],
   },
 ]);
@@ -243,6 +246,8 @@ const radioGroups = ref<
         v-for="(radioGroup, i) in radioGroups"
         :key="i"
         v-model="radioGroup.value"
+        :disabled="radioGroup.disabled"
+        :size="radioGroup.size"
         :hint="`Selected value: ${radioGroup.value}`"
         inline
       >
@@ -250,7 +255,6 @@ const radioGroups = ref<
           v-for="(radio, j) in radioGroup.options"
           :key="j"
           :value="radio.color"
-          v-bind="radio"
         >
           <span class="capitalize"> {{ radio.color }} </span>
         </RuiRadio>
