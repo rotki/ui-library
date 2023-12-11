@@ -9,32 +9,30 @@ describe('Chips/Chip', () => {
   it('renders properly', () => {
     const label = 'Chip';
     const wrapper = createWrapper({
-      props: {
-        label,
+      slots: {
+        default: label,
       },
     });
     expect(wrapper.find('span[class*=_label]').text()).toContain(label);
   });
 
-  it('shows dismiss icon', async () => {
+  it('shows close icon', async () => {
     const wrapper = createWrapper({
       props: {
-        label: 'Chip',
-        dismissible: true,
+        closeable: true,
       },
     });
 
     expect(wrapper.find('button').attributes().disabled).toBeUndefined();
 
     await wrapper.find('button').trigger('click');
-    expect(wrapper.emitted()).toHaveProperty('remove');
+    expect(wrapper.emitted()).toHaveProperty('click:close');
   });
 
-  it("disabled chip can't dismiss dismiss", async () => {
+  it("disabled chip can't be closed", async () => {
     const wrapper = createWrapper({
       props: {
-        label: 'Chip',
-        dismissible: true,
+        closeable: true,
         disabled: true,
       },
     });
@@ -42,6 +40,39 @@ describe('Chips/Chip', () => {
     expect(wrapper.find('button').attributes().disabled).toBe('');
 
     await wrapper.find('button').trigger('click');
-    expect(wrapper.emitted()).not.toHaveProperty('remove');
+    expect(wrapper.emitted()).not.toHaveProperty('click:close');
+  });
+
+  it("disabled chip doesn't emit click event", async () => {
+    const wrapper = createWrapper({
+      props: {
+        disabled: true,
+        clickable: true,
+      },
+    });
+
+    await wrapper.find('div[role=button]').trigger('click');
+    expect(wrapper.emitted()).not.toHaveProperty('click');
+
+    await wrapper.setProps({ disabled: false });
+
+    await wrapper.find('div[role=button]').trigger('click');
+    expect(wrapper.emitted()).toHaveProperty('click');
+  });
+
+  it("not `clickable` chip doesn't emit click event", async () => {
+    const wrapper = createWrapper({
+      props: {
+        clickable: false,
+      },
+    });
+
+    await wrapper.find('div[role=button]').trigger('click');
+    expect(wrapper.emitted()).not.toHaveProperty('click');
+
+    await wrapper.setProps({ clickable: true });
+
+    await wrapper.find('div[role=button]').trigger('click');
+    expect(wrapper.emitted()).toHaveProperty('click');
   });
 });

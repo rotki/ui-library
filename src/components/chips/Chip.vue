@@ -1,33 +1,72 @@
 <script lang="ts" setup>
+import { type StyleValue } from 'vue';
+import { logicNot, logicOr } from '@vueuse/math';
+import { objectOmit } from '@vueuse/shared';
 import { type ContextColorsType } from '@/consts/colors';
 import Icon from '@/components/icons/Icon.vue';
+import { type RuiIcons } from '~/src';
 
 export interface Props {
-  label?: string;
-  dismissible?: boolean;
+  label?: boolean;
+  clickable?: boolean;
+  closeable?: boolean;
   disabled?: boolean;
   size?: 'sm' | 'md';
   variant?: 'filled' | 'outlined';
   color?: 'grey' | ContextColorsType;
+  closeIcon?: RuiIcons;
+  bgColor?: string;
+  textColor?: string;
 }
 
 defineOptions({
   name: 'RuiChip',
+  inheritAttrs: false,
 });
 
-withDefaults(defineProps<Props>(), {
-  label: '',
+const props = withDefaults(defineProps<Props>(), {
+  label: false,
   size: 'md',
   color: 'grey',
-  dismissible: false,
+  clickable: false,
+  closeable: false,
   disabled: false,
   variant: 'filled',
+  closeIcon: 'close-circle-line',
+  bgColor: undefined,
+  textColor: undefined,
 });
 
-const emit = defineEmits<{ (event: 'remove'): void }>();
+const emit = defineEmits<{
+  (event: 'click:close'): void;
+  (event: 'click'): void;
+}>();
+
+const { clickable, disabled, bgColor, textColor } = toRefs(props);
+
+const click = () => {
+  if (get(logicOr(logicNot(clickable), disabled))) {
+    return;
+  }
+  emit('click');
+};
 
 const css = useCssModule();
 const slots = useSlots();
+const attrs = useAttrs();
+
+const style: ComputedRef<Partial<StyleValue>> = computed(() => {
+  const style: Partial<StyleValue> = {};
+  const bg = get(bgColor);
+  const text = get(textColor);
+  if (bg) {
+    style.backgroundColor = bg;
+  }
+  if (text) {
+    style.color = text;
+  }
+  return style;
+});
 </script>
 
 <template>
@@ -37,27 +76,35 @@ const slots = useSlots();
       css[color ?? ''],
       css[size ?? ''],
       css[variant ?? ''],
-      { [css.disabled]: disabled },
+      {
+        [css.disabled]: disabled,
+        [css.label]: label,
+        [css.readonly]: !clickable,
+      },
     ]"
+    :style="style"
     role="button"
     tabindex="0"
+    v-bind="objectOmit(attrs, ['onClick'])"
+    @click="click()"
   >
     <div v-if="slots.prepend" :class="css.chip__prepend">
       <slot name="prepend" />
     </div>
     <span :class="css.chip__label">
-      <slot>{{ label }}</slot>
+      <slot />
     </span>
     <button
-      v-if="dismissible"
+      v-if="closeable"
       :class="css.chip__close"
       :disabled="disabled"
-      @click.stop="emit('remove')"
+      type="button"
+      @click.stop="emit('click:close')"
     >
       <Icon
         :class="css.chip__close_icon"
         :size="size === 'sm' ? 16 : 24"
-        name="close-circle-line"
+        :name="closeIcon"
       />
     </button>
   </div>
@@ -70,26 +117,46 @@ const slots = useSlots();
   @apply inline-flex items-center justify-between rounded-full px-1.5 py-[0.25rem] transition-all cursor-default;
   @apply max-w-full truncate;
 
+  &.label {
+    @apply rounded-sm;
+  }
+
   &.grey {
     @apply text-rui-text;
 
     &.filled {
-      @apply bg-black/[0.08] hover:bg-black/[0.12] focus:bg-black/[0.20];
+      @apply bg-black/[0.08];
+
+      &:not(.readonly):not(.disabled) {
+        @apply hover:bg-black/[0.12] focus:bg-black/[0.20];
+      }
     }
 
     &.outlined {
-      @apply border border-black/[0.26] bg-transparent hover:bg-black/[0.04] focus:bg-black/[0.12];
+      @apply border border-black/[0.26] bg-transparent;
+
+      &:not(.readonly):not(.disabled) {
+        @apply hover:bg-black/[0.04] focus:bg-black/[0.12];
+      }
     }
   }
 
   @each $color in c.$context-colors {
     &.#{$color} {
       &.filled {
-        @apply text-rui-dark-text bg-rui-#{$color} hover:bg-rui-#{$color}-darker;
+        @apply text-rui-dark-text bg-rui-#{$color};
+
+        &:not(.readonly):not(.disabled) {
+          @apply hover:bg-rui-#{$color}-darker;
+        }
       }
 
       &.outlined {
-        @apply border text-rui-#{$color} border-rui-#{$color}/50 bg-transparent hover:bg-rui-#{$color}/[0.04];
+        @apply border text-rui-#{$color} border-rui-#{$color}/50 bg-transparent;
+
+        &:not(.readonly):not(.disabled) {
+          @apply hover:bg-rui-#{$color}/[0.04];
+        }
       }
     }
   }
@@ -132,33 +199,10 @@ const slots = useSlots();
       @apply -mr-1.5;
     }
   }
-}
 
-.disabled {
-  &.chip {
-    @apply opacity-40 cursor-default;
-
-    &.grey {
-      &.filled {
-        @apply hover:bg-black/[0.08] focus:bg-black/[0.08];
-      }
-
-      &.outlined {
-        @apply hover:bg-transparent focus:bg-transparent;
-      }
-    }
-
-    @each $color in c.$context-colors {
-      &.#{$color} {
-        &.filled {
-          @apply hover:bg-rui-#{$color};
-        }
-
-        &.outlined {
-          @apply hover:bg-transparent;
-        }
-      }
-    }
+  &.disabled,
+  &.readonly {
+    @apply cursor-default;
 
     &__close {
       @apply cursor-default;
@@ -168,12 +212,20 @@ const slots = useSlots();
       }
     }
   }
+
+  &.disabled {
+    @apply opacity-40;
+  }
 }
 
 :global(.dark) {
   .chip {
     &.grey {
-      @apply bg-white/[0.16] hover:bg-white/[0.20] focus:bg-white/[0.24];
+      @apply bg-white/[0.16];
+
+      &:not(.readonly):not(.disabled) {
+        @apply hover:bg-white/[0.20] focus:bg-white/[0.24];
+      }
     }
 
     @each $color in (warning, success, info) {
