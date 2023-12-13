@@ -1,6 +1,9 @@
+/* eslint-disable max-lines */
+import { objectOmit } from '@vueuse/shared';
 import Button from '@/components/buttons/button/Button.vue';
 import TextField from '@/components/forms/text-field/TextField.vue';
 import Icon from '@/components/icons/Icon.vue';
+import Card from '@/components/cards/Card.vue';
 import DataTable, {
   type TableColumn,
   type Props as TableProps,
@@ -19,7 +22,7 @@ type User = {
 type Props = TableProps<User, 'id'>;
 
 const render: StoryFn<Props> = (args) => ({
-  components: { DataTable: DataTable<User>, Button, Icon, TextField },
+  components: { DataTable: DataTable<User>, Button, Icon, TextField, Card },
   setup() {
     const modelValue = computed({
       get() {
@@ -54,37 +57,64 @@ const render: StoryFn<Props> = (args) => ({
       },
     });
 
-    return { args, modelValue, pagination, search, sort };
+    return { args, modelValue, pagination, search, sort, objectOmit };
   },
   template: `
-    <div class="flex flex-col space-y-4">
-      <div class="flex items-center space-x-4">
-        <TextField
-          v-if="search !== undefined"
-          v-model="search"
-          placeholder="search"
-          label="search"
-          class="w-1/2 lg:w-2/5"
-          variant="outlined"
-          color="primary"
-          hide-details
-        />
-        <span v-if="modelValue">selected: {{ modelValue.length }}</span>
-      </div>
-      <DataTable
-        v-bind="args"
-        v-model="modelValue"
-        v-model:pagination="pagination"
-        v-model:sort="sort"
-        :search="search"
-      >
-        <template #item.action>
-          <Button icon variant="text" size="sm">
-            <Icon name="more-fill" color="primary" />
-          </Button>
-        </template>
-      </DataTable>
-    </div>`,
+      <div class="flex flex-col space-y-4">
+        <div class="flex items-center space-x-4">
+          <TextField
+              v-if="search !== undefined"
+              v-model="search"
+              placeholder="search"
+              label="search"
+              class="w-1/2 lg:w-2/5"
+              variant="outlined"
+              color="primary"
+              hide-details
+          />
+          <span v-if="modelValue">selected: {{ modelValue.length }}</span>
+        </div>
+        <DataTable
+            v-bind="
+                objectOmit(args, [
+                  'modelValue',
+                  'pagination',
+                  'sort',
+                  'expanded',
+                ])
+            "
+            v-model="modelValue"
+            v-model:pagination="pagination"
+            v-model:sort="sort"
+            :search="search"
+            v-model:expanded="args.expanded"
+            :row-attr="args.rowAttr"
+            :rows="args.rows"
+        >
+          <template #item.action>
+            <Button icon variant="text" size="sm">
+              <Icon name="more-fill" color="primary" />
+            </Button>
+          </template>
+          <template v-if="args.expanded" #expanded-item>
+            <Card>
+              <template #header> Expanded content</template>
+              <DataTable
+                  v-bind="
+                    objectOmit(args, [
+                      'modelValue',
+                      'pagination',
+                      'sort',
+                      'expanded',
+                    ])
+                  "
+                  :row-attr="args.rowAttr"
+                  :rows="args.rows"
+              />
+            </Card>
+          </template>
+        </DataTable>
+      </div>`,
 });
 
 const data = [
@@ -215,11 +245,15 @@ const meta: Meta<Props> = {
           'update:pagination',
           'update:sort',
           'update:options',
+          'update:expanded',
           'tfoot',
           'no-data',
           'empty-description',
           '`header.${column.key.toString()}`',
           '`item.${column.key.toString()}`',
+          'body.append',
+          'item.expand',
+          'expanded-item',
         ],
       },
     },
@@ -381,6 +415,37 @@ export const EmptyState: Story = {
       { column: 'name', direction: 'asc' },
       { column: 'email', direction: 'asc' },
     ],
+  },
+};
+
+export const Expandable: Story = {
+  args: {
+    rows: data,
+    modelValue: [],
+    cols: columns,
+    outlined: true,
+    pagination: { limit: 5, page: 1, total: 50 },
+    sort: [
+      { column: 'name', direction: 'asc' },
+      { column: 'email', direction: 'asc' },
+    ],
+    expanded: [],
+  },
+};
+
+export const SingleExpandable: Story = {
+  args: {
+    rows: data,
+    modelValue: [],
+    cols: columns,
+    outlined: true,
+    pagination: { limit: 5, page: 1, total: 50 },
+    sort: [
+      { column: 'name', direction: 'asc' },
+      { column: 'email', direction: 'asc' },
+    ],
+    expanded: [],
+    singleExpand: true,
   },
 };
 

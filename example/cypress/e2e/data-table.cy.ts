@@ -110,4 +110,89 @@ describe('DataTable', () => {
 
     cy.get('@outlined').should('exist');
   });
+
+  it('checks for data tables with multiple expanded content', () => {
+    cy.get('div[data-cy=table-expandable-0]').as('multiple');
+    cy.get('@multiple')
+      .find('tr button[class*=_tr__expander_button]')
+      .as('buttons');
+    cy.get('@buttons').eq(1).as('button1');
+    cy.get('@buttons').eq(2).as('button2');
+
+    cy.get('@multiple')
+      .find('table tbody tr[hidden] div[data-cy=expanded-content]')
+      .should('exist');
+
+    cy.get('@button1').click();
+
+    cy.get('@button1').should((btn) => {
+      const classes = Cypress.$(btn).attr('class');
+      expect(classes).to.contain('_tr__expander_button');
+      expect(classes).to.contain('_tr__expander_button_open');
+    });
+
+    cy.get('@button1').click();
+
+    cy.get('@button1').should((btn) => {
+      const classes = Cypress.$(btn).attr('class');
+      expect(classes).not.to.contain('_tr__expander_button_open');
+    });
+
+    cy.get('@button1').click();
+    cy.get('@button2').click();
+
+    cy.get('@button1').should((btn) => {
+      const classes = Cypress.$(btn).attr('class');
+      expect(classes).to.contain('_tr__expander_button');
+      expect(classes).to.contain('_tr__expander_button_open');
+    });
+
+    cy.get('@button2').should((btn) => {
+      const classes = Cypress.$(btn).attr('class');
+      expect(classes).to.contain('_tr__expander_button');
+      expect(classes).to.contain('_tr__expander_button_open');
+    });
+  });
+
+  it('checks for data tables with single expanded content', () => {
+    cy.get('div[data-cy=table-expandable-1]').as('single');
+    cy.get('@single')
+      .find('tr button[class*=_tr__expander_button]')
+      .as('buttons');
+    cy.get('@buttons').eq(1).as('button1');
+    cy.get('@buttons').eq(2).as('button2');
+
+    cy.get('@single')
+      .find('table tbody tr[hidden] div[data-cy=expanded-content]')
+      .should('exist');
+
+    cy.get('@button1').click();
+
+    cy.get('@button1').should((btn) => {
+      const classes = Cypress.$(btn).attr('class');
+      expect(classes).to.contain('_tr__expander_button');
+      expect(classes).to.contain('_tr__expander_button_open');
+    });
+
+    cy.get('@button1').click();
+
+    cy.get('@button1').should((btn) => {
+      const classes = Cypress.$(btn).attr('class');
+      expect(classes).not.to.contain('_tr__expander_button_open');
+    });
+
+    cy.get('@button1').click();
+    cy.get('@button2').click();
+
+    cy.get('@button1').should((btn) => {
+      const classes = Cypress.$(btn).attr('class');
+      expect(classes).not.to.contain('_tr__expander_button_open');
+    });
+
+    cy.get('@button2').should((btn) => {
+      const classes = Cypress.$(btn).attr('class');
+      expect(classes).to.contain('_tr__expander_button');
+      expect(classes).to.contain('_tr__expander_button_open');
+    });
+  });
 });
