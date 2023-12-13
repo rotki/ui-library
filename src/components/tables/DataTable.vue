@@ -3,11 +3,13 @@
   setup
   generic="T extends object, IdType extends keyof T = keyof T"
 >
+import { type Ref } from 'vue';
 import Button from '@/components/buttons/button/Button.vue';
 import Checkbox from '@/components/forms/checkbox/Checkbox.vue';
 import Icon from '@/components/icons/Icon.vue';
 import Progress from '@/components/progress/Progress.vue';
 import RuiBadge from '@/components/overlays/badge/Badge.vue';
+import ExpandButton from '@/components/tables/ExpandButton.vue';
 import TablePagination, {
   type TablePaginationData,
 } from './TablePagination.vue';
@@ -106,7 +108,9 @@ export interface Props<T, K extends keyof T> {
    * use this when api controls pagination
    * @example v-model:pagination.external="{ total: 10, limit: 5, page: 1 }"
    */
-  paginationModifiers?: { external: boolean };
+  paginationModifiers?: {
+    external: boolean;
+  };
   /**
    * model for sort column/columns data
    * single column sort
@@ -123,7 +127,9 @@ export interface Props<T, K extends keyof T> {
    * multi columns sort
    * @example v-model:sort.external="[{ column: 'name', direction: 'asc' }]"
    */
-  sortModifiers?: { external: boolean };
+  sortModifiers?: {
+    external: boolean;
+  };
   /**
    * list of column definitions
    */
@@ -133,7 +139,7 @@ export interface Props<T, K extends keyof T> {
    */
   columnAttr?: string;
   /**
-   * flag to show a more or less spaceous table
+   * flag to show a more or less spacious table
    */
   dense?: boolean;
   /**
@@ -146,7 +152,7 @@ export interface Props<T, K extends keyof T> {
   striped?: boolean;
   /**
    * flag to show loading state of the table
-   * triggers an indefinite progress at the bottom of the table header
+   * triggers indefinite progress at the bottom of the table header
    */
   loading?: boolean;
   /**
@@ -154,17 +160,28 @@ export interface Props<T, K extends keyof T> {
    * text and icon
    * @example :empty="{ icon: 'transactions-line', label: 'No transactions found' }"
    */
-  empty?: { label?: string; description?: string };
+  empty?: {
+    label?: string;
+    description?: string;
+  };
   /**
    * should hide the footer
    */
   hideDefaultFooter?: boolean;
 
   rounded?: 'sm' | 'md' | 'lg';
+  /**
+   * model for expanded rows
+   */
+  expanded?: T[];
+  /**
+   * make expansion work like accordion
+   */
+  singleExpand?: boolean;
 }
 
 defineOptions({
-  name: 'RuiDataTable',
+  name: 'RuiDataTableBase',
 });
 
 const props = withDefaults(defineProps<Props<T, IdType>>(), {
@@ -184,10 +201,13 @@ const props = withDefaults(defineProps<Props<T, IdType>>(), {
   empty: () => ({ label: 'No item found' }),
   hideDefaultFooter: false,
   rounded: 'md',
+  expanded: undefined,
+  singleExpand: false,
 });
 
 const emit = defineEmits<{
   (e: 'update:model-value', value?: T[IdType][]): void;
+  (e: 'update:expanded', value: T[]): void;
   (e: 'update:pagination', value: TablePaginationData): void;
   (e: 'update:sort', value?: SortColumn<T> | SortColumn<T>[]): void;
   (e: 'update:options', value: TableOptions<T>): void;
@@ -201,18 +221,29 @@ const getKeys = <T extends object>(t: T) =>
 /**
  * Prepare the columns from props or generate using first item in the list
  */
-const columns = computed<TableColumn<T>[]>(
-  () =>
+const columns = computed<TableColumn<T>[]>(() => {
+  const data =
     props.cols ??
     getKeys(props.rows[0] ?? {}).map(
       (key) =>
         ({
           key: key.toString(),
           [props.columnAttr]: key.toString(),
-          class: '',
         }) satisfies NoneSortableTableColumn<T>,
-    ),
-);
+    );
+
+  if (get(expandable)) {
+    return [
+      ...data,
+      {
+        key: 'expand',
+        sortable: false,
+      },
+    ];
+  }
+
+  return data;
+});
 
 const selectedData = computed<T[IdType][] | undefined>({
   get() {
@@ -224,6 +255,8 @@ const selectedData = computed<T[IdType][] | undefined>({
 });
 
 const rowIdentifier = computed(() => props.rowAttr);
+
+const expandable = computed(() => props.expanded && slots['expanded-item']);
 
 const internalPaginationState: Ref<TablePaginationData | undefined> = ref();
 
@@ -427,6 +460,15 @@ const indeterminate = computed(() => {
 
 const noData = computed(() => get(filtered).length === 0);
 
+const colspan = computed(() => {
+  let columnLength = get(columns).length;
+  if (get(selectedData)) {
+    columnLength++;
+  }
+
+  return columnLength;
+});
+
 const isSortedBy = (key: ColumnName<T>) => key in get(sortedMap);
 
 const getSortIndex = (key: ColumnName<T>) => {
@@ -446,6 +488,36 @@ const isSelected = (identifier: T[IdType]) => {
   }
 
   return selection.includes(identifier);
+};
+
+const isExpanded = (identifier: T[IdType]) => {
+  const { expanded } = props;
+  if (!expanded?.length) {
+    return false;
+  }
+
+  return expanded.some((data) => data[props.rowAttr] === identifier);
+};
+
+const onToggleExpand = (row: T) => {
+  const { expanded } = props;
+  if (!expanded) {
+    return;
+  }
+
+  const key = props.rowAttr;
+  const rowExpanded = isExpanded(row[key]);
+
+  if (props.singleExpand) {
+    return emit('update:expanded', rowExpanded ? [] : [row]);
+  }
+
+  return emit(
+    'update:expanded',
+    rowExpanded
+      ? expanded.filter((item) => item[key] !== row[key])
+      : [...expanded, row],
+  );
 };
 
 /**
@@ -649,11 +721,7 @@ const slots = useSlots();
               { [css.thead__loader_linear]: !noData },
             ]"
           >
-            <th
-              scope="col"
-              :class="css.progress"
-              :colspan="columns.length + (selectedData ? 1 : 0)"
-            >
+            <th scope="col" :class="css.progress" :colspan="colspan">
               <div :class="css.progress__wrapper">
                 <Progress
                   variant="indeterminate"
@@ -665,43 +733,69 @@ const slots = useSlots();
           </tr>
         </thead>
         <tbody :class="[css.tbody, { [css['tbody--striped']]: striped }]">
-          <tr
-            v-for="(row, index) in filtered"
-            :key="index"
-            :class="[
-              css.tr,
-              { [css.tr__selected]: isSelected(row[rowIdentifier]) },
-            ]"
-          >
-            <td v-if="selectedData" :class="css.checkbox">
-              <Checkbox
-                :model-value="isSelected(row[rowIdentifier])"
-                hide-details
-                color="primary"
-                :data-cy="`table-toggle-check-${index}`"
-                @update:model-value="onSelect($event, row[rowIdentifier])"
-              />
-            </td>
-
-            <td
-              v-for="(column, subIndex) in columns"
-              :key="subIndex"
+          <template v-for="(row, index) in filtered" :key="index">
+            <tr
               :class="[
-                css.td,
-                column.cellClass,
-                css[`align__${column.align ?? 'start'}`],
+                css.tr,
+                { [css.tr__selected]: isSelected(row[rowIdentifier]) },
               ]"
             >
-              <slot
-                :name="`item.${column.key.toString()}`"
-                :column="column"
-                :row="row"
-                :index="index"
+              <td v-if="selectedData" :class="css.checkbox">
+                <Checkbox
+                  :model-value="isSelected(row[rowIdentifier])"
+                  hide-details
+                  color="primary"
+                  :data-cy="`table-toggle-check-${index}`"
+                  @update:model-value="onSelect($event, row[rowIdentifier])"
+                />
+              </td>
+
+              <td
+                v-for="(column, subIndex) in columns"
+                :key="subIndex"
+                :class="[
+                  css.td,
+                  column.cellClass,
+                  css[`align__${column.align ?? 'start'}`],
+                ]"
               >
-                {{ row[column.key as keyof T] ?? '' }}
-              </slot>
-            </td>
-          </tr>
+                <slot
+                  v-if="column.key.toString() === 'expand'"
+                  :name="`item.${column.key.toString()}`"
+                  :column="column"
+                  :row="row"
+                  :index="index"
+                >
+                  <ExpandButton
+                    v-if="!slots['item.expand']"
+                    :expanded="isExpanded(row[rowIdentifier])"
+                    @click="onToggleExpand(row)"
+                  />
+                </slot>
+                <slot
+                  v-else
+                  :name="`item.${column.key.toString()}`"
+                  :column="column"
+                  :row="row"
+                  :index="index"
+                >
+                  {{ row[column.key as keyof T] ?? '' }}
+                </slot>
+              </td>
+            </tr>
+
+            <tr
+              v-if="expandable"
+              :hidden="!isExpanded(row[rowIdentifier])"
+              :class="[css.tr, css.tr__expandable]"
+            >
+              <td :colspan="colspan" :class="[css.td]">
+                <slot name="expanded-item" :row="row" :index="index">
+                  expansion content placeholder
+                </slot>
+              </td>
+            </tr>
+          </template>
           <tr
             v-if="noData && empty && !loading"
             :class="[css.tr, css.tr__empty]"
@@ -715,10 +809,7 @@ const slots = useSlots();
               leave-from-class="opacity-100 translate-y-0"
               leave-to-class="opacity-0 translate-y-1"
             >
-              <td
-                :colspan="columns.length + (selectedData ? 1 : 0)"
-                :class="css.td"
-              >
+              <td :colspan="colspan" :class="css.td">
                 <slot name="no-data">
                   <div :class="css.empty">
                     <p v-if="empty.label" :class="css.empty__label">
@@ -890,14 +981,14 @@ const slots = useSlots();
       @apply divide-y divide-black/[0.12];
 
       &--striped {
-        .tr {
+        > .tr {
           &:nth-child(even) {
             @apply bg-rui-grey-50;
           }
         }
       }
 
-      .tr {
+      > .tr {
         @apply hover:bg-black/[0.04];
 
         &__selected {
@@ -907,33 +998,37 @@ const slots = useSlots();
         &__empty {
           @apply hover:bg-transparent;
         }
-      }
 
-      .td {
-        @apply p-4 text-rui-text text-body-2;
-        text-wrap: initial;
-
-        &.align__start {
-          @apply text-left rtl:text-right;
+        &__expandable {
+          @apply bg-[#f9fafb] hover:bg-[#f9fafb];
         }
 
-        &.align__center {
-          @apply text-center;
-        }
+        .td {
+          @apply p-4 text-rui-text text-body-2;
+          text-wrap: initial;
 
-        &.align__end {
-          @apply text-right rtl:text-left;
-        }
-
-        .empty {
-          @apply flex flex-col space-y-3 items-center justify-center flex-1 py-2;
-
-          &__label {
-            @apply text-body-1 font-bold text-center text-current;
+          &.align__start {
+            @apply text-left rtl:text-right;
           }
 
-          &__description {
-            @apply text-body-2 text-center text-rui-text-secondary;
+          &.align__center {
+            @apply text-center;
+          }
+
+          &.align__end {
+            @apply text-right rtl:text-left;
+          }
+
+          .empty {
+            @apply flex flex-col space-y-3 items-center justify-center flex-1 py-2;
+
+            &__label {
+              @apply text-body-1 font-bold text-center text-current;
+            }
+
+            &__description {
+              @apply text-body-2 text-center text-rui-text-secondary;
+            }
           }
         }
       }
@@ -984,21 +1079,25 @@ const slots = useSlots();
         @apply divide-white/[0.12];
 
         &--striped {
-          .tr {
+          > .tr {
             &:nth-child(even) {
               @apply bg-rui-grey-900;
             }
           }
         }
 
-        .tr {
+        > .tr {
           &__selected {
             @apply bg-rui-dark-primary/[0.08];
           }
-        }
 
-        .td {
-          @apply text-gray-400;
+          &__expandable {
+            @apply bg-[#121212] hover:bg-[#121212];
+          }
+
+          .td {
+            @apply text-gray-400;
+          }
         }
       }
     }
