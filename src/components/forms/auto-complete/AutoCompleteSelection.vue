@@ -125,22 +125,20 @@ watch([data, wrapperWidth], () => {
           :key="chip[keyProp]"
           :class="css.chip"
           :disabled="!!itemDisabledProp && chip[itemDisabledProp]"
-          :label="chip[textProp] ?? ''"
           :size="dense ? 'sm' : 'md'"
-          dismissible
-          @remove="emit('remove', chip)"
-        />
+          closeable
+          @click:close="emit('remove', chip)"
+        >
+          {{ chip[textProp] ?? '' }}
+        </Chip>
         <div
           v-if="data.length > maxChipsToRender"
           ref="more"
           :class="css.remaining"
         >
-          <Chip
-            :class="css.chip"
-            :label="`+${data.length - maxChipsToRender}`"
-            :size="dense ? 'sm' : 'md'"
-            color="secondary"
-          />
+          <Chip :class="css.chip" :size="dense ? 'sm' : 'md'" color="secondary">
+            {{ `+${data.length - maxChipsToRender}` }}
+          </Chip>
         </div>
       </div>
     </div>

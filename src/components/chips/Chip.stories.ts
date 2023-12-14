@@ -2,7 +2,7 @@ import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import Chip, { type Props as ChipProps } from '@/components/chips/Chip.vue';
 import { contextColors } from '@/consts/colors';
 
-type Props = ChipProps & { prepend: string };
+type Props = ChipProps & { prepend: string; children: string };
 
 const render: StoryFn<Props> = (args) => ({
   components: { Chip },
@@ -20,6 +20,7 @@ const render: StoryFn<Props> = (args) => ({
     <div>
     <Chip v-if="show" v-bind="args" @remove="hideShow()">
       <template #prepend v-if="args.prepend">{{ args.prepend }}</template>
+      {{ args.children }}
     </Chip>
     </div>`,
 });
@@ -30,9 +31,11 @@ const meta: Meta<Props> = {
   tags: ['autodocs'],
   render,
   argTypes: {
-    label: { control: 'text' },
+    tile: { control: 'boolean' },
+    children: { control: 'string' },
     prepend: { control: 'text' },
-    dismissible: { control: 'boolean' },
+    clickable: { control: 'boolean' },
+    closeable: { control: 'boolean' },
     disabled: { control: 'boolean' },
     size: {
       control: 'select',
@@ -60,9 +63,32 @@ type Story = StoryObj<Props>;
 
 export const Default: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'filled',
-    dismissible: false,
+    closeable: false,
+    disabled: false,
+    size: 'md',
+    color: 'grey',
+  },
+};
+
+export const Tile: Story = {
+  args: {
+    children: 'Chip',
+    tile: true,
+    variant: 'filled',
+    closeable: false,
+    disabled: false,
+    size: 'md',
+    color: 'grey',
+  },
+};
+
+export const Clickable: Story = {
+  args: {
+    children: 'Chip',
+    variant: 'filled',
+    clickable: true,
     disabled: false,
     size: 'md',
     color: 'grey',
@@ -71,9 +97,9 @@ export const Default: Story = {
 
 export const Dismissible: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'filled',
-    dismissible: true,
+    closeable: true,
     disabled: false,
     size: 'md',
     color: 'grey',
@@ -82,9 +108,9 @@ export const Dismissible: Story = {
 
 export const DismissiblePrefix: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'filled',
-    dismissible: true,
+    closeable: true,
     disabled: false,
     size: 'md',
     color: 'grey',
@@ -94,9 +120,9 @@ export const DismissiblePrefix: Story = {
 
 export const SmallDismissible: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'filled',
-    dismissible: true,
+    closeable: true,
     disabled: false,
     size: 'sm',
     color: 'grey',
@@ -105,9 +131,9 @@ export const SmallDismissible: Story = {
 
 export const SmallDismissiblePrefix: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'filled',
-    dismissible: true,
+    closeable: true,
     disabled: false,
     size: 'sm',
     color: 'grey',
@@ -117,9 +143,9 @@ export const SmallDismissiblePrefix: Story = {
 
 export const Primary: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'filled',
-    dismissible: true,
+    closeable: true,
     disabled: false,
     size: 'md',
     color: 'primary',
@@ -128,9 +154,9 @@ export const Primary: Story = {
 
 export const PrimarySmall: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'filled',
-    dismissible: true,
+    closeable: true,
     disabled: false,
     size: 'sm',
     color: 'primary',
@@ -139,9 +165,9 @@ export const PrimarySmall: Story = {
 
 export const PrimarySmallDisabled: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'filled',
-    dismissible: true,
+    closeable: true,
     disabled: true,
     size: 'sm',
     color: 'primary',
@@ -150,9 +176,9 @@ export const PrimarySmallDisabled: Story = {
 
 export const Secondary: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'filled',
-    dismissible: true,
+    closeable: true,
     disabled: false,
     size: 'md',
     color: 'secondary',
@@ -161,9 +187,9 @@ export const Secondary: Story = {
 
 export const SecondarySmall: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'filled',
-    dismissible: true,
+    closeable: true,
     disabled: false,
     size: 'sm',
     color: 'secondary',
@@ -172,9 +198,9 @@ export const SecondarySmall: Story = {
 
 export const SecondarySmallDisabled: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'filled',
-    dismissible: true,
+    closeable: true,
     disabled: true,
     size: 'sm',
     color: 'secondary',
@@ -183,9 +209,9 @@ export const SecondarySmallDisabled: Story = {
 
 export const Error: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'filled',
-    dismissible: true,
+    closeable: true,
     disabled: false,
     size: 'md',
     color: 'error',
@@ -194,9 +220,9 @@ export const Error: Story = {
 
 export const ErrorSmall: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'filled',
-    dismissible: true,
+    closeable: true,
     disabled: false,
     size: 'sm',
     color: 'error',
@@ -205,9 +231,9 @@ export const ErrorSmall: Story = {
 
 export const ErrorSmallDisabled: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'filled',
-    dismissible: true,
+    closeable: true,
     disabled: true,
     size: 'sm',
     color: 'error',
@@ -216,9 +242,9 @@ export const ErrorSmallDisabled: Story = {
 
 export const OutlinedDefault: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'outlined',
-    dismissible: false,
+    closeable: false,
     disabled: false,
     size: 'md',
     color: 'grey',
@@ -227,9 +253,9 @@ export const OutlinedDefault: Story = {
 
 export const OutlinedDismissible: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'outlined',
-    dismissible: true,
+    closeable: true,
     disabled: false,
     size: 'md',
     color: 'grey',
@@ -238,9 +264,9 @@ export const OutlinedDismissible: Story = {
 
 export const OutlinedSmallDismissible: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'outlined',
-    dismissible: true,
+    closeable: true,
     disabled: false,
     size: 'sm',
     color: 'grey',
@@ -249,9 +275,9 @@ export const OutlinedSmallDismissible: Story = {
 
 export const OutlinedPrimary: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'outlined',
-    dismissible: true,
+    closeable: true,
     disabled: false,
     size: 'md',
     color: 'primary',
@@ -260,9 +286,9 @@ export const OutlinedPrimary: Story = {
 
 export const OutlinedPrimarySmall: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'outlined',
-    dismissible: true,
+    closeable: true,
     disabled: false,
     size: 'sm',
     color: 'primary',
@@ -271,9 +297,9 @@ export const OutlinedPrimarySmall: Story = {
 
 export const OutlinedPrimarySmallDisabled: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'outlined',
-    dismissible: true,
+    closeable: true,
     disabled: true,
     size: 'sm',
     color: 'primary',
@@ -282,9 +308,9 @@ export const OutlinedPrimarySmallDisabled: Story = {
 
 export const OutlinedSecondary: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'outlined',
-    dismissible: true,
+    closeable: true,
     disabled: false,
     size: 'md',
     color: 'secondary',
@@ -293,9 +319,9 @@ export const OutlinedSecondary: Story = {
 
 export const OutlinedSecondarySmall: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'outlined',
-    dismissible: true,
+    closeable: true,
     disabled: false,
     size: 'sm',
     color: 'secondary',
@@ -304,9 +330,9 @@ export const OutlinedSecondarySmall: Story = {
 
 export const OutlinedSecondarySmallDisabled: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'outlined',
-    dismissible: true,
+    closeable: true,
     disabled: true,
     size: 'sm',
     color: 'secondary',
@@ -315,9 +341,9 @@ export const OutlinedSecondarySmallDisabled: Story = {
 
 export const OutlinedError: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'outlined',
-    dismissible: true,
+    closeable: true,
     disabled: false,
     size: 'md',
     color: 'error',
@@ -326,9 +352,9 @@ export const OutlinedError: Story = {
 
 export const OutlinedErrorPrefix: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'outlined',
-    dismissible: true,
+    closeable: true,
     disabled: false,
     size: 'md',
     color: 'error',
@@ -338,9 +364,9 @@ export const OutlinedErrorPrefix: Story = {
 
 export const OutlinedErrorSmall: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'outlined',
-    dismissible: true,
+    closeable: true,
     disabled: false,
     size: 'sm',
     color: 'error',
@@ -349,9 +375,9 @@ export const OutlinedErrorSmall: Story = {
 
 export const OutlinedErrorSmallDisabled: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'outlined',
-    dismissible: true,
+    closeable: true,
     disabled: true,
     size: 'sm',
     color: 'error',
@@ -360,9 +386,9 @@ export const OutlinedErrorSmallDisabled: Story = {
 
 export const OutlinedErrorSmallDisabledPrefixed: Story = {
   args: {
-    label: 'Chip',
+    children: 'Chip',
     variant: 'outlined',
-    dismissible: true,
+    closeable: true,
     disabled: true,
     size: 'sm',
     color: 'error',
