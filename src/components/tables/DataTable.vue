@@ -181,7 +181,7 @@ export interface Props<T, K extends keyof T> {
 }
 
 defineOptions({
-  name: 'RuiDataTableBase',
+  name: 'RuiDataTable',
 });
 
 const props = withDefaults(defineProps<Props<T, IdType>>(), {
