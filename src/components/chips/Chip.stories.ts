@@ -31,7 +31,7 @@ const meta: Meta<Props> = {
   tags: ['autodocs'],
   render,
   argTypes: {
-    label: { control: 'boolean' },
+    tile: { control: 'boolean' },
     children: { control: 'string' },
     prepend: { control: 'text' },
     clickable: { control: 'boolean' },
@@ -72,10 +72,10 @@ export const Default: Story = {
   },
 };
 
-export const Label: Story = {
+export const Tile: Story = {
   args: {
     children: 'Chip',
-    label: true,
+    tile: true,
     variant: 'filled',
     closeable: false,
     disabled: false,

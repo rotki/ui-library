@@ -7,7 +7,7 @@ import Icon from '@/components/icons/Icon.vue';
 import { type RuiIcons } from '~/src';
 
 export interface Props {
-  label?: boolean;
+  tile?: boolean;
   clickable?: boolean;
   closeable?: boolean;
   disabled?: boolean;
@@ -78,7 +78,7 @@ const style: ComputedRef<Partial<StyleValue>> = computed(() => {
       css[variant ?? ''],
       {
         [css.disabled]: disabled,
-        [css.label]: label,
+        [css.tile]: tile,
         [css.readonly]: !clickable,
       },
     ]"
@@ -117,7 +117,7 @@ const style: ComputedRef<Partial<StyleValue>> = computed(() => {
   @apply inline-flex items-center justify-between rounded-full px-1.5 py-[0.25rem] transition-all cursor-default;
   @apply max-w-full truncate;
 
-  &.label {
+  &.tile {
     @apply rounded-sm;
   }
 
