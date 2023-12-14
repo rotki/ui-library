@@ -105,7 +105,7 @@ const hasHeadContent = computed(() => !!slots.header || !!slots.subheader);
   }
 
   .footer {
-    @apply py-2 px-1 flex space-x-2 items-center justify-start mt-auto;
+    @apply p-4 pt-2 flex space-x-2 items-center justify-start mt-auto;
   }
 
   &.flat {
