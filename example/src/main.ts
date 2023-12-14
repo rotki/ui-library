@@ -11,6 +11,7 @@ import {
   RiAlignJustify,
   RiAlignLeft,
   RiAlignRight,
+  RiArrowDownCircleLine,
   RiArrowDownSLine,
   RiArrowLeftLine,
   RiArrowLeftSLine,
@@ -56,6 +57,7 @@ app.use(RuiPlugin, {
     RiArrowRightSLine,
     RiArrowUpSLine,
     RiArrowDownSLine,
+    RiArrowDownCircleLine,
   ],
 });
 

@@ -172,6 +172,7 @@ const onLast = () => {
   .indicator {
     @apply text-rui-text text-caption;
   }
+
   .navigation {
     @apply flex items-center;
   }
