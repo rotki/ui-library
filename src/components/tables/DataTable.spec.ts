@@ -279,4 +279,23 @@ describe('DataTable', () => {
         .exists(),
     ).toBeTruthy();
   });
+
+  it('sticky header behaves as expected', async () => {
+    const wrapper = createWrapper({
+      props: {
+        rows: data,
+        rowAttr: 'id',
+        cols: columns,
+        modelValue: [],
+        stickyHeader: true,
+        stickyOffset: 40,
+      },
+    });
+
+    expect(wrapper.find('thead[data-id=head-clone]').exists()).toBeTruthy();
+
+    await wrapper.setProps({ stickyHeader: false });
+
+    expect(wrapper.find('thead[data-id=head-clone]').exists()).toBeFalsy();
+  });
 });

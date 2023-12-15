@@ -449,4 +449,22 @@ export const SingleExpandable: Story = {
   },
 };
 
+export const StickyHeader: Story = {
+  args: {
+    rows: data,
+    modelValue: [],
+    cols: columns,
+    outlined: true,
+    pagination: { limit: 5, page: 1, total: 50 },
+    sort: [
+      { column: 'name', direction: 'asc' },
+      { column: 'email', direction: 'asc' },
+    ],
+    expanded: [],
+    singleExpand: true,
+    stickyHeader: true,
+    stickyOffset: 40,
+  },
+};
+
 export default meta;
