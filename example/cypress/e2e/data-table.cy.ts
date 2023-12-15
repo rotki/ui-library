@@ -195,4 +195,35 @@ describe('DataTable', () => {
       expect(classes).to.contain('_tr__expander_button_open');
     });
   });
+
+  it.only('checks for data tables with sticky header', () => {
+    cy.get('div[data-cy=table-expandable-0]').as('sticky');
+
+    cy.get('@sticky')
+      .find('> div > table > tbody > tr:nth-child(5)')
+      .as('row4');
+
+    cy.get('@sticky')
+      .find('> div > table thead[data-id=head-clone]')
+      .should('exist');
+
+    cy.get('@row4')
+      .scrollIntoView()
+      .get('@sticky')
+      .find('> div > table thead[data-id=head-main]')
+      .should((thead) => {
+        const classes = Cypress.$(thead).attr('class');
+        expect(classes).to.contain('_sticky__header_');
+        expect(classes).to.contain('_stick__top_');
+      });
+
+    cy.window()
+      .scrollTo('top')
+      .get('@sticky')
+      .find('> div > table thead[data-id=head-main][class*=_sticky__header_]')
+      .should((thead) => {
+        const classes = Cypress.$(thead).attr('class');
+        expect(classes).to.contain('_stick__top_');
+      });
+  });
 });

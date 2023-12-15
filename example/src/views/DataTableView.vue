@@ -211,6 +211,8 @@ const emptyTables = ref<
         label: 'No item found',
         description: 'No user found',
       },
+      stickyHeader: true,
+      stickyOffset: 72,
     },
   },
   {
@@ -252,6 +254,8 @@ const emptyTables = ref<
       outlined: true,
       sort: [{ column: 'name', direction: 'asc' }],
       pagination: { limit: 5, page: 1, total: 5 },
+      stickyHeader: true,
+      stickyOffset: 72,
     },
   },
 ]);
@@ -273,6 +277,8 @@ const expandableTables = ref<
       sort: [{ column: 'name', direction: 'asc' }],
       pagination: { limit: 5, page: 1, total: 5 },
       expanded: [],
+      stickyHeader: true,
+      stickyOffset: 72,
     },
   },
   {
@@ -334,6 +340,8 @@ const datatables = ref<
       cols: columns,
       outlined: true,
       sort: [{ column: 'name', direction: 'asc' }],
+      stickyHeader: true,
+      stickyOffset: 72,
     },
   },
   {
@@ -791,6 +799,7 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
                       'pagination',
                       'sort',
                       'expanded',
+                      'stickyHeader',
                     ])
                   "
                   :data-cy="`table-expanded-${i}`"
