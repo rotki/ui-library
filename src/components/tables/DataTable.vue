@@ -178,6 +178,11 @@ export interface Props<T, K extends keyof T> {
    * make expansion work like accordion
    */
   singleExpand?: boolean;
+  /**
+   * make expansion work like accordion
+   */
+  stickyHeader?: boolean;
+  stickyOffset?: number;
 }
 
 defineOptions({
@@ -203,6 +208,8 @@ const props = withDefaults(defineProps<Props<T, IdType>>(), {
   rounded: 'md',
   expanded: undefined,
   singleExpand: false,
+  stickyHeader: false,
+  stickyOffset: 0,
 });
 
 const emit = defineEmits<{
@@ -214,6 +221,8 @@ const emit = defineEmits<{
 }>();
 
 const css = useCssModule();
+const { stickyOffset } = toRefs(props);
+const { stick, table, tableScroller } = useStickyTableHeader(stickyOffset);
 
 const getKeys = <T extends object>(t: T) =>
   Object.keys(t) as SortableColumnName<T>[];
@@ -635,9 +644,19 @@ const slots = useSlots();
       { [css.outlined]: outlined },
     ]"
   >
-    <div :class="css.scroller">
-      <table :class="[css.table, { [css.dense]: dense }]" aria-label="">
-        <thead :class="css.thead">
+    <div ref="tableScroller" :class="css.scroller">
+      <table
+        ref="table"
+        :class="[css.table, { [css.dense]: dense }]"
+        aria-label=""
+      >
+        <thead
+          data-id="head-main"
+          :class="[
+            css.thead,
+            { [css.sticky__header]: stickyHeader, [css.stick__top]: stick },
+          ]"
+        >
           <tr :class="css.tr">
             <th v-if="selectedData" scope="col" :class="css.checkbox">
               <Checkbox
@@ -730,6 +749,26 @@ const slots = useSlots();
                 />
               </div>
             </th>
+          </tr>
+        </thead>
+        <thead v-if="stickyHeader" :class="css.thead" data-id="head-clone">
+          <tr :class="css.tr">
+            <th v-if="selectedData" scope="col" :class="css.checkbox" />
+
+            <th
+              v-for="(column, index) in columns"
+              :key="index"
+              scope="col"
+              :class="[
+                css.th,
+                column.class,
+                css[`align__${column.align ?? 'start'}`],
+                {
+                  capitalize: !cols,
+                  [css.sortable]: column.sortable,
+                },
+              ]"
+            />
           </tr>
         </thead>
         <tbody :class="[css.tbody, { [css['tbody--striped']]: striped }]">
@@ -882,14 +921,29 @@ const slots = useSlots();
 
   .scroller {
     @apply overflow-x-auto overflow-y-hidden;
+    clip-path: inset(0 0 0 0);
   }
 
   .table {
-    @apply min-w-full table-fixed divide-y divide-black/[0.12] whitespace-nowrap mx-auto my-0;
-    max-width: fit-content;
+    @apply min-w-full table-fixed divide-y divide-black/[0.12] whitespace-nowrap mx-auto my-0 max-w-fit relative;
 
     .thead {
       @apply divide-y divide-black/[0.12];
+
+      &.sticky__header {
+        @apply top-0 z-10 absolute;
+
+        &.stick__top {
+          @apply fixed;
+
+          tr {
+            th {
+              @apply bg-white border-b border-b-black/[0.12];
+            }
+          }
+        }
+      }
+
       .tr {
         .th {
           @apply p-4;
@@ -1068,6 +1122,13 @@ const slots = useSlots();
       @apply divide-gray-700;
       .thead {
         @apply divide-y divide-gray-700;
+
+        &.sticky__header.stick__top {
+          th {
+            @apply bg-[#121212] border-b border-b-gray-700;
+          }
+        }
+
         .tr {
           .th {
             @apply text-white;
