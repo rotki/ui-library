@@ -1,12 +1,16 @@
 import { createApp } from 'vue';
-import { RuiPlugin } from '../src';
+import { createRui } from '../src';
 import * as Icons from '../src/all-icons';
+
+const RuiPlugin = createRui({
+  theme: {
+    icons: Object.values(Icons),
+  }
+})
 
 const app = createApp({ template: '<div />' });
 app
-  .use(RuiPlugin, {
-    icons: Object.values(Icons),
-  })
+  .use(RuiPlugin)
   .mount(null);
 
 export const vueInstance = app;

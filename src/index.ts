@@ -22,10 +22,19 @@ export * from '@/components';
 
 export { StepperState };
 
-export const RuiPlugin = {
-  install: (app: App, options?: InitThemeOptions) => {
+export interface RuiOptions {
+  theme?: InitThemeOptions;
+}
+
+export function createRui(options: RuiOptions = {}) {
+  const { theme } = options;
+  const install = (_app: App) => {
     const { registerIcons } = useIcons();
-    registerIcons(options?.icons || []);
-    useRotkiTheme().init({ ...options });
-  },
-};
+    registerIcons(theme?.icons || []);
+    useRotkiTheme().init({ ...theme });
+  };
+
+  return {
+    install,
+  };
+}

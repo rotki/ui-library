@@ -27,11 +27,11 @@ import '@fontsource/roboto/latin.css';
 To use the library you must install the library plugin:
 
 ```typescript
-import { RuiPlugin } from "@rotki/ui-library";
+import { createRui } from "@rotki/ui-library";
 
 ...
-
-app.use(RuiPlugin, options);
+const RuiPlugin = createRui(options);
+app.use(RuiPlugin);
 ```
 
 ### Using the components
@@ -72,11 +72,14 @@ switchThemeScheme(ThemeMode.dark);
 
 You need to specify which icons you want to enable, when installing the RuiPlugin.
 ```typescript
-import { Ri4kFill, Ri4kLine, RuiPlugin } from '@rotki/ui-library';
+import { Ri4kFill, Ri4kLine, createRui } from '@rotki/ui-library';
 
-app.use(RuiPlugin, {
-  icons: [Ri4kFill, Ri4kLine]
-});
+const RuiPlugin = createRui({
+  theme: {
+    icons: [Ri4kFill, Ri4kLine]
+  }
+})
+app.use(RuiPlugin);
 ```
 
 ```vue
