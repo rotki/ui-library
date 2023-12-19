@@ -2,6 +2,11 @@
 import { type App } from 'vue';
 import { useRotkiTheme } from '@/composables/theme';
 import { StepperState } from '@/types/stepper';
+import {
+  type TableOptions,
+  TableSymbol,
+  createTableDefaults,
+} from '@/composables/defaults/table';
 import type { InitThemeOptions } from '@/types/theme';
 import '@/style.scss';
 
@@ -24,17 +29,28 @@ export { StepperState };
 
 export interface RuiOptions {
   theme?: InitThemeOptions;
+  defaults?: {
+    table?: TableOptions;
+  };
 }
 
 export function createRui(options: RuiOptions = {}) {
   const { theme } = options;
-  const install = (_app: App) => {
+
+  const defaults = Object.freeze({
+    table: createTableDefaults(options.defaults?.table),
+  });
+
+  const install = (app: App) => {
     const { registerIcons } = useIcons();
     registerIcons(theme?.icons || []);
     useRotkiTheme().init({ ...theme });
+
+    app.provide(TableSymbol, defaults.table);
   };
 
   return {
     install,
+    defaults,
   };
 }

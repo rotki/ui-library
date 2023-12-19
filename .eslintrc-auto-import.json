@@ -300,6 +300,9 @@
     "watchThrottled": true,
     "watchTriggerable": true,
     "watchWithFilter": true,
-    "whenever": true
+    "whenever": true,
+    "TableSymbol": true,
+    "createTableDefaults": true,
+    "useTable": true
   }
 }

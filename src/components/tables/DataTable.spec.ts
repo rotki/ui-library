@@ -1,6 +1,9 @@
+/* eslint-disable max-lines */
 import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import DataTable, { type TableColumn } from '@/components/tables/DataTable.vue';
+import TablePagination from '@/components/tables/TablePagination.vue';
+import { RuiSimpleSelect } from '~/src';
 
 type User = {
   id: number;
@@ -11,7 +14,15 @@ type User = {
 
 const createWrapper = (
   options?: ComponentMountingOptions<typeof DataTable<User>>,
-) => mount(DataTable<User>, options);
+) =>
+  mount(DataTable<User>, {
+    ...options,
+    global: {
+      provide: {
+        [TableSymbol.valueOf()]: createTableDefaults(),
+      },
+    },
+  });
 
 describe('DataTable', () => {
   const data: User[] = [
@@ -297,5 +308,155 @@ describe('DataTable', () => {
     await wrapper.setProps({ stickyHeader: false });
 
     expect(wrapper.find('thead[data-id=head-clone]').exists()).toBeFalsy();
+  });
+
+  describe('global settings', () => {
+    it('should follow global settings', async () => {
+      const itemsPerPage = ref(25);
+      const wrapperComponent = {
+        template:
+          "<div><DataTable :rows='[]' row-attr='id'/><DataTable :rows='[]' row-attr='id'/></div>",
+      };
+
+      const wrapper = mount(wrapperComponent, {
+        global: {
+          components: {
+            DataTable,
+          },
+          provide: {
+            [TableSymbol.valueOf()]: createTableDefaults({
+              itemsPerPage,
+              globalItemsPerPage: true,
+            }),
+          },
+        },
+      });
+
+      await nextTick();
+
+      const paginationInstances = wrapper.findAllComponents(TablePagination);
+      expect(paginationInstances).toHaveLength(2);
+
+      paginationInstances.forEach((instance) => {
+        expect(instance.vm.modelValue).toMatchObject(
+          expect.objectContaining({ limit: 25 }),
+        );
+      });
+
+      const select = paginationInstances[0].findComponent(RuiSimpleSelect);
+      select.vm.$emit('update:model-value', 10);
+
+      await nextTick();
+
+      paginationInstances.forEach((instance) => {
+        expect(instance.vm.modelValue).toMatchObject(
+          expect.objectContaining({ limit: 10 }),
+        );
+      });
+
+      expect(get(itemsPerPage)).toBe(10);
+    });
+
+    it('should respect local setting override', async () => {
+      const itemsPerPage = ref(25);
+      const wrapperComponent = {
+        template:
+          "<div><DataTable :rows='[]' row-attr='id'/><DataTable :globalItemsPerPage='false' :rows='[]' row-attr='id'/></div>",
+      };
+
+      const wrapper = mount(wrapperComponent, {
+        global: {
+          components: {
+            DataTable,
+          },
+          provide: {
+            [TableSymbol.valueOf()]: createTableDefaults({
+              itemsPerPage,
+              globalItemsPerPage: true,
+            }),
+          },
+        },
+      });
+
+      await nextTick();
+
+      const paginate = wrapper.findAllComponents(TablePagination);
+      expect(paginate).toHaveLength(2);
+
+      expect(paginate[0].vm.modelValue).toMatchObject(
+        expect.objectContaining({ limit: 25 }),
+      );
+      expect(paginate[1].vm.modelValue).toMatchObject(
+        expect.objectContaining({ limit: 10 }),
+      );
+
+      const globalSelect = paginate[0].findComponent(RuiSimpleSelect);
+      const localSelect = paginate[1].findComponent(RuiSimpleSelect);
+      globalSelect.vm.$emit('update:model-value', 10);
+      localSelect.vm.$emit('update:model-value', 25);
+
+      await nextTick();
+
+      expect(paginate[0].vm.modelValue).toMatchObject(
+        expect.objectContaining({ limit: 10 }),
+      );
+
+      expect(paginate[1].vm.modelValue).toMatchObject(
+        expect.objectContaining({ limit: 25 }),
+      );
+
+      expect(get(itemsPerPage)).toBe(10);
+    });
+
+    it('should follow single global setting', async () => {
+      const itemsPerPage = ref(25);
+      const wrapperComponent = {
+        template:
+          "<div><DataTable :rows='[]' row-attr='id'/><DataTable :globalItemsPerPage='true' :rows='[]' row-attr='id'/></div>",
+      };
+
+      const wrapper = mount(wrapperComponent, {
+        global: {
+          components: {
+            DataTable,
+          },
+          provide: {
+            [TableSymbol.valueOf()]: createTableDefaults({
+              itemsPerPage,
+            }),
+          },
+        },
+      });
+
+      await nextTick();
+
+      const paginate = wrapper.findAllComponents(TablePagination);
+      expect(paginate).toHaveLength(2);
+
+      expect(paginate[0].vm.modelValue).toMatchObject(
+        expect.objectContaining({ limit: 10 }),
+      );
+
+      expect(paginate[1].vm.modelValue).toMatchObject(
+        expect.objectContaining({ limit: 25 }),
+      );
+
+      const globalSelect = paginate[0].findComponent(RuiSimpleSelect);
+      const localSelect = paginate[1].findComponent(RuiSimpleSelect);
+      globalSelect.vm.$emit('update:model-value', 25);
+      localSelect.vm.$emit('update:model-value', 10);
+
+      await nextTick();
+
+      expect(paginate[0].vm.modelValue).toMatchObject(
+        expect.objectContaining({ limit: 25 }),
+      );
+
+      expect(paginate[1].vm.modelValue).toMatchObject(
+        expect.objectContaining({ limit: 10 }),
+      );
+
+      expect(get(itemsPerPage)).toBe(10);
+    });
   });
 });

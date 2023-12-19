@@ -183,6 +183,11 @@ export interface Props<T, K extends keyof T> {
    */
   stickyHeader?: boolean;
   stickyOffset?: number;
+  /**
+   * Affects how the items per page work across the app.
+   * When true, changing the items per page setting in one table will affect other tables.
+   */
+  globalItemsPerPage?: boolean;
 }
 
 defineOptions({
@@ -210,6 +215,7 @@ const props = withDefaults(defineProps<Props<T, IdType>>(), {
   singleExpand: false,
   stickyHeader: false,
   stickyOffset: 0,
+  globalItemsPerPage: undefined,
 });
 
 const emit = defineEmits<{
@@ -223,6 +229,14 @@ const emit = defineEmits<{
 const css = useCssModule();
 const { stickyOffset } = toRefs(props);
 const { stick, table, tableScroller } = useStickyTableHeader(stickyOffset);
+
+const tableDefaults = useTable();
+const globalItemsPerPageSettings = computed(() => {
+  if (props.globalItemsPerPage !== undefined) {
+    return props.globalItemsPerPage;
+  }
+  return get(tableDefaults.globalItemsPerPage);
+});
 
 const getKeys = <T extends object>(t: T) =>
   Object.keys(t) as SortableColumnName<T>[];
@@ -273,6 +287,25 @@ const pagination = computed(() => props.pagination);
 
 watchImmediate(pagination, (pagination) => {
   set(internalPaginationState, pagination);
+});
+
+/**
+ * Keeps the global items per page in sync with the internal state.
+ */
+watch(internalPaginationState, (pagination) => {
+  if (pagination?.limit && get(globalItemsPerPageSettings)) {
+    set(tableDefaults.itemsPerPage, pagination.limit);
+  }
+});
+
+watch(tableDefaults.itemsPerPage, (itemsPerPage) => {
+  if (!get(globalItemsPerPageSettings)) {
+    return;
+  }
+  set(paginationData, {
+    ...get(paginationData),
+    limit: itemsPerPage,
+  });
 });
 
 /**
@@ -631,6 +664,17 @@ watch(search, () => {
   if (pagination) {
     pagination.page = 1;
   }
+});
+
+onMounted(() => {
+  if (!get(globalItemsPerPageSettings)) {
+    return;
+  }
+
+  set(paginationData, {
+    ...get(paginationData),
+    limit: get(tableDefaults.itemsPerPage),
+  });
 });
 
 const slots = useSlots();
