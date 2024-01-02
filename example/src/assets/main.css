@@ -1,8 +1,12 @@
 @import './style.css';
 
 @layer base {
+  html {
+    @apply overflow-hidden;
+  }
+
   body {
-    @apply bg-white text-black;
+    @apply bg-white text-black h-screen overflow-y-auto overflow-x-hidden;
   }
 
   .dark body {

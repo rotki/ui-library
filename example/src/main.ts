@@ -3,7 +3,7 @@ import '@rotki/ui-library/style.css';
 import '@fontsource/roboto/latin.css';
 
 import { createApp } from 'vue';
-import { createPinia } from 'pinia';
+import { createPinia, storeToRefs } from 'pinia';
 import {
   RiAddFill,
   RiAlertLine,
@@ -30,8 +30,12 @@ import {
 } from '@rotki/ui-library';
 import App from '@/App.vue';
 import router from '@/router';
+import { useCounterStore } from '@/stores/counter';
 
 const app = createApp(App);
+
+app.use(createPinia());
+const { itemsPerPage } = storeToRefs(useCounterStore());
 const RuiPlugin = createRui({
   theme: {
     icons: [
@@ -58,9 +62,14 @@ const RuiPlugin = createRui({
       RiArrowDownCircleLine,
     ],
   },
+  defaults: {
+    table: {
+      itemsPerPage,
+      globalItemsPerPage: false,
+    },
+  },
 });
 
-app.use(createPinia());
 app.use(router);
 app.use(RuiPlugin);
 

@@ -9,5 +9,7 @@ export const useCounterStore = defineStore('counter', () => {
     count.value++;
   }
 
-  return { count, doubleCount, increment };
+  const itemsPerPage = ref(15);
+
+  return { count, doubleCount, increment, itemsPerPage };
 });
