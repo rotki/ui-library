@@ -14,6 +14,7 @@ export interface StepperStep {
   title?: string;
   description?: string;
   state?: StepperState;
+  loading?: boolean;
 }
 
 export const StepperOrientation = {

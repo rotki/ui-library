@@ -6,6 +6,7 @@ import {
 } from '@/types/stepper';
 import StepperIcon from '@/components/steppers/StepperIcon.vue';
 import StepperCustomIcon from '@/components/steppers/StepperCustomIcon.vue';
+import Progress from '@/components/progress/Progress.vue';
 
 export interface Props {
   step?: number;
@@ -23,7 +24,7 @@ defineOptions({
 });
 
 const props = withDefaults(defineProps<Props>(), {
-  step: 0,
+  step: undefined,
   iconTop: false,
   custom: false,
   titleClass: '',
@@ -36,14 +37,16 @@ const css = useCssModule();
 
 const { custom, steps, step, orientation, keepActiveVisible } = toRefs(props);
 
-// automatically set step state to custom stepper.
+// automatically set step state to stepper.
 const renderedStep = computed(() => {
-  if (!get(custom)) {
-    return get(steps);
+  const currentStep = get(step);
+  const stepsVal = get(steps);
+
+  if (!isDefined(currentStep)) {
+    return stepsVal;
   }
 
-  const currentStep = get(step);
-  return get(steps).map((text, index) => {
+  return stepsVal.map((text, index) => {
     let stepStatus: StepperState = StepperState.inactive;
 
     if (index + 1 === currentStep) {
@@ -95,7 +98,7 @@ watch(step, () => {
     class="no-scrollbar overflow-auto"
   >
     <template
-      v-for="({ title, description, state }, index) in renderedStep"
+      v-for="({ title, description, state, loading }, index) in renderedStep"
       :key="index"
     >
       <hr v-if="index > 0" :class="css.divider" />
@@ -109,8 +112,23 @@ watch(step, () => {
         ]"
       >
         <slot name="icon" v-bind="{ state, index: index + 1 }">
-          <StepperCustomIcon v-if="custom" :index="index + 1" :state="state" />
-          <StepperIcon v-else :index="index + 1" :state="state" />
+          <div class="relative flex py-2">
+            <StepperCustomIcon
+              v-if="custom"
+              :index="index + 1"
+              :state="state"
+            />
+            <StepperIcon v-else :index="index + 1" :state="state" />
+            <Progress
+              v-if="loading"
+              class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
+              size="32"
+              variant="indeterminate"
+              circular
+              thickness="2"
+              color="primary"
+            />
+          </div>
         </slot>
         <div v-if="title || description" :class="css.label">
           <span

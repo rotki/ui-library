@@ -131,6 +131,17 @@ export const TitleOnly: Story = {
   },
 };
 
+export const Loading: Story = {
+  args: {
+    steps: [
+      { title: 'Step', state: StepperState.done },
+      { title: 'Step', state: StepperState.active, loading: true },
+      { title: 'Step', state: StepperState.inactive },
+      { title: 'Step', state: StepperState.inactive },
+    ],
+  },
+};
+
 export const TitleOnlyAndVertical: Story = {
   args: {
     orientation: StepperOrientation.vertical,
