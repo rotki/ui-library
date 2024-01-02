@@ -32,7 +32,7 @@ const meta: Meta<PropsAndLabel> = {
     color: { control: 'select', options: contextColors },
     variant: {
       control: 'select',
-      options: ['default', 'outlined', 'text', 'fab'],
+      options: ['default', 'outlined', 'text', 'fab', 'list'],
       table: { category: 'Shape' },
     },
     rounded: { control: 'boolean', table: { category: 'Shape' } },
@@ -193,6 +193,13 @@ export const ErrorOutlinedDisabled: Story = {
     color: 'error',
     variant: 'outlined',
     disabled: true,
+  },
+};
+
+export const List: Story = {
+  args: {
+    label: 'List',
+    variant: 'list',
   },
 };
 
