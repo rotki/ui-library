@@ -106,6 +106,11 @@ const router = createRouter({
       name: 'badges',
       component: () => import('@/views/BadgeView.vue'),
     },
+    {
+      path: '/breakpoint',
+      name: 'breakpoint',
+      component: () => import('@/views/BreakpointView.vue'),
+    },
   ],
 });
 
