@@ -1,7 +1,7 @@
 node_modules
 dist
 auto-imports.d.ts
-all-icons.ts
+src/icons
 tests/coverage
 tests/html
 storybook-static

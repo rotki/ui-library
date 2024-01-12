@@ -10,7 +10,7 @@ import {
 import type { InitThemeOptions } from '@/types/theme';
 import '@/style.scss';
 
-export * from '@/all-icons';
+export * from '@/icons';
 
 export {
   type InitThemeOptions,

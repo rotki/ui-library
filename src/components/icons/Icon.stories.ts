@@ -1,5 +1,5 @@
 import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
-import * as Icons from '@/all-icons';
+import * as Icons from '@/icons';
 import { contextColors } from '@/consts/colors';
 import { default as Icon, type Props } from './Icon.vue';
 

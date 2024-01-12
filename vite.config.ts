@@ -7,7 +7,7 @@ import fg from 'fast-glob';
 const entryPoints = [
   'src/components/index.ts',
   'src/composables/index.ts',
-  'src/all-icons.ts',
+  'src/icons/*',
   'src/theme/index.ts',
   'src/index.ts',
 ];

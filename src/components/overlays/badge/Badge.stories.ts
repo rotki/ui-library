@@ -2,7 +2,7 @@ import { objectOmit } from '@vueuse/shared';
 import Icon from '@/components/icons/Icon.vue';
 import Button from '@/components/buttons/button/Button.vue';
 import { contextColors } from '@/consts/colors';
-import * as Icons from '@/all-icons';
+import * as Icons from '@/icons';
 import Badge, { type Props as BadgeProps } from './Badge.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 

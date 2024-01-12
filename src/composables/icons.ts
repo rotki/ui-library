@@ -30,7 +30,7 @@ import {
   RiInformationLine,
   RiMoreFill,
   RiRadioButtonLine,
-} from '@/all-icons';
+} from '@/icons';
 
 export const useIcons = createGlobalState(() => {
   const requiredIcons: GeneratedIcon[] = [

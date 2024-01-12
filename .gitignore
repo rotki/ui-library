@@ -151,5 +151,5 @@ auto-imports.d.ts
 .DS_Store
 storybook-static
 
-all-icons.ts
+src/icons
 tests/html

@@ -65,7 +65,7 @@
   },
   "scripts": {
     "build:prod": "node scripts/dist-build.cjs",
-    "build": "vite build",
+    "build": "pnpm run generate-icons && vite build",
     "build:storybook": "STORYBOOK=true storybook build",
     "build:tailwind": "tailwindcss -o dist/style.css --minify",
     "build:types": "vue-tsc -p tsconfig.build.json",

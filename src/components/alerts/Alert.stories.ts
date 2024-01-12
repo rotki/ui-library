@@ -1,6 +1,6 @@
 import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { contextColors } from '@/consts/colors';
-import * as Icons from '@/all-icons';
+import * as Icons from '@/icons';
 import { default as Alert, type Props } from './Alert.vue';
 
 const render: StoryFn<Props> = (args) => ({
