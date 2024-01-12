@@ -3,7 +3,10 @@ import { type Ref } from 'vue';
 /**
  * Setup sticky table header
  */
-export const useStickyTableHeader = (offsetTop: Ref<number> = ref(0)) => {
+export const useStickyTableHeader = (
+  offsetTop: Ref<number> = ref(0),
+  sticky: Ref<boolean> = ref(false),
+) => {
   const table: Ref<HTMLTableElement | null> = ref(null);
   const tableScroller: Ref<HTMLElement | null> = ref(null);
   const stick: Ref<boolean> = ref(false);
@@ -15,10 +18,10 @@ export const useStickyTableHeader = (offsetTop: Ref<number> = ref(0)) => {
     row: ':scope > tbody > tr:not([hidden])',
   };
 
-  const updateHeaderCellWidth = () => {
+  const watchCellWidth = () => {
     const root = get(table);
 
-    if (!root) {
+    if (!get(sticky) || !root) {
       return;
     }
 
@@ -28,22 +31,29 @@ export const useStickyTableHeader = (offsetTop: Ref<number> = ref(0)) => {
 
     const head: HTMLHeadElement | null =
       root.querySelector(selectors.head) ?? null;
+
     const columns: NodeListOf<HTMLElement> | undefined = head?.querySelectorAll(
       selectors.th,
     );
+
     const clonedColumns: NodeListOf<HTMLElement> | undefined =
       theadClone?.querySelectorAll(selectors.th);
 
-    columns?.forEach((column: HTMLElement, i: number) => {
-      const cellRect = clonedColumns?.item(i)?.getBoundingClientRect();
-      column.style.width = `${cellRect?.width ?? 0}px`;
+    clonedColumns?.forEach((th: HTMLElement, i: number) => {
+      useResizeObserver(th, (entries) => {
+        const cellRect = entries[0].target.getBoundingClientRect();
+        const column = columns?.item(i);
+        if (column) {
+          column.style.width = `${cellRect.width}px`;
+        }
+      });
     });
   };
 
-  const addStickyClass = () => {
+  const toggleStickyClass = () => {
     const root = get(table);
 
-    if (!root) {
+    if (!get(sticky) || !root) {
       return;
     }
 
@@ -73,7 +83,6 @@ export const useStickyTableHeader = (offsetTop: Ref<number> = ref(0)) => {
     const top = get(offsetTop) ?? 0;
 
     head.style.width = `${theadWidth}px`;
-    theadClone.style.height = `${headRect.height}px`;
 
     const rows = root.querySelectorAll(selectors.row);
 
@@ -98,29 +107,12 @@ export const useStickyTableHeader = (offsetTop: Ref<number> = ref(0)) => {
     }
   };
 
-  const updateHeader = () => {
-    addStickyClass();
-    updateHeaderCellWidth();
-  };
-
-  watchEffect(() => {
-    if (!get(table)?.querySelector(selectors.head)) {
-      return;
-    }
-
-    updateHeader();
-
-    const scroller = get(tableScroller);
-
-    if (scroller) {
-      useResizeObserver(get(tableScroller), updateHeader);
-    }
-  });
-
   onMounted(() => {
-    useEventListener(window, 'scroll', addStickyClass);
-    useEventListener(window, 'resize', updateHeader);
-    useEventListener(tableScroller, 'scroll', updateHeader);
+    toggleStickyClass();
+    useEventListener(tableScroller, 'scroll', toggleStickyClass);
+    useEventListener(document.body, 'scroll', toggleStickyClass);
+    useEventListener(window, 'resize', toggleStickyClass);
+    watchCellWidth();
   });
 
   return {

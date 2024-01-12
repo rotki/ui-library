@@ -127,14 +127,14 @@ const onToggleAll = (checked: boolean) => emit('select:all', checked);
 
 const isSortedBy = (key: TableColumn<T>['key']) => key in props.sortedMap;
 
-const getSortIndex = (key: TableColumn<T>['key']) => {
+const getSortIndex = (key: TableColumn<T>['key']): number => {
   const sortBy = props.sortData;
 
   if (!sortBy || !Array.isArray(sortBy) || !isSortedBy(key)) {
     return -1;
   }
 
-  return sortBy.findIndex((sort) => sort.column === key) ?? -1;
+  return sortBy.findIndex((sort) => sort.column === key);
 };
 
 const getSortDirection = (key: TableColumn<T>['key']) =>
@@ -182,7 +182,7 @@ const getSortDirection = (key: TableColumn<T>['key']) =>
         <slot :column="column" :name="`header.${column.key.toString()}`">
           <Badge
             v-if="column.sortable"
-            :value="getSortIndex(column.key) >= 0"
+            :model-value="getSortIndex(column.key) >= 0"
             :text="`${getSortIndex(column.key) + 1}`"
             color="secondary"
             size="sm"

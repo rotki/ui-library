@@ -15,3 +15,12 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands';
+
+Cypress.on('uncaught:exception', (e) => {
+  if (
+    /ResizeObserver loop completed/.test(e.message) ||
+    /ResizeObserver loop limit exceeded/.test(e.message)
+  ) {
+    return false;
+  }
+});
