@@ -1,7 +1,8 @@
 /* eslint-disable max-lines */
 import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import DataTable, { type TableColumn } from '@/components/tables/DataTable.vue';
+import { type TableColumn } from '@/components/tables/TableHead.vue';
+import DataTable from '@/components/tables/DataTable.vue';
 import TablePagination from '@/components/tables/TablePagination.vue';
 import { RuiSimpleSelect } from '~/src';
 
@@ -19,7 +20,9 @@ const createWrapper = (
     ...options,
     global: {
       provide: {
-        [TableSymbol.valueOf()]: createTableDefaults(),
+        [TableSymbol.valueOf()]: createTableDefaults({
+          limits: [5, 10, 15, 25, 50, 100, 200],
+        }),
       },
     },
   });
@@ -123,9 +126,9 @@ describe('DataTable', () => {
 
     expect(
       wrapper
-        .find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]')
+        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
         .exists(),
-    ).toBeTruthy();
+    ).toBeFalsy();
 
     await wrapper
       .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
@@ -139,9 +142,9 @@ describe('DataTable', () => {
 
     expect(
       wrapper
-        .find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]')
+        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
         .exists(),
-    ).toBeFalsy();
+    ).toBeTruthy();
   });
 
   it('multiple expand toggles correctly', async () => {
@@ -167,7 +170,7 @@ describe('DataTable', () => {
       wrapper
         .find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]')
         .exists(),
-    ).toBeTruthy();
+    ).toBeFalsy();
 
     await wrapper
       .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
@@ -183,7 +186,7 @@ describe('DataTable', () => {
 
     expect(
       wrapper
-        .find('tbody tr:not(hidden):nth-child(2) div[data-cy=expanded-content]')
+        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
         .exists(),
     ).toBeTruthy();
 
@@ -201,7 +204,7 @@ describe('DataTable', () => {
 
     expect(
       wrapper
-        .find('tbody tr:not(hidden):nth-child(4) div[data-cy=expanded-content]')
+        .find('tbody tr:nth-child(4) div[data-cy=expanded-content]')
         .exists(),
     ).toBeTruthy();
   });
@@ -228,9 +231,9 @@ describe('DataTable', () => {
 
     expect(
       wrapper
-        .find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]')
+        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
         .exists(),
-    ).toBeTruthy();
+    ).toBeFalsy();
 
     await wrapper
       .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
@@ -246,7 +249,7 @@ describe('DataTable', () => {
 
     expect(
       wrapper
-        .find('tbody tr:not(hidden):nth-child(2) div[data-cy=expanded-content]')
+        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
         .exists(),
     ).toBeTruthy();
 
@@ -258,9 +261,9 @@ describe('DataTable', () => {
 
     expect(
       wrapper
-        .find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]')
+        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
         .exists(),
-    ).toBeTruthy();
+    ).toBeFalsy();
 
     await wrapper
       .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
@@ -286,9 +289,9 @@ describe('DataTable', () => {
 
     expect(
       wrapper
-        .find('tbody tr:not(hidden):nth-child(4) div[data-cy=expanded-content]')
+        .find('tbody tr:nth-child(4) div[data-cy=expanded-content]')
         .exists(),
-    ).toBeTruthy();
+    ).toBeFalsy();
   });
 
   it('sticky header behaves as expected', async () => {
@@ -327,6 +330,7 @@ describe('DataTable', () => {
             [TableSymbol.valueOf()]: createTableDefaults({
               itemsPerPage,
               globalItemsPerPage: true,
+              limits: [5, 10, 15, 25, 50, 100, 200],
             }),
           },
         },
@@ -373,6 +377,7 @@ describe('DataTable', () => {
             [TableSymbol.valueOf()]: createTableDefaults({
               itemsPerPage,
               globalItemsPerPage: true,
+              limits: [5, 10, 15, 25, 50, 100, 200],
             }),
           },
         },
@@ -423,6 +428,7 @@ describe('DataTable', () => {
           provide: {
             [TableSymbol.valueOf()]: createTableDefaults({
               itemsPerPage,
+              limits: [5, 10, 15, 25, 50, 100, 200],
             }),
           },
         },

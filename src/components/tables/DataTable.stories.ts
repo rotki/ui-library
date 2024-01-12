@@ -4,10 +4,8 @@ import Button from '@/components/buttons/button/Button.vue';
 import TextField from '@/components/forms/text-field/TextField.vue';
 import Icon from '@/components/icons/Icon.vue';
 import Card from '@/components/cards/Card.vue';
-import DataTable, {
-  type TableColumn,
-  type Props as TableProps,
-} from './DataTable.vue';
+import DataTable, { type Props as TableProps } from './DataTable.vue';
+import { type TableColumn } from './TableHead.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 type User = {
@@ -56,8 +54,42 @@ const render: StoryFn<Props> = (args) => ({
         args.search = val;
       },
     });
+    const expanded = computed({
+      get() {
+        return args.expanded;
+      },
+      set(val) {
+        args.expanded = val;
+      },
+    });
+    const group = computed({
+      get() {
+        return args.group;
+      },
+      set(val) {
+        args.group = val;
+      },
+    });
+    const collapsed = computed({
+      get() {
+        return args.collapsed;
+      },
+      set(val) {
+        args.collapsed = val;
+      },
+    });
 
-    return { args, modelValue, pagination, search, sort, objectOmit };
+    return {
+      args,
+      modelValue,
+      pagination,
+      search,
+      sort,
+      expanded,
+      group,
+      collapsed,
+      objectOmit,
+    };
   },
   template: `
       <div class="flex flex-col space-y-4">
@@ -81,6 +113,8 @@ const render: StoryFn<Props> = (args) => ({
                   'pagination',
                   'sort',
                   'expanded',
+                  'group',
+                  'collapsed',
                 ])
             "
             v-model="modelValue"
@@ -88,6 +122,8 @@ const render: StoryFn<Props> = (args) => ({
             v-model:sort="sort"
             :search="search"
             v-model:expanded="args.expanded"
+            v-model:group="args.group"
+            v-model:collapsed="args.collapsed"
             :row-attr="args.rowAttr"
             :rows="args.rows"
         >
@@ -106,6 +142,8 @@ const render: StoryFn<Props> = (args) => ({
                       'pagination',
                       'sort',
                       'expanded',
+                      'group',
+                      'collapsed',
                     ])
                   "
                   :row-attr="args.rowAttr"
@@ -205,6 +243,7 @@ const columns: TableColumn<User>[] = [
     key: 'email',
     label: 'Email address',
     sortable: true,
+    align: 'center',
   },
   {
     key: 'role',
@@ -235,6 +274,7 @@ const meta: Meta<Props> = {
     loading: false,
     dense: false,
     outlined: false,
+    striped: false,
   },
   parameters: {
     docs: {
@@ -253,6 +293,7 @@ const meta: Meta<Props> = {
           '`item.${column.key.toString()}`',
           'body.append',
           'item.expand',
+          'group.header',
           'expanded-item',
         ],
       },
@@ -464,6 +505,23 @@ export const StickyHeader: Story = {
     singleExpand: true,
     stickyHeader: true,
     stickyOffset: 40,
+  },
+};
+
+export const Grouped: Story = {
+  args: {
+    rows: data,
+    modelValue: [],
+    cols: columns,
+    outlined: true,
+    pagination: { limit: 5, page: 1, total: 50 },
+    sort: [
+      { column: 'name', direction: 'asc' },
+      { column: 'email', direction: 'asc' },
+    ],
+    expanded: [],
+    collapsed: [],
+    group: 'name',
   },
 };
 

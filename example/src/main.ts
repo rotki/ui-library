@@ -20,7 +20,9 @@ import {
   RiArrowUpSLine,
   RiCheckboxCircleLine,
   RiCloseFill,
+  RiDeleteBinLine,
   RiErrorWarningLine,
+  RiFileCopyLine,
   RiInformationLine,
   RiMacbookLine,
   RiMoonLine,
@@ -60,12 +62,15 @@ const RuiPlugin = createRui({
       RiArrowUpSLine,
       RiArrowDownSLine,
       RiArrowDownCircleLine,
+      RiDeleteBinLine,
+      RiFileCopyLine,
     ],
   },
   defaults: {
     table: {
       itemsPerPage,
       globalItemsPerPage: false,
+      limits: [5, 10, 15, 25, 50, 100, 200],
     },
   },
 });

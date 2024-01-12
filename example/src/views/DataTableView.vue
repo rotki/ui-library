@@ -110,6 +110,7 @@ const fixedColumns: DataTableColumn<BaseUser>[] = [
   {
     key: 'name',
     label: 'Full name',
+    sortable: true,
   },
   {
     key: 'username',
@@ -164,7 +165,7 @@ const fixedRows: ExtendedUser[] = [
   {
     id: 3,
     name: 'Clementine Bauch',
-    username: 'Samantha',
+    username: 'Kamren',
     email: 'Nathan@yesenia.net',
     website: 'ramiro.info',
     'address.street': 'Douglas Extension',
@@ -180,13 +181,49 @@ const fixedRows: ExtendedUser[] = [
     'address.city': 'Wisokyburgh',
   },
   {
-    id: 9,
+    id: 19,
     name: 'Glenna Reichert',
-    username: 'Delphine',
+    username: 'Kamren',
     email: 'Chaim_McDermott@dana.io',
     website: 'conrad.com',
     'address.street': 'Dayna Park',
     'address.city': 'Bartholomebury',
+  },
+  {
+    id: 15,
+    name: 'Chelsey Dietrich',
+    username: 'Kamren',
+    email: 'Lucio_Hettinger@annie.ca',
+    website: 'demarco.info',
+    'address.street': 'Skiles Walks',
+    'address.city': 'Roscoeview',
+  },
+  {
+    id: 110,
+    name: 'Clementina DuBuque',
+    username: 'Moriah.Stanton',
+    email: 'Rey.Padberg@karina.biz',
+    website: 'ambrose.net',
+    'address.street': 'Kattie Turnpike',
+    'address.city': 'Lebsackbury',
+  },
+  {
+    id: 13,
+    name: 'Clementine Bauch',
+    username: 'Kamren',
+    email: 'Nathan@yesenia.net',
+    website: 'ramiro.info',
+    'address.street': 'Douglas Extension',
+    'address.city': 'McKenziehaven',
+  },
+  {
+    id: 12,
+    name: 'Ervin Howell',
+    username: 'Antonette',
+    email: 'Shanna@melissa.tv',
+    website: 'anastasia.net',
+    'address.street': 'Victor Plains',
+    'address.city': 'Wisokyburgh',
   },
 ];
 
@@ -256,6 +293,8 @@ const emptyTables = ref<
       pagination: { limit: 5, page: 1, total: 5 },
       stickyHeader: true,
       stickyOffset: 72,
+      group: ['username'],
+      collapsed: [],
     },
   },
 ]);
@@ -305,6 +344,8 @@ const expandableTables = ref<
       sort: [{ column: 'name', direction: 'asc' }],
       pagination: { limit: 5, page: 1, total: 5 },
       expanded: [],
+      stickyHeader: true,
+      stickyOffset: 72,
     },
   },
 ]);
@@ -510,6 +551,8 @@ const apiDatatables = ref<
       search: '',
       sort: { column: 'name', direction: 'asc' },
       pagination: { limit: 5, page: 1, total: 0 },
+      group: ['username'],
+      collapsed: [],
     },
   },
   {
@@ -733,8 +776,11 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
             v-model="table.modelValue"
             v-model:pagination="table.pagination"
             v-model:sort="table.sort"
+            v-model:group="table.group"
+            v-model:collapsed="table.collapsed"
             :data-cy="`table-empty-${i}`"
           >
+            <template #header.address.city> city custom header</template>
             <template #item.actions>
               <RuiButton icon variant="text" size="sm">
                 <RuiIcon name="more-fill" color="primary" />
@@ -877,6 +923,8 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
             v-model="table.modelValue"
             v-model:pagination.external="table.pagination"
             v-model:sort.external="table.sort"
+            v-model:group="table.group"
+            v-model:collapsed="table.collapsed"
             :data-cy="`table-api-${i}`"
             @update:options="fetchData(i, $event, table.search, true)"
           >
@@ -884,6 +932,9 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
               <RuiButton icon variant="text" size="sm">
                 <RuiIcon name="more-fill" color="primary" />
               </RuiButton>
+            </template>
+            <template #group.header.content="{ groupValue }">
+              custom group content: {{ groupValue }}
             </template>
           </RuiDataTable>
 
@@ -893,6 +944,9 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
               <RuiButton icon variant="text" size="sm">
                 <RuiIcon name="more-fill" color="primary" />
               </RuiButton>
+            </template>
+            <template #group.header.content="{ groupValue }">
+              custom group content: {{ groupValue }}
             </template>
           </RuiDataTable>
         </div>

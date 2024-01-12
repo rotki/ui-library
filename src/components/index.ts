@@ -85,9 +85,13 @@ import {
 } from '@/components/forms/select/SimpleSelect.vue';
 import {
   type TableColumn as DataTableColumn,
+  type GroupKeys as DataTableGroupKeys,
+  type SortColumn as DataTableSortColumn,
+  type TableSortData as DataTableSortData,
+} from '@/components/tables/TableHead.vue';
+import {
   type TableOptions as DataTableOptions,
   type Props as DataTableProps,
-  type SortColumn as DataTableSortColumn,
   default as RuiDataTable,
 } from '@/components/tables/DataTable.vue';
 import {
@@ -195,4 +199,6 @@ export {
   DividerProps,
   TextAreaProps,
   ExpandButtonProps,
+  DataTableSortData,
+  DataTableGroupKeys,
 };

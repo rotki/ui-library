@@ -120,8 +120,8 @@ describe('DataTable', () => {
     cy.get('@buttons').eq(2).as('button2');
 
     cy.get('@multiple')
-      .find('table tbody tr[hidden] div[data-cy=expanded-content]')
-      .should('exist');
+      .find('table tbody tr div[data-cy=expanded-content]')
+      .should('not.exist');
 
     cy.get('@button1').click();
 
@@ -163,8 +163,8 @@ describe('DataTable', () => {
     cy.get('@buttons').eq(2).as('button2');
 
     cy.get('@single')
-      .find('table tbody tr[hidden] div[data-cy=expanded-content]')
-      .should('exist');
+      .find('table tbody tr div[data-cy=expanded-content]')
+      .should('not.exist');
 
     cy.get('@button1').click();
 
@@ -196,7 +196,7 @@ describe('DataTable', () => {
     });
   });
 
-  it.only('checks for data tables with sticky header', () => {
+  it('checks for data tables with sticky header', () => {
     cy.get('div[data-cy="table-expandable-0"]').as('sticky');
 
     cy.get('@sticky')

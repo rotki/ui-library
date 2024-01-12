@@ -29,9 +29,11 @@ const { modelValue } = toRefs(props);
 
 const css = useCssModule();
 
-const defaultLimits = ref([5, 10, 15, 25, 50, 100]);
+const tableDefaults = useTable();
 
-const limits = computed(() => get(modelValue).limits ?? get(defaultLimits));
+const limits = computed(
+  () => get(modelValue).limits ?? get(tableDefaults.limits),
+);
 
 const currentLimit = computed({
   get: () => get(modelValue).limit,
