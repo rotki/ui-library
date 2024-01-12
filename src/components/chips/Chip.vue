@@ -25,7 +25,7 @@ defineOptions({
 });
 
 const props = withDefaults(defineProps<Props>(), {
-  label: false,
+  tile: false,
   size: 'md',
   color: 'grey',
   clickable: false,

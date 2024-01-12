@@ -8,7 +8,8 @@ const render: StoryFn<Props> = (args) => ({
   setup() {
     return { args };
   },
-  template: `<Alert v-bind="args" class="w-[400px]" />`,
+  template: `
+    <Alert v-bind="args" class="w-[400px]" />`,
 });
 
 const meta: Meta<Props> = {

@@ -18,4 +18,8 @@ html, body, html * {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+
+  .border-default {
+    @apply border-rui-grey-200 dark:border-rui-grey-800;
+  }
 }

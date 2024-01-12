@@ -25,27 +25,28 @@ const render: StoryFn<Props> = (args) => ({
     return { cardArgs, args };
   },
   template: `
-  <div>
-    <Card v-bind="cardArgs">
-      <template v-if="args.image" #image><img :src="args.image" alt="card image" /></template>
-      <template v-if="args.prepend" #prepend>{{ args.prepend }}</template>
-      <template v-if="args.header" #header>{{ args.header }}</template>
-      <template v-if="args.customHeader" #custom-header><h5 class="p-4 text-rui-error text-h5">{{ args.customHeader }}</h5></template>
-      <template v-if="args.subheader" #subheader>
-        {{ args.subheader }}
-      </template>
-      <p v-if="args.content">{{ args.content }}</p>
-      <template v-if="args.actions" #footer>
-        <Button
-          v-for="(action, i) in args.actions"
-          v-bind="action"
-          :key="i"
-        >
-          {{ action.text }}
-        </Button>
-      </template>
-    </Card>
-  </div>`,
+      <div>
+        <Card v-bind="cardArgs">
+          <template v-if="args.image" #image><img :src="args.image" alt="card image" /></template>
+          <template v-if="args.prepend" #prepend>{{ args.prepend }}</template>
+          <template v-if="args.header" #header>{{ args.header }}</template>
+          <template v-if="args.customHeader" #custom-header><h5 class="p-4 text-rui-error text-h5">
+            {{ args.customHeader }}</h5></template>
+          <template v-if="args.subheader" #subheader>
+            {{ args.subheader }}
+          </template>
+          <p v-if="args.content">{{ args.content }}</p>
+          <template v-if="args.actions" #footer>
+            <Button
+                v-for="(action, i) in args.actions"
+                v-bind="action"
+                :key="i"
+            >
+              {{ action.text }}
+            </Button>
+          </template>
+        </Card>
+      </div>`,
 });
 
 const meta: Meta<Props> = {
@@ -59,6 +60,11 @@ const meta: Meta<Props> = {
     header: { control: 'text' },
     image: { control: 'text' },
     prepend: { control: 'text' },
+    rounded: {
+      control: 'select',
+      options: ['sm', 'md', 'lg'],
+      defaultValue: 'md',
+    },
     elevation: { control: 'number', max: 24, min: 1 },
     subheader: { control: 'text' },
     content: { control: 'text' },

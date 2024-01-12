@@ -27,6 +27,10 @@ describe('Tabs', () => {
 
     // Click third tab
     cy.get('@tablist').find('button:nth-child(3)').click();
+    cy.get('@tabcontent').find('> div > div:nth-child(3)').should('be.visible');
+    cy.get('@tabcontent')
+      .find('> div > div:nth-child(3)')
+      .should('have.class', 'active-tab-item');
     cy.get('@tabcontent').should('have.text', 'Tab 3 Content');
 
     // Click last tab should redirect to stepper page

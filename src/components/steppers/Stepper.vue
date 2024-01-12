@@ -142,8 +142,9 @@ watch(step, () => {
             v-if="description"
             :class="[css.subtitle, { [subtitleClass]: custom }]"
             class="text-caption"
-            >{{ description }}</span
           >
+            {{ description }}
+          </span>
         </div>
       </div>
     </template>

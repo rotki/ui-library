@@ -29,8 +29,8 @@ const preview: Preview = {
     },
     vueInstance: {
       defaultValue: vueInstance,
-      control: { type: 'object' }
-    }
+      control: { type: 'object' },
+    },
   },
   globalTypes: {
     theme: {
@@ -44,7 +44,7 @@ const preview: Preview = {
         items: [
           { value: 'auto', title: 'Auto' },
           { value: 'light', icon: 'sun', title: 'Light' },
-          { value: 'dark', icon: 'moon', title: 'Dark' }
+          { value: 'dark', icon: 'moon', title: 'Dark' },
         ],
         // Change title based on selected value
         dynamicTitle: true,

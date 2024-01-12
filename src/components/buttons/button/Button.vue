@@ -260,6 +260,10 @@ const slots = useSlots();
 
   &.list {
     @apply p-3 rounded-none w-full justify-start text-left;
+
+    &.sm {
+      @apply px-3 py-1;
+    }
   }
 
   &.icon {

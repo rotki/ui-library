@@ -72,7 +72,12 @@ const {
           @before-enter="updatePopper()"
           @after-leave="onPopperLeave()"
         >
-          <div v-if="open" :class="css.base">
+          <div
+            v-if="open"
+            key="tooltip"
+            :class="css.base"
+            role="tooltip-content"
+          >
             <slot>
               {{ text }}
             </slot>
@@ -95,7 +100,7 @@ $arrowSize: 0.625rem;
 }
 
 .tooltip {
-  @apply w-max transform transition-opacity delay-0 z-[999];
+  @apply w-max transform transition-opacity delay-0 z-[9999];
 
   &__fixed {
     @apply fixed;

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useRoute } from 'vue-router';
+import { throttleFilter } from '@vueuse/shared';
 import { type ContextColorsType } from '@/consts/colors';
 import Button from '@/components/buttons/button/Button.vue';
 import Icon from '@/components/icons/Icon.vue';
@@ -69,11 +70,12 @@ const updateModelValue = (newModelValue: string | number) => {
   set(internalModelValue, newModelValue);
 };
 
+const route = useRoute();
+
 const isPathMatch = (
   path: string,
   { exactPath, exact }: { exactPath?: boolean; exact?: boolean },
 ) => {
-  const route = useRoute();
   const currentRoute = route.fullPath;
 
   if (exactPath) {
@@ -86,77 +88,6 @@ const isPathMatch = (
     return currentRoute === routeWithoutQueryParams;
   }
   return currentRoute.startsWith(routeWithoutQueryParams);
-};
-
-onMounted(() => {
-  if (get(modelValue) !== undefined) {
-    return;
-  }
-  const enabledChildren = get(children).filter(
-    (child) => !child.props.disabled,
-  );
-  if (enabledChildren.length > 0) {
-    let newModelValue: string | number = enabledChildren[0].props.tabValue;
-    enabledChildren.forEach((child) => {
-      const props = child.props as TabProps;
-      if (props.link !== false && props.to && isPathMatch(props.to, props)) {
-        newModelValue = props.to;
-      }
-    });
-    updateModelValue(newModelValue);
-  }
-  keepActiveTabVisible();
-});
-
-const css = useCssModule();
-
-const bar = ref<HTMLDivElement>();
-const wrapper = ref<HTMLDivElement>();
-
-const { width, height } = useElementSize(bar);
-const { width: wrapperWidth, height: wrapperHeight } = useElementSize(wrapper);
-const { arrivedState, x, y } = useScroll(bar, { behavior: 'smooth' });
-
-const { top, bottom, left, right } = toRefs(arrivedState);
-
-const showArrows = computed(() => {
-  if (!get(vertical)) {
-    return get(wrapperWidth) > get(width);
-  }
-
-  return get(wrapperHeight) > get(height);
-});
-
-const prevArrowDisabled = computed(() => {
-  if (!get(vertical)) {
-    return get(left);
-  }
-
-  return get(top);
-});
-
-const nextArrowDisabled = computed(() => {
-  if (!get(vertical)) {
-    return get(right);
-  }
-
-  return get(bottom);
-});
-
-const onPrevSliderClick = () => {
-  if (!get(vertical)) {
-    set(x, get(x) - get(width));
-  } else {
-    set(y, get(y) - get(height));
-  }
-};
-
-const onNextSliderClick = () => {
-  if (!get(vertical)) {
-    set(x, get(x) + get(width));
-  } else {
-    set(y, get(y) + get(height));
-  }
 };
 
 const keepActiveTabVisible = () => {
@@ -201,6 +132,111 @@ const keepActiveTabVisible = () => {
       });
     }
   });
+};
+
+const applyNewValue = (onlyLink = false) => {
+  const enabledChildren = get(children).filter(
+    (child) => !child.props.disabled,
+  );
+  if (enabledChildren.length > 0) {
+    let newModelValue: string | number = get(modelValue) || 0;
+    enabledChildren.forEach((child, index) => {
+      const props = child.props as TabProps;
+      if (!onlyLink && index === 0 && props.tabValue) {
+        newModelValue = props.tabValue;
+      }
+      if (props.link !== false && props.to && isPathMatch(props.to, props)) {
+        newModelValue = props.to;
+      }
+    });
+    updateModelValue(newModelValue);
+  }
+  keepActiveTabVisible();
+};
+
+onMounted(() => {
+  if (get(modelValue) !== undefined) {
+    return;
+  }
+  applyNewValue();
+});
+
+watch(route, () => {
+  applyNewValue(true);
+});
+
+const css = useCssModule();
+
+const bar = ref<HTMLDivElement>();
+const wrapper = ref<HTMLDivElement>();
+
+const { width, height } = useElementSize(bar);
+const { width: wrapperWidth, height: wrapperHeight } = useElementSize(wrapper);
+const { arrivedState, x, y } = useScroll(bar, { behavior: 'smooth' });
+
+const { top, bottom, left, right } = toRefs(arrivedState);
+
+const showArrows: Ref<boolean> = ref(false);
+const { trigger: triggerHorizontal, stop: stopHorizontal } = watchTriggerable(
+  [wrapperWidth, width],
+  ([ww, w]) => {
+    set(showArrows, ww > w);
+  },
+  {
+    eventFilter: throttleFilter(50),
+  },
+);
+
+const { trigger: triggerVertical, stop: stopVertical } = watchTriggerable(
+  [wrapperHeight, height],
+  ([wh, h]) => {
+    set(showArrows, wh > h);
+  },
+  {
+    eventFilter: throttleFilter(500),
+  },
+);
+
+watchImmediate(vertical, (vertical) => {
+  if (vertical) {
+    triggerVertical();
+    stopHorizontal();
+  } else {
+    triggerHorizontal();
+    stopVertical();
+  }
+});
+
+const prevArrowDisabled = computed(() => {
+  if (!get(vertical)) {
+    return get(left);
+  }
+
+  return get(top);
+});
+
+const nextArrowDisabled = computed(() => {
+  if (!get(vertical)) {
+    return get(right);
+  }
+
+  return get(bottom);
+});
+
+const onPrevSliderClick = () => {
+  if (!get(vertical)) {
+    set(x, get(x) - get(width));
+  } else {
+    set(y, get(y) - get(height));
+  }
+};
+
+const onNextSliderClick = () => {
+  if (!get(vertical)) {
+    set(x, get(x) + get(width));
+  } else {
+    set(y, get(y) + get(height));
+  }
 };
 
 useResizeObserver(bar, () => {

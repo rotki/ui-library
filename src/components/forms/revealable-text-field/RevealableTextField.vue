@@ -50,6 +50,7 @@ const slots = useSlots();
     <template #append>
       <div class="flex items-center">
         <RuiButton
+          :disabled="disabled"
           tabindex="-1"
           variant="text"
           type="button"

@@ -52,6 +52,7 @@ describe('Tabs/Tabs', () => {
     await wrapper.setProps({
       vertical: true,
     });
+    await nextTick();
     expect(wrapper.classes()).toMatch(/_tabs--vertical_/);
 
     expect(
