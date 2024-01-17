@@ -110,7 +110,11 @@ const { hasError, hasSuccess } = useFormTextDetail(
         <Icon v-else-if="modelValue" name="checkbox-fill" :size="iconSize" />
         <Icon v-else name="checkbox-blank-line" :size="iconSize" />
       </span>
-      <span :class="css.label" class="text-body-1">
+      <span
+        v-if="label || $slots.default"
+        :class="css.label"
+        class="text-body-1"
+      >
         <slot>{{ label }}</slot>
       </span>
     </label>
