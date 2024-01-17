@@ -19,6 +19,8 @@ export interface BaseTableColumn<T> {
   align?: 'start' | 'center' | 'end';
   class?: string;
   cellClass?: string;
+  colspan?: string | number;
+  rowspan?: string | number;
 
   [key: string]: any;
 }
@@ -153,7 +155,13 @@ const getSortDirection = (key: TableColumn<T>['key']) =>
     ]"
   >
     <tr :class="css.tr">
-      <th v-if="selectable" :class="css.checkbox" scope="col">
+      <th
+        v-if="selectable"
+        :class="css.checkbox"
+        scope="col"
+        colspan="1"
+        rowspan="1"
+      >
         <Checkbox
           :disabled="disableCheckAll"
           :indeterminate="indeterminate"
@@ -178,6 +186,8 @@ const getSortDirection = (key: TableColumn<T>['key']) =>
           },
         ]"
         scope="col"
+        :colspan="column.colspan ?? 1"
+        :rowspan="column.rowspan ?? 1"
       >
         <slot :column="column" :name="`header.${column.key.toString()}`">
           <Badge
@@ -335,13 +345,16 @@ const getSortDirection = (key: TableColumn<T>['key']) =>
     }
 
     .checkbox {
-      @apply ps-4 w-14;
+      @apply px-2 w-[3.625rem] max-w-[3.625rem];
+      label {
+        @apply ml-0;
+      }
     }
   }
 
   &__loader {
     .progress {
-      @apply relative w-full py-8;
+      @apply relative py-8;
     }
 
     &_linear {

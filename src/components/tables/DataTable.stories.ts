@@ -92,22 +92,22 @@ const render: StoryFn<Props> = (args) => ({
     };
   },
   template: `
-      <div class="flex flex-col space-y-4">
-        <div class="flex items-center space-x-4">
-          <TextField
-              v-if="search !== undefined"
-              v-model="search"
-              placeholder="search"
-              label="search"
-              class="w-1/2 lg:w-2/5"
-              variant="outlined"
-              color="primary"
-              hide-details
-          />
-          <span v-if="modelValue">selected: {{ modelValue.length }}</span>
-        </div>
-        <DataTable
-            v-bind="
+    <div class="flex flex-col space-y-4">
+      <div class="flex items-center space-x-4">
+        <TextField
+          v-if="search !== undefined"
+          v-model="search"
+          placeholder="search"
+          label="search"
+          class="w-1/2 lg:w-2/5"
+          variant="outlined"
+          color="primary"
+          hide-details
+        />
+        <span v-if="modelValue">selected: {{ modelValue.length }}</span>
+      </div>
+      <DataTable
+        v-bind="
                 objectOmit(args, [
                   'modelValue',
                   'pagination',
@@ -117,26 +117,26 @@ const render: StoryFn<Props> = (args) => ({
                   'collapsed',
                 ])
             "
-            v-model="modelValue"
-            v-model:pagination="pagination"
-            v-model:sort="sort"
-            :search="search"
-            v-model:expanded="args.expanded"
-            v-model:group="args.group"
-            v-model:collapsed="args.collapsed"
-            :row-attr="args.rowAttr"
-            :rows="args.rows"
-        >
-          <template #item.action>
-            <Button icon variant="text" size="sm">
-              <Icon name="more-fill" color="primary" />
-            </Button>
-          </template>
-          <template v-if="args.expanded" #expanded-item>
-            <Card>
-              <template #header> Expanded content</template>
-              <DataTable
-                  v-bind="
+        v-model="modelValue"
+        v-model:pagination="pagination"
+        v-model:sort="sort"
+        :search="search"
+        v-model:expanded="args.expanded"
+        v-model:group="args.group"
+        v-model:collapsed="args.collapsed"
+        :row-attr="args.rowAttr"
+        :rows="args.rows"
+      >
+        <template #item.action>
+          <Button icon variant="text" size="sm">
+            <Icon name="more-fill" color="primary" />
+          </Button>
+        </template>
+        <template v-if="args.expanded" #expanded-item>
+          <Card>
+            <template #header> Expanded content</template>
+            <DataTable
+              v-bind="
                     objectOmit(args, [
                       'modelValue',
                       'pagination',
@@ -146,13 +146,13 @@ const render: StoryFn<Props> = (args) => ({
                       'collapsed',
                     ])
                   "
-                  :row-attr="args.rowAttr"
-                  :rows="args.rows"
-              />
-            </Card>
-          </template>
-        </DataTable>
-      </div>`,
+              :row-attr="args.rowAttr"
+              :rows="args.rows"
+            />
+          </Card>
+        </template>
+      </DataTable>
+    </div>`,
 });
 
 const data = [
