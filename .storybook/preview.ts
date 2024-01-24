@@ -2,21 +2,29 @@ import '../src/style.scss';
 import './preview.scss';
 import '@fontsource/roboto/latin.css';
 import type { Preview } from '@storybook/vue3';
-import { vueInstance } from './app';
+import { setup } from '@storybook/vue3';
 
 import { useEffect, useGlobals } from '@storybook/addons';
-import { useRotkiTheme } from '../src';
+import { createRui, useRotkiTheme } from '../src';
+import * as Icons from '../src/icons';
+import { ref } from 'vue';
 
-export const useTheme = (StoryFn) => {
-  const [{ theme }] = useGlobals();
-  const { switchThemeScheme } = useRotkiTheme();
+const RuiPlugin = createRui({
+  theme: {
+    icons: Object.values(Icons),
+  },
+  defaults: {
+    table: {
+      itemsPerPage: ref(10),
+      globalItemsPerPage: false,
+      limits: [5, 10, 15, 25, 50, 100, 200],
+    },
+  },
+});
 
-  useEffect(() => {
-    switchThemeScheme(theme);
-  }, [theme]);
-
-  return StoryFn();
-};
+setup(app => {
+  app.use(RuiPlugin)
+})
 
 const preview: Preview = {
   parameters: {
@@ -26,10 +34,6 @@ const preview: Preview = {
         color: /(background|color)$/i,
         date: /Date$/,
       },
-    },
-    vueInstance: {
-      defaultValue: vueInstance,
-      control: { type: 'object' },
     },
   },
   globalTypes: {
@@ -51,7 +55,16 @@ const preview: Preview = {
       },
     },
   },
-  decorators: [useTheme],
+  decorators: [(story) => {
+    const [{ theme }] = useGlobals();
+    const { switchThemeScheme } = useRotkiTheme();
+
+    useEffect(() => {
+      switchThemeScheme(theme);
+    }, [theme]);
+
+    return story();
+  }],
 };
 
 export default preview;
