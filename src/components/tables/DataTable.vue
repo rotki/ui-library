@@ -9,7 +9,8 @@ import Icon from '@/components/icons/Icon.vue';
 import Tooltip from '@/components/overlays/tooltip/Tooltip.vue';
 import ExpandButton from '@/components/tables/ExpandButton.vue';
 import TablePagination, { type TablePaginationData } from './TablePagination.vue';
-import TableHead, { type GroupData, type GroupKeys, type NoneSortableTableColumn, type SortColumn, type TableColumn, type TableRowKey, type TableRowKeyData, type TableSortData } from './TableHead.vue';
+import TableHead, { type GroupData, type GroupKeys, type NoneSortableTableColumn, type SortColumn, type TableColumn, type TableRowKey, type TableRowKeyData, type TableSortData,
+} from './TableHead.vue';
 import type { Ref } from 'vue';
 
 export interface TableOptions<T> {
@@ -17,11 +18,13 @@ export interface TableOptions<T> {
   sort?: SortColumn<T> | SortColumn<T>[];
 }
 
-export type GroupedTableRow<T> = T &
-  Partial<{
-    groupVal: string;
-    group: Partial<T>;
-  }>;
+export interface GroupHeader<T> {
+  __header__: true;
+  identifier: string;
+  group: Partial<T>;
+}
+
+export type GroupedTableRow<T> = T | GroupHeader<T>;
 
 export interface Props<T, K extends keyof T> {
   /**
@@ -188,21 +191,54 @@ const emit = defineEmits<{
   (e: 'copy:group', value: GroupData<T>): void;
 }>();
 
+const slots = defineSlots<
+  Partial<Record<`header.${string}`, (props: {
+    column: TableColumn<T>;
+  }) => any>
+  & Record<`item.${string}`, (props: {
+    column: TableColumn<T>;
+    row: T;
+    index: number;
+  }) => any>
+  & {
+    'body.prepend': (props: { colspan: number }) => any;
+    'body.append': (props: { colspan: number }) => any;
+    'group.header': (props: {
+      colspan: number;
+      header: GroupHeader<T>;
+      isOpen: boolean;
+      toggle: () => void;
+    }) => any;
+    'group.header.content': (props: {
+      header: GroupHeader<T>;
+      key: string;
+    }) => any;
+    'expanded-item': (props: { row: T; index: number }) => any;
+    'no-data': () => any;
+    'empty-description': () => any;
+    'tfoot': () => any;
+  }>
+>();
+
 const { stickyOffset, stickyHeader, collapsed } = toRefs(props);
 
+function isRow<T extends object>(item: GroupedTableRow<T>): item is T {
+  return !('__header__' in item);
+}
+
+function isHeaderSlot(slotName: string): slotName is `header.${string}` {
+  return slotName.startsWith('header.');
+}
+
 const css = useCssModule();
-const slots = useSlots();
 const { stick, table, tableScroller } = useStickyTableHeader(
   stickyOffset,
   stickyHeader,
 );
 
 const tableDefaults = useTable();
-const groupHeaderKey = 'group.header';
 
-const headerSlots = computed(() =>
-  Object.keys(slots).filter(slotName => slotName.startsWith('header.')),
-);
+const headerSlots = computed<`header.${string}`[]>(() => Object.keys(slots).filter(isHeaderSlot));
 
 const globalItemsPerPageSettings = computed(() => {
   if (props.globalItemsPerPage !== undefined)
@@ -373,21 +409,21 @@ const sortedMap = computed(() => {
 /**
  * list if ids of the visible table rows used for check-all and uncheck-all
  */
-const visibleIdentifiers = computed(() => {
+const visibleIdentifiers = computed<T[IdType][]>(() => {
   const selectBy = props.rowAttr;
 
   if (!selectBy)
     return [];
 
   return get(filtered)
-    .filter(row => row[selectBy] !== groupHeaderKey)
+    .filter(isRow)
     .map(row => row[selectBy]);
 });
 
 /**
  * Flag to know when all rows are selected for the current screen
  */
-const isAllSelected = computed(() => {
+const isAllSelected = computed<boolean>(() => {
   const selectedRows = get(selectedData);
   if (!selectedRows)
     return false;
@@ -401,7 +437,7 @@ const isAllSelected = computed(() => {
 /**
  * rows filtered based on search query if it exists
  */
-const searchData = computed(() => {
+const searchData = computed<T[]>(() => {
   const query = props.search?.toLocaleLowerCase();
   if (!query)
     return props.rows;
@@ -481,45 +517,41 @@ const isGrouped = computed(() => !!get(groupKey));
 /**
  * comprises search, sorted paginated, and grouped data
  */
-const mappedGroups: ComputedRef<Record<string, GroupedTableRow<T>[]>>
-  = computed(() => {
-    if (!get(isGrouped)) {
-      // no grouping
-      return {};
+const mappedGroups = computed<Record<string, GroupedTableRow<T>[]>>(() => {
+  if (!get(isGrouped)) {
+    // no grouping
+    return {};
+  }
+
+  const result = get(sorted);
+  const identifier = props.rowAttr;
+
+  return result.reduce((acc: Record<string, GroupedTableRow<T>[]>, row) => {
+    if (!isDefined(row[identifier]) || row[identifier] === '')
+      return acc;
+
+    const group = getRowGroup(row);
+    const groupVal = Object.values(group).filter(isDefined).join(',');
+    if (!acc[groupVal]) {
+      acc[groupVal] = [
+          {
+            __header__: true,
+            group,
+            identifier: groupVal,
+          } satisfies GroupHeader<T>,
+      ];
     }
 
-    const result = get(sorted);
-    const identifier = props.rowAttr;
+    acc[groupVal].push(row);
 
-    return result.reduce((acc: Record<string, T[]>, row) => {
-      if (!isDefined(row[identifier]) || row[identifier] === '')
-        return acc;
-
-      const group = getRowGroup(row);
-      const groupVal = Object.values(group).filter(isDefined).join(',');
-      if (!acc[groupVal]) {
-        // todo: make sure this assertion is not needed anymore
-        /* eslint-disable @typescript-eslint/consistent-type-assertions */
-        acc[groupVal] = [
-          {
-            [identifier]: groupHeaderKey,
-            group,
-            groupVal,
-          } as GroupedTableRow<T>,
-        ];
-        /* eslint-enable @typescript-eslint/consistent-type-assertions */
-      }
-
-      acc[groupVal].push(row);
-
-      return acc;
-    }, {});
-  });
+    return acc;
+  }, {});
+});
 
 /**
  * comprises search, sorted paginated, and grouped data
  */
-const grouped: ComputedRef<GroupedTableRow<T>[]> = computed(() => {
+const grouped = computed<GroupedTableRow<T>[]>(() => {
   const result = get(sorted);
   const groupByKey = get(groupKey);
 
@@ -536,7 +568,7 @@ const grouped: ComputedRef<GroupedTableRow<T>[]> = computed(() => {
 /**
  * comprises search, sorted and paginated data
  */
-const filtered: ComputedRef<GroupedTableRow<T>[]> = computed(() => {
+const filtered = computed<GroupedTableRow<T>[]>(() => {
   const result = get(grouped);
 
   const paginated = get(paginationData);
@@ -614,7 +646,7 @@ function onToggleExpand(row: T) {
   );
 }
 
-function getRowGroup(row: T): Partial<Record<TableRowKey<T>, any>> {
+function getRowGroup(row: T): Partial<T> {
   return get(groupKeys).reduce((acc, key) => ({ ...acc, [key]: row[key] }), {});
 }
 
@@ -622,12 +654,10 @@ function getGroupRows(groupVal: string) {
   if (!get(isGrouped))
     return [];
 
-  return get(mappedGroups)[groupVal].filter(
-    row => row[props.rowAttr] !== groupHeaderKey,
-  );
+  return get(mappedGroups)[groupVal].filter(isRow);
 }
 
-function compareGroupsFn(a: T, b: T) {
+function compareGroupsFn(a: T, b: Partial<T>) {
   const group = get(groupKeys);
   if (group.length === 0)
     return false;
@@ -635,19 +665,18 @@ function compareGroupsFn(a: T, b: T) {
   return group.every(key => a[key] === b[key]);
 }
 
-function isExpandedGroup(value: any) {
+function isExpandedGroup(value: Partial<T>) {
   return get(collapsedRows).every(row => !compareGroupsFn(row, value));
 }
 
-function isHiddenRow(row: T) {
+function isHiddenRow(row: GroupedTableRow<T>) {
   const identifier = props.rowAttr;
   return (
-    get(isGrouped)
-    && get(collapsedRows).some(value => row[identifier] === value[identifier])
+    get(isGrouped) && get(collapsedRows).some(value => isRow(row) && row[identifier] === value[identifier])
   );
 }
 
-function onToggleExpandGroup(group: any, value?: string) {
+function onToggleExpandGroup(group: Partial<T>, value?: string) {
   if (!value)
     return;
 
@@ -780,9 +809,9 @@ function onPaginate() {
   emit('update:expanded', []);
 }
 
-function setInternalTotal(groupedItems: T[]) {
+function setInternalTotal(groupedItems: GroupedTableRow<T>[]) {
   if (!props.paginationModifiers?.external)
-    set(itemsLength, groupedItems.length);
+    set(itemsLength, groupedItems.filter(isRow).length);
 }
 
 function cellValue(row: T, key: TableColumn<T>['key']) {
@@ -895,19 +924,16 @@ onMounted(() => {
           />
           <template v-for="(row, index) in filtered">
             <tr
-              v-if="row[rowIdentifier] === groupHeaderKey"
+              v-if="!isRow(row)"
               :key="`row-${index}`"
               :class="[css.tr, css.tr__group]"
             >
               <slot
                 name="group.header"
                 :colspan="colspan"
-                :row="row"
-                :group="row.group"
-                :group-key="groupKey"
-                :group-value="row.groupVal"
+                :header="row"
                 :is-open="isExpandedGroup(row.group)"
-                :toggle="() => onToggleExpandGroup(row.group, row.groupVal)"
+                :toggle="() => onToggleExpandGroup(row.group, row.identifier)"
               >
                 <td
                   :class="[css.td]"
@@ -917,16 +943,14 @@ onMounted(() => {
                   <div class="flex items-center gap-2">
                     <ExpandButton
                       :expanded="isExpandedGroup(row.group)"
-                      @click="onToggleExpandGroup(row.group, row.groupVal)"
+                      @click="onToggleExpandGroup(row.group, row.identifier)"
                     />
                     <slot
+                      :key="groupKey"
                       name="group.header.content"
-                      :row="row"
-                      :group="row.group"
-                      :group-key="groupKey"
-                      :group-value="row.groupVal"
+                      :header="row"
                     >
-                      <span>{{ groupKey }}: {{ row.groupVal }}</span>
+                      <span>{{ groupKey }}: {{ row.identifier }}</span>
                       <Button
                         size="sm"
                         variant="text"
@@ -1000,7 +1024,7 @@ onMounted(() => {
                 >
                   <slot
                     v-if="column.key === 'expand'"
-                    :name="`item.${column.key.toString()}`"
+                    :name="`item.${column.key}`"
                     :column="column"
                     :row="row"
                     :index="index"
@@ -1015,7 +1039,7 @@ onMounted(() => {
                     v-else
                     :column="column"
                     :index="index"
-                    :name="`item.${column.key.toString()}`"
+                    :name="`item.${column.key}`"
                     :row="row"
                   >
                     {{ cellValue(row, column.key) }}

@@ -968,8 +968,8 @@ function toggleRow(row: any, expanded: any[] | undefined) {
                 />
               </RuiButton>
             </template>
-            <template #group.header.content="{ groupValue }">
-              custom group content: {{ groupValue }}
+            <template #group.header.content="{ header }">
+              custom group content: {{ header.identifier }}
             </template>
           </RuiDataTable>
 
@@ -991,8 +991,8 @@ function toggleRow(row: any, expanded: any[] | undefined) {
                 />
               </RuiButton>
             </template>
-            <template #group.header.content="{ groupValue }">
-              custom group content: {{ groupValue }}
+            <template #group.header.content="{ header }">
+              custom group content: {{ header.identifier }}
             </template>
           </RuiDataTable>
         </div>

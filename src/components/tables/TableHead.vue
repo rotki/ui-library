@@ -10,7 +10,7 @@ import Progress from '@/components/progress/Progress.vue';
  * The column name must be a key of the passed data object type.
  * @template T - The type of the data in the column.
  */
-export type TableRowKey<T> = keyof T;
+export type TableRowKey<T> = keyof T extends string ? keyof T : never;
 
 export interface BaseTableColumn<T> {
   key: TableRowKey<T> | string;
