@@ -1,7 +1,0 @@
-node_modules
-dist
-auto-imports.d.ts
-src/icons
-tests/coverage
-tests/html
-storybook-static

@@ -1,13 +1,11 @@
 import '../src/style.scss';
 import './preview.scss';
 import '@fontsource/roboto/latin.css';
-import type { Preview } from '@storybook/vue3';
-import { setup } from '@storybook/vue3';
-
+import { type Preview, setup } from '@storybook/vue3';
 import { useEffect, useGlobals } from '@storybook/addons';
+import { ref } from 'vue';
 import { createRui, useRotkiTheme } from '../src';
 import * as Icons from '../src/icons';
-import { ref } from 'vue';
 
 const RuiPlugin = createRui({
   theme: {
@@ -22,9 +20,9 @@ const RuiPlugin = createRui({
   },
 });
 
-setup(app => {
-  app.use(RuiPlugin)
-})
+setup((app) => {
+  app.use(RuiPlugin);
+});
 
 const preview: Preview = {
   parameters: {

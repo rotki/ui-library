@@ -4,21 +4,22 @@ import { promiseTimeout } from '@vueuse/core';
 import Button from '@/components/buttons/button/Button.vue';
 import Tooltip from '@/components/overlays/tooltip/Tooltip.vue';
 
-const createWrapper = (options?: ComponentMountingOptions<typeof Tooltip>) =>
-  mount(Tooltip, {
+function createWrapper(options?: ComponentMountingOptions<typeof Tooltip>) {
+  return mount(Tooltip, {
     ...options,
+    global: {
+      stubs: { 'rui-button': Button },
+    },
     slots: {
       activator: '<rui-button id="activator">Tooltip trigger</rui-button>',
       default: options?.props?.text ?? '',
     },
-    global: {
-      stubs: { 'rui-button': Button },
-    },
   });
+}
 
 const delay = (time: number = 100) => promiseTimeout(time);
 
-describe('Tooltip', () => {
+describe('tooltip', () => {
   const text = 'Tooltip content';
 
   it('renders properly', async () => {
@@ -42,11 +43,11 @@ describe('Tooltip', () => {
     wrapper.unmount();
   });
 
-  it('passes props correctly', async () => {
+  it('passes props correctly', () => {
     const wrapper = createWrapper({
       props: {
-        text,
         disabled: true,
+        text,
       },
     });
     expect(wrapper.get('#activator')).toBeTruthy();
@@ -57,8 +58,8 @@ describe('Tooltip', () => {
   it('disabled does not trigger tooltip', async () => {
     const wrapper = createWrapper({
       props: {
-        text,
         disabled: true,
+        text,
       },
     });
 
@@ -91,9 +92,9 @@ describe('Tooltip', () => {
   it('tooltip only appears after `openDelay` timeout', async () => {
     const wrapper = createWrapper({
       props: {
-        text,
-        openDelay: 400,
         closeDelay: 50000,
+        openDelay: 400,
+        text,
       },
     });
 
@@ -130,8 +131,8 @@ describe('Tooltip', () => {
     expect(document.body.querySelector('div[role=tooltip]')).toBeFalsy();
     const wrapper = createWrapper({
       props: {
-        text,
         closeDelay: 1000,
+        text,
       },
     });
 

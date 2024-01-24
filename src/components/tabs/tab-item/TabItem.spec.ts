@@ -4,32 +4,33 @@ import TabItem from '@/components/tabs/tab-item/TabItem.vue';
 
 vi.mock('@headlessui/vue', () => ({
   TransitionRoot: {
-    template: `
-      <div v-if='show'><slot /></div>
-    `,
     props: {
       show: { type: Boolean },
     },
+    template: `
+      <div v-if='show'><slot /></div>
+    `,
   },
 }));
 
-const createWrapper = (options?: ComponentMountingOptions<typeof TabItem>) =>
-  mount(TabItem, {
+function createWrapper(options?: ComponentMountingOptions<typeof TabItem>) {
+  return mount(TabItem, {
     ...options,
     props: {
       value: 'value',
       ...options?.props,
     },
   });
+}
 
-describe('Tabs/TabItem', () => {
+describe('tabs/TabItem', () => {
   it('do not render if not active', () => {
     const wrapper = createWrapper();
 
     expect(wrapper.find('div').find('div').exists()).toBeFalsy();
   });
 
-  it("render if it's active", async () => {
+  it('render if it\'s active', async () => {
     const wrapper = createWrapper({
       props: {
         active: true,

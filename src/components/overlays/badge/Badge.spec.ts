@@ -3,23 +3,24 @@ import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import Button from '@/components/buttons/button/Button.vue';
 import Badge from '@/components/overlays/badge/Badge.vue';
 
-const createWrapper = (options?: ComponentMountingOptions<typeof Badge>) =>
-  mount(Badge, {
+function createWrapper(options?: ComponentMountingOptions<typeof Badge>) {
+  return mount(Badge, {
     ...options,
-    slots: {
-      default: '<rui-button>Badge</rui-button>',
-    },
     global: {
       stubs: { 'rui-button': Button },
     },
+    slots: {
+      default: '<rui-button>Badge</rui-button>',
+    },
   });
+}
 
-describe('Badge', () => {
+describe('badge', () => {
   it('renders properly', async () => {
     const wrapper = createWrapper({
       props: {
-        text: 'Badge content',
         modelValue: false,
+        text: 'Badge content',
       },
     });
 
@@ -43,8 +44,8 @@ describe('Badge', () => {
   it('passes props correctly', async () => {
     const wrapper = createWrapper({
       props: {
-        text: 'Badge content',
         modelValue: false,
+        text: 'Badge content',
       },
     });
 

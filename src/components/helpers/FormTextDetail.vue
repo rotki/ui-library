@@ -34,7 +34,11 @@ const {
     leave-to-class="opacity-0 -translate-y-2 h-0"
     appear
   >
-    <div v-if="hasError" key="error" class="text-rui-error text-caption">
+    <div
+      v-if="hasError"
+      key="error"
+      class="text-rui-error text-caption"
+    >
       {{ formattedErrorMessages[0] }}
     </div>
     <div

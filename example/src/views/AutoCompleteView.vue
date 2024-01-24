@@ -496,7 +496,12 @@ const autoCompleteFields = ref<AutoCompleteProps[]>([
 
 <template>
   <div>
-    <h2 class="text-h4 mb-6" data-cy="auto-complete">Auto Complete</h2>
+    <h2
+      class="text-h4 mb-6"
+      data-cy="auto-complete"
+    >
+      Auto Complete
+    </h2>
     <div class="grid gap-6 grid-cols-2">
       <RuiAutoComplete
         v-for="(field, i) in autoCompleteFields"

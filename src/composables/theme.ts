@@ -16,8 +16,8 @@ const config: Ref<ThemeConfig> = ref({ ...defaultTheme });
  * Theme manager
  * @returns {ThemeContent}
  */
-export const useRotkiTheme = (): ThemeContent => {
-  const { store, state, system } = useColorMode<ThemeMode>();
+export function useRotkiTheme(): ThemeContent {
+  const { state, store, system } = useColorMode<ThemeMode>();
 
   /**
    * whether the current theme is controlled by system or user
@@ -33,8 +33,8 @@ export const useRotkiTheme = (): ThemeContent => {
    */
   const isLight: ComputedRef<boolean> = computed(
     () =>
-      (get(isAutoControlled) && get(system) === ThemeMode.light) ||
-      get(state) === ThemeMode.light,
+      (get(isAutoControlled) && get(system) === ThemeMode.light)
+      || get(state) === ThemeMode.light,
   );
 
   /**
@@ -43,8 +43,8 @@ export const useRotkiTheme = (): ThemeContent => {
    */
   const isDark: ComputedRef<boolean> = computed(
     () =>
-      (get(isAutoControlled) && get(system) === ThemeMode.dark) ||
-      get(state) === ThemeMode.dark,
+      (get(isAutoControlled) && get(system) === ThemeMode.dark)
+      || get(state) === ThemeMode.dark,
   );
 
   /**
@@ -52,9 +52,8 @@ export const useRotkiTheme = (): ThemeContent => {
    * @type {ComputedRef<ThemeData>}
    */
   const theme: ComputedRef<ThemeData> = computed(() => {
-    if (get(isLight)) {
+    if (get(isLight))
       return get(config).light;
-    }
 
     return get(config).dark;
   });
@@ -71,13 +70,12 @@ export const useRotkiTheme = (): ThemeContent => {
    * toggle between auto|light|dark
    */
   const toggleThemeMode = () => {
-    if (get(isAutoControlled)) {
+    if (get(isAutoControlled))
       switchThemeScheme(ThemeMode.light);
-    } else if (get(isLight)) {
+    else if (get(isLight))
       switchThemeScheme(ThemeMode.dark);
-    } else if (get(isDark)) {
+    else if (get(isDark))
       switchThemeScheme(ThemeMode.auto);
-    }
   };
 
   /**
@@ -102,17 +100,17 @@ export const useRotkiTheme = (): ThemeContent => {
         ([isLight, theme]) => {
           const contextVariables = Object.entries(theme)
             .map(([context, contextObject]: [string, ColorIntensity]) => ({
-              [`--rui-${context}-main`]: contextObject.DEFAULT,
-              [`--rui-${context}-lighter`]: contextObject.lighter,
               [`--rui-${context}-darker`]: contextObject.darker,
+              [`--rui-${context}-lighter`]: contextObject.lighter,
+              [`--rui-${context}-main`]: contextObject.DEFAULT,
             }))
             .reduce((acc, obj) => ({ ...acc, ...obj }), {});
 
           const state = isLight ? ThemeMode.light : ThemeMode.dark;
           const textColorsVariables = {
+            '--rui-text-disabled': `var(--rui-${state}-text-disabled)`,
             '--rui-text-primary': `var(--rui-${state}-text-primary)`,
             '--rui-text-secondary': `var(--rui-${state}-text-secondary)`,
-            '--rui-text-disabled': `var(--rui-${state}-text-disabled)`,
           };
 
           Object.entries({
@@ -128,16 +126,16 @@ export const useRotkiTheme = (): ThemeContent => {
   };
 
   return {
-    isAutoControlled,
-    isLight,
-    isDark,
     config,
-    theme,
-    store,
-    state,
     init,
+    isAutoControlled,
+    isDark,
+    isLight,
     setThemeConfig,
-    toggleThemeMode,
+    state,
+    store,
     switchThemeScheme,
+    theme,
+    toggleThemeMode,
   };
-};
+}

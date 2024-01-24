@@ -2,14 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import SimpleSelect from '@/components/forms/select/SimpleSelect.vue';
 
-const createWrapper = (
-  options?: ComponentMountingOptions<typeof SimpleSelect>,
-) => mount(SimpleSelect, options);
+function createWrapper(options?: ComponentMountingOptions<typeof SimpleSelect>) {
+  return mount(SimpleSelect, options);
+}
 
-describe('Simple select', () => {
-  it('renders properly', async () => {
+describe('simple select', () => {
+  it('renders properly', () => {
     const wrapper = createWrapper({
       props: {
+        modelValue: 'Option 5',
         options: [
           'Option 0',
           'Option 1',
@@ -18,7 +19,6 @@ describe('Simple select', () => {
           'Option 4',
           'Option 5',
         ],
-        modelValue: 'Option 5',
       },
     });
 
@@ -26,9 +26,11 @@ describe('Simple select', () => {
     expect(wrapper.find('span > svg').exists()).toBeTruthy();
   });
 
-  it('passes props correctly', async () => {
+  it('passes props correctly', () => {
     const wrapper = createWrapper({
       props: {
+        disabled: true,
+        modelValue: 'Option 5',
         options: [
           'Option 0',
           'Option 1',
@@ -37,8 +39,6 @@ describe('Simple select', () => {
           'Option 4',
           'Option 5',
         ],
-        modelValue: 'Option 5',
-        disabled: true,
       },
     });
     expect(wrapper.find('select[disabled]').exists()).toBeTruthy();

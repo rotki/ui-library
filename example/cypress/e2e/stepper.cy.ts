@@ -1,6 +1,6 @@
 // https://docs.cypress.io/api/introduction/api.html
 
-describe('Stepper', () => {
+describe('stepper', () => {
   beforeEach(() => {
     cy.visit('/steppers');
   });

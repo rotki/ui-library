@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { type ContextColorsType } from '@/consts/colors';
-import { type RuiIcons } from '~/src';
+import type { ContextColorsType } from '@/consts/colors';
+import type { RuiIcons } from '~/src';
 
 export interface Props {
   name: RuiIcons;
@@ -44,7 +44,10 @@ const path: ComputedRef<string | undefined> = computed(() => {
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <path :d="path" fill="currentColor" />
+    <path
+      :d="path"
+      fill="currentColor"
+    />
   </svg>
 </template>
 

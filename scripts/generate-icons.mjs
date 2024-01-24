@@ -1,12 +1,15 @@
-const path = require('node:path');
-const { readdir, readFile, writeFile, lstat } = require('node:fs/promises');
-const fs = require('fs-extra');
-const { pascalCase } = require('scule');
-const { XMLParser } = require('fast-xml-parser');
+import path from 'node:path';
+import { lstat, readFile, readdir, writeFile } from 'node:fs/promises';
+import url from 'node:url';
+import fs from 'fs-extra';
+import { pascalCase } from 'scule';
+import { XMLParser } from 'fast-xml-parser';
 
 const PREFIX = 'ri-';
 const TARGET = 'src/icons/';
 const CHUNK_SIZE = 500;
+
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 function resolveRoot(...dir) {
   return path.resolve(__dirname, '..', ...dir);
@@ -55,7 +58,8 @@ async function getAllSvgDataFromPath(pathDir) {
       res.push(...(await getAllSvgDataFromPath(`${pathDir}/${child}`)));
     });
     return res;
-  } else if (type.isFile()) {
+  }
+  else if (type.isFile()) {
     const name = PREFIX + path.basename(pathDir).replace('.svg', '');
     const generatedName = pascalCase(name);
     const svg = await readFile(pathDir, 'utf8');
@@ -120,10 +124,10 @@ import { type GeneratedIcon } from '@/types/icons';\n
   });
 
   indexFileContent += `export type RuiIcons = ${names
-    .map((x) => `"${x.replace('ri-', '')}"`)
+    .map(x => `"${x.replace('ri-', '')}"`)
     .join(' | ')};\n`;
 
   await writeFile(resolveRoot(`${TARGET}index.ts`), indexFileContent, 'utf8');
 }
 
-generate();
+await generate();

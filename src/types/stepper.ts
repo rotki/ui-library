@@ -1,11 +1,11 @@
 export const StepperState = {
-  inactive: 'inactive',
   active: 'active',
   done: 'done',
   error: 'error',
-  warning: 'warning',
+  inactive: 'inactive',
   info: 'info',
   success: 'success',
+  warning: 'warning',
 } as const;
 
 export type StepperState = (typeof StepperState)[keyof typeof StepperState];
@@ -18,8 +18,8 @@ export interface StepperStep {
 }
 
 export const StepperOrientation = {
-  vertical: 'vertical',
   horizontal: 'horizontal',
+  vertical: 'vertical',
 } as const;
 
 export type StepperOrientation =

@@ -2,28 +2,28 @@ import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import AutoComplete from '@/components/forms/auto-complete/AutoComplete.vue';
 
-const createWrapper = (
-  options?: ComponentMountingOptions<typeof AutoComplete>,
-) => mount(AutoComplete, { ...options });
+function createWrapper(options?: ComponentMountingOptions<typeof AutoComplete>) {
+  return mount(AutoComplete, { ...options });
+}
 
-describe('Forms/AutoComplete', () => {
+describe('forms/AutoComplete', () => {
   const data = [
-    { id: '1', text: 'Hello 1', disabled: false },
-    { id: '2', text: 'Hello 2', disabled: false },
-    { id: '3', text: 'Hello 3', disabled: false },
-    { id: '4', text: 'Hello 4', disabled: true },
-    { id: '5', text: 'Hello 5', disabled: true },
-    { id: '6', text: 'Hello 6', disabled: false },
-    { id: '7', text: 'Hello 7', disabled: false },
-    { id: '8', text: 'Hello 8', disabled: true },
-    { id: '9', text: 'Hello 9', disabled: false },
-    { id: '10', text: 'Hello 10', disabled: false },
-    { id: '11', text: 'Hello 11', disabled: false },
-    { id: '12', text: 'Hello 12', disabled: false },
-    { id: '13', text: 'Hello 13', disabled: false },
-    { id: '14', text: 'Hello 14', disabled: false },
-    { id: '15', text: 'Hello 15', disabled: false },
-    { id: '16', text: 'Hello 16', disabled: false },
+    { disabled: false, id: '1', text: 'Hello 1' },
+    { disabled: false, id: '2', text: 'Hello 2' },
+    { disabled: false, id: '3', text: 'Hello 3' },
+    { disabled: true, id: '4', text: 'Hello 4' },
+    { disabled: true, id: '5', text: 'Hello 5' },
+    { disabled: false, id: '6', text: 'Hello 6' },
+    { disabled: false, id: '7', text: 'Hello 7' },
+    { disabled: true, id: '8', text: 'Hello 8' },
+    { disabled: false, id: '9', text: 'Hello 9' },
+    { disabled: false, id: '10', text: 'Hello 10' },
+    { disabled: false, id: '11', text: 'Hello 11' },
+    { disabled: false, id: '12', text: 'Hello 12' },
+    { disabled: false, id: '13', text: 'Hello 13' },
+    { disabled: false, id: '14', text: 'Hello 14' },
+    { disabled: false, id: '15', text: 'Hello 15' },
+    { disabled: false, id: '16', text: 'Hello 16' },
   ];
   const hint = 'Lorem ipsum dolor hint';
   const errorMessage = 'Lorem ipsum dolor sit amet error';
@@ -32,9 +32,9 @@ describe('Forms/AutoComplete', () => {
   it('renders properly', () => {
     const wrapper = createWrapper({
       props: {
-        label,
         data,
         hint,
+        label,
         modelValue: null,
       },
     });

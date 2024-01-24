@@ -1,11 +1,20 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["src/**/*.stories.ts", "src/stories", "src/**/*.spec.ts"],
   "compilerOptions": {
-    "outDir": "dist",
     "declaration": true,
-    "emitDeclarationOnly": true
+    "emitDeclarationOnly": true,
+    "outDir": "dist"
   },
+  "exclude": [
+    "src/**/*.stories.ts",
+    "src/stories",
+    "src/**/*.spec.ts",
+    "tests",
+    "example",
+    "**/*.config.ts",
+    ".storybook/",
+    "tests/"
+  ],
   "tsc-alias": {
     "resolveFullPaths": true
   }

@@ -2,7 +2,7 @@ import { DEFAULT_POPPER_OPTIONS } from '@/composables/popper';
 import Tooltip, { type Props } from './Tooltip.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-const render: StoryFn<Props> = (args) => ({
+const render: StoryFn<Props> = args => ({
   components: { Tooltip },
   setup() {
     return { args };
@@ -19,37 +19,37 @@ const render: StoryFn<Props> = (args) => ({
 });
 
 const meta: Meta<Props> = {
-  title: 'Components/Overlays/Tooltip',
-  component: Tooltip,
-  tags: ['autodocs'],
-  render,
+  args: {
+    closeDelay: 500,
+    disabled: false,
+    hideArrow: false,
+    openDelay: 0,
+    popper: {
+      ...DEFAULT_POPPER_OPTIONS,
+    },
+    text: 'My Tooltip',
+  },
   argTypes: {
     closeDelay: {
       control: 'number',
     },
+    disabled: { control: 'boolean' },
+    hideArrow: { control: 'boolean' },
+    openDelay: { control: 'number' },
+    popper: { control: 'object' },
     text: {
       control: 'text',
     },
-    openDelay: { control: 'number' },
-    hideArrow: { control: 'boolean' },
-    disabled: { control: 'boolean' },
-    popper: { control: 'object' },
   },
-  args: {
-    text: 'My Tooltip',
-    closeDelay: 500,
-    openDelay: 0,
-    disabled: false,
-    hideArrow: false,
-    popper: {
-      ...DEFAULT_POPPER_OPTIONS,
-    },
-  },
+  component: Tooltip,
   parameters: {
     docs: {
       controls: { exclude: ['default'] },
     },
   },
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Overlays/Tooltip',
 };
 
 type Story = StoryObj<Props>;

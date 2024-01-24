@@ -1,7 +1,7 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { type Props, default as SimpleSelect } from './SimpleSelect.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-const render: StoryFn<Props> = (args) => ({
+const render: StoryFn<Props> = args => ({
   components: { SimpleSelect },
   setup() {
     const modelValue = computed({
@@ -19,31 +19,31 @@ const render: StoryFn<Props> = (args) => ({
 });
 
 const meta: Meta<Props> = {
-  title: 'Components/Forms/SimpleSelect',
-  component: SimpleSelect,
-  tags: ['autodocs'],
-  render,
+  args: {
+    disabled: false,
+    options: [...new Array(10)].map((_, i) => `Option ${i}`),
+    variant: 'default',
+  },
   argTypes: {
+    disabled: { control: 'boolean' },
     modelValue: { control: 'string' },
     name: { control: 'string' },
     options: { control: 'array', defaultValue: [] },
-    disabled: { control: 'boolean' },
     variant: {
       control: 'select',
       defaultValue: 'default',
       options: ['default', 'outlined'],
     },
   },
-  args: {
-    options: [...new Array(10)].map((_, i) => `Option ${i}`),
-    variant: 'default',
-    disabled: false,
-  },
+  component: SimpleSelect,
   parameters: {
     docs: {
       controls: { exclude: ['update:model-value'] },
     },
   },
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Forms/SimpleSelect',
 };
 
 type Story = StoryObj<Props>;
@@ -56,8 +56,8 @@ export const Default: Story = {
 
 export const DefaultDisabled: Story = {
   args: {
-    modelValue: 'Option 1',
     disabled: true,
+    modelValue: 'Option 1',
   },
 };
 
@@ -70,9 +70,9 @@ export const Outlined: Story = {
 
 export const OutlinedDisabled: Story = {
   args: {
+    disabled: true,
     modelValue: 'Option 1',
     variant: 'outlined',
-    disabled: true,
   },
 };
 

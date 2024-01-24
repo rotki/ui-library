@@ -1,4 +1,4 @@
-import { onMounted, ref, watchEffect } from 'vue';
+import { type Ref, onMounted, ref, watchEffect } from 'vue';
 import {
   type VirtualElement,
   defaultModifiers,
@@ -11,7 +11,6 @@ import preventOverflow from '@popperjs/core/lib/modifiers/preventOverflow';
 import computeStyles from '@popperjs/core/lib/modifiers/computeStyles';
 import eventListeners from '@popperjs/core/lib/modifiers/eventListeners';
 import { type MaybeElement, unrefElement } from '@vueuse/core';
-import type { Ref } from 'vue';
 import type { Instance, Placement, PositioningStrategy } from '@popperjs/core';
 
 export interface PopperOptions {
@@ -28,15 +27,15 @@ export interface PopperOptions {
 }
 
 export const DEFAULT_POPPER_OPTIONS: PopperOptions = {
+  adaptive: true,
+  gpuAcceleration: true,
   locked: false,
-  overflowPadding: 8,
   offsetDistance: 8,
   offsetSkid: 0,
-  gpuAcceleration: true,
-  adaptive: true,
-  scroll: true,
-  resize: true,
+  overflowPadding: 8,
   placement: 'bottom',
+  resize: true,
+  scroll: true,
   strategy: 'absolute',
 };
 
@@ -52,13 +51,7 @@ export const createPopper = popperGenerator({
   ],
 });
 
-export const usePopper = (
-  options: Ref<PopperOptions>,
-  disabled: Ref<boolean> = ref(false),
-  openDelay: Ref<number> = ref(0),
-  closeDelay: Ref<number> = ref(0),
-  virtualReference?: Ref<Element | VirtualElement>,
-) => {
+export function usePopper(options: Ref<PopperOptions>, disabled: Ref<boolean> = ref(false), openDelay: Ref<number> = ref(0), closeDelay: Ref<number> = ref(0), virtualReference?: Ref<Element | VirtualElement>) {
   const reference: Ref<MaybeElement | null> = ref(null);
   const popper: Ref<MaybeElement | null> = ref(null);
   const instance: Ref<Instance | null> = ref(null);
@@ -72,13 +65,15 @@ export const usePopper = (
   };
 
   const updatePopper = () => {
+    // todo: see making things async/await has any side-effects
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     get(instance)?.update();
   };
 
   const onMouseOver = () => {
-    if (get(disabled)) {
+    if (get(disabled))
       return;
-    }
+
     if (get(closeTimeout)) {
       clearTimeout(get(closeTimeout));
       set(closeTimeout, undefined);
@@ -97,9 +92,9 @@ export const usePopper = (
   };
 
   const onMouseLeave = () => {
-    if (get(disabled)) {
+    if (get(disabled))
       return;
-    }
+
     if (get(openTimeout)) {
       clearTimeout(get(openTimeout));
       set(openTimeout, undefined);
@@ -107,9 +102,9 @@ export const usePopper = (
 
     if (!get(closeTimeout)) {
       const timeout = setTimeout(() => {
-        if (!get(open)) {
+        if (!get(open))
           onPopperLeave();
-        }
+
         set(open, false);
         set(closeTimeout, undefined);
       }, get(closeDelay));
@@ -120,43 +115,39 @@ export const usePopper = (
 
   onMounted(() => {
     watchEffect((onInvalidate) => {
-      if (!get(popper)) {
+      if (!get(popper))
         return;
-      }
-      if (!get(reference) && !get(virtualReference)) {
+
+      if (!get(reference) && !get(virtualReference))
         return;
-      }
 
       const popperEl = unrefElement(popper);
       const referenceEl = get(virtualReference) || unrefElement(reference);
 
-      if (!(popperEl instanceof HTMLElement)) {
+      if (!(popperEl instanceof HTMLElement))
         return;
-      }
-      if (!referenceEl) {
+
+      if (!referenceEl)
         return;
-      }
 
       const {
+        adaptive = DEFAULT_POPPER_OPTIONS.adaptive,
+        gpuAcceleration = DEFAULT_POPPER_OPTIONS.gpuAcceleration,
         locked = DEFAULT_POPPER_OPTIONS.locked,
-        overflowPadding = DEFAULT_POPPER_OPTIONS.overflowPadding,
         offsetDistance = DEFAULT_POPPER_OPTIONS.offsetDistance,
         offsetSkid = DEFAULT_POPPER_OPTIONS.offsetSkid,
-        gpuAcceleration = DEFAULT_POPPER_OPTIONS.gpuAcceleration,
-        adaptive = DEFAULT_POPPER_OPTIONS.adaptive,
-        scroll = DEFAULT_POPPER_OPTIONS.scroll,
-        resize = DEFAULT_POPPER_OPTIONS.resize,
+        overflowPadding = DEFAULT_POPPER_OPTIONS.overflowPadding,
         placement = DEFAULT_POPPER_OPTIONS.placement,
+        resize = DEFAULT_POPPER_OPTIONS.resize,
+        scroll = DEFAULT_POPPER_OPTIONS.scroll,
         strategy = DEFAULT_POPPER_OPTIONS.strategy,
       } = get(options);
 
       const value = createPopper(referenceEl, popperEl, {
-        placement,
-        strategy,
         modifiers: [
           {
-            name: 'flip',
             enabled: !locked,
+            name: 'flip',
           },
           {
             name: 'preventOverflow',
@@ -180,8 +171,8 @@ export const usePopper = (
           {
             name: 'eventListeners',
             options: {
-              scroll,
               resize,
+              scroll,
             },
           },
           {
@@ -191,6 +182,8 @@ export const usePopper = (
             },
           },
         ],
+        placement,
+        strategy,
       });
 
       set(instance, value);
@@ -200,14 +193,14 @@ export const usePopper = (
   });
 
   return {
-    reference,
-    popper,
     instance,
-    open,
-    popperEnter,
-    onMouseOver,
     onMouseLeave,
+    onMouseOver,
     onPopperLeave,
+    open,
+    popper,
+    popperEnter,
+    reference,
     updatePopper,
   };
-};
+}

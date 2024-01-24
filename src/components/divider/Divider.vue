@@ -13,5 +13,8 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <div :class="vertical ? 'border-l' : 'border-t'" class="border-default" />
+  <div
+    :class="vertical ? 'border-l' : 'border-t'"
+    class="border-default"
+  />
 </template>

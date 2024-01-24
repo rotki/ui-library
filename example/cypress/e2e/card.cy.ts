@@ -1,6 +1,6 @@
 // https://docs.cypress.io/api/introduction/api.html
 
-describe('Dialog', () => {
+describe('dialog', () => {
   beforeEach(() => {
     cy.visit('/cards');
   });

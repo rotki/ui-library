@@ -296,24 +296,24 @@ $context-colors: 'primary', 'secondary', 'error', 'warning', 'info', 'success';
 
 @keyframes bg-tint {
   to {
-    background: white
+    background: white;
   }
 }
 
 @keyframes bg-shade {
   to {
-    background: black
+    background: black;
   }
 }
 
 @keyframes text-tint {
   to {
-    color: white
+    color: white;
   }
 }
 
 @keyframes text-shade {
   to {
-    color: black
+    color: black;
   }
 }

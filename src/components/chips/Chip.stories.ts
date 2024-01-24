@@ -1,10 +1,10 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import Chip, { type Props as ChipProps } from '@/components/chips/Chip.vue';
 import { contextColors } from '@/consts/colors';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 type Props = ChipProps & { prepend: string; children: string };
 
-const render: StoryFn<Props> = (args) => ({
+const render: StoryFn<Props> = args => ({
   components: { Chip },
   setup() {
     const show = ref(true);
@@ -14,7 +14,7 @@ const render: StoryFn<Props> = (args) => ({
         set(show, true);
       }, 2000);
     };
-    return { args, show, hideShow };
+    return { args, hideShow, show };
   },
   template: `
     <div>
@@ -26,30 +26,27 @@ const render: StoryFn<Props> = (args) => ({
 });
 
 const meta: Meta<Props> = {
-  title: 'Components/Chip',
-  component: Chip,
-  tags: ['autodocs'],
-  render,
   argTypes: {
-    tile: { control: 'boolean' },
     children: { control: 'string' },
-    prepend: { control: 'text' },
     clickable: { control: 'boolean' },
     closeable: { control: 'boolean' },
-    disabled: { control: 'boolean' },
-    size: {
-      control: 'select',
-      options: ['sm', 'md'],
-    },
     color: {
       control: 'select',
       options: ['grey', ...contextColors],
     },
+    disabled: { control: 'boolean' },
+    prepend: { control: 'text' },
+    size: {
+      control: 'select',
+      options: ['sm', 'md'],
+    },
+    tile: { control: 'boolean' },
     variant: {
       control: 'select',
       options: ['filled', 'outlined'],
     },
   },
+  component: Chip,
   parameters: {
     docs: {
       controls: {
@@ -57,6 +54,9 @@ const meta: Meta<Props> = {
       },
     },
   },
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Chip',
 };
 
 type Story = StoryObj<Props>;
@@ -64,335 +64,335 @@ type Story = StoryObj<Props>;
 export const Default: Story = {
   args: {
     children: 'Chip',
-    variant: 'filled',
     closeable: false,
+    color: 'grey',
     disabled: false,
     size: 'md',
-    color: 'grey',
+    variant: 'filled',
   },
 };
 
 export const Tile: Story = {
   args: {
     children: 'Chip',
-    tile: true,
-    variant: 'filled',
     closeable: false,
+    color: 'grey',
     disabled: false,
     size: 'md',
-    color: 'grey',
+    tile: true,
+    variant: 'filled',
   },
 };
 
 export const Clickable: Story = {
   args: {
     children: 'Chip',
-    variant: 'filled',
     clickable: true,
+    color: 'grey',
     disabled: false,
     size: 'md',
-    color: 'grey',
+    variant: 'filled',
   },
 };
 
 export const Dismissible: Story = {
   args: {
     children: 'Chip',
-    variant: 'filled',
     closeable: true,
+    color: 'grey',
     disabled: false,
     size: 'md',
-    color: 'grey',
+    variant: 'filled',
   },
 };
 
 export const DismissiblePrefix: Story = {
   args: {
     children: 'Chip',
-    variant: 'filled',
     closeable: true,
-    disabled: false,
-    size: 'md',
     color: 'grey',
+    disabled: false,
     prepend: 'BTC',
+    size: 'md',
+    variant: 'filled',
   },
 };
 
 export const SmallDismissible: Story = {
   args: {
     children: 'Chip',
-    variant: 'filled',
     closeable: true,
+    color: 'grey',
     disabled: false,
     size: 'sm',
-    color: 'grey',
+    variant: 'filled',
   },
 };
 
 export const SmallDismissiblePrefix: Story = {
   args: {
     children: 'Chip',
-    variant: 'filled',
     closeable: true,
-    disabled: false,
-    size: 'sm',
     color: 'grey',
+    disabled: false,
     prepend: 'BTC',
+    size: 'sm',
+    variant: 'filled',
   },
 };
 
 export const Primary: Story = {
   args: {
     children: 'Chip',
-    variant: 'filled',
     closeable: true,
+    color: 'primary',
     disabled: false,
     size: 'md',
-    color: 'primary',
+    variant: 'filled',
   },
 };
 
 export const PrimarySmall: Story = {
   args: {
     children: 'Chip',
-    variant: 'filled',
     closeable: true,
+    color: 'primary',
     disabled: false,
     size: 'sm',
-    color: 'primary',
+    variant: 'filled',
   },
 };
 
 export const PrimarySmallDisabled: Story = {
   args: {
     children: 'Chip',
-    variant: 'filled',
     closeable: true,
+    color: 'primary',
     disabled: true,
     size: 'sm',
-    color: 'primary',
+    variant: 'filled',
   },
 };
 
 export const Secondary: Story = {
   args: {
     children: 'Chip',
-    variant: 'filled',
     closeable: true,
+    color: 'secondary',
     disabled: false,
     size: 'md',
-    color: 'secondary',
+    variant: 'filled',
   },
 };
 
 export const SecondarySmall: Story = {
   args: {
     children: 'Chip',
-    variant: 'filled',
     closeable: true,
+    color: 'secondary',
     disabled: false,
     size: 'sm',
-    color: 'secondary',
+    variant: 'filled',
   },
 };
 
 export const SecondarySmallDisabled: Story = {
   args: {
     children: 'Chip',
-    variant: 'filled',
     closeable: true,
+    color: 'secondary',
     disabled: true,
     size: 'sm',
-    color: 'secondary',
+    variant: 'filled',
   },
 };
 
 export const Error: Story = {
   args: {
     children: 'Chip',
-    variant: 'filled',
     closeable: true,
+    color: 'error',
     disabled: false,
     size: 'md',
-    color: 'error',
+    variant: 'filled',
   },
 };
 
 export const ErrorSmall: Story = {
   args: {
     children: 'Chip',
-    variant: 'filled',
     closeable: true,
+    color: 'error',
     disabled: false,
     size: 'sm',
-    color: 'error',
+    variant: 'filled',
   },
 };
 
 export const ErrorSmallDisabled: Story = {
   args: {
     children: 'Chip',
-    variant: 'filled',
     closeable: true,
+    color: 'error',
     disabled: true,
     size: 'sm',
-    color: 'error',
+    variant: 'filled',
   },
 };
 
 export const OutlinedDefault: Story = {
   args: {
     children: 'Chip',
-    variant: 'outlined',
     closeable: false,
+    color: 'grey',
     disabled: false,
     size: 'md',
-    color: 'grey',
+    variant: 'outlined',
   },
 };
 
 export const OutlinedDismissible: Story = {
   args: {
     children: 'Chip',
-    variant: 'outlined',
     closeable: true,
+    color: 'grey',
     disabled: false,
     size: 'md',
-    color: 'grey',
+    variant: 'outlined',
   },
 };
 
 export const OutlinedSmallDismissible: Story = {
   args: {
     children: 'Chip',
-    variant: 'outlined',
     closeable: true,
+    color: 'grey',
     disabled: false,
     size: 'sm',
-    color: 'grey',
+    variant: 'outlined',
   },
 };
 
 export const OutlinedPrimary: Story = {
   args: {
     children: 'Chip',
-    variant: 'outlined',
     closeable: true,
+    color: 'primary',
     disabled: false,
     size: 'md',
-    color: 'primary',
+    variant: 'outlined',
   },
 };
 
 export const OutlinedPrimarySmall: Story = {
   args: {
     children: 'Chip',
-    variant: 'outlined',
     closeable: true,
+    color: 'primary',
     disabled: false,
     size: 'sm',
-    color: 'primary',
+    variant: 'outlined',
   },
 };
 
 export const OutlinedPrimarySmallDisabled: Story = {
   args: {
     children: 'Chip',
-    variant: 'outlined',
     closeable: true,
+    color: 'primary',
     disabled: true,
     size: 'sm',
-    color: 'primary',
+    variant: 'outlined',
   },
 };
 
 export const OutlinedSecondary: Story = {
   args: {
     children: 'Chip',
-    variant: 'outlined',
     closeable: true,
+    color: 'secondary',
     disabled: false,
     size: 'md',
-    color: 'secondary',
+    variant: 'outlined',
   },
 };
 
 export const OutlinedSecondarySmall: Story = {
   args: {
     children: 'Chip',
-    variant: 'outlined',
     closeable: true,
+    color: 'secondary',
     disabled: false,
     size: 'sm',
-    color: 'secondary',
+    variant: 'outlined',
   },
 };
 
 export const OutlinedSecondarySmallDisabled: Story = {
   args: {
     children: 'Chip',
-    variant: 'outlined',
     closeable: true,
+    color: 'secondary',
     disabled: true,
     size: 'sm',
-    color: 'secondary',
+    variant: 'outlined',
   },
 };
 
 export const OutlinedError: Story = {
   args: {
     children: 'Chip',
-    variant: 'outlined',
     closeable: true,
+    color: 'error',
     disabled: false,
     size: 'md',
-    color: 'error',
+    variant: 'outlined',
   },
 };
 
 export const OutlinedErrorPrefix: Story = {
   args: {
     children: 'Chip',
-    variant: 'outlined',
     closeable: true,
-    disabled: false,
-    size: 'md',
     color: 'error',
+    disabled: false,
     prepend: 'BTC',
+    size: 'md',
+    variant: 'outlined',
   },
 };
 
 export const OutlinedErrorSmall: Story = {
   args: {
     children: 'Chip',
-    variant: 'outlined',
     closeable: true,
+    color: 'error',
     disabled: false,
     size: 'sm',
-    color: 'error',
+    variant: 'outlined',
   },
 };
 
 export const OutlinedErrorSmallDisabled: Story = {
   args: {
     children: 'Chip',
-    variant: 'outlined',
     closeable: true,
+    color: 'error',
     disabled: true,
     size: 'sm',
-    color: 'error',
+    variant: 'outlined',
   },
 };
 
 export const OutlinedErrorSmallDisabledPrefixed: Story = {
   args: {
     children: 'Chip',
-    variant: 'outlined',
     closeable: true,
-    disabled: true,
-    size: 'sm',
     color: 'error',
+    disabled: true,
     prepend: 'BTC',
+    size: 'sm',
+    variant: 'outlined',
   },
 };
 

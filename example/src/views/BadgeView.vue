@@ -754,10 +754,22 @@ const badges = ref<BadgeProps[]>([
 
 <template>
   <div>
-    <h2 class="text-h4 mb-6" data-cy="badges">Badges</h2>
+    <h2
+      class="text-h4 mb-6"
+      data-cy="badges"
+    >
+      Badges
+    </h2>
     <div class="grid gap-6 grid-cols-3 lg:grid-cols-7">
-      <div v-for="(badge, i) in badges" :key="i" class="p-4">
-        <RuiBadge v-bind="badge" :data-cy="`badge-${i}`">
+      <div
+        v-for="(badge, i) in badges"
+        :key="i"
+        class="p-4"
+      >
+        <RuiBadge
+          v-bind="badge"
+          :data-cy="`badge-${i}`"
+        >
           <RuiButton @click="badge.modelValue = !badge.modelValue">
             Badge
           </RuiButton>

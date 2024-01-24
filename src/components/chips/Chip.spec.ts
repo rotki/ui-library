@@ -2,10 +2,11 @@ import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import Chip from '@/components/chips/Chip.vue';
 
-const createWrapper = (options?: ComponentMountingOptions<typeof Chip>) =>
-  mount(Chip, { ...options, global: { stubs: ['rui-icon'] } });
+function createWrapper(options?: ComponentMountingOptions<typeof Chip>) {
+  return mount(Chip, { ...options, global: { stubs: ['rui-icon'] } });
+}
 
-describe('Chips/Chip', () => {
+describe('chips/Chip', () => {
   it('renders properly', () => {
     const label = 'Chip';
     const wrapper = createWrapper({
@@ -29,7 +30,7 @@ describe('Chips/Chip', () => {
     expect(wrapper.emitted()).toHaveProperty('click:close');
   });
 
-  it("disabled chip can't be closed", async () => {
+  it('disabled chip can\'t be closed', async () => {
     const wrapper = createWrapper({
       props: {
         closeable: true,
@@ -43,11 +44,11 @@ describe('Chips/Chip', () => {
     expect(wrapper.emitted()).not.toHaveProperty('click:close');
   });
 
-  it("disabled chip doesn't emit click event", async () => {
+  it('disabled chip doesn\'t emit click event', async () => {
     const wrapper = createWrapper({
       props: {
-        disabled: true,
         clickable: true,
+        disabled: true,
       },
     });
 
@@ -60,7 +61,7 @@ describe('Chips/Chip', () => {
     expect(wrapper.emitted()).toHaveProperty('click');
   });
 
-  it("not `clickable` chip doesn't emit click event", async () => {
+  it('not `clickable` chip doesn\'t emit click event', async () => {
     const wrapper = createWrapper({
       props: {
         clickable: false,

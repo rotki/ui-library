@@ -1,5 +1,4 @@
 import type { StorybookConfig } from '@storybook/vue3-vite';
-import path = require("node:path");
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
@@ -10,9 +9,9 @@ const config: StorybookConfig = {
     {
       name: '@storybook/addon-essentials',
       options: {
-        backgrounds: false
-      }
-    }
+        backgrounds: false,
+      },
+    },
   ],
   framework: {
     name: '@storybook/vue3-vite',
@@ -22,7 +21,8 @@ const config: StorybookConfig = {
     autodocs: 'tag',
   },
   typescript: {
-    check: true
-  }
+    check: true,
+  },
 };
+
 export default config;

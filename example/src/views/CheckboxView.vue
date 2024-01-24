@@ -109,7 +109,12 @@ const checkboxes = ref<CheckboxData[]>([
 
 <template>
   <div>
-    <h2 class="text-h4 mb-6" data-cy="checkboxes">Checkboxes</h2>
+    <h2
+      class="text-h4 mb-6"
+      data-cy="checkboxes"
+    >
+      Checkboxes
+    </h2>
     <div class="grid gap-1 grid-rows-2 grid-cols-6">
       <RuiCheckbox
         v-for="(checkbox, i) in checkboxes"

@@ -6,24 +6,25 @@ import {
 import { describe, expect, it } from 'vitest';
 import Tab from '@/components/tabs/tab/Tab.vue';
 
-const createWrapper = (options?: ComponentMountingOptions<typeof Tab>) =>
-  mount(Tab, {
+function createWrapper(options?: ComponentMountingOptions<typeof Tab>) {
+  return mount(Tab, {
     ...options,
-    props: { tabValue: 'tab-1', ...options?.props },
     global: {
       stubs: {
         RouterLink: RouterLinkStub,
       },
     },
+    props: { tabValue: 'tab-1', ...options?.props },
   });
+}
 
-describe('Tabs/Tab', () => {
+describe('tabs/Tab', () => {
   it('renders properly', () => {
     const label = 'Tab 1';
     const wrapper = createWrapper({
       slots: {
-        prepend: 'prepend',
         default: () => label,
+        prepend: 'prepend',
       },
     });
     const elem = wrapper.find('button');
@@ -88,10 +89,10 @@ describe('Tabs/Tab', () => {
   it('tab as link', async () => {
     const wrapper = createWrapper({
       props: {
-        link: true,
-        to: '/tabs',
         exact: true,
         exactPath: true,
+        link: true,
+        to: '/tabs',
       },
     });
 

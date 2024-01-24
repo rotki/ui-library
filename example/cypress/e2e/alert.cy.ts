@@ -1,4 +1,4 @@
-describe('Alerts', () => {
+describe('alerts', () => {
   beforeEach(() => {
     cy.visit('/alerts');
   });

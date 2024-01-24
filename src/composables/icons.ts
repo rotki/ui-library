@@ -1,4 +1,3 @@
-import { type GeneratedIcon } from '@/types/icons';
 import {
   RiAlertFill,
   RiAlertLine,
@@ -31,6 +30,7 @@ import {
   RiMoreFill,
   RiRadioButtonLine,
 } from '@/icons';
+import type { GeneratedIcon } from '@/types/icons';
 
 export const useIcons = createGlobalState(() => {
   const requiredIcons: GeneratedIcon[] = [

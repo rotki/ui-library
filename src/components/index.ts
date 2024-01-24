@@ -1,4 +1,4 @@
-/* eslint-disable max-lines,import/max-dependencies */
+/* eslint-disable import/max-dependencies */
 import {
   type Props as AlertProps,
   default as RuiAlert,
@@ -68,7 +68,7 @@ import {
   default as RuiRadioGroup,
 } from '@/components/forms/radio-button/radio-group/RadioGroup.vue';
 import {
-  type RadioProps as RadioProps,
+  type RadioProps,
   default as RuiRadio,
 } from '@/components/forms/radio-button/radio/Radio.vue';
 import {
@@ -83,12 +83,6 @@ import {
   default as RuiSimpleSelect,
   type Props as SimpleSelectProps,
 } from '@/components/forms/select/SimpleSelect.vue';
-import {
-  type TableColumn as DataTableColumn,
-  type GroupKeys as DataTableGroupKeys,
-  type SortColumn as DataTableSortColumn,
-  type TableSortData as DataTableSortData,
-} from '@/components/tables/TableHead.vue';
 import {
   type TableOptions as DataTableOptions,
   type Props as DataTableProps,
@@ -131,6 +125,12 @@ import {
   default as RuiSkeletonLoader,
   type Props as SkeletonLoaderProps,
 } from '@/components/loaders/Skeleton.vue';
+import type {
+  TableColumn as DataTableColumn,
+  GroupKeys as DataTableGroupKeys,
+  SortColumn as DataTableSortColumn,
+  TableSortData as DataTableSortData,
+} from '@/components/tables/TableHead.vue';
 
 export {
   RuiAlert,

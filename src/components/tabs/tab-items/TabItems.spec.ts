@@ -5,16 +5,17 @@ import TabItem from '@/components/tabs/tab-item/TabItem.vue';
 
 vi.mock('@headlessui/vue', () => ({
   TransitionRoot: {
-    template: `
-      <div v-if='show'><slot /></div>
-    `,
     props: {
       show: { type: Boolean },
     },
+    template: `
+      <div v-if='show'><slot /></div>
+    `,
   },
 }));
-const createWrapper = (options?: ComponentMountingOptions<typeof TabItems>) =>
-  mount(TabItems, {
+
+function createWrapper(options?: ComponentMountingOptions<typeof TabItems>) {
+  return mount(TabItems, {
     ...options,
     global: { stubs: { TabItem } },
     slots: {
@@ -26,8 +27,9 @@ const createWrapper = (options?: ComponentMountingOptions<typeof TabItems>) =>
       ],
     },
   });
+}
 
-describe('Tabs/TabItems', () => {
+describe('tabs/TabItems', () => {
   it('renders properly', async () => {
     const wrapper = createWrapper({
       props: {

@@ -1,4 +1,4 @@
-import { type RouteLocationNamedRaw } from 'vue-router';
+import type { RouteLocationNamedRaw } from 'vue-router';
 
 export interface SideNavLink {
   to: RouteLocationNamedRaw;
@@ -16,7 +16,7 @@ export type DataType<C, D = undefined> = Omit<
   'modelValue'
 >;
 
-export type Slots = {
+export interface Slots {
   append?: string;
   prepend?: string;
-};
+}

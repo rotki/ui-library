@@ -1,5 +1,5 @@
-import { type SetupContext } from 'vue';
 import { objectOmit, objectPick } from '@vueuse/shared';
+import type { SetupContext } from 'vue';
 
 interface CurrencyOptions {
   currency?: string;
@@ -17,52 +17,50 @@ type SetupContextAttrsKeys = (keyof SetupContextAttrs)[];
  * @param {number} amount
  * @param {CurrencyOptions} options
  */
-export const formatCurrency = (
-  amount: number | string,
-  {
-    currency = 'EUR',
-    style = 'currency',
-    fractionDigits = 2,
-    locale = 'de-De',
-  }: CurrencyOptions,
-) =>
-  new Intl.NumberFormat(locale, {
-    style,
+export function formatCurrency(amount: number | string, {
+  currency = 'EUR',
+  fractionDigits = 2,
+  locale = 'de-De',
+  style = 'currency',
+}: CurrencyOptions) {
+  return new Intl.NumberFormat(locale, {
     currency,
     maximumFractionDigits: fractionDigits,
     minimumFractionDigits: fractionDigits,
+    style,
   }).format(Number(amount));
+}
 
 /**
  * Format number value
  * @param {number} amount
  * @param {CurrencyOptions} options
  */
-export const formatNumber = (
-  amount: number | string,
-  { fractionDigits = 2 }: CurrencyOptions,
-) =>
-  new Intl.NumberFormat(undefined, {
+export function formatNumber(amount: number | string, { fractionDigits = 2 }: CurrencyOptions) {
+  return new Intl.NumberFormat(undefined, {
     maximumFractionDigits: fractionDigits,
     minimumFractionDigits: fractionDigits,
   }).format(Number(amount));
+}
 
 /**
  * Format number value without fraction
  * @param {number} amount
  */
-export const formatInteger = (amount: number | string) =>
-  formatNumber(amount, { fractionDigits: 0 });
+export function formatInteger(amount: number | string) {
+  return formatNumber(amount, { fractionDigits: 0 });
+}
 
 /**
  * Generates and returns the array of root allowed attributes
  * @param {SetupContextAttrs} data
  * @returns {SetupContextAttrsKeys}
  */
-export const getRootKeys = (data: SetupContextAttrs) =>
-  Object.keys(data).filter((key) =>
+export function getRootKeys(data: SetupContextAttrs) {
+  return Object.keys(data).filter(key =>
     key.startsWith('data-'),
   ) as SetupContextAttrsKeys;
+}
 
 /**
  * Picks only required attributes for root element
@@ -70,10 +68,9 @@ export const getRootKeys = (data: SetupContextAttrs) =>
  * @param {SetupContextAttrsKeys} include
  * @returns {Pick<SetupContextAttrs, any>}
  */
-export const getRootAttrs = (
-  data: SetupContextAttrs,
-  include: SetupContextAttrsKeys = ['class'],
-) => objectPick(data, [...getRootKeys(data), ...include]);
+export function getRootAttrs(data: SetupContextAttrs, include: SetupContextAttrsKeys = ['class']) {
+  return objectPick(data, [...getRootKeys(data), ...include]);
+}
 
 /**
  * Omits root attributes from component's attributes
@@ -81,7 +78,6 @@ export const getRootAttrs = (
  * @param {SetupContextAttrsKeys} exclude
  * @returns {Omit<SetupContextAttrs, any>}
  */
-export const getNonRootAttrs = (
-  data: SetupContextAttrs,
-  exclude: SetupContextAttrsKeys = ['class'],
-) => objectOmit(data, [...getRootKeys(data), ...exclude]);
+export function getNonRootAttrs(data: SetupContextAttrs, exclude: SetupContextAttrsKeys = ['class']) {
+  return objectOmit(data, [...getRootKeys(data), ...exclude]);
+}

@@ -11,8 +11,8 @@ export const useGlobalId = createGlobalState(() => {
   return { count, nextId };
 });
 
-export const generateId = (prefix = '') => {
+export function generateId(prefix = '') {
   const { nextId } = useGlobalId();
 
   return `${prefix}-${nextId()}`;
-};
+}

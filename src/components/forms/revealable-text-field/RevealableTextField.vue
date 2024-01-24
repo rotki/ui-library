@@ -44,7 +44,10 @@ const slots = useSlots();
     v-bind="{ ...props, ...attrs }"
     :type="hidden ? 'password' : 'text'"
   >
-    <template v-if="slots.prepend" #prepend>
+    <template
+      v-if="slots.prepend"
+      #prepend
+    >
       <slot name="prepend" />
     </template>
     <template #append>

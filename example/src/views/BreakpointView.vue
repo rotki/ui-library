@@ -60,13 +60,22 @@ const groups = computed(() => [
 
 <template>
   <div>
-    <h2 class="text-h4 mb-2" data-cy="breakpoint">Breakpoint</h2>
+    <h2
+      class="text-h4 mb-2"
+      data-cy="breakpoint"
+    >
+      Breakpoint
+    </h2>
     <h5 class="text-h5 mb-8 text-rui-text-secondary">
       Resize the browser window!
     </h5>
     <div>
       <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <div v-for="(group, i) in groups" :key="i" class="flex flex-col gap-1">
+        <div
+          v-for="(group, i) in groups"
+          :key="i"
+          class="flex flex-col gap-1"
+        >
           <div
             v-for="(item, j) in group"
             :key="j"

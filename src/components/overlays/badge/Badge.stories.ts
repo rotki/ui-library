@@ -10,8 +10,8 @@ type Props = BadgeProps & {
   buttonText?: string | null;
 };
 
-const render: StoryFn<Props> = (args) => ({
-  components: { Badge, Icon, Button },
+const render: StoryFn<Props> = args => ({
+  components: { Badge, Button, Icon },
   setup() {
     const modelValue = computed({
       get() {
@@ -40,47 +40,47 @@ const render: StoryFn<Props> = (args) => ({
 });
 
 const meta: Meta<Props> = {
-  title: 'Components/Overlays/Badge',
-  component: Badge,
-  tags: ['autodocs'],
-  render,
+  args: {
+    buttonText: 'Badge',
+    color: 'primary',
+    dot: false,
+    icon: null,
+    left: false,
+    modelValue: true,
+    offsetX: 0,
+    offsetY: 0,
+    rounded: 'full',
+    size: 'md',
+    text: '1',
+  },
   argTypes: {
-    text: {
-      control: 'text',
-    },
+    color: { control: 'select', options: ['default', ...contextColors] },
     icon: {
       control: 'select',
       options: [null, ...Object.values(Icons).map(({ name }) => name.slice(3))],
     },
-    color: { control: 'select', options: ['default', ...contextColors] },
-    rounded: { control: 'select', options: ['full', 'sm', 'md', 'lg'] },
-    placement: { control: 'select', options: ['top', 'center', 'bottom'] },
-    size: { control: 'select', options: ['sm', 'md', 'lg'] },
     offsetX: {
       control: 'number',
     },
     offsetY: {
       control: 'number',
     },
+    placement: { control: 'select', options: ['top', 'center', 'bottom'] },
+    rounded: { control: 'select', options: ['full', 'sm', 'md', 'lg'] },
+    size: { control: 'select', options: ['sm', 'md', 'lg'] },
+    text: {
+      control: 'text',
+    },
   },
-  args: {
-    text: '1',
-    buttonText: 'Badge',
-    color: 'primary',
-    rounded: 'full',
-    size: 'md',
-    modelValue: true,
-    icon: null,
-    dot: false,
-    left: false,
-    offsetX: 0,
-    offsetY: 0,
-  },
+  component: Badge,
   parameters: {
     docs: {
       controls: { exclude: ['default', 'badge'] },
     },
   },
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Overlays/Badge',
 };
 
 type Story = StoryObj<Props>;

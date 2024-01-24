@@ -1,6 +1,6 @@
 // https://docs.cypress.io/api/introduction/api.html
 
-describe('DataTable', () => {
+describe('dataTable', () => {
   beforeEach(() => {
     cy.visit('/data-tables');
   });
@@ -213,8 +213,8 @@ describe('DataTable', () => {
       .should('exist');
 
     cy.get('@row4')
-      .scrollIntoView()
-      .get('@mainHead')
+      .scrollIntoView();
+    cy.get('@row4').get('@mainHead')
       .should((thead) => {
         const classes = Cypress.$(thead).attr('class');
         expect(classes).to.contain('_sticky__header_');
@@ -223,8 +223,9 @@ describe('DataTable', () => {
 
     cy.window()
       .get('body')
-      .scrollTo('top')
-      .get('@mainHead')
+      .scrollTo('top');
+    cy.window()
+      .get('body').get('@mainHead')
       .should((thead) => {
         const classes = Cypress.$(thead).attr('class');
         expect(classes).not.to.contain('_stick__top_');

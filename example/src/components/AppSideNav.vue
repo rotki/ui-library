@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useCssModule } from 'vue';
 import { useRoute } from 'vue-router';
-import { type SideNavLink } from '@/types';
+import type { SideNavLink } from '@/types';
 
 defineProps<{
   navigation: Array<{
@@ -16,11 +16,26 @@ const css = useCssModule();
 
 <template>
   <nav :class="css.navigation">
-    <ul class="space-y-9" role="list">
-      <li v-for="(section, i) in navigation" :key="i">
-        <h2 :class="css.section__title">{{ section.title }}</h2>
-        <ul :class="css.section__menu" role="list">
-          <li v-for="(link, j) in section.links" :key="j" class="relative">
+    <ul
+      class="space-y-9"
+      role="list"
+    >
+      <li
+        v-for="(section, i) in navigation"
+        :key="i"
+      >
+        <h2 :class="css.section__title">
+          {{ section.title }}
+        </h2>
+        <ul
+          :class="css.section__menu"
+          role="list"
+        >
+          <li
+            v-for="(link, j) in section.links"
+            :key="j"
+            class="relative"
+          >
             <RouterLink
               :class="[
                 css.link,

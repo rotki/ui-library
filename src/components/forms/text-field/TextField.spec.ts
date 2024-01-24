@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import TextField from '@/components/forms/text-field/TextField.vue';
 
-const createWrapper = (options?: ComponentMountingOptions<typeof TextField>) =>
-  mount(TextField, { ...options, global: { stubs: ['icon'] } });
+function createWrapper(options?: ComponentMountingOptions<typeof TextField>) {
+  return mount(TextField, { ...options, global: { stubs: ['icon'] } });
+}
 
-describe('Forms/TextField', () => {
+describe('forms/TextField', () => {
   it('renders properly', () => {
     const label = 'Text Field Label';
     const wrapper = createWrapper({
@@ -111,17 +112,17 @@ describe('Forms/TextField', () => {
     expect(wrapper.find('.details div').text()).toBe(successMessage);
   });
 
-  it('passes hideDetails', async () => {
+  it('passes hideDetails', () => {
     const wrapper = createWrapper({
       props: {
-        hint: 'This hint should not be rendered',
         hideDetails: true,
+        hint: 'This hint should not be rendered',
       },
     });
     expect(wrapper.find('.details div').exists()).toBeFalsy();
   });
 
-  it('passes prependIcon', async () => {
+  it('passes prependIcon', () => {
     const icon = 'heart-fill';
     const wrapper = createWrapper({
       props: {
@@ -134,7 +135,7 @@ describe('Forms/TextField', () => {
     ).toBe(icon);
   });
 
-  it('passes appendIcon', async () => {
+  it('passes appendIcon', () => {
     const icon = 'heart-fill';
     const wrapper = createWrapper({
       props: {
@@ -147,7 +148,7 @@ describe('Forms/TextField', () => {
     ).toBe(icon);
   });
 
-  it('passes prepend slot', async () => {
+  it('passes prepend slot', () => {
     const prepend = 'Prepend text';
 
     const wrapper = createWrapper({
@@ -159,7 +160,7 @@ describe('Forms/TextField', () => {
     expect(wrapper.find('div[class*=prepend]').text()).toBe(prepend);
   });
 
-  it('passes append slot', async () => {
+  it('passes append slot', () => {
     const append = 'Append text';
 
     const wrapper = createWrapper({

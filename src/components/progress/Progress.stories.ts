@@ -1,8 +1,8 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { contextColors } from '@/consts/colors';
 import { default as Progress, type Props } from './Progress.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-const render: StoryFn<Props> = (args) => ({
+const render: StoryFn<Props> = args => ({
   components: { Progress },
   setup() {
     return { args };
@@ -12,76 +12,76 @@ const render: StoryFn<Props> = (args) => ({
 });
 
 const meta: Meta<Props> = {
-  title: 'Components/Progress',
-  component: Progress,
-  tags: ['autodocs'],
-  render,
+  args: {
+    size: 32,
+    thickness: 4,
+  },
   argTypes: {
-    value: {
-      control: 'number',
-    },
     bufferValue: {
       control: 'number',
     },
+    circular: { control: 'boolean' },
     color: {
       control: 'select',
       options: ['inherit', ...contextColors],
       selected: 'inherit',
     },
+    showLabel: { control: 'boolean' },
+    size: { control: 'number' },
+    thickness: { control: 'number' },
+    value: {
+      control: 'number',
+    },
     variant: {
       control: 'select',
       options: ['determinate', 'indeterminate', 'buffer'],
     },
-    circular: { control: 'boolean' },
-    showLabel: { control: 'boolean' },
-    thickness: { control: 'number' },
-    size: { control: 'number' },
   },
-  args: {
-    thickness: 4,
-    size: 32,
-  },
+  component: Progress,
   parameters: {
     docs: {
       controls: { exclude: [] },
     },
   },
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Progress',
 };
 
 type Story = StoryObj<Props>;
 
 export const Default: Story = {
   args: {
-    value: 50,
     bufferValue: 60,
-    variant: 'determinate',
     circular: false,
     showLabel: false,
+    value: 50,
+    variant: 'determinate',
   },
 };
 
 export const Primary: Story = {
   args: {
-    value: 50,
     bufferValue: 60,
-    variant: 'determinate',
-    color: 'primary',
     circular: false,
+    color: 'primary',
     showLabel: false,
+    value: 50,
+    variant: 'determinate',
   },
 };
 
 export const WithLabel: Story = {
   args: {
-    value: 50,
     showLabel: true,
+    value: 50,
   },
 };
 
 export const Secondary: Story = {
   args: {
-    value: 50,
     color: 'secondary',
+    value: 50,
   },
 };
 
@@ -94,50 +94,50 @@ export const Indeterminate: Story = {
 
 export const Buffer: Story = {
   args: {
-    value: 50,
     bufferValue: 70,
+    value: 50,
     variant: 'buffer',
   },
 };
 
 export const BufferWithLabel: Story = {
   args: {
-    value: 50,
     bufferValue: 70,
-    variant: 'buffer',
     showLabel: true,
+    value: 50,
+    variant: 'buffer',
   },
 };
 
 export const Circular: Story = {
   args: {
-    value: 50,
     circular: true,
+    value: 50,
   },
 };
 
 export const CircularPrimary: Story = {
   args: {
-    value: 50,
     circular: true,
     color: 'primary',
+    value: 50,
   },
 };
 
 export const CircularIndeterminate: Story = {
   args: {
+    circular: true,
     value: 50,
     variant: 'indeterminate',
-    circular: true,
   },
 };
 
 export const CircularWithLabel: Story = {
   args: {
-    value: 100,
-    variant: 'determinate',
     circular: true,
     showLabel: true,
+    value: 100,
+    variant: 'determinate',
   },
 };
 

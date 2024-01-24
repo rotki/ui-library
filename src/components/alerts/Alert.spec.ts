@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import Alert from '@/components/alerts/Alert.vue';
 
-const createWrapper = (options?: ComponentMountingOptions<typeof Alert>) =>
-  mount(Alert, { ...options, global: { stubs: ['rui-icon'] } });
+function createWrapper(options?: ComponentMountingOptions<typeof Alert>) {
+  return mount(Alert, { ...options, global: { stubs: ['rui-icon'] } });
+}
 
-describe('Forms/Alert', () => {
+describe('forms/Alert', () => {
   it('renders properly', () => {
     const title = 'Text Field Label';
     const wrapper = createWrapper({

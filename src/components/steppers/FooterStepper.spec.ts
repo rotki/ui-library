@@ -2,16 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import FooterStepper from '@/components/steppers/FooterStepper.vue';
 
-const createWrapper = (
-  options: ComponentMountingOptions<typeof FooterStepper>,
-) => mount(FooterStepper, options);
+function createWrapper(options: ComponentMountingOptions<typeof FooterStepper>) {
+  return mount(FooterStepper, options);
+}
 
-describe('FooterStepper', () => {
+describe('footerStepper', () => {
   it('renders properly', () => {
     const wrapper = createWrapper({
       props: {
-        pages: 5,
         modelValue: 1,
+        pages: 5,
       },
     });
     expect(wrapper.classes()).toMatch(/_footer-stepper_/);
@@ -21,9 +21,9 @@ describe('FooterStepper', () => {
   it('passes props correctly', async () => {
     const wrapper = createWrapper({
       props: {
+        modelValue: 1,
         pages: 5,
         variant: 'bullet',
-        modelValue: 1,
       },
     });
 

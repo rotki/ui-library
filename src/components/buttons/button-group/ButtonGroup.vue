@@ -1,5 +1,5 @@
 <script lang="ts" generic="T = undefined" setup>
-import { type ContextColorsType } from '@/consts/colors';
+import type { ContextColorsType } from '@/consts/colors';
 
 export interface Props<T = undefined> {
   vertical?: boolean;
@@ -43,51 +43,50 @@ const children = computed(() =>
     };
 
     // if group is disabled, disable child buttons
-    if (get(disabled)) {
+    if (get(disabled))
       child.props.disabled = true;
-    }
+
     const rootColor = get(color);
     // if given root color, use it
-    if (rootColor) {
+    if (rootColor)
       child.props.color = rootColor;
-    }
 
-    if (child.props.active && props.activeColor) {
+    if (child.props.active && props.activeColor)
       child.props.color = props.activeColor;
-    }
 
     return child;
   }),
 );
 
-const activeItem = (id: T) => {
+function activeItem(id: T) {
   const selected = get(modelValue);
-  if (Array.isArray(selected)) {
+  if (Array.isArray(selected))
     return selected.includes(id);
-  }
 
   return selected === id;
-};
+}
 
-const onClick = (id: T) => {
+function onClick(id: T) {
   const selected = get(modelValue);
   const mandatory = get(required);
   if (Array.isArray(selected)) {
     const index = selected.indexOf(id);
     if (index >= 0) {
-      if (!mandatory || selected.length !== 1) {
+      if (!mandatory || selected.length !== 1)
         selected.splice(index, 1);
-      }
-    } else {
+    }
+    else {
       selected.push(id);
     }
     emit('update:modelValue', selected);
-  } else if (mandatory) {
+  }
+  else if (mandatory) {
     emit('update:modelValue', id);
-  } else {
+  }
+  else {
     emit('update:modelValue', activeItem(id) ? undefined : id);
   }
-};
+}
 
 const css = useCssModule();
 const colorClass = computed(() => (props.color ? css[props.color] : undefined));

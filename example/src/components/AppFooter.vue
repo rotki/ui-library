@@ -6,7 +6,12 @@ const year = new Date().getFullYear();
 </script>
 
 <template>
-  <footer :class="css.footer" class="wrapper">&copy; {{ year }} Rotki</footer>
+  <footer
+    :class="css.footer"
+    class="wrapper"
+  >
+    &copy; {{ year }} Rotki
+  </footer>
 </template>
 
 <style lang="scss" module>

@@ -229,19 +229,40 @@ const radioGroups = ref<
 
 <template>
   <div>
-    <h2 class="text-h4 mb-6" data-cy="radio-buttons">Radio Buttons</h2>
-    <div class="grid gap-4 grid-cols-6 mb-14" data-cy="radio-wrapper">
+    <h2
+      class="text-h4 mb-6"
+      data-cy="radio-buttons"
+    >
+      Radio Buttons
+    </h2>
+    <div
+      class="grid gap-4 grid-cols-6 mb-14"
+      data-cy="radio-wrapper"
+    >
       <RuiRadio
         v-for="(radio, j) in radios"
         :key="j"
         v-model="radio.modelValue"
         v-bind="radio"
       >
-        <span v-if="radio.label" class="capitalize"> {{ radio.label }} </span>
+        <span
+          v-if="radio.label"
+          class="capitalize"
+        >
+          {{ radio.label }}
+        </span>
       </RuiRadio>
     </div>
-    <h2 class="text-h4 mb-6" data-cy="radio-group-buttons">Radio Groups</h2>
-    <div class="grid gap-8" data-cy="radio-group-wrapper">
+    <h2
+      class="text-h4 mb-6"
+      data-cy="radio-group-buttons"
+    >
+      Radio Groups
+    </h2>
+    <div
+      class="grid gap-8"
+      data-cy="radio-group-wrapper"
+    >
       <RuiRadioGroup
         v-for="(radioGroup, i) in radioGroups"
         :key="i"

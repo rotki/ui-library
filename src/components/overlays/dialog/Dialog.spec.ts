@@ -8,17 +8,19 @@ import { promiseTimeout } from '@vueuse/core';
 import Dialog from '@/components/overlays/dialog/Dialog.vue';
 import Button from '@/components/buttons/button/Button.vue';
 
-const createWrapper = (options: ComponentMountingOptions<typeof Dialog>) =>
-  mount(Dialog, { ...options, global: { stubs: { 'rui-button': Button } } });
+function createWrapper(options: ComponentMountingOptions<typeof Dialog>) {
+  return mount(Dialog, { ...options, global: { stubs: { 'rui-button': Button } } });
+}
 
 const delay = (time: number = 100) => promiseTimeout(time);
 
-const getPortal = () =>
-  new DOMWrapper(
+function getPortal() {
+  return new DOMWrapper(
     document.querySelector('#headlessui-portal-root div[role=dialog]'),
   );
+}
 
-describe('Dialog', () => {
+describe('dialog', () => {
   it('renders properly', async () => {
     const wrapper = createWrapper({
       props: {
@@ -31,10 +33,10 @@ describe('Dialog', () => {
     expect(portal.exists()).toBeTruthy();
     expect(portal.classes()).toMatch(/_dialog_/);
 
-    wrapper.setProps({ dismissible: true });
+    await wrapper.setProps({ dismissible: true });
     await delay(500);
 
-    wrapper.setProps({ modelValue: false });
+    await wrapper.setProps({ modelValue: false });
     await delay(500);
 
     expect(getPortal().exists()).toBeFalsy();
@@ -46,11 +48,11 @@ describe('Dialog', () => {
         modelValue: true,
       },
       slots: {
-        title: ({ text = 'Dialog title' }: { text?: string }) => text,
-        description: ({ text = 'Dialog description' }: { text?: string }) =>
-          text,
         default: ({ text = 'Lorem ipsum dolor sit amet' }: { text?: string }) =>
           `<p>${text}</p>`,
+        description: ({ text = 'Dialog description' }: { text?: string }) =>
+          text,
+        title: ({ text = 'Dialog title' }: { text?: string }) => text,
       },
     });
 
@@ -60,18 +62,18 @@ describe('Dialog', () => {
     expect(portal.classes()).toMatch(/_dialog_/);
     expect(portal.find('div[class*=_dismiss_] button').exists()).toBeFalsy();
 
-    wrapper.setProps({ dismissible: true });
+    await wrapper.setProps({ dismissible: true });
     await delay();
     expect(portal.find('div[class*=_dismiss_] button').exists()).toBeTruthy();
     expect(portal.get('div[class*=_dismiss_] button').classes()).toMatch(
       /_btn_/,
     );
 
-    wrapper.setProps({ persistent: true });
+    await wrapper.setProps({ persistent: true });
     await delay();
     expect(portal.find('div[class*=_dismiss_] button').exists()).toBeFalsy();
 
-    wrapper.setProps({ modelValue: false });
+    await wrapper.setProps({ modelValue: false });
     await delay(500);
 
     expect(getPortal().exists()).toBeFalsy();

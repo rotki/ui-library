@@ -1,9 +1,9 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import * as Icons from '@/icons';
 import { contextColors } from '@/consts/colors';
 import { default as Icon, type Props } from './Icon.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-const render: StoryFn<Props> = (args) => ({
+const render: StoryFn<Props> = args => ({
   components: { Icon },
   setup() {
     return { args };
@@ -12,7 +12,16 @@ const render: StoryFn<Props> = (args) => ({
 });
 
 const meta: Meta<Props> = {
-  title: 'Components/Icon',
+  argTypes: {
+    color: { control: 'select', options: contextColors },
+    name: {
+      control: 'select',
+      options: Object.values(Icons).map(({ name }) => name.slice(3)),
+    },
+    size: {
+      control: 'number',
+    },
+  },
   component: Icon,
   parameters: {
     docs: {
@@ -22,51 +31,42 @@ const meta: Meta<Props> = {
       },
     },
   },
-  tags: ['autodocs'],
   render,
-  argTypes: {
-    name: {
-      control: 'select',
-      options: Object.values(Icons).map(({ name }) => name.slice(3)),
-    },
-    size: {
-      control: 'number',
-    },
-    color: { control: 'select', options: contextColors },
-  },
+  tags: ['autodocs'],
+  title: 'Components/Icon',
 };
 
 type Story = StoryObj<Props>;
 
 export const Primary: Story = {
   args: {
+    color: 'primary',
     name: 'arrow-down-circle-fill',
     size: 24,
-    color: 'primary',
   },
 };
 
 export const PrimaryLarge: Story = {
   args: {
+    color: 'primary',
     name: 'arrow-down-circle-fill',
     size: 48,
-    color: 'primary',
   },
 };
 
 export const Secondary: Story = {
   args: {
+    color: 'secondary',
     name: 'arrow-down-circle-fill',
     size: 24,
-    color: 'secondary',
   },
 };
 
 export const SecondaryTiny: Story = {
   args: {
+    color: 'secondary',
     name: 'arrow-down-circle-fill',
     size: 14,
-    color: 'secondary',
   },
 };
 

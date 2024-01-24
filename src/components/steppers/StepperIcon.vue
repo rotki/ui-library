@@ -33,9 +33,18 @@ const css = useCssModule();
       v-else-if="state === StepperState.success"
       name="checkbox-circle-fill"
     />
-    <Icon v-else-if="state === StepperState.error" name="error-warning-fill" />
-    <Icon v-else-if="state === StepperState.warning" name="alert-fill" />
-    <Icon v-else-if="state === StepperState.info" name="information-fill" />
+    <Icon
+      v-else-if="state === StepperState.error"
+      name="error-warning-fill"
+    />
+    <Icon
+      v-else-if="state === StepperState.warning"
+      name="alert-fill"
+    />
+    <Icon
+      v-else-if="state === StepperState.info"
+      name="information-fill"
+    />
   </span>
 </template>
 

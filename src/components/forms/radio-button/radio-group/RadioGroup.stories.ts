@@ -1,10 +1,10 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import Radio from '@/components/forms/radio-button/radio/Radio.vue';
 import { contextColors } from '@/consts/colors';
 import { type Props, default as RadioGroup } from './RadioGroup.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-const render: StoryFn<Props> = (args) => ({
-  components: { RadioGroup, Radio },
+const render: StoryFn<Props> = args => ({
+  components: { Radio, RadioGroup },
   setup() {
     const modelValue = computed({
       get() {
@@ -24,21 +24,21 @@ const render: StoryFn<Props> = (args) => ({
 });
 
 const meta: Meta<Props> = {
-  title: 'Components/Forms/Radio/RadioGroup',
-  component: RadioGroup,
-  tags: ['autodocs'],
-  render,
   argTypes: {
-    modelValue: { control: 'text' },
-    inline: { control: 'boolean' },
-    hint: { control: 'text' },
-    errorMessages: { control: 'object' },
-    successMessages: { control: 'object' },
-    hideDetails: { control: 'boolean' },
-    disabled: { control: 'boolean', table: { category: 'State' } },
     color: { control: 'select', options: contextColors },
+    disabled: { control: 'boolean', table: { category: 'State' } },
+    errorMessages: { control: 'object' },
+    hideDetails: { control: 'boolean' },
+    hint: { control: 'text' },
+    inline: { control: 'boolean' },
+    modelValue: { control: 'text' },
     size: { control: 'select', options: ['medium', 'sm', 'lg'] },
+    successMessages: { control: 'object' },
   },
+  component: RadioGroup,
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Forms/Radio/RadioGroup',
 };
 
 type Story = StoryObj<Props>;
@@ -67,8 +67,8 @@ export const WithHint: Story = {
 
 export const HideDetails: Story = {
   args: {
-    hint: 'Hint (should be invisible)',
     hideDetails: true,
+    hint: 'Hint (should be invisible)',
   },
 };
 

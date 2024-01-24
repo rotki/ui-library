@@ -1,7 +1,5 @@
 import { objectOmit } from '@vueuse/shared';
-import Button, {
-  type Props as ButtonProps,
-} from '@/components/buttons/button/Button.vue';
+import Button, { type Props as ButtonProps } from '@/components/buttons/button/Button.vue';
 import Card, { type Props as CardProps } from './Card.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
@@ -15,14 +13,14 @@ type Props = CardProps & {
   actions?: (ButtonProps & { text: string })[];
 };
 
-const render: StoryFn<Props> = (args) => ({
+const render: StoryFn<Props> = args => ({
   components: { Button, Card },
   setup: () => {
     const cardArgs = computed(() =>
       objectOmit(args, ['header', 'subheader', 'content', 'actions']),
     );
 
-    return { cardArgs, args };
+    return { args, cardArgs };
   },
   template: `
       <div>
@@ -50,60 +48,60 @@ const render: StoryFn<Props> = (args) => ({
 });
 
 const meta: Meta<Props> = {
-  title: 'Components/Card',
-  component: Card,
-  tags: ['autodocs'],
-  render,
+  args: {
+    customHeader: '',
+    dense: false,
+    divide: false,
+    elevation: 0,
+    header: '',
+    image: '',
+    prepend: '',
+    subheader: '',
+    variant: 'outlined',
+  },
   argTypes: {
+    content: { control: 'text' },
+    customHeader: { control: 'text' },
     dense: { control: 'boolean' },
     divide: { control: 'boolean' },
+    elevation: { control: 'number', max: 24, min: 1 },
     header: { control: 'text' },
     image: { control: 'text' },
     prepend: { control: 'text' },
     rounded: {
       control: 'select',
-      options: ['sm', 'md', 'lg'],
       defaultValue: 'md',
+      options: ['sm', 'md', 'lg'],
     },
-    elevation: { control: 'number', max: 24, min: 1 },
     subheader: { control: 'text' },
-    content: { control: 'text' },
-    customHeader: { control: 'text' },
     variant: {
       control: 'select',
-      options: ['flat', 'outlined'],
       defaultValue: 'outlined',
+      options: ['flat', 'outlined'],
     },
   },
-  args: {
-    dense: false,
-    divide: false,
-    variant: 'outlined',
-    elevation: 0,
-    header: '',
-    subheader: '',
-    image: '',
-    prepend: '',
-    customHeader: '',
-  },
+  component: Card,
   parameters: {
     docs: {
       controls: { exclude: ['default', 'footer'] },
     },
   },
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Card',
 };
 
 type Story = StoryObj<Props>;
 
 export const Default: Story = {
   args: {
+    actions: [
+      { color: 'secondary', size: 'lg', text: 'Action 1', variant: 'text' },
+      { color: 'primary', size: 'lg', text: 'Action 2', variant: 'text' },
+    ],
     content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
     header: 'Card header',
     subheader: 'Card subheader',
-    actions: [
-      { size: 'lg', variant: 'text', text: 'Action 1', color: 'secondary' },
-      { size: 'lg', variant: 'text', text: 'Action 2', color: 'primary' },
-    ],
   },
 };
 
@@ -118,194 +116,194 @@ export const NoActions: Story = {
 export const DividedNoActions: Story = {
   args: {
     content: 'Lorem ipsum dolor sit amet consect '.repeat(50),
+    divide: true,
     header: 'Card header',
     subheader: 'Card subheader',
-    divide: true,
   },
 };
 
 export const Divided: Story = {
   args: {
+    actions: [
+      { color: 'secondary', size: 'lg', text: 'Action 1', variant: 'text' },
+      { color: 'primary', size: 'lg', text: 'Action 2', variant: 'text' },
+    ],
     content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
+    divide: true,
     header: 'Card header',
     subheader: 'Card subheader',
-    divide: true,
-    actions: [
-      { size: 'lg', variant: 'text', text: 'Action 1', color: 'secondary' },
-      { size: 'lg', variant: 'text', text: 'Action 2', color: 'primary' },
-    ],
   },
 };
 
 export const DividedPrepend: Story = {
   args: {
-    content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
-    header: 'Card header',
-    subheader: 'Card subheader',
-    prepend: 'OP',
-    divide: true,
     actions: [
-      { size: 'lg', variant: 'text', text: 'Action 1', color: 'secondary' },
-      { size: 'lg', variant: 'text', text: 'Action 2', color: 'primary' },
+      { color: 'secondary', size: 'lg', text: 'Action 1', variant: 'text' },
+      { color: 'primary', size: 'lg', text: 'Action 2', variant: 'text' },
     ],
+    content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
+    divide: true,
+    header: 'Card header',
+    prepend: 'OP',
+    subheader: 'Card subheader',
   },
 };
 
 export const WithImage: Story = {
   args: {
+    actions: [
+      { color: 'secondary', size: 'lg', text: 'Action 1', variant: 'text' },
+      { color: 'primary', size: 'lg', text: 'Action 2', variant: 'text' },
+    ],
     content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
     header: 'Card header',
-    subheader: 'Card subheader',
     image: 'https://placehold.co/960x320',
-    actions: [
-      { size: 'lg', variant: 'text', text: 'Action 1', color: 'secondary' },
-      { size: 'lg', variant: 'text', text: 'Action 2', color: 'primary' },
-    ],
+    subheader: 'Card subheader',
   },
 };
 
 export const DividedWithImage: Story = {
   args: {
-    content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
-    header: 'Card header',
-    subheader: 'Card subheader',
-    image: 'https://placehold.co/960x320',
-    divide: true,
     actions: [
-      { size: 'lg', variant: 'text', text: 'Action 1', color: 'secondary' },
-      { size: 'lg', variant: 'text', text: 'Action 2', color: 'primary' },
+      { color: 'secondary', size: 'lg', text: 'Action 1', variant: 'text' },
+      { color: 'primary', size: 'lg', text: 'Action 2', variant: 'text' },
     ],
+    content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
+    divide: true,
+    header: 'Card header',
+    image: 'https://placehold.co/960x320',
+    subheader: 'Card subheader',
   },
 };
 
 export const Dense: Story = {
   args: {
-    dense: true,
+    actions: [
+      { color: 'secondary', size: 'sm', text: 'Action 1', variant: 'text' },
+      { color: 'primary', size: 'sm', text: 'Action 2', variant: 'text' },
+    ],
     content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
+    dense: true,
     header: 'Card header',
     subheader: 'Card subheader',
-    actions: [
-      { size: 'sm', variant: 'text', text: 'Action 1', color: 'secondary' },
-      { size: 'sm', variant: 'text', text: 'Action 2', color: 'primary' },
-    ],
   },
 };
 
 export const DenseFlat: Story = {
   args: {
-    dense: true,
-    content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
-    header: 'Card header',
-    subheader: 'Card subheader',
-    variant: 'flat',
     actions: [
       {
-        size: 'sm',
-        variant: 'text',
-        text: 'Action 1',
         color: 'secondary',
         disabled: true,
+        size: 'sm',
+        text: 'Action 1',
+        variant: 'text',
       },
       {
-        size: 'sm',
-        variant: 'text',
-        text: 'Action 2',
         color: 'primary',
         disabled: true,
         loading: true,
+        size: 'sm',
+        text: 'Action 2',
+        variant: 'text',
       },
     ],
+    content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
+    dense: true,
+    header: 'Card header',
+    subheader: 'Card subheader',
+    variant: 'flat',
   },
 };
 
 export const DenseDivide: Story = {
   args: {
-    dense: true,
-    divide: true,
-    content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
-    header: 'Card header',
-    subheader: 'Card subheader',
     actions: [
       {
-        size: 'sm',
-        variant: 'text',
-        text: 'Action 1',
         color: 'secondary',
+        size: 'sm',
+        text: 'Action 1',
+        variant: 'text',
       },
       {
-        size: 'sm',
-        variant: 'text',
-        text: 'Action 2',
         color: 'primary',
+        size: 'sm',
+        text: 'Action 2',
+        variant: 'text',
       },
     ],
+    content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
+    dense: true,
+    divide: true,
+    header: 'Card header',
+    subheader: 'Card subheader',
   },
 };
 
 export const Elevated: Story = {
   args: {
+    actions: [
+      {
+        color: 'secondary',
+        text: 'Action 1',
+        variant: 'text',
+      },
+      {
+        color: 'primary',
+        text: 'Action 2',
+        variant: 'text',
+      },
+    ],
     content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
+    elevation: 1,
     header: 'Card header',
     subheader: 'Card subheader',
     variant: 'flat',
-    elevation: 1,
-    actions: [
-      {
-        variant: 'text',
-        text: 'Action 1',
-        color: 'secondary',
-      },
-      {
-        variant: 'text',
-        text: 'Action 2',
-        color: 'primary',
-      },
-    ],
   },
 };
 
 export const HighElevation: Story = {
   args: {
+    actions: [
+      {
+        color: 'secondary',
+        text: 'Action 1',
+        variant: 'text',
+      },
+      {
+        color: 'primary',
+        text: 'Action 2',
+        variant: 'text',
+      },
+    ],
     content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
+    elevation: 4,
     header: 'Card header',
     subheader: 'Card subheader',
     variant: 'flat',
-    elevation: 4,
-    actions: [
-      {
-        variant: 'text',
-        text: 'Action 1',
-        color: 'secondary',
-      },
-      {
-        variant: 'text',
-        text: 'Action 2',
-        color: 'primary',
-      },
-    ],
   },
 };
 
 export const CustomHeader: Story = {
   args: {
-    content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
-    header: 'Card header',
-    subheader: 'Card subheader',
-    customHeader: 'Custom header',
-    variant: 'flat',
-    elevation: 4,
     actions: [
       {
-        variant: 'text',
-        text: 'Action 1',
         color: 'secondary',
+        text: 'Action 1',
+        variant: 'text',
       },
       {
-        variant: 'text',
-        text: 'Action 2',
         color: 'primary',
+        text: 'Action 2',
+        variant: 'text',
       },
     ],
+    content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
+    customHeader: 'Custom header',
+    elevation: 4,
+    header: 'Card header',
+    subheader: 'Card subheader',
+    variant: 'flat',
   },
 };
 

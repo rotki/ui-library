@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { RuiTextArea, type TextAreaProps } from '@rotki/ui-library';
 import { ref } from 'vue';
-import { type Slots } from '@/types';
+import type { Slots } from '@/types';
 
 type TextAreaData = TextAreaProps & Slots;
 
@@ -220,7 +220,12 @@ const textAreas = ref<TextAreaData[]>([
 
 <template>
   <div>
-    <h2 class="text-h4 mb-6" data-cy="text-fields">Text Fields</h2>
+    <h2
+      class="text-h4 mb-6"
+      data-cy="text-fields"
+    >
+      Text Fields
+    </h2>
     <div class="grid gap-4 grid-cols-3">
       <RuiTextArea
         v-for="(field, i) in textAreas"
@@ -230,8 +235,18 @@ const textAreas = ref<TextAreaData[]>([
         placeholder="Placeholder"
         v-bind="field"
       >
-        <template v-if="field.prepend" #prepend>{{ field.prepend }}</template>
-        <template v-if="field.append" #append>{{ field.append }}</template>
+        <template
+          v-if="field.prepend"
+          #prepend
+        >
+          {{ field.prepend }}
+        </template>
+        <template
+          v-if="field.append"
+          #append
+        >
+          {{ field.append }}
+        </template>
       </RuiTextArea>
     </div>
   </div>

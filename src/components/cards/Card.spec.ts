@@ -3,11 +3,12 @@ import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import Card from '@/components/cards/Card.vue';
 import Button from '@/components/buttons/button/Button.vue';
 
-const createWrapper = (options: ComponentMountingOptions<typeof Card>) =>
-  mount(Card, { ...options, global: { stubs: { 'rui-button': Button } } });
+function createWrapper(options: ComponentMountingOptions<typeof Card>) {
+  return mount(Card, { ...options, global: { stubs: { 'rui-button': Button } } });
+}
 
-describe('Card', () => {
-  it('renders properly', async () => {
+describe('card', () => {
+  it('renders properly', () => {
     const wrapper = createWrapper({});
 
     expect(wrapper.exists()).toBeTruthy();
@@ -34,14 +35,14 @@ describe('Card', () => {
         variant: 'outlined',
       },
       slots: {
-        header: ({ text = 'Card header' }: { text?: string }) => text,
-        image: { template: `<img src="https://placehold.co/960x320" alt />` },
-        prepend: ({ text = 'OP' }: { text?: string }) => text,
-        subheader: ({ text = 'Card subheader' }: { text?: string }) => text,
         default: { template: `<p>Lorem ipsum dolor sit amet</p>` },
         footer: ['Action 1', 'Action 2'].map((action, i) => ({
           template: `<rui-button :key="${i}">${action}</rui-button>`,
         })),
+        header: ({ text = 'Card header' }: { text?: string }) => text,
+        image: { template: `<img src="https://placehold.co/960x320" alt />` },
+        prepend: ({ text = 'OP' }: { text?: string }) => text,
+        subheader: ({ text = 'Card subheader' }: { text?: string }) => text,
       },
     });
 

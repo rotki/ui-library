@@ -1,5 +1,3 @@
-/* eslint-disable max-lines,import/max-dependencies */
-import { type App } from 'vue';
 import { useRotkiTheme } from '@/composables/theme';
 import { StepperState } from '@/types/stepper';
 import {
@@ -7,6 +5,7 @@ import {
   TableSymbol,
   createTableDefaults,
 } from '@/composables/defaults/table';
+import type { App } from 'vue';
 import type { InitThemeOptions } from '@/types/theme';
 import '@/style.scss';
 
@@ -23,6 +22,7 @@ export {
 export { type ContextColorsType, contextColors } from '@/consts/colors';
 
 export * from '@/composables';
+
 export * from '@/components';
 
 export { StepperState };
@@ -50,7 +50,7 @@ export function createRui(options: RuiOptions = {}) {
   };
 
   return {
-    install,
     defaults,
+    install,
   };
 }

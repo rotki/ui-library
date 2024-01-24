@@ -7,8 +7,8 @@ import { describe, expect, it } from 'vitest';
 import Tabs from '@/components/tabs/tabs/Tabs.vue';
 import Tab from '@/components/tabs/tab/Tab.vue';
 
-const createWrapper = (options?: ComponentMountingOptions<typeof Tabs>) =>
-  mount(Tabs, {
+function createWrapper(options?: ComponentMountingOptions<typeof Tabs>) {
+  return mount(Tabs, {
     ...options,
     global: {
       stubs: {
@@ -25,13 +25,14 @@ const createWrapper = (options?: ComponentMountingOptions<typeof Tabs>) =>
       ],
     },
   });
+}
 
-describe('Tabs/Tabs', () => {
+describe('tabs/Tabs', () => {
   it('renders properly', async () => {
     const modelValue = ref();
     const wrapper = createWrapper({
       props: {
-        modelValue: get(modelValue),
+        'modelValue': get(modelValue),
         'onUpdate:modelValue': (e: any) => set(modelValue, e),
       },
     });
@@ -107,7 +108,7 @@ describe('Tabs/Tabs', () => {
     const modelValue = ref();
     const wrapper = createWrapper({
       props: {
-        modelValue: get(modelValue),
+        'modelValue': get(modelValue),
         'onUpdate:modelValue': (e: any) => set(modelValue, e),
       },
     });

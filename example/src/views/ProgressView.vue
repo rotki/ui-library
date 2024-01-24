@@ -140,7 +140,12 @@ const progress = ref<ProgressProps[]>([
 
 <template>
   <div>
-    <h2 class="text-h4 mb-6" data-cy="progress">Progress</h2>
+    <h2
+      class="text-h4 mb-6"
+      data-cy="progress"
+    >
+      Progress
+    </h2>
     <div class="grid gap-4 grid-cols-3">
       <RuiProgress
         v-for="(item, i) in progress"

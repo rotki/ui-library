@@ -49,9 +49,15 @@ const {
     @mouseover="onMouseOver()"
     @mouseleave="onMouseLeave()"
   >
-    <slot name="activator" :open="open" />
+    <slot
+      name="activator"
+      :open="open"
+    />
 
-    <Teleport v-if="!disabled" to="body">
+    <Teleport
+      v-if="!disabled"
+      to="body"
+    >
       <div
         v-if="popperEnter"
         ref="tooltip"

@@ -1,14 +1,14 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import {
   default as Skeleton,
   type Props as SkeletonProps,
 } from './Skeleton.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 type Props = SkeletonProps & {
   class: string;
 };
 
-const render: StoryFn<Props> = (args) => ({
+const render: StoryFn<Props> = args => ({
   components: { Skeleton },
   setup() {
     return { args };
@@ -17,11 +17,17 @@ const render: StoryFn<Props> = (args) => ({
 });
 
 const meta: Meta<Props> = {
-  title: 'Components/Loaders/Skeleton',
-  component: Skeleton,
-  tags: ['autodocs'],
-  render,
+  args: {
+    type: 'text',
+  },
   argTypes: {
+    class: {
+      control: 'text',
+    },
+    rounded: {
+      control: 'select',
+      options: ['none', 'sm', 'md', 'lg', 'full'],
+    },
     type: {
       control: 'select',
       options: [
@@ -37,22 +43,16 @@ const meta: Meta<Props> = {
       ],
       selected: 'text',
     },
-    rounded: {
-      control: 'select',
-      options: ['none', 'sm', 'md', 'lg', 'full'],
-    },
-    class: {
-      control: 'text',
-    },
   },
-  args: {
-    type: 'text',
-  },
+  component: Skeleton,
   parameters: {
     docs: {
       controls: { exclude: [] },
     },
   },
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Loaders/Skeleton',
 };
 
 type Story = StoryObj<Props>;
@@ -90,11 +90,11 @@ export const Thumbnail: Story = {
 };
 
 export const Custom: Story = {
-  args: { type: 'custom', class: 'w-20 h-20', rounded: 'lg' },
+  args: { class: 'w-20 h-20', rounded: 'lg', type: 'custom' },
 };
 
 export const CustomFullRound: Story = {
-  args: { type: 'custom', class: 'w-20 h-20', rounded: 'full' },
+  args: { class: 'w-20 h-20', rounded: 'full', type: 'custom' },
 };
 
 export default meta;

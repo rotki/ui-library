@@ -1,4 +1,4 @@
-describe('Forms/Checkbox', () => {
+describe('forms/Checkbox', () => {
   beforeEach(() => {
     cy.visit('/checkboxes');
   });

@@ -119,28 +119,29 @@ const emit = defineEmits<{
 
 const css = useCssModule();
 
-const onSort = ({ key, direction }: TableColumn<T>) =>
-  emit('sort', {
+function onSort({ key, direction }: TableColumn<T>) {
+  return emit('sort', {
     key: key as TableRowKey<T>,
     direction: direction ?? 'asc',
   });
+}
 
 const onToggleAll = (checked: boolean) => emit('select:all', checked);
 
 const isSortedBy = (key: TableColumn<T>['key']) => key in props.sortedMap;
 
-const getSortIndex = (key: TableColumn<T>['key']): number => {
+function getSortIndex(key: TableColumn<T>['key']): number {
   const sortBy = props.sortData;
 
-  if (!sortBy || !Array.isArray(sortBy) || !isSortedBy(key)) {
+  if (!sortBy || !Array.isArray(sortBy) || !isSortedBy(key))
     return -1;
-  }
 
-  return sortBy.findIndex((sort) => sort.column === key);
-};
+  return sortBy.findIndex(sort => sort.column === key);
+}
 
-const getSortDirection = (key: TableColumn<T>['key']) =>
-  props.sortedMap[key]?.direction;
+function getSortDirection(key: TableColumn<T>['key']) {
+  return props.sortedMap[key]?.direction;
+}
 </script>
 
 <template>
@@ -189,7 +190,10 @@ const getSortDirection = (key: TableColumn<T>['key']) =>
         :colspan="column.colspan ?? 1"
         :rowspan="column.rowspan ?? 1"
       >
-        <slot :column="column" :name="`header.${column.key.toString()}`">
+        <slot
+          :column="column"
+          :name="`header.${column.key.toString()}`"
+        >
           <Badge
             v-if="column.sortable"
             :model-value="getSortIndex(column.key) >= 0"
@@ -215,7 +219,10 @@ const getSortDirection = (key: TableColumn<T>['key']) =>
                 {{ column[columnAttr] }}
               </span>
 
-              <template v-if="column.align === 'end'" #prepend>
+              <template
+                v-if="column.align === 'end'"
+                #prepend
+              >
                 <Icon
                   :class="css.sort__icon"
                   name="arrow-down-line"
@@ -233,7 +240,10 @@ const getSortDirection = (key: TableColumn<T>['key']) =>
               </template>
             </Button>
           </Badge>
-          <span v-else :class="css.column__text">
+          <span
+            v-else
+            :class="css.column__text"
+          >
             {{ column[columnAttr] }}
           </span>
         </slot>
@@ -243,7 +253,11 @@ const getSortDirection = (key: TableColumn<T>['key']) =>
       v-if="loading"
       :class="[css.thead__loader, { [css.thead__loader_linear]: !noData }]"
     >
-      <th :class="css.progress" :colspan="colspan" scope="col">
+      <th
+        :class="css.progress"
+        :colspan="colspan"
+        scope="col"
+      >
         <div :class="css.progress__wrapper">
           <Progress
             :circular="noData"

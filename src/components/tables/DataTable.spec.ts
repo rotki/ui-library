@@ -1,22 +1,19 @@
-/* eslint-disable max-lines */
 import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { type TableColumn } from '@/components/tables/TableHead.vue';
 import DataTable from '@/components/tables/DataTable.vue';
 import TablePagination from '@/components/tables/TablePagination.vue';
 import { RuiSimpleSelect } from '~/src';
+import type { TableColumn } from '@/components/tables/TableHead.vue';
 
-type User = {
+interface User {
   id: number;
   name: string;
   title: string;
   email: string;
-};
+}
 
-const createWrapper = (
-  options?: ComponentMountingOptions<typeof DataTable<User>>,
-) =>
-  mount(DataTable<User>, {
+function createWrapper(options?: ComponentMountingOptions<typeof DataTable<User>>) {
+  return mount(DataTable<User>, {
     ...options,
     global: {
       provide: {
@@ -26,14 +23,15 @@ const createWrapper = (
       },
     },
   });
+}
 
-describe('DataTable', () => {
+describe('dataTable', () => {
   const data: User[] = [
     ...[...new Array(50)].map((_, index) => ({
+      email: `lindsay.walton${index}@example.com`,
       id: index + 1,
       name: `Lindsay Walton ${index}`,
       title: index % 2 === 0 ? 'Back-end Developer' : 'Front-end Developer',
-      email: `lindsay.walton${index}@example.com`,
     })),
   ];
 
@@ -43,16 +41,16 @@ describe('DataTable', () => {
       label: 'ID',
     },
     {
+      align: 'end',
       key: 'name',
       label: 'Full name',
       sortable: true,
-      align: 'end',
     },
     {
+      align: 'start',
       key: 'title',
       label: 'Job position',
       sortable: true,
-      align: 'start',
     },
     {
       key: 'email',
@@ -64,12 +62,12 @@ describe('DataTable', () => {
     },
   ];
 
-  it('renders properly', async () => {
+  it('renders properly', () => {
     const wrapper = createWrapper({
       props: {
-        rows: data,
-        rowAttr: 'id',
         cols: columns,
+        rowAttr: 'id',
+        rows: data,
       },
     });
 
@@ -81,17 +79,17 @@ describe('DataTable', () => {
   it('passes props correctly', async () => {
     const wrapper = createWrapper({
       props: {
-        rows: data,
-        rowAttr: 'id',
-        cols: columns,
-        modelValue: [],
-        dense: true,
-        outlined: true,
-        search: '',
-        sort: [{ column: 'name', direction: 'asc' }],
-        pagination: { limit: 10, page: 1, total: 50 },
-        expanded: [],
+        'cols': columns,
+        'dense': true,
+        'expanded': [],
+        'modelValue': [],
         'onUpdate:expanded': (e: any) => wrapper.setProps({ expanded: e }),
+        'outlined': true,
+        'pagination': { limit: 10, page: 1, total: 50 },
+        'rowAttr': 'id',
+        'rows': data,
+        'search': '',
+        'sort': [{ column: 'name', direction: 'asc' }],
       },
       slots: {
         'expanded-item': {
@@ -150,12 +148,12 @@ describe('DataTable', () => {
   it('multiple expand toggles correctly', async () => {
     const wrapper = createWrapper({
       props: {
-        rows: data,
-        rowAttr: 'id',
-        cols: columns,
-        modelValue: [],
-        expanded: [],
+        'cols': columns,
+        'expanded': [],
+        'modelValue': [],
         'onUpdate:expanded': (e: any) => wrapper.setProps({ expanded: e }),
+        'rowAttr': 'id',
+        'rows': data,
       },
       slots: {
         'expanded-item': {
@@ -212,13 +210,13 @@ describe('DataTable', () => {
   it('single expand toggles correctly', async () => {
     const wrapper = createWrapper({
       props: {
-        rows: data,
-        rowAttr: 'id',
-        cols: columns,
-        modelValue: [],
-        singleExpand: true,
-        expanded: [],
+        'cols': columns,
+        'expanded': [],
+        'modelValue': [],
         'onUpdate:expanded': (e: any) => wrapper.setProps({ expanded: e }),
+        'rowAttr': 'id',
+        'rows': data,
+        'singleExpand': true,
       },
       slots: {
         'expanded-item': {
@@ -297,10 +295,10 @@ describe('DataTable', () => {
   it('sticky header behaves as expected', async () => {
     const wrapper = createWrapper({
       props: {
-        rows: data,
-        rowAttr: 'id',
         cols: columns,
         modelValue: [],
+        rowAttr: 'id',
+        rows: data,
         stickyHeader: true,
         stickyOffset: 40,
       },
@@ -318,7 +316,7 @@ describe('DataTable', () => {
       const itemsPerPage = ref(25);
       const wrapperComponent = {
         template:
-          "<div><DataTable :rows='[]' row-attr='id'/><DataTable :rows='[]' row-attr='id'/></div>",
+          '<div><DataTable :rows=\'[]\' row-attr=\'id\'/><DataTable :rows=\'[]\' row-attr=\'id\'/></div>',
       };
 
       const wrapper = mount(wrapperComponent, {
@@ -328,8 +326,8 @@ describe('DataTable', () => {
           },
           provide: {
             [TableSymbol.valueOf()]: createTableDefaults({
-              itemsPerPage,
               globalItemsPerPage: true,
+              itemsPerPage,
               limits: [5, 10, 15, 25, 50, 100, 200],
             }),
           },
@@ -365,7 +363,7 @@ describe('DataTable', () => {
       const itemsPerPage = ref(25);
       const wrapperComponent = {
         template:
-          "<div><DataTable :rows='[]' row-attr='id'/><DataTable :globalItemsPerPage='false' :rows='[]' row-attr='id'/></div>",
+          '<div><DataTable :rows=\'[]\' row-attr=\'id\'/><DataTable :globalItemsPerPage=\'false\' :rows=\'[]\' row-attr=\'id\'/></div>',
       };
 
       const wrapper = mount(wrapperComponent, {
@@ -375,8 +373,8 @@ describe('DataTable', () => {
           },
           provide: {
             [TableSymbol.valueOf()]: createTableDefaults({
-              itemsPerPage,
               globalItemsPerPage: true,
+              itemsPerPage,
               limits: [5, 10, 15, 25, 50, 100, 200],
             }),
           },
@@ -417,7 +415,7 @@ describe('DataTable', () => {
       const itemsPerPage = ref(25);
       const wrapperComponent = {
         template:
-          "<div><DataTable :rows='[]' row-attr='id'/><DataTable :globalItemsPerPage='true' :rows='[]' row-attr='id'/></div>",
+          '<div><DataTable :rows=\'[]\' row-attr=\'id\'/><DataTable :globalItemsPerPage=\'true\' :rows=\'[]\' row-attr=\'id\'/></div>',
       };
 
       const wrapper = mount(wrapperComponent, {

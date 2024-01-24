@@ -38,9 +38,11 @@ const { persistent } = toRefs(props);
 
 const closeBlocked = ref(false);
 
-const onClose = () => {
+function onClose() {
   if (get(persistent)) {
     set(closeBlocked, true);
+    // todo: see if this can be removed without any side-effects
+    // eslint-disable-next-line no-new
     new Promise<void>((resolve) => {
       setTimeout(() => {
         set(closeBlocked, false);
@@ -50,12 +52,19 @@ const onClose = () => {
     return;
   }
   emit('update:model-value', false);
-};
+}
 </script>
 
 <template>
-  <TransitionRoot :show="modelValue" as="template">
-    <Dialog :static="persistent" :class="css.dialog" @close="onClose()">
+  <TransitionRoot
+    :show="modelValue"
+    as="template"
+  >
+    <Dialog
+      :static="persistent"
+      :class="css.dialog"
+      @close="onClose()"
+    >
       <TransitionChild
         as="template"
         enter="duration-300 ease-out"
@@ -86,7 +95,10 @@ const onClose = () => {
                 { [css.close__blocked]: closeBlocked },
               ]"
             >
-              <div v-if="dismissible && !persistent" :class="css.dismiss">
+              <div
+                v-if="dismissible && !persistent"
+                :class="css.dismiss"
+              >
                 <Button
                   :class="css.dismiss__button"
                   size="sm"
@@ -96,27 +108,50 @@ const onClose = () => {
                   @click="emit('update:model-value', false)"
                 >
                   <span class="sr-only">Close</span>
-                  <Icon name="close-line" aria-hidden="true" class="w-6 h-6" />
+                  <Icon
+                    name="close-line"
+                    aria-hidden="true"
+                    class="w-6 h-6"
+                  />
                 </Button>
               </div>
-              <div :class="css.content__wrapper" tabindex="0">
+              <div
+                :class="css.content__wrapper"
+                tabindex="0"
+              >
                 <DialogDescription
                   v-if="slots.description"
                   :class="css.description"
                 >
                   <slot name="description" />
                 </DialogDescription>
-                <DialogTitle v-if="slots.title" as="h6" :class="css.title">
+                <DialogTitle
+                  v-if="slots.title"
+                  as="h6"
+                  :class="css.title"
+                >
                   <slot name="title" />
                 </DialogTitle>
-                <div v-if="!(slots.title || slots.description)" class="pt-6" />
-                <div v-if="slots.default" :class="css.content">
+                <div
+                  v-if="!(slots.title || slots.description)"
+                  class="pt-6"
+                />
+                <div
+                  v-if="slots.default"
+                  :class="css.content"
+                >
                   <slot />
                 </div>
-                <div v-if="slots.actions" :class="css.actions">
+                <div
+                  v-if="slots.actions"
+                  :class="css.actions"
+                >
                   <slot name="actions" />
                 </div>
-                <div v-else class="pt-2" />
+                <div
+                  v-else
+                  class="pt-2"
+                />
               </div>
             </DialogPanel>
           </TransitionChild>

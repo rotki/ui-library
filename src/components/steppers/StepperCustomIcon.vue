@@ -17,7 +17,10 @@ const css = useCssModule();
 
 <template>
   <span :class="[css.indicator, css[state]]">
-    <span v-if="state === StepperState.inactive" :class="css.text">
+    <span
+      v-if="state === StepperState.inactive"
+      :class="css.text"
+    >
       {{ index }}
     </span>
     <Icon
@@ -31,7 +34,10 @@ const css = useCssModule();
       :size="20"
       name="check-line"
     />
-    <span v-else :class="css.text">
+    <span
+      v-else
+      :class="css.text"
+    >
       {{ index }}
     </span>
   </span>

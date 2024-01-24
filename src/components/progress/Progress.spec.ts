@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import Progress from '@/components/progress/Progress.vue';
 
-const createWrapper = (options?: ComponentMountingOptions<typeof Progress>) =>
-  mount(Progress, options);
+function createWrapper(options?: ComponentMountingOptions<typeof Progress>) {
+  return mount(Progress, options);
+}
 
-describe('Progress', () => {
+describe('progress', () => {
   it('renders properly', () => {
     const wrapper = createWrapper({
       props: {
@@ -24,9 +25,9 @@ describe('Progress', () => {
   it('passes props correctly', async () => {
     const wrapper = createWrapper({
       props: {
+        color: 'secondary',
         value: 50,
         variant: 'indeterminate',
-        color: 'secondary',
       },
     });
     expect(wrapper.get('div[role=progressbar]').classes()).toMatch(

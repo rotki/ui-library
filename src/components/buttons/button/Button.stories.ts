@@ -1,16 +1,16 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { contextColors } from '@/consts/colors';
 import { default as Button, type Props } from './Button.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 type PropsAndLabel = Props & {
   label: string;
 };
 
-const render: StoryFn<PropsAndLabel> = (args) => ({
+const render: StoryFn<PropsAndLabel> = args => ({
   components: { Button },
   setup() {
     const clicks = ref(0);
-    return { clicks, args };
+    return { args, clicks };
   },
   template: `
     <Button v-bind="args" @click="clicks++">
@@ -23,31 +23,31 @@ const render: StoryFn<PropsAndLabel> = (args) => ({
 });
 
 const meta: Meta<PropsAndLabel> = {
-  title: 'Components/Button/Button',
-  component: Button as any,
-  tags: ['autodocs'],
-  render,
   argTypes: {
-    label: { control: 'text' },
     color: { control: 'select', options: contextColors },
+    disabled: { control: 'boolean', table: { category: 'State' } },
+    elevation: { control: 'number', table: { category: 'Shape' } },
+    icon: { control: 'boolean', table: { category: 'Shape' } },
+    label: { control: 'text' },
+    loading: { control: 'boolean', table: { category: 'State' } },
+    rounded: { control: 'boolean', table: { category: 'Shape' } },
+    size: { control: 'select', options: ['medium', 'sm', 'lg'] },
+    type: { control: 'select', options: ['button', 'submit'] },
     variant: {
       control: 'select',
       options: ['default', 'outlined', 'text', 'fab', 'list'],
       table: { category: 'Shape' },
     },
-    rounded: { control: 'boolean', table: { category: 'Shape' } },
-    elevation: { control: 'number', table: { category: 'Shape' } },
-    icon: { control: 'boolean', table: { category: 'Shape' } },
-    size: { control: 'select', options: ['medium', 'sm', 'lg'] },
-    type: { control: 'select', options: ['button', 'submit'] },
-    disabled: { control: 'boolean', table: { category: 'State' } },
-    loading: { control: 'boolean', table: { category: 'State' } },
   },
+  component: Button as any,
   parameters: {
     docs: {
       controls: { exclude: ['prepend', 'append', 'default'] },
     },
   },
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Button/Button',
 };
 
 type Story = StoryObj<PropsAndLabel>;
@@ -109,8 +109,8 @@ export const PrimaryLargeRounded: Story = {
 export const PrimaryDisabled: Story = {
   args: {
     color: 'primary',
-    label: 'Medium',
     disabled: true,
+    label: 'Medium',
   },
 };
 
@@ -133,66 +133,66 @@ export const PrimaryLoading: Story = {
 export const PrimaryOutlinedWithElevation: Story = {
   args: {
     color: 'primary',
+    elevation: 4,
     label: 'Primary Outlined',
     variant: 'outlined',
-    elevation: 4,
   },
 };
 
 export const Secondary: Story = {
   args: {
-    label: 'Secondary Button',
     color: 'secondary',
+    label: 'Secondary Button',
   },
 };
 
 export const SecondaryText: Story = {
   args: {
-    label: 'Secondary Button',
     color: 'secondary',
-    variant: 'text',
+    label: 'Secondary Button',
     size: 'lg',
+    variant: 'text',
   },
 };
 
 export const SecondaryOutlined: Story = {
   args: {
-    label: 'Outlined Button',
     color: 'secondary',
+    label: 'Outlined Button',
     variant: 'outlined',
   },
 };
 
 export const ErrorButton: Story = {
   args: {
-    label: 'Error Button',
     color: 'error',
+    label: 'Error Button',
   },
 };
 
 export const ErrorButtonText: Story = {
   args: {
-    label: 'Error Button',
     color: 'error',
-    variant: 'text',
+    label: 'Error Button',
     size: 'lg',
+    variant: 'text',
   },
 };
 
 export const ErrorOutlined: Story = {
   args: {
-    label: 'Error Button',
     color: 'error',
+    label: 'Error Button',
     variant: 'outlined',
   },
 };
 
 export const ErrorOutlinedDisabled: Story = {
   args: {
-    label: 'Error Button',
     color: 'error',
-    variant: 'outlined',
     disabled: true,
+    label: 'Error Button',
+    variant: 'outlined',
   },
 };
 
@@ -205,8 +205,8 @@ export const List: Story = {
 
 export const FloatingActionButton: Story = {
   args: {
-    label: 'Floating Action Button',
     color: 'primary',
+    label: 'Floating Action Button',
     variant: 'fab',
   },
 };

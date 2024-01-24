@@ -2,15 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import Icon from '@/components/icons/Icon.vue';
 
-const createWrapper = (options?: ComponentMountingOptions<typeof Icon>) =>
-  mount(Icon, options);
+function createWrapper(options?: ComponentMountingOptions<typeof Icon>) {
+  return mount(Icon, options);
+}
 
-describe('Forms/Icon', () => {
+describe('forms/Icon', () => {
   it('renders properly', () => {
     const wrapper = createWrapper({
       props: {
-        name: 'arrow-down-circle-fill',
         color: 'primary',
+        name: 'arrow-down-circle-fill',
       },
     });
     expect(wrapper.classes()).toMatch(/_remixicon_/);

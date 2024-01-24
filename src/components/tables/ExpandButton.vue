@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import Button from '@/components/buttons/button/Button.vue';
 import Icon from '@/components/icons/Icon.vue';
-import { type RuiIcons } from '~/src';
+import type { RuiIcons } from '~/src';
 
 export interface Props {
   expanded: boolean;
@@ -26,7 +26,10 @@ const css = useCssModule();
     variant="text"
   >
     <slot>
-      <Icon :class="css.tr__expander_button_icon" :name="icon" />
+      <Icon
+        :class="css.tr__expander_button_icon"
+        :name="icon"
+      />
     </slot>
   </Button>
 </template>

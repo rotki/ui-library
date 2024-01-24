@@ -1,8 +1,8 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { contextColors } from '@/consts/colors';
 import { default as TextField, type TextFieldProps } from './TextField.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-const render: StoryFn<TextFieldProps> = (args) => ({
+const render: StoryFn<TextFieldProps> = args => ({
   components: { TextField },
   setup() {
     const modelValue = computed({
@@ -21,44 +21,44 @@ const render: StoryFn<TextFieldProps> = (args) => ({
 });
 
 const meta: Meta<TextFieldProps> = {
-  title: 'Components/Forms/TextField',
-  component: TextField,
-  tags: ['autodocs'],
-  render,
   argTypes: {
-    modelValue: { control: 'text' },
-    label: { control: 'text' },
-    placeholder: { control: 'text' },
-    hint: { control: 'text' },
     appendIcon: { control: 'text' },
-    prependIcon: { control: 'text' },
-    errorMessages: { control: 'array', defaultValue: [] },
-    successMessages: { control: 'array', defaultValue: [] },
-    hideDetails: { control: 'boolean', table: { category: 'State' } },
-    dense: { control: 'boolean', table: { category: 'State' } },
-    variant: {
-      control: 'select',
-      options: ['default', 'filled', 'outlined'],
-      table: { category: 'State' },
-    },
-    disabled: { control: 'boolean', table: { category: 'State' } },
-    readonly: { control: 'boolean', table: { category: 'State' } },
     color: {
       control: 'select',
       options: contextColors,
       table: { category: 'State' },
     },
+    dense: { control: 'boolean', table: { category: 'State' } },
+    disabled: { control: 'boolean', table: { category: 'State' } },
+    errorMessages: { control: 'array', defaultValue: [] },
+    hideDetails: { control: 'boolean', table: { category: 'State' } },
+    hint: { control: 'text' },
+    label: { control: 'text' },
+    modelValue: { control: 'text' },
+    placeholder: { control: 'text' },
+    prependIcon: { control: 'text' },
+    readonly: { control: 'boolean', table: { category: 'State' } },
+    successMessages: { control: 'array', defaultValue: [] },
     textColor: {
       control: 'select',
       options: contextColors,
       table: { category: 'State' },
     },
+    variant: {
+      control: 'select',
+      options: ['default', 'filled', 'outlined'],
+      table: { category: 'State' },
+    },
   },
+  component: TextField,
   parameters: {
     docs: {
       controls: { exclude: ['default', 'as'] },
     },
   },
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Forms/TextField',
 };
 
 type Story = StoryObj<TextFieldProps>;
@@ -88,47 +88,47 @@ export const Outlined: Story = {
 
 export const Primary: Story = {
   args: {
+    color: 'primary',
     label: 'Label',
     placeholder: 'Placeholder',
     variant: 'outlined',
-    color: 'primary',
   },
 };
 
 export const Dense: Story = {
   args: {
+    dense: true,
     label: 'Label',
     placeholder: 'Placeholder',
     variant: 'outlined',
-    dense: true,
   },
 };
 
 export const Disabled: Story = {
   args: {
+    disabled: true,
     label: 'Label',
     placeholder: 'Placeholder',
     variant: 'outlined',
-    disabled: true,
   },
 };
 
 export const Readonly: Story = {
   args: {
     label: 'Label',
-    placeholder: 'Placeholder',
-    variant: 'outlined',
-    readonly: true,
     modelValue: 'Readonly text',
+    placeholder: 'Placeholder',
+    readonly: true,
+    variant: 'outlined',
   },
 };
 
 export const WithErrorMessage: Story = {
   args: {
+    errorMessages: ['With error messages'],
     label: 'Label',
     placeholder: 'Placeholder',
     variant: 'outlined',
-    errorMessages: ['With error messages'],
   },
 };
 
@@ -136,27 +136,27 @@ export const WithSuccessMessage: Story = {
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
     successMessages: ['With success messages'],
+    variant: 'outlined',
   },
 };
 
 export const WithHint: Story = {
   args: {
+    hint: 'With hint',
     label: 'Label',
     placeholder: 'Placeholder',
     variant: 'outlined',
-    hint: 'With hint',
   },
 };
 
 export const HideDetails: Story = {
   args: {
+    hideDetails: true,
+    hint: 'Hint (should be invisible)',
     label: 'Label',
     placeholder: 'Placeholder',
     variant: 'outlined',
-    hint: 'Hint (should be invisible)',
-    hideDetails: true,
   },
 };
 
@@ -164,17 +164,17 @@ export const WithPrependIcon: Story = {
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
     prependIcon: 'heart-fill',
+    variant: 'outlined',
   },
 };
 
 export const WithAppendIcon: Story = {
   args: {
+    appendIcon: 'heart-fill',
     label: 'Label',
     placeholder: 'Placeholder',
     variant: 'outlined',
-    appendIcon: 'heart-fill',
   },
 };
 

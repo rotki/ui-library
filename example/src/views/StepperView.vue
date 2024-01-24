@@ -322,14 +322,22 @@ const footerSteppers = ref<FooterStepperData[]>([
 
 <template>
   <div>
-    <h2 class="text-h4 mb-6" data-cy="steppers">Steppers</h2>
+    <h2
+      class="text-h4 mb-6"
+      data-cy="steppers"
+    >
+      Steppers
+    </h2>
     <RuiStepper
       v-for="(stepper, i) in steppers"
       :key="i"
       class="mb-6"
       v-bind="stepper"
     />
-    <h2 class="text-h4 mb-6 mt-14" data-cy="footer-steppers">
+    <h2
+      class="text-h4 mb-6 mt-14"
+      data-cy="footer-steppers"
+    >
       Footer Steppers
     </h2>
     <RuiFooterStepper

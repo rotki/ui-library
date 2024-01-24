@@ -25,6 +25,31 @@
   ],
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.es.js",
+      "default": "./dist/index.es.js"
+    },
+    "./theme": {
+      "types": "./dist/theme/index.d.ts",
+      "import": "./dist/theme/index.es.js",
+      "default": "./dist/theme/index.es.js"
+    },
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components/index.es.js",
+      "default": "./dist/components/index.es.js"
+    },
+    "./composables": {
+      "types": "./dist/composables/index.d.ts",
+      "import": "./dist/composables/index.es.js",
+      "default": "./dist/composables/index.es.js"
+    },
+    "./style.css": {
+      "default": "./dist/style.css"
+    }
+  },
   "typesVersions": {
     "*": {
       "theme": [
@@ -38,38 +63,13 @@
       ]
     }
   },
-  "exports": {
-    ".": {
-      "import": "./dist/index.es.js",
-      "default": "./dist/index.es.js",
-      "types": "./dist/index.d.ts"
-    },
-    "./theme": {
-      "import": "./dist/theme/index.es.js",
-      "default": "./dist/theme/index.es.js",
-      "types": "./dist/theme/index.d.ts"
-    },
-    "./components": {
-      "import": "./dist/components/index.es.js",
-      "default": "./dist/components/index.es.js",
-      "types": "./dist/components/index.d.ts"
-    },
-    "./composables": {
-      "import": "./dist/composables/index.es.js",
-      "default": "./dist/composables/index.es.js",
-      "types": "./dist/composables/index.d.ts"
-    },
-    "./style.css": {
-      "default": "./dist/style.css"
-    }
-  },
   "scripts": {
-    "build:prod": "node scripts/dist-build.cjs",
+    "build:prod": "node scripts/dist-build.mjs",
     "build": "pnpm run generate-icons && vite build",
     "build:storybook": "STORYBOOK=true storybook build",
     "build:tailwind": "tailwindcss -o dist/style.css --minify",
     "build:types": "vue-tsc -p tsconfig.build.json",
-    "generate-icons": "node scripts/generate-icons.cjs",
+    "generate-icons": "node scripts/generate-icons.mjs",
     "resolve:alias": "tsc-alias -p tsconfig.build.json",
     "dev": "vite",
     "lint": "eslint .",
@@ -84,7 +84,7 @@
     "coverage": "vitest run --coverage",
     "coverage:preview": "npx vite preview --open --outDir tests/coverage",
     "typecheck": "vue-tsc --noEmit",
-    "prepare": "husky install && node scripts/prepare.cjs",
+    "prepare": "husky install && node scripts/prepare.mjs",
     "release": "bumpp -r --no-push"
   },
   "peerDependencies": {
@@ -103,7 +103,7 @@
     "@fontsource/roboto": "5.0.8",
     "@headlessui/vue": "1.7.17",
     "@popperjs/core": "2.11.8",
-    "@rotki/eslint-config": "1.1.2",
+    "@rotki/eslint-config": "2.4.4",
     "@storybook/addon-docs": "7.6.10",
     "@storybook/addon-essentials": "7.6.10",
     "@storybook/addon-interactions": "7.6.10",
@@ -129,6 +129,7 @@
     "bumpp": "9.3.0",
     "css-loader": "6.9.1",
     "eslint": "8.56.0",
+    "eslint-plugin-cypress": "2.15.1",
     "eslint-plugin-storybook": "0.6.15",
     "fast-glob": "3.3.2",
     "fast-xml-parser": "4.3.3",

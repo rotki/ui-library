@@ -7,8 +7,8 @@ import {
 } from '@headlessui/vue';
 import Icon from '@/components/icons/Icon.vue';
 import TextField from '@/components/forms/text-field/TextField.vue';
-import { type ContextColorsType } from '@/consts/colors';
 import AutoCompleteSelection from '@/components/forms/auto-complete/AutoCompleteSelection.vue';
+import type { ContextColorsType } from '@/consts/colors';
 
 export type Option = Record<string, any>;
 
@@ -86,14 +86,14 @@ const filtered = computed(() => {
   return !search
     ? get(data)
     : get(data).filter((item) => {
-        if (searchKey) {
-          return (
-            item[textKey].toLowerCase().includes(search) ||
-            item[searchKey].toLowerCase().includes(search)
-          );
-        }
-        return item[textKey].toLowerCase().includes(search);
-      });
+      if (searchKey) {
+        return (
+          item[textKey].toLowerCase().includes(search)
+          || item[searchKey].toLowerCase().includes(search)
+        );
+      }
+      return item[textKey].toLowerCase().includes(search);
+    });
 });
 
 const multiple = computed(() => Array.isArray(get(modelValue)));
@@ -105,32 +105,30 @@ const hasValue = computed(() => {
 
 const hideDetails = computed(() => !(get(hint) || get(errorMessages)?.length));
 
-const onChange = (newVal: ModelValue) => {
+function onChange(newVal: ModelValue) {
   const value = get(modelValue);
-  if (!(newVal && value) || newVal !== value) {
+  if (!(newVal && value) || newVal !== value)
     emit('update:modelValue', newVal);
-  }
-};
+}
 
-const setQuery = (q: string) => {
+function setQuery(q: string) {
   set(query, q);
-};
+}
 
-const toggleDropdown = () => {
+function toggleDropdown() {
   get(button)?.el?.click();
-};
+}
 
-const onClear = () => {
+function onClear() {
   emit('update:modelValue', get(multiple) ? [] : null);
   setQuery('');
-};
+}
 
-const onRemove = (option: unknown) => {
+function onRemove(option: unknown) {
   const value = get(modelValue);
 
-  if (!get(multiple) || !Array.isArray(value)) {
+  if (!get(multiple) || !Array.isArray(value))
     return;
-  }
 
   const key = get(keyProp);
 
@@ -138,17 +136,16 @@ const onRemove = (option: unknown) => {
     'update:modelValue',
     value.filter((opt: Option) => opt[key] !== (option as Option)[key]),
   );
-};
+}
 
 watch(multiple, (newVal) => {
   const value = get(modelValue);
-  if (newVal) {
+  if (newVal)
     emit('update:modelValue', get(hasValue) ? [value] : []);
-  } else if (Array.isArray(value)) {
+  else if (Array.isArray(value))
     emit('update:modelValue', value[0] ?? null);
-  } else {
+  else
     emit('update:modelValue', null);
-  }
 });
 
 const { list, containerProps, wrapperProps, scrollTo } = useVirtualList<Option>(
@@ -165,19 +162,19 @@ watch(filtered, () => {
 
 const renderedData = useArrayMap(list, ({ data }) => data);
 
-const updateOpen = (open: boolean) => {
+function updateOpen(open: boolean) {
   if (!open && get(hasValue)) {
     const value = get(modelValue);
     const key = get(keyProp);
     const lastKey = Array.isArray(value)
-      ? value[value.length - 1][key]
+      ? value.at(-1)[key]
       : value![key];
 
     nextTick(() => {
-      scrollTo(get(filtered).findIndex((item) => item[key] === lastKey));
+      scrollTo(get(filtered).findIndex(item => item[key] === lastKey));
     });
   }
-};
+}
 
 const attrs = useAttrs();
 </script>
@@ -231,7 +228,10 @@ const attrs = useAttrs();
                 type="button"
                 @click.prevent.stop="onClear()"
               >
-                <Icon :class="css.clear_icon" name="close-line" />
+                <Icon
+                  :class="css.clear_icon"
+                  name="close-line"
+                />
               </button>
               <ComboboxButton
                 ref="button"
@@ -261,9 +261,15 @@ const attrs = useAttrs();
               v-if="filtered.length === 0 && query !== ''"
               :class="css.empty"
             >
-              <slot name="no-data">No options found</slot>
+              <slot name="no-data">
+                No options found
+              </slot>
             </div>
-            <div v-else v-bind="containerProps" class="max-h-60">
+            <div
+              v-else
+              v-bind="containerProps"
+              class="max-h-60"
+            >
               <div v-bind="wrapperProps">
                 <ComboboxOption
                   v-for="item in renderedData"
@@ -288,7 +294,11 @@ const attrs = useAttrs();
                       v-if="!!slots.prefix"
                       :class="{ prefix: !!slots.prefix }"
                     >
-                      <slot class="prefix" name="prefix" v-bind="item" />
+                      <slot
+                        class="prefix"
+                        name="prefix"
+                        v-bind="item"
+                      />
                     </span>
                     <span class="block truncate">
                       <template v-if="slots.default">
@@ -296,7 +306,10 @@ const attrs = useAttrs();
                       </template>
                       <template v-else> {{ item[textProp] }} </template>
                     </span>
-                    <span v-if="selected" :class="css.option__selected_icon">
+                    <span
+                      v-if="selected"
+                      :class="css.option__selected_icon"
+                    >
                       <Icon
                         aria-hidden="true"
                         class="h-5 w-5"

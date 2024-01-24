@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { type StyleValue } from 'vue';
 import { logicNot, logicOr } from '@vueuse/math';
 import { objectOmit } from '@vueuse/shared';
-import { type ContextColorsType } from '@/consts/colors';
 import Icon from '@/components/icons/Icon.vue';
-import { type RuiIcons } from '~/src';
+import type { ContextColorsType } from '@/consts/colors';
+import type { StyleValue } from 'vue';
+import type { RuiIcons } from '~/src';
 
 export interface Props {
   tile?: boolean;
@@ -44,12 +44,12 @@ const emit = defineEmits<{
 
 const { clickable, disabled, bgColor, textColor } = toRefs(props);
 
-const click = () => {
-  if (get(logicOr(logicNot(clickable), disabled))) {
+function click() {
+  if (get(logicOr(logicNot(clickable), disabled)))
     return;
-  }
+
   emit('click');
-};
+}
 
 const css = useCssModule();
 const slots = useSlots();
@@ -59,12 +59,12 @@ const style: ComputedRef<Partial<StyleValue>> = computed(() => {
   const style: Partial<StyleValue> = {};
   const bg = get(bgColor);
   const text = get(textColor);
-  if (bg) {
+  if (bg)
     style.backgroundColor = bg;
-  }
-  if (text) {
+
+  if (text)
     style.color = text;
-  }
+
   return style;
 });
 </script>
@@ -88,7 +88,10 @@ const style: ComputedRef<Partial<StyleValue>> = computed(() => {
     v-bind="objectOmit(attrs, ['onClick'])"
     @click="click()"
   >
-    <div v-if="slots.prepend" :class="css.chip__prepend">
+    <div
+      v-if="slots.prepend"
+      :class="css.chip__prepend"
+    >
       <slot name="prepend" />
     </div>
     <span :class="css.chip__label">

@@ -26,23 +26,30 @@ const themes: Theme[] = [
 ];
 
 const selectedTheme = computed<Theme | null>(
-  () => themes.find((theme) => theme.value === get(state)) ?? null,
+  () => themes.find(theme => theme.value === get(state)) ?? null,
 );
 
-const defaultTheme = themes.find((theme) => theme.value === get(state));
+const defaultTheme = themes.find(theme => theme.value === get(state));
 
 const onSwitchTheme = ({ value }: Theme) => switchThemeScheme(value);
 </script>
 
 <template>
   <header :class="css.header">
-    <div :class="css['header-wrapper']" class="wrapper">
+    <div
+      :class="css['header-wrapper']"
+      class="wrapper"
+    >
       <RouterLink
         :to="{ name: 'buttons' }"
         aria-label="Home page"
         class="flex items-center space-x-3"
       >
-        <img alt="rotki" class="h-8" src="../assets/logo.png" />
+        <img
+          alt="rotki"
+          class="h-8"
+          src="../assets/logo.png"
+        />
       </RouterLink>
       <div
         class="relative flex basis-0 justify-end gap-6 sm:gap-8 md:flex-grow"
@@ -55,8 +62,13 @@ const onSwitchTheme = ({ value }: Theme) => switchThemeScheme(value);
           class="relative"
           @update:model-value="onSwitchTheme($event)"
         >
-          <ListboxLabel class="sr-only">Theme</ListboxLabel>
-          <ListboxButton :aria-label="selectedTheme?.name" :class="css.toggle">
+          <ListboxLabel class="sr-only">
+            Theme
+          </ListboxLabel>
+          <ListboxButton
+            :aria-label="selectedTheme?.name"
+            :class="css.toggle"
+          >
             <RuiIcon
               :class="[css['toggle-icon'], css.light]"
               :size="32"
@@ -91,10 +103,15 @@ const onSwitchTheme = ({ value }: Theme) => switchThemeScheme(value);
                     ]"
                     class="h-4 w-4"
                   >
-                    <RuiIcon :name="theme.icon" :size="16" />
+                    <RuiIcon
+                      :name="theme.icon"
+                      :size="16"
+                    />
                   </span>
                 </div>
-                <div class="ml-3">{{ theme.name }}</div>
+                <div class="ml-3">
+                  {{ theme.name }}
+                </div>
               </div>
             </ListboxOption>
           </ListboxOptions>

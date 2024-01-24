@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { type ContextColorsType } from '@/consts/colors';
 import { default as RuiButton } from '@/components/buttons/button/Button.vue';
 import { default as RuiIcon } from '@/components/icons/Icon.vue';
-import { type RuiIcons } from '~/src';
+import type { ContextColorsType } from '@/consts/colors';
+import type { RuiIcons } from '~/src';
 
 export interface Props {
   title?: string;
@@ -37,9 +37,8 @@ const { icon, type } = toRefs(props);
 
 const usedIcon: ComputedRef<RuiIcons | undefined> = computed(() => {
   const iconVal = get(icon);
-  if (iconVal) {
+  if (iconVal)
     return iconVal;
-  }
 
   const iconMap: Record<ContextColorsType, RuiIcons | undefined> = {
     primary: undefined,
@@ -60,12 +59,24 @@ const slots = useSlots();
 </script>
 
 <template>
-  <div :class="[css.alert, css[type], css[variant]]" v-bind="attrs">
+  <div
+    :class="[css.alert, css[type], css[variant]]"
+    v-bind="attrs"
+  >
     <div class="flex space-x-3 py-1 flex-grow">
-      <div v-if="usedIcon" :class="css.icon">
-        <RuiIcon :name="usedIcon" size="22" />
+      <div
+        v-if="usedIcon"
+        :class="css.icon"
+      >
+        <RuiIcon
+          :name="usedIcon"
+          size="22"
+        />
       </div>
-      <div class="space-y-1 flex-grow" :class="css.texts">
+      <div
+        class="space-y-1 flex-grow"
+        :class="css.texts"
+      >
         <div
           v-if="slots.title || title"
           :class="{
@@ -77,7 +88,10 @@ const slots = useSlots();
           </slot>
         </div>
 
-        <div v-if="slots.default || description" class="text-body-2">
+        <div
+          v-if="slots.default || description"
+          class="text-body-2"
+        >
           <slot>
             {{ description }}
           </slot>
@@ -104,7 +118,10 @@ const slots = useSlots();
         :class="css.close"
         @click="emit('close')"
       >
-        <RuiIcon name="close-fill" size="20" />
+        <RuiIcon
+          name="close-fill"
+          size="20"
+        />
       </RuiButton>
     </div>
   </div>

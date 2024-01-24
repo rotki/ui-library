@@ -1,29 +1,33 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "target": "es2020",
-    "module": "esnext",
-    "strict": true,
-    "esModuleInterop": true,
     "jsx": "preserve",
-    "skipLibCheck": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "noUnusedLocals": true,
-    "strictNullChecks": true,
+    "lib": ["esnext", "dom"],
     "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "allowJs": false,
-    "forceConsistentCasingInFileNames": true,
-    "sourceMap": true,
-    "isolatedModules": true,
+    "baseUrl": ".",
+    "module": "esnext",
+    "moduleResolution": "node",
     "paths": {
       "@/*": ["src/*"],
       "~/*": ["./*"]
     },
-    "lib": ["esnext", "dom"],
-    "types": ["node", "vue", "vite/client"]
+    "resolveJsonModule": true,
+    "types": ["node", "vue", "vite/client"],
+    "allowJs": false,
+    "strict": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "skipLibCheck": true
   },
-  "include": ["src/**/*", "*.d.ts", "auto-imports.d.ts"],
-  "exclude": ["node_modules", "dist", "example"]
+  "include": [
+    "src/**/*",
+    "*.d.ts",
+    "auto-imports.d.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
 }

@@ -1,6 +1,6 @@
 // https://docs.cypress.io/api/introduction/api.html
 
-describe('Badge', () => {
+describe('badge', () => {
   beforeEach(() => {
     cy.visit('/badges');
   });

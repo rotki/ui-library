@@ -1,10 +1,10 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { contextColors } from '@/consts/colors';
 import { default as Radio, type RadioProps } from './Radio.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 type PropsAndLabel = RadioProps & { label: string };
 
-const render: StoryFn<PropsAndLabel> = (args) => ({
+const render: StoryFn<PropsAndLabel> = args => ({
   components: { Radio },
   setup() {
     const modelValue = computed({
@@ -23,26 +23,26 @@ const render: StoryFn<PropsAndLabel> = (args) => ({
 });
 
 const meta: Meta<PropsAndLabel> = {
-  title: 'Components/Forms/Radio/Radio',
-  component: Radio,
-  tags: ['autodocs'],
-  render,
   argTypes: {
-    label: { control: 'text' },
-    modelValue: { control: 'text' },
-    value: { control: 'text' },
-    hint: { control: 'text' },
+    color: { control: 'select', options: contextColors },
+    disabled: { control: 'boolean', table: { category: 'State' } },
     errorMessages: { control: 'array', defaultValue: [] },
     hideDetails: { control: 'boolean' },
-    disabled: { control: 'boolean', table: { category: 'State' } },
-    color: { control: 'select', options: contextColors },
+    hint: { control: 'text' },
+    label: { control: 'text' },
+    modelValue: { control: 'text' },
     size: { control: 'select', options: ['medium', 'sm', 'lg'] },
+    value: { control: 'text' },
   },
+  component: Radio,
   parameters: {
     docs: {
       controls: { exclude: ['default'] },
     },
   },
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Forms/Radio/Radio',
 };
 
 type Story = StoryObj<PropsAndLabel>;
@@ -92,25 +92,25 @@ export const Disabled: Story = {
 
 export const WithErrorMessage: Story = {
   args: {
-    label: 'Label',
     errorMessages: ['With error messages'],
+    label: 'Label',
     value: 'test',
   },
 };
 
 export const WithHint: Story = {
   args: {
-    label: 'Label',
     hint: 'With hint',
+    label: 'Label',
     value: 'test',
   },
 };
 
 export const HideDetails: Story = {
   args: {
-    label: 'Label',
-    hint: 'Hint (should be invisible)',
     hideDetails: true,
+    hint: 'Hint (should be invisible)',
+    label: 'Label',
     value: 'test',
   },
 };

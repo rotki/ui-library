@@ -38,15 +38,28 @@ const attrs = useAttrs();
     :rounded="rounded"
     v-bind="attrs"
   />
-  <div v-else :class="css[`skeleton_${type}`]" v-bind="attrs">
+  <div
+    v-else
+    :class="css[`skeleton_${type}`]"
+    v-bind="attrs"
+  >
     <SkeletonBase
       v-if="type === 'article'"
       :class="css.skeleton_heading"
       :rounded="rounded"
     />
-    <SkeletonBase :class="css.skeleton_text" :rounded="rounded" />
-    <SkeletonBase :class="css.skeleton_text" :rounded="rounded" />
-    <SkeletonBase :class="css.skeleton_text" :rounded="rounded" />
+    <SkeletonBase
+      :class="css.skeleton_text"
+      :rounded="rounded"
+    />
+    <SkeletonBase
+      :class="css.skeleton_text"
+      :rounded="rounded"
+    />
+    <SkeletonBase
+      :class="css.skeleton_text"
+      :rounded="rounded"
+    />
   </div>
 </template>
 

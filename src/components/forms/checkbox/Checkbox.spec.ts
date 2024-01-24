@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import Checkbox from '@/components/forms/checkbox/Checkbox.vue';
 
-const createWrapper = (options?: ComponentMountingOptions<typeof Checkbox>) =>
-  mount(Checkbox, { ...options, global: { stubs: ['icon'] } });
+function createWrapper(options?: ComponentMountingOptions<typeof Checkbox>) {
+  return mount(Checkbox, { ...options, global: { stubs: ['icon'] } });
+}
 
-describe('Forms/Checkbox', () => {
+describe('forms/Checkbox', () => {
   it('renders properly', () => {
     const label = 'Checkbox Label';
     const wrapper = createWrapper({
@@ -34,9 +35,9 @@ describe('Forms/Checkbox', () => {
     expect(wrapper.find('icon-stub').attributes('name')).toBe(
       'checkbox-blank-line',
     );
-    await wrapper.setProps({ modelValue: true, indeterminate: false });
+    await wrapper.setProps({ indeterminate: false, modelValue: true });
     expect(wrapper.find('icon-stub').attributes('name')).toBe('checkbox-fill');
-    await wrapper.setProps({ modelValue: false, indeterminate: true });
+    await wrapper.setProps({ indeterminate: true, modelValue: false });
     expect(wrapper.find('icon-stub').attributes('name')).toBe(
       'checkbox-indeterminate-fill',
     );
@@ -86,11 +87,11 @@ describe('Forms/Checkbox', () => {
     expect(wrapper.find('.details > div').text()).toBe(errorMessage);
   });
 
-  it('passes hideDetails', async () => {
+  it('passes hideDetails', () => {
     const wrapper = createWrapper({
       props: {
-        hint: 'This hint should not be rendered',
         hideDetails: true,
+        hint: 'This hint should not be rendered',
       },
     });
     expect(wrapper.find('.details > div').exists()).toBeFalsy();

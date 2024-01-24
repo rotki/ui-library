@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import Button from './Button.vue';
 
-const createWrapper = (options?: ComponentMountingOptions<typeof Button>) =>
-  mount(Button, options);
+function createWrapper(options?: ComponentMountingOptions<typeof Button>) {
+  return mount(Button, options);
+}
 
-describe('Button/Button', () => {
+describe('button/Button', () => {
   it('renders properly', () => {
     const label = 'Primary Button';
     const wrapper = createWrapper({

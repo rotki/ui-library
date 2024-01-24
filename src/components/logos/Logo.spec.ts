@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import Logo from './Logo.vue';
 
-const createWrapper = (options?: ComponentMountingOptions<typeof Logo>) =>
-  mount(Logo, { ...options, global: { stubs: ['icon'] } });
+function createWrapper(options?: ComponentMountingOptions<typeof Logo>) {
+  return mount(Logo, { ...options, global: { stubs: ['icon'] } });
+}
 
-describe('Forms/Logo', () => {
+describe('forms/Logo', () => {
   it('renders properly', () => {
     const wrapper = createWrapper();
     expect(wrapper.find('div').find('img').exists()).toBeTruthy();

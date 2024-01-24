@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { type ContextColorsType } from '@/consts/colors';
 import Button from '@/components/buttons/button/Button.vue';
+import type { ContextColorsType } from '@/consts/colors';
 
 export interface Props {
   color?: ContextColorsType;
@@ -46,8 +46,8 @@ const slots = defineSlots<{
   append?(props?: object): any;
 }>();
 
-const { target, grow, active, disabled, vertical, align, tabValue } =
-  toRefs(props);
+const { target, grow, active, disabled, vertical, align, tabValue }
+  = toRefs(props);
 
 const css = useCssModule();
 
@@ -66,9 +66,9 @@ const tabClass = computed(() => [
 
 const attrs = useAttrs();
 
-const click = () => {
+function click() {
   emit('click', get(tabValue));
-};
+}
 </script>
 
 <template>
@@ -80,8 +80,14 @@ const click = () => {
     role="tab"
     v-bind="attrs"
   >
-    <template v-for="(_, name) in slots" #[name]="slotData">
-      <slot :name="name" v-bind="slotData" />
+    <template
+      v-for="(_, name) in slots"
+      #[name]="slotData"
+    >
+      <slot
+        :name="name"
+        v-bind="slotData"
+      />
     </template>
   </Button>
   <Button
@@ -93,8 +99,14 @@ const click = () => {
     variant="text"
     @click="click()"
   >
-    <template v-for="(_, name) in slots" #[name]="slotData">
-      <slot :name="name" v-bind="slotData" />
+    <template
+      v-for="(_, name) in slots"
+      #[name]="slotData"
+    >
+      <slot
+        :name="name"
+        v-bind="slotData"
+      />
     </template>
   </Button>
   <RouterLink
@@ -126,8 +138,14 @@ const click = () => {
         isSelf ? navigate($event) : undefined;
       "
     >
-      <template v-for="(_, name) in slots" #[name]="slotData">
-        <slot :name="name" v-bind="slotData" />
+      <template
+        v-for="(_, name) in slots"
+        #[name]="slotData"
+      >
+        <slot
+          :name="name"
+          v-bind="slotData"
+        />
       </template>
     </Button>
   </RouterLink>

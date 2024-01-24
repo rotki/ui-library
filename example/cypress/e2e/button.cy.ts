@@ -1,6 +1,6 @@
 // https://docs.cypress.io/api/introduction/api.html
 
-describe('Button', () => {
+describe('button', () => {
   beforeEach(() => {
     cy.visit('/');
   });

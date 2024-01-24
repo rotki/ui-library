@@ -37,7 +37,7 @@ const limits = computed(
 
 const currentLimit = computed({
   get: () => get(modelValue).limit,
-  set: (value) =>
+  set: value =>
     emit('update:model-value', {
       ...get(modelValue),
       limit: Number(value),
@@ -47,9 +47,9 @@ const currentLimit = computed({
 
 const pages = computed(() => {
   const { limit, total } = get(modelValue);
-  if (!total) {
+  if (!total)
     return 0;
-  }
+
   return Math.ceil(total / limit);
 });
 
@@ -64,44 +64,44 @@ const indicatorText = computed(() => {
 const hasPrev = computed(() => get(modelValue).page > 1);
 const hasNext = computed(() => get(pages) > get(modelValue).page);
 
-const goToPage = (page: number) => {
+function goToPage(page: number) {
   emit('update:model-value', {
     ...get(modelValue),
     page,
   });
-};
+}
 
-const onNavigate = (delta: number) => {
+function onNavigate(delta: number) {
   goToPage(get(modelValue).page + delta);
-};
+}
 
-const onPrev = () => {
-  if (!get(hasPrev)) {
+function onPrev() {
+  if (!get(hasPrev))
     return;
-  }
+
   onNavigate(-1);
-};
+}
 
-const onNext = () => {
-  if (!get(hasNext)) {
+function onNext() {
+  if (!get(hasNext))
     return;
-  }
+
   onNavigate(1);
-};
+}
 
-const onFirst = () => {
-  if (!get(hasPrev)) {
+function onFirst() {
+  if (!get(hasPrev))
     return;
-  }
+
   goToPage(1);
-};
+}
 
-const onLast = () => {
-  if (!get(hasNext)) {
+function onLast() {
+  if (!get(hasNext))
     return;
-  }
+
   goToPage(get(pages));
-};
+}
 </script>
 
 <template>

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
-import { type ContextColorsType } from '@/consts/colors';
 import Icon from '@/components/icons/Icon.vue';
 import FormTextDetail from '@/components/helpers/FormTextDetail.vue';
+import type { ContextColorsType } from '@/consts/colors';
 
 export interface RadioProps {
   value: string;
@@ -38,24 +38,23 @@ const emit = defineEmits<{
   (e: 'update:modelValue', modelValue: string): void;
 }>();
 
-const { modelValue, size, value, successMessages, errorMessages } =
-  toRefs(props);
+const { modelValue, size, value, successMessages, errorMessages }
+  = toRefs(props);
 
-const input = (event: Event) => {
+function input(event: Event) {
   const checked = (event.target as HTMLInputElement).checked;
-  if (checked) {
+  if (checked)
     emit('update:modelValue', get(value));
-  }
-};
+}
 
 const iconSize: ComputedRef<number> = computed(() => {
   const sizeVal = get(size);
-  if (sizeVal === 'lg') {
+  if (sizeVal === 'lg')
     return 28;
-  }
-  if (sizeVal === 'sm') {
+
+  if (sizeVal === 'sm')
     return 20;
-  }
+
   return 24;
 });
 
@@ -103,10 +102,21 @@ const { hasError, hasSuccess } = useFormTextDetail(
           },
         ]"
       >
-        <Icon v-if="selected" name="radio-button-line" :size="iconSize" />
-        <Icon v-else name="checkbox-blank-circle-line" :size="iconSize" />
+        <Icon
+          v-if="selected"
+          name="radio-button-line"
+          :size="iconSize"
+        />
+        <Icon
+          v-else
+          name="checkbox-blank-circle-line"
+          :size="iconSize"
+        />
       </div>
-      <div :class="css.label" class="text-body-1">
+      <div
+        :class="css.label"
+        class="text-body-1"
+      >
         <slot>{{ label }}</slot>
       </div>
     </label>

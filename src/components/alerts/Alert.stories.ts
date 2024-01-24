@@ -1,9 +1,9 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { contextColors } from '@/consts/colors';
 import * as Icons from '@/icons';
 import { default as Alert, type Props } from './Alert.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-const render: StoryFn<Props> = (args) => ({
+const render: StoryFn<Props> = args => ({
   components: { Alert },
   setup() {
     return { args };
@@ -13,72 +13,72 @@ const render: StoryFn<Props> = (args) => ({
 });
 
 const meta: Meta<Props> = {
-  title: 'Components/Alert',
-  component: Alert,
-  tags: ['autodocs'],
-  render,
   argTypes: {
-    title: { control: 'text' },
+    actionText: { control: 'text' },
     description: { control: 'text' },
-    type: { control: 'select', options: contextColors },
     icon: {
       control: 'select',
       options: Object.values(Icons).map(({ name }) => name.slice(3)),
     },
+    title: { control: 'text' },
+    type: { control: 'select', options: contextColors },
     variant: {
       control: 'select',
       options: ['default', 'filled', 'outlined'],
       table: { category: 'State' },
     },
-    actionText: { control: 'text' },
   },
+  component: Alert,
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Alert',
 };
 
 type Story = StoryObj<Props>;
 
 export const Default: Story = {
   args: {
-    title: 'Title',
     description: 'Description',
+    title: 'Title',
   },
 };
 
 export const Error: Story = {
   args: {
-    title: 'Title',
     description: 'Description',
+    title: 'Title',
     type: 'error',
   },
 };
 
 export const Warning: Story = {
   args: {
-    title: 'Title',
     description: 'Description',
+    title: 'Title',
     type: 'warning',
   },
 };
 
 export const Info: Story = {
   args: {
-    title: 'Title',
     description: 'Description',
+    title: 'Title',
     type: 'info',
   },
 };
 
 export const Success: Story = {
   args: {
-    title: 'Title',
     description: 'Description',
+    title: 'Title',
     type: 'success',
   },
 };
 
 export const Filled: Story = {
   args: {
-    title: 'Title',
     description: 'Description',
+    title: 'Title',
     type: 'error',
     variant: 'filled',
   },
@@ -86,8 +86,8 @@ export const Filled: Story = {
 
 export const Outlined: Story = {
   args: {
-    title: 'Title',
     description: 'Description',
+    title: 'Title',
     type: 'error',
     variant: 'outlined',
   },
@@ -95,10 +95,10 @@ export const Outlined: Story = {
 
 export const WithActionButton: Story = {
   args: {
-    title: 'Title',
-    description: 'Description',
-    type: 'error',
     actionText: 'Action',
+    description: 'Description',
+    title: 'Title',
+    type: 'error',
   },
 };
 

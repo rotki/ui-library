@@ -1,8 +1,8 @@
 import { breakpointsTailwind } from '@vueuse/core';
 import { camelCase } from 'scule';
-import { type Ref } from 'vue';
+import type { Ref } from 'vue';
 
-export const useBreakpoint = () => {
+export function useBreakpoint() {
   const { width } = useWindowSize();
 
   const breakpointList = {
@@ -32,23 +32,23 @@ export const useBreakpoint = () => {
     value,
   ]);
 
-  const sizesUp = list.map((breakpoint) => [
+  const sizesUp = list.map(breakpoint => [
     camelCase(`is_${breakpoint}_and_up`),
     breakpoints.greaterOrEqual(breakpoint),
   ]);
 
-  const sizesDown = list.map((breakpoint) => [
+  const sizesDown = list.map(breakpoint => [
     camelCase(`is_${breakpoint}_and_down`),
     breakpoints.smaller(breakpoint),
   ]);
 
-  const name = computed(() => rawSizes.find((item) => get(item[1]))?.[0] || '');
+  const name = computed(() => rawSizes.find(item => get(item[1]))?.[0] || '');
 
   return {
     ...Object.fromEntries(sizes),
     ...Object.fromEntries(sizesUp),
     ...Object.fromEntries(sizesDown),
-    width,
     name,
+    width,
   };
-};
+}

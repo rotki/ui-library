@@ -1,12 +1,12 @@
-import { type BasicColorSchema } from '@vueuse/core';
 import { contextColors } from '@/consts/colors';
-import { type GeneratedIcon } from '@/types/icons';
+import type { BasicColorSchema } from '@vueuse/core';
+import type { GeneratedIcon } from '@/types/icons';
 import type { ComputedRef, Ref } from 'vue';
 
 export const ThemeMode = {
   auto: 'auto',
-  light: 'light',
   dark: 'dark',
+  light: 'light',
 } as const;
 
 export type ThemeMode = (typeof ThemeMode)[keyof typeof ThemeMode];
@@ -46,19 +46,20 @@ export interface ThemeContent {
   setThemeConfig: (newConfig: ThemeConfig) => void;
 }
 
-const createDefaultTheme = (theme: 'light' | 'dark') =>
-  Object.fromEntries(
-    contextColors.map((color) => [
+function createDefaultTheme(theme: 'light' | 'dark') {
+  return Object.fromEntries(
+    contextColors.map(color => [
       color,
       {
+        darker: `var(--rui-${theme}-${color}-darker)`,
         DEFAULT: `var(--rui-${theme}-${color}-main)`,
         lighter: `var(--rui-${theme}-${color}-lighter)`,
-        darker: `var(--rui-${theme}-${color}-darker)`,
       },
     ]),
   );
+}
 
 export const defaultTheme: ThemeConfig = {
-  light: createDefaultTheme('light'),
   dark: createDefaultTheme('dark'),
+  light: createDefaultTheme('light'),
 };

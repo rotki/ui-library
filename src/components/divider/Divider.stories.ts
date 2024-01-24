@@ -1,7 +1,7 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { default as Divider, type Props } from './Divider.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-const render: StoryFn<Props> = (args) => ({
+const render: StoryFn<Props> = args => ({
   components: { Divider },
   setup() {
     return { args };
@@ -11,13 +11,13 @@ const render: StoryFn<Props> = (args) => ({
 });
 
 const meta: Meta<Props> = {
-  title: 'Components/Divider',
-  component: Divider,
-  tags: ['autodocs'],
-  render,
   argTypes: {
     vertical: { control: 'boolean' },
   },
+  component: Divider,
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Divider',
 };
 
 type Story = StoryObj<Props>;

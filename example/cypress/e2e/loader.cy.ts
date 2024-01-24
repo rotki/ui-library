@@ -1,4 +1,4 @@
-describe('Loaders', () => {
+describe('loaders', () => {
   beforeEach(() => {
     cy.visit('/loaders');
   });

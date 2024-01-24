@@ -3,17 +3,16 @@ import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import Button from '../button/Button.vue';
 import ButtonGroup from './ButtonGroup.vue';
 
-const createWrapper = (
-  options?: ComponentMountingOptions<typeof ButtonGroup>,
-) =>
-  mount(ButtonGroup, {
+function createWrapper(options?: ComponentMountingOptions<typeof ButtonGroup>) {
+  return mount(ButtonGroup, {
     slots: {
       default: [Button, Button, Button],
     },
     ...options,
   });
+}
 
-describe('Button/ButtonGroup', () => {
+describe('button/ButtonGroup', () => {
   it('passes vertical props', async () => {
     const wrapper = createWrapper();
     expect(wrapper.classes()).not.toMatch(/vertical/);
@@ -68,7 +67,7 @@ describe('Button/ButtonGroup', () => {
   it('toggleable button group', async () => {
     const wrapper = createWrapper({
       props: {
-        modelValue: 0,
+        'modelValue': 0,
         'onUpdate:modelValue': (e: any) => wrapper.setProps({ modelValue: e }),
       },
     });
@@ -122,7 +121,7 @@ describe('Button/ButtonGroup', () => {
   it('multiple toggleable button group', async () => {
     const wrapper = createWrapper({
       props: {
-        modelValue: [0],
+        'modelValue': [0],
         'onUpdate:modelValue': (e: any) => wrapper.setProps({ modelValue: e }),
       },
     });
@@ -190,11 +189,11 @@ describe('Button/ButtonGroup', () => {
     const modelValue = ref([0]);
     const updateModelValue = vi.fn((value: number[]) => set(modelValue, value));
     const wrapper = createWrapper({
-      props: {
-        'onUpdate:modelValue': (e: any) => updateModelValue(e),
-      },
       data() {
         return { selected: get(modelValue) };
+      },
+      props: {
+        'onUpdate:modelValue': (e: any) => updateModelValue(e),
       },
     });
 

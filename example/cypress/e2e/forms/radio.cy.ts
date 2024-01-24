@@ -1,4 +1,4 @@
-describe('Forms/Radio', () => {
+describe('forms/Radio', () => {
   beforeEach(() => {
     cy.visit('/radios');
   });
@@ -63,7 +63,7 @@ describe('Forms/Radio', () => {
           .parentsUntil('div[class*=wrapper]')
           .parent()
           .find('.details')
-          .should('contain.text', `Selected value: ${value}`);
+          .should('contain.text', `Selected value: ${value?.toString()}`);
       });
 
     cy.get('@thirdRadio').should('not.be.checked');
@@ -79,7 +79,7 @@ describe('Forms/Radio', () => {
           .parentsUntil('div[class*=wrapper]')
           .parent()
           .find('.details')
-          .should('contain.text', `Selected value: ${value}`);
+          .should('contain.text', `Selected value: ${value?.toString()}`);
       });
   });
 });

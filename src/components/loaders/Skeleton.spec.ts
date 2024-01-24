@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import Skeleton from '@/components/loaders/Skeleton.vue';
 
-const createWrapper = (options?: ComponentMountingOptions<typeof Skeleton>) =>
-  mount(Skeleton, options);
+function createWrapper(options?: ComponentMountingOptions<typeof Skeleton>) {
+  return mount(Skeleton, options);
+}
 
-describe('Skeleton', () => {
+describe('skeleton', () => {
   it('renders properly', () => {
     const wrapper = createWrapper();
     expect(wrapper.get('div[role=alert]').classes()).toMatch(/_skeleton_/);
@@ -15,8 +16,8 @@ describe('Skeleton', () => {
   it('passes props correctly', async () => {
     const wrapper = createWrapper({
       props: {
-        type: 'text',
         rounded: 'full',
+        type: 'text',
       },
     });
     expect(wrapper.get('div[role=alert]').classes()).toMatch(/_skeleton_text_/);

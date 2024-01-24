@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { objectPick } from '@vueuse/shared';
 import FormTextDetail from '@/components/helpers/FormTextDetail.vue';
-import { type ContextColorsType } from '~/src';
+import type { ContextColorsType } from '~/src';
 
 export interface Props {
   modelValue?: string;
@@ -51,7 +51,10 @@ const css = useCssModule();
 
 <template>
   <div>
-    <div v-if="label" class="text-rui-text-secondary text-body-1">
+    <div
+      v-if="label"
+      class="text-rui-text-secondary text-body-1"
+    >
       {{ label }}
     </div>
     <div :class="[css.wrapper, { [css.wrapper__inline]: inline }]">

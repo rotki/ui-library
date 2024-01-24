@@ -1,6 +1,6 @@
 // https://docs.cypress.io/api/introduction/api.html
 
-describe('Tabs', () => {
+describe('tabs', () => {
   beforeEach(() => {
     cy.visit('/tabs');
   });

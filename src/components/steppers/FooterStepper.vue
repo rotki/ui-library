@@ -28,26 +28,25 @@ const css = useCssModule();
 
 const { modelValue, pages } = toRefs(props);
 
-const onChange = (delta: number) => {
+function onChange(delta: number) {
   emit('update:modelValue', get(modelValue) + delta);
-};
+}
 
-const onPrev = () => {
+function onPrev() {
   const value = get(modelValue);
-  if (value) {
+  if (value)
     onChange(-1);
-  }
-};
-const onNext = () => {
-  const value = get(modelValue);
-  if (value < get(pages)) {
-    onChange(1);
-  }
-};
+}
 
-const onClick = (index: number) => {
+function onNext() {
+  const value = get(modelValue);
+  if (value < get(pages))
+    onChange(1);
+}
+
+function onClick(index: number) {
   onChange(index - get(modelValue));
-};
+}
 </script>
 
 <template>
@@ -70,16 +69,32 @@ const onClick = (index: number) => {
         color="primary"
         @click="onPrev()"
       >
-        <template v-if="!arrowButtons" #prepend>
-          <RuiIcon :size="18" name="arrow-left-s-line" />
+        <template
+          v-if="!arrowButtons"
+          #prepend
+        >
+          <RuiIcon
+            :size="18"
+            name="arrow-left-s-line"
+          />
         </template>
         <span v-if="!arrowButtons">Back</span>
-        <RuiIcon v-else :size="24" name="arrow-left-line" />
+        <RuiIcon
+          v-else
+          :size="24"
+          name="arrow-left-line"
+        />
       </RuiButton>
-      <span v-if="variant === 'numeric'" :class="css.numeric">
+      <span
+        v-if="variant === 'numeric'"
+        :class="css.numeric"
+      >
         {{ modelValue }}/{{ pages }}
       </span>
-      <div v-else-if="variant === 'bullet'" :class="css.bullets">
+      <div
+        v-else-if="variant === 'bullet'"
+        :class="css.bullets"
+      >
         <span
           v-for="i in pages"
           :key="i"
@@ -102,9 +117,19 @@ const onClick = (index: number) => {
         @click="onNext()"
       >
         <span v-if="!arrowButtons">Next</span>
-        <RuiIcon v-else :size="24" name="arrow-right-line" />
-        <template v-if="!arrowButtons" #append>
-          <RuiIcon :size="18" name="arrow-right-s-line" />
+        <RuiIcon
+          v-else
+          :size="24"
+          name="arrow-right-line"
+        />
+        <template
+          v-if="!arrowButtons"
+          #append
+        >
+          <RuiIcon
+            :size="18"
+            name="arrow-right-s-line"
+          />
         </template>
       </RuiButton>
     </template>

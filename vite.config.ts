@@ -15,7 +15,7 @@ const entryPoints = [
 const files = fg.sync(entryPoints, { absolute: true });
 
 const entities = files.map((file) => {
-  const [key] = file.match(/(?<=src\/).*$/) || [];
+  const [key] = file.match(/(?<=src\/).*$/) || [''];
   const keyWithoutExt = key.replace(/\.[^.]*$/, '');
   return [keyWithoutExt, file];
 });
@@ -36,9 +36,6 @@ export default defineConfig({
       dts: './auto-imports.d.ts',
       dirs: ['src/composables/**', 'src/utils/**'],
       vueTemplate: true,
-      eslintrc: {
-        enabled: true,
-      },
     }),
   ],
   build: {

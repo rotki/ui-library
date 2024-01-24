@@ -37,7 +37,10 @@ const css = useCssModule();
     >
       <slot />
     </TransitionRoot>
-    <div v-if="eager && !active" class="hidden">
+    <div
+      v-if="eager && !active"
+      class="hidden"
+    >
       <slot />
     </div>
   </div>

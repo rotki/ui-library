@@ -1,4 +1,3 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import Button from '@/components/buttons/button/Button.vue';
 import Icon from '@/components/icons/Icon.vue';
 import { contextColors } from '@/consts/colors';
@@ -6,14 +5,15 @@ import {
   default as ButtonGroup,
   type Props as ButtonProps,
 } from './ButtonGroup.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 type Props = ButtonProps<string | number>;
 
-const render: StoryFn<Props> = (args) => ({
-  components: { ButtonGroup, Button, Icon },
+const render: StoryFn<Props> = args => ({
+  components: { Button, ButtonGroup, Icon },
   setup() {
     const count = ref(0);
-    return { count, args };
+    return { args, count };
   },
   template: `
     <div v-if="'modelValue' in args">
@@ -47,22 +47,22 @@ const render: StoryFn<Props> = (args) => ({
 });
 
 const meta: Meta<Props> = {
-  title: 'Components/Button/ButtonGroup',
-  component: ButtonGroup as any,
-  tags: ['autodocs'],
-  render,
   argTypes: {
-    vertical: { control: 'boolean' },
-    color: { control: 'select', options: contextColors },
     activeColor: { control: 'select', options: contextColors },
+    color: { control: 'select', options: contextColors },
+    gap: { control: 'select', options: ['md', 'sm', 'lg'] },
+    size: { control: 'select', options: ['md', 'sm', 'lg'] },
     variant: {
       control: 'select',
       options: ['default', 'outlined', 'text'],
       table: { category: 'Shape' },
     },
-    size: { control: 'select', options: ['md', 'sm', 'lg'] },
-    gap: { control: 'select', options: ['md', 'sm', 'lg'] },
+    vertical: { control: 'boolean' },
   },
+  component: ButtonGroup as any,
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Button/ButtonGroup',
 };
 
 type Story = StoryObj<Props>;
@@ -97,24 +97,24 @@ export const Text: Story = {
 
 export const DefaultToggle: Story = {
   args: {
-    modelValue: 0,
     color: 'primary',
+    modelValue: 0,
   },
 };
 
 export const ToggleRequired: Story = {
   args: {
-    required: true,
-    modelValue: 0,
     color: 'primary',
+    modelValue: 0,
+    required: true,
   },
 };
 
 export const VerticalToggle: Story = {
   args: {
-    vertical: true,
-    modelValue: 0,
     color: 'primary',
+    modelValue: 0,
+    vertical: true,
   },
 };
 
@@ -127,49 +127,49 @@ export const Toggle: Story = {
 
 export const OutlinedToggle: Story = {
   args: {
-    variant: 'outlined',
-    modelValue: 0,
     color: 'primary',
+    modelValue: 0,
+    variant: 'outlined',
   },
 };
 
 export const TextToggle: Story = {
   args: {
-    variant: 'text',
-    modelValue: 0,
     color: 'primary',
+    modelValue: 0,
+    variant: 'text',
   },
 };
 
 export const ActiveColorToggle: Story = {
   args: {
-    variant: 'text',
-    modelValue: 0,
-    color: 'primary',
     activeColor: 'warning',
+    color: 'primary',
+    modelValue: 0,
+    variant: 'text',
   },
 };
 
 export const DefaultToggleMultiple: Story = {
   args: {
-    modelValue: [0],
     color: 'primary',
+    modelValue: [0],
   },
 };
 
 export const ToggleMultipleRequired: Story = {
   args: {
-    required: true,
-    modelValue: [0],
     color: 'primary',
+    modelValue: [0],
+    required: true,
   },
 };
 
 export const VerticalToggleMultiple: Story = {
   args: {
-    vertical: true,
-    modelValue: [0],
     color: 'primary',
+    modelValue: [0],
+    vertical: true,
   },
 };
 
@@ -182,26 +182,26 @@ export const ToggleMultiple: Story = {
 
 export const OutlinedToggleMultiple: Story = {
   args: {
-    variant: 'outlined',
-    modelValue: [0],
     color: 'primary',
+    modelValue: [0],
+    variant: 'outlined',
   },
 };
 
 export const TextToggleMultiple: Story = {
   args: {
-    variant: 'text',
-    modelValue: [0],
     color: 'primary',
+    modelValue: [0],
+    variant: 'text',
   },
 };
 
 export const ActiveColorMultiple: Story = {
   args: {
-    variant: 'text',
-    modelValue: [0],
-    color: 'primary',
     activeColor: 'warning',
+    color: 'primary',
+    modelValue: [0],
+    variant: 'text',
   },
 };
 

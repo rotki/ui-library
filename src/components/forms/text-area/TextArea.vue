@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { logicAnd, logicNot } from '@vueuse/math';
-import { type ContextColorsType } from '@/consts/colors';
 import RuiIcon from '@/components/icons/Icon.vue';
 import { default as RuiButton } from '@/components/buttons/button/Button.vue';
 import FormTextDetail from '@/components/helpers/FormTextDetail.vue';
-import { type RuiIcons } from '~/src';
+import type { ContextColorsType } from '@/consts/colors';
+import type { RuiIcons } from '~/src';
 
 export interface Props {
   value?: string;
@@ -87,9 +87,9 @@ const focusedDebounced = ref(false);
 
 const labelWithQuote = computed(() => {
   const labelVal = get(label);
-  if (!labelVal) {
+  if (!labelVal)
     return '"\\200B"';
-  }
+
   return `'  ${get(label)}  '`;
 });
 
@@ -100,9 +100,9 @@ const fieldStyles = computed(() => {
   const value: { minHeight: string; maxHeight?: string } = {
     minHeight: `${min * height + 0.75}rem`,
   };
-  if (max) {
+  if (max)
     value.maxHeight = `${max * height + 0.75}rem`;
-  }
+
   return value;
 });
 
@@ -113,17 +113,17 @@ const internalValue = computed({
 
 const prependWidth = computed(() => {
   const width = get(useElementBounding(prepend).width);
-  if (!width) {
+  if (!width)
     return '0rem';
-  }
+
   return `${(width + 24) / 16}rem`;
 });
 
 const appendWidth = computed(() => {
   const width = get(useElementBounding(append).width);
-  if (!width) {
+  if (!width)
     return '0rem';
-  }
+
   return `${(width + 24) / 16}rem`;
 });
 
@@ -145,32 +145,32 @@ const css = useCssModule();
 const attrs = useAttrs();
 const slots = useSlots();
 
-const clearIconClicked = () => {
+function clearIconClicked() {
   set(internalValue, '');
   emit('click:clear');
-};
+}
 
-const computeFieldHeight = (newVal?: string, oldVal?: string) => {
-  if (!get(autoGrow)) {
+function computeFieldHeight(newVal?: string, oldVal?: string) {
+  if (!get(autoGrow))
     return;
-  }
+
   const field = get(textarea);
   const fieldValue = newVal ?? get(value);
   const fieldSizer = get(textareaSizer);
-  if (!(field && fieldSizer)) {
+  if (!(field && fieldSizer))
     return;
-  }
+
   nextTick(() => {
     field.style.minHeight = get(fieldStyles).minHeight;
     const sizerHeight = fieldSizer.scrollHeight;
     const fieldHeight = field.scrollHeight;
     let height = `${Math.max(sizerHeight, fieldHeight) / 16}rem`;
-    if (oldVal && oldVal.length > fieldValue.length) {
+    if (oldVal && oldVal.length > fieldValue.length)
       height = `${Math.min(sizerHeight, fieldHeight) / 16}rem`;
-    }
+
     field.style.height = height;
   });
-};
+}
 
 const { focused } = useFocus(textarea);
 
@@ -209,8 +209,14 @@ onMounted(computeFieldHeight);
         class="flex items-center gap-1 shrink-0"
         :class="css.prepend"
       >
-        <slot v-if="slots.prepend" name="prepend" />
-        <div v-else-if="prependIcon" :class="[css.icon]">
+        <slot
+          v-if="slots.prepend"
+          name="prepend"
+        />
+        <div
+          v-else-if="prependIcon"
+          :class="[css.icon]"
+        >
           <RuiIcon :name="prependIcon" />
         </div>
       </div>
@@ -238,7 +244,10 @@ onMounted(computeFieldHeight);
         <label :class="css.label">
           {{ label }}
         </label>
-        <fieldset v-if="variant === 'outlined'" :class="css.fieldset">
+        <fieldset
+          v-if="variant === 'outlined'"
+          :class="css.fieldset"
+        >
           <legend />
         </fieldset>
       </div>
@@ -258,10 +267,19 @@ onMounted(computeFieldHeight);
           :color="color"
           @click="clearIconClicked()"
         >
-          <RuiIcon name="close-line" size="20" />
+          <RuiIcon
+            name="close-line"
+            size="20"
+          />
         </RuiButton>
-        <slot v-if="slots.append" name="append" />
-        <div v-else-if="appendIcon" :class="[css.icon]">
+        <slot
+          v-if="slots.append"
+          name="append"
+        />
+        <div
+          v-else-if="appendIcon"
+          :class="[css.icon]"
+        >
           <RuiIcon :name="appendIcon" />
         </div>
       </div>

@@ -3,25 +3,14 @@
   setup
   generic="T extends object, IdType extends keyof T = keyof T"
 >
-import { type Ref } from 'vue';
 import Checkbox from '@/components/forms/checkbox/Checkbox.vue';
 import Button from '@/components/buttons/button/Button.vue';
 import Icon from '@/components/icons/Icon.vue';
 import Tooltip from '@/components/overlays/tooltip/Tooltip.vue';
 import ExpandButton from '@/components/tables/ExpandButton.vue';
-import TablePagination, {
-  type TablePaginationData,
-} from './TablePagination.vue';
-import TableHead, {
-  type GroupData,
-  type GroupKeys,
-  type NoneSortableTableColumn,
-  type SortColumn,
-  type TableColumn,
-  type TableRowKey,
-  type TableRowKeyData,
-  type TableSortData,
-} from './TableHead.vue';
+import TablePagination, { type TablePaginationData } from './TablePagination.vue';
+import TableHead, { type GroupData, type GroupKeys, type NoneSortableTableColumn, type SortColumn, type TableColumn, type TableRowKey, type TableRowKeyData, type TableSortData } from './TableHead.vue';
+import type { Ref } from 'vue';
 
 export interface TableOptions<T> {
   pagination?: TablePaginationData;
@@ -212,13 +201,13 @@ const tableDefaults = useTable();
 const groupHeaderKey = 'group.header';
 
 const headerSlots = computed(() =>
-  Object.keys(slots).filter((slotName) => slotName.startsWith('header.')),
+  Object.keys(slots).filter(slotName => slotName.startsWith('header.')),
 );
 
 const globalItemsPerPageSettings = computed(() => {
-  if (props.globalItemsPerPage !== undefined) {
+  if (props.globalItemsPerPage !== undefined)
     return props.globalItemsPerPage;
-  }
+
   return get(tableDefaults.globalItemsPerPage);
 });
 
@@ -228,10 +217,10 @@ const getKeys = <T extends object>(t: T) => Object.keys(t) as TableRowKey<T>[];
  * Prepare the columns from props or generate using first item in the list
  */
 const columns = computed<TableColumn<T>[]>(() => {
-  const data =
-    props.cols ??
-    getKeys(props.rows[0] ?? {}).map(
-      (key) =>
+  const data
+    = props.cols
+    ?? getKeys(props.rows[0] ?? {}).map(
+      key =>
         ({
           key,
           [props.columnAttr]: key.toString(),
@@ -253,12 +242,11 @@ const columns = computed<TableColumn<T>[]>(() => {
 
   const groupByKeys = get(groupKeys);
 
-  if (groupByKeys.length === 0) {
+  if (groupByKeys.length === 0)
     return data;
-  }
 
   return data.filter(
-    (column) => !groupByKeys.includes(column.key as TableRowKey<T>),
+    column => !groupByKeys.includes(column.key as TableRowKey<T>),
   );
 });
 
@@ -294,15 +282,14 @@ const expandable = computed(() => props.expanded && slots['expanded-item']);
  * Keeps the global items per page in sync with the internal state.
  */
 watch(internalPaginationState, (pagination) => {
-  if (pagination?.limit && get(globalItemsPerPageSettings)) {
+  if (pagination?.limit && get(globalItemsPerPageSettings))
     set(tableDefaults.itemsPerPage, pagination.limit);
-  }
 });
 
 watch(tableDefaults.itemsPerPage, (itemsPerPage) => {
-  if (!get(globalItemsPerPageSettings)) {
+  if (!get(globalItemsPerPageSettings))
     return;
-  }
+
   set(paginationData, {
     ...get(paginationData),
     limit: itemsPerPage,
@@ -325,9 +312,8 @@ const paginationData: Ref<TablePaginationData> = computed({
       };
     }
 
-    if (props.paginationModifiers?.external) {
+    if (props.paginationModifiers?.external)
       return paginated;
-    }
 
     return {
       total: get(itemsLength),
@@ -366,21 +352,19 @@ const sortData = computed({
 const sortedMap = computed(() => {
   const mapped: Partial<Record<TableRowKey<T>, SortColumn<T>>> = {};
   const sortBy = get(sortData);
-  if (!sortBy) {
+  if (!sortBy)
     return mapped;
-  }
 
   if (!Array.isArray(sortBy)) {
-    if (sortBy.column) {
+    if (sortBy.column)
       mapped[sortBy.column] = sortBy;
-    }
+
     return mapped;
   }
 
   return sortBy.reduce((acc, curr) => {
-    if (!curr.column) {
+    if (!curr.column)
       return acc;
-    }
 
     return { ...acc, [curr.column]: curr };
   }, mapped);
@@ -392,13 +376,12 @@ const sortedMap = computed(() => {
 const visibleIdentifiers = computed(() => {
   const selectBy = props.rowAttr;
 
-  if (!selectBy) {
+  if (!selectBy)
     return [];
-  }
 
   return get(filtered)
-    .filter((row) => row[selectBy] !== groupHeaderKey)
-    .map((row) => row[selectBy]);
+    .filter(row => row[selectBy] !== groupHeaderKey)
+    .map(row => row[selectBy]);
 });
 
 /**
@@ -406,13 +389,12 @@ const visibleIdentifiers = computed(() => {
  */
 const isAllSelected = computed(() => {
   const selectedRows = get(selectedData);
-  if (!selectedRows) {
+  if (!selectedRows)
     return false;
-  }
 
   return (
-    selectedRows.length > 0 &&
-    get(visibleIdentifiers).every((id) => selectedRows.includes(id))
+    selectedRows.length > 0
+    && get(visibleIdentifiers).every(id => selectedRows.includes(id))
   );
 });
 
@@ -421,12 +403,11 @@ const isAllSelected = computed(() => {
  */
 const searchData = computed(() => {
   const query = props.search?.toLocaleLowerCase();
-  if (!query) {
+  if (!query)
     return props.rows;
-  }
 
-  return props.rows.filter((row) =>
-    getKeys(row).some((key) =>
+  return props.rows.filter(row =>
+    getKeys(row).some(key =>
       `${row[key]}`.toLocaleLowerCase().includes(query),
     ),
   );
@@ -438,9 +419,8 @@ const searchData = computed(() => {
 const sorted: ComputedRef<T[]> = computed(() => {
   const sortBy = get(sortData);
   const data = [...get(searchData)];
-  if (!sortBy || props.sortModifiers?.external) {
+  if (!sortBy || props.sortModifiers?.external)
     return data;
-  }
 
   const sortOptions: Intl.CollatorOptions = {
     numeric: true,
@@ -450,9 +430,9 @@ const sorted: ComputedRef<T[]> = computed(() => {
   const sort = (by: SortColumn<T>) => {
     data.sort((a, b) => {
       const column = by.column;
-      if (!column) {
+      if (!column)
         return 0;
-      }
+
       if (by.direction === 'desc') {
         return `${b[column]}`.localeCompare(
           `${a[column]}`,
@@ -469,11 +449,10 @@ const sorted: ComputedRef<T[]> = computed(() => {
     });
   };
 
-  if (!Array.isArray(sortBy)) {
+  if (!Array.isArray(sortBy))
     sort(sortBy);
-  } else {
+  else
     sortBy.forEach(sort);
-  }
 
   return data;
 });
@@ -502,8 +481,8 @@ const isGrouped = computed(() => !!get(groupKey));
 /**
  * comprises search, sorted paginated, and grouped data
  */
-const mappedGroups: ComputedRef<Record<string, GroupedTableRow<T>[]>> =
-  computed(() => {
+const mappedGroups: ComputedRef<Record<string, GroupedTableRow<T>[]>>
+  = computed(() => {
     if (!get(isGrouped)) {
       // no grouping
       return {};
@@ -513,13 +492,14 @@ const mappedGroups: ComputedRef<Record<string, GroupedTableRow<T>[]>> =
     const identifier = props.rowAttr;
 
     return result.reduce((acc: Record<string, T[]>, row) => {
-      if (!isDefined(row[identifier]) || row[identifier] === '') {
+      if (!isDefined(row[identifier]) || row[identifier] === '')
         return acc;
-      }
 
       const group = getRowGroup(row);
       const groupVal = Object.values(group).filter(isDefined).join(',');
       if (!acc[groupVal]) {
+        // todo: make sure this assertion is not needed anymore
+        /* eslint-disable @typescript-eslint/consistent-type-assertions */
         acc[groupVal] = [
           {
             [identifier]: groupHeaderKey,
@@ -527,6 +507,7 @@ const mappedGroups: ComputedRef<Record<string, GroupedTableRow<T>[]>> =
             groupVal,
           } as GroupedTableRow<T>,
         ];
+        /* eslint-enable @typescript-eslint/consistent-type-assertions */
       }
 
       acc[groupVal].push(row);
@@ -548,8 +529,8 @@ const grouped: ComputedRef<GroupedTableRow<T>[]> = computed(() => {
   }
 
   return Object.values(get(mappedGroups))
-    .flatMap((grouped) => grouped)
-    .filter((row) => !isHiddenRow(row));
+    .flatMap(grouped => grouped)
+    .filter(row => !isHiddenRow(row));
 });
 
 /**
@@ -571,9 +552,9 @@ const filtered: ComputedRef<GroupedTableRow<T>[]> = computed(() => {
 
 const indeterminate = computed(() => {
   const selectedRows = get(selectedData);
-  if (!selectedRows) {
+  if (!selectedRows)
     return false;
-  }
+
   return selectedRows.length > 0 && !get(isAllSelected);
 });
 
@@ -581,101 +562,94 @@ const noData = computed(() => get(filtered).length === 0);
 
 const colspan = computed(() => {
   let columnLength = get(columns).length;
-  if (get(selectedData)) {
+  if (get(selectedData))
     columnLength++;
-  }
 
   return columnLength;
 });
 
 const isSortedBy = (key: TableRowKey<T>) => key in get(sortedMap);
 
-const getSortIndex = (key: TableRowKey<T>) => {
+function getSortIndex(key: TableRowKey<T>) {
   const sortBy = get(sortData);
 
-  if (!sortBy || !Array.isArray(sortBy) || !isSortedBy(key)) {
+  if (!sortBy || !Array.isArray(sortBy) || !isSortedBy(key))
     return -1;
-  }
 
-  return sortBy.findIndex((sort) => sort.column === key) ?? -1;
-};
+  return sortBy.findIndex(sort => sort.column === key) ?? -1;
+}
 
-const isSelected = (identifier: T[IdType]) => {
+function isSelected(identifier: T[IdType]) {
   const selection = get(selectedData);
-  if (!selection) {
+  if (!selection)
     return false;
-  }
 
   return selection.includes(identifier);
-};
+}
 
-const isExpanded = (identifier: T[IdType]) => {
+function isExpanded(identifier: T[IdType]) {
   const { expanded } = props;
-  if (!expanded?.length) {
+  if (!expanded?.length)
     return false;
-  }
 
-  return expanded.some((data) => data[props.rowAttr] === identifier);
-};
+  return expanded.some(data => data[props.rowAttr] === identifier);
+}
 
-const onToggleExpand = (row: T) => {
+function onToggleExpand(row: T) {
   const { expanded } = props;
-  if (!expanded) {
+  if (!expanded)
     return;
-  }
 
   const key = props.rowAttr;
   const rowExpanded = isExpanded(row[key]);
 
-  if (props.singleExpand) {
+  if (props.singleExpand)
     return emit('update:expanded', rowExpanded ? [] : [row]);
-  }
 
   return emit(
     'update:expanded',
     rowExpanded
-      ? expanded.filter((item) => item[key] !== row[key])
+      ? expanded.filter(item => item[key] !== row[key])
       : [...expanded, row],
   );
-};
+}
 
-const getRowGroup = (row: T): Partial<Record<TableRowKey<T>, any>> =>
-  get(groupKeys).reduce((acc, key) => ({ ...acc, [key]: row[key] }), {});
+function getRowGroup(row: T): Partial<Record<TableRowKey<T>, any>> {
+  return get(groupKeys).reduce((acc, key) => ({ ...acc, [key]: row[key] }), {});
+}
 
-const getGroupRows = (groupVal: string) => {
-  if (!get(isGrouped)) {
+function getGroupRows(groupVal: string) {
+  if (!get(isGrouped))
     return [];
-  }
 
   return get(mappedGroups)[groupVal].filter(
-    (row) => row[props.rowAttr] !== groupHeaderKey,
+    row => row[props.rowAttr] !== groupHeaderKey,
   );
-};
+}
 
-const compareGroupsFn = (a: T, b: T) => {
+function compareGroupsFn(a: T, b: T) {
   const group = get(groupKeys);
-  if (group.length === 0) {
+  if (group.length === 0)
     return false;
-  }
 
-  return group.every((key) => a[key] === b[key]);
-};
+  return group.every(key => a[key] === b[key]);
+}
 
-const isExpandedGroup = (value: any) =>
-  get(collapsedRows).every((row) => !compareGroupsFn(row, value));
+function isExpandedGroup(value: any) {
+  return get(collapsedRows).every(row => !compareGroupsFn(row, value));
+}
 
-const isHiddenRow = (row: T) => {
+function isHiddenRow(row: T) {
   const identifier = props.rowAttr;
   return (
-    get(isGrouped) &&
-    get(collapsedRows).some((value) => row[identifier] === value[identifier])
+    get(isGrouped)
+    && get(collapsedRows).some(value => row[identifier] === value[identifier])
   );
-};
+}
 
-const onToggleExpandGroup = (group: any, value?: string) => {
-  if (!value) {
+function onToggleExpandGroup(group: any, value?: string) {
+  if (!value)
     return;
-  }
 
   const collapsed = get(collapsedRows);
 
@@ -687,37 +661,36 @@ const onToggleExpandGroup = (group: any, value?: string) => {
     collapsedRows,
     groupExpanded
       ? [...collapsed, ...groupRows]
-      : collapsed.filter((row) => !compareGroupsFn(row, group)),
+      : collapsed.filter(row => !compareGroupsFn(row, group)),
   );
 
   emit('update:collapsed', get(collapsedRows));
-};
+}
 
-const onUngroup = () => {
+function onUngroup() {
   set(collapsedRows, []);
 
   emit('update:collapsed', []);
   emit('update:group', Array.isArray(props.group) ? [] : undefined);
-};
+}
 
-const onCopyGroup = (value: GroupData<T>) => {
+function onCopyGroup(value: GroupData<T>) {
   emit('copy:group', value);
-};
+}
 
 /**
  * Sort to handle single sort or multiple sort columns
  */
-const onSort = ({
+function onSort({
   key,
   direction,
 }: {
   key: TableRowKey<T>;
   direction?: 'asc' | 'desc';
-}) => {
+}) {
   const sortBy = get(sortData);
-  if (!sortBy) {
+  if (!sortBy)
     return;
-  }
 
   if (!Array.isArray(sortBy)) {
     if (isSortedBy(key)) {
@@ -725,13 +698,15 @@ const onSort = ({
 
       if (sortBy.direction === newDirection) {
         set(sortData, { ...sortBy, column: undefined, direction: 'asc' });
-      } else {
+      }
+      else {
         set(sortData, {
           ...sortBy,
           direction: sortBy.direction === 'asc' ? 'desc' : 'asc',
         });
       }
-    } else {
+    }
+    else {
       set(sortData, { column: key, direction: direction || 'asc' });
     }
     return;
@@ -743,22 +718,23 @@ const onSort = ({
     const index = getSortIndex(key);
     const sortByCol = sortBy[index];
 
-    if (sortByCol.direction === newDirection) {
+    if (sortByCol.direction === newDirection)
       sortBy.splice(index, 1);
-    } else {
+    else
       sortByCol.direction = sortByCol.direction === 'asc' ? 'desc' : 'asc';
-    }
+
     set(sortData, sortBy);
-  } else {
+  }
+  else {
     set(sortData, [...sortBy, { column: key, direction: direction || 'asc' }]);
   }
-};
+}
 
 /**
  * toggles selected rows
  * @param {boolean} checked checkbox state
  */
-const onToggleAll = (checked: boolean) => {
+function onToggleAll(checked: boolean) {
   if (checked) {
     set(
       selectedData,
@@ -766,60 +742,60 @@ const onToggleAll = (checked: boolean) => {
         new Set([...(get(selectedData) ?? []), ...get(visibleIdentifiers)]),
       ),
     );
-  } else {
+  }
+  else {
     set(
       selectedData,
       get(selectedData)?.filter(
-        (identifier) => !get(visibleIdentifiers).includes(identifier),
+        identifier => !get(visibleIdentifiers).includes(identifier),
       ),
     );
   }
-};
+}
 
 /**
  * toggles a single row
  * @param {boolean} checked checkbox state
  * @param {string} value the id of the selected row
  */
-const onSelect = (checked: boolean, value: T[typeof props.rowAttr]) => {
+function onSelect(checked: boolean, value: T[typeof props.rowAttr]) {
   const selectedRows = get(selectedData);
-  if (!selectedRows) {
+  if (!selectedRows)
     return false;
-  }
 
   if (checked) {
     set(selectedData, [...selectedRows, value]);
-  } else {
+  }
+  else {
     set(
       selectedData,
-      [...selectedRows].filter((r) => r !== value),
+      [...selectedRows].filter(r => r !== value),
     );
   }
-};
+}
 
 const search = computed(() => props.search);
 
-const onPaginate = () => {
+function onPaginate() {
   emit('update:expanded', []);
-};
+}
 
-const setInternalTotal = (groupedItems: T[]) => {
-  if (!props.paginationModifiers?.external) {
+function setInternalTotal(groupedItems: T[]) {
+  if (!props.paginationModifiers?.external)
     set(itemsLength, groupedItems.length);
-  }
-};
+}
 
-const cellValue = (row: T, key: TableColumn<T>['key']) =>
-  row[key as TableRowKey<T>];
+function cellValue(row: T, key: TableColumn<T>['key']) {
+  return row[key as TableRowKey<T>];
+}
 
 /**
  * on changing search query, need to reset pagination page to 1
  */
 watch(search, () => {
   const pagination = get(paginationData);
-  if (pagination) {
+  if (pagination)
     pagination.page = 1;
-  }
 });
 
 watch(grouped, setInternalTotal);
@@ -827,9 +803,8 @@ watch(grouped, setInternalTotal);
 onMounted(() => {
   setInternalTotal(get(grouped));
 
-  if (!get(globalItemsPerPageSettings)) {
+  if (!get(globalItemsPerPageSettings))
     return;
-  }
 
   set(paginationData, {
     ...get(paginationData),
@@ -846,7 +821,10 @@ onMounted(() => {
       { [css.outlined]: outlined },
     ]"
   >
-    <div ref="tableScroller" :class="css.scroller">
+    <div
+      ref="tableScroller"
+      :class="css.scroller"
+    >
       <table
         ref="table"
         :class="[css.table, { [css.dense]: dense }]"
@@ -871,8 +849,14 @@ onMounted(() => {
           @sort="onSort($event)"
           @select:all="onToggleAll($event)"
         >
-          <template v-for="headerSlot in headerSlots" #[headerSlot]="slotData">
-            <slot :name="headerSlot" v-bind="slotData" />
+          <template
+            v-for="headerSlot in headerSlots"
+            #[headerSlot]="slotData"
+          >
+            <slot
+              :name="headerSlot"
+              v-bind="slotData"
+            />
           </template>
         </TableHead>
         <TableHead
@@ -893,8 +877,14 @@ onMounted(() => {
           data-id="head-clone"
           class="opacity-0 invisible"
         >
-          <template v-for="headerSlot in headerSlots" #[headerSlot]="slotData">
-            <slot :name="headerSlot" v-bind="slotData" />
+          <template
+            v-for="headerSlot in headerSlots"
+            #[headerSlot]="slotData"
+          >
+            <slot
+              :name="headerSlot"
+              v-bind="slotData"
+            />
           </template>
         </TableHead>
         <tbody :class="[css.tbody, { [css['tbody--striped']]: striped }]">
@@ -919,7 +909,11 @@ onMounted(() => {
                 :is-open="isExpandedGroup(row.group)"
                 :toggle="() => onToggleExpandGroup(row.group, row.groupVal)"
               >
-                <td :class="[css.td]" class="!p-2" :colspan="colspan">
+                <td
+                  :class="[css.td]"
+                  class="!p-2"
+                  :colspan="colspan"
+                >
                   <div class="flex items-center gap-2">
                     <ExpandButton
                       :expanded="isExpandedGroup(row.group)"
@@ -941,7 +935,10 @@ onMounted(() => {
                           onCopyGroup({ key: groupKey, value: row.group })
                         "
                       >
-                        <Icon name="file-copy-line" size="16" />
+                        <Icon
+                          name="file-copy-line"
+                          size="16"
+                        />
                       </Button>
                     </slot>
                     <Tooltip
@@ -955,7 +952,10 @@ onMounted(() => {
                           icon
                           @click="onUngroup()"
                         >
-                          <Icon name="delete-bin-line" size="14" />
+                          <Icon
+                            name="delete-bin-line"
+                            size="14"
+                          />
                         </Button>
                       </template>
                       Ungroup
@@ -1028,8 +1028,15 @@ onMounted(() => {
                 :key="`row-expand-${index}`"
                 :class="[css.tr, css.tr__expandable]"
               >
-                <td :colspan="colspan" :class="[css.td]">
-                  <slot name="expanded-item" :row="row" :index="index" />
+                <td
+                  :colspan="colspan"
+                  :class="[css.td]"
+                >
+                  <slot
+                    name="expanded-item"
+                    :row="row"
+                    :index="index"
+                  />
                 </td>
               </tr>
             </template>
@@ -1047,10 +1054,16 @@ onMounted(() => {
               leave-from-class="opacity-100 translate-y-0"
               leave-to-class="opacity-0 translate-y-1"
             >
-              <td :class="css.td" :colspan="colspan">
+              <td
+                :class="css.td"
+                :colspan="colspan"
+              >
                 <slot name="no-data">
                   <div :class="css.empty">
-                    <p v-if="empty.label" :class="css.empty__label">
+                    <p
+                      v-if="empty.label"
+                      :class="css.empty__label"
+                    >
                       {{ empty.label }}
                     </p>
 

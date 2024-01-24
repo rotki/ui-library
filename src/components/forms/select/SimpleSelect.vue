@@ -29,7 +29,7 @@ const css = useCssModule();
 
 const value = computed({
   get: () => get(modelValue),
-  set: (value) => emit('update:model-value', value),
+  set: value => emit('update:model-value', value),
 });
 </script>
 
@@ -45,12 +45,20 @@ const value = computed({
       :name="name"
       :disabled="disabled"
     >
-      <option v-for="(option, i) in options" :key="i" :value="option">
+      <option
+        v-for="(option, i) in options"
+        :key="i"
+        :value="option"
+      >
         {{ option }}
       </option>
     </select>
     <span :class="css.icon__wrapper">
-      <Icon :class="css.icon" name="arrow-drop-down-fill" size="24" />
+      <Icon
+        :class="css.icon"
+        name="arrow-drop-down-fill"
+        size="24"
+      />
     </span>
   </div>
 </template>

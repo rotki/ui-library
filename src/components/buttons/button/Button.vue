@@ -1,6 +1,6 @@
 <script lang="ts" generic="T = undefined" setup>
-import { type ContextColorsType } from '@/consts/colors';
 import { default as RuiProgress } from '@/components/progress/Progress.vue';
+import type { ContextColorsType } from '@/consts/colors';
 
 export interface Props<T = undefined> {
   disabled?: boolean;
@@ -46,29 +46,26 @@ const attrs = useAttrs();
 const css = useCssModule();
 
 const usedElevation: ComputedRef<number | string> = computed(() => {
-  if (props.disabled) {
+  if (props.disabled)
     return 0;
-  }
 
-  if (props.elevation !== null) {
+  if (props.elevation !== null)
     return props.elevation;
-  }
 
-  if (props.variant === 'fab') {
+  if (props.variant === 'fab')
     return 6;
-  }
 
   return 0;
 });
 
 const spinnerSize: ComputedRef<number> = computed(() => {
   const size = props.size;
-  if (size === 'lg') {
+  if (size === 'lg')
     return 26;
-  }
-  if (size === 'sm') {
+
+  if (size === 'sm')
     return 18;
-  }
+
   return 22;
 });
 
@@ -97,9 +94,20 @@ const slots = useSlots();
     v-bind="attrs"
     @click="emit('update:value', btnValue)"
   >
-    <slot v-if="slots.prepend" name="prepend" />
-    <span v-if="slots.default" :class="css.label"> <slot /> </span>
-    <slot v-if="slots.append" name="append" />
+    <slot
+      v-if="slots.prepend"
+      name="prepend"
+    />
+    <span
+      v-if="slots.default"
+      :class="css.label"
+    >
+      <slot />
+    </span>
+    <slot
+      v-if="slots.append"
+      name="append"
+    />
     <RuiProgress
       v-if="loading"
       circular

@@ -1,6 +1,6 @@
 // https://docs.cypress.io/api/introduction/api.html
 
-describe('Tooltip', () => {
+describe('tooltip', () => {
   beforeEach(() => {
     cy.visit('/tooltips');
   });

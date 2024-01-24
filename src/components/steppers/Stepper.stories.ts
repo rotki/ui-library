@@ -1,8 +1,8 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { StepperOrientation, StepperState } from '@/types/stepper';
 import { type Props, default as Stepper } from './Stepper.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-const render: StoryFn<Props> = (args) => ({
+const render: StoryFn<Props> = args => ({
   components: { Stepper },
   setup() {
     return { args };
@@ -11,26 +11,26 @@ const render: StoryFn<Props> = (args) => ({
 });
 
 const meta: Meta<Props> = {
-  title: 'Components/Stepper',
-  component: Stepper,
-  tags: ['autodocs'],
-  render,
   argTypes: {
-    step: { control: 'number', table: { category: 'State' } },
-    steps: { control: 'array', table: { category: 'State' } },
-    iconTop: { control: 'boolean', table: { category: 'State' } },
     custom: { control: 'boolean', table: { category: 'State' } },
+    iconTop: { control: 'boolean', table: { category: 'State' } },
     orientation: {
       control: 'select',
       options: [StepperOrientation.horizontal, StepperOrientation.vertical],
       table: { category: 'State' },
     },
+    step: { control: 'number', table: { category: 'State' } },
+    steps: { control: 'array', table: { category: 'State' } },
   },
+  component: Stepper,
   parameters: {
     docs: {
       controls: { exclude: ['icon', 'titleClass', 'subtitleClass'] },
     },
   },
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Stepper',
 };
 
 type Story = StoryObj<Props>;
@@ -39,39 +39,39 @@ export const Default: Story = {
   args: {
     steps: [
       {
-        title: 'Inactive',
         description: 'Lorem ipsum',
         state: StepperState.inactive,
+        title: 'Inactive',
       },
       {
-        title: 'Active',
         description: 'Lorem ipsum',
         state: StepperState.active,
+        title: 'Active',
       },
       {
-        title: 'Done',
         description: 'Lorem ipsum',
         state: StepperState.done,
+        title: 'Done',
       },
       {
-        title: 'Error',
         description: 'Lorem ipsum',
         state: StepperState.error,
+        title: 'Error',
       },
       {
-        title: 'Warning',
         description: 'Lorem ipsum',
         state: StepperState.warning,
+        title: 'Warning',
       },
       {
-        title: 'Info',
         description: 'Lorem ipsum',
         state: StepperState.info,
+        title: 'Info',
       },
       {
-        title: 'Success',
         description: 'Lorem ipsum',
         state: StepperState.success,
+        title: 'Success',
       },
     ],
   },
@@ -82,39 +82,39 @@ export const VerticalOrientation: Story = {
     orientation: StepperOrientation.vertical,
     steps: [
       {
-        title: 'Inactive',
         description: 'Lorem ipsum',
         state: StepperState.inactive,
+        title: 'Inactive',
       },
       {
-        title: 'Active',
         description: 'Lorem ipsum',
         state: StepperState.active,
+        title: 'Active',
       },
       {
-        title: 'Done',
         description: 'Lorem ipsum',
         state: StepperState.done,
+        title: 'Done',
       },
       {
-        title: 'Error',
         description: 'Lorem ipsum',
         state: StepperState.error,
+        title: 'Error',
       },
       {
-        title: 'Warning',
         description: 'Lorem ipsum',
         state: StepperState.warning,
+        title: 'Warning',
       },
       {
-        title: 'Info',
         description: 'Lorem ipsum',
         state: StepperState.info,
+        title: 'Info',
       },
       {
-        title: 'Success',
         description: 'Lorem ipsum',
         state: StepperState.success,
+        title: 'Success',
       },
     ],
   },
@@ -123,10 +123,10 @@ export const VerticalOrientation: Story = {
 export const TitleOnly: Story = {
   args: {
     steps: [
-      { title: 'Step', state: StepperState.done },
-      { title: 'Step', state: StepperState.active },
-      { title: 'Step', state: StepperState.inactive },
-      { title: 'Step', state: StepperState.inactive },
+      { state: StepperState.done, title: 'Step' },
+      { state: StepperState.active, title: 'Step' },
+      { state: StepperState.inactive, title: 'Step' },
+      { state: StepperState.inactive, title: 'Step' },
     ],
   },
 };
@@ -134,10 +134,10 @@ export const TitleOnly: Story = {
 export const Loading: Story = {
   args: {
     steps: [
-      { title: 'Step', state: StepperState.done },
-      { title: 'Step', state: StepperState.active, loading: true },
-      { title: 'Step', state: StepperState.inactive },
-      { title: 'Step', state: StepperState.inactive },
+      { state: StepperState.done, title: 'Step' },
+      { loading: true, state: StepperState.active, title: 'Step' },
+      { state: StepperState.inactive, title: 'Step' },
+      { state: StepperState.inactive, title: 'Step' },
     ],
   },
 };
@@ -146,10 +146,10 @@ export const TitleOnlyAndVertical: Story = {
   args: {
     orientation: StepperOrientation.vertical,
     steps: [
-      { title: 'Step', state: StepperState.done },
-      { title: 'Step', state: StepperState.active },
-      { title: 'Step', state: StepperState.inactive },
-      { title: 'Step', state: StepperState.inactive },
+      { state: StepperState.done, title: 'Step' },
+      { state: StepperState.active, title: 'Step' },
+      { state: StepperState.inactive, title: 'Step' },
+      { state: StepperState.inactive, title: 'Step' },
     ],
   },
 };
@@ -205,18 +205,18 @@ export const Custom: Story = {
     custom: true,
     step: 1,
     steps: [
-      { title: 'Done', description: 'Lorem ipsum', state: StepperState.done },
+      { description: 'Lorem ipsum', state: StepperState.done, title: 'Done' },
       {
+        description: 'Lorem ipsum',
         title: 'Active',
-        description: 'Lorem ipsum',
       },
       {
-        title: 'Inactive',
         description: 'Lorem ipsum',
+        title: 'Inactive',
       },
       {
-        title: 'Inactive',
         description: 'Lorem ipsum',
+        title: 'Inactive',
       },
     ],
   },
@@ -225,21 +225,21 @@ export const Custom: Story = {
 export const CustomVertical: Story = {
   args: {
     custom: true,
-    step: 1,
     orientation: StepperOrientation.vertical,
+    step: 1,
     steps: [
-      { title: 'Done', description: 'Lorem ipsum', state: StepperState.done },
+      { description: 'Lorem ipsum', state: StepperState.done, title: 'Done' },
       {
+        description: 'Lorem ipsum',
         title: 'Active',
-        description: 'Lorem ipsum',
       },
       {
-        title: 'Inactive',
         description: 'Lorem ipsum',
+        title: 'Inactive',
       },
       {
-        title: 'Inactive',
         description: 'Lorem ipsum',
+        title: 'Inactive',
       },
     ],
   },
@@ -249,23 +249,23 @@ export const CustomWithColor: Story = {
   args: {
     custom: true,
     step: 1,
-    titleClass: 'text-rui-primary',
-    subtitleClass: 'text-rui-primary/80',
     steps: [
-      { title: 'Done', description: 'Lorem ipsum', state: StepperState.done },
+      { description: 'Lorem ipsum', state: StepperState.done, title: 'Done' },
       {
+        description: 'Lorem ipsum',
         title: 'Active',
-        description: 'Lorem ipsum',
       },
       {
-        title: 'Inactive',
         description: 'Lorem ipsum',
+        title: 'Inactive',
       },
       {
-        title: 'Inactive',
         description: 'Lorem ipsum',
+        title: 'Inactive',
       },
     ],
+    subtitleClass: 'text-rui-primary/80',
+    titleClass: 'text-rui-primary',
   },
 };
 

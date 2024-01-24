@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import Radio from './Radio.vue';
 
-const createWrapper = (options?: ComponentMountingOptions<typeof Radio>) =>
-  mount(Radio, { ...options, global: { stubs: ['icon'] } });
+function createWrapper(options?: ComponentMountingOptions<typeof Radio>) {
+  return mount(Radio, { ...options, global: { stubs: ['icon'] } });
+}
 
-describe('Forms/RadioButton/Radio', () => {
+describe('forms/RadioButton/Radio', () => {
   it('renders properly', () => {
     const label = 'Radio Label';
     const wrapper = createWrapper({
@@ -54,7 +55,7 @@ describe('Forms/RadioButton/Radio', () => {
 
   it('passes color props', async () => {
     const wrapper = createWrapper({
-      props: { value: 'value', color: 'primary' },
+      props: { color: 'primary', value: 'value' },
     });
     expect(wrapper.find('label > div').classes()).toMatch(/_primary_/);
 
@@ -69,7 +70,7 @@ describe('Forms/RadioButton/Radio', () => {
   });
 
   it('passes size props', async () => {
-    const wrapper = createWrapper({ props: { value: 'value', size: 'sm' } });
+    const wrapper = createWrapper({ props: { size: 'sm', value: 'value' } });
     expect(wrapper.find('label > div').classes()).toMatch(/_sm_/);
 
     await wrapper.setProps({ size: 'lg' });
@@ -106,12 +107,12 @@ describe('Forms/RadioButton/Radio', () => {
     expect(wrapper.find('.details > div').text()).toBe(errorMessage);
   });
 
-  it('passes hideDetails', async () => {
+  it('passes hideDetails', () => {
     const wrapper = createWrapper({
       props: {
-        value: 'value',
-        hint: 'This hint should not be rendered',
         hideDetails: true,
+        hint: 'This hint should not be rendered',
+        value: 'value',
       },
     });
     expect(wrapper.find('.details > div').exists()).toBeFalsy();

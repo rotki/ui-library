@@ -48,16 +48,15 @@ const multiple = computed(() => Array.isArray(get(data)));
 
 const displayValue = computed(() => {
   const value = get(data);
-  if (Array.isArray(value) || !value) {
+  if (Array.isArray(value) || !value)
     return undefined;
-  }
 
   return value[get(textProp)];
 });
 
 const maxInnerWidth = computed(() => get(wrapperWidth) - get(minInputWidth));
 
-const setMaxChips = async () => {
+async function setMaxChips() {
   const value = get(data);
   // for single select or when no value is selected, no need for this computation
   if (!Array.isArray(value) || value.length === 0) {
@@ -97,15 +96,15 @@ const setMaxChips = async () => {
       // if after adding the more indicator, the width is still
       // wider than available space, we remove another chip
       await nextTick();
-      if (get(useElementBounding(innerWrapper).width) > get(maxInnerWidth)) {
+      if (get(useElementBounding(innerWrapper).width) > get(maxInnerWidth))
         set(maxChipsToRender, get(maxChipsToRender) - 1);
-      }
+
       break;
     }
   }
-};
+}
 
-onMounted(async () => {
+onMounted(() => {
   nextTick(() => {
     setMaxChips();
   }).catch();
@@ -117,7 +116,11 @@ watch([data, wrapperWidth], () => {
 </script>
 
 <template>
-  <div v-if="multiple && data?.length" ref="innerWrapper" :class="css.wrapper">
+  <div
+    v-if="multiple && data?.length"
+    ref="innerWrapper"
+    :class="css.wrapper"
+  >
     <div :class="css.chips_wrapper">
       <div :class="[css.chips, css[variant ?? '']]">
         <Chip
@@ -136,7 +139,11 @@ watch([data, wrapperWidth], () => {
           ref="more"
           :class="css.remaining"
         >
-          <Chip :class="css.chip" :size="dense ? 'sm' : 'md'" color="secondary">
+          <Chip
+            :class="css.chip"
+            :size="dense ? 'sm' : 'md'"
+            color="secondary"
+          >
             {{ `+${data.length - maxChipsToRender}` }}
           </Chip>
         </div>

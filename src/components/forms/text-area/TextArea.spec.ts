@@ -2,15 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { mount } from '@vue/test-utils';
 import TextArea from '@/components/forms/text-area/TextArea.vue';
 
-const createWrapper = (options?: any) =>
-  mount(TextArea, {
+function createWrapper(options?: any) {
+  return mount(TextArea, {
     ...options,
     global: {
       stubs: { RuiIcon: true },
     },
   });
+}
 
-describe('Forms/TextArea', () => {
+describe('forms/TextArea', () => {
   it('renders properly', () => {
     const label = 'Text Area Label';
     const wrapper = createWrapper({
@@ -133,17 +134,17 @@ describe('Forms/TextArea', () => {
     expect(wrapper.find('.details > div').text()).toBe(successMessage);
   });
 
-  it('passes hideDetails', async () => {
+  it('passes hideDetails', () => {
     const wrapper = createWrapper({
       propsData: {
-        hint: 'This hint should not be rendered',
         hideDetails: true,
+        hint: 'This hint should not be rendered',
       },
     });
     expect(wrapper.find('.details > div').exists()).toBeFalsy();
   });
 
-  it('passes prependIcon', async () => {
+  it('passes prependIcon', () => {
     const icon = 'heart-fill';
     const wrapper = createWrapper({
       propsData: {
@@ -156,7 +157,7 @@ describe('Forms/TextArea', () => {
     ).toBe(icon);
   });
 
-  it('passes appendIcon', async () => {
+  it('passes appendIcon', () => {
     const icon = 'heart-fill';
     const wrapper = createWrapper({
       propsData: {
@@ -169,7 +170,7 @@ describe('Forms/TextArea', () => {
     ).toBe(icon);
   });
 
-  it('passes prepend slot', async () => {
+  it('passes prepend slot', () => {
     const prepend = 'Prepend text';
 
     const wrapper = createWrapper({
@@ -181,7 +182,7 @@ describe('Forms/TextArea', () => {
     expect(wrapper.find('div[class*=prepend]').text()).toBe(prepend);
   });
 
-  it('passes append slot', async () => {
+  it('passes append slot', () => {
     const append = 'Append text';
 
     const wrapper = createWrapper({

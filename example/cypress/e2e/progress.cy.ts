@@ -1,6 +1,6 @@
 // https://docs.cypress.io/api/introduction/api.html
 
-describe('Progress', () => {
+describe('progress', () => {
   beforeEach(() => {
     cy.visit('/progress');
   });

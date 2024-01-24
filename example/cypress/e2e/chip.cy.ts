@@ -1,6 +1,6 @@
 // https://docs.cypress.io/api/introduction/api.html
 
-describe('Chip', () => {
+describe('chip', () => {
   beforeEach(() => {
     cy.visit('/chips');
   });

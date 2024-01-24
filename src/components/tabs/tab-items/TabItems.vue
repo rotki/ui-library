@@ -45,9 +45,8 @@ const children = computed(() => {
     };
   });
 
-  if (!anyActive) {
+  if (!anyActive)
     set(currIndex, -1);
-  }
 
   return children;
 });
@@ -60,7 +59,10 @@ const css = useCssModule();
 </script>
 
 <template>
-  <div ref="wrapper" :class="css.tabs">
+  <div
+    ref="wrapper"
+    :class="css.tabs"
+  >
     <div ref="inner">
       <Component
         :is="child"

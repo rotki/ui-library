@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { logicAnd, logicNot } from '@vueuse/math';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
-import { type ContextColorsType } from '@/consts/colors';
 import Icon from '@/components/icons/Icon.vue';
 import Button from '@/components/buttons/button/Button.vue';
 import FormTextDetail from '@/components/helpers/FormTextDetail.vue';
-import { type RuiIcons } from '~/src';
+import type { ContextColorsType } from '@/consts/colors';
+import type { RuiIcons } from '~/src';
 
 export interface TextFieldProps {
   modelValue?: string;
@@ -70,16 +70,16 @@ const {
   successMessages,
 } = toRefs(props);
 
-const input = (event: Event) => {
+function input(event: Event) {
   const value = (event.target as HTMLInputElement).value;
   emit('update:modelValue', value);
-};
+}
 
 const labelWithQuote = computed(() => {
   const labelVal = get(label);
-  if (!labelVal) {
+  if (!labelVal)
     return '"\\200B"';
-  }
+
   return `'  ${get(label)}  '`;
 });
 
@@ -118,10 +118,10 @@ const showClearIcon = logicAnd(
   logicNot(readonly),
 );
 
-const clearIconClicked = () => {
+function clearIconClicked() {
   emit('update:modelValue', '');
   emit('clear');
-};
+}
 </script>
 
 <template>
@@ -147,8 +147,14 @@ const clearIconClicked = () => {
         class="flex items-center gap-1 shrink-0"
         :class="css.prepend"
       >
-        <slot v-if="slots.prepend" name="prepend" />
-        <div v-else-if="prependIcon" :class="[css.icon]">
+        <slot
+          v-if="slots.prepend"
+          name="prepend"
+        />
+        <div
+          v-else-if="prependIcon"
+          :class="[css.icon]"
+        >
           <Icon :name="prependIcon" />
         </div>
       </div>
@@ -175,7 +181,10 @@ const clearIconClicked = () => {
         <label :class="css.label">
           {{ label }}
         </label>
-        <fieldset v-if="variant === 'outlined'" :class="css.fieldset">
+        <fieldset
+          v-if="variant === 'outlined'"
+          :class="css.fieldset"
+        >
           <legend />
         </fieldset>
       </div>
@@ -194,10 +203,19 @@ const clearIconClicked = () => {
           :color="color"
           @click.stop="clearIconClicked()"
         >
-          <Icon name="close-line" size="20" />
+          <Icon
+            name="close-line"
+            size="20"
+          />
         </Button>
-        <slot v-if="slots.append" name="append" />
-        <div v-else-if="appendIcon" :class="[css.icon]">
+        <slot
+          v-if="slots.append"
+          name="append"
+        />
+        <div
+          v-else-if="appendIcon"
+          :class="[css.icon]"
+        >
           <Icon :name="appendIcon" />
         </div>
       </div>

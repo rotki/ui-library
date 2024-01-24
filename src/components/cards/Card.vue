@@ -44,26 +44,47 @@ const hasHeadContent = computed(() => !!slots.header || !!slots.subheader);
       },
     ]"
   >
-    <div v-if="slots.image" :class="css.image">
+    <div
+      v-if="slots.image"
+      :class="css.image"
+    >
       <slot name="image" />
     </div>
     <slot name="custom-header">
-      <CardHeader v-if="hasHeadContent" :dense="dense">
-        <template v-if="slots.prepend" #prepend>
+      <CardHeader
+        v-if="hasHeadContent"
+        :dense="dense"
+      >
+        <template
+          v-if="slots.prepend"
+          #prepend
+        >
           <slot name="prepend" />
         </template>
-        <template v-if="slots.header" #header>
+        <template
+          v-if="slots.header"
+          #header
+        >
           <slot name="header" />
         </template>
-        <template v-if="slots.subheader" #subheader>
+        <template
+          v-if="slots.subheader"
+          #subheader
+        >
           <slot name="subheader" />
         </template>
       </CardHeader>
     </slot>
-    <div v-if="slots.default" :class="css.content">
+    <div
+      v-if="slots.default"
+      :class="css.content"
+    >
       <slot />
     </div>
-    <div v-if="slots.footer" :class="css.footer">
+    <div
+      v-if="slots.footer"
+      :class="css.footer"
+    >
       <slot name="footer" />
     </div>
   </div>

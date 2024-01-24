@@ -1,4 +1,4 @@
-describe('Forms/TextField', () => {
+describe('forms/TextField', () => {
   beforeEach(() => {
     cy.visit('/text-fields');
   });

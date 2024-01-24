@@ -4,4 +4,4 @@ export default {
   mode: 'jit',
   content: ['./index.html', './src/**/*.{vue,ts}'],
   plugins: [],
-} as Partial<Config>;
+} satisfies Partial<Config>;

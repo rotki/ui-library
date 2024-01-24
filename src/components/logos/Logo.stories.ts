@@ -1,7 +1,7 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
 import { default as Logo, type Props } from './Logo.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-const render: StoryFn<Props> = (args) => ({
+const render: StoryFn<Props> = args => ({
   components: { Logo },
   setup() {
     return { args };
@@ -10,13 +10,13 @@ const render: StoryFn<Props> = (args) => ({
 });
 
 const meta: Meta<Props> = {
-  title: 'Components/Logo',
-  component: Logo,
-  tags: ['autodocs'],
-  render,
   argTypes: {
     text: { control: 'boolean' },
   },
+  component: Logo,
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Logo',
 };
 
 type Story = StoryObj<Props>;

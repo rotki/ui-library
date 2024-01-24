@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type ContextColorsType } from '@/consts/colors';
+import type { ContextColorsType } from '@/consts/colors';
 
 export interface Props {
   /**
@@ -98,14 +98,20 @@ const circularViewSize = computed(() => 40 + get(circularScaledThickness));
         />
       </svg>
       <template v-else>
-        <div v-if="variant === 'buffer'" :class="css['buffer-dots']" />
+        <div
+          v-if="variant === 'buffer'"
+          :class="css['buffer-dots']"
+        />
         <div
           :class="[css.rail, { [css['buffer-rail']]: variant === 'buffer' }]"
         />
         <div :class="css[variant ?? '']" />
       </template>
     </div>
-    <div v-if="showLabel && variant !== 'indeterminate'" :class="css.label">
+    <div
+      v-if="showLabel && variant !== 'indeterminate'"
+      :class="css.label"
+    >
       {{ label }}
     </div>
   </div>

@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { mount } from '@vue/test-utils';
 import Divider from './Divider.vue';
 
-const createWrapper = (options?: any) =>
-  mount(Divider, { ...options, stubs: { RuiIcon: true } });
+function createWrapper(options?: any) {
+  return mount(Divider, { ...options, stubs: { RuiIcon: true } });
+}
 
-describe('Divider', () => {
+describe('divider', () => {
   it('renders properly', () => {
     const wrapper = createWrapper();
     expect(wrapper.find('div')).toBeTruthy();

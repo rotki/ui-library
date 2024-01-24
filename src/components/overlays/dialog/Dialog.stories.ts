@@ -1,7 +1,5 @@
 import { objectOmit } from '@vueuse/shared';
-import Button, {
-  type Props as ButtonProps,
-} from '@/components/buttons/button/Button.vue';
+import Button, { type Props as ButtonProps } from '@/components/buttons/button/Button.vue';
 import Dialog, { type Props as DialogProps } from './Dialog.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
@@ -12,7 +10,7 @@ type Props = DialogProps & {
   actions?: (ButtonProps & { text: string })[];
 };
 
-const render: StoryFn<Props> = (args) => ({
+const render: StoryFn<Props> = args => ({
   components: { Button, Dialog },
   setup() {
     const modelValue = computed({
@@ -28,7 +26,7 @@ const render: StoryFn<Props> = (args) => ({
       objectOmit(args, ['title', 'description', 'content', 'actions']),
     );
 
-    return { modelValue, args, dialogArgs };
+    return { args, dialogArgs, modelValue };
   },
   template: `
   <div>
@@ -54,202 +52,202 @@ const render: StoryFn<Props> = (args) => ({
 });
 
 const meta: Meta<Props> = {
-  title: 'Components/Overlays/Dialog',
-  component: Dialog,
-  tags: ['autodocs'],
-  render,
+  args: {
+    dismissible: false,
+    modelValue: false,
+  },
   argTypes: {
-    modelValue: { control: 'boolean' },
-    title: { control: 'text' },
-    description: { control: 'text' },
     content: { control: 'text' },
+    description: { control: 'text' },
+    modelValue: { control: 'boolean' },
     size: {
       control: 'select',
-      options: ['sm', 'md', 'lg'],
       defaultValue: undefined,
+      options: ['sm', 'md', 'lg'],
     },
+    title: { control: 'text' },
   },
-  args: {
-    modelValue: false,
-    dismissible: false,
-  },
+  component: Dialog,
   parameters: {
     docs: {
       controls: { exclude: ['update:model-value', 'default'] },
     },
   },
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Overlays/Dialog',
 };
 
 type Story = StoryObj<Props>;
 
 export const Default: Story = {
   args: {
+    actions: [
+      { color: 'secondary', size: 'lg', text: 'Action 1', variant: 'text' },
+      { color: 'primary', size: 'lg', text: 'Action 2', variant: 'text' },
+    ],
     content: 'Lorem ipsum dolor sit amet',
-    title: 'Dialog title',
     description: 'Dialog description',
     size: 'lg',
-    actions: [
-      { size: 'lg', variant: 'text', text: 'Action 1', color: 'secondary' },
-      { size: 'lg', variant: 'text', text: 'Action 2', color: 'primary' },
-    ],
+    title: 'Dialog title',
   },
 };
 
 export const Dismissible: Story = {
   args: {
-    dismissible: true,
-    content: 'Lorem ipsum dolor sit amet',
-    title: 'Dialog title',
-    description: 'Dialog description',
-    size: 'lg',
     actions: [
-      { size: 'lg', variant: 'text', text: 'Action 1', color: 'secondary' },
-      { size: 'lg', variant: 'text', text: 'Action 2', color: 'primary' },
+      { color: 'secondary', size: 'lg', text: 'Action 1', variant: 'text' },
+      { color: 'primary', size: 'lg', text: 'Action 2', variant: 'text' },
     ],
+    content: 'Lorem ipsum dolor sit amet',
+    description: 'Dialog description',
+    dismissible: true,
+    size: 'lg',
+    title: 'Dialog title',
   },
 };
 
 export const Loading: Story = {
   args: {
-    dismissible: true,
-    content: 'Lorem ipsum dolor sit amet',
-    title: 'Dialog title',
-    description: 'Dialog description',
-    size: 'lg',
     actions: [
       {
-        size: 'lg',
-        variant: 'text',
-        text: 'Action 1',
         color: 'secondary',
         disabled: true,
+        size: 'lg',
+        text: 'Action 1',
+        variant: 'text',
       },
       {
-        size: 'lg',
-        variant: 'text',
-        text: 'Action 2',
         color: 'primary',
         disabled: true,
         loading: true,
+        size: 'lg',
+        text: 'Action 2',
+        variant: 'text',
       },
     ],
+    content: 'Lorem ipsum dolor sit amet',
+    description: 'Dialog description',
+    dismissible: true,
+    size: 'lg',
+    title: 'Dialog title',
   },
 };
 
 export const SmallSized: Story = {
   args: {
-    dismissible: true,
-    content: 'Lorem ipsum dolor sit amet',
-    title: 'Dialog title',
-    description: 'Dialog description',
-    size: 'sm',
     actions: [
       {
-        size: 'sm',
-        variant: 'text',
-        text: 'Action 1',
         color: 'secondary',
+        size: 'sm',
+        text: 'Action 1',
+        variant: 'text',
       },
       {
-        size: 'sm',
-        variant: 'text',
-        text: 'Action 2',
         color: 'primary',
+        size: 'sm',
+        text: 'Action 2',
+        variant: 'text',
       },
     ],
+    content: 'Lorem ipsum dolor sit amet',
+    description: 'Dialog description',
+    dismissible: true,
+    size: 'sm',
+    title: 'Dialog title',
   },
 };
 
 export const DefaultSized: Story = {
   args: {
-    dismissible: true,
-    content: 'Lorem ipsum dolor sit amet',
-    title: 'Dialog title',
-    description: 'Dialog description',
     actions: [
       {
-        variant: 'text',
-        text: 'Action 1',
         color: 'secondary',
+        text: 'Action 1',
+        variant: 'text',
       },
       {
-        variant: 'text',
-        text: 'Action 2',
         color: 'primary',
+        text: 'Action 2',
+        variant: 'text',
       },
     ],
+    content: 'Lorem ipsum dolor sit amet',
+    description: 'Dialog description',
+    dismissible: true,
+    title: 'Dialog title',
   },
 };
 
 export const LargeSized: Story = {
   args: {
-    dismissible: true,
-    content: 'Lorem ipsum dolor sit amet',
-    title: 'Dialog title',
-    description: 'Dialog description',
-    size: 'lg',
     actions: [
       {
-        size: 'lg',
-        variant: 'text',
-        text: 'Action 1',
         color: 'secondary',
+        size: 'lg',
+        text: 'Action 1',
+        variant: 'text',
       },
       {
-        size: 'lg',
-        variant: 'text',
-        text: 'Action 2',
         color: 'primary',
+        size: 'lg',
+        text: 'Action 2',
+        variant: 'text',
       },
     ],
+    content: 'Lorem ipsum dolor sit amet',
+    description: 'Dialog description',
+    dismissible: true,
+    size: 'lg',
+    title: 'Dialog title',
   },
 };
 
 export const Persistent: Story = {
   args: {
-    persistent: true,
-    content: 'Can only be dismissed via action buttons',
-    title: 'Dialog title',
-    description: 'Dialog description',
-    size: 'sm',
     actions: [
       {
-        size: 'sm',
-        variant: 'text',
-        text: 'Action 1',
         color: 'secondary',
+        size: 'sm',
+        text: 'Action 1',
+        variant: 'text',
       },
       {
-        size: 'sm',
-        variant: 'text',
-        text: 'Action 2',
         color: 'primary',
+        size: 'sm',
+        text: 'Action 2',
+        variant: 'text',
       },
     ],
+    content: 'Can only be dismissed via action buttons',
+    description: 'Dialog description',
+    persistent: true,
+    size: 'sm',
+    title: 'Dialog title',
   },
 };
 
 export const Scrollable: Story = {
   args: {
-    persistent: true,
-    content: 'Lorem ipsum dolor sit amet consecteur '.repeat(1000),
-    title: 'Terms and Conditions',
-    description: 'agree to proceed',
-    size: 'lg',
     actions: [
       {
-        size: 'lg',
-        variant: 'text',
-        text: 'Disagree',
         color: 'secondary',
+        size: 'lg',
+        text: 'Disagree',
+        variant: 'text',
       },
       {
-        size: 'lg',
-        variant: 'text',
-        text: 'Agree',
         color: 'primary',
+        size: 'lg',
+        text: 'Agree',
+        variant: 'text',
       },
     ],
+    content: 'Lorem ipsum dolor sit amet consecteur '.repeat(1000),
+    description: 'agree to proceed',
+    persistent: true,
+    size: 'lg',
+    title: 'Terms and Conditions',
   },
 };
 

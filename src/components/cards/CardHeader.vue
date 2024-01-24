@@ -22,14 +22,23 @@ const slots = useSlots();
       { [css.dense]: dense, [css.has_prepend]: !!slots.prepend },
     ]"
   >
-    <div v-if="slots.prepend" :class="css.prepend">
+    <div
+      v-if="slots.prepend"
+      :class="css.prepend"
+    >
       <slot name="prepend" />
     </div>
     <div :class="css.headers">
-      <h5 v-if="slots.header" :class="css.header">
+      <h5
+        v-if="slots.header"
+        :class="css.header"
+      >
         <slot name="header" />
       </h5>
-      <p v-if="slots.subheader" :class="css.subheader">
+      <p
+        v-if="slots.subheader"
+        :class="css.subheader"
+      >
         <slot name="subheader" />
       </p>
     </div>
