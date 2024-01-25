@@ -211,7 +211,7 @@ const slots = defineSlots<
     }) => any;
     'group.header.content': (props: {
       header: GroupHeader<T>;
-      key: string;
+      groupKey: string;
     }) => any;
     'expanded-item': (props: { row: T; index: number }) => any;
     'no-data': () => any;
@@ -946,7 +946,7 @@ onMounted(() => {
                       @click="onToggleExpandGroup(row.group, row.identifier)"
                     />
                     <slot
-                      :key="groupKey"
+                      :group-key="groupKey"
                       name="group.header.content"
                       :header="row"
                     >
