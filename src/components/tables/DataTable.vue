@@ -1021,10 +1021,10 @@ onMounted(() => {
                 >
                   <Checkbox
                     :data-cy="`table-toggle-check-${index}`"
-                    :value="isSelected(row[rowIdentifier])"
+                    :model-value="isSelected(row[rowIdentifier])"
                     color="primary"
                     hide-details
-                    @input="onSelect($event, row[rowIdentifier])"
+                    @update:model-value="onSelect($event, row[rowIdentifier])"
                   />
                 </td>
 

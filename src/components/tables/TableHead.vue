@@ -166,11 +166,11 @@ function getSortDirection(key: TableColumn<T>['key']) {
         <Checkbox
           :disabled="disableCheckAll"
           :indeterminate="indeterminate"
-          :value="isAllSelected"
+          :model-value="isAllSelected"
           color="primary"
           data-cy="table-toggle-check-all"
           hide-details
-          @input="onToggleAll($event)"
+          @update:model-value="onToggleAll($event)"
         />
       </th>
 
