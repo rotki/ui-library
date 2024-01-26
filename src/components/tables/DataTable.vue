@@ -238,7 +238,11 @@ const { stick, table, tableScroller } = useStickyTableHeader(
 
 const tableDefaults = useTable();
 
-const headerSlots = computed<`header.${string}`[]>(() => Object.keys(slots).filter(isHeaderSlot));
+const expandable = computed(() => props.expanded && slots['expanded-item']);
+
+const headerSlots = computed<`header.${string}`[]>(() =>
+  Object.keys(slots).filter(isHeaderSlot),
+);
 
 const globalItemsPerPageSettings = computed(() => {
   if (props.globalItemsPerPage !== undefined)
@@ -248,6 +252,27 @@ const globalItemsPerPageSettings = computed(() => {
 });
 
 const getKeys = <T extends object>(t: T) => Object.keys(t) as TableRowKey<T>[];
+
+const groupKeys: ComputedRef<TableRowKey<T>[]> = computed(() => {
+  const groupBy = props.group;
+
+  if (!groupBy) {
+    // no grouping
+    return [];
+  }
+
+  if (!Array.isArray(groupBy)) {
+    // currently only supports a single grouping
+    // only the first item in the array is used
+    return [groupBy];
+  }
+
+  return groupBy;
+});
+
+const groupKey = computed(() => get(groupKeys).join(':'));
+
+const isGrouped = computed(() => !!get(groupKey));
 
 /**
  * Prepare the columns from props or generate using first item in the list
@@ -310,26 +335,6 @@ watchImmediate(pagination, (pagination) => {
 
 watchImmediate(collapsed, (value) => {
   set(collapsedRows, value ?? []);
-});
-
-const expandable = computed(() => props.expanded && slots['expanded-item']);
-
-/**
- * Keeps the global items per page in sync with the internal state.
- */
-watch(internalPaginationState, (pagination) => {
-  if (pagination?.limit && get(globalItemsPerPageSettings))
-    set(tableDefaults.itemsPerPage, pagination.limit);
-});
-
-watch(tableDefaults.itemsPerPage, (itemsPerPage) => {
-  if (!get(globalItemsPerPageSettings))
-    return;
-
-  set(paginationData, {
-    ...get(paginationData),
-    limit: itemsPerPage,
-  });
 });
 
 /**
@@ -407,34 +412,6 @@ const sortedMap = computed(() => {
 });
 
 /**
- * list if ids of the visible table rows used for check-all and uncheck-all
- */
-const visibleIdentifiers = computed<T[IdType][]>(() => {
-  const selectBy = props.rowAttr;
-
-  if (!selectBy)
-    return [];
-
-  return get(filtered)
-    .filter(isRow)
-    .map(row => row[selectBy]);
-});
-
-/**
- * Flag to know when all rows are selected for the current screen
- */
-const isAllSelected = computed<boolean>(() => {
-  const selectedRows = get(selectedData);
-  if (!selectedRows)
-    return false;
-
-  return (
-    selectedRows.length > 0
-    && get(visibleIdentifiers).every(id => selectedRows.includes(id))
-  );
-});
-
-/**
  * rows filtered based on search query if it exists
  */
 const searchData = computed<T[]>(() => {
@@ -493,27 +470,6 @@ const sorted: ComputedRef<T[]> = computed(() => {
   return data;
 });
 
-const groupKeys: ComputedRef<TableRowKey<T>[]> = computed(() => {
-  const groupBy = props.group;
-
-  if (!groupBy) {
-    // no grouping
-    return [];
-  }
-
-  if (!Array.isArray(groupBy)) {
-    // currently only supports a single grouping
-    // only the first item in the array is used
-    return [groupBy];
-  }
-
-  return groupBy;
-});
-
-const groupKey = computed(() => get(groupKeys).join(':'));
-
-const isGrouped = computed(() => !!get(groupKey));
-
 /**
  * comprises search, sorted paginated, and grouped data
  */
@@ -534,11 +490,11 @@ const mappedGroups = computed<Record<string, GroupedTableRow<T>[]>>(() => {
     const groupVal = Object.values(group).filter(isDefined).join(',');
     if (!acc[groupVal]) {
       acc[groupVal] = [
-          {
-            __header__: true,
-            group,
-            identifier: groupVal,
-          } satisfies GroupHeader<T>,
+        {
+          __header__: true,
+          group,
+          identifier: groupVal,
+        } satisfies GroupHeader<T>,
       ];
     }
 
@@ -560,9 +516,7 @@ const grouped = computed<GroupedTableRow<T>[]>(() => {
     return result;
   }
 
-  return Object.values(get(mappedGroups))
-    .flatMap(grouped => grouped)
-    .filter(row => !isHiddenRow(row));
+  return Object.values(get(mappedGroups)).flatMap(grouped => grouped);
 });
 
 /**
@@ -576,10 +530,52 @@ const filtered = computed<GroupedTableRow<T>[]>(() => {
   if (paginated && !props.paginationModifiers?.external) {
     const start = (paginated.page - 1) * limit;
     const end = start + limit;
-    return result.slice(start, end);
+    const preGroups = result.slice(0, start + 1).filter(item => !isRow(item));
+    const postGroups = result.slice(start + 1, end + preGroups.length).filter(item => !isRow(item));
+    const data = result.slice(start + preGroups.length, end + preGroups.length + postGroups.length);
+    const nearestGroup = preGroups.at(-1);
+    if (data.length > 0) {
+      // if our first item is not a group, push in the nearest group
+      if (isRow(data[0]) && nearestGroup)
+        data.unshift(nearestGroup);
+      const lastItem = data.at(-1);
+      // if our last item is a group, remove it
+      if (lastItem && !isRow(lastItem))
+        data.pop();
+    }
+
+    return data.filter(row => !isHiddenRow(row));
   }
 
-  return result;
+  return result.filter(row => !isHiddenRow(row));
+});
+
+/**
+ * list if ids of the visible table rows used for check-all and uncheck-all
+ */
+const visibleIdentifiers = computed<T[IdType][]>(() => {
+  const selectBy = props.rowAttr;
+
+  if (!selectBy)
+    return [];
+
+  return get(filtered)
+    .filter(isRow)
+    .map(row => row[selectBy]);
+});
+
+/**
+ * Flag to know when all rows are selected for the current screen
+ */
+const isAllSelected = computed<boolean>(() => {
+  const selectedRows = get(selectedData);
+  if (!selectedRows)
+    return false;
+
+  return (
+    selectedRows.length > 0
+    && get(visibleIdentifiers).every(id => selectedRows.includes(id))
+  );
 });
 
 const indeterminate = computed(() => {
@@ -672,7 +668,10 @@ function isExpandedGroup(value: Partial<T>) {
 function isHiddenRow(row: GroupedTableRow<T>) {
   const identifier = props.rowAttr;
   return (
-    get(isGrouped) && get(collapsedRows).some(value => isRow(row) && row[identifier] === value[identifier])
+    get(isGrouped)
+    && get(collapsedRows).some(
+      value => isRow(row) && row[identifier] === value[identifier],
+    )
   );
 }
 
@@ -809,14 +808,32 @@ function onPaginate() {
   emit('update:expanded', []);
 }
 
-function setInternalTotal(groupedItems: GroupedTableRow<T>[]) {
+function setInternalTotal(items: GroupedTableRow<T>[]) {
   if (!props.paginationModifiers?.external)
-    set(itemsLength, groupedItems.filter(isRow).length);
+    set(itemsLength, items.filter(isRow).length);
 }
 
 function cellValue(row: T, key: TableColumn<T>['key']) {
   return row[key as TableRowKey<T>];
 }
+
+/**
+ * Keeps the global items per page in sync with the internal state.
+ */
+watch(internalPaginationState, (pagination) => {
+  if (pagination?.limit && get(globalItemsPerPageSettings))
+    set(tableDefaults.itemsPerPage, pagination.limit);
+});
+
+watch(tableDefaults.itemsPerPage, (itemsPerPage) => {
+  if (!get(globalItemsPerPageSettings))
+    return;
+
+  set(paginationData, {
+    ...get(paginationData),
+    limit: itemsPerPage,
+  });
+});
 
 /**
  * on changing search query, need to reset pagination page to 1
@@ -827,10 +844,10 @@ watch(search, () => {
     pagination.page = 1;
 });
 
-watch(grouped, setInternalTotal);
+watch(sorted, setInternalTotal);
 
 onMounted(() => {
-  setInternalTotal(get(grouped));
+  setInternalTotal(get(sorted));
 
   if (!get(globalItemsPerPageSettings))
     return;
