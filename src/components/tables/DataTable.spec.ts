@@ -207,6 +207,53 @@ describe('dataTable', () => {
     ).toBeTruthy();
   });
 
+  it('selection toggles correctly', async () => {
+    const wrapper = createWrapper({
+      props: {
+        'cols': columns,
+        'modelValue': [],
+        'onUpdate:modelValue': (e: any) => wrapper.setProps({ modelValue: e }),
+        'rowAttr': 'id',
+        'rows': data,
+      },
+    });
+
+    expect(wrapper.props().modelValue).toHaveLength(0);
+
+    expect(
+      wrapper
+        .find('thead tr [data-cy=table-toggle-check-all] input')
+        .exists(),
+    ).toBeTruthy();
+
+    await wrapper
+      .find('thead tr [data-cy=table-toggle-check-all] input')
+      .setValue(true);
+
+    expect(wrapper.props().modelValue).toHaveLength(10);
+
+    expect(
+      wrapper
+        .find('tr [data-cy*=table-toggle-check-] span[class*=checkbox][class*=checked]')
+        .exists(),
+    ).toBeTruthy();
+
+    expect(
+      wrapper
+        .findAll('tr [data-cy*=table-toggle-check-] span[class*=checkbox][class*=checked]'),
+    ).toHaveLength(11);
+
+    await wrapper
+      .find('thead tr [data-cy=table-toggle-check-all] input')
+      .setValue(false);
+
+    expect(wrapper.props().modelValue).toHaveLength(0);
+
+    await wrapper.find('tr [data-cy=table-toggle-check-0] input').setValue(true);
+
+    expect(wrapper.props().modelValue).toHaveLength(1);
+  });
+
   it('single expand toggles correctly', async () => {
     const wrapper = createWrapper({
       props: {
