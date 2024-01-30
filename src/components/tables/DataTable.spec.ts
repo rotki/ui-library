@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import DataTable from '@/components/tables/DataTable.vue';
 import TablePagination from '@/components/tables/TablePagination.vue';
-import { RuiSimpleSelect } from '~/src';
+import { RuiButton, RuiSimpleSelect } from '~/src';
 import type { TableColumn } from '@/components/tables/TableHead.vue';
 
 interface User {
@@ -141,6 +141,24 @@ describe('dataTable', () => {
     expect(
       wrapper
         .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
+        .exists(),
+    ).toBeTruthy();
+
+    expect(
+      wrapper
+        .find('div[data-cy=table-pagination] div[class*=limit]')
+        .exists(),
+    ).toBeTruthy();
+
+    expect(
+      wrapper
+        .find('div[data-cy=table-pagination] div[class*=ranges]')
+        .exists(),
+    ).toBeTruthy();
+
+    expect(
+      wrapper
+        .find('div[data-cy=table-pagination] div[class*=navigation]')
         .exists(),
     ).toBeTruthy();
   });
@@ -509,5 +527,66 @@ describe('dataTable', () => {
 
       expect(get(itemsPerPage)).toBe(10);
     });
+  });
+
+  it('pagination range works as expected', async () => {
+    const wrapper = createWrapper({
+      props: {
+        'cols': columns,
+        'onUpdate:pagination': (e: any) => wrapper.setProps({ pagination: e }),
+        'rowAttr': 'id',
+        'rows': data,
+      },
+    });
+
+    await nextTick();
+
+    await wrapper.setProps({ pagination: { limit: 10, page: 1, total: data.length } });
+
+    const paginator = wrapper.findComponent(TablePagination);
+    expect(paginator.exists()).toBeTruthy();
+
+    expect(
+      paginator
+        .find('div[data-cy=table-pagination] div[class*=limit]')
+        .exists(),
+    ).toBeTruthy();
+
+    expect(
+      paginator
+        .find('div[data-cy=table-pagination] div[class*=ranges]')
+        .exists(),
+    ).toBeTruthy();
+
+    expect(
+      paginator
+        .find('div[data-cy=table-pagination] div[class*=navigation]')
+        .exists(),
+    ).toBeTruthy();
+
+    const navButtons = paginator.findAllComponents(RuiButton);
+    expect(navButtons.length).toBe(4);
+
+    expect(navButtons.filter(b => b.attributes('disabled') === '')).toHaveLength(2);
+    expect(navButtons.filter(b => b.attributes('disabled') === undefined)).toHaveLength(2);
+
+    const [limits, ranges] = paginator.findAllComponents(RuiSimpleSelect);
+    expect(limits.exists()).toBeTruthy();
+    expect(ranges.exists()).toBeTruthy();
+
+    limits.vm.$emit('update:model-value', 5);
+
+    await nextTick();
+
+    expect(limits.vm.modelValue).toBe(5);
+
+    ranges.vm.$emit('update:model-value', '6-10');
+
+    await nextTick();
+
+    expect(ranges.vm.modelValue).toBe('6-10');
+
+    expect(navButtons.filter(b => b.attributes('disabled') === '')).toHaveLength(0);
+    expect(navButtons.filter(b => b.attributes('disabled') === undefined)).toHaveLength(4);
   });
 });
