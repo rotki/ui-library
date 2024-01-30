@@ -53,12 +53,27 @@ const pages = computed(() => {
   return Math.ceil(total / limit);
 });
 
-const indicatorText = computed(() => {
-  const { limit, total, page } = get(modelValue);
+const ranges = computed(() => {
+  const segments = [];
 
-  return `${formatInteger((page - 1) * limit + 1)}-${formatInteger(
-    Math.min(page * limit, total),
-  )} of ${formatInteger(total)}`;
+  for (let i = 1; i <= get(pages); i++)
+    segments.push(pageRangeText(i));
+
+  return segments;
+});
+
+const indicatorText = computed(() => {
+  const { total } = get(modelValue);
+  return `${!total ? '0 ' : ''}of ${formatInteger(total)}`;
+});
+
+const currentRange = computed({
+  get: () => pageRangeText(get(modelValue).page),
+  set: value =>
+    emit('update:model-value', {
+      ...get(modelValue),
+      page: get(ranges).indexOf(value) + 1,
+    }),
 });
 
 const hasPrev = computed(() => get(modelValue).page > 1);
@@ -69,6 +84,13 @@ function goToPage(page: number) {
     ...get(modelValue),
     page,
   });
+}
+
+function pageRangeText(page: number) {
+  const { limit, total } = get(modelValue);
+  return `${formatInteger((page - 1) * limit + 1)}-${formatInteger(
+    Math.min(page * limit, total),
+  )}`;
 }
 
 function onNavigate(delta: number) {
@@ -115,9 +137,19 @@ function onLast() {
         name="limit"
       />
     </div>
-    <span :class="css.indicator">
-      {{ indicatorText }}
-    </span>
+    <div :class="css.ranges">
+      <span :class="css.ranges__text">Items #</span>
+      <SimpleSelect
+        v-if="ranges.length > 0"
+        v-model="currentRange"
+        :options="ranges"
+        :disabled="loading"
+        name="ranges"
+      />
+      <span :class="css.indicator">
+        {{ indicatorText }}
+      </span>
+    </div>
     <div :class="css.navigation">
       <Button
         :size="dense ? 'sm' : undefined"
@@ -171,8 +203,16 @@ function onLast() {
     }
   }
 
+  .ranges {
+    @apply flex items-center space-x-2 text-caption px-3;
+
+    &__text {
+      @apply text-rui-text-secondary whitespace-nowrap py-4;
+    }
+  }
+
   .indicator {
-    @apply text-rui-text text-caption px-3;
+    @apply text-rui-text text-caption;
   }
 
   .navigation {
