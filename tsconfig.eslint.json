@@ -8,7 +8,8 @@
     "example/**/*.ts",
     "example/**/*.vue",
     "**/*.config.ts",
-    "tests/**/*.ts"
+    "tests/**/*.ts",
+    "scripts/**/*.ts"
   ],
   "exclude": ["node_modules", "dist"]
 }
