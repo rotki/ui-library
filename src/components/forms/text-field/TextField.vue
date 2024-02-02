@@ -83,23 +83,27 @@ const labelWithQuote = computed(() => {
   return `'  ${get(label)}  '`;
 });
 
-const wrapper = ref<HTMLDivElement>();
+const prepend = ref<HTMLDivElement>();
+const append = ref<HTMLDivElement>();
 const innerWrapper = ref<HTMLDivElement>();
 const inputRef = ref();
 
-const { left: wrapperLeft, right: wrapperRight } = useElementBounding(wrapper);
-const {
-  left: innerWrapperLeft,
-  right: innerWrapperRight,
-  width,
-} = useElementBounding(innerWrapper);
+const prependWidth = ref('0px');
+const appendWidth = ref('0px');
 
-const prependWidth = computed(
-  () => `${get(innerWrapperLeft) - get(wrapperLeft)}px`,
-);
-const appendWidth = computed(
-  () => `${get(wrapperRight) - get(innerWrapperRight)}px`,
-);
+const { width } = useElementBounding(innerWrapper);
+
+useResizeObserver(prepend, (entries) => {
+  const [entry] = entries;
+  const { width, left } = entry.contentRect;
+  set(prependWidth, `${width + left}px`);
+});
+
+useResizeObserver(append, (entries) => {
+  const [entry] = entries;
+  const { width, right } = entry.contentRect;
+  set(appendWidth, `${width + right}px`);
+});
 
 const { hasError, hasSuccess, hasMessages } = useFormTextDetail(
   errorMessages,
@@ -127,7 +131,6 @@ function clearIconClicked() {
 <template>
   <div v-bind="getRootAttrs(attrs)">
     <div
-      ref="wrapper"
       :class="[
         css.wrapper,
         css[color ?? ''],
@@ -144,6 +147,7 @@ function clearIconClicked() {
     >
       <div
         v-if="slots.prepend || prependIcon"
+        ref="prepend"
         class="flex items-center gap-1 shrink-0"
         :class="css.prepend"
       >
@@ -190,6 +194,7 @@ function clearIconClicked() {
       </div>
       <div
         v-if="slots.append || appendIcon || showClearIcon"
+        ref="append"
         class="flex items-center gap-1 shrink-0"
         :class="css.append"
       >
@@ -338,13 +343,13 @@ function clearIconClicked() {
 
   .prepend {
     &:not(:empty) {
-      @apply mr-2;
+      @apply pr-2;
     }
   }
 
   .append {
     &:not(:empty) {
-      @apply ml-2;
+      @apply pl-2;
     }
   }
 
@@ -420,13 +425,13 @@ function clearIconClicked() {
 
     .prepend {
       &:not(:empty) {
-        @apply ml-3 mr-0;
+        @apply pl-3 pr-0;
       }
     }
 
     .append {
       &:not(:empty) {
-        @apply mr-3 ml-0;
+        @apply pr-3 pl-0;
       }
     }
 
