@@ -32,7 +32,7 @@ const meta: Meta<PropsAndLabel> = {
     hint: { control: 'text' },
     label: { control: 'text' },
     modelValue: { control: 'boolean' },
-    size: { control: 'select', options: ['medium', 'sm', 'lg'] },
+    size: { control: 'select', options: ['medium', 'sm'] },
     successMessages: { control: 'array', defaultValue: [] },
   },
   component: Switch,
