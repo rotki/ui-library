@@ -1,3 +1,4 @@
+/* eslint-disable import/max-dependencies */
 import { createRouter, createWebHistory } from 'vue-router';
 import ButtonView from '@/views/ButtonView.vue';
 
@@ -30,6 +31,11 @@ const router = createRouter({
       path: '/checkboxes',
       name: 'checkboxes',
       component: () => import('@/views/CheckboxView.vue'),
+    },
+    {
+      path: '/switches',
+      name: 'switches',
+      component: () => import('@/views/SwitchView.vue'),
     },
     {
       path: '/radios',

@@ -24,6 +24,10 @@ import {
   default as RuiCheckbox,
 } from '@/components/forms/checkbox/Checkbox.vue';
 import {
+  default as RuiSwitch,
+  type Props as SwitchProps,
+} from '@/components/forms/switch/Switch.vue';
+import {
   type Props as ChipProps,
   default as RuiChip,
 } from '@/components/chips/Chip.vue';
@@ -148,6 +152,7 @@ export {
   RuiRadioGroup,
   RuiRevealableTextField,
   RuiStepper,
+  RuiSwitch,
   RuiTextField,
   RuiTooltip,
   RuiDataTable,
@@ -181,6 +186,7 @@ export {
   BadgeProps,
   AlertProps,
   CheckboxProps,
+  SwitchProps,
   ProgressProps,
   RadioGroupProps,
   RadioProps,

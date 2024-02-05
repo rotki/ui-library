@@ -13,6 +13,7 @@ const navigation = ref([
       { to: { name: 'buttons' }, title: 'Buttons' },
       { to: { name: 'icons' }, title: 'Icons' },
       { to: { name: 'checkboxes' }, title: 'Checkboxes' },
+      { to: { name: 'switches' }, title: 'Switches' },
       { to: { name: 'radios' }, title: 'Radio' },
       { to: { name: 'text-fields' }, title: 'Text Fields' },
       { to: { name: 'text-areas' }, title: 'Text Areas' },
