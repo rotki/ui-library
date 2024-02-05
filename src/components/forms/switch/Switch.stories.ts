@@ -1,11 +1,11 @@
 import { contextColors } from '@/consts/colors';
-import { default as Checkbox, type Props } from './Checkbox.vue';
+import { type Props, default as Switch } from './Switch.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 type PropsAndLabel = Props & { label: string };
 
 const render: StoryFn<PropsAndLabel> = args => ({
-  components: { Checkbox },
+  components: { Switch },
   setup() {
     const modelValue = computed({
       get() {
@@ -16,19 +16,11 @@ const render: StoryFn<PropsAndLabel> = args => ({
       },
     });
 
-    const indeterminate = computed({
-      get() {
-        return args.indeterminate;
-      },
-      set(val) {
-        args.indeterminate = val;
-      },
-    });
-    return { args, indeterminate, modelValue };
+    return { args, modelValue };
   },
-  template: `<Checkbox v-bind="args" v-model="modelValue" v-model:indeterminate="indeterminate">
+  template: `<Switch v-bind="args" v-model="modelValue">
     {{ args.label }}
-  </Checkbox>`,
+  </Switch>`,
 });
 
 const meta: Meta<PropsAndLabel> = {
@@ -38,13 +30,12 @@ const meta: Meta<PropsAndLabel> = {
     errorMessages: { control: 'array', defaultValue: [] },
     hideDetails: { control: 'boolean' },
     hint: { control: 'text' },
-    indeterminate: { control: 'boolean' },
     label: { control: 'text' },
     modelValue: { control: 'boolean' },
-    size: { control: 'select', options: ['medium', 'sm', 'lg'] },
+    size: { control: 'select', options: ['medium', 'sm'] },
     successMessages: { control: 'array', defaultValue: [] },
   },
-  component: Checkbox,
+  component: Switch,
   parameters: {
     docs: {
       controls: { exclude: ['default'] },
@@ -52,7 +43,7 @@ const meta: Meta<PropsAndLabel> = {
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Forms/Checkbox',
+  title: 'Components/Forms/Switch',
 };
 
 type Story = StoryObj<PropsAndLabel>;
@@ -63,20 +54,9 @@ export const Checked: Story = {
   },
 };
 
-export const Indeterminate: Story = {
-  args: {
-    indeterminate: true,
-  },
-};
-
-export const Large: Story = {
-  args: {
-    size: 'lg',
-  },
-};
-
 export const Small: Story = {
   args: {
+    label: 'asdfa',
     size: 'sm',
   },
 };
