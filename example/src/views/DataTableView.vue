@@ -351,6 +351,7 @@ const expandableTables = ref<
       pagination: { limit: 5, page: 1, total: 5 },
       expanded: [],
       stickyHeader: true,
+      disablePerPage: true,
     },
   },
   {

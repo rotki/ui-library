@@ -13,12 +13,14 @@ export interface TablePaginationData {
 export interface Props {
   modelValue: TablePaginationData;
   dense?: boolean;
+  disablePerPage?: boolean;
   loading?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   dense: false,
   loading: false,
+  disablePerPage: false,
 });
 
 const emit = defineEmits<{
@@ -133,7 +135,7 @@ function onLast() {
       <SimpleSelect
         v-model="currentLimit"
         :options="limits"
-        :disabled="loading"
+        :disabled="loading || disablePerPage"
         name="limit"
       />
     </div>

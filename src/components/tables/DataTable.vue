@@ -105,6 +105,7 @@ export interface Props<T, K extends keyof T> {
    * triggers indefinite progress at the bottom of the table header
    */
   loading?: boolean;
+  disablePerPage?: boolean;
   /**
    * data to display for empty state
    * text and icon
@@ -169,6 +170,7 @@ const props = withDefaults(defineProps<Props<T, IdType>>(), {
   empty: () => ({ description: 'No item found' }),
   rounded: 'md',
   hideDefaultFooter: false,
+  disablePerPage: false,
   striped: false,
   expanded: undefined,
   singleExpand: false,
@@ -1157,6 +1159,7 @@ onMounted(() => {
       v-model="paginationData"
       :dense="dense"
       :loading="loading"
+      :disable-per-page="disablePerPage"
       data-cy="table-pagination"
       @update:model-value="onPaginate()"
     />
