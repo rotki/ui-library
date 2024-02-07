@@ -285,7 +285,6 @@ const emptyTables = ref<
         description: 'No user found',
       },
       stickyHeader: true,
-      stickyOffset: 72,
     },
   },
   {
@@ -328,7 +327,6 @@ const emptyTables = ref<
       sort: [{ column: 'name', direction: 'asc' }],
       pagination: { limit: 5, page: 1, total: 5 },
       stickyHeader: true,
-      stickyOffset: 72,
       group: ['username'],
       collapsed: [],
     },
@@ -353,7 +351,6 @@ const expandableTables = ref<
       pagination: { limit: 5, page: 1, total: 5 },
       expanded: [],
       stickyHeader: true,
-      stickyOffset: 72,
     },
   },
   {
@@ -381,7 +378,6 @@ const expandableTables = ref<
       pagination: { limit: 5, page: 1, total: 5 },
       expanded: [],
       stickyHeader: true,
-      stickyOffset: 72,
     },
   },
 ]);
@@ -418,7 +414,6 @@ const datatables = ref<
       outlined: true,
       sort: [{ column: 'name', direction: 'asc' }],
       stickyHeader: true,
-      stickyOffset: 72,
     },
   },
   {

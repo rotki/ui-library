@@ -379,6 +379,7 @@ describe('dataTable', () => {
   describe('global settings', () => {
     it('should follow global settings', async () => {
       const itemsPerPage = ref(25);
+      const stickyOffset = ref(64);
       const wrapperComponent = {
         template:
           '<div><DataTable :rows=\'[]\' row-attr=\'id\'/><DataTable :rows=\'[]\' row-attr=\'id\'/></div>',
@@ -394,6 +395,7 @@ describe('dataTable', () => {
               globalItemsPerPage: true,
               itemsPerPage,
               limits: [5, 10, 15, 25, 50, 100, 200],
+              stickyOffset,
             }),
           },
         },

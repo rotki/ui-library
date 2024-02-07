@@ -1,9 +1,9 @@
-import type { Ref } from 'vue';
+import type { MaybeRef } from '@vueuse/shared';
 
 /**
  * Setup sticky table header
  */
-export function useStickyTableHeader(offsetTop: Ref<number> = ref(0), sticky: Ref<boolean> = ref(false)) {
+export function useStickyTableHeader(sticky: MaybeRef<boolean> = ref(false), offsetTop?: MaybeRef<number>) {
   const table: Ref<HTMLTableElement | null> = ref(null);
   const tableScroller: Ref<HTMLElement | null> = ref(null);
   const stick: Ref<boolean> = ref(false);

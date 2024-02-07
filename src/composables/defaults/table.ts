@@ -5,6 +5,7 @@ export interface TableOptions {
   itemsPerPage: Ref<number>;
   globalItemsPerPage: MaybeRef<boolean>;
   limits: MaybeRef<number[]>;
+  stickyOffset: MaybeRef<number>;
 }
 
 export const TableSymbol: InjectionKey<TableOptions> = Symbol.for('rui:table');
@@ -14,6 +15,7 @@ export function createTableDefaults(options?: Partial<TableOptions>): TableOptio
     globalItemsPerPage: false,
     itemsPerPage: ref(10),
     limits: [10, 25, 50, 100],
+    stickyOffset: ref(0),
     ...options,
   };
 }

@@ -32,12 +32,12 @@ import {
 } from '@rotki/ui-library';
 import App from '@/App.vue';
 import router from '@/router';
-import { useCounterStore } from '@/stores/counter';
+import { useDefaultsStore } from '@/stores/defaults';
 
 const app = createApp(App);
 
 app.use(createPinia());
-const { itemsPerPage } = storeToRefs(useCounterStore());
+const { itemsPerPage, stickyOffset } = storeToRefs(useDefaultsStore());
 const RuiPlugin = createRui({
   theme: {
     icons: [
@@ -69,6 +69,7 @@ const RuiPlugin = createRui({
   defaults: {
     table: {
       itemsPerPage,
+      stickyOffset,
       globalItemsPerPage: false,
       limits: [5, 10, 15, 25, 50, 100, 200],
     },
