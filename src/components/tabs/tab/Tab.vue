@@ -41,9 +41,9 @@ const emit = defineEmits<{
 }>();
 
 const slots = defineSlots<{
-  default?(props?: object): any;
-  prepend?(props?: object): any;
-  append?(props?: object): any;
+  default?: (props?: object) => any;
+  prepend?: (props?: object) => any;
+  append?: (props?: object) => any;
 }>();
 
 const { target, grow, active, disabled, vertical, align, tabValue }
