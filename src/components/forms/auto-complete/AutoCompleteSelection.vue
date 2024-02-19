@@ -1,19 +1,17 @@
-<script lang="ts" setup>
+<script lang="ts" setup generic='T extends object'>
 import { ComboboxInput } from '@headlessui/vue';
 import { objectOmit } from '@vueuse/shared';
 import Chip from '@/components/chips/Chip.vue';
 import type {
   Props as AutoCompleteProps,
   ModelValue,
-  Option,
 } from '@/components/forms/auto-complete/AutoComplete.vue';
 
-export interface Props
-  extends Pick<
-    AutoCompleteProps,
+export interface Props<T extends object> extends Pick<
+    AutoCompleteProps<T>,
     'textProp' | 'keyProp' | 'dense' | 'itemDisabledProp' | 'variant'
   > {
-  data: ModelValue;
+  data: ModelValue<T>;
   hasValue: boolean;
   wrapperWidth: number;
 }
@@ -23,41 +21,41 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<Props>(), {
-  keyProp: 'id',
-  textProp: 'text',
-  itemDisabledProp: '',
+const props = withDefaults(defineProps<Props<T>>(), {
+  keyProp: undefined,
+  textProp: undefined,
+  itemDisabledProp: undefined,
   dense: false,
 });
 
 const emit = defineEmits<{
-  (e: 'remove', option: Option): void;
+  (e: 'remove', option: T): void;
 }>();
 
 const css = useCssModule();
 const attrs = useAttrs();
 
-const { data, textProp, wrapperWidth } = toRefs(props);
+const { data, wrapperWidth } = toRefs(props);
 
 const innerWrapper = ref<HTMLDivElement>();
 const more = ref<HTMLDivElement>();
 const minInputWidth = ref(120);
 const maxChipsToRender = ref(0);
 
-const multiple = computed(() => Array.isArray(get(data)));
+const multiple = computed(() => Array.isArray(props.data));
 
 const displayValue = computed(() => {
-  const value = get(data);
+  const value = props.data;
   if (Array.isArray(value) || !value)
-    return undefined;
+    return '';
 
-  return value[get(textProp)];
+  return getText(value, props.textProp) ?? '';
 });
 
-const maxInnerWidth = computed(() => get(wrapperWidth) - get(minInputWidth));
+const maxInnerWidth = computed(() => props.wrapperWidth - get(minInputWidth));
 
 async function setMaxChips() {
-  const value = get(data);
+  const value = props.data;
   // for single select or when no value is selected, no need for this computation
   if (!Array.isArray(value) || value.length === 0) {
     set(maxChipsToRender, 0);
@@ -79,7 +77,7 @@ async function setMaxChips() {
   // if available space cannot contain more indicator, just show only the count
   if (get(maxInnerWidth) < maxMore) {
     set(maxChipsToRender, 0);
-    set(minInputWidth, get(wrapperWidth) - maxMore);
+    set(minInputWidth, props.wrapperWidth - maxMore);
     return;
   }
 
@@ -104,6 +102,8 @@ async function setMaxChips() {
   }
 }
 
+const { getTextValue, getItemKey, isItemDisabled } = useAutoCompleteProps(props);
+
 onMounted(() => {
   nextTick(() => {
     setMaxChips();
@@ -125,14 +125,14 @@ watch([data, wrapperWidth], () => {
       <div :class="[css.chips, css[variant ?? '']]">
         <Chip
           v-for="chip in data.slice(0, maxChipsToRender)"
-          :key="chip[keyProp]"
+          :key="getItemKey(chip)"
           :class="css.chip"
-          :disabled="!!itemDisabledProp && chip[itemDisabledProp]"
+          :disabled="isItemDisabled(chip)"
           :size="dense ? 'sm' : 'md'"
           closeable
           @click:close="emit('remove', chip)"
         >
-          {{ chip[textProp] ?? '' }}
+          {{ getTextValue(chip) ?? '' }}
         </Chip>
         <div
           v-if="data.length > maxChipsToRender"

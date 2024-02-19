@@ -1,31 +1,25 @@
-<script lang="ts" setup>
-import {
-  Combobox,
-  ComboboxButton,
-  ComboboxOption,
-  ComboboxOptions,
-} from '@headlessui/vue';
+<script lang="ts" setup generic='T extends object'>
+import { Combobox, ComboboxButton, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import Icon from '@/components/icons/Icon.vue';
 import TextField from '@/components/forms/text-field/TextField.vue';
 import AutoCompleteSelection from '@/components/forms/auto-complete/AutoCompleteSelection.vue';
+import { defaultKeyProp } from '@/consts/forms/auto-complete';
 import type { ContextColorsType } from '@/consts/colors';
 
-export type Option = Record<string, any>;
+export type ModelValue<T> = T | null | T[];
 
-export type ModelValue = Option | Option[] | null;
-
-export interface Props {
-  data: Option[];
-  modelValue: ModelValue;
+export interface Props<T extends object> {
+  data: T[];
+  modelValue: ModelValue<T>;
   nullable?: boolean;
   disabled?: boolean;
   searchQuery?: string;
-  searchProp?: string;
+  searchProp?: Extract<keyof T, string>;
   placeholder?: string;
   label?: string;
-  keyProp?: string;
-  textProp?: string;
-  itemDisabledProp?: string;
+  keyProp?: Extract<keyof T, string>;
+  textProp?: Extract<keyof T, string>;
+  itemDisabledProp?: Extract<keyof T, string>;
   variant?: 'default' | 'filled' | 'outlined';
   color?: ContextColorsType;
   dense?: boolean;
@@ -38,11 +32,11 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<Props>(), {
-  keyProp: 'id',
-  textProp: 'text',
-  itemDisabledProp: 'disabled',
-  searchProp: '',
+const props = withDefaults(defineProps<Props<T>>(), {
+  keyProp: undefined,
+  textProp: undefined,
+  itemDisabledProp: undefined,
+  searchProp: undefined,
   searchQuery: '',
   placeholder: '',
   label: '',
@@ -56,57 +50,52 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', modelValue: ModelValue): void;
+  (e: 'update:modelValue', modelValue: ModelValue<T>): void;
 }>();
 
 const css = useCssModule();
 const slots = useSlots();
 
-const {
-  data,
-  modelValue,
-  searchQuery,
-  searchProp,
-  textProp,
-  keyProp,
-  itemDisabledProp,
-  hint,
-  errorMessages,
-} = toRefs(props);
-
-const query = ref(get(searchQuery) ?? '');
+const query = ref(props.searchQuery ?? '');
 const button = ref<{
   el: HTMLButtonElement;
 }>();
 
-const filtered = computed(() => {
-  const search = get(query)?.toLowerCase();
-  const searchKey = get(searchProp);
-  const textKey = get(textProp);
+function matches(search: string, text?: string): boolean {
+  return !!text && text.toLowerCase().includes(search);
+}
+
+const internalKeyProp = computed<string>(() => props.keyProp ?? defaultKeyProp);
+
+const internalModelValue = computed<object | object[] | null>(() => props.modelValue);
+
+const filtered = computed<T[]>(() => {
+  const search = get(query).toLowerCase();
+  const searchKey = props.searchProp;
+  const textKey = props.textProp;
   return !search
-    ? get(data)
-    : get(data).filter((item) => {
+    ? props.data
+    : props.data.filter((item) => {
+      const itemText = getText(item, textKey);
       if (searchKey) {
-        return (
-          item[textKey].toLowerCase().includes(search)
-          || item[searchKey].toLowerCase().includes(search)
-        );
+        const searchText = getStringValue(item[searchKey]);
+        return matches(search, itemText) || matches(search, searchText);
       }
-      return item[textKey].toLowerCase().includes(search);
+      return matches(search, itemText);
     });
 });
 
-const multiple = computed(() => Array.isArray(get(modelValue)));
+const multiple = computed(() => Array.isArray(props.modelValue));
 
 const hasValue = computed(() => {
-  const value = get(modelValue);
-  return Array.isArray(value) ? !!get(value)?.length : !!value;
+  const value = props.modelValue;
+  return Array.isArray(value) ? value.length > 0 : !!value;
 });
 
-const hideDetails = computed(() => !(get(hint) || get(errorMessages)?.length));
+const hideDetails = computed(() => !(props.hint || props.errorMessages?.length > 0));
 
-function onChange(newVal: ModelValue) {
-  const value = get(modelValue);
+function onChange(newVal: ModelValue<T>) {
+  const value = props.modelValue;
   if (!(newVal && value) || newVal !== value)
     emit('update:modelValue', newVal);
 }
@@ -125,30 +114,37 @@ function onClear() {
 }
 
 function onRemove(option: unknown) {
-  const value = get(modelValue);
+  const value = props.modelValue;
 
   if (!get(multiple) || !Array.isArray(value))
     return;
 
-  const key = get(keyProp);
+  const key = props.keyProp ?? defaultKeyProp as Extract<keyof T, string>;
 
   emit(
     'update:modelValue',
-    value.filter((opt: Option) => opt[key] !== (option as Option)[key]),
+    value.filter((opt: T) => opt[key] !== (option as T)[key]),
   );
 }
 
-watch(multiple, (newVal) => {
-  const value = get(modelValue);
-  if (newVal)
-    emit('update:modelValue', get(hasValue) ? [value] : []);
-  else if (Array.isArray(value))
-    emit('update:modelValue', value[0] ?? null);
-  else
-    emit('update:modelValue', null);
+watch(multiple, (multiple) => {
+  const value = props.modelValue;
+
+  if (multiple) {
+    if (Array.isArray(value))
+      emit('update:modelValue', value);
+    else
+      emit('update:modelValue', value ? [value] : []);
+  }
+  else {
+    if (Array.isArray(value))
+      emit('update:modelValue', value.length > 0 ? value[0] : null);
+    else
+      emit('update:modelValue', value || null);
+  }
 });
 
-const { list, containerProps, wrapperProps, scrollTo } = useVirtualList<Option>(
+const { list, containerProps, wrapperProps, scrollTo } = useVirtualList<T>(
   filtered,
   {
     itemHeight: 40,
@@ -164,17 +160,19 @@ const renderedData = useArrayMap(list, ({ data }) => data);
 
 function updateOpen(open: boolean) {
   if (!open && get(hasValue)) {
-    const value = get(modelValue);
-    const key = get(keyProp);
+    const value = props.modelValue;
+    const key = props.keyProp ?? defaultKeyProp as Extract<keyof T, string>;
     const lastKey = Array.isArray(value)
-      ? value.at(-1)[key]
-      : value![key];
+      ? value.at(-1)?.[key]
+      : value;
 
     nextTick(() => {
       scrollTo(get(filtered).findIndex(item => item[key] === lastKey));
     });
   }
 }
+
+const { getTextValue, getItemKey, isItemDisabled } = useAutoCompleteProps(props);
 
 const attrs = useAttrs();
 </script>
@@ -183,7 +181,7 @@ const attrs = useAttrs();
   <div :class="[multiple ? css.multiple : css.single, css[variant ?? '']]">
     <Combobox
       #default="{ open }"
-      :by="keyProp"
+      :by="internalKeyProp"
       :class="[
         {
           [css.disabled]: disabled,
@@ -191,7 +189,7 @@ const attrs = useAttrs();
         },
       ]"
       :disabled="disabled"
-      :model-value="modelValue"
+      :model-value="internalModelValue"
       :multiple="multiple"
       :nullable="nullable"
       @update:model-value="onChange($event)"
@@ -273,10 +271,10 @@ const attrs = useAttrs();
               <div v-bind="wrapperProps">
                 <ComboboxOption
                   v-for="item in renderedData"
-                  :key="item[keyProp]"
+                  :key="getItemKey(item)"
                   #default="{ selected, disabled: itemDisabled }"
                   class="h-10"
-                  :disabled="!!itemDisabledProp && item[itemDisabledProp]"
+                  :disabled="isItemDisabled(item)"
                   :value="item"
                   as="template"
                 >
@@ -297,14 +295,14 @@ const attrs = useAttrs();
                       <slot
                         class="prefix"
                         name="prefix"
-                        v-bind="item"
+                        :item="item"
                       />
                     </span>
                     <span class="block truncate">
                       <template v-if="slots.default">
-                        <slot v-bind="item" />
+                        <slot :item="item" />
                       </template>
-                      <template v-else> {{ item[textProp] }} </template>
+                      <template v-else> {{ getTextValue(item) }} </template>
                     </span>
                     <span
                       v-if="selected"

@@ -2,7 +2,13 @@ import AutoComplete, { type Props } from '@/components/forms/auto-complete/AutoC
 import { contextColors } from '@/consts/colors';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-const render: StoryFn<Props> = args => ({
+interface AutoCompleteData {
+  disabled: boolean;
+  id: string;
+  text: string;
+}
+
+const render: StoryFn<Props<AutoCompleteData>> = args => ({
   components: { AutoComplete },
   setup() {
     const modelValue = computed({
@@ -23,7 +29,7 @@ const render: StoryFn<Props> = args => ({
   `,
 });
 
-const meta: Meta<Props> = {
+const meta: Meta<Props<AutoCompleteData>> = {
   argTypes: {
     color: {
       control: 'select',
@@ -42,7 +48,7 @@ const meta: Meta<Props> = {
       table: { category: 'State' },
     },
   },
-  component: AutoComplete,
+  component: AutoComplete as any,
   parameters: {
     docs: {
       controls: {
@@ -55,9 +61,9 @@ const meta: Meta<Props> = {
   title: 'Components/Forms/AutoComplete',
 };
 
-type Story = StoryObj<Props>;
+type Story = StoryObj<Props<AutoCompleteData>>;
 
-const data = [
+const data: AutoCompleteData[] = [
   { disabled: false, id: '1', text: 'Hello 1' },
   { disabled: false, id: '2', text: 'Hello 2' },
   { disabled: false, id: '3', text: 'Hello 3' },

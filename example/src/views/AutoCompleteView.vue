@@ -3,7 +3,13 @@ import { ref } from 'vue';
 import { type AutoCompleteProps, RuiAutoComplete } from '@rotki/ui-library';
 import { objectOmit } from '@vueuse/shared';
 
-const data = [
+interface AutoCompleteData {
+  id: string;
+  text: string;
+  disabled: boolean;
+};
+
+const data: AutoCompleteData[] = [
   { id: '1', text: 'Hello 1', disabled: false },
   { id: '2', text: 'Hello 2', disabled: false },
   { id: '3', text: 'Hello 3', disabled: false },
@@ -22,7 +28,7 @@ const data = [
   { id: '16', text: 'Hello 16', disabled: false },
 ];
 
-const autoCompleteFields = ref<AutoCompleteProps[]>([
+const autoCompleteFields = ref<AutoCompleteProps<AutoCompleteData>[]>([
   {
     data,
     modelValue: [
