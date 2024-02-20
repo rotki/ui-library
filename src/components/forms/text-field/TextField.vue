@@ -80,7 +80,7 @@ const labelWithQuote = computed(() => {
   if (!labelVal)
     return '"\\200B"';
 
-  return `'  ${get(label)}  '`;
+  return `'  ${labelVal}  '`;
 });
 
 const prepend = ref<HTMLDivElement>();
@@ -183,13 +183,15 @@ function clearIconClicked() {
           @remove="emit('remove', $event)"
         />
         <label :class="css.label">
-          {{ label }}
+          <span>
+            {{ label }}
+          </span>
         </label>
         <fieldset
           v-if="variant === 'outlined'"
           :class="css.fieldset"
         >
-          <legend />
+          <legend :class="{ [css.show]: label }" />
         </fieldset>
       </div>
       <div
@@ -322,7 +324,7 @@ function clearIconClicked() {
   }
 
   .label {
-    @apply left-0 text-base leading-[3.75] text-rui-text-secondary pointer-events-none absolute top-0 flex h-full w-full select-none transition-all border-b border-black/[0.42];
+    @apply left-0 text-base leading-[3.75] text-rui-text-secondary pointer-events-none absolute top-0 flex h-full w-full select-none transition-all duration-75 border-b border-black/[0.42];
 
     --x-padding: 0px;
     --prepend-width: v-bind(prependWidth);
@@ -330,6 +332,11 @@ function clearIconClicked() {
 
     padding-left: calc(var(--x-padding) + var(--prepend-width, 0px));
     padding-right: calc(var(--x-padding) + var(--append-width, 0px));
+
+    span {
+      @apply truncate transition-all duration-75;
+      content: v-bind(labelWithQuote);
+    }
 
     &:after {
       content: '';
@@ -527,11 +534,18 @@ function clearIconClicked() {
         @apply border-t-transparent;
 
         + .label {
-          @apply leading-[0] pl-4;
+          @apply leading-[0] pl-4 -mt-3;
+
+          span {
+            @apply pt-3;
+          }
         }
 
         ~ .fieldset {
           legend {
+            &.show {
+              @apply px-2;
+            }
             &:after {
               content: v-bind(labelWithQuote);
             }
@@ -541,13 +555,17 @@ function clearIconClicked() {
     }
 
     .fieldset {
-      @apply absolute w-full h-[calc(100%+0.5rem)] top-0 left-0 pointer-events-none rounded border border-black/[0.23] px-2 transition-all -mt-2;
+      @apply absolute w-full min-w-0 h-[calc(100%+0.5rem)] top-0 left-0 pointer-events-none rounded border border-black/[0.23] px-2 transition-all -mt-2;
 
       legend {
-        @apply opacity-0 text-xs;
+        @apply opacity-0 text-xs max-w-full truncate;
+
+        &:before {
+          content: ' ';
+        }
 
         &:after {
-          @apply whitespace-break-spaces;
+          @apply truncate max-w-full leading-[0];
           content: '\200B';
         }
       }
