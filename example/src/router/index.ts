@@ -88,6 +88,11 @@ const router = createRouter({
       component: () => import('@/views/TooltipView.vue'),
     },
     {
+      path: '/menus',
+      name: 'menus',
+      component: () => import('@/views/MenuView.vue'),
+    },
+    {
       path: '/data-tables',
       name: 'data-tables',
       component: () => import('@/views/DataTableView.vue'),
