@@ -52,6 +52,10 @@ import {
   type Props as TooltipProps,
 } from '@/components/overlays/tooltip/Tooltip.vue';
 import {
+  type Props as MenuProps,
+  default as RuiMenu,
+} from '@/components/overlays/menu/Menu.vue';
+import {
   type Props as BadgeProps,
   default as RuiBadge,
 } from '@/components/overlays/badge/Badge.vue';
@@ -155,6 +159,7 @@ export {
   RuiSwitch,
   RuiTextField,
   RuiTooltip,
+  RuiMenu,
   RuiDataTable,
   RuiSimpleSelect,
   RuiDialog,
@@ -172,6 +177,7 @@ export {
   AutoCompleteProps,
   ChipProps,
   TooltipProps,
+  MenuProps,
   SimpleSelectProps,
   DataTableProps,
   DataTableColumn,

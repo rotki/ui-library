@@ -131,7 +131,7 @@ describe('tooltip', () => {
     expect(document.body.querySelector('div[role=tooltip]')).toBeFalsy();
     const wrapper = createWrapper({
       props: {
-        closeDelay: 1000,
+        closeDelay: 500,
         text,
       },
     });
@@ -158,15 +158,11 @@ describe('tooltip', () => {
       document.body.querySelector('div[data-popper-placement=bottom]'),
     ).toBeTruthy();
     expect(tooltip?.querySelector('span[data-popper-arrow]')).toBeTruthy();
+    expect(document.body.innerHTML).toMatch(new RegExp(text));
+
+    await delay(600);
+    expect(document.body.innerHTML).not.toMatch(new RegExp(text));
 
     wrapper.unmount();
-
-    tooltip = document.body.querySelector('div[role=tooltip]');
-    expect(tooltip).toBeFalsy();
-
-    expect(
-      document.body.querySelector('div[data-popper-placement=bottom]'),
-    ).toBeFalsy();
-    expect(tooltip?.querySelector('span[data-popper-arrow]')).toBeFalsy();
   });
 });

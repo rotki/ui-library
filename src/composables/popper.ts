@@ -70,7 +70,7 @@ export function usePopper(options: Ref<PopperOptions>, disabled: Ref<boolean> = 
     get(instance)?.update();
   };
 
-  const onMouseOver = () => {
+  const onOpen = () => {
     if (get(disabled))
       return;
 
@@ -91,7 +91,7 @@ export function usePopper(options: Ref<PopperOptions>, disabled: Ref<boolean> = 
     }
   };
 
-  const onMouseLeave = () => {
+  const onClose = () => {
     if (get(disabled))
       return;
 
@@ -194,8 +194,8 @@ export function usePopper(options: Ref<PopperOptions>, disabled: Ref<boolean> = 
 
   return {
     instance,
-    onMouseLeave,
-    onMouseOver,
+    onClose,
+    onOpen,
     onPopperLeave,
     open,
     popper,

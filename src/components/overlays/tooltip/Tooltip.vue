@@ -34,8 +34,8 @@ const {
   popper: tooltip,
   open,
   popperEnter,
-  onMouseOver,
-  onMouseLeave,
+  onOpen,
+  onClose,
   onPopperLeave,
   updatePopper,
 } = usePopper(popper, disabled, openDelay, closeDelay);
@@ -46,8 +46,8 @@ const {
     ref="activator"
     :class="css.wrapper"
     :data-tooltip-disabled="disabled"
-    @mouseover="onMouseOver()"
-    @mouseleave="onMouseLeave()"
+    @mouseover="onOpen()"
+    @mouseleave="onClose()"
   >
     <slot
       name="activator"
