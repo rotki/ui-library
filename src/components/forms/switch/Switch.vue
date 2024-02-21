@@ -191,28 +191,28 @@ $colors: 'primary', 'secondary', 'error', 'warning', 'info', 'success';
   }
 
   .inner {
-    @apply relative w-[43px] h-[24px];
+    @apply relative w-[43px] h-[24px] shrink-0;
   }
 
   .input {
-    @apply appearance-none relative w-full h-full rounded-full bg-rui-grey-400 transition-all cursor-pointer;
+    @apply appearance-none relative w-full h-full rounded-full bg-rui-grey-400 transition-all duration-75 ease-in-out cursor-pointer;
 
     &:focus {
       + .toggle {
         &:before {
-          @apply opacity-30;
+          @apply opacity-20;
         }
       }
     }
   }
 
   .toggle {
-    @apply absolute w-5 h-5 transition-all transform -translate-y-1/2 top-1/2 rounded-full pointer-events-none;
+    @apply absolute w-5 h-5 transition-all duration-75 ease-in-out transform -translate-y-1/2 top-1/2 rounded-full pointer-events-none;
     @apply bg-white left-[2px];
 
     &:before {
       content: '';
-      @apply absolute w-10 h-10 bg-white rounded-full top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-all opacity-0;
+      @apply absolute w-10 h-10 bg-black rounded-full top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-all duration-75 ease-in-out opacity-0;
     }
   }
 }
@@ -280,7 +280,7 @@ $colors: 'primary', 'secondary', 'error', 'warning', 'info', 'success';
 
   .toggle {
     &:before {
-      @apply bg-black;
+      @apply bg-white;
     }
   }
 }
