@@ -438,10 +438,7 @@ const sorted: ComputedRef<T[]> = computed(() => {
   if (!sortBy || props.sortModifiers?.external)
     return data;
 
-  const sortOptions: Intl.CollatorOptions = {
-    numeric: true,
-    ignorePunctuation: true,
-  };
+  const sortOptions: Intl.CollatorOptions = { sensitivity: 'accent', usage: 'sort' };
 
   const sort = (by: SortColumn<T>) => {
     data.sort((a, b) => {
@@ -449,16 +446,17 @@ const sorted: ComputedRef<T[]> = computed(() => {
       if (!column)
         return 0;
 
-      if (by.direction === 'desc') {
-        return `${b[column]}`.localeCompare(
-          `${a[column]}`,
-          undefined,
-          sortOptions,
-        );
-      }
+      let [aValue, bValue] = [a[column], b[column]];
+      if (by.direction === 'desc')
+        [aValue, bValue] = [bValue, aValue];
 
-      return `${a[column]}`.localeCompare(
-        `${b[column]}`,
+      const aNumber = Number(aValue);
+      const bNumber = Number(bValue);
+      if (!isNaN(aNumber) && !isNaN(bNumber))
+        return aNumber - bNumber;
+
+      return `${aValue}`.localeCompare(
+        `${bValue}`,
         undefined,
         sortOptions,
       );
