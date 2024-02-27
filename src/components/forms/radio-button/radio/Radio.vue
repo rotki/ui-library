@@ -130,6 +130,8 @@ const { hasError, hasSuccess } = useFormTextDetail(
 </template>
 
 <style lang="scss" module>
+@use '@/styles/colors.scss' as c;
+
 .wrapper {
   @apply relative flex items-start cursor-pointer -ml-[9px];
 
@@ -202,9 +204,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
       }
     }
 
-    $colors: 'primary', 'secondary', 'error', 'warning', 'info', 'success';
-
-    @each $color in $colors {
+    @each $color in c.$context-colors {
       &.#{$color} {
         @apply before:bg-rui-#{$color};
         &.checked {
