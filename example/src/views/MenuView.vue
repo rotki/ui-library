@@ -266,7 +266,7 @@ const menuSelectCustom = ref<MenuSelectProps<SelectOption>[]>([
             </RuiButton>
           </template>
           <div class="px-3 py-2">
-            This is menu
+            This is menu {{ i }}
           </div>
         </RuiMenu>
       </div>

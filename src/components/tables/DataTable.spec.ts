@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import DataTable from '@/components/tables/DataTable.vue';
-import TablePagination from '@/components/tables/TablePagination.vue';
-import { RuiButton, RuiMenuSelect } from '~/src';
+import { RuiButton, RuiDataTable, RuiTablePagination } from '~/src';
 import type { TableColumn } from '@/components/tables/TableHead.vue';
 
 interface User {
@@ -12,8 +10,8 @@ interface User {
   email: string;
 }
 
-function createWrapper(options?: ComponentMountingOptions<typeof DataTable<User>>) {
-  return mount(DataTable<User>, {
+function createWrapper(options?: ComponentMountingOptions<typeof RuiDataTable<User>>) {
+  return mount(RuiDataTable<User>, {
     ...options,
     global: {
       provide: {
@@ -382,13 +380,13 @@ describe('dataTable', () => {
       const stickyOffset = ref(64);
       const wrapperComponent = {
         template:
-          '<div><DataTable :rows=\'[]\' row-attr=\'id\'/><DataTable :rows=\'[]\' row-attr=\'id\'/></div>',
+          '<div><RuiDataTable :rows=\'[]\' row-attr=\'id\'/><RuiDataTable :rows=\'[]\' row-attr=\'id\'/></div>',
       };
 
       const wrapper = mount(wrapperComponent, {
         global: {
           components: {
-            DataTable,
+            RuiDataTable,
           },
           provide: {
             [TableSymbol.valueOf()]: createTableDefaults({
@@ -403,7 +401,7 @@ describe('dataTable', () => {
 
       await nextTick();
 
-      const paginationInstances = wrapper.findAllComponents(TablePagination);
+      const paginationInstances = wrapper.findAllComponents(RuiTablePagination);
       expect(paginationInstances).toHaveLength(2);
 
       paginationInstances.forEach((instance) => {
@@ -412,7 +410,7 @@ describe('dataTable', () => {
         );
       });
 
-      const select = paginationInstances[0].findComponent(RuiMenuSelect);
+      const select = paginationInstances[0].findComponent({ name: 'RuiMenuSelect' });
       select.vm.$emit('update:model-value', { limit: 10 });
 
       await nextTick();
@@ -430,13 +428,13 @@ describe('dataTable', () => {
       const itemsPerPage = ref(25);
       const wrapperComponent = {
         template:
-          '<div><DataTable :rows=\'[]\' row-attr=\'id\'/><DataTable :globalItemsPerPage=\'false\' :rows=\'[]\' row-attr=\'id\'/></div>',
+          '<div><RuiDataTable :rows=\'[]\' row-attr=\'id\'/><RuiDataTable :globalItemsPerPage=\'false\' :rows=\'[]\' row-attr=\'id\'/></div>',
       };
 
       const wrapper = mount(wrapperComponent, {
         global: {
           components: {
-            DataTable,
+            RuiDataTable,
           },
           provide: {
             [TableSymbol.valueOf()]: createTableDefaults({
@@ -450,7 +448,7 @@ describe('dataTable', () => {
 
       await nextTick();
 
-      const paginate = wrapper.findAllComponents(TablePagination);
+      const paginate = wrapper.findAllComponents(RuiTablePagination);
       expect(paginate).toHaveLength(2);
 
       expect(paginate[0].vm.modelValue).toMatchObject(
@@ -460,8 +458,8 @@ describe('dataTable', () => {
         expect.objectContaining({ limit: 10 }),
       );
 
-      const globalSelect = paginate[0].findComponent(RuiMenuSelect);
-      const localSelect = paginate[1].findComponent(RuiMenuSelect);
+      const globalSelect = paginate[0].findComponent({ name: 'RuiMenuSelect' });
+      const localSelect = paginate[1].findComponent({ name: 'RuiMenuSelect' });
       globalSelect.vm.$emit('update:model-value', { limit: 10 });
       localSelect.vm.$emit('update:model-value', { limit: 25 });
 
@@ -482,13 +480,13 @@ describe('dataTable', () => {
       const itemsPerPage = ref(25);
       const wrapperComponent = {
         template:
-          '<div><DataTable :rows=\'[]\' row-attr=\'id\'/><DataTable :globalItemsPerPage=\'true\' :rows=\'[]\' row-attr=\'id\'/></div>',
+          '<div><RuiDataTable :rows=\'[]\' row-attr=\'id\'/><RuiDataTable :globalItemsPerPage=\'true\' :rows=\'[]\' row-attr=\'id\'/></div>',
       };
 
       const wrapper = mount(wrapperComponent, {
         global: {
           components: {
-            DataTable,
+            RuiDataTable,
           },
           provide: {
             [TableSymbol.valueOf()]: createTableDefaults({
@@ -501,7 +499,7 @@ describe('dataTable', () => {
 
       await nextTick();
 
-      const paginate = wrapper.findAllComponents(TablePagination);
+      const paginate = wrapper.findAllComponents(RuiTablePagination);
       expect(paginate).toHaveLength(2);
 
       expect(paginate[0].vm.modelValue).toMatchObject(
@@ -512,8 +510,8 @@ describe('dataTable', () => {
         expect.objectContaining({ limit: 25 }),
       );
 
-      const globalSelect = paginate[0].findComponent(RuiMenuSelect);
-      const localSelect = paginate[1].findComponent(RuiMenuSelect);
+      const globalSelect = paginate[0].findComponent({ name: 'RuiMenuSelect' });
+      const localSelect = paginate[1].findComponent({ name: 'RuiMenuSelect' });
       globalSelect.vm.$emit('update:model-value', { limit: 25 });
       localSelect.vm.$emit('update:model-value', { limit: 10 });
 
@@ -545,7 +543,7 @@ describe('dataTable', () => {
 
     await wrapper.setProps({ pagination: { limit: 10, page: 1, total: data.length } });
 
-    const paginator = wrapper.findComponent(TablePagination);
+    const paginator = wrapper.findComponent(RuiTablePagination);
     expect(paginator.exists()).toBeTruthy();
 
     expect(
@@ -572,7 +570,7 @@ describe('dataTable', () => {
     expect(navButtons.filter(b => b.attributes('disabled') === '')).toHaveLength(2);
     expect(navButtons.filter(b => b.attributes('disabled') === undefined)).toHaveLength(2);
 
-    const [limits, ranges] = paginator.findAllComponents(RuiMenuSelect);
+    const [limits, ranges] = paginator.findAllComponents({ name: 'RuiMenuSelect' });
     expect(limits.exists()).toBeTruthy();
     expect(ranges.exists()).toBeTruthy();
 
