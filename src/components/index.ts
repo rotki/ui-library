@@ -28,6 +28,10 @@ import {
   type Props as SwitchProps,
 } from '@/components/forms/switch/Switch.vue';
 import {
+  default as RuiSlider,
+  type Props as SliderProps,
+} from '@/components/forms/slider/Slider.vue';
+import {
   type Props as ChipProps,
   default as RuiChip,
 } from '@/components/chips/Chip.vue';
@@ -179,6 +183,7 @@ export {
   RuiDivider,
   RuiTableRowExpander,
   RuiMenuSelect,
+  RuiSlider,
   AutoCompleteProps,
   ChipProps,
   TooltipProps,
@@ -219,4 +224,5 @@ export {
   DataTableSortData,
   DataTableGroupKeys,
   MenuSelectProps,
+  SliderProps,
 };

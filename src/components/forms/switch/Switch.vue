@@ -98,7 +98,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
 </template>
 
 <style lang="scss" module>
-$colors: 'primary', 'secondary', 'error', 'warning', 'info', 'success';
+@use '@/styles/colors.scss' as c;
 
 .wrapper {
   @apply relative flex gap-2 items-start cursor-pointer;
@@ -160,7 +160,7 @@ $colors: 'primary', 'secondary', 'error', 'warning', 'info', 'success';
 
   &.checked {
     &:not(.disabled) {
-      @each $color in $colors {
+      @each $color in c.$context-colors {
         &.#{$color} {
           .input {
             @apply bg-rui-#{$color};
@@ -242,7 +242,7 @@ $colors: 'primary', 'secondary', 'error', 'warning', 'info', 'success';
 
     &.checked {
       &:not(.disabled) {
-        @each $color in $colors {
+        @each $color in c.$context-colors {
           &.#{$color} {
             .input {
               @apply bg-rui-#{$color}/[0.5];

@@ -53,6 +53,11 @@ const router = createRouter({
       component: () => import('@/views/TextAreaView.vue'),
     },
     {
+      path: '/sliders',
+      name: 'sliders',
+      component: () => import('@/views/SliderView.vue'),
+    },
+    {
       path: '/auto-complete',
       name: 'auto-complete',
       component: () => import('@/views/AutoCompleteView.vue'),
