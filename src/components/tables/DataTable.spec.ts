@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import DataTable from '@/components/tables/DataTable.vue';
 import TablePagination from '@/components/tables/TablePagination.vue';
-import { RuiButton, RuiSimpleSelect } from '~/src';
+import { RuiButton, RuiMenuSelect } from '~/src';
 import type { TableColumn } from '@/components/tables/TableHead.vue';
 
 interface User {
@@ -412,8 +412,8 @@ describe('dataTable', () => {
         );
       });
 
-      const select = paginationInstances[0].findComponent(RuiSimpleSelect);
-      select.vm.$emit('update:model-value', 10);
+      const select = paginationInstances[0].findComponent(RuiMenuSelect);
+      select.vm.$emit('update:model-value', { limit: 10 });
 
       await nextTick();
 
@@ -460,10 +460,10 @@ describe('dataTable', () => {
         expect.objectContaining({ limit: 10 }),
       );
 
-      const globalSelect = paginate[0].findComponent(RuiSimpleSelect);
-      const localSelect = paginate[1].findComponent(RuiSimpleSelect);
-      globalSelect.vm.$emit('update:model-value', 10);
-      localSelect.vm.$emit('update:model-value', 25);
+      const globalSelect = paginate[0].findComponent(RuiMenuSelect);
+      const localSelect = paginate[1].findComponent(RuiMenuSelect);
+      globalSelect.vm.$emit('update:model-value', { limit: 10 });
+      localSelect.vm.$emit('update:model-value', { limit: 25 });
 
       await nextTick();
 
@@ -512,10 +512,10 @@ describe('dataTable', () => {
         expect.objectContaining({ limit: 25 }),
       );
 
-      const globalSelect = paginate[0].findComponent(RuiSimpleSelect);
-      const localSelect = paginate[1].findComponent(RuiSimpleSelect);
-      globalSelect.vm.$emit('update:model-value', 25);
-      localSelect.vm.$emit('update:model-value', 10);
+      const globalSelect = paginate[0].findComponent(RuiMenuSelect);
+      const localSelect = paginate[1].findComponent(RuiMenuSelect);
+      globalSelect.vm.$emit('update:model-value', { limit: 25 });
+      localSelect.vm.$emit('update:model-value', { limit: 10 });
 
       await nextTick();
 
@@ -572,21 +572,21 @@ describe('dataTable', () => {
     expect(navButtons.filter(b => b.attributes('disabled') === '')).toHaveLength(2);
     expect(navButtons.filter(b => b.attributes('disabled') === undefined)).toHaveLength(2);
 
-    const [limits, ranges] = paginator.findAllComponents(RuiSimpleSelect);
+    const [limits, ranges] = paginator.findAllComponents(RuiMenuSelect);
     expect(limits.exists()).toBeTruthy();
     expect(ranges.exists()).toBeTruthy();
 
-    limits.vm.$emit('update:model-value', 5);
+    limits.vm.$emit('update:model-value', { limit: 5 });
 
     await nextTick();
 
-    expect(limits.vm.modelValue).toBe(5);
+    expect(limits.vm.modelValue).toStrictEqual({ limit: 5 });
 
-    ranges.vm.$emit('update:model-value', '6-10');
+    ranges.vm.$emit('update:model-value', { page: '6-10' });
 
     await nextTick();
 
-    expect(ranges.vm.modelValue).toBe('6-10');
+    expect(ranges.vm.modelValue).toStrictEqual({ page: '6-10' });
 
     expect(navButtons.filter(b => b.attributes('disabled') === '')).toHaveLength(0);
     expect(navButtons.filter(b => b.attributes('disabled') === undefined)).toHaveLength(4);
