@@ -159,7 +159,7 @@ const on = computed(() => {
 
 <style lang="scss" module>
 .wrapper {
-  @apply relative inline-flex;
+  @apply relative inline-flex max-w-full;
 }
 
 .menu {

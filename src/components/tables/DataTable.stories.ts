@@ -155,7 +155,7 @@ const render: StoryFn<Props> = args => ({
     </div>`,
 });
 
-const data = [
+const data: User[] = [
   {
     date: '10.09.2023',
     email: 'Lefteris@example.com',
