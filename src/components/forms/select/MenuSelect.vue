@@ -55,6 +55,38 @@ const value = computed({
   set: value => emit('update:model-value', value),
 });
 
+const menuWidth = computed(() => {
+  const widths = { min: 0, max: 0 };
+  const maxWidth = 30;
+  const paddingX = 1.5;
+  const fontMultiplier = props.dense ? 12 : 13;
+
+  props.options.forEach((option) => {
+    const length = getText(option)?.toString()?.length ?? 0;
+    if (widths.min === 0 && widths.max === 0) {
+      widths.min = length;
+      widths.max = length;
+    }
+    else if (length < widths.min) {
+      widths.min = length;
+    }
+    else if (length > widths.max) {
+      widths.max = length;
+    }
+  });
+
+  const difference = widths.max - widths.min;
+
+  function computeValue(width: number) {
+    return `${Math.min((width * fontMultiplier) / 16 + paddingX, maxWidth)}rem`;
+  }
+
+  if (difference <= 5)
+    return computeValue(widths.max);
+
+  return computeValue(widths.min + difference / 2);
+});
+
 function getText(item: T): T[K] {
   return item[props.textAttr];
 }
@@ -94,7 +126,15 @@ watch(isOpen, updateOpen);
         v-bind="{ disabled, value, outlined, on, open }"
       >
         <label
-          :class="[css.activator, { [css.disabled]: disabled, [css.outlined]: outlined }]"
+          :class="[
+            css.activator,
+            labelClass,
+            {
+              [css.disabled]: disabled,
+              [css.outlined]: outlined,
+              [css.dense]: dense,
+            },
+          ]"
           :aria-disabled="disabled"
           v-on="disabled ? {} : on"
         >
@@ -114,7 +154,8 @@ watch(isOpen, updateOpen);
     </template>
     <div
       v-bind="containerProps"
-      :class="css.menu"
+      :class="[css.menu, menuClass]"
+      :style="{ width: menuWidth }"
     >
       <div v-bind="wrapperProps">
         <RuiButton
@@ -138,9 +179,13 @@ watch(isOpen, updateOpen);
   @apply max-w-full;
 
   .activator {
-    @apply relative inline-flex overflow-hidden;
-    @apply outline-none focus:outline-none cursor-pointer pl-2 pr-8 py-1 rounded;
+    @apply relative inline-flex items-center overflow-hidden;
+    @apply outline-none focus:outline-none cursor-pointer h-9 pl-4 py-2 pr-8 rounded;
     @apply m-0 bg-white hover:bg-gray-50 transition text-caption;
+
+    &.dense {
+      @apply h-7 pl-2 py-1;
+    }
 
     &.disabled {
       @apply bg-black/[.12] text-rui-text-disabled active:text-rui-text-disabled cursor-default;
@@ -170,7 +215,7 @@ watch(isOpen, updateOpen);
 }
 
 .menu {
-  @apply max-h-60 w-80;
+  @apply max-h-60 min-w-[2.5rem];
 }
 
 :global(.dark) {
