@@ -133,6 +133,10 @@ import {
   default as RuiSkeletonLoader,
   type Props as SkeletonLoaderProps,
 } from '@/components/loaders/Skeleton.vue';
+import {
+  type Props as MenuSelectProps,
+  default as RuiMenuSelect,
+} from '@/components/forms/select/MenuSelect.vue';
 import type {
   TableColumn as DataTableColumn,
   GroupKeys as DataTableGroupKeys,
@@ -174,6 +178,7 @@ export {
   RuiTextArea,
   RuiDivider,
   RuiTableRowExpander,
+  RuiMenuSelect,
   AutoCompleteProps,
   ChipProps,
   TooltipProps,
@@ -213,4 +218,5 @@ export {
   ExpandButtonProps,
   DataTableSortData,
   DataTableGroupKeys,
+  MenuSelectProps,
 };

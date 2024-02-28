@@ -33,7 +33,7 @@ const navigation = ref([
     ],
   },
   {
-    title: 'Components',
+    title: 'Utilities',
     links: [
       {
         to: { name: 'breakpoint' },

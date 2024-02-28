@@ -11,6 +11,7 @@ export interface Props {
 withDefaults(defineProps<Props>(), { icon: 'arrow-down-s-line' });
 
 const css = useCssModule();
+const attrs = useAttrs();
 </script>
 
 <template>
@@ -24,6 +25,7 @@ const css = useCssModule();
     icon
     size="sm"
     variant="text"
+    v-bind="attrs"
   >
     <slot>
       <Icon

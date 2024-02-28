@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import Button from '@/components/buttons/button/Button.vue';
 import Icon from '@/components/icons/Icon.vue';
-import SimpleSelect from '@/components/forms/select/SimpleSelect.vue';
+import MenuSelect from '@/components/forms/select/MenuSelect.vue';
 
 export interface TablePaginationData {
   page: number;
@@ -34,15 +34,15 @@ const css = useCssModule();
 const tableDefaults = useTable();
 
 const limits = computed(
-  () => get(modelValue).limits ?? get(tableDefaults.limits),
+  () => (get(modelValue).limits ?? get(tableDefaults.limits)).map(limit => ({ limit })),
 );
 
 const currentLimit = computed({
-  get: () => get(modelValue).limit,
-  set: value =>
+  get: () => ({ limit: get(modelValue).limit }),
+  set: ({ limit }) =>
     emit('update:model-value', {
       ...get(modelValue),
-      limit: Number(value),
+      limit: Number(limit),
       page: 1,
     }),
 });
@@ -61,7 +61,7 @@ const ranges = computed(() => {
   for (let i = 1; i <= get(pages); i++)
     segments.push(pageRangeText(i));
 
-  return segments;
+  return segments.map(page => ({ page }));
 });
 
 const indicatorText = computed(() => {
@@ -70,11 +70,11 @@ const indicatorText = computed(() => {
 });
 
 const currentRange = computed({
-  get: () => pageRangeText(get(modelValue).page),
-  set: value =>
+  get: () => ({ page: pageRangeText(get(modelValue).page) }),
+  set: ({ page }) =>
     emit('update:model-value', {
       ...get(modelValue),
-      page: get(ranges).indexOf(value) + 1,
+      page: get(ranges).findIndex(range => range.page === page) + 1,
     }),
 });
 
@@ -132,21 +132,25 @@ function onLast() {
   <div :class="css.wrapper">
     <div :class="css.limit">
       <span :class="css.limit__text">Rows per page:</span>
-      <SimpleSelect
+      <MenuSelect
         v-model="currentLimit"
         :options="limits"
         :disabled="loading || disablePerPage"
         name="limit"
+        key-attr="limit"
+        text-attr="limit"
       />
     </div>
     <div :class="css.ranges">
       <span :class="css.ranges__text">Items #</span>
-      <SimpleSelect
+      <MenuSelect
         v-if="ranges.length > 0"
         v-model="currentRange"
         :options="ranges"
         :disabled="loading"
         name="ranges"
+        key-attr="page"
+        text-attr="page"
       />
       <span :class="css.indicator">
         {{ indicatorText }}
