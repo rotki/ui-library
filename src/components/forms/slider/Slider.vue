@@ -381,7 +381,7 @@ const tickSizeInPx = computed(() => `${get(tickSize)}px`);
 
         &__track {
           width: v-bind(trackWidth);
-          @apply transition-all ease-linear duration-75;
+          @apply transition-all ease-linear duration-75 delay-0;
           @apply h-full rounded-full;
         }
       }
@@ -404,7 +404,7 @@ const tickSizeInPx = computed(() => `${get(tickSize)}px`);
       }
 
       &__thumb {
-        @apply absolute top-1/2 transition-all ease-linear duration-75 transform -translate-y-1/2 -translate-x-1/2;
+        @apply absolute top-1/2 transition-all ease-linear duration-75 delay-0 transform -translate-y-1/2 -translate-x-1/2;
         @apply w-3 h-3 rounded-full shadow-2;
         left: v-bind(trackWidth);
 
@@ -418,7 +418,7 @@ const tickSizeInPx = computed(() => `${get(tickSize)}px`);
         &_label {
           left: v-bind(trackWidth);
           @apply invisible opacity-0;
-          @apply absolute -mt-7 transition-all ease-linear duration-75 transform -translate-x-1/2;
+          @apply absolute -mt-7 transition-all ease-linear duration-75 delay-0 transform -translate-x-1/2;
           @apply px-2 py-1 text-xs font-normal;
           @apply bg-rui-grey-700/90 text-white rounded shadow;
         }
