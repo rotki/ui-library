@@ -15,7 +15,7 @@ import type { Ref } from 'vue';
 
 export interface TableOptions<T> {
   pagination?: TablePaginationData;
-  sort?: SortColumn<T> | SortColumn<T>[];
+  sort?: TableSortData<T>;
 }
 
 export interface GroupHeader<T> {
@@ -1272,14 +1272,6 @@ onMounted(() => {
     }
 
     &.dense {
-      .thead {
-        .tr {
-          .th {
-            @apply py-[0.38rem];
-          }
-        }
-      }
-
       .tbody {
         .td {
           @apply py-[0.38rem];

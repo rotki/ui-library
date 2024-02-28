@@ -152,6 +152,7 @@ function getSortDirection(key: TableColumn<T>['key']) {
       {
         [css.sticky__header]: stickyHeader,
         [css.stick__top]: stick,
+        [css.dense]: dense,
       },
     ]"
   >
@@ -167,6 +168,7 @@ function getSortDirection(key: TableColumn<T>['key']) {
           :disabled="disableCheckAll"
           :indeterminate="indeterminate"
           :model-value="isAllSelected"
+          :size="dense ? 'sm' : undefined"
           color="primary"
           data-cy="table-toggle-check-all"
           hide-details
@@ -198,6 +200,7 @@ function getSortDirection(key: TableColumn<T>['key']) {
             v-if="column.sortable"
             :model-value="getSortIndex(column.key) >= 0"
             :text="`${getSortIndex(column.key) + 1}`"
+            :offset-y="dense ? 8 : 0"
             color="secondary"
             size="sm"
           >
@@ -284,6 +287,14 @@ function getSortDirection(key: TableColumn<T>['key']) {
         th {
           @apply bg-white border-b border-b-black/[0.12];
         }
+      }
+    }
+  }
+
+  &.dense {
+    .tr {
+      .th {
+        @apply py-[0.38rem];
       }
     }
   }
