@@ -123,6 +123,11 @@ const router = createRouter({
       component: () => import('@/views/BadgeView.vue'),
     },
     {
+      path: '/accordions',
+      name: 'accordions',
+      component: () => import('@/views/AccordionView.vue'),
+    },
+    {
       path: '/breakpoint',
       name: 'breakpoint',
       component: () => import('@/views/BreakpointView.vue'),
