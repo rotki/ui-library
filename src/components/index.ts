@@ -141,6 +141,14 @@ import {
   type Props as MenuSelectProps,
   default as RuiMenuSelect,
 } from '@/components/forms/select/MenuSelect.vue';
+import {
+  type Props as AccordionsProps,
+  default as RuiAccordions,
+} from '@/components/accordions/accordions/Accordions.vue';
+import {
+  type AccordionProps,
+  default as RuiAccordion,
+} from '@/components/accordions/accordion/Accordion.vue';
 import type {
   TableColumn as DataTableColumn,
   GroupKeys as DataTableGroupKeys,
@@ -184,6 +192,8 @@ export {
   RuiTableRowExpander,
   RuiMenuSelect,
   RuiSlider,
+  RuiAccordions,
+  RuiAccordion,
   AutoCompleteProps,
   ChipProps,
   TooltipProps,
@@ -225,4 +235,6 @@ export {
   DataTableGroupKeys,
   MenuSelectProps,
   SliderProps,
+  AccordionsProps,
+  AccordionProps,
 };

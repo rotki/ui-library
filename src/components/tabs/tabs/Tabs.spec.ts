@@ -29,13 +29,7 @@ function createWrapper(options?: ComponentMountingOptions<typeof Tabs>) {
 
 describe('tabs/Tabs', () => {
   it('renders properly', async () => {
-    const modelValue = ref();
-    const wrapper = createWrapper({
-      props: {
-        'modelValue': get(modelValue),
-        'onUpdate:modelValue': (e: any) => set(modelValue, e),
-      },
-    });
+    const wrapper = createWrapper();
 
     await nextTick();
 

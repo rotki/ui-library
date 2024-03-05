@@ -31,6 +31,7 @@ const navigation = ref([
       { to: { name: 'cards' }, title: 'Cards' },
       { to: { name: 'tabs' }, title: 'Tabs' },
       { to: { name: 'badges' }, title: 'Badges' },
+      { to: { name: 'accordions' }, title: 'Accordions' },
     ],
   },
   {
