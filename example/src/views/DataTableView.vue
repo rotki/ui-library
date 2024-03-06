@@ -331,6 +331,22 @@ const emptyTables = ref<
       collapsed: [],
     },
   },
+  {
+    title: 'Selection with disabled rows',
+    table: {
+      rowAttr: 'id',
+      rows: fixedRows,
+      cols: fixedColumns,
+      modelValue: [9, 5],
+      disabledRows: fixedRows.slice(0, 3),
+      outlined: true,
+      sort: [{ column: 'name', direction: 'asc' }],
+      pagination: { limit: 5, page: 1, total: 5 },
+      stickyHeader: true,
+      group: ['username'],
+      collapsed: [],
+    },
+  },
 ]);
 
 const expandableTables = ref<

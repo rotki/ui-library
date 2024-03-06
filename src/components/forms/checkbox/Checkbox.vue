@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { objectPick } from '@vueuse/shared';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 import Icon from '@/components/icons/Icon.vue';
 import FormTextDetail from '@/components/helpers/FormTextDetail.vue';
@@ -80,13 +81,14 @@ const { hasError, hasSuccess } = useFormTextDetail(
           [css.disabled]: disabled,
         },
       ]"
+      v-bind="objectPick(attrs, ['onClick'])"
     >
       <input
         :checked="modelValue"
         type="checkbox"
         :class="css.input"
         :disabled="disabled"
-        v-bind="getNonRootAttrs(attrs)"
+        v-bind="getNonRootAttrs(attrs, ['onInput', 'onClick'])"
         @input="input($event)"
       />
       <span

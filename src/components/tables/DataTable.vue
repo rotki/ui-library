@@ -148,6 +148,7 @@ export interface Props<T, K extends keyof T> {
    */
   group?: TableRowKeyData<T>;
   collapsed?: T[];
+  disabledRows?: T[];
 }
 
 defineOptions({
@@ -179,7 +180,7 @@ const props = withDefaults(defineProps<Props<T, IdType>>(), {
   globalItemsPerPage: undefined,
   group: undefined,
   collapsed: undefined,
-  customGroupBy: undefined,
+  disabledRows: undefined,
 });
 
 const emit = defineEmits<{
@@ -222,7 +223,7 @@ const slots = defineSlots<
   }>
 >();
 
-const { stickyHeader, collapsed } = toRefs(props);
+const { stickyHeader, collapsed, modelValue, disabledRows } = toRefs(props);
 const tableDefaults = useTable();
 
 const stickyHeaderOffset = computed(() => props.stickyOffset !== undefined ? props.stickyOffset : get(tableDefaults.stickyOffset));
@@ -318,11 +319,17 @@ const itemsLength = ref(0);
 
 const selectedData = computed<T[IdType][] | undefined>({
   get() {
-    return props.modelValue;
+    return get(modelValue);
   },
   set(value) {
     emit('update:model-value', value);
   },
+});
+
+const internalSelectedData: Ref<T[IdType][]> = ref([]);
+
+watchImmediate(modelValue, (modelValue) => {
+  set(internalSelectedData, modelValue);
 });
 
 const rowIdentifier = computed(() => props.rowAttr);
@@ -381,6 +388,8 @@ const sortData = computed({
     return props.sort;
   },
   set(value) {
+    onToggleAll(false);
+    resetCheckboxShiftState();
     emit('update:sort', value);
     emit('update:options', {
       sort: value,
@@ -616,6 +625,14 @@ function isSelected(identifier: T[IdType]) {
   return selection.includes(identifier);
 }
 
+function isDisabledRow(rowKey: T[IdType]) {
+  const identifier = props.rowAttr;
+  if (!identifier)
+    return false;
+
+  return get(disabledRows)?.some((disabledRow: T) => rowKey === disabledRow[identifier]);
+}
+
 function isExpanded(identifier: T[IdType]) {
   const { expanded } = props;
   if (!expanded?.length)
@@ -782,24 +799,87 @@ function onToggleAll(checked: boolean) {
   }
 }
 
+const shiftClicked: Ref<boolean> = ref(false);
+const lastSelectedIndex: Ref<number> = ref(-1);
+
+function resetCheckboxShiftState() {
+  set(shiftClicked, false);
+  set(lastSelectedIndex, -1);
+}
+
 /**
  * toggles a single row
  * @param {boolean} checked checkbox state
  * @param {string} value the id of the selected row
+ * @param {number} index the index of the selected row
+ * @param {boolean} userAction whether the select triggered by user manually
+ *
  */
-function onSelect(checked: boolean, value: T[typeof props.rowAttr]) {
-  const selectedRows = get(selectedData);
+function onSelect(checked: boolean, value: T[typeof props.rowAttr], index: number, userAction = false) {
+  if (get(shiftClicked) && userAction)
+    return;
+
+  const selectedRows = get(internalSelectedData);
   if (!selectedRows)
     return false;
 
-  if (checked) {
-    set(selectedData, [...selectedRows, value]);
+  const selected = isSelected(value);
+
+  if (checked && !selected) {
+    set(internalSelectedData, [...selectedRows, value]);
   }
-  else {
+  else if (!checked && selected) {
     set(
-      selectedData,
+      internalSelectedData,
       [...selectedRows].filter(r => r !== value),
     );
+  }
+
+  if (userAction)
+    set(selectedData, get(internalSelectedData));
+}
+
+function onCheckboxClick(event: any, value: T[typeof props.rowAttr], index: number) {
+  const input = event.currentTarget.querySelector('input');
+  const nodeName = event.target.nodeName;
+
+  const shiftKey = event.shiftKey;
+  set(shiftClicked, shiftKey);
+
+  if (input && nodeName !== 'INPUT') {
+    if (shiftKey) {
+      setTimeout(() => {
+        let lastIndex = get(lastSelectedIndex);
+        if (lastIndex === -1)
+          lastIndex = index;
+        const tableData = get(filtered);
+        const lastSelectedData = tableData[lastIndex];
+
+        if (isRow(lastSelectedData)) {
+          const id = get(rowIdentifier);
+          const valueToApply = isSelected(lastSelectedData[id]);
+
+          if (lastIndex === index) {
+            onSelect(!valueToApply, value, index);
+          }
+          else {
+            const from = Math.min(lastIndex, index);
+            const to = Math.max(lastIndex, index);
+
+            for (let i = from; i <= to; i++) {
+              const currSelectedData = tableData[i];
+              if (isRow(currSelectedData))
+                onSelect(valueToApply, currSelectedData[id], i);
+            }
+          }
+
+          set(lastSelectedIndex, index);
+          set(selectedData, get(internalSelectedData));
+        }
+      }, 1);
+    }
+
+    else { set(lastSelectedIndex, index); }
   }
 }
 
@@ -826,6 +906,8 @@ function scrollToTop() {
 function onPaginate() {
   emit('update:expanded', []);
   scrollToTop();
+  onToggleAll(false);
+  resetCheckboxShiftState();
 }
 
 function setInternalTotal(items: GroupedTableRow<T>[]) {
@@ -859,9 +941,12 @@ watch(tableDefaults.itemsPerPage, (itemsPerPage) => {
  * on changing search query, need to reset pagination page to 1
  */
 watch(search, () => {
-  const pagination = get(paginationData);
-  if (pagination)
-    pagination.page = 1;
+  set(paginationData, {
+    ...get(paginationData),
+    page: 1,
+  });
+  onToggleAll(false);
+  resetCheckboxShiftState();
 });
 
 watch(sorted, setInternalTotal);
@@ -1042,9 +1127,13 @@ onMounted(() => {
                   <Checkbox
                     :data-cy="`table-toggle-check-${index}`"
                     :model-value="isSelected(row[rowIdentifier])"
+                    :disabled="isDisabledRow(row[rowIdentifier])"
+                    :size="dense ? 'sm' : undefined"
                     color="primary"
+                    class="select-none"
                     hide-details
-                    @update:model-value="onSelect($event, row[rowIdentifier])"
+                    @update:model-value="onSelect($event, row[rowIdentifier], index, true)"
+                    @click="onCheckboxClick($event, row[rowIdentifier], index)"
                   />
                 </td>
 
