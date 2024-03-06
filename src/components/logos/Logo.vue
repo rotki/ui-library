@@ -14,14 +14,30 @@ withDefaults(defineProps<Props>(), {
   text: false,
   customSrc: undefined,
 });
+
+const pending = ref(true);
+const error = ref(false);
 </script>
 
 <template>
   <div class="h-12 space-x-4 flex items-center">
     <img
+      v-if="customSrc && !error"
       class="h-full"
-      :src="customSrc ?? logo"
+      :class="{ hidden: pending }"
+      :src="customSrc"
+      @loadstart="pending = true"
+      @load="pending = false"
+      @error="
+        error = true;
+        pending = false;
+      "
+    />
+    <img
+      v-if="!customSrc || pending || error"
+      :src="logo"
       alt="Rotki"
+      class="h-full"
     />
     <div
       v-if="text"
