@@ -38,4 +38,11 @@ export const WithCustomSrc: Story = {
   },
 };
 
+export const WithCustomSrcAndFallback: Story = {
+  args: {
+    customSrc:
+      'notfoundurl',
+  },
+};
+
 export default meta;
