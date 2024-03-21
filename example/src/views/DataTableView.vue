@@ -332,7 +332,24 @@ const emptyTables = ref<
     },
   },
   {
-    title: 'Selection with disabled rows',
+    title: 'Multi page selection with disabled rows',
+    table: {
+      rowAttr: 'id',
+      rows: fixedRows,
+      cols: fixedColumns,
+      modelValue: [9, 5],
+      disabledRows: fixedRows.slice(0, 3),
+      outlined: true,
+      sort: [{ column: 'name', direction: 'asc' }],
+      pagination: { limit: 5, page: 1, total: 5 },
+      stickyHeader: true,
+      multiPageSelect: true,
+      group: ['username'],
+      collapsed: [],
+    },
+  },
+  {
+    title: 'Single page selection with repositioned group expand button',
     table: {
       rowAttr: 'id',
       rows: fixedRows,
@@ -345,6 +362,8 @@ const emptyTables = ref<
       stickyHeader: true,
       group: ['username'],
       collapsed: [],
+      expanded: [],
+      groupExpandButtonPosition: 'end',
     },
   },
 ]);
@@ -384,6 +403,24 @@ const expandableTables = ref<
     },
   },
   {
+    title: 'Expandable with icon on left',
+    table: {
+      rowAttr: 'id',
+      rows: fixedRows,
+      cols: [
+        { key: 'expand' },
+        ...fixedColumns,
+      ],
+      outlined: true,
+      sort: [{ column: 'name', direction: 'asc' }],
+      pagination: { limit: 5, page: 1, total: 5 },
+      modelValue: [],
+      expanded: [],
+      singleExpand: true,
+      group: ['username'],
+    },
+  },
+  {
     title: 'Custom Expandable control',
     customToggle: true,
     table: {
@@ -395,6 +432,28 @@ const expandableTables = ref<
       pagination: { limit: 5, page: 1, total: 5 },
       expanded: [],
       stickyHeader: true,
+    },
+  },
+  {
+    title: 'Selection with defined expand button',
+    table: {
+      rowAttr: 'id',
+      rows: fixedRows,
+      cols: [
+        ...fixedColumns.slice(0, 4),
+        { key: 'expand' },
+        ...fixedColumns.slice(4),
+      ],
+      modelValue: [9, 5],
+      disabledRows: fixedRows.slice(0, 3),
+      outlined: true,
+      sort: [{ column: 'name', direction: 'asc' }],
+      pagination: { limit: 5, page: 1, total: 5 },
+      stickyHeader: true,
+      group: ['username'],
+      collapsed: [],
+      expanded: [],
+      groupExpandButtonPosition: 'end',
     },
   },
 ]);
@@ -617,6 +676,9 @@ const apiDatatables = ref<
     },
   },
 ]);
+
+const containerScroll = ref(null);
+const containedTable = { ...get(emptyTables)[4].table };
 
 const users = computed<ExtendedUser[]>(() =>
   JSON.parse(get(_users) ?? '[]').map(normalize),
@@ -1041,6 +1103,35 @@ function toggleRow(row: any, expanded: any[] | undefined) {
             </template>
             <template #group.header.content="{ header }">
               custom group content: {{ header.identifier }}
+            </template>
+          </RuiDataTable>
+        </div>
+        <div
+          ref="containerScroll"
+          class="max-h-[300px] overflow-y-auto mt-10"
+        >
+          <RuiDataTable
+            v-bind="objectOmit(containedTable, ['modelValue', 'pagination', 'sort', 'stickyHeader'])"
+            v-model="containedTable.modelValue"
+            v-model:pagination="containedTable.pagination"
+            v-model:sort="containedTable.sort"
+            v-model:group="containedTable.group"
+            v-model:collapsed="containedTable.collapsed"
+            data-cy="table-scroll-parent"
+            :scroller="containerScroll"
+            :scroller-offset="0"
+          >
+            <template #item.action>
+              <RuiButton
+                icon
+                variant="text"
+                size="sm"
+              >
+                <RuiIcon
+                  name="more-fill"
+                  color="primary"
+                />
+              </RuiButton>
             </template>
           </RuiDataTable>
         </div>

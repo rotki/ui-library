@@ -41,7 +41,9 @@ const emit = defineEmits<{
   (e: 'update:indeterminate', indeterminate: boolean): void;
 }>();
 
-const { size, modelValue, errorMessages, successMessages } = toRefs(props);
+const { size, modelValue, indeterminate, errorMessages, successMessages } = toRefs(props);
+
+const el = ref<HTMLInputElement | null>(null);
 
 function input(event: Event) {
   const checked = (event.target as HTMLInputElement).checked;
@@ -69,6 +71,18 @@ const { hasError, hasSuccess } = useFormTextDetail(
   errorMessages,
   successMessages,
 );
+
+watch(indeterminate, (val) => {
+  const input = get(el);
+  if (input && val)
+    input.checked = false;
+});
+
+watch(modelValue, (val) => {
+  const input = get(el);
+  if (input && input.checked !== val)
+    input.checked = val;
+});
 </script>
 
 <template>
@@ -84,7 +98,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
       v-bind="objectPick(attrs, ['onClick'])"
     >
       <input
-        :checked="modelValue"
+        ref="el"
         type="checkbox"
         :class="css.input"
         :disabled="disabled"

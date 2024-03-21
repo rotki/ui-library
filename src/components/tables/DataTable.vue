@@ -147,8 +147,11 @@ export interface Props<T, K extends keyof T> {
    * @example v-model:group="['name', 'country']"
    */
   group?: TableRowKeyData<T>;
+  groupExpandButtonPosition?: 'start' | 'end';
   collapsed?: T[];
   disabledRows?: T[];
+  multiPageSelect?: boolean;
+  scroller?: HTMLElement;
 }
 
 defineOptions({
@@ -181,6 +184,9 @@ const props = withDefaults(defineProps<Props<T, IdType>>(), {
   group: undefined,
   collapsed: undefined,
   disabledRows: undefined,
+  multiPageSelect: false,
+  groupExpandButtonPosition: 'start',
+  scroller: undefined,
 });
 
 const emit = defineEmits<{
@@ -292,7 +298,9 @@ const columns = computed<TableColumn<T>[]>(() => {
         }) satisfies NoneSortableTableColumn<T>,
     );
 
-  if (get(expandable)) {
+  const hasExpandColumn = data.some(row => row.key === 'expand');
+
+  if (get(expandable) && !hasExpandColumn) {
     return [
       ...data,
       {
@@ -388,7 +396,8 @@ const sortData = computed({
     return props.sort;
   },
   set(value) {
-    onToggleAll(false);
+    if (!props.multiPageSelect)
+      onToggleAll(false);
     resetCheckboxShiftState();
     emit('update:sort', value);
     emit('update:options', {
@@ -630,7 +639,7 @@ function isDisabledRow(rowKey: T[IdType]) {
   if (!identifier)
     return false;
 
-  return get(disabledRows)?.some((disabledRow: T) => rowKey === disabledRow[identifier]);
+  return !!get(disabledRows)?.some((disabledRow: T) => rowKey === disabledRow[identifier]);
 }
 
 function isExpanded(identifier: T[IdType]) {
@@ -776,26 +785,44 @@ function onSort({
   }
 }
 
+function isSelectable(rowKey: T[IdType]): boolean {
+  return isSelected(rowKey) || !isDisabledRow(rowKey);
+}
+
+function mustSelect(rowKey: T[IdType]): boolean {
+  return isSelected(rowKey) && isDisabledRow(rowKey);
+}
+
 /**
  * toggles selected rows
  * @param {boolean} checked checkbox state
  */
 function onToggleAll(checked: boolean) {
-  if (checked) {
-    set(
-      selectedData,
-      Array.from(
-        new Set([...(get(selectedData) ?? []), ...get(visibleIdentifiers)]),
-      ),
-    );
+  const selectedRows = get(selectedData) ?? [];
+  if (!props.multiPageSelect) {
+    if (checked)
+      set(selectedData, get(visibleIdentifiers).filter(isSelectable));
+    else
+      set(selectedData, get(visibleIdentifiers).filter(mustSelect));
   }
   else {
-    set(
-      selectedData,
-      get(selectedData)?.filter(
-        identifier => !get(visibleIdentifiers).includes(identifier),
-      ),
-    );
+    if (checked) {
+      set(
+        selectedData,
+        Array.from(new Set(
+          [
+            ...selectedRows,
+            ...get(visibleIdentifiers).filter(isSelectable),
+          ],
+        )),
+      );
+    }
+    else {
+      set(
+        selectedData,
+        selectedRows.filter(rowKey => !get(visibleIdentifiers).includes(rowKey) || get(visibleIdentifiers).filter(mustSelect).includes(rowKey)),
+      );
+    }
   }
 }
 
@@ -888,7 +915,8 @@ const search = computed(() => props.search);
 function scrollToTop() {
   const { top } = useElementBounding(table);
 
-  const wrapper = document.body;
+  const { top: scrollerTop } = useElementBounding(props.scroller);
+  const wrapper = props.scroller ?? document.body;
   const tableEl = get(table);
 
   if (!(tableEl && wrapper))
@@ -896,7 +924,12 @@ function scrollToTop() {
 
   const tableTop = get(top);
   setTimeout(() => {
-    const newScrollTop = tableTop + wrapper.scrollTop - (get(stickyHeaderOffset) ?? 0);
+    let newScrollTop = tableTop + wrapper.scrollTop - 2;
+    if (props.scroller) {
+      newScrollTop -= get(scrollerTop) - tableEl.scrollTop;
+      wrapper.style.scrollBehavior = 'smooth';
+    }
+    else { newScrollTop -= (get(stickyHeaderOffset) ?? 0); }
 
     if (wrapper.scrollTop > newScrollTop)
       wrapper.scrollTop = newScrollTop;
@@ -906,7 +939,8 @@ function scrollToTop() {
 function onPaginate() {
   emit('update:expanded', []);
   scrollToTop();
-  onToggleAll(false);
+  if (!props.multiPageSelect)
+    onToggleAll(false);
   resetCheckboxShiftState();
 }
 
@@ -1064,6 +1098,7 @@ onMounted(() => {
                 >
                   <div class="flex items-center gap-2">
                     <ExpandButton
+                      v-if="groupExpandButtonPosition === 'start'"
                       :expanded="isExpandedGroup(row.group)"
                       @click="onToggleExpandGroup(row.group, row.identifier)"
                     />
@@ -1106,6 +1141,11 @@ onMounted(() => {
                       </template>
                       Ungroup
                     </Tooltip>
+                    <ExpandButton
+                      v-if="groupExpandButtonPosition === 'end'"
+                      :expanded="isExpandedGroup(row.group)"
+                      @click="onToggleExpandGroup(row.group, row.identifier)"
+                    />
                   </div>
                 </td>
               </slot>
