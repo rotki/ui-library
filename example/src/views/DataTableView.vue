@@ -475,11 +475,19 @@ const datatables = ref<
   },
   {
     title: 'No Column definitions',
-    table: { rowAttr: 'id', rows: [] },
+    table: {
+      rowAttr: 'id',
+      rows: [],
+    },
   },
   {
     title: 'Outlined',
-    table: { rowAttr: 'id', rows: [], cols: fixedColumns, outlined: true },
+    table: {
+      rowAttr: 'id',
+      rows: [],
+      cols: fixedColumns,
+      outlined: true,
+    },
   },
   {
     title: 'Sortable',
@@ -573,11 +581,18 @@ const apiDatatables = ref<
 >([
   {
     title: 'API: With Column definitions',
-    table: { rowAttr: 'id', rows: [], cols: fixedColumns },
+    table: {
+      rowAttr: 'id',
+      rows: [],
+      cols: fixedColumns,
+    },
   },
   {
     title: 'API: No Column definitions',
-    table: { rowAttr: 'id', rows: [] },
+    table: {
+      rowAttr: 'id',
+      rows: [],
+    },
   },
   {
     title: 'API: Sortable',
@@ -873,7 +888,7 @@ function toggleRow(row: any, expanded: any[] | undefined) {
         >
           <h4>{{ title }}</h4>
           <RuiDataTable
-            v-bind="objectOmit(table, ['modelValue', 'pagination', 'sort'])"
+            v-bind="objectOmit(table, ['modelValue', 'pagination', 'sort', 'scroller'])"
             v-model="table.modelValue"
             v-model:pagination="table.pagination"
             v-model:sort="table.sort"
@@ -933,6 +948,7 @@ function toggleRow(row: any, expanded: any[] | undefined) {
                 'sort',
                 'expanded',
                 'rows',
+                'scroller',
               ])
             "
             v-model="table.modelValue"
@@ -977,6 +993,7 @@ function toggleRow(row: any, expanded: any[] | undefined) {
                       'sort',
                       'expanded',
                       'stickyHeader',
+                      'scroller',
                     ])
                   "
                   :data-cy="`table-expanded-${i}`"
@@ -1009,7 +1026,7 @@ function toggleRow(row: any, expanded: any[] | undefined) {
             </span>
           </div>
           <RuiDataTable
-            v-bind="objectOmit(table, ['modelValue', 'pagination', 'sort'])"
+            v-bind="objectOmit(table, ['modelValue', 'pagination', 'sort', 'scroller'])"
             v-model="table.modelValue"
             v-model:pagination="table.pagination"
             v-model:sort="table.sort"
@@ -1056,7 +1073,7 @@ function toggleRow(row: any, expanded: any[] | undefined) {
           </div>
           <RuiDataTable
             v-bind="
-              objectOmit(table, ['modelValue', 'pagination', 'sort', 'search'])
+              objectOmit(table, ['modelValue', 'pagination', 'sort', 'search', 'scroller'])
             "
             v-model="table.modelValue"
             v-model:pagination.external="table.pagination"
@@ -1119,7 +1136,6 @@ function toggleRow(row: any, expanded: any[] | undefined) {
             v-model:collapsed="containedTable.collapsed"
             data-cy="table-scroll-parent"
             :scroller="containerScroll"
-            :scroller-offset="0"
           >
             <template #item.action>
               <RuiButton

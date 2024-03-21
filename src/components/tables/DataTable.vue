@@ -151,7 +151,7 @@ export interface Props<T, K extends keyof T> {
   collapsed?: T[];
   disabledRows?: T[];
   multiPageSelect?: boolean;
-  scroller?: HTMLElement;
+  scroller?: HTMLElement | null;
 }
 
 defineOptions({
