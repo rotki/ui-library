@@ -374,6 +374,22 @@ describe('dataTable', () => {
     expect(wrapper.find('thead[data-id=head-clone]').exists()).toBeFalsy();
   });
 
+  it('reset page number when search value is updated', async () => {
+    const wrapper = createWrapper({
+      props: {
+        'cols': columns,
+        'onUpdate:pagination': (pagination: any) => wrapper.setProps({ pagination }),
+        'pagination': { limit: 10, page: 5, total: 50 },
+        'rowAttr': 'id',
+        'rows': data,
+        'search': '',
+      },
+    });
+
+    await wrapper.setProps({ search: 'new search' });
+    expect(wrapper.props().pagination?.page).toBe(1);
+  });
+
   describe('global settings', () => {
     it('should follow global settings', async () => {
       const itemsPerPage = ref(25);
@@ -580,11 +596,11 @@ describe('dataTable', () => {
 
     expect(limits.vm.modelValue).toStrictEqual({ limit: 5 });
 
-    ranges.vm.$emit('update:model-value', { page: '6-10' });
+    ranges.vm.$emit('update:model-value', { page: 2 });
 
     await nextTick();
 
-    expect(ranges.vm.modelValue).toStrictEqual({ page: '6-10' });
+    expect(ranges.vm.modelValue).toStrictEqual({ page: 2, text: '6-10' });
 
     expect(navButtons.filter(b => b.attributes('disabled') === '')).toHaveLength(0);
     expect(navButtons.filter(b => b.attributes('disabled') === undefined)).toHaveLength(4);
