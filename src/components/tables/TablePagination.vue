@@ -58,10 +58,10 @@ const pages = computed(() => {
 const ranges = computed(() => {
   const segments = [];
 
-  for (let i = 1; i <= get(pages); i++)
-    segments.push(pageRangeText(i));
+  for (let page = 1; page <= get(pages); page++)
+    segments.push({ page, text: pageRangeText(page) });
 
-  return segments.map(page => ({ page }));
+  return segments;
 });
 
 const indicatorText = computed(() => {
@@ -70,11 +70,11 @@ const indicatorText = computed(() => {
 });
 
 const currentRange = computed({
-  get: () => ({ page: pageRangeText(get(modelValue).page) }),
+  get: () => ({ page: get(modelValue).page, text: pageRangeText(get(modelValue).page) }),
   set: ({ page }) =>
     emit('update:model-value', {
       ...get(modelValue),
-      page: get(ranges).findIndex(range => range.page === page) + 1,
+      page,
     }),
 });
 
@@ -152,7 +152,7 @@ function onLast() {
         :dense="dense"
         name="ranges"
         key-attr="page"
-        text-attr="page"
+        text-attr="text"
       />
       <span :class="css.indicator">
         {{ indicatorText }}
