@@ -219,7 +219,12 @@ function getSortDirection(key: TableColumn<T>['key']) {
               @click="onSort(column)"
             >
               <span :class="css.column__text">
-                {{ column[columnAttr] }}
+                <slot
+                  :name="`header.text.${column.key.toString()}`"
+                  :column="column"
+                >
+                  {{ column[columnAttr] }}
+                </slot>
               </span>
 
               <template
@@ -247,7 +252,12 @@ function getSortDirection(key: TableColumn<T>['key']) {
             v-else
             :class="css.column__text"
           >
-            {{ column[columnAttr] }}
+            <slot
+              :name="`header.text.${column.key.toString()}`"
+              :column="column"
+            >
+              {{ column[columnAttr] }}
+            </slot>
           </span>
         </slot>
       </th>
