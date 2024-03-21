@@ -895,7 +895,7 @@ function onCheckboxClick(event: any, value: T[typeof props.rowAttr], index: numb
 
             for (let i = from; i <= to; i++) {
               const currSelectedData = tableData[i];
-              if (isRow(currSelectedData))
+              if (isRow(currSelectedData) && !isDisabledRow(currSelectedData[id]))
                 onSelect(valueToApply, currSelectedData[id], i);
             }
           }
