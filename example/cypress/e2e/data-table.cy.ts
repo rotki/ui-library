@@ -88,7 +88,7 @@ describe('dataTable', () => {
 
     cy.get('@loading')
       .find(
-        'table thead tr[class*=_thead__loader_] th[class*=_progress_] div[class*=_circular_]',
+        'table tbody td[class*=_tbody__loader_] div[class*=_circular_]',
       )
       .should('exist');
 
