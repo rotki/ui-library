@@ -7,6 +7,7 @@ import Checkbox from '@/components/forms/checkbox/Checkbox.vue';
 import Button from '@/components/buttons/button/Button.vue';
 import Icon from '@/components/icons/Icon.vue';
 import Tooltip from '@/components/overlays/tooltip/Tooltip.vue';
+import Progress from '@/components/progress/Progress.vue';
 import ExpandButton from '@/components/tables/ExpandButton.vue';
 import TablePagination, { type TablePaginationData } from './TablePagination.vue';
 import TableHead, { type GroupData, type GroupKeys, type NoneSortableTableColumn, type SortColumn, type TableColumn, type TableRowKey, type TableRowKeyData, type TableSortData,
@@ -1232,6 +1233,20 @@ onMounted(() => {
             </template>
           </template>
           <tr
+            v-if="loading && noData"
+          >
+            <td
+              :class="css.tbody__loader"
+              :colspan="colspan"
+            >
+              <Progress
+                color="primary"
+                variant="indeterminate"
+                circular
+              />
+            </td>
+          </tr>
+          <tr
             v-if="noData && empty && !loading"
             :class="[css.tr, css.tr__empty]"
           >
@@ -1271,7 +1286,7 @@ onMounted(() => {
             </Transition>
           </tr>
           <slot
-            v-if="slots['body.append'] && !(loading && noData)"
+            v-if="slots['body.append']"
             :colspan="colspan"
             name="body.append"
           />
@@ -1390,6 +1405,10 @@ onMounted(() => {
             }
           }
         }
+      }
+
+      &__loader {
+        @apply py-8 text-center;
       }
     }
 

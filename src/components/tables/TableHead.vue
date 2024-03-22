@@ -264,7 +264,7 @@ function getSortDirection(key: TableColumn<T>['key']) {
     </tr>
     <tr
       v-if="loading"
-      :class="[css.thead__loader, { [css.thead__loader_linear]: !noData }]"
+      :class="[css.thead__loader, css.thead__loader_linear]"
     >
       <th
         :class="css.progress"
@@ -273,7 +273,6 @@ function getSortDirection(key: TableColumn<T>['key']) {
       >
         <div :class="css.progress__wrapper">
           <Progress
-            :circular="noData"
             color="primary"
             variant="indeterminate"
           />

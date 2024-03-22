@@ -896,6 +896,26 @@ function toggleRow(row: any, expanded: any[] | undefined) {
             v-model:collapsed="table.collapsed"
             :data-cy="`table-empty-${i}`"
           >
+            <template #body.prepend="{ colspan }">
+              <tr>
+                <td
+                  :colspan="colspan"
+                  class="p-3"
+                >
+                  body prepend content
+                </td>
+              </tr>
+            </template>
+            <template #body.append="{ colspan }">
+              <tr>
+                <td
+                  :colspan="colspan"
+                  class="p-3"
+                >
+                  body append content
+                </td>
+              </tr>
+            </template>
             <template #header.text.address.city>
               city custom header
             </template>
