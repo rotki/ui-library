@@ -40,8 +40,7 @@ export const WithCustomSrc: Story = {
 
 export const WithCustomSrcAndFallback: Story = {
   args: {
-    customSrc:
-      'notfoundurl',
+    customSrc: 'notfoundurl',
   },
 };
 

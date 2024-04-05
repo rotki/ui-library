@@ -1,7 +1,10 @@
 import RuiMenuSelect, { type Props } from './MenuSelect.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-interface SelectOption { id: string | number; label: string | number }
+interface SelectOption {
+  id: string | number;
+  label: string | number;
+}
 
 type SelectProps = Props<SelectOption>;
 

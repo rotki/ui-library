@@ -46,10 +46,10 @@ const {
 } = useFetch<string>('https://jsonplaceholder.typicode.com/users');
 
 interface BaseUser {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
+  'id': number;
+  'name': string;
+  'username': string;
+  'email': string;
   'address.street': string;
   'address.city': string;
 }
@@ -138,8 +138,8 @@ const fixedColumns: DataTableColumn<BaseUser>[] = [
 ];
 
 interface ExtendedUser extends BaseUser {
-  phone?: string;
-  website: string;
+  'phone'?: string;
+  'website': string;
   'company.name'?: string;
 }
 

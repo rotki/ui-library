@@ -2,7 +2,7 @@ import '../src/style.scss';
 import './preview.scss';
 import '@fontsource/roboto/latin.css';
 import { type Preview, setup } from '@storybook/vue3';
-import { useEffect, useGlobals } from '@storybook/addons';
+import { useEffect, useGlobals } from '@storybook/preview-api';
 import { ref } from 'vue';
 import { createRui, useRotkiTheme } from '../src';
 import * as Icons from '../src/icons';
@@ -26,7 +26,6 @@ setup((app) => {
 
 const preview: Preview = {
   parameters: {
-    actions: { argTypesRegex: '^on[A-Z].*' },
     controls: {
       matchers: {
         color: /(background|color)$/i,
