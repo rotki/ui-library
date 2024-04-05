@@ -34,7 +34,9 @@ describe('menu select', () => {
       },
     });
 
-    expect(wrapper.get('label').classes()).toMatch(/_activator_/);
+    expect(wrapper.get('label').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_activator_/)]),
+    );
     expect(wrapper.find('label span[class*=label]').exists()).toBeTruthy();
     expect(wrapper.find('span > svg').exists()).toBeTruthy();
   });

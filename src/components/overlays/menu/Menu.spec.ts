@@ -33,7 +33,9 @@ describe('menu', () => {
     let menu = document.body.querySelector('div[role=menu]') as HTMLDivElement;
 
     expect(menu).toBeTruthy();
-    expect(menu?.classList).toMatch(/_menu_/);
+    expect(Array.from(menu?.classList ?? [])).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_menu_/)]),
+    );
 
     expect(
       document.body.querySelector('div[data-popper-placement=bottom]'),
@@ -46,7 +48,9 @@ describe('menu', () => {
     menu = document.body.querySelector('div[role=menu]') as HTMLDivElement;
 
     expect(menu).toBeTruthy();
-    expect(menu?.classList).toMatch(/_menu_/);
+    expect(Array.from(menu?.classList ?? [])).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_menu_/)]),
+    );
 
     expect(
       document.body.querySelector('div[data-popper-placement=bottom]'),
@@ -96,7 +100,9 @@ describe('menu', () => {
     menu = document.body.querySelector('div[role=menu]');
 
     expect(menu).toBeTruthy();
-    expect(menu?.classList).toMatch(/_menu_/);
+    expect(Array.from(menu?.classList ?? [])).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_menu_/)]),
+    );
     expect(
       document.body.querySelector('div[data-popper-placement=bottom]'),
     ).toBeTruthy();
@@ -118,7 +124,9 @@ describe('menu', () => {
     const menu = document.body.querySelector('div[role=menu]');
 
     expect(menu).toBeTruthy();
-    expect(menu?.classList).toMatch(/_menu_/);
+    expect(Array.from(menu?.classList ?? [])).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_menu_/)]),
+    );
     expect(
       document.body.querySelector('div[data-popper-placement=bottom]'),
     ).toBeTruthy();
@@ -145,7 +153,9 @@ describe('menu', () => {
     let menu = document.body.querySelector('div[role=menu]');
 
     expect(menu).toBeTruthy();
-    expect(menu?.classList).toMatch(/_menu_/);
+    expect(Array.from(menu?.classList ?? [])).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_menu_/)]),
+    );
     expect(
       document.body.querySelector('div[data-popper-placement=bottom]'),
     ).toBeTruthy();
@@ -156,7 +166,9 @@ describe('menu', () => {
     menu = document.body.querySelector('div[role=menu]');
 
     expect(menu).toBeTruthy();
-    expect(menu?.classList).toMatch(/_menu_/);
+    expect(Array.from(menu?.classList ?? [])).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_menu_/)]),
+    );
     expect(
       document.body.querySelector('div[data-popper-placement=bottom]'),
     ).toBeTruthy();
@@ -187,7 +199,9 @@ describe('menu', () => {
       let menu = document.body.querySelector('div[role=menu]');
 
       expect(menu).toBeTruthy();
-      expect(menu?.classList).toMatch(/_menu_/);
+      expect(Array.from(menu?.classList ?? [])).toEqual(
+        expect.arrayContaining([expect.stringMatching(/_menu_/)]),
+      );
       expect(
         document.body.querySelector('div[data-popper-placement=bottom]'),
       ).toBeTruthy();
@@ -198,7 +212,9 @@ describe('menu', () => {
       menu = document.body.querySelector('div[role=menu]');
 
       expect(menu).toBeTruthy();
-      expect(menu?.classList).toMatch(/_menu_/);
+      expect(Array.from(menu?.classList ?? [])).toEqual(
+        expect.arrayContaining([expect.stringMatching(/_menu_/)]),
+      );
       expect(
         document.body.querySelector('div[data-popper-placement=bottom]'),
       ).toBeTruthy();
@@ -222,7 +238,9 @@ describe('menu', () => {
       let menu = document.body.querySelector('div[role=menu]');
 
       expect(menu).toBeTruthy();
-      expect(menu?.classList).toMatch(/_menu_/);
+      expect(Array.from(menu?.classList ?? [])).toEqual(
+        expect.arrayContaining([expect.stringMatching(/_menu_/)]),
+      );
       expect(
         document.body.querySelector('div[data-popper-placement=bottom]'),
       ).toBeTruthy();
@@ -270,7 +288,9 @@ describe('menu', () => {
     const menu = document.body.querySelector('div[role=menu]') as HTMLDivElement;
 
     expect(menu).toBeTruthy();
-    expect(menu?.classList).toMatch(/_menu_/);
+    expect(Array.from(menu?.classList ?? [])).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_menu_/)]),
+    );
 
     expect(
       document.body.querySelector('div[data-popper-placement=bottom]'),

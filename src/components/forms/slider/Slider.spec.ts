@@ -31,33 +31,51 @@ describe('forms/Slider', () => {
   it('passes disabled props', async () => {
     const wrapper = createWrapper();
     expect(wrapper.find('input').attributes('disabled')).toBeUndefined();
-    expect(wrapper.find('label').classes()).not.toMatch(/_disabled_/);
+    expect(wrapper.find('label').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_disabled_/)]),
+    );
     await wrapper.setProps({ disabled: true });
     expect(wrapper.find('input').attributes('disabled')).toBeDefined();
-    expect(wrapper.find('label').classes()).toMatch(/_disabled_/);
+    expect(wrapper.find('label').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_disabled_/)]),
+    );
     await wrapper.setProps({ disabled: false });
     expect(wrapper.find('input').attributes('disabled')).toBeUndefined();
-    expect(wrapper.find('label').classes()).not.toMatch(/_disabled_/);
+    expect(wrapper.find('label').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_disabled_/)]),
+    );
   });
 
   it('passes vertical props', async () => {
     const wrapper = createWrapper();
-    expect(wrapper.find('label').classes()).not.toMatch(/_vertical_/);
+    expect(wrapper.find('label').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_vertical_/)]),
+    );
     await wrapper.setProps({ vertical: true });
-    expect(wrapper.find('label').classes()).toMatch(/_vertical_/);
+    expect(wrapper.find('label').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_vertical_/)]),
+    );
     await wrapper.setProps({ vertical: false });
-    expect(wrapper.find('label').classes()).not.toMatch(/_vertical_/);
+    expect(wrapper.find('label').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_vertical_/)]),
+    );
   });
 
   it('passes hideTrack props', async () => {
     const wrapper = createWrapper();
-    expect(wrapper.find('label').classes()).not.toMatch(/_hide-track_/);
+    expect(wrapper.find('label').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_hide-track_/)]),
+    );
     expect(wrapper.find('div[class*=slider__container__track]').exists()).toBeTruthy();
     await wrapper.setProps({ hideTrack: true });
-    expect(wrapper.find('label').classes()).toMatch(/_hide-track_/);
+    expect(wrapper.find('label').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_hide-track_/)]),
+    );
     expect(wrapper.find('div[class*=slider__container__track]').exists()).toBeFalsy();
     await wrapper.setProps({ hideTrack: false });
-    expect(wrapper.find('label').classes()).not.toMatch(/_hide-track_/);
+    expect(wrapper.find('label').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_hide-track_/)]),
+    );
     expect(wrapper.find('div[class*=slider__container__track]').exists()).toBeTruthy();
   });
 
@@ -91,30 +109,44 @@ describe('forms/Slider', () => {
         showTicks: true,
       },
     });
-    expect(wrapper.find('label').classes()).not.toMatch(/_big-tick/);
+    expect(wrapper.find('label').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_big-tick/)]),
+    );
     await wrapper.setProps({ tickSize: 12 });
-    expect(wrapper.find('label').classes()).toMatch(/_big-tick/);
+    expect(wrapper.find('label').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_big-tick/)]),
+    );
     await wrapper.setProps({ tickSize: 1 });
-    expect(wrapper.find('label').classes()).not.toMatch(/_big-tick/);
+    expect(wrapper.find('label').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_big-tick/)]),
+    );
   });
 
   it('passes color props', async () => {
     const wrapper = createWrapper();
-    expect(wrapper.find('label').classes()).toMatch(/_primary_/);
+    expect(wrapper.find('label').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_primary_/)]),
+    );
 
     await wrapper.setProps({ color: 'primary' });
-    expect(wrapper.find('label').classes()).toMatch(/_primary_/);
+    expect(wrapper.find('label').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_primary_/)]),
+    );
 
     await wrapper.setProps({ color: 'secondary' });
-    expect(wrapper.find('label').classes()).toMatch(
-      /_secondary_/,
+    expect(wrapper.find('label').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_secondary_/)]),
     );
 
     await wrapper.setProps({ color: 'error' });
-    expect(wrapper.find('label').classes()).toMatch(/_error_/);
+    expect(wrapper.find('label').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_error_/)]),
+    );
 
     await wrapper.setProps({ color: 'success' });
-    expect(wrapper.find('label').classes()).toMatch(/_success_/);
+    expect(wrapper.find('label').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_success_/)]),
+    );
   });
 
   it('passes hint props', async () => {
@@ -123,8 +155,8 @@ describe('forms/Slider', () => {
 
     const hint = 'Slider Hints';
     await wrapper.setProps({ hint });
-    expect(wrapper.find('.details div').classes()).toMatch(
-      /text-rui-text-secondary/,
+    expect(wrapper.find('.details div').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/text-rui-text-secondary/)]),
     );
     expect(wrapper.find('.details div').text()).toBe(hint);
   });
@@ -135,7 +167,9 @@ describe('forms/Slider', () => {
 
     const errorMessage = 'Slider Error Message';
     await wrapper.setProps({ errorMessages: [errorMessage] });
-    expect(wrapper.find('.details div').classes()).toMatch(/text-rui-error/);
+    expect(wrapper.find('.details div').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/text-rui-error/)]),
+    );
     expect(wrapper.find('.details div').text()).toBe(errorMessage);
   });
 
@@ -145,7 +179,9 @@ describe('forms/Slider', () => {
 
     const successMessage = 'Slider Error Message';
     await wrapper.setProps({ successMessages: [successMessage] });
-    expect(wrapper.find('.details div').classes()).toMatch(/text-rui-success/);
+    expect(wrapper.find('.details div').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/text-rui-success/)]),
+    );
     expect(wrapper.find('.details div').text()).toBe(successMessage);
   });
 

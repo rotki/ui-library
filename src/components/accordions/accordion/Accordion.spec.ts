@@ -34,7 +34,9 @@ describe('accordions/Accordion', () => {
     });
 
     expect(wrapper.find('.accordion__content').exists()).toBeTruthy();
-    expect(wrapper.find('.accordion').classes()).toMatch(/_open_/);
+    expect(wrapper.find('.accordion').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_open_/)]),
+    );
 
     await wrapper.setProps({
       eager: true,
@@ -42,7 +44,9 @@ describe('accordions/Accordion', () => {
     });
 
     expect(wrapper.find('.accordion__content').exists()).toBeTruthy();
-    expect(wrapper.find('.accordion').classes()).not.toMatch(/_open_/);
+    expect(wrapper.find('.accordion').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_open_/)]),
+    );
   });
 
   it('pass `headerClass` and `contentClass` props', async () => {

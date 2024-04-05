@@ -35,7 +35,9 @@ describe('tooltip', () => {
     const tooltip = document.body.querySelector('div[role=tooltip]');
 
     expect(tooltip).toBeTruthy();
-    expect(tooltip?.classList).toMatch(/_tooltip_/);
+    expect(Array.from(tooltip?.classList ?? [])).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tooltip_/)]),
+    );
     expect(
       document.body.querySelector('div[data-popper-placement=bottom]'),
     ).toBeTruthy();
@@ -81,7 +83,9 @@ describe('tooltip', () => {
     tooltip = document.body.querySelector('div[role=tooltip]');
 
     expect(tooltip).toBeTruthy();
-    expect(tooltip?.classList).toMatch(/_tooltip_/);
+    expect(Array.from(tooltip?.classList ?? [])).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tooltip_/)]),
+    );
     expect(
       document.body.querySelector('div[data-popper-placement=bottom]'),
     ).toBeTruthy();
@@ -104,7 +108,9 @@ describe('tooltip', () => {
     const tooltip = document.body.querySelector('div[role=tooltip]');
 
     expect(tooltip).toBeTruthy();
-    expect(tooltip?.classList).toMatch(/_tooltip_/);
+    expect(Array.from(tooltip?.classList ?? [])).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tooltip_/)]),
+    );
     expect(
       document.body.querySelector('div[data-popper-placement=bottom]'),
     ).toBeTruthy();
@@ -142,7 +148,9 @@ describe('tooltip', () => {
     let tooltip = document.body.querySelector('div[role=tooltip]');
 
     expect(tooltip).toBeTruthy();
-    expect(tooltip?.classList).toMatch(/_tooltip_/);
+    expect(Array.from(tooltip?.classList ?? [])).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tooltip_/)]),
+    );
     expect(
       document.body.querySelector('div[data-popper-placement=bottom]'),
     ).toBeTruthy();
@@ -153,7 +161,9 @@ describe('tooltip', () => {
     tooltip = document.body.querySelector('div[role=tooltip]');
 
     expect(tooltip).toBeTruthy();
-    expect(tooltip?.classList).toMatch(/_tooltip_/);
+    expect(Array.from(tooltip?.classList ?? [])).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tooltip_/)]),
+    );
     expect(
       document.body.querySelector('div[data-popper-placement=bottom]'),
     ).toBeTruthy();

@@ -14,13 +14,25 @@ describe('divider', () => {
 
   it('passes vertical props', async () => {
     const wrapper = createWrapper();
-    expect(wrapper.get('div').classes()).not.toMatch(/border-l/);
-    expect(wrapper.get('div').classes()).toMatch(/border-t/);
+    expect(wrapper.get('div').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/border-l/)]),
+    );
+    expect(wrapper.get('div').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/border-t/)]),
+    );
     await wrapper.setProps({ vertical: true });
-    expect(wrapper.get('div').classes()).not.toMatch(/border-t/);
-    expect(wrapper.get('div').classes()).toMatch(/border-l/);
+    expect(wrapper.get('div').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/border-t/)]),
+    );
+    expect(wrapper.get('div').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/border-l/)]),
+    );
     await wrapper.setProps({ vertical: false });
-    expect(wrapper.get('div').classes()).not.toMatch(/border-l/);
-    expect(wrapper.get('div').classes()).toMatch(/border-t/);
+    expect(wrapper.get('div').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/border-l/)]),
+    );
+    expect(wrapper.get('div').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/border-t/)]),
+    );
   });
 });

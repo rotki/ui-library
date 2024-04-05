@@ -12,11 +12,21 @@ describe('card', () => {
     const wrapper = createWrapper({});
 
     expect(wrapper.exists()).toBeTruthy();
-    expect(wrapper.classes()).toMatch(/_card_/);
-    expect(wrapper.classes()).toMatch(/_outlined_/);
-    expect(wrapper.classes()).toMatch('shadow-0');
-    expect(wrapper.classes()).not.toMatch(/_dense_/);
-    expect(wrapper.classes()).not.toMatch(/_divide_/);
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_card_/)]),
+    );
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_outlined_/)]),
+    );
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching('shadow-0')]),
+    );
+    expect(wrapper.classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_dense_/)]),
+    );
+    expect(wrapper.classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_divide_/)]),
+    );
 
     expect(wrapper.find('div[class*=_image_').exists()).toBeFalsy();
     expect(wrapper.find('h5[class*=_prepend_').exists()).toBeFalsy();
@@ -60,11 +70,23 @@ describe('card', () => {
       variant: 'flat',
     });
 
-    expect(wrapper.classes()).not.toMatch(/_outlined_/);
-    expect(wrapper.classes()).not.toMatch('shadow-0');
-    expect(wrapper.classes()).toMatch(/_card_/);
-    expect(wrapper.classes()).toMatch('shadow-2');
-    expect(wrapper.classes()).toMatch(/_dense_/);
-    expect(wrapper.classes()).toMatch(/_divide_/);
+    expect(wrapper.classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_outlined_/)]),
+    );
+    expect(wrapper.classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching('shadow-0')]),
+    );
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_card_/)]),
+    );
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching('shadow-2')]),
+    );
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_dense_/)]),
+    );
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_divide_/)]),
+    );
   });
 });

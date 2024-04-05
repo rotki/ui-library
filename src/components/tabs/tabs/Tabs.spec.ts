@@ -36,42 +36,52 @@ describe('tabs/Tabs', () => {
     const buttons = wrapper.findAll('div[class*=_tabs-wrapper] > button');
 
     expect(buttons).toHaveLength(4);
-    expect(buttons[0].classes()).toMatch(/active-tab/);
+    expect(buttons[0].classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/active-tab/)]),
+    );
   });
 
   it('pass vertical props', async () => {
     const wrapper = createWrapper({});
 
-    expect(wrapper.classes()).not.toMatch(/_tabs--vertical_/);
+    expect(wrapper.classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tabs--vertical_/)]),
+    );
 
     await wrapper.setProps({
       vertical: true,
     });
     await nextTick();
-    expect(wrapper.classes()).toMatch(/_tabs--vertical_/);
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tabs--vertical_/)]),
+    );
 
     expect(
       wrapper.find('div[class*=_tabs-wrapper] > button').classes(),
-    ).toMatch(/_tab--vertical_/);
+    ).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tab--vertical_/)]),
+    );
   });
 
   it('pass grow props', async () => {
     const wrapper = createWrapper({});
 
-    expect(wrapper.find('div[class*=tabs-bar]').classes()).not.toMatch(
-      /_tabs-bar--grow/,
+    expect(wrapper.find('div[class*=tabs-bar]').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tabs-bar--grow/)]),
     );
 
     await wrapper.setProps({
       grow: true,
     });
-    expect(wrapper.find('div[class*=tabs-bar]').classes()).toMatch(
-      /_tabs-bar--grow/,
+    expect(wrapper.find('div[class*=tabs-bar]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tabs-bar--grow/)]),
     );
 
     expect(
       wrapper.find('div[class*=_tabs-wrapper] > button').classes(),
-    ).toMatch(/_tab--grow/);
+    ).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tab--grow/)]),
+    );
   });
 
   it('pass disabled props', async () => {
@@ -89,13 +99,19 @@ describe('tabs/Tabs', () => {
   it('pass align props', async () => {
     const wrapper = createWrapper({});
 
-    expect(wrapper.find('button').classes()).toMatch(/_tab--center_/);
+    expect(wrapper.find('button').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tab--center_/)]),
+    );
 
     await wrapper.setProps({ align: 'start' });
-    expect(wrapper.find('button').classes()).toMatch(/_tab--start_/);
+    expect(wrapper.find('button').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tab--start_/)]),
+    );
 
     await wrapper.setProps({ align: 'end' });
-    expect(wrapper.find('button').classes()).toMatch(/_tab--end_/);
+    expect(wrapper.find('button').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tab--end_/)]),
+    );
   });
 
   it('click tab change the modelValue', async () => {
@@ -111,7 +127,9 @@ describe('tabs/Tabs', () => {
     let buttons = wrapper.findAll('div[class*=_tabs-wrapper] > button');
 
     expect(buttons).toHaveLength(4);
-    expect(buttons[0].classes()).toMatch(/active-tab/);
+    expect(buttons[0].classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/active-tab/)]),
+    );
 
     await buttons[1].trigger('click');
     await nextTick();

@@ -30,15 +30,21 @@ describe('badge', () => {
 
     expect(wrapper.find('div[role=status]').exists()).toBeTruthy();
 
-    expect(wrapper.get('div[role=status]').classes()).toMatch(/_badge_/);
-    expect(wrapper.get('div[role=status]').classes()).toMatch(
-      /_placement__top_/,
+    expect(wrapper.get('div[role=status]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_badge_/)]),
     );
-    expect(wrapper.get('div[role=status]').classes()).toMatch(
-      /_rounded__full_/,
+    expect(wrapper.get('div[role=status]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_placement__top_/)]),
     );
-    expect(wrapper.get('div[role=status]').classes()).toMatch(/_size__md_/);
-    expect(wrapper.get('div[role=status]').classes()).toMatch(/_primary_/);
+    expect(wrapper.get('div[role=status]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_rounded__full_/)]),
+    );
+    expect(wrapper.get('div[role=status]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_size__md_/)]),
+    );
+    expect(wrapper.get('div[role=status]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_primary_/)]),
+    );
   });
 
   it('passes props correctly', async () => {
@@ -63,19 +69,21 @@ describe('badge', () => {
 
     expect(wrapper.find('svg[class*=_remixicon_]').exists()).toBeTruthy();
 
-    expect(wrapper.get('div[role=status]').classes()).toMatch(
-      /_rounded__full_/,
+    expect(wrapper.get('div[role=status]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_rounded__full_/)]),
     );
 
-    expect(wrapper.get('div[role=status]').classes()).not.toMatch(
-      /_rounded__sm_/,
+    expect(wrapper.get('div[role=status]').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_rounded__sm_/)]),
     );
 
     await wrapper.setProps({ rounded: 'sm' });
 
-    expect(wrapper.get('div[role=status]').classes()).toMatch(/_rounded__sm_/);
-    expect(wrapper.get('div[role=status]').classes()).not.toMatch(
-      /_rounded__full_/,
+    expect(wrapper.get('div[role=status]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_rounded__sm_/)]),
+    );
+    expect(wrapper.get('div[role=status]').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_rounded__full_/)]),
     );
   });
 });

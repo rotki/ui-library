@@ -9,9 +9,13 @@ function createWrapper(options?: ComponentMountingOptions<typeof RadioGroup>) {
 describe('forms/RadioButton/RadioGroup', () => {
   it('passes inline props', async () => {
     const wrapper = createWrapper();
-    expect(wrapper.find('div[class*=wrapper]').classes()).not.toMatch(/inline/);
+    expect(wrapper.find('div[class*=wrapper]').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/inline/)]),
+    );
     await wrapper.setProps({ inline: true });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toMatch(/inline/);
+    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/inline/)]),
+    );
   });
 
   it('passes hint props', async () => {
@@ -20,8 +24,8 @@ describe('forms/RadioButton/RadioGroup', () => {
 
     const hint = 'RadioGroup Hints';
     await wrapper.setProps({ hint });
-    expect(wrapper.find('.details > div').classes()).toMatch(
-      /text-rui-text-secondary/,
+    expect(wrapper.find('.details > div').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/text-rui-text-secondary/)]),
     );
     expect(wrapper.find('.details > div').text()).toBe(hint);
   });
@@ -32,7 +36,9 @@ describe('forms/RadioButton/RadioGroup', () => {
 
     const errorMessage = 'RadioGroup Error Message';
     await wrapper.setProps({ errorMessages: [errorMessage] });
-    expect(wrapper.find('.details > div').classes()).toMatch(/text-rui-error/);
+    expect(wrapper.find('.details > div').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/text-rui-error/)]),
+    );
     expect(wrapper.find('.details > div').text()).toBe(errorMessage);
   });
 

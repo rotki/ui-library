@@ -20,17 +20,25 @@ describe('components/Stepper', () => {
 
   it('renders properly', () => {
     const wrapper = createWrapper({ props: { steps } });
-    expect(wrapper.classes()).toMatch(/_stepper_/);
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_stepper_/)]),
+    );
   });
 
   it('passes props correctly', async () => {
     const wrapper = createWrapper({
       props: { steps },
     });
-    expect(wrapper.classes()).toMatch(/_horizontal_/);
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_horizontal_/)]),
+    );
     await wrapper.setProps({ orientation: StepperOrientation.vertical });
-    expect(wrapper.classes()).toMatch(/_vertical_/);
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_vertical_/)]),
+    );
     await wrapper.setProps({ iconTop: true });
-    expect(wrapper.classes()).toMatch(/_icon-top_/);
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_icon-top_/)]),
+    );
   });
 });

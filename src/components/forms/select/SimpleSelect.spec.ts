@@ -22,7 +22,9 @@ describe('simple select', () => {
       },
     });
 
-    expect(wrapper.get('select').classes()).toMatch(/_select_/);
+    expect(wrapper.get('select').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_select_/)]),
+    );
     expect(wrapper.find('span > svg').exists()).toBeTruthy();
   });
 

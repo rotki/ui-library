@@ -31,7 +31,9 @@ describe('dialog', () => {
     await delay();
     const portal = getPortal();
     expect(portal.exists()).toBeTruthy();
-    expect(portal.classes()).toMatch(/_dialog_/);
+    expect(portal.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_dialog_/)]),
+    );
 
     await wrapper.setProps({ dismissible: true });
     await delay(500);
@@ -59,14 +61,16 @@ describe('dialog', () => {
     await delay();
     const portal = getPortal();
     expect(portal.exists()).toBeTruthy();
-    expect(portal.classes()).toMatch(/_dialog_/);
+    expect(portal.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_dialog_/)]),
+    );
     expect(portal.find('div[class*=_dismiss_] button').exists()).toBeFalsy();
 
     await wrapper.setProps({ dismissible: true });
     await delay();
     expect(portal.find('div[class*=_dismiss_] button').exists()).toBeTruthy();
-    expect(portal.get('div[class*=_dismiss_] button').classes()).toMatch(
-      /_btn_/,
+    expect(portal.get('div[class*=_dismiss_] button').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_btn_/)]),
     );
 
     await wrapper.setProps({ persistent: true });

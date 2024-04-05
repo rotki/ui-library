@@ -60,43 +60,57 @@ describe('forms/TextArea', () => {
         color: 'primary',
       },
     });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toMatch(/_primary_/);
+    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_primary_/)]),
+    );
 
     await wrapper.setProps({ color: 'secondary' });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toMatch(
-      /_secondary_/,
+    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_secondary_/)]),
     );
 
     await wrapper.setProps({ color: 'error' });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toMatch(/_error_/);
+    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_error_/)]),
+    );
 
     await wrapper.setProps({ color: 'success' });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toMatch(/_success_/);
+    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_success_/)]),
+    );
   });
 
   it('passes variant props', async () => {
     const wrapper = createWrapper();
-    expect(wrapper.find('div[class*=wrapper]').classes()).toMatch(/_default_/);
+    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_default_/)]),
+    );
 
     await wrapper.setProps({ variant: 'filled' });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toMatch(/_filled_/);
+    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_filled_/)]),
+    );
 
     await wrapper.setProps({ variant: 'outlined' });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toMatch(/_outlined_/);
+    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_outlined_/)]),
+    );
   });
 
   it('passes dense props', async () => {
     const wrapper = createWrapper();
-    expect(wrapper.find('div[class*=wrapper]').classes()).not.toMatch(
-      /_dense_/,
+    expect(wrapper.find('div[class*=wrapper]').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_dense_/)]),
     );
 
     await wrapper.setProps({ dense: true });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toMatch(/_dense_/);
+    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_dense_/)]),
+    );
 
     await wrapper.setProps({ dense: false });
-    expect(wrapper.find('div[class*=wrapper]').classes()).not.toMatch(
-      /_dense_/,
+    expect(wrapper.find('div[class*=wrapper]').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_dense_/)]),
     );
   });
 
@@ -106,8 +120,8 @@ describe('forms/TextArea', () => {
 
     const hint = 'Text Areas Hints';
     await wrapper.setProps({ hint });
-    expect(wrapper.find('.details > div').classes()).toMatch(
-      /text-rui-text-secondary/,
+    expect(wrapper.find('.details > div').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/text-rui-text-secondary/)]),
     );
     expect(wrapper.find('.details > div').text()).toBe(hint);
   });
@@ -118,7 +132,9 @@ describe('forms/TextArea', () => {
 
     const errorMessage = 'Text Areas Error Message';
     await wrapper.setProps({ errorMessages: [errorMessage] });
-    expect(wrapper.find('.details > div').classes()).toMatch(/text-rui-error/);
+    expect(wrapper.find('.details > div').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/text-rui-error/)]),
+    );
     expect(wrapper.find('.details > div').text()).toBe(errorMessage);
   });
 
@@ -128,8 +144,8 @@ describe('forms/TextArea', () => {
 
     const successMessage = 'Text Areas Error Message';
     await wrapper.setProps({ successMessages: [successMessage] });
-    expect(wrapper.find('.details > div').classes()).toMatch(
-      /text-rui-success/,
+    expect(wrapper.find('.details > div').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/text-rui-success/)]),
     );
     expect(wrapper.find('.details > div').text()).toBe(successMessage);
   });

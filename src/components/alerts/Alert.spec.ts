@@ -19,30 +19,46 @@ describe('forms/Alert', () => {
 
   it('passes type props', async () => {
     const wrapper = createWrapper({ props: { title: 'Title' } });
-    expect(wrapper.find('div[class*=alert]').classes()).toMatch(/_primary_/);
+    expect(wrapper.find('div[class*=alert]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_primary_/)]),
+    );
 
     await wrapper.setProps({ type: 'error' });
-    expect(wrapper.find('div[class*=alert]').classes()).toMatch(/_error_/);
+    expect(wrapper.find('div[class*=alert]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_error_/)]),
+    );
 
     await wrapper.setProps({ type: 'warning' });
-    expect(wrapper.find('div[class*=alert]').classes()).toMatch(/_warning_/);
+    expect(wrapper.find('div[class*=alert]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_warning_/)]),
+    );
 
     await wrapper.setProps({ type: 'info' });
-    expect(wrapper.find('div[class*=alert]').classes()).toMatch(/_info_/);
+    expect(wrapper.find('div[class*=alert]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_info_/)]),
+    );
 
     await wrapper.setProps({ type: 'success' });
-    expect(wrapper.find('div[class*=alert]').classes()).toMatch(/_success_/);
+    expect(wrapper.find('div[class*=alert]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_success_/)]),
+    );
   });
 
   it('passes variant props', async () => {
     const wrapper = createWrapper({ props: { title: 'Title' } });
-    expect(wrapper.find('div[class*=alert]').classes()).toMatch(/_default_/);
+    expect(wrapper.find('div[class*=alert]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_default_/)]),
+    );
 
     await wrapper.setProps({ variant: 'filled' });
-    expect(wrapper.find('div[class*=alert]').classes()).toMatch(/_filled_/);
+    expect(wrapper.find('div[class*=alert]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_filled_/)]),
+    );
 
     await wrapper.setProps({ variant: 'outlined' });
-    expect(wrapper.find('div[class*=alert]').classes()).toMatch(/_outlined_/);
+    expect(wrapper.find('div[class*=alert]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_outlined_/)]),
+    );
   });
 
   it('passes correct icon', async () => {

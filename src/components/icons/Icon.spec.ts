@@ -14,8 +14,12 @@ describe('forms/Icon', () => {
         name: 'arrow-down-circle-fill',
       },
     });
-    expect(wrapper.classes()).toMatch(/_remixicon_/);
-    expect(wrapper.classes()).toMatch(/_primary_/);
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_remixicon_/)]),
+    );
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_primary_/)]),
+    );
   });
 
   it('passes props correctly', async () => {
@@ -28,8 +32,12 @@ describe('forms/Icon', () => {
     expect(wrapper.attributes('width')).toMatch('32');
     expect(wrapper.attributes('height')).toMatch('32');
     await wrapper.setProps({ color: 'primary' });
-    expect(wrapper.classes()).toMatch(/_primary_/);
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_primary_/)]),
+    );
     await wrapper.setProps({ color: 'secondary' });
-    expect(wrapper.classes()).toMatch(/_secondary_/);
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_secondary_/)]),
+    );
   });
 });

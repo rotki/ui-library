@@ -15,38 +15,56 @@ describe('forms/Switch', () => {
       },
     });
     expect(wrapper.text()).toContain(label);
-    expect(wrapper.get('label > div > div').classes()).toMatch(/_toggle_/);
+    expect(wrapper.get('label > div > div').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_toggle_/)]),
+    );
   });
 
   it('passes disabled props', async () => {
     const wrapper = createWrapper();
     expect(wrapper.find('input').attributes('disabled')).toBeUndefined();
-    expect(wrapper.get('label').classes()).not.toMatch(/_disabled_/);
+    expect(wrapper.get('label').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_disabled_/)]),
+    );
     await wrapper.setProps({ disabled: true });
     expect(wrapper.find('input').attributes('disabled')).toBeDefined();
-    expect(wrapper.get('label').classes()).toMatch(/_disabled_/);
+    expect(wrapper.get('label').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_disabled_/)]),
+    );
     await wrapper.setProps({ disabled: false });
     expect(wrapper.find('input').attributes('disabled')).toBeUndefined();
-    expect(wrapper.get('label').classes()).not.toMatch(/_disabled_/);
+    expect(wrapper.get('label').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_disabled_/)]),
+    );
   });
 
   it('passes color props', async () => {
     const wrapper = createWrapper({ props: { color: 'primary' } });
-    expect(wrapper.find('label').classes()).toMatch(/_primary_/);
+    expect(wrapper.find('label').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_primary_/)]),
+    );
 
     await wrapper.setProps({ color: 'secondary' });
-    expect(wrapper.find('label').classes()).toMatch(/_secondary_/);
+    expect(wrapper.find('label').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_secondary_/)]),
+    );
 
     await wrapper.setProps({ color: 'error' });
-    expect(wrapper.find('label').classes()).toMatch(/_error_/);
+    expect(wrapper.find('label').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_error_/)]),
+    );
 
     await wrapper.setProps({ color: 'success' });
-    expect(wrapper.find('label').classes()).toMatch(/_success_/);
+    expect(wrapper.find('label').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_success_/)]),
+    );
   });
 
   it('passes size props', async () => {
     const wrapper = createWrapper({ props: { size: 'sm' } });
-    expect(wrapper.find('label').classes()).toMatch(/_sm_/);
+    expect(wrapper.find('label').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_sm_/)]),
+    );
   });
 
   it('passes hint props', async () => {
@@ -55,8 +73,8 @@ describe('forms/Switch', () => {
 
     const hint = 'Switch Hints';
     await wrapper.setProps({ hint });
-    expect(wrapper.find('.details > div').classes()).toMatch(
-      /text-rui-text-secondary/,
+    expect(wrapper.find('.details > div').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/text-rui-text-secondary/)]),
     );
     expect(wrapper.find('.details > div').text()).toBe(hint);
   });
@@ -67,7 +85,9 @@ describe('forms/Switch', () => {
 
     const errorMessage = 'Switch Error Message';
     await wrapper.setProps({ errorMessages: [errorMessage] });
-    expect(wrapper.find('.details > div').classes()).toMatch(/text-rui-error/);
+    expect(wrapper.find('.details > div').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/text-rui-error/)]),
+    );
     expect(wrapper.find('.details > div').text()).toBe(errorMessage);
   });
 

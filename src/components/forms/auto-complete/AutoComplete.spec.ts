@@ -72,13 +72,23 @@ describe('forms/AutoComplete', () => {
       },
     });
 
-    expect(wrapper.classes()).toMatch(/_single_/);
-    expect(wrapper.classes()).toMatch(/_default_/);
-    expect(wrapper.classes()).not.toMatch(/_multiple_/);
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_single_/)]),
+    );
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_default_/)]),
+    );
+    expect(wrapper.classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_multiple_/)]),
+    );
 
     await wrapper.setProps({ variant: 'filled' });
-    expect(wrapper.classes()).toMatch(/_filled_/);
-    expect(wrapper.classes()).not.toMatch(/_default_/);
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_filled_/)]),
+    );
+    expect(wrapper.classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_default_/)]),
+    );
   });
 
   it('based on model, expect multiple values', async () => {
@@ -90,12 +100,22 @@ describe('forms/AutoComplete', () => {
       },
     });
 
-    expect(wrapper.classes()).toMatch(/_multiple_/);
-    expect(wrapper.classes()).toMatch(/_default_/);
-    expect(wrapper.classes()).not.toMatch(/_single_/);
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_multiple_/)]),
+    );
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_default_/)]),
+    );
+    expect(wrapper.classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_single_/)]),
+    );
 
     await wrapper.setProps({ variant: 'filled' });
-    expect(wrapper.classes()).toMatch(/_filled_/);
-    expect(wrapper.classes()).not.toMatch(/_default_/);
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_filled_/)]),
+    );
+    expect(wrapper.classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_default_/)]),
+    );
   });
 });

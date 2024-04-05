@@ -14,8 +14,12 @@ describe('footerStepper', () => {
         pages: 5,
       },
     });
-    expect(wrapper.classes()).toMatch(/_footer-stepper_/);
-    expect(wrapper.classes()).toMatch(/_numeric_/);
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_footer-stepper_/)]),
+    );
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_numeric_/)]),
+    );
   });
 
   it('passes props correctly', async () => {
@@ -28,12 +32,16 @@ describe('footerStepper', () => {
     });
 
     await wrapper.setProps({ variant: 'progress' });
-    expect(wrapper.classes()).toMatch(/_progress_/);
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_progress_/)]),
+    );
 
     const next = wrapper.find('button ~ button span[class*=_label] span');
     expect(next.exists()).toBeTruthy();
 
     await wrapper.setProps({ variant: 'pill' });
-    expect(wrapper.classes()).toMatch(/_pill_/);
+    expect(wrapper.classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_pill_/)]),
+    );
   });
 });

@@ -69,7 +69,9 @@ describe('dataTable', () => {
       },
     });
 
-    expect(wrapper.get('table').classes()).toMatch(/_table_/);
+    expect(wrapper.get('table').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_table_/)]),
+    );
     expect(wrapper.find('table thead').exists()).toBeTruthy();
     expect(wrapper.find('table tbody').exists()).toBeTruthy();
   });
