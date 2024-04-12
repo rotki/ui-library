@@ -868,6 +868,10 @@ function toggleRow(row: any, expanded: any[] | undefined) {
   else
     expanded?.push(row);
 }
+
+function removeRow(table: DataTableProps<ExtendedUser, 'id'>, row: any) {
+  table.rows = table.rows.filter(tRow => tRow.id !== row.id);
+}
 </script>
 
 <template>
@@ -919,15 +923,17 @@ function toggleRow(row: any, expanded: any[] | undefined) {
             <template #header.text.address.city>
               city custom header
             </template>
-            <template #item.actions>
+            <template #item.action="{ row }">
               <RuiButton
                 icon
                 variant="text"
                 size="sm"
+                @click="removeRow(table, row)"
               >
                 <RuiIcon
-                  name="more-fill"
-                  color="primary"
+                  name="delete-bin-line"
+                  size="14"
+                  color="error"
                 />
               </RuiButton>
             </template>

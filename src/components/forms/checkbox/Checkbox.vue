@@ -83,6 +83,12 @@ watch(indeterminate, (val) => {
       input.value = 'on';
   }
 });
+
+watch(internalModelValue, (val) => {
+  const input = get(el);
+  if (input && input.checked !== val)
+    input.checked = val;
+});
 </script>
 
 <template>

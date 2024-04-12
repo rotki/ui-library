@@ -12,7 +12,6 @@ import ExpandButton from '@/components/tables/ExpandButton.vue';
 import TablePagination, { type TablePaginationData } from './TablePagination.vue';
 import TableHead, { type GroupData, type GroupKeys, type NoneSortableTableColumn, type SortColumn, type TableColumn, type TableRowKey, type TableRowKeyData, type TableSortData,
 } from './TableHead.vue';
-import type { Ref } from 'vue';
 
 export interface TableOptions<T> {
   pagination?: TablePaginationData;
@@ -839,11 +838,10 @@ function resetCheckboxShiftState() {
  * toggles a single row
  * @param {boolean} checked checkbox state
  * @param {string} value the id of the selected row
- * @param {number} index the index of the selected row
  * @param {boolean} userAction whether the select triggered by user manually
  *
  */
-function onSelect(checked: boolean, value: T[typeof props.rowAttr], index: number, userAction = false) {
+function onSelect(checked: boolean, value: T[typeof props.rowAttr], userAction = false) {
   if (get(shiftClicked) && userAction)
     return;
 
@@ -888,7 +886,7 @@ function onCheckboxClick(event: any, value: T[typeof props.rowAttr], index: numb
           const valueToApply = isSelected(lastSelectedData[id]);
 
           if (lastIndex === index) {
-            onSelect(!valueToApply, value, index);
+            onSelect(!valueToApply, value);
           }
           else {
             const from = Math.min(lastIndex, index);
@@ -897,7 +895,7 @@ function onCheckboxClick(event: any, value: T[typeof props.rowAttr], index: numb
             for (let i = from; i <= to; i++) {
               const currSelectedData = tableData[i];
               if (isRow(currSelectedData) && !isDisabledRow(currSelectedData[id]))
-                onSelect(valueToApply, currSelectedData[id], i);
+                onSelect(valueToApply, currSelectedData[id]);
             }
           }
 
@@ -912,6 +910,13 @@ function onCheckboxClick(event: any, value: T[typeof props.rowAttr], index: numb
 }
 
 const search = computed(() => props.search);
+
+function deselectRemovedRows() {
+  get(selectedData)?.forEach((key: T[IdType]) => {
+    if (isSelected(key) && !get(visibleIdentifiers).includes(key))
+      onSelect(false, key, true);
+  });
+}
 
 function scrollToTop() {
   const { top } = useElementBounding(table);
@@ -984,7 +989,11 @@ watch(search, () => {
   resetCheckboxShiftState();
 });
 
-watch(sorted, setInternalTotal);
+watch(sorted, (items) => {
+  if (!props.multiPageSelect)
+    deselectRemovedRows();
+  setInternalTotal(items);
+});
 
 onMounted(() => {
   setInternalTotal(get(sorted));
@@ -1170,7 +1179,7 @@ onMounted(() => {
                     color="primary"
                     class="select-none"
                     hide-details
-                    @update:model-value="onSelect($event, row[rowIdentifier], index, true)"
+                    @update:model-value="onSelect($event, row[rowIdentifier], true)"
                     @click="onCheckboxClick($event, row[rowIdentifier], index)"
                   />
                 </td>
