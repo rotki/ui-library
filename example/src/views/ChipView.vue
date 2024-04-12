@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { reactive, ref } from 'vue';
 import { type ChipProps, RuiChip } from '@rotki/ui-library';
 
 const dismissed = reactive<Record<string | number, number>>({});

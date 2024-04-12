@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { RuiSkeletonLoader, type SkeletonLoaderProps } from '@rotki/ui-library';
-import { ref } from 'vue';
 
 const loaders = ref<
 (SkeletonLoaderProps & {

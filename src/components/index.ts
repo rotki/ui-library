@@ -56,7 +56,7 @@ import {
   type Props as TooltipProps,
 } from '@/components/overlays/tooltip/Tooltip.vue';
 import {
-  type Props as MenuProps,
+  type MenuProps,
   default as RuiMenu,
 } from '@/components/overlays/menu/Menu.vue';
 import {
@@ -140,7 +140,7 @@ import {
 import {
   type Props as MenuSelectProps,
   default as RuiMenuSelect,
-} from '@/components/forms/select/MenuSelect.vue';
+} from '@/components/forms/select/RuiMenuSelect.vue';
 import {
   type Props as AccordionsProps,
   default as RuiAccordions,

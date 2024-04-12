@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { RuiIcon } from '@rotki/ui-library';
-import { ref } from 'vue';
 
 const icons = ref([
   { name: 'moon-line', size: 24 },

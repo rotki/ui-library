@@ -3,7 +3,6 @@ import {
   RuiSlider,
   type SliderProps,
 } from '@rotki/ui-library';
-import { ref } from 'vue';
 
 type SliderData = SliderProps &
   {

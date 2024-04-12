@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
 import { type AutoCompleteProps, RuiAutoComplete } from '@rotki/ui-library';
 import { objectOmit } from '@vueuse/shared';
 

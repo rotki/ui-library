@@ -6,7 +6,6 @@ import {
   type TooltipProps,
 } from '@rotki/ui-library/components';
 import { objectOmit } from '@vueuse/shared';
-import { ref } from 'vue';
 
 const tooltips = ref<
 (TooltipProps & {

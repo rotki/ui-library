@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import MenuSelect from '@/components/forms/select/MenuSelect.vue';
+import MenuSelect from '@/components/forms/select/RuiMenuSelect.vue';
 
 interface SelectOption { id: string; label: string }
 
@@ -28,16 +28,16 @@ describe('menu select', () => {
     const wrapper = createWrapper({
       props: {
         keyAttr: 'id',
-        modelValue: null,
+        modelValue: undefined,
         options,
         textAttr: 'label',
       },
     });
 
-    expect(wrapper.get('label').classes()).toEqual(
+    expect(wrapper.get('button[data-id="activator"]').classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_activator_/)]),
     );
-    expect(wrapper.find('label span[class*=label]').exists()).toBeTruthy();
+    expect(wrapper.find('button[data-id="activator"] span[class*=label]').exists()).toBeTruthy();
     expect(wrapper.find('span > svg').exists()).toBeTruthy();
   });
 
@@ -46,12 +46,12 @@ describe('menu select', () => {
       props: {
         disabled: true,
         keyAttr: 'id',
-        modelValue: options[4],
+        modelValue: options[4].id,
         options,
         textAttr: 'label',
       },
     });
-    expect(wrapper.find('label[aria-disabled]').exists()).toBeTruthy();
-    expect(wrapper.find('label[aria-disabled]').text()).toMatch('Spain');
+    expect(wrapper.find('button[aria-disabled]').exists()).toBeTruthy();
+    expect(wrapper.find('button[aria-disabled]').text()).toMatch('Spain');
   });
 });

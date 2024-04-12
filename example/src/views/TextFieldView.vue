@@ -5,7 +5,6 @@ import {
   RuiTextField,
   type TextFieldProps,
 } from '@rotki/ui-library';
-import { ref } from 'vue';
 import { objectOmit } from '@vueuse/shared';
 import type { Slots } from '@/types';
 

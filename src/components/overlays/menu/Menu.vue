@@ -1,30 +1,43 @@
 <script setup lang="ts">
 import { type PopperOptions, usePopper } from '@/composables/popper';
+import RuiFormTextDetail from '@/components/helpers/FormTextDetail.vue';
 
-export interface Props {
+export interface MenuProps {
   modelValue?: boolean;
   openOnHover?: boolean;
+  fullWidth?: boolean;
   disabled?: boolean;
   openDelay?: number;
   closeDelay?: number;
   popper?: PopperOptions;
+  wrapperClass?: string;
   menuClass?: string;
   closeOnContentClick?: boolean;
+  hint?: string;
+  errorMessages?: string | string[];
+  successMessages?: string | string[];
+  showDetails?: boolean;
+  dense?: boolean;
 }
 
 defineOptions({
   name: 'RuiMenu',
 });
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<MenuProps>(), {
   modelValue: false,
   openOnHover: false,
   disabled: false,
+  fullWidth: false,
   openDelay: 0,
   closeDelay: 0,
   popper: () => ({}),
+  wrapperClass: '',
   menuClass: '',
   closeOnContentClick: false,
+  hint: undefined,
+  errorMessages: () => [],
+  successMessages: () => [],
 });
 
 const emit = defineEmits<{
@@ -33,7 +46,17 @@ const emit = defineEmits<{
 
 const css = useCssModule();
 
-const { modelValue, closeDelay, openDelay, popper, disabled, closeOnContentClick, openOnHover } = toRefs(props);
+const {
+  modelValue,
+  closeDelay,
+  openDelay,
+  popper,
+  disabled,
+  closeOnContentClick,
+  openOnHover,
+  errorMessages,
+  successMessages,
+} = toRefs(props);
 
 const {
   reference: activator,
@@ -45,6 +68,8 @@ const {
   onPopperLeave,
   updatePopper,
 } = usePopper(popper, disabled, openDelay, closeDelay);
+
+const { width } = useElementSize(activator);
 
 const click: Ref<boolean> = ref(false);
 
@@ -77,19 +102,15 @@ watch(open, (open) => {
   emit('update:model-value', open);
 });
 
-const onClickOutsideIgnored = computed(() => {
-  if (!get(closeOnContentClick))
-    return get(menu);
-
-  return undefined;
-});
-
-onClickOutside(activator, () => {
+onClickOutside(menu, () => {
   if (get(open))
     onLeave();
-}, { ignore: [onClickOutsideIgnored] });
+}, { ignore: [activator] });
 
 const on = computed(() => {
+  if (get(disabled))
+    return {};
+
   const openOnHoverVal = get(openOnHover);
   const clickVal = get(click);
   return {
@@ -104,19 +125,23 @@ const on = computed(() => {
     click: checkClick,
   };
 });
+
+const { hasError, hasSuccess } = useFormTextDetail(
+  errorMessages,
+  successMessages,
+);
 </script>
 
 <template>
-  <div>
+  <div @keyup.esc.exact="onLeave()">
     <div
       ref="activator"
-      :class="css.wrapper"
+      :class="[css.wrapper, wrapperClass, { 'w-full': fullWidth }]"
       :data-menu-disabled="disabled"
     >
       <slot
         name="activator"
-        :on="on"
-        :open="open"
+        v-bind="{ on, open, disabled, hasError, hasSuccess }"
       />
     </div>
     <Teleport
@@ -132,6 +157,7 @@ const on = computed(() => {
           css[`menu__${popper?.strategy ?? 'absolute'}`],
         ]"
         role="menu"
+        @click="closeOnContentClick ? onLeave() : undefined"
       >
         <TransitionGroup
           enter-active-class="transition ease-out duration-200"
@@ -149,11 +175,19 @@ const on = computed(() => {
             :class="css.base"
             role="menu-content"
           >
-            <slot />
+            <slot v-bind="{ width }" />
           </div>
         </TransitionGroup>
       </div>
     </Teleport>
+    <RuiFormTextDetail
+      v-if="showDetails"
+      class="pt-1"
+      :class="[dense ? 'px-2' : 'px-4']"
+      :error-messages="errorMessages"
+      :success-messages="successMessages"
+      :hint="hint"
+    />
   </div>
 </template>
 

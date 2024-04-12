@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import Button from '@/components/buttons/button/Button.vue';
 import Icon from '@/components/icons/Icon.vue';
-import MenuSelect from '@/components/forms/select/MenuSelect.vue';
+import MenuSelect from '../forms/select/RuiMenuSelect.vue';
 
 export interface TablePaginationData {
   page: number;
@@ -38,8 +38,8 @@ const limits = computed(
 );
 
 const currentLimit = computed({
-  get: () => ({ limit: get(modelValue).limit }),
-  set: ({ limit }) =>
+  get: () => get(modelValue).limit,
+  set: limit =>
     emit('update:model-value', {
       ...get(modelValue),
       limit: Number(limit),
@@ -70,8 +70,8 @@ const indicatorText = computed(() => {
 });
 
 const currentRange = computed({
-  get: () => ({ page: get(modelValue).page, text: pageRangeText(get(modelValue).page) }),
-  set: ({ page }) =>
+  get: () => get(modelValue).page,
+  set: page =>
     emit('update:model-value', {
       ...get(modelValue),
       page,
@@ -90,7 +90,7 @@ function goToPage(page: number) {
 
 function pageRangeText(page: number) {
   const { limit, total } = get(modelValue);
-  return `${formatInteger((page - 1) * limit + 1)}-${formatInteger(
+  return `${formatInteger((page - 1) * limit + 1)} - ${formatInteger(
     Math.min(page * limit, total),
   )}`;
 }
@@ -136,10 +136,11 @@ function onLast() {
         v-model="currentLimit"
         :options="limits"
         :disabled="loading || disablePerPage"
-        :dense="dense"
+        label-class="!text-xs !min-h-8"
         name="limit"
         key-attr="limit"
         text-attr="limit"
+        dense
       />
     </div>
     <div :class="css.ranges">
@@ -149,10 +150,11 @@ function onLast() {
         v-model="currentRange"
         :options="ranges"
         :disabled="loading"
-        :dense="dense"
+        label-class="!text-xs !min-h-8"
         name="ranges"
         key-attr="page"
         text-attr="text"
+        dense
       />
       <span :class="css.indicator">
         {{ indicatorText }}

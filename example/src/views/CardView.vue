@@ -6,7 +6,6 @@ import {
   RuiCard,
 } from '@rotki/ui-library/components';
 import { objectOmit } from '@vueuse/shared';
-import { ref } from 'vue';
 
 const sections = ref<
   {

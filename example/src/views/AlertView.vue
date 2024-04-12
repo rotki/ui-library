@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { type AlertProps, RuiAlert } from '@rotki/ui-library';
-import { ref } from 'vue';
 
 type AlertData = Omit<
   AlertProps & { clicks?: number; closed?: boolean },

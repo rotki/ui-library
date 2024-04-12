@@ -1,9 +1,9 @@
 import { DEFAULT_POPPER_OPTIONS } from '@/composables/popper';
 import Button from '@/components/buttons/button/Button.vue';
-import Menu, { type Props } from './Menu.vue';
+import Menu, { type MenuProps } from './Menu.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-const render: StoryFn<Props> = args => ({
+const render: StoryFn<MenuProps> = args => ({
   components: { Button, Menu },
   setup() {
     return { args };
@@ -21,7 +21,7 @@ const render: StoryFn<Props> = args => ({
     </div>`,
 });
 
-const meta: Meta<Props> = {
+const meta: Meta<MenuProps> = {
   args: {
     closeDelay: 0,
     closeOnContentClick: false,
@@ -55,7 +55,7 @@ const meta: Meta<Props> = {
   title: 'Components/Overlays/Menu',
 };
 
-type Story = StoryObj<Props>;
+type Story = StoryObj<MenuProps>;
 
 export const Default: Story = {
   args: {},

@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { RuiChip, useBreakpoint } from '@rotki/ui-library';
-import { computed } from 'vue';
-import { get } from '@vueuse/shared';
 
 const {
   name,

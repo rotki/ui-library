@@ -6,7 +6,6 @@ import {
   RuiButtonGroup,
   RuiIcon,
 } from '@rotki/ui-library';
-import { ref } from 'vue';
 import { objectOmit } from '@vueuse/shared';
 
 interface ExtraProperties {
@@ -717,16 +716,16 @@ const multipleToggleButtons = ref<ButtonGroupData[]>([
           v-bind="objectOmit(buttonGroup, ['modelValue', 'count', 'rounded'])"
           v-model="buttonGroup.modelValue"
         >
-          <RuiButton value="left">
+          <RuiButton model-value="left">
             <RuiIcon name="align-left" />
           </RuiButton>
-          <RuiButton value="center">
+          <RuiButton model-value="center">
             <RuiIcon name="align-center" />
           </RuiButton>
-          <RuiButton value="right">
+          <RuiButton model-value="right">
             <RuiIcon name="align-right" />
           </RuiButton>
-          <RuiButton value="justify">
+          <RuiButton model-value="justify">
             <RuiIcon name="align-justify" />
           </RuiButton>
         </RuiButtonGroup>

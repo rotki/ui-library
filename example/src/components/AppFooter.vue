@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { useCssModule } from 'vue';
-
 const css = useCssModule();
 const year = new Date().getFullYear();
 </script>
