@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { type RadioProps, RuiRadio, RuiRadioGroup } from '@rotki/ui-library';
-import { ref } from 'vue';
 
 type RadioData = RadioProps & {
   label?: string;
@@ -184,7 +183,7 @@ const radioGroups = ref<
     disabled?: boolean;
     size?: RadioData['size'];
     options: {
-      color: RadioData['color'];
+      color: NonNullable<RadioData['color']>;
     }[];
   }[]
 >([

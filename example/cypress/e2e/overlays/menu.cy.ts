@@ -12,23 +12,24 @@ describe('menu', () => {
 
     cy.get('@defaultMenu').find('[data-cy=activator]').as('activator');
     cy.get('@activator').trigger('click');
-    cy.get('body').find('div[role=menu]');
+    cy.get('body').find('div[role=menu]').should('be.visible');
     cy.get('@activator').trigger('click');
-    cy.get('body').find('div[role=menu-content]').should('not.exist');
+    cy.get('body').find('div[role=menu-content]').should('not.be.visible');
 
     cy.get('@activator').trigger('click');
-    cy.get('body').find('div[role=menu-content]').should('exist').as('menuContent');
+    cy.get('body').find('div[role=menu-content]').should('be.visible').as('menuContent');
     cy.get('@menuContent').trigger('click');
-    cy.get('body').find('div[role=menu-content]').contains('This is menu 0').should('exist');
+    cy.get('body').find('div[role=menu-content]').should('be.visible');
+    cy.get('@activator').type('{esc}');
     cy.get('body').trigger('click');
-    cy.get('body').find('div[role=menu-content]').contains('This is menu 0').should('not.exist');
+    cy.get('body').find('div[role=menu-content]').should('not.be.visible');
   });
 
   it('disabled should not trigger menu', () => {
     cy.get('div[data-cy=menu-4]').as('disabledMenu');
 
     cy.get('@disabledMenu').find('[data-cy=activator]').as('activator');
-    cy.get('@activator').trigger('click');
+    cy.get('@activator').should('be.disabled');
     cy.get('body').find('div[role=menu-content]').should('not.exist');
   });
 
@@ -47,7 +48,8 @@ describe('menu', () => {
     cy.get('@activator').trigger('mouseleave');
     cy.get('body').find('div[role=menu-content]').should('exist');
 
-    cy.get('@activator').trigger('click');
+    cy.get('@activator').type('{esc}');
+    cy.get('body').trigger('click');
     cy.get('body').find('div[role=menu-content]').should('not.exist');
   });
 

@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { useCssModule } from 'vue';
-import { useRoute } from 'vue-router';
 import type { SideNavLink } from '@/types';
 
 defineProps<{

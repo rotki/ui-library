@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { RouterView } from 'vue-router';
-import { ref, useCssModule } from 'vue';
 import AppNav from '@/components/AppNav.vue';
 import AppFooter from '@/components/AppFooter.vue';
 import AppSideNav from '@/components/AppSideNav.vue';

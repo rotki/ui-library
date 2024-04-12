@@ -4,7 +4,6 @@ import {
   RuiBadge,
   RuiButton,
 } from '@rotki/ui-library/components';
-import { ref } from 'vue';
 
 const badges = ref<BadgeProps[]>([
   {

@@ -429,7 +429,7 @@ describe('dataTable', () => {
       });
 
       const select = paginationInstances[0].findComponent({ name: 'RuiMenuSelect' });
-      select.vm.$emit('update:model-value', { limit: 10 });
+      select.vm.$emit('update:model-value', 10);
 
       await nextTick();
 
@@ -478,8 +478,8 @@ describe('dataTable', () => {
 
       const globalSelect = paginate[0].findComponent({ name: 'RuiMenuSelect' });
       const localSelect = paginate[1].findComponent({ name: 'RuiMenuSelect' });
-      globalSelect.vm.$emit('update:model-value', { limit: 10 });
-      localSelect.vm.$emit('update:model-value', { limit: 25 });
+      globalSelect.vm.$emit('update:model-value', 10);
+      localSelect.vm.$emit('update:model-value', 25);
 
       await nextTick();
 
@@ -530,8 +530,8 @@ describe('dataTable', () => {
 
       const globalSelect = paginate[0].findComponent({ name: 'RuiMenuSelect' });
       const localSelect = paginate[1].findComponent({ name: 'RuiMenuSelect' });
-      globalSelect.vm.$emit('update:model-value', { limit: 25 });
-      localSelect.vm.$emit('update:model-value', { limit: 10 });
+      globalSelect.vm.$emit('update:model-value', 25);
+      localSelect.vm.$emit('update:model-value', 10);
 
       await nextTick();
 
@@ -547,7 +547,7 @@ describe('dataTable', () => {
     });
   });
 
-  it('pagination range works as expected', async () => {
+  it('pagination limit and range works as expected', async () => {
     const wrapper = createWrapper({
       props: {
         'cols': columns,
@@ -592,19 +592,34 @@ describe('dataTable', () => {
     expect(limits.exists()).toBeTruthy();
     expect(ranges.exists()).toBeTruthy();
 
-    limits.vm.$emit('update:model-value', { limit: 5 });
+    limits.vm.$emit('update:model-value', 5);
 
     await nextTick();
 
-    expect(limits.vm.modelValue).toStrictEqual({ limit: 5 });
+    expect(limits.vm.modelValue).toStrictEqual(5);
+    expect(limits.find('[data-id="activator"] span').text()).toStrictEqual('5');
+    expect(limits.find('input[type=hidden]').element).toHaveProperty('value', '5');
+    expect(navButtons.filter(b => b.attributes('disabled') === '')).toHaveLength(2);
+    expect(navButtons.filter(b => b.attributes('disabled') === undefined)).toHaveLength(2);
 
-    ranges.vm.$emit('update:model-value', { page: 2 });
+    ranges.vm.$emit('update:model-value', 2);
 
     await nextTick();
 
-    expect(ranges.vm.modelValue).toStrictEqual({ page: 2, text: '6-10' });
+    expect(ranges.props().modelValue).toStrictEqual(2);
+    expect(ranges.find('[data-id="activator"] span').text()).toStrictEqual('6 - 10');
+    expect(ranges.find('input[type=hidden]').element).toHaveProperty('value', '2');
 
-    expect(navButtons.filter(b => b.attributes('disabled') === '')).toHaveLength(0);
-    expect(navButtons.filter(b => b.attributes('disabled') === undefined)).toHaveLength(4);
+    limits.vm.$emit('update:model-value', 10);
+
+    await nextTick();
+
+    expect(limits.props().modelValue).toStrictEqual(10);
+    expect(limits.find('[data-id="activator"] span').text()).toStrictEqual('10');
+    expect(limits.find('input[type=hidden]').element).toHaveProperty('value', '10');
+
+    expect(ranges.props().modelValue).toStrictEqual(1);
+    expect(ranges.find('[data-id="activator"] span').text()).toStrictEqual('1 - 10');
+    expect(ranges.find('input[type=hidden]').element).toHaveProperty('value', '1');
   });
 });

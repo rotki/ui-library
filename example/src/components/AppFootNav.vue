@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-import { computed, toRefs, useCssModule } from 'vue';
-import { useRoute } from 'vue-router';
-import { get } from '@vueuse/shared';
 import type { SideNavLink } from '@/types';
 
 const props = defineProps<{

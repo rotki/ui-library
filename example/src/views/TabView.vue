@@ -8,7 +8,6 @@ import {
   RuiTabs,
   type TabsProps,
 } from '@rotki/ui-library';
-import { ref } from 'vue';
 
 const tabs = ref<TabsProps[]>([
   {

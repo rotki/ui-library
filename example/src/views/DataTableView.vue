@@ -11,9 +11,7 @@ import {
   RuiTableRowExpander,
   RuiTextField,
 } from '@rotki/ui-library/components';
-import { useFetch } from '@vueuse/core';
-import { get, objectOmit, useDebounceFn } from '@vueuse/shared';
-import { computed, onBeforeMount, ref } from 'vue';
+import { objectOmit, useDebounceFn } from '@vueuse/shared';
 
 interface _User {
   id: number;
@@ -858,18 +856,18 @@ const data = [
 
 const selection = ref<number[]>([]);
 
-function isExpanded(row: any, expanded: any[] | undefined) {
-  return expanded?.some((item: ExtendedUser) => item.id === row.id);
+function isExpanded(row: ExtendedUser, expanded?: ExtendedUser[]): boolean {
+  return expanded?.some((item: ExtendedUser) => item.id === row.id) ?? false;
 }
 
-function toggleRow(row: any, expanded: any[] | undefined) {
+function toggleRow(row: ExtendedUser, expanded?: ExtendedUser[]) {
   if (isExpanded(row, expanded))
     expanded?.splice(expanded.indexOf(row), 1);
   else
     expanded?.push(row);
 }
 
-function removeRow(table: DataTableProps<ExtendedUser, 'id'>, row: any) {
+function removeRow(table: DataTableProps<ExtendedUser, 'id'>, row: ExtendedUser) {
   table.rows = table.rows.filter(tRow => tRow.id !== row.id);
 }
 </script>

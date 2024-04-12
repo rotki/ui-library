@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { computed, useCssModule } from 'vue';
 import { RuiIcon, ThemeMode, useRotkiTheme } from '@rotki/ui-library';
 import {
   Listbox,
@@ -8,7 +7,6 @@ import {
   ListboxOption,
   ListboxOptions,
 } from '@headlessui/vue';
-import { get } from '@vueuse/shared';
 
 const css = useCssModule();
 const { switchThemeScheme, state } = useRotkiTheme();

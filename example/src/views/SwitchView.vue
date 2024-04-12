@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { RuiSwitch, type SwitchProps } from '@rotki/ui-library';
-import { ref } from 'vue';
 
 type SwitchData = SwitchProps & {
   value?: boolean;

@@ -2,7 +2,6 @@ import '@/assets/main.css';
 import '@rotki/ui-library/style.css';
 import '@fontsource/roboto/latin.css';
 
-import { createApp } from 'vue';
 import { createPinia, storeToRefs } from 'pinia';
 import {
   RiAddFill,

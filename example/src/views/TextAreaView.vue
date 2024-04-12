@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { RuiTextArea, type TextAreaProps } from '@rotki/ui-library';
-import { ref } from 'vue';
 import type { Slots } from '@/types';
 
 type TextAreaData = TextAreaProps & Slots;

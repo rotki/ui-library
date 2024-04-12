@@ -30,16 +30,19 @@ const props = withDefaults(defineProps<Props<T>>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', modelValue: T | T[] | undefined): void;
+  (e: 'update:modelValue', modelValue?: T | T[]): void;
 }>();
 
 const slots = useSlots();
 const { modelValue, required, disabled, color, variant, size } = toRefs(props);
 const children = computed(() =>
   (slots.default?.() ?? []).map((child, i) => {
+    // child props are in kebab-case it seems
+    const value = child.props?.['model-value'];
+
     child.props = {
       ...child.props,
-      active: activeItem(child.props?.value ?? i),
+      active: activeItem(value ?? i),
     };
 
     // if group is disabled, disable child buttons
@@ -115,7 +118,7 @@ const variantClass = computed(() =>
       :class="css.button"
       :size="size"
       :variant="variant"
-      @update:value="onClick($event ?? i)"
+      @update:model-value="onClick($event ?? i)"
     />
   </div>
 </template>

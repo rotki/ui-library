@@ -1,4 +1,4 @@
-import RuiMenuSelect, { type Props } from './MenuSelect.vue';
+import RuiMenuSelect, { type Props } from './RuiMenuSelect.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 interface SelectOption {
@@ -50,7 +50,11 @@ const meta: Meta<SelectProps> = {
     disabled: { control: 'boolean' },
     modelValue: { control: 'string' },
     options: { control: 'array', defaultValue: [] },
-    outlined: { control: 'boolean' },
+    variant: {
+      control: 'select',
+      defaultValue: 'default',
+      options: ['default', 'outlined', 'filled'],
+    },
   },
   component: RuiMenuSelect as any,
   parameters: {
@@ -68,7 +72,7 @@ type Story = StoryObj<SelectProps>;
 export const Default: Story = {
   args: {
     keyAttr: 'id',
-    modelValue: null,
+    modelValue: undefined,
     textAttr: 'label',
   },
 };
@@ -77,7 +81,7 @@ export const DefaultDisabled: Story = {
   args: {
     disabled: true,
     keyAttr: 'id',
-    modelValue: null,
+    modelValue: undefined,
     textAttr: 'label',
   },
 };
@@ -85,9 +89,9 @@ export const DefaultDisabled: Story = {
 export const Outlined: Story = {
   args: {
     keyAttr: 'id',
-    modelValue: null,
-    outlined: true,
+    modelValue: undefined,
     textAttr: 'label',
+    variant: 'outlined',
   },
 };
 
@@ -95,9 +99,9 @@ export const OutlinedDisabled: Story = {
   args: {
     disabled: true,
     keyAttr: 'id',
-    modelValue: null,
-    outlined: true,
+    modelValue: undefined,
     textAttr: 'label',
+    variant: 'outlined',
   },
 };
 
@@ -106,9 +110,9 @@ export const OutlinedDense: Story = {
     dense: false,
     disabled: true,
     keyAttr: 'id',
-    modelValue: null,
-    outlined: true,
+    modelValue: undefined,
     textAttr: 'label',
+    variant: 'outlined',
   },
 };
 
@@ -117,9 +121,9 @@ export const OutlinedDisabledDense: Story = {
     dense: true,
     disabled: true,
     keyAttr: 'id',
-    modelValue: null,
-    outlined: true,
+    modelValue: undefined,
     textAttr: 'label',
+    variant: 'outlined',
   },
 };
 

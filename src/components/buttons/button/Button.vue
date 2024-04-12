@@ -14,7 +14,7 @@ export interface Props<T = undefined> {
   size?: 'sm' | 'lg';
   tag?: 'button' | 'a';
   type?: 'button' | 'submit';
-  value?: T;
+  modelValue?: T;
 }
 
 defineOptions({
@@ -33,14 +33,14 @@ const props = withDefaults(defineProps<Props<T>>(), {
   size: undefined,
   tag: 'button',
   type: 'button',
-  value: undefined,
+  modelValue: undefined,
 });
 
 const emit = defineEmits<{
-  (e: 'update:value', value?: T): void;
+  (e: 'update:model-value', value?: T): void;
 }>();
 
-const btnValue = computed(() => props.value);
+const btnValue = computed(() => props.modelValue);
 
 const attrs = useAttrs();
 const css = useCssModule();
@@ -92,7 +92,7 @@ const slots = useSlots();
     :disabled="disabled || loading"
     :type="tag === 'button' ? type : undefined"
     v-bind="attrs"
-    @click="emit('update:value', btnValue)"
+    @click="emit('update:model-value', btnValue)"
   >
     <slot
       v-if="slots.prepend"
@@ -271,6 +271,10 @@ const slots = useSlots();
 
     &.sm {
       @apply px-3 py-1;
+    }
+
+    .label {
+      @apply w-full;
     }
   }
 
