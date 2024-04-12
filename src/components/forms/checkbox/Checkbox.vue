@@ -45,13 +45,14 @@ const { size, modelValue, indeterminate, errorMessages, successMessages } = toRe
 
 const el = ref<HTMLInputElement | null>(null);
 
-function input(event: Event) {
-  const checked = (event.target as HTMLInputElement).checked;
-  if (checked)
-    emit('update:indeterminate', false);
-
-  emit('update:modelValue', checked);
-}
+const internalModelValue = computed({
+  get: () => get(modelValue),
+  set: (checked: boolean) => {
+    if (checked)
+      emit('update:indeterminate', false);
+    emit('update:modelValue', checked);
+  },
+});
 
 const iconSize: ComputedRef<number> = computed(() => {
   const sizeVal = get(size);
@@ -74,14 +75,13 @@ const { hasError, hasSuccess } = useFormTextDetail(
 
 watch(indeterminate, (val) => {
   const input = get(el);
-  if (input && val)
-    input.checked = false;
-});
-
-watch(modelValue, (val) => {
-  const input = get(el);
-  if (input && input.checked !== val)
-    input.checked = val;
+  if (input) {
+    input.checked = !val;
+    if (val)
+      input.value = 'off';
+    else
+      input.value = 'on';
+  }
 });
 </script>
 
@@ -99,11 +99,11 @@ watch(modelValue, (val) => {
     >
       <input
         ref="el"
+        v-model="internalModelValue"
         type="checkbox"
         :class="css.input"
         :disabled="disabled"
         v-bind="getNonRootAttrs(attrs, ['onInput', 'onClick'])"
-        @input="input($event)"
       />
       <span
         :class="[
