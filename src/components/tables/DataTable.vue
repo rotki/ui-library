@@ -1400,10 +1400,10 @@ onMounted(() => {
           }
 
           .empty {
-            @apply flex flex-col space-y-3 items-center justify-center flex-1 py-2;
+            @apply flex flex-col gap-3 items-center justify-center flex-1 min-h-[4.4rem];
 
             &__label {
-              @apply text-body-1 font-bold text-center text-current pb-0 mb-0;
+              @apply text-body-1 leading-none font-bold text-center text-current pb-0 mb-0;
             }
 
             &__description {
