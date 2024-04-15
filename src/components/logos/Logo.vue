@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { transformCase } from '@/utils/helpers';
 import fallback from './logo.svg';
 
 interface ExternalLinks {
@@ -6,7 +7,7 @@ interface ExternalLinks {
   app?: string;
   website?: string;
   about?: string;
-  empty_screen?: string;
+  emptyScreen?: string;
   [key: string]: string | undefined;
 }
 
@@ -39,7 +40,7 @@ const emptyLinks: ExternalLinks = {
   app: undefined,
   website: undefined,
   about: undefined,
-  empty_screen: undefined,
+  emptyScreen: undefined,
 };
 
 const externalSources = computedAsync(
@@ -52,7 +53,7 @@ const externalSources = computedAsync(
         `https://raw.githubusercontent.com/rotki/data/${props.branch}/constants/asset-mappings.json`,
       );
 
-      return JSON.parse(get(data) ?? 'null')?.logo ?? emptyLinks;
+      return transformCase(JSON.parse(get(data) ?? 'null')?.logo, 'camelCase') ?? emptyLinks;
     }
     catch {
       return emptyLinks;

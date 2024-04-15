@@ -10,10 +10,10 @@ const icons = ref([
 const logos = ref<(LogoProps & { name: string })[]>([
   { name: 'Default' },
   { name: 'Custom', logo: 'drawer' },
-  { name: 'Custom failed fallback to default', logo: 'non_existing_key' },
-  { name: 'Custom failed fallback to default with app name', logo: 'non_existing_key', text: true },
+  { name: 'Custom failed fallback to default', logo: 'nonExistingKey' },
+  { name: 'Custom failed fallback to default with app name', logo: 'nonExistingKey', text: true },
   { name: 'Default with app name', text: true },
-  { name: 'Custom with app name', logo: 'drawer', text: true },
+  { name: 'Custom with app name', logo: 'emptyScreen', text: true },
 ]);
 </script>
 

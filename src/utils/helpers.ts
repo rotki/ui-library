@@ -1,4 +1,5 @@
 import { objectOmit, objectPick } from '@vueuse/shared';
+import { camelCase, snakeCase } from 'scule';
 import type { SetupContext } from 'vue';
 
 interface CurrencyOptions {
@@ -80,4 +81,24 @@ export function getRootAttrs(data: SetupContextAttrs, include: SetupContextAttrs
  */
 export function getNonRootAttrs(data: SetupContextAttrs, exclude: SetupContextAttrsKeys = ['class']) {
   return objectOmit(data, [...getRootKeys(data), ...exclude]);
+}
+
+/**
+ * Transforms the keys of an object to either camelCase or snake_case
+ * @param {T} item
+ * @param {"camelCase" | "snake_case"} to
+ * @returns {Record<string, any>}
+ */
+export function transformCase<T extends object>(item: T, to: 'camelCase' | 'snake_case') {
+  if (!item)
+    return item;
+
+  return Object.keys(item).reduce((acc, curr) => {
+    if (to === 'camelCase')
+      acc[camelCase(curr)] = item[curr as keyof T];
+    else
+      acc[snakeCase(curr)] = item[curr as keyof T];
+
+    return acc;
+  }, {} as Record<string, any>);
 }
