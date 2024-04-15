@@ -9,11 +9,11 @@ const icons = ref([
 
 const logos = ref<(LogoProps & { name: string })[]>([
   { name: 'Default' },
-  { name: 'Custom', customSrc: 'https://raw.githubusercontent.com/rotki/data/hohoho/assets/icons/drawer_logo.png' },
-  { name: 'Custom failed fallback to default', customSrc: 'https://raw.githubusercontent.com/rotki/data/hohoho/assets/icons/drawer_logo' },
-  { name: 'Custom failed fallback to default with app name', customSrc: 'https://raw.githubusercontent.com/rotki/data/hohoho/assets/icons/drawer_logo', text: true },
+  { name: 'Custom', logo: 'drawer' },
+  { name: 'Custom failed fallback to default', logo: 'non_existing_key' },
+  { name: 'Custom failed fallback to default with app name', logo: 'non_existing_key', text: true },
   { name: 'Default with app name', text: true },
-  { name: 'Custom with app name', customSrc: 'https://raw.githubusercontent.com/rotki/data/main/assets/icons/drawer_logo.png', text: true },
+  { name: 'Custom with app name', logo: 'drawer', text: true },
 ]);
 </script>
 

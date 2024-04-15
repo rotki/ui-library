@@ -1,4 +1,4 @@
-import { default as Logo, type Props } from './Logo.vue';
+import Logo, { type Props } from './Logo.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 const render: StoryFn<Props> = args => ({
@@ -11,6 +11,9 @@ const render: StoryFn<Props> = args => ({
 
 const meta: Meta<Props> = {
   argTypes: {
+    branch: { control: 'text' },
+    logo: { control: 'text' },
+    size: { control: 'text' },
     text: { control: 'boolean' },
   },
   component: Logo,
@@ -33,14 +36,13 @@ export const WithText: Story = {
 
 export const WithCustomSrc: Story = {
   args: {
-    customSrc:
-      'https://raw.githubusercontent.com/rotki/data/hohoho/assets/icons/drawer_logo.png',
+    logo: 'drawer_logo',
   },
 };
 
 export const WithCustomSrcAndFallback: Story = {
   args: {
-    customSrc: 'notfoundurl',
+    logo: 'notfoundkey',
   },
 };
 
