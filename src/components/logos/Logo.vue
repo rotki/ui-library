@@ -15,6 +15,7 @@ export interface Props {
   branch?: 'develop' | 'main' | string;
   logo?: keyof ExternalLinks;
   size?: string | number; // in rems
+  uniqueKey?: string | number;
 }
 
 defineOptions({
@@ -26,6 +27,7 @@ const props = withDefaults(defineProps<Props>(), {
   branch: 'develop',
   logo: undefined,
   size: 3,
+  uniqueKey: undefined,
 });
 
 const customImageRef = ref<HTMLImageElement>();
@@ -40,21 +42,25 @@ const emptyLinks: ExternalLinks = {
   empty_screen: undefined,
 };
 
-const externalSources = computedAsync(async (): Promise<ExternalLinks> => {
-  if (!props.logo)
-    return emptyLinks;
+const externalSources = computedAsync(
+  async (): Promise<ExternalLinks> => {
+    if (!props.logo)
+      return emptyLinks;
 
-  try {
-    const { data } = await useFetch<string>(
-      `https://raw.githubusercontent.com/rotki/data/${props.branch}/constants/asset-mappings.json`,
-    );
+    try {
+      const { data } = await useFetch<string>(
+        `https://raw.githubusercontent.com/rotki/data/${props.branch}/constants/asset-mappings.json`,
+      );
 
-    return JSON.parse(get(data) ?? 'null')?.logo ?? emptyLinks;
-  }
-  catch {
-    return emptyLinks;
-  }
-}, emptyLinks, { evaluating: pendingSources });
+      return JSON.parse(get(data) ?? 'null')?.logo ?? emptyLinks;
+    }
+    catch {
+      return emptyLinks;
+    }
+  },
+  emptyLinks,
+  { evaluating: pendingSources },
+);
 
 const externalSource = computed(() => {
   const sources = get(externalSources);
@@ -64,7 +70,12 @@ const externalSource = computed(() => {
     return undefined;
   }
 
-  return `https://raw.githubusercontent.com/rotki/data/${props.branch}/assets/icons/${sources[logo]}`;
+  const url = `https://raw.githubusercontent.com/rotki/data/${props.branch}/assets/icons/${sources[logo]}`;
+
+  if (props.uniqueKey)
+    return `${url}?key=${props.uniqueKey}`;
+
+  return url;
 });
 
 watch(
