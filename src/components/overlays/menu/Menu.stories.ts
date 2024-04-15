@@ -103,4 +103,10 @@ export const MenuDisabled: Story = {
   },
 };
 
+export const PersistentMenu: Story = {
+  args: {
+    persistent: true,
+  },
+};
+
 export default meta;

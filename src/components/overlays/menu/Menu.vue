@@ -18,6 +18,7 @@ export interface MenuProps {
   successMessages?: string | string[];
   showDetails?: boolean;
   dense?: boolean;
+  persistent?: boolean;
 }
 
 defineOptions({
@@ -38,6 +39,7 @@ const props = withDefaults(defineProps<MenuProps>(), {
   hint: undefined,
   errorMessages: () => [],
   successMessages: () => [],
+  persistent: false,
 });
 
 const emit = defineEmits<{
@@ -56,6 +58,7 @@ const {
   openOnHover,
   errorMessages,
   successMessages,
+  persistent,
 } = toRefs(props);
 
 const {
@@ -103,7 +106,7 @@ watch(open, (open) => {
 });
 
 onClickOutside(menu, () => {
-  if (get(open))
+  if (get(open) && !get(persistent))
     onLeave();
 }, { ignore: [activator] });
 
