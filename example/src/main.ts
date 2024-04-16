@@ -30,7 +30,7 @@ import {
   createRui,
 } from '@rotki/ui-library';
 import App from '@/App.vue';
-import router from '@/router';
+import { router } from '@/router';
 import { useDefaultsStore } from '@/stores/defaults';
 
 const app = createApp(App);

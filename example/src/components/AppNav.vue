@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RuiIcon, ThemeMode, useRotkiTheme } from '@rotki/ui-library';
+import { RuiIcon, type RuiIcons, ThemeMode, useRotkiTheme } from '@rotki/ui-library';
 import {
   Listbox,
   ListboxButton,
@@ -14,7 +14,7 @@ const { switchThemeScheme, state } = useRotkiTheme();
 interface Theme {
   name: string;
   value: ThemeMode;
-  icon: string;
+  icon: RuiIcons;
 }
 
 const themes: Theme[] = [

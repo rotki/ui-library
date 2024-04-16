@@ -5,14 +5,15 @@ import {
   RuiButton,
   RuiButtonGroup,
   RuiIcon,
+  type RuiIcons,
 } from '@rotki/ui-library';
 import { objectOmit } from '@vueuse/shared';
 
 interface ExtraProperties {
   clicks: number;
-  prepend?: string;
-  append?: string;
-  iconName?: string;
+  prepend?: RuiIcons;
+  append?: RuiIcons;
+  iconName?: RuiIcons;
 }
 
 type ButtonData = ButtonProps & ExtraProperties;
@@ -627,7 +628,7 @@ const multipleToggleButtons = ref<ButtonGroupData[]>([
           {{ button.color }} {{ button.clicks }}
         </span>
         <RuiIcon
-          v-else
+          v-else-if="button.iconName"
           :name="button.iconName"
         />
         <template

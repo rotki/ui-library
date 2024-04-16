@@ -1,160 +1,47 @@
 /* eslint-disable import/max-dependencies */
-import {
-  type Props as AlertProps,
-  default as RuiAlert,
-} from '@/components/alerts/Alert.vue';
-import {
-  type Props as AutoCompleteProps,
-  default as RuiAutoComplete,
-} from '@/components/forms/auto-complete/AutoComplete.vue';
-import {
-  type Props as ButtonProps,
-  default as RuiButton,
-} from '@/components/buttons/button/Button.vue';
-import {
-  type Props as ButtonGroupProps,
-  default as RuiButtonGroup,
-} from '@/components/buttons/button-group/ButtonGroup.vue';
-import {
-  type Props as IconProps,
-  default as RuiIcon,
-} from '@/components/icons/Icon.vue';
-import {
-  type Props as CheckboxProps,
-  default as RuiCheckbox,
-} from '@/components/forms/checkbox/Checkbox.vue';
-import {
-  default as RuiSwitch,
-  type Props as SwitchProps,
-} from '@/components/forms/switch/Switch.vue';
-import {
-  default as RuiSlider,
-  type Props as SliderProps,
-} from '@/components/forms/slider/Slider.vue';
-import {
-  type Props as ChipProps,
-  default as RuiChip,
-} from '@/components/chips/Chip.vue';
-import {
-  type Props as DividerProps,
-  default as RuiDivider,
-} from '@/components/divider/Divider.vue';
-import {
-  default as RuiStepper,
-  type Props as StepperProps,
-} from '@/components/steppers/Stepper.vue';
-import {
-  default as RuiTextArea,
-  type Props as TextAreaProps,
-} from '@/components/forms/text-area/TextArea.vue';
-import {
-  default as RuiTextField,
-  type TextFieldProps,
-} from '@/components/forms/text-field/TextField.vue';
-import {
-  default as RuiTooltip,
-  type Props as TooltipProps,
-} from '@/components/overlays/tooltip/Tooltip.vue';
-import {
-  type MenuProps,
-  default as RuiMenu,
-} from '@/components/overlays/menu/Menu.vue';
-import {
-  type Props as BadgeProps,
-  default as RuiBadge,
-} from '@/components/overlays/badge/Badge.vue';
-import {
-  type Props as DialogProps,
-  default as RuiDialog,
-} from '@/components/overlays/dialog/Dialog.vue';
-import {
-  type Props as FooterStepperProps,
-  default as RuiFooterStepper,
-} from '@/components/steppers/FooterStepper.vue';
-import {
-  type Props as ProgressProps,
-  default as RuiProgress,
-} from '@/components/progress/Progress.vue';
-import {
-  type Props as RadioGroupProps,
-  default as RuiRadioGroup,
-} from '@/components/forms/radio-button/radio-group/RadioGroup.vue';
-import {
-  type RadioProps,
-  default as RuiRadio,
-} from '@/components/forms/radio-button/radio/Radio.vue';
-import {
-  type Props as RevealableTextFieldProps,
-  default as RuiRevealableTextField,
-} from '@/components/forms/revealable-text-field/RevealableTextField.vue';
-import {
-  type Props as LogoProps,
-  default as RuiLogo,
-} from '@/components/logos/Logo.vue';
-import {
-  default as RuiSimpleSelect,
-  type Props as SimpleSelectProps,
-} from '@/components/forms/select/SimpleSelect.vue';
-import {
-  type TableOptions as DataTableOptions,
-  type Props as DataTableProps,
-  default as RuiDataTable,
-} from '@/components/tables/DataTable.vue';
-import {
-  type Props as ExpandButtonProps,
-  default as RuiTableRowExpander,
-} from '@/components/tables/ExpandButton.vue';
-import {
-  default as RuiTablePagination,
-  type TablePaginationData,
-  type Props as TablePaginationProps,
-} from '@/components/tables/TablePagination.vue';
-import {
-  type Props as CardProps,
-  default as RuiCard,
-} from '@/components/cards/Card.vue';
-import {
-  type Props as CardHeaderProps,
-  default as RuiCardHeader,
-} from '@/components/cards/CardHeader.vue';
-import {
-  default as RuiTabs,
-  type Props as TabsProps,
-} from '@/components/tabs/tabs/Tabs.vue';
-import {
-  default as RuiTab,
-  type Props as TabProps,
-} from '@/components/tabs/tab/Tab.vue';
-import {
-  default as RuiTabItems,
-  type Props as TabItemsProps,
-} from '@/components/tabs/tab-items/TabItems.vue';
-import {
-  default as RuiTabItem,
-  type Props as TabItemProps,
-} from '@/components/tabs/tab-item/TabItem.vue';
-import {
-  default as RuiSkeletonLoader,
-  type Props as SkeletonLoaderProps,
-} from '@/components/loaders/Skeleton.vue';
-import {
-  type Props as MenuSelectProps,
-  default as RuiMenuSelect,
-} from '@/components/forms/select/RuiMenuSelect.vue';
-import {
-  type Props as AccordionsProps,
-  default as RuiAccordions,
-} from '@/components/accordions/accordions/Accordions.vue';
-import {
-  type AccordionProps,
-  default as RuiAccordion,
-} from '@/components/accordions/accordion/Accordion.vue';
+import RuiAlert, { type Props as AlertProps } from '@/components/alerts/RuiAlert.vue';
+import RuiAutoComplete, { type Props as AutoCompleteProps } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
+import RuiButton, { type Props as ButtonProps } from '@/components/buttons/button/RuiButton.vue';
+import RuiButtonGroup, { type Props as ButtonGroupProps } from '@/components/buttons/button-group/RuiButtonGroup.vue';
+import RuiIcon, { type Props as IconProps } from '@/components/icons/RuiIcon.vue';
+import RuiCheckbox, { type Props as CheckboxProps } from '@/components/forms/checkbox/RuiCheckbox.vue';
+import RuiSwitch, { type Props as SwitchProps } from '@/components/forms/switch/RuiSwitch.vue';
+import RuiSlider, { type Props as SliderProps } from '@/components/forms/slider/RuiSlider.vue';
+import RuiChip, { type Props as ChipProps } from '@/components/chips/RuiChip.vue';
+import RuiDivider, { type Props as DividerProps } from '@/components/divider/RuiDivider.vue';
+import RuiStepper, { type Props as StepperProps } from '@/components/steppers/RuiStepper.vue';
+import RuiTextArea, { type Props as TextAreaProps } from '@/components/forms/text-area/RuiTextArea.vue';
+import RuiTextField, { type TextFieldProps } from '@/components/forms/text-field/RuiTextField.vue';
+import RuiTooltip, { type Props as TooltipProps } from '@/components/overlays/tooltip/RuiTooltip.vue';
+import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
+import RuiBadge, { type Props as BadgeProps } from '@/components/overlays/badge/RuiBadge.vue';
+import RuiDialog, { type Props as DialogProps } from '@/components/overlays/dialog/RuiDialog.vue';
+import RuiFooterStepper, { type Props as FooterStepperProps } from '@/components/steppers/RuiFooterStepper.vue';
+import RuiProgress, { type Props as ProgressProps } from '@/components/progress/RuiProgress.vue';
+import RuiRadioGroup, { type Props as RadioGroupProps } from '@/components/forms/radio-button/radio-group/RuiRadioGroup.vue';
+import RuiRadio, { type RadioProps } from '@/components/forms/radio-button/radio/RuiRadio.vue';
+import RuiRevealableTextField, { type Props as RevealableTextFieldProps } from '@/components/forms/revealable-text-field/RuiRevealableTextField.vue';
+import RuiLogo, { type Props as LogoProps } from '@/components/logos/RuiLogo.vue';
+import RuiSimpleSelect, { type Props as SimpleSelectProps } from '@/components/forms/select/RuiSimpleSelect.vue';
+import RuiDataTable, { type TableOptions as DataTableOptions, type Props as DataTableProps } from '@/components/tables/RuiDataTable.vue';
+import RuiTableRowExpander, { type Props as ExpandButtonProps } from '@/components/tables/RuiExpandButton.vue';
+import RuiTablePagination, { type TablePaginationData, type Props as TablePaginationProps } from '@/components/tables/RuiTablePagination.vue';
+import RuiCard, { type Props as CardProps } from '@/components/cards/RuiCard.vue';
+import RuiCardHeader, { type Props as CardHeaderProps } from '@/components/cards/RuiCardHeader.vue';
+import RuiTabs, { type Props as TabsProps } from '@/components/tabs/tabs/RuiTabs.vue';
+import RuiTab, { type Props as TabProps } from '@/components/tabs/tab/RuiTab.vue';
+import RuiTabItems, { type Props as TabItemsProps } from '@/components/tabs/tab-items/RuiTabItems.vue';
+import RuiTabItem, { type Props as TabItemProps } from '@/components/tabs/tab-item/RuiTabItem.vue';
+import RuiSkeletonLoader, { type Props as SkeletonLoaderProps } from '@/components/loaders/RuiSkeletonLoader.vue';
+import RuiMenuSelect, { type Props as MenuSelectProps } from '@/components/forms/select/RuiMenuSelect.vue';
+import RuiAccordions, { type Props as AccordionsProps } from '@/components/accordions/accordions/RuiAccordions.vue';
+import RuiAccordion, { type AccordionProps } from '@/components/accordions/accordion/RuiAccordion.vue';
 import type {
   TableColumn as DataTableColumn,
   GroupKeys as DataTableGroupKeys,
   SortColumn as DataTableSortColumn,
   TableSortData as DataTableSortData,
-} from '@/components/tables/TableHead.vue';
+} from '@/components/tables/RuiTableHead.vue';
 
 export {
   RuiAlert,

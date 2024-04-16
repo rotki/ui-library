@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import MenuSelect from '@/components/forms/select/RuiMenuSelect.vue';
+import RuiMenuSelect from '@/components/forms/select/RuiMenuSelect.vue';
 
 interface SelectOption { id: string; label: string }
 
-function createWrapper(options?: ComponentMountingOptions<typeof MenuSelect<SelectOption>>) {
-  return mount(MenuSelect, options);
+function createWrapper(options?: ComponentMountingOptions<typeof RuiMenuSelect<SelectOption>>) {
+  return mount(RuiMenuSelect, options);
 }
 
 describe('menu select', () => {

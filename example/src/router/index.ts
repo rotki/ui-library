@@ -2,7 +2,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import ButtonView from '@/views/ButtonView.vue';
 
-const router = createRouter({
+export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior: (to, from, savedPosition) => {
     if (savedPosition) {
@@ -134,5 +134,3 @@ const router = createRouter({
     },
   ],
 });
-
-export default router;

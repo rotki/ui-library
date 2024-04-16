@@ -1,8 +1,8 @@
 <script lang="ts" setup generic="T extends object | string, K extends keyof T = keyof T">
-import RuiButton from '@/components/buttons/button/Button.vue';
-import RuiIcon from '@/components/icons/Icon.vue';
-import RuiMenu, { type MenuProps } from '@/components/overlays/menu/Menu.vue';
 import { useDropdownMenu } from '@/composables/dropdown-menu';
+import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiIcon from '@/components/icons/RuiIcon.vue';
+import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 
 export interface Props<T, K extends keyof T = keyof T> {
   options: T[];

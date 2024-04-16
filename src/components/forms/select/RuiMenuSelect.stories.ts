@@ -1,4 +1,4 @@
-import RuiMenuSelect, { type Props } from './RuiMenuSelect.vue';
+import RuiMenuSelect, { type Props } from '@/components/forms/select/RuiMenuSelect.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 interface SelectOption {

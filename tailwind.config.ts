@@ -1,5 +1,5 @@
 import process from 'node:process';
-import typographyClasses from './src/consts/typography';
+import { typographyClasses } from './src/consts/typography';
 import themePlugin from './src/theme';
 import {
   baseColors,

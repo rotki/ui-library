@@ -1,0 +1,75 @@
+import RuiRadio from '@/components/forms/radio-button/radio/RuiRadio.vue';
+import { contextColors } from '@/consts/colors';
+import RuiRadioGroup, { type Props } from '@/components/forms/radio-button/radio-group/RuiRadioGroup.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+
+const render: StoryFn<Props> = args => ({
+  components: { RuiRadio, RuiRadioGroup },
+  setup() {
+    const modelValue = computed({
+      get() {
+        return args.modelValue;
+      },
+      set(val) {
+        args.modelValue = val;
+      },
+    });
+
+    return { args, modelValue };
+  },
+  template: `<RuiRadioGroup v-bind="args" v-model="modelValue">
+    <RuiRadio value="yes">yes</RuiRadio>
+    <RuiRadio value="no">no</RuiRadio>
+  </RuiRadioGroup>`,
+});
+
+const meta: Meta<Props> = {
+  argTypes: {
+    color: { control: 'select', options: contextColors },
+    disabled: { control: 'boolean', table: { category: 'State' } },
+    errorMessages: { control: 'object' },
+    hideDetails: { control: 'boolean' },
+    hint: { control: 'text' },
+    inline: { control: 'boolean' },
+    modelValue: { control: 'text' },
+    size: { control: 'select', options: ['medium', 'sm', 'lg'] },
+    successMessages: { control: 'object' },
+  },
+  component: RuiRadioGroup,
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Forms/Radio/RadioGroup',
+};
+
+type Story = StoryObj<Props>;
+
+export const Default: Story = {
+  args: {},
+};
+
+export const Inline: Story = {
+  args: {
+    inline: true,
+  },
+};
+
+export const WithErrorMessage: Story = {
+  args: {
+    errorMessages: ['With error messages'],
+  },
+};
+
+export const WithHint: Story = {
+  args: {
+    hint: 'With hint',
+  },
+};
+
+export const HideDetails: Story = {
+  args: {
+    hideDetails: true,
+    hint: 'Hint (should be invisible)',
+  },
+};
+
+export default meta;

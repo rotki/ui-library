@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { type LogoProps, RuiIcon, RuiLogo } from '@rotki/ui-library';
+import { type LogoProps, RuiIcon, type RuiIcons, RuiLogo } from '@rotki/ui-library';
 
-const icons = ref([
+const icons = ref<{ name: RuiIcons; size: number }[]>([
   { name: 'moon-line', size: 24 },
   { name: 'sun-line', size: 24 },
   { name: 'arrow-right-line', size: 24 },
