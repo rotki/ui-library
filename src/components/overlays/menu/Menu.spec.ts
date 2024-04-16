@@ -65,7 +65,7 @@ describe('menu', () => {
     wrapper.unmount();
   });
 
-  it('passes props correctly', async () => {
+  it('passes props correctly', () => {
     const wrapper = createWrapper({
       props: {
         disabled: true,

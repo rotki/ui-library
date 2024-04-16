@@ -60,7 +60,7 @@ describe('forms/Switch', () => {
     );
   });
 
-  it('passes size props', async () => {
+  it('passes size props', () => {
     const wrapper = createWrapper({ props: { size: 'sm' } });
     expect(wrapper.find('label').classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_sm_/)]),

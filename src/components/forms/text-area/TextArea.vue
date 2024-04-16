@@ -85,6 +85,10 @@ const textarea = ref<HTMLTextAreaElement>();
 const textareaSizer = ref<HTMLTextAreaElement>();
 const focusedDebounced = ref(false);
 
+const css = useCssModule();
+const attrs = useAttrs();
+const slots = useSlots();
+
 const labelWithQuote = computed(() => {
   const labelVal = get(label);
   if (!labelVal)
@@ -140,10 +144,6 @@ const { hasError, hasSuccess, hasMessages } = useFormTextDetail(
   errorMessages,
   successMessages,
 );
-
-const css = useCssModule();
-const attrs = useAttrs();
-const slots = useSlots();
 
 function clearIconClicked() {
   set(internalValue, '');

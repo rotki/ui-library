@@ -16,7 +16,7 @@ export default mergeConfig(
         reportsDirectory: 'tests/coverage',
         reporter: ['html', 'json'],
         include: ['src/*'],
-        exclude: ['node_modules', 'tests/', '**/*.d.ts'],
+        exclude: ['node_modules', 'tests/', '**/*.d.ts', 'src/**/*.stories.ts'],
       },
       testTransformMode: {
         ssr: ['**/*.ssr.spec.ts'],

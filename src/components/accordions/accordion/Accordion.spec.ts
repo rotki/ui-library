@@ -13,7 +13,7 @@ function createWrapper(options?: any) {
 }
 
 describe('accordions/Accordion', () => {
-  it('renders properly', async () => {
+  it('renders properly', () => {
     const wrapper = createWrapper({
       propsData: {
         open: true,

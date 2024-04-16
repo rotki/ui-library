@@ -8,7 +8,7 @@ function createWrapper(options?: ComponentMountingOptions<typeof Logo>) {
 }
 
 describe('forms/Logo', () => {
-  it('renders properly', async () => {
+  it('renders properly', () => {
     const wrapper = createWrapper();
     expect(wrapper.find('div').find('img').exists()).toBeTruthy();
   });

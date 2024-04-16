@@ -31,7 +31,7 @@ function createWrapper(options?: ComponentMountingOptions<typeof Accordions>) {
 }
 
 describe('accordions/Accordions', () => {
-  it('renders properly', async () => {
+  it('renders properly', () => {
     const modelValue = ref();
     const wrapper = createWrapper({
       props: {
