@@ -18,6 +18,9 @@ export default mergeConfig(
         include: ['src/*'],
         exclude: ['node_modules', 'tests/', '**/*.d.ts'],
       },
+      testTransformMode: {
+        ssr: ['**/*.ssr.spec.ts'],
+      },
     },
   }),
 );

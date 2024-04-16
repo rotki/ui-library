@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useSSRContext } from 'vue';
+import { isClient } from '@vueuse/shared';
 import { transformCase } from '@/utils/helpers';
 import fallback from './logo.svg';
 
@@ -42,26 +44,7 @@ const emptyLinks: ExternalLinks = {
   about: undefined,
   emptyScreen: undefined,
 };
-
-const externalSources = computedAsync(
-  async (): Promise<ExternalLinks> => {
-    if (!props.logo)
-      return emptyLinks;
-
-    try {
-      const { data } = await useFetch<string>(
-        `https://raw.githubusercontent.com/rotki/data/${props.branch}/constants/asset-mappings.json`,
-      );
-
-      return transformCase(JSON.parse(get(data) ?? 'null')?.logo, 'camelCase') ?? emptyLinks;
-    }
-    catch {
-      return emptyLinks;
-    }
-  },
-  emptyLinks,
-  { evaluating: pendingSources },
-);
+const externalSources = ref(emptyLinks);
 
 const externalSource = computed(() => {
   const sources = get(externalSources);
@@ -73,11 +56,29 @@ const externalSource = computed(() => {
 
   const url = `https://raw.githubusercontent.com/rotki/data/${props.branch}/assets/icons/${sources[logo]}`;
 
-  if (props.uniqueKey)
+  if (props.uniqueKey !== undefined)
     return `${url}?key=${props.uniqueKey}`;
 
   return url;
 });
+
+async function fetchSources() {
+  if (!props.logo)
+    return set(externalSources, emptyLinks);
+
+  set(pendingSources, true);
+  try {
+    const { data } = await useFetch<string>(
+      `https://raw.githubusercontent.com/rotki/data/${props.branch}/constants/asset-mappings.json`,
+    );
+
+    set(externalSources, transformCase(JSON.parse(get(data) ?? 'null')?.logo, 'camelCase') ?? emptyLinks);
+  }
+  catch {
+    set(externalSources, emptyLinks);
+  }
+  set(pendingSources, false);
+}
 
 watch(
   () => get(customImageRef)?.complete,
@@ -90,11 +91,20 @@ watch(
     }
   },
 );
+
+watchEffect(fetchSources);
+
+if (!isClient)
+  useSSRContext();
+
+onServerPrefetch(async () => {
+  await fetchSources();
+});
 </script>
 
 <template>
   <div
-    class="space-x-4 flex items-center relative"
+    class="gap-x-4 flex items-center relative"
     :style="{ height: `${size}rem` }"
   >
     <div
