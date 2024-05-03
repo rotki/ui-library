@@ -151,6 +151,7 @@ export interface Props<T, K extends keyof T> {
   disabledRows?: T[];
   multiPageSelect?: boolean;
   scroller?: HTMLElement | null;
+  itemClass?: ((item: T) => string) | string;
 }
 
 defineOptions({
@@ -186,6 +187,7 @@ const props = withDefaults(defineProps<Props<T, IdType>>(), {
   multiPageSelect: false,
   groupExpandButtonPosition: 'start',
   scroller: undefined,
+  itemClass: '',
 });
 
 const emit = defineEmits<{
@@ -1162,6 +1164,7 @@ onMounted(() => {
                 :class="[
                   css.tr,
                   { [css.tr__selected]: isSelected(row[rowIdentifier]) },
+                  typeof itemClass === 'string' ? itemClass : itemClass(row),
                 ]"
               >
                 <td
