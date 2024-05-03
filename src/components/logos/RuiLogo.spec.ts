@@ -28,5 +28,7 @@ describe('forms/Logo', () => {
     await wrapper.setProps({ logo: 'website' });
     await promiseTimeout(1000);
     expect(wrapper.find('img[data-image=custom]').exists()).toBeTruthy();
+    await wrapper.setProps({ uniqueKey: '10' });
+    expect(wrapper.find('img[data-image=custom][src*="?key=10"]').exists()).toBeTruthy();
   });
 });
