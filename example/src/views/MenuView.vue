@@ -288,6 +288,7 @@ const menuSelectPrimitive = ref<MenuSelectProps<string>[]>([
         <RuiMenu
           v-bind="objectOmit(menu, ['buttonColor'])"
           :data-cy="`menu-${i}`"
+          :open-delay="50"
         >
           <template #activator="{ on, disabled }">
             <RuiButton

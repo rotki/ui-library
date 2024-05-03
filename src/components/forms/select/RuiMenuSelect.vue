@@ -215,7 +215,7 @@ function setValue(val: T) {
           v-if="floatLabel || variant === 'outlined'"
           :class="css.fieldset"
         >
-          <legend :class="{ 'px-2': float }" />
+          <legend :class="{ 'px-2': float && !dense, 'px-1': float && dense }" />
         </fieldset>
       </slot>
       <input
