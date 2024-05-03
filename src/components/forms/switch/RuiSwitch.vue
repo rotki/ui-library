@@ -90,6 +90,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
     </label>
     <RuiFormTextDetail
       v-if="!hideDetails"
+      class="pt-1"
       :error-messages="errorMessages"
       :success-messages="successMessages"
       :hint="hint"
