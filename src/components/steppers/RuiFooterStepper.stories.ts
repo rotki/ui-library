@@ -21,6 +21,7 @@ const render: StoryFn<Props> = args => ({
 const meta: Meta<Props> = {
   argTypes: {
     arrowButtons: { control: 'boolean', table: { category: 'State' } },
+    hideButtons: { control: 'boolean', table: { category: 'State' } },
     modelValue: {
       control: 'number',
       table: { category: 'State' },
@@ -54,6 +55,16 @@ export const Default: Story = {
   },
 };
 
+export const DefaultWithoutButtons: Story = {
+  args: {
+    arrowButtons: false,
+    hideButtons: false,
+    modelValue: 1,
+    pages: 5,
+    variant: 'numeric',
+  },
+};
+
 export const Bullet: Story = {
   args: {
     arrowButtons: false,
@@ -63,9 +74,29 @@ export const Bullet: Story = {
   },
 };
 
+export const BulletWithoutButtons: Story = {
+  args: {
+    arrowButtons: false,
+    hideButtons: true,
+    modelValue: 1,
+    pages: 5,
+    variant: 'bullet',
+  },
+};
+
 export const Progress: Story = {
   args: {
     arrowButtons: false,
+    modelValue: 1,
+    pages: 5,
+    variant: 'progress',
+  },
+};
+
+export const ProgressWithoutButtons: Story = {
+  args: {
+    arrowButtons: false,
+    hideButtons: true,
     modelValue: 1,
     pages: 5,
     variant: 'progress',

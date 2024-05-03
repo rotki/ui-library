@@ -8,6 +8,7 @@ export interface Props {
   modelValue?: number;
   variant?: 'numeric' | 'bullet' | 'progress' | 'pill';
   arrowButtons?: boolean;
+  hideButtons?: boolean;
 }
 
 defineOptions({
@@ -18,6 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: 1,
   variant: 'numeric',
   arrowButtons: false,
+  hideButtons: false,
 });
 
 const emit = defineEmits<{
@@ -62,6 +64,7 @@ function onClick(index: number) {
     </template>
     <template v-else>
       <RuiButton
+        v-if="!hideButtons"
         :class="{ [css.arrow__button]: arrowButtons }"
         :disabled="modelValue <= 1"
         :icon="arrowButtons"
@@ -109,6 +112,7 @@ function onClick(index: number) {
         :value="(modelValue / pages) * 100"
       />
       <RuiButton
+        v-if="!hideButtons"
         :class="{ [css.arrow__button]: arrowButtons }"
         :disabled="modelValue >= pages"
         :icon="arrowButtons"
@@ -138,7 +142,7 @@ function onClick(index: number) {
 
 <style lang="scss" module>
 .footer-stepper {
-  @apply flex items-center justify-between transition-all duration-150;
+  @apply flex items-center justify-between gap-x-4 transition-all duration-150;
 
   .numeric {
     @apply text-rui-text;
@@ -171,7 +175,7 @@ function onClick(index: number) {
   }
 
   .bullets {
-    @apply mx-4 space-x-1;
+    @apply gap-x-1;
 
     .bullet {
       @apply w-2;
@@ -179,7 +183,7 @@ function onClick(index: number) {
   }
 
   .pills {
-    @apply w-full space-x-3;
+    @apply w-full gap-x-3;
 
     .pill {
       @apply w-full;
@@ -187,7 +191,7 @@ function onClick(index: number) {
   }
 
   .progress {
-    @apply max-w-[60%] mx-4;
+    @apply max-w-[60%];
   }
 
   .arrow__button {
