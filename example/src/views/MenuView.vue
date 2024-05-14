@@ -247,7 +247,6 @@ const primitiveOptions: string[] = ['Lorem', 'Ipsum', 'Dolor', 'Sit amet', 'Cons
 
 const menuSelectPrimitive = ref<MenuSelectProps<string>[]>([
   {
-    disabled: false,
     modelValue: undefined,
     options: primitiveOptions,
   },
@@ -257,15 +256,40 @@ const menuSelectPrimitive = ref<MenuSelectProps<string>[]>([
     options: primitiveOptions,
   },
   {
-    disabled: false,
-    variant: 'outlined',
     modelValue: undefined,
+    dense: true,
+    disabled: true,
     options: primitiveOptions,
   },
   {
+    modelValue: 'Lorem',
+    dense: true,
+    disabled: true,
+    options: primitiveOptions,
+  },
+  {
+    modelValue: undefined,
+    variant: 'outlined',
+    options: primitiveOptions,
+  },
+  {
+    modelValue: undefined,
+    dense: true,
+    variant: 'outlined',
+    options: primitiveOptions,
+  },
+  {
+    modelValue: undefined,
+    dense: true,
     disabled: true,
     variant: 'outlined',
-    modelValue: undefined,
+    options: primitiveOptions,
+  },
+  {
+    modelValue: 'Lorem',
+    dense: true,
+    disabled: true,
+    variant: 'outlined',
     options: primitiveOptions,
   },
 ]);
@@ -288,7 +312,7 @@ const menuSelectPrimitive = ref<MenuSelectProps<string>[]>([
         <RuiMenu
           v-bind="objectOmit(menu, ['buttonColor'])"
           :data-cy="`menu-${i}`"
-          :open-delay="50"
+          :open-delay="10"
         >
           <template #activator="{ on, disabled }">
             <RuiButton
@@ -341,7 +365,6 @@ const menuSelectPrimitive = ref<MenuSelectProps<string>[]>([
           v-model="menu.modelValue"
           v-bind="objectOmit(menu, ['modelValue'])"
           :data-cy="`select-menu-custom-${i}`"
-          wrapper-class="w-full"
         >
           <template #activator="{ on, disabled, open, value }">
             <RuiButton
@@ -382,8 +405,6 @@ const menuSelectPrimitive = ref<MenuSelectProps<string>[]>([
           v-bind="objectOmit(menu, ['modelValue'])"
           :data-cy="`select-menu-custom-inner-${i}`"
           :item-height="menu.dense ? undefined : 80"
-          full-width
-          float-label
           clearable
           :label-class="menu.dense ? undefined : 'h-20'"
           variant="outlined"
@@ -419,7 +440,6 @@ const menuSelectPrimitive = ref<MenuSelectProps<string>[]>([
           v-bind="objectOmit(menu, ['modelValue'])"
           :append-width="1.5"
           :data-cy="`select-menu-custom-options-${i}`"
-          full-width
         >
           <template #item.append="{ active }">
             <RuiIcon
@@ -449,7 +469,6 @@ const menuSelectPrimitive = ref<MenuSelectProps<string>[]>([
           v-bind="objectOmit(menu, ['modelValue'])"
           :append-width="1.5"
           :data-cy="`select-menu-custom-options-${i}`"
-          full-width
         >
           <template #item.append="{ active }">
             <RuiIcon
@@ -478,7 +497,6 @@ const menuSelectPrimitive = ref<MenuSelectProps<string>[]>([
           v-bind="objectOmit(menu, ['modelValue'])"
           :append-width="1.5"
           :data-cy="`select-menu-custom-readonly-${i}`"
-          full-width
           read-only
         >
           <template #item.append="{ active }">

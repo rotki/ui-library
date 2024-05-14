@@ -12,8 +12,6 @@ export interface Props<T, K extends keyof T = keyof T> {
   disabled?: boolean;
   readOnly?: boolean;
   dense?: boolean;
-  fullWidth?: boolean;
-  floatLabel?: boolean;
   clearable?: boolean;
   label?: string;
   menuOptions?: MenuProps;
@@ -38,7 +36,6 @@ const props = withDefaults(defineProps<Props<T, K>>(), {
   disabled: false,
   readOnly: false,
   dense: false,
-  floatLabel: false,
   clearable: false,
   showDetails: false,
   label: 'Select',
@@ -110,7 +107,9 @@ const {
   menuRef,
 });
 
-const float = computed(() => (get(isOpen) || !!get(value)) && props.floatLabel);
+const outlined = computed(() => props.variant === 'outlined');
+
+const float = computed(() => (get(isOpen) || !!get(value)) && get(outlined));
 
 const virtualContainerProps = computed(() => ({
   style: containerProps.style as any,
@@ -126,8 +125,9 @@ function setValue(val: T) {
 <template>
   <RuiMenu
     v-model="isOpen"
-    :class="[css.wrapper, { 'w-full': fullWidth }]"
-    v-bind="{ ...menuOptions, errorMessages, successMessages, hint, dense, fullWidth, showDetails, disabled }"
+    :class="css.wrapper"
+    full-width
+    v-bind="{ ...menuOptions, errorMessages, successMessages, hint, dense, showDetails, disabled }"
   >
     <template #activator="{ on, open, hasError, hasSuccess }">
       <slot
@@ -144,27 +144,25 @@ function setValue(val: T) {
             {
               [css.disabled]: disabled,
               [css.readonly]: readOnly,
-              [css.outlined]: variant === 'outlined',
+              [css.outlined]: outlined,
               [css.dense]: dense,
               [css.float]: float,
-              [css['float-label']]: floatLabel,
               [css.opened]: open,
               [css['with-value']]: !!value,
               [css['with-error']]: hasError,
               [css['with-success']]: hasSuccess && !hasError,
-              'w-full': fullWidth,
             },
           ]"
           data-id="activator"
           v-on="readOnly ? {} : on"
         >
           <span
-            v-if="floatLabel || !value"
+            v-if="outlined || !value"
             :class="[
               css.label,
               {
-                'absolute': floatLabel,
-                'pr-2': !value && !open && floatLabel,
+                'absolute': outlined,
+                'pr-2': !value && !open && outlined,
               },
             ]"
           >
@@ -177,7 +175,8 @@ function setValue(val: T) {
           </span>
           <span
             v-if="value"
-            :class="[css.value, { 'w-full': fullWidth }]"
+            class="w-full"
+            :class="css.value"
           >
             <slot
               name="activator.prepend"
@@ -212,7 +211,7 @@ function setValue(val: T) {
           </span>
         </button>
         <fieldset
-          v-if="floatLabel || variant === 'outlined'"
+          v-if="outlined"
           :class="css.fieldset"
         >
           <legend :class="{ 'px-2': float && !dense, 'px-1': float && dense }" />
@@ -227,7 +226,7 @@ function setValue(val: T) {
     <template #default="{ width }">
       <div
         :class="[css.menu, menuClass]"
-        :style="{ width: fullWidth ? `${width / 16}rem` : menuWidth }"
+        :style="{ width: `${width}px`, minWidth: menuWidth }"
         v-bind="virtualContainerProps"
         @scroll="containerProps.onScroll"
       >
@@ -271,11 +270,11 @@ function setValue(val: T) {
 
 <style lang="scss" module>
 .wrapper {
-  @apply max-w-full inline-flex flex-col;
+  @apply w-full inline-flex flex-col;
 
   .activator {
-    @apply relative inline-flex items-center max-w-full;
-    @apply outline-none focus:outline-none cursor-pointer min-h-14 pl-4 py-2 pr-8 rounded;
+    @apply relative inline-flex items-center w-full;
+    @apply outline-none focus:outline-none cursor-pointer min-h-14 pl-3 py-2 pr-8 rounded;
     @apply m-0 bg-white transition-all text-body-1 text-left hover:border-black;
 
     &:not(.outlined) {
@@ -283,15 +282,15 @@ function setValue(val: T) {
     }
 
     &.dense {
-      @apply pl-2 py-1 min-h-10 text-sm;
+      @apply py-1 min-h-10;
 
       ~ .fieldset {
-        @apply px-1;
+        @apply px-2;
       }
     }
 
     &.disabled {
-      @apply opacity-65 text-rui-text-disabled active:text-rui-text-disabled cursor-default pointer-events-none bg-gray-50;
+      @apply opacity-65 text-rui-text-disabled active:text-rui-text-disabled cursor-default pointer-events-none;
     }
 
     &.readonly {
@@ -299,7 +298,7 @@ function setValue(val: T) {
     }
 
     &.outlined {
-      @apply border border-black/[0.23] hover:border-black;
+      @apply border-none hover:border-none;
 
       &.opened,
       &:focus {
@@ -311,13 +310,23 @@ function setValue(val: T) {
         }
       }
 
+      ~ .fieldset {
+        @apply border border-black/[0.23];
+      }
+
+      &:hover {
+        ~ .fieldset {
+          @apply border-black;
+        }
+      }
+
       &.disabled {
-        @apply border-dotted border-black/[0.23];
+        ~ .fieldset {
+          @apply border-dotted;
+        }
       }
 
       &.with-success {
-        @apply border-rui-success #{!important};
-
         .label {
           @apply text-rui-success #{!important};
         }
@@ -328,8 +337,6 @@ function setValue(val: T) {
       }
 
       &.with-error {
-        @apply border-rui-error #{!important};
-
         .label {
           @apply text-rui-error #{!important};
         }
@@ -338,6 +345,11 @@ function setValue(val: T) {
           @apply border-rui-error #{!important};
         }
       }
+    }
+
+    .label {
+      @apply text-rui-text-secondary;
+      max-width: calc(100% - 2.5rem);
     }
 
     .label,
@@ -358,51 +370,12 @@ function setValue(val: T) {
       }
     }
 
-    &.float-label {
-      .label {
-        max-width: calc(100% - 3rem);
-      }
-
-      &.dense {
-        .label {
-          max-width: calc(100% - 2.5rem);
-        }
-      }
-    }
-
     &.float {
-      &.outlined {
-        @apply border-t-transparent #{!important};
-
-        &.with-success {
-          @apply border-t-transparent #{!important};
-        }
-
-        &.with-error {
-          @apply border-t-transparent #{!important};
-        }
-      }
-
       .label {
-        @apply -translate-y-2 top-0 text-xs;
-        max-width: calc(100% - 3rem);
-      }
-
-      &.dense {
-        .label {
-          max-width: calc(100% - 2.5rem);
-        }
-      }
-
-      &.with-value:hover {
-        ~ .fieldset {
-          @apply border-black;
-        }
+        @apply -translate-y-2 top-0 text-xs px-1;
       }
 
       ~ .fieldset {
-        @apply border border-black/[0.23];
-
         legend {
           &:after {
             content: v-bind(labelWithQuote);
@@ -414,6 +387,10 @@ function setValue(val: T) {
       &.opened.with-value,
       &:focus,
       &:focus.with-value {
+        .label {
+          @apply text-rui-primary;
+        }
+
         ~ .fieldset {
           @apply border-rui-primary;
           @apply border-2 #{!important};
@@ -426,7 +403,8 @@ function setValue(val: T) {
     @apply absolute w-full min-w-0 h-[calc(100%+0.5rem)] top-0 left-0 rounded pointer-events-none px-2 transition-all -mt-2;
 
     legend {
-      @apply opacity-0 text-xs max-w-full truncate;
+      @apply opacity-0 text-xs truncate;
+      max-width: calc(100% - 1rem);
 
       &:before {
         content: ' ';
@@ -451,10 +429,10 @@ function setValue(val: T) {
 
       &:not(.outlined) {
         @apply hover:bg-white/10 focus-within:bg-white/10;
-      }
 
-      &.disabled {
-        @apply bg-white/10;
+        &.disabled {
+          @apply bg-white/10;
+        }
       }
 
       &.readonly {
@@ -462,18 +440,14 @@ function setValue(val: T) {
       }
 
       &.outlined {
-        @apply border-white/[0.23] hover:border-white;
-      }
+        ~ .fieldset {
+          @apply border-white/[0.23];
+        }
 
-      &.float {
-        &.with-value:hover {
+        &:hover {
           ~ .fieldset {
             @apply border-white;
           }
-        }
-
-        ~ .fieldset {
-          @apply border border-white/[0.23];
         }
       }
     }
