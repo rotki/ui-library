@@ -1,85 +1,162 @@
-import { describe, expect, it } from 'vitest';
-import {
-  type ComponentMountingOptions,
-  DOMWrapper,
-  mount,
-} from '@vue/test-utils';
-import { promiseTimeout } from '@vueuse/core';
+import { describe, expect, it, vi } from 'vitest';
+import { mount } from '@vue/test-utils';
 import RuiDialog from '@/components/overlays/dialog/RuiDialog.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 
-function createWrapper(options: ComponentMountingOptions<typeof RuiDialog>) {
-  return mount(RuiDialog, { ...options, global: { stubs: { 'rui-button': RuiButton } } });
-}
+const text = 'This is content';
 
-const delay = (time: number = 100) => promiseTimeout(time);
-
-function getPortal() {
-  return new DOMWrapper(
-    document.querySelector('#headlessui-portal-root div[role=dialog]'),
-  );
+function createWrapper(options?: any) {
+  return mount(RuiDialog, {
+    ...options,
+    global: {
+      stubs: { 'rui-button': RuiButton },
+    },
+    slots: {
+      activator: `<rui-button id="trigger" v-on="params.on">
+        Click me!
+      </rui-button>`,
+      default: `
+        <div>
+          ${text}
+          
+          <rui-button id="close" @click="params.close()" />
+        </div>
+      `,
+    },
+  });
 }
 
 describe('dialog', () => {
   it('renders properly', async () => {
-    const wrapper = createWrapper({
-      props: {
-        modelValue: true,
-      },
-    });
+    const wrapper = createWrapper();
+    await nextTick();
+    let dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
 
-    await delay();
-    const portal = getPortal();
-    expect(portal.exists()).toBeTruthy();
-    expect(portal.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_dialog_/)]),
-    );
+    expect(dialog).toBeFalsy();
 
-    await wrapper.setProps({ dismissible: true });
-    await delay(500);
+    // Open dialog by clicking activator
+    await wrapper.find('#trigger').trigger('click');
+    await vi.delay();
 
-    await wrapper.setProps({ modelValue: false });
-    await delay(500);
+    dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
 
-    expect(getPortal().exists()).toBeFalsy();
+    expect(dialog).toBeTruthy();
+    expect(dialog.querySelector('div[class*=_content_]')).toBeTruthy();
+    expect(dialog.querySelector('div[class*=_center_]')).toBeTruthy();
+
+    // Click the button that call close function
+    const closeButton = dialog.querySelector('#close') as HTMLButtonElement;
+    closeButton.click();
+
+    await vi.delay();
+    dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+
+    expect(dialog).toBeFalsy();
+    wrapper.unmount();
   });
 
-  it('reacts to props changes', async () => {
-    const wrapper = createWrapper({
-      props: {
-        modelValue: true,
-      },
-      slots: {
-        default: ({ text = 'Lorem ipsum dolor sit amet' }: { text?: string }) =>
-          `<p>${text}</p>`,
-        description: ({ text = 'Dialog description' }: { text?: string }) =>
-          text,
-        title: ({ text = 'Dialog title' }: { text?: string }) => text,
-      },
+  it('should pass width and maxWidth props', async () => {
+    const wrapper = createWrapper();
+    await nextTick();
+
+    // Open dialog by clicking activator
+    await wrapper.find('#trigger').trigger('click');
+    await vi.delay();
+
+    const dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+    expect(dialog).toBeTruthy();
+
+    const contentWrapper = dialog.querySelector('div[class*=_content_]') as HTMLDivElement;
+    expect(contentWrapper).toBeTruthy();
+
+    expect(contentWrapper.style.width).toBe('98%');
+    expect(contentWrapper.style.maxWidth).toBeFalsy();
+
+    await wrapper.setProps({
+      maxWidth: '100%',
+      width: '500',
     });
 
-    await delay();
-    const portal = getPortal();
-    expect(portal.exists()).toBeTruthy();
-    expect(portal.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_dialog_/)]),
-    );
-    expect(portal.find('div[class*=_dismiss_] button').exists()).toBeFalsy();
+    expect(contentWrapper.style.width).toBe('500px');
+    expect(contentWrapper.style.maxWidth).toBe('100%');
 
-    await wrapper.setProps({ dismissible: true });
-    await delay();
-    expect(portal.find('div[class*=_dismiss_] button').exists()).toBeTruthy();
-    expect(portal.get('div[class*=_dismiss_] button').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_btn_/)]),
-    );
+    wrapper.unmount();
+  });
 
-    await wrapper.setProps({ persistent: true });
-    await delay();
-    expect(portal.find('div[class*=_dismiss_] button').exists()).toBeFalsy();
+  it('dialog works with `persistent=false`', async () => {
+    const wrapper = createWrapper();
+    await nextTick();
 
-    await wrapper.setProps({ modelValue: false });
-    await delay(500);
+    // Open dialog by clicking activator
+    await wrapper.find('#trigger').trigger('click');
+    await vi.delay();
 
-    expect(getPortal().exists()).toBeFalsy();
+    let dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+    expect(dialog).toBeTruthy();
+
+    // Click on the overlay should close the dialog
+    const overlay = dialog.querySelector('div[class*=_overlay_]') as HTMLDivElement;
+    overlay.click();
+
+    await vi.delay();
+    dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+
+    expect(dialog).toBeFalsy();
+
+    await vi.delay();
+
+    // Open dialog by clicking activator
+    await wrapper.find('#trigger').trigger('click');
+    await vi.delay();
+
+    dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+    expect(dialog).toBeTruthy();
+
+    // Press escape should also close the dialog
+    const event = new KeyboardEvent('keydown', { key: 'Escape' });
+    dialog.dispatchEvent(event);
+
+    await vi.delay();
+    dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+
+    expect(dialog).toBeFalsy();
+
+    wrapper.unmount();
+  });
+
+  it('dialog works with `persistent=true`', async () => {
+    const wrapper = createWrapper({
+      propsData: {
+        persistent: true,
+      },
+    });
+    await nextTick();
+
+    // Open dialog by clicking activator
+    await wrapper.find('#trigger').trigger('click');
+    await vi.delay();
+
+    let dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+    expect(dialog).toBeTruthy();
+
+    // Click on the overlay should not close the dialog
+    const overlay = dialog.querySelector('div[class*=_overlay_]') as HTMLDivElement;
+    overlay.click();
+
+    await vi.delay();
+    dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+
+    expect(dialog).toBeTruthy();
+
+    // Press escape should not close the dialog
+    const event = new KeyboardEvent('keydown', { key: 'Escape' });
+    dialog.dispatchEvent(event);
+
+    await vi.delay();
+    dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+
+    expect(dialog).toBeTruthy();
+
+    wrapper.unmount();
   });
 });

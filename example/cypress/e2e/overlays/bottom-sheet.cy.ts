@@ -1,50 +1,50 @@
 // https://docs.cypress.io/api/introduction/api.html
 
-describe('dialog', () => {
+describe('bottom-sheet', () => {
   beforeEach(() => {
-    cy.visit('/dialogs');
+    cy.visit('/bottom-sheets');
   });
 
-  it('check persistent dialog', () => {
-    cy.contains('h2[data-cy=dialogs]', 'Dialogs');
+  it('check persistent bottom sheet', () => {
+    cy.contains('h2[data-cy=bottom-sheets]', 'Bottom Sheets');
 
-    cy.get('div[data-cy=dialog-0]').as('defaultDialog');
+    cy.get('div[data-cy=bottom-sheet-0]').as('defaultBottomSheet');
 
-    // open dialog
-    cy.get('@defaultDialog').find('[data-cy=activator]').as('activator');
+    // open bottom sheet
+    cy.get('@defaultBottomSheet').find('[data-cy=activator]').as('activator');
     cy.get('@activator').trigger('click');
     cy.get('body').find('div[role=dialog]').should('be.visible');
 
-    // should not close the dialog
+    // should not close the bottom sheet
     cy.get('body').find('div[role=dialog]').type('{esc}');
     cy.get('body').find('div[role=dialog]').should('be.visible');
 
-    // should not close the dialog
+    // should not close the bottom sheet
     cy.get('body').find('div[role=dialog]').find('div[class*=_overlay_]').trigger('click', { force: true });
     cy.get('body').find('div[role=dialog]').should('be.visible');
 
-    // close the dialog
+    // close the bottom sheet
     cy.get('body').find('button[data-cy=close]').trigger('click');
     cy.get('body').find('div[role=dialog]').should('not.be.exist');
   });
 
-  it('check non-persistent dialog', () => {
-    cy.get('div[data-cy=dialog-1]').as('defaultDialog');
+  it('check non-persistent bottom sheet', () => {
+    cy.get('div[data-cy=bottom-sheet-1]').as('defaultBottomSheet');
 
-    // open dialog
-    cy.get('@defaultDialog').find('[data-cy=activator]').as('activator');
+    // open bottom sheet
+    cy.get('@defaultBottomSheet').find('[data-cy=activator]').as('activator');
     cy.get('@activator').trigger('click');
     cy.get('body').find('div[role=dialog]').should('be.visible');
 
-    // should close the dialog
+    // should close the bottom sheet
     cy.get('body').find('div[role=dialog]').type('{esc}');
     cy.get('body').find('div[role=dialog]').should('not.exist');
 
-    // open the dialog again
+    // open the bottom sheet again
     cy.get('@activator').trigger('click');
     cy.get('body').find('div[role=dialog]').should('be.visible');
 
-    // should close the dialog too
+    // should close the bottom sheet too
     cy.get('body').find('div[role=dialog]').find('div[class*=_overlay_]').trigger('click', { force: true });
     cy.get('body').find('div[role=dialog]').should('not.exist');
   });

@@ -1,18 +1,18 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import {
-  type DialogProps,
+  type BottomSheetProps,
+  RuiBottomSheet,
   RuiButton,
   RuiCard,
-  RuiDialog,
 } from '@rotki/ui-library';
 
 interface ExtraProperties {
   label: string;
 }
 
-type DialogData = DialogProps & ExtraProperties;
-const dialogs = ref<DialogData[]>([
+type BottomSheetData = BottomSheetProps & ExtraProperties;
+const bottomSheets = ref<BottomSheetData[]>([
   { label: 'Persistent', persistent: true },
   { label: 'Non Persistent', persistent: false },
 ]);
@@ -22,24 +22,24 @@ const dialogs = ref<DialogData[]>([
   <div>
     <h2
       class="text-h4 mb-6"
-      data-cy="dialogs"
+      data-cy="bottom-sheets"
     >
-      Dialogs
+      Bottom Sheets
     </h2>
     <div class="grid gap-4 grid-rows-2 grid-cols-6 justify-items-start mb-14">
-      <RuiDialog
-        v-for="(dialog, i) in dialogs"
+      <RuiBottomSheet
+        v-for="(bottomSheet, i) in bottomSheets"
         :key="i"
-        v-bind="dialog"
+        v-bind="bottomSheet"
         width="900px"
-        :data-cy="`dialog-${i}`"
+        :data-cy="`bottom-sheet-${i}`"
       >
         <template #activator="{ on }">
           <RuiButton
             data-cy="activator"
             v-on="on"
           >
-            {{ dialog.label }}
+            {{ bottomSheet.label }}
           </RuiButton>
         </template>
         <template #default="{ close }">
@@ -52,7 +52,7 @@ const dialogs = ref<DialogData[]>([
             </template>
 
             <div class="p-4 pb-0">
-              <div class="h-[100px]">
+              <div class="h-[500px]">
                 Contents {{ i }}
               </div>
 
@@ -71,7 +71,7 @@ const dialogs = ref<DialogData[]>([
             </div>
           </RuiCard>
         </template>
-      </RuiDialog>
+      </RuiBottomSheet>
     </div>
   </div>
 </template>

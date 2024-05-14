@@ -26,11 +26,12 @@ const navigation = ref([
       { to: { name: 'tooltips' }, title: 'Tooltips' },
       { to: { name: 'menus' }, title: 'Menus' },
       { to: { name: 'data-tables' }, title: 'Data Tables' },
-      { to: { name: 'dialogs' }, title: 'Dialogs' },
       { to: { name: 'cards' }, title: 'Cards' },
       { to: { name: 'tabs' }, title: 'Tabs' },
       { to: { name: 'badges' }, title: 'Badges' },
       { to: { name: 'accordions' }, title: 'Accordions' },
+      { to: { name: 'dialogs' }, title: 'Dialogs' },
+      { to: { name: 'bottom-sheets' }, title: 'Bottom Sheets' },
     ],
   },
   {

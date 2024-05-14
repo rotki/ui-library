@@ -15,7 +15,7 @@ import RuiTextField, { type TextFieldProps } from '@/components/forms/text-field
 import RuiTooltip, { type Props as TooltipProps } from '@/components/overlays/tooltip/RuiTooltip.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import RuiBadge, { type Props as BadgeProps } from '@/components/overlays/badge/RuiBadge.vue';
-import RuiDialog, { type Props as DialogProps } from '@/components/overlays/dialog/RuiDialog.vue';
+import RuiDialog, { type DialogProps } from '@/components/overlays/dialog/RuiDialog.vue';
 import RuiFooterStepper, { type Props as FooterStepperProps } from '@/components/steppers/RuiFooterStepper.vue';
 import RuiProgress, { type Props as ProgressProps } from '@/components/progress/RuiProgress.vue';
 import RuiRadioGroup, { type Props as RadioGroupProps } from '@/components/forms/radio-button/radio-group/RuiRadioGroup.vue';
@@ -36,6 +36,7 @@ import RuiSkeletonLoader, { type Props as SkeletonLoaderProps } from '@/componen
 import RuiMenuSelect, { type Props as MenuSelectProps } from '@/components/forms/select/RuiMenuSelect.vue';
 import RuiAccordions, { type Props as AccordionsProps } from '@/components/accordions/accordions/RuiAccordions.vue';
 import RuiAccordion, { type AccordionProps } from '@/components/accordions/accordion/RuiAccordion.vue';
+import RuiBottomSheet, { type BottomSheetProps } from '@/components/overlays/bottom-sheet/RuiBottomSheet.vue';
 import type {
   TableColumn as DataTableColumn,
   GroupKeys as DataTableGroupKeys,
@@ -81,6 +82,7 @@ export {
   RuiSlider,
   RuiAccordions,
   RuiAccordion,
+  RuiBottomSheet,
   AutoCompleteProps,
   ChipProps,
   TooltipProps,
@@ -124,4 +126,5 @@ export {
   SliderProps,
   AccordionsProps,
   AccordionProps,
+  BottomSheetProps,
 };

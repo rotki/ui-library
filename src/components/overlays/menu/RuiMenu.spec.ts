@@ -1,6 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { promiseTimeout } from '@vueuse/core';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 
@@ -21,14 +20,12 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiMenu>) {
   });
 }
 
-const delay = (time: number = 100) => promiseTimeout(time);
-
 describe('menu', () => {
   it('renders properly', async () => {
     const wrapper = createWrapper();
 
     await wrapper.find('#trigger').trigger('click');
-    await delay();
+    await vi.delay();
 
     let menu = document.body.querySelector('div[role=menu]') as HTMLDivElement;
 
@@ -43,7 +40,7 @@ describe('menu', () => {
 
     // Click the content shouldn't close the menu
     menu.click();
-    await delay();
+    await vi.delay();
 
     menu = document.body.querySelector('div[role=menu]') as HTMLDivElement;
 
@@ -59,7 +56,7 @@ describe('menu', () => {
 
     // Click outside should close the menu
     document.body.click();
-    await delay();
+    await vi.delay();
 
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
     wrapper.unmount();
@@ -84,7 +81,7 @@ describe('menu', () => {
     });
 
     await wrapper.find('#trigger').trigger('click');
-    await delay();
+    await vi.delay();
 
     let menu = document.body.querySelector('div[role=menu]');
 
@@ -95,7 +92,7 @@ describe('menu', () => {
     await wrapper.setProps({ disabled: false });
 
     await wrapper.find('#trigger').trigger('click');
-    await delay();
+    await vi.delay();
 
     menu = document.body.querySelector('div[role=menu]');
 
@@ -119,7 +116,7 @@ describe('menu', () => {
     });
 
     await wrapper.find('#trigger').trigger('click');
-    await delay();
+    await vi.delay();
 
     const menu = document.body.querySelector('div[role=menu]');
 
@@ -132,9 +129,9 @@ describe('menu', () => {
     ).toBeTruthy();
 
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
-    await delay(100);
+    await vi.delay(100);
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
-    await delay(500);
+    await vi.delay(500);
     expect(document.body.innerHTML).toMatch(new RegExp(text));
 
     wrapper.unmount();
@@ -148,7 +145,7 @@ describe('menu', () => {
     });
 
     await wrapper.find('#trigger').trigger('click');
-    await delay();
+    await vi.delay();
 
     let menu = document.body.querySelector('div[role=menu]');
 
@@ -174,7 +171,7 @@ describe('menu', () => {
     ).toBeTruthy();
     expect(document.body.innerHTML).toMatch(new RegExp(text));
 
-    await delay(2100);
+    await vi.delay(2100);
 
     menu = document.body.querySelector('div[role=menu]');
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
@@ -194,7 +191,7 @@ describe('menu', () => {
       });
 
       await wrapper.find('#trigger').trigger('mouseover');
-      await delay();
+      await vi.delay();
 
       let menu = document.body.querySelector('div[role=menu]');
 
@@ -220,7 +217,7 @@ describe('menu', () => {
       ).toBeTruthy();
       expect(document.body.innerHTML).toMatch(new RegExp(text));
 
-      await delay(2100);
+      await vi.delay(2100);
 
       expect(document.body.innerHTML).not.toMatch(new RegExp(text));
     });
@@ -233,7 +230,7 @@ describe('menu', () => {
       });
 
       await wrapper.find('#trigger').trigger('mouseover');
-      await delay();
+      await vi.delay();
 
       let menu = document.body.querySelector('div[role=menu]');
 
@@ -247,7 +244,7 @@ describe('menu', () => {
       expect(document.body.innerHTML).toMatch(new RegExp(text));
 
       await wrapper.find('#trigger').trigger('click');
-      await delay();
+      await vi.delay();
 
       menu = document.body.querySelector('div[role=menu]');
       expect(menu).toBeTruthy();
@@ -258,7 +255,7 @@ describe('menu', () => {
       expect(document.body.innerHTML).toMatch(new RegExp(text));
 
       await wrapper.find('#trigger').trigger('mouseleave');
-      await delay();
+      await vi.delay();
 
       menu = document.body.querySelector('div[role=menu]');
       expect(menu).toBeTruthy();
@@ -269,7 +266,7 @@ describe('menu', () => {
       expect(document.body.innerHTML).toMatch(new RegExp(text));
 
       await wrapper.find('#trigger').trigger('click');
-      await delay();
+      await vi.delay();
 
       expect(document.body.innerHTML).not.toMatch(new RegExp(text));
     });
@@ -283,7 +280,7 @@ describe('menu', () => {
     });
 
     await wrapper.find('#trigger').trigger('click');
-    await delay();
+    await vi.delay();
 
     const menu = document.body.querySelector('div[role=menu]') as HTMLDivElement;
 
@@ -299,7 +296,7 @@ describe('menu', () => {
 
     // Click the content should close the menu
     menu.click();
-    await delay();
+    await vi.delay();
 
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
   });

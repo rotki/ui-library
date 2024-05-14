@@ -1,15 +1,15 @@
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCard from '@/components/cards/RuiCard.vue';
-import RuiDialog, { type DialogProps } from '@/components/overlays/dialog/RuiDialog.vue';
+import RuiBottomSheet, { type BottomSheetProps } from '@/components/overlays/bottom-sheet/RuiBottomSheet.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-const render: StoryFn<DialogProps> = args => ({
-  components: { RuiButton, RuiCard, RuiDialog },
+const render: StoryFn<BottomSheetProps> = args => ({
+  components: { RuiBottomSheet, RuiButton, RuiCard },
   setup() {
     return { args };
   },
   template: `
-    <RuiDialog
+    <RuiBottomSheet
       v-bind="args"
       width="900px"
     >
@@ -26,12 +26,12 @@ const render: StoryFn<DialogProps> = args => ({
           <template #subheader>
             Subheader
           </template>
-
+  
           <div class="p-4 pb-0">
-            <div class="h-[300px]">
+            <div class="h-[500px]">
               Contents
             </div>
-
+  
             <div class="border-t border-default py-4">
               <div class="flex gap-2 w-full justify-end">
                 <RuiButton
@@ -46,11 +46,11 @@ const render: StoryFn<DialogProps> = args => ({
           </div>
         </RuiCard>
       </template>
-    </RuiDialog>
+    </RuiBottomSheet>
   `,
 });
 
-const meta: Meta<DialogProps> = {
+const meta: Meta<BottomSheetProps> = {
   args: {
     maxWidth: '500px',
     persistent: false,
@@ -61,7 +61,7 @@ const meta: Meta<DialogProps> = {
     persistent: { control: 'boolean' },
     width: { control: 'text' },
   },
-  component: RuiDialog,
+  component: RuiBottomSheet,
   parameters: {
     docs: {
       controls: { exclude: ['default'] },
@@ -69,10 +69,10 @@ const meta: Meta<DialogProps> = {
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Overlays/Dialog',
+  title: 'Components/Overlays/BottomSheet',
 };
 
-type Story = StoryObj<DialogProps>;
+type Story = StoryObj<BottomSheetProps>;
 
 export const Default: Story = {
   args: {},

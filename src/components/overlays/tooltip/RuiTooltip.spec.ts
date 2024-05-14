@@ -1,6 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { promiseTimeout } from '@vueuse/core';
 import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 
@@ -17,8 +16,6 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiTooltip>) {
   });
 }
 
-const delay = (time: number = 100) => promiseTimeout(time);
-
 describe('tooltip', () => {
   const text = 'Tooltip content';
 
@@ -30,7 +27,7 @@ describe('tooltip', () => {
     });
 
     await wrapper.trigger('mouseover');
-    await delay();
+    await vi.delay();
 
     const tooltip = document.body.querySelector('div[role=tooltip]');
 
@@ -66,7 +63,7 @@ describe('tooltip', () => {
     });
 
     await wrapper.trigger('mouseover');
-    await delay();
+    await vi.delay();
 
     let tooltip = document.body.querySelector('div[role=tooltip]');
 
@@ -78,7 +75,7 @@ describe('tooltip', () => {
     await wrapper.setProps({ disabled: false });
 
     await wrapper.trigger('mouseover');
-    await delay();
+    await vi.delay();
 
     tooltip = document.body.querySelector('div[role=tooltip]');
 
@@ -103,7 +100,7 @@ describe('tooltip', () => {
     });
 
     await wrapper.trigger('mouseover');
-    await delay();
+    await vi.delay();
 
     const tooltip = document.body.querySelector('div[role=tooltip]');
 
@@ -117,17 +114,17 @@ describe('tooltip', () => {
     expect(tooltip?.querySelector('span[data-popper-arrow]')).toBeTruthy();
 
     // Tooltip shouldn't appear if the mouseleave happens before the timer ends.
-    await delay(100);
+    await vi.delay(100);
     await wrapper.trigger('mouseleave');
-    await delay(500);
+    await vi.delay(500);
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
 
     await wrapper.trigger('mouseover');
-    await delay(100);
+    await vi.delay(100);
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
 
     await wrapper.trigger('mouseover');
-    await delay(350);
+    await vi.delay(350);
     expect(document.body.innerHTML).toMatch(new RegExp(text));
 
     wrapper.unmount();
@@ -143,7 +140,7 @@ describe('tooltip', () => {
     });
 
     await wrapper.trigger('mouseover');
-    await delay();
+    await vi.delay();
 
     let tooltip = document.body.querySelector('div[role=tooltip]');
 
@@ -170,7 +167,7 @@ describe('tooltip', () => {
     expect(tooltip?.querySelector('span[data-popper-arrow]')).toBeTruthy();
     expect(document.body.innerHTML).toMatch(new RegExp(text));
 
-    await delay(600);
+    await vi.delay(600);
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
 
     wrapper.unmount();

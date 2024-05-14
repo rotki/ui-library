@@ -1,5 +1,6 @@
 // setup.js file
 import { vi } from 'vitest';
+import { promiseTimeout } from '@vueuse/core';
 import * as Icons from '../../src/icons';
 import { useIcons } from '../../src/composables';
 
@@ -13,3 +14,7 @@ const ResizeObserverMock = vi.fn(() => ({
 }));
 
 vi.stubGlobal('ResizeObserver', ResizeObserverMock);
+
+const delay = (ms: number = 200) => promiseTimeout(ms);
+
+vi.delay = delay;
