@@ -56,6 +56,7 @@ const meta: Meta<Props> = {
     header: '',
     image: '',
     prepend: '',
+    rounded: 'md',
     subheader: '',
     variant: 'outlined',
   },
@@ -70,13 +71,11 @@ const meta: Meta<Props> = {
     prepend: { control: 'text' },
     rounded: {
       control: 'select',
-      defaultValue: 'md',
       options: ['sm', 'md', 'lg'],
     },
     subheader: { control: 'text' },
     variant: {
       control: 'select',
-      defaultValue: 'outlined',
       options: ['flat', 'outlined'],
     },
   },

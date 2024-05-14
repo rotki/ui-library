@@ -867,7 +867,7 @@ function toggleRow(row: ExtendedUser, expanded?: ExtendedUser[]) {
     expanded?.push(row);
 }
 
-function removeRow(table: DataTableProps<ExtendedUser, 'id'>, row: ExtendedUser) {
+function removeRow(table: Pick<DataTableProps<ExtendedUser, 'id'>, 'rows'>, row: ExtendedUser) {
   table.rows = table.rows.filter(tRow => tRow.id !== row.id);
 }
 </script>

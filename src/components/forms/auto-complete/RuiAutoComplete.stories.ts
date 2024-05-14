@@ -30,6 +30,9 @@ const render: StoryFn<Props<AutoCompleteData>> = args => ({
 });
 
 const meta: Meta<Props<AutoCompleteData>> = {
+  args: {
+    errorMessages: [],
+  },
   argTypes: {
     color: {
       control: 'select',
@@ -38,7 +41,7 @@ const meta: Meta<Props<AutoCompleteData>> = {
     },
     dense: { control: 'boolean', table: { category: 'State' } },
     disabled: { control: 'boolean', table: { category: 'State' } },
-    errorMessages: { control: 'array', defaultValue: [] },
+    errorMessages: { control: 'object' },
     hint: { control: 'text' },
     label: { control: 'text' },
     placeholder: { control: 'text' },

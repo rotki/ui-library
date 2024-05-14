@@ -23,10 +23,13 @@ const render: StoryFn<PropsAndLabel> = args => ({
 });
 
 const meta: Meta<PropsAndLabel> = {
+  args: {
+    errorMessages: [],
+  },
   argTypes: {
     color: { control: 'select', options: contextColors },
     disabled: { control: 'boolean', table: { category: 'State' } },
-    errorMessages: { control: 'array', defaultValue: [] },
+    errorMessages: { control: 'object' },
     hideDetails: { control: 'boolean' },
     hint: { control: 'text' },
     label: { control: 'text' },

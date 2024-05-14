@@ -20,6 +20,10 @@ const render: StoryFn<Props> = args => ({
 });
 
 const meta: Meta<Props> = {
+  args: {
+    errorMessages: [],
+    successMessages: [],
+  },
   argTypes: {
     appendIcon: { control: 'text' },
     color: {
@@ -29,14 +33,14 @@ const meta: Meta<Props> = {
     },
     dense: { control: 'boolean', table: { category: 'State' } },
     disabled: { control: 'boolean', table: { category: 'State' } },
-    errorMessages: { control: 'array', defaultValue: [] },
+    errorMessages: { control: 'object' },
     hideDetails: { control: 'boolean', table: { category: 'State' } },
     hint: { control: 'text' },
     label: { control: 'text' },
     modelValue: { control: 'text' },
     placeholder: { control: 'text' },
     prependIcon: { control: 'text' },
-    successMessages: { control: 'array', defaultValue: [] },
+    successMessages: { control: 'object' },
     textColor: {
       control: 'select',
       options: contextColors,

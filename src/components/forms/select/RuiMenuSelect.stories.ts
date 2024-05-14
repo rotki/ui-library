@@ -44,15 +44,15 @@ const meta: Meta<SelectProps> = {
   args: {
     disabled: false,
     options,
+    variant: 'default',
   },
   argTypes: {
     dense: { control: 'boolean' },
     disabled: { control: 'boolean' },
-    modelValue: { control: 'string' },
-    options: { control: 'array', defaultValue: [] },
+    modelValue: { control: 'text' },
+    options: { control: 'object' },
     variant: {
       control: 'select',
-      defaultValue: 'default',
       options: ['default', 'outlined', 'filled'],
     },
   },

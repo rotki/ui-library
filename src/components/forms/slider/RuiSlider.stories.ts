@@ -23,10 +23,14 @@ const render: StoryFn<Props> = args => ({
 });
 
 const meta: Meta<Props> = {
+  args: {
+    errorMessages: [],
+    successMessages: [],
+  },
   argTypes: {
     color: { control: 'select', options: contextColors },
     disabled: { control: 'boolean', table: { category: 'State' } },
-    errorMessages: { control: 'array', defaultValue: [] },
+    errorMessages: { control: 'object' },
     hideDetails: { control: 'boolean', table: { category: 'State' } },
     hideTrack: { control: 'boolean', table: { category: 'State' } },
     hint: { control: 'text' },
@@ -37,7 +41,7 @@ const meta: Meta<Props> = {
     showThumbLabel: { control: 'boolean', table: { category: 'State' } },
     showTicks: { control: 'boolean', table: { category: 'State' } },
     step: { control: 'number' },
-    successMessages: { control: 'array', defaultValue: [] },
+    successMessages: { control: 'object' },
     vertical: { control: 'boolean', table: { category: 'State' } },
   },
   component: RuiSlider,

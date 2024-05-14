@@ -36,7 +36,6 @@ const preview: Preview = {
   globalTypes: {
     theme: {
       description: 'Global theme for components',
-      defaultValue: 'auto',
       toolbar: {
         // The label to show for this toolbar item
         title: 'Theme',

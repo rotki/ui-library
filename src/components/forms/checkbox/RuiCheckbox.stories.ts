@@ -32,17 +32,21 @@ const render: StoryFn<PropsAndLabel> = args => ({
 });
 
 const meta: Meta<PropsAndLabel> = {
+  args: {
+    errorMessages: [],
+    successMessages: [],
+  },
   argTypes: {
     color: { control: 'select', options: contextColors },
     disabled: { control: 'boolean', table: { category: 'State' } },
-    errorMessages: { control: 'array', defaultValue: [] },
+    errorMessages: { control: 'object' },
     hideDetails: { control: 'boolean' },
     hint: { control: 'text' },
     indeterminate: { control: 'boolean' },
     label: { control: 'text' },
     modelValue: { control: 'boolean' },
     size: { control: 'select', options: ['medium', 'sm', 'lg'] },
-    successMessages: { control: 'array', defaultValue: [] },
+    successMessages: { control: 'object' },
   },
   component: RuiCheckbox,
   parameters: {

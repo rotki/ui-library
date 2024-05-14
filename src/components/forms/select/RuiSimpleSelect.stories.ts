@@ -26,12 +26,11 @@ const meta: Meta<Props> = {
   },
   argTypes: {
     disabled: { control: 'boolean' },
-    modelValue: { control: 'string' },
-    name: { control: 'string' },
-    options: { control: 'array', defaultValue: [] },
+    modelValue: { control: 'text' },
+    name: { control: 'text' },
+    options: { control: 'object' },
     variant: {
       control: 'select',
-      defaultValue: 'default',
       options: ['default', 'outlined'],
     },
   },

@@ -20,7 +20,7 @@ const meta: Meta<Props> = {
       table: { category: 'State' },
     },
     step: { control: 'number', table: { category: 'State' } },
-    steps: { control: 'array', table: { category: 'State' } },
+    steps: { control: 'object', table: { category: 'State' } },
   },
   component: RuiStepper,
   parameters: {

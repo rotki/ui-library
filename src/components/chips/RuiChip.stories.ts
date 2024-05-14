@@ -27,7 +27,7 @@ const render: StoryFn<Props> = args => ({
 
 const meta: Meta<Props> = {
   argTypes: {
-    children: { control: 'string' },
+    children: { control: 'text' },
     clickable: { control: 'boolean' },
     closeable: { control: 'boolean' },
     color: {

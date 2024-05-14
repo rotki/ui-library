@@ -20,6 +20,10 @@ const render: StoryFn<TextFieldProps> = args => ({
 });
 
 const meta: Meta<TextFieldProps> = {
+  args: {
+    errorMessages: [],
+    successMessages: [],
+  },
   argTypes: {
     appendIcon: { control: 'text' },
     color: {
@@ -29,7 +33,7 @@ const meta: Meta<TextFieldProps> = {
     },
     dense: { control: 'boolean', table: { category: 'State' } },
     disabled: { control: 'boolean', table: { category: 'State' } },
-    errorMessages: { control: 'array', defaultValue: [] },
+    errorMessages: { control: 'object' },
     hideDetails: { control: 'boolean', table: { category: 'State' } },
     hint: { control: 'text' },
     label: { control: 'text' },
@@ -37,7 +41,7 @@ const meta: Meta<TextFieldProps> = {
     placeholder: { control: 'text' },
     prependIcon: { control: 'text' },
     readonly: { control: 'boolean', table: { category: 'State' } },
-    successMessages: { control: 'array', defaultValue: [] },
+    successMessages: { control: 'object' },
     textColor: {
       control: 'select',
       options: contextColors,

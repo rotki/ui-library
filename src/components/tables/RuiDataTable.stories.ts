@@ -261,6 +261,7 @@ const meta: Meta<Props> = {
     loading: false,
     modelValue: undefined,
     outlined: false,
+    rounded: 'md',
     rowAttr: 'id',
     rows: [],
     striped: false,
@@ -268,7 +269,6 @@ const meta: Meta<Props> = {
   argTypes: {
     rounded: {
       control: 'select',
-      defaultValue: 'md',
       options: ['sm', 'md', 'lg'],
     },
   },

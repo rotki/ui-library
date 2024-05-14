@@ -69,7 +69,7 @@ const render: StoryFn<Props> = args => ({
 const meta: Meta<Props> = {
   argTypes: {
     align: { control: 'select', options: ['start', 'center', 'end'] },
-    class: { control: 'string' },
+    class: { control: 'text' },
     color: {
       control: 'select',
       options: contextColors,
