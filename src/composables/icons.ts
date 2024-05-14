@@ -23,6 +23,7 @@ import {
   RiDatabase2Line,
   RiErrorWarningFill,
   RiErrorWarningLine,
+  RiExpandUpDownLine,
   RiEyeLine,
   RiEyeOffLine,
   RiInformationFill,
@@ -64,6 +65,7 @@ export const useIcons = createGlobalState(() => {
     RiInformationLine,
     RiRadioButtonLine,
     RiMoreFill,
+    RiExpandUpDownLine,
   ];
 
   const registeredIcons: Ref<Record<string, string>> = ref({});

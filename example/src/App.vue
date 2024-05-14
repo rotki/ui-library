@@ -32,6 +32,7 @@ const navigation = ref([
       { to: { name: 'accordions' }, title: 'Accordions' },
       { to: { name: 'dialogs' }, title: 'Dialogs' },
       { to: { name: 'bottom-sheets' }, title: 'Bottom Sheets' },
+      { to: { name: 'color-pickers' }, title: 'Color Picker' },
     ],
   },
   {

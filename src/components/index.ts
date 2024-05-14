@@ -37,6 +37,7 @@ import RuiMenuSelect, { type Props as MenuSelectProps } from '@/components/forms
 import RuiAccordions, { type Props as AccordionsProps } from '@/components/accordions/accordions/RuiAccordions.vue';
 import RuiAccordion, { type AccordionProps } from '@/components/accordions/accordion/RuiAccordion.vue';
 import RuiBottomSheet, { type BottomSheetProps } from '@/components/overlays/bottom-sheet/RuiBottomSheet.vue';
+import RuiColorPicker, { type Props as ColorPickerProps } from '@/components/color-picker/RuiColorPicker.vue';
 import type {
   TableColumn as DataTableColumn,
   GroupKeys as DataTableGroupKeys,
@@ -83,6 +84,7 @@ export {
   RuiAccordions,
   RuiAccordion,
   RuiBottomSheet,
+  RuiColorPicker,
   AutoCompleteProps,
   ChipProps,
   TooltipProps,
@@ -127,4 +129,5 @@ export {
   AccordionsProps,
   AccordionProps,
   BottomSheetProps,
+  ColorPickerProps,
 };
