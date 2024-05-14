@@ -254,6 +254,12 @@ function clearIconClicked() {
       @apply text-white/[0.56];
     }
 
+    &:hover {
+      .label {
+        @apply border-white;
+      }
+    }
+
     &.filled {
       .input {
         &:focus {
@@ -273,10 +279,13 @@ function clearIconClicked() {
         @apply border-white/[0.23];
       }
 
-      .input {
-        &:focus {
-          ~ .fieldset {
-            @apply border-white;
+      &:not(.disabled) {
+        .input {
+          &:hover,
+          &:focus {
+            ~ .fieldset {
+              @apply border-white;
+            }
           }
         }
       }
@@ -285,7 +294,7 @@ function clearIconClicked() {
 }
 
 .wrapper {
-  @apply relative w-full min-w-[12.5rem] flex items-center pt-3;
+  @apply relative w-full flex items-center pt-3;
 
   .input {
     @apply leading-6 text-rui-text w-full bg-transparent py-1.5 pr-3 outline-0 outline-none transition-all placeholder:opacity-0 focus:placeholder:opacity-100;
@@ -344,6 +353,12 @@ function clearIconClicked() {
     }
   }
 
+  &:hover {
+    .label {
+      @apply border-black;
+    }
+  }
+
   .icon {
     @apply text-black/[0.54];
   }
@@ -375,10 +390,12 @@ function clearIconClicked() {
       }
 
       &.outlined {
-        .input {
-          &:focus {
-            ~ .fieldset {
-              @apply border-rui-#{$color};
+        &:not(.disabled) {
+          .input {
+            &:focus {
+              ~ .fieldset {
+                @apply border-rui-#{$color};
+              }
             }
           }
         }
@@ -468,10 +485,10 @@ function clearIconClicked() {
       &[data-has-value='true'],
       &:focus {
         + .label {
-          @apply leading-[2.5];
+          @apply leading-[1.5] pl-4;
 
-          padding-left: calc(var(--x-padding) + var(--prepend-width, 0px));
-          padding-right: calc(var(--x-padding) + var(--append-width, 0px));
+          padding-left: calc(var(--x-padding));
+          padding-right: calc(var(--x-padding));
         }
       }
     }
@@ -495,10 +512,7 @@ function clearIconClicked() {
       &[data-has-value='true'],
       &:focus {
         + .label {
-          @apply leading-[1.5] pl-4;
-
-          padding-left: calc(var(--x-padding));
-          padding-right: calc(var(--x-padding));
+          @apply leading-[2.25];
         }
       }
     }
@@ -519,12 +533,6 @@ function clearIconClicked() {
   &.outlined {
     .input {
       @apply py-4 border-b-0;
-
-      &:focus {
-        ~ .fieldset {
-          @apply border-2 border-black;
-        }
-      }
 
       &:not(:placeholder-shown),
       &:autofill,
@@ -567,6 +575,23 @@ function clearIconClicked() {
         &:after {
           @apply truncate max-w-full leading-[0];
           content: '\200B';
+        }
+      }
+    }
+
+    &:not(.disabled) {
+      .input {
+        &:hover,
+        &:focus {
+          ~ .fieldset {
+            @apply border border-black;
+          }
+        }
+
+        &:focus {
+          ~ .fieldset {
+            @apply border-2;
+          }
         }
       }
     }

@@ -296,17 +296,27 @@ onMounted(computeFieldHeight);
 
 <style lang="scss" module>
 @use '@/styles/colors.scss' as c;
+
 :global(.dark) {
   .wrapper {
     .label {
       @apply border-white/[0.42];
+
       &:after {
         @apply border-white;
       }
     }
+
     .icon {
       @apply text-white/[0.56];
     }
+
+    &:hover {
+      .label {
+        @apply border-white;
+      }
+    }
+
     &.filled {
       .textarea {
         &:focus {
@@ -315,47 +325,62 @@ onMounted(computeFieldHeight);
           }
         }
       }
+
       .label {
         @apply bg-white/[0.09];
       }
     }
+
     &.outlined {
       .fieldset {
         @apply border-white/[0.23];
       }
-      .textarea {
-        &:focus {
-          ~ .fieldset {
-            @apply border-white;
+
+      &:not(.disabled) {
+        .textarea {
+          &:hover,
+          &:focus {
+            ~ .fieldset {
+              @apply border-white;
+            }
           }
         }
       }
     }
   }
 }
+
 .wrapper {
   @apply relative w-full min-w-[12.5rem] flex items-start;
+
   .inner_wrapper {
     @apply flex flex-1 pt-4;
   }
+
   .append {
     @apply absolute right-0;
   }
+
   .textarea {
     @apply leading-6 text-rui-text w-full bg-transparent pb-2 pt-0;
     @apply outline-0 outline-none placeholder:opacity-0 focus:placeholder:opacity-100;
+
     --x-padding: 0.75rem;
     padding-right: calc(var(--x-padding) + v-bind(appendWidth)) !important;
+
     &_sizer {
       @apply invisible absolute top-0 left-0 w-full h-0 -z-10 pointer-events-none py-2 px-3 #{!important};
+
       padding-right: calc(var(--x-padding) + v-bind(appendWidth)) !important;
     }
+
     &:focus {
       @apply outline-0;
       + .label {
         @apply after:scale-x-100;
       }
     }
+
     &:not(:placeholder-shown),
     &:autofill,
     &:-webkit-autofill,
@@ -367,37 +392,54 @@ onMounted(computeFieldHeight);
         padding-right: var(--x-padding);
       }
     }
+
     &:disabled {
       @apply border-dotted;
+
       &,
       + .label {
         @apply text-rui-text-disabled;
       }
+
       ~ .fieldset {
         @apply border-dotted;
       }
     }
   }
+
   .label {
     @apply left-0 text-base leading-[3.2] text-rui-text-secondary pointer-events-none absolute top-0 flex h-full w-full select-none transition-all border-b border-black/[0.42];
+
     --x-padding: 0rem;
+
     padding-left: calc(var(--x-padding) + v-bind(prependWidth));
     padding-right: calc(var(--x-padding) + v-bind(appendWidth));
+
     &:after {
       content: '';
       @apply absolute bottom-0 left-0 block w-full scale-x-0 border-b-2 mb-[-1px] transition-transform duration-300 border-black;
     }
   }
+
+  &:hover {
+    .label {
+      @apply border-black;
+    }
+  }
+
   .icon {
     @apply text-black/[0.54];
   }
+
   .prepend,
   .append {
     @apply mt-4 mx-3;
+
     .textarea {
       --x-padding: 0rem;
     }
   }
+
   @each $color in c.$context-colors {
     &.#{$color} {
       .textarea {
@@ -407,19 +449,24 @@ onMounted(computeFieldHeight);
           }
         }
       }
+
       .label {
         @apply after:border-rui-#{$color};
       }
+
       &.outlined {
-        .textarea {
-          &:focus {
-            ~ .fieldset {
-              @apply border-rui-#{$color};
+        &:not(.disabled) {
+          .textarea {
+            &:focus {
+              ~ .fieldset {
+                @apply border-rui-#{$color};
+              }
             }
           }
         }
       }
     }
+
     &.text_#{$color},
     &.with-#{$color} {
       .prepend,
@@ -427,28 +474,34 @@ onMounted(computeFieldHeight);
       .textarea {
         @apply text-rui-#{$color};
       }
+
       &:not(.disabled) .prepend svg,
       &:not(.disabled) .append svg {
         @apply text-rui-#{$color};
       }
     }
   }
+
   @each $color in 'error', 'success' {
     &.with-#{$color} {
       .textarea {
         @apply border-rui-#{$color} #{!important};
       }
+
       .label {
         @apply text-rui-#{$color} after:border-rui-#{$color} #{!important};
       }
+
       .fieldset {
         @apply border-rui-#{$color} #{!important};
       }
     }
   }
+
   &.dense {
     .inner_wrapper {
       @apply pt-2;
+
       .textarea {
         @apply py-1;
         &_sizer {
@@ -457,13 +510,16 @@ onMounted(computeFieldHeight);
       }
     }
   }
+
   &.filled,
   &.outlined {
     .textarea {
       @apply px-3;
     }
+
     .prepend {
       @apply mr-0;
+
       + .inner_wrapper .textarea {
         &:not(:placeholder-shown),
         &:autofill,
@@ -476,23 +532,28 @@ onMounted(computeFieldHeight);
         }
       }
     }
+
     .append {
       @apply ml-0;
     }
+
     .prepend,
     .append {
       + .inner_wrapper > .label {
         --x-padding: 0rem;
       }
     }
+
     .label {
       --x-padding: 0.75rem;
     }
   }
+
   &.filled {
     .label {
       @apply rounded-t bg-black/[0.06];
     }
+
     &.no-label {
       .textarea {
         @apply py-4;
@@ -500,6 +561,7 @@ onMounted(computeFieldHeight);
           @apply py-4;
         }
       }
+
       &.dense {
         .textarea {
           @apply py-3;
@@ -507,22 +569,20 @@ onMounted(computeFieldHeight);
       }
     }
   }
+
   &.outlined {
     .textarea {
-      &:focus {
-        ~ .fieldset {
-          @apply border-2 border-black;
-        }
-      }
       &:not(:placeholder-shown),
       &:autofill,
       &:-webkit-autofill,
       &[data-has-value='true'],
       &:focus {
         @apply border-t-transparent;
+
         + .label {
           @apply leading-[0] pl-4;
         }
+
         ~ .fieldset {
           legend {
             &:after {
@@ -532,22 +592,45 @@ onMounted(computeFieldHeight);
         }
       }
     }
+
     .fieldset {
       @apply absolute w-full h-[calc(100%+0.5rem)] top-0 left-0 pointer-events-none rounded border border-black/[0.23] px-2 transition-all -mt-2;
+
       legend {
         @apply opacity-0 text-xs;
+
         &:after {
           @apply whitespace-break-spaces;
           content: '\200B';
         }
       }
     }
+
+    &:not(.disabled) {
+      .textarea {
+        &:hover,
+        &:focus {
+          ~ .fieldset {
+            @apply border border-black;
+          }
+        }
+
+        &:focus {
+          ~ .fieldset {
+            @apply border-2;
+          }
+        }
+      }
+    }
+
     .label {
       @apply border-0 border-transparent;
+
       &:after {
         content: none !important;
       }
     }
+
     &.dense {
       .label {
         @apply leading-[2.5];
