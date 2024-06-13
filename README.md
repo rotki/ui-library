@@ -106,9 +106,9 @@ You can extend @rotki/ui-library tailwind theme configuration by adding these to
 // tailwind.config.js
 
 module.exports = {
-    // ... your tailwind configs,
-    plugins: [require('@rotki/ui-library/theme')]
-}
+  // ... your tailwind configs,
+  plugins: [require('@rotki/ui-library/theme')],
+};
 ```
 
 ## Development
