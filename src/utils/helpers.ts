@@ -102,3 +102,9 @@ export function transformCase<T extends object>(item: T, to: 'camelCase' | 'snak
     return acc;
   }, {} as Record<string, any>);
 }
+
+export function transformPropsUnit(value?: string | number): string | undefined {
+  if (value === undefined || (typeof value === 'string' && isNaN(Number(value))))
+    return value;
+  return `${value}px`;
+}
