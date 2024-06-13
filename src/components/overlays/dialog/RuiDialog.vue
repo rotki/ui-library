@@ -80,12 +80,6 @@ function close() {
   set(isOpen, false);
 }
 
-function transformPropsUnit(value?: string | number): string | undefined {
-  if (value === undefined || (typeof value === 'string' && isNaN(Number(value))))
-    return value;
-  return `${value}px`;
-}
-
 const style = computed(() => ({
   width: transformPropsUnit(get(width)),
   maxWidth: transformPropsUnit(get(maxWidth)),

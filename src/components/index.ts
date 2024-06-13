@@ -38,6 +38,7 @@ import RuiAccordions, { type Props as AccordionsProps } from '@/components/accor
 import RuiAccordion, { type AccordionProps } from '@/components/accordions/accordion/RuiAccordion.vue';
 import RuiBottomSheet, { type BottomSheetProps } from '@/components/overlays/bottom-sheet/RuiBottomSheet.vue';
 import RuiColorPicker, { type Props as ColorPickerProps } from '@/components/color-picker/RuiColorPicker.vue';
+import RuiNotification, { type NotificationProps } from '@/components/overlays/notification/RuiNotification.vue';
 import type {
   TableColumn as DataTableColumn,
   GroupKeys as DataTableGroupKeys,
@@ -85,6 +86,7 @@ export {
   RuiAccordion,
   RuiBottomSheet,
   RuiColorPicker,
+  RuiNotification,
   AutoCompleteProps,
   ChipProps,
   TooltipProps,
@@ -130,4 +132,5 @@ export {
   AccordionProps,
   BottomSheetProps,
   ColorPickerProps,
+  NotificationProps,
 };

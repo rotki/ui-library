@@ -143,6 +143,11 @@ export const router = createRouter({
       component: () => import('@/views/ColorPickerView.vue'),
     },
     {
+      path: '/notification',
+      name: 'notification',
+      component: () => import('@/views/NotificationView.vue'),
+    },
+    {
       path: '/breakpoint',
       name: 'breakpoint',
       component: () => import('@/views/BreakpointView.vue'),
