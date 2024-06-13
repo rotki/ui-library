@@ -16,36 +16,26 @@ const config: Ref<ThemeConfig> = ref({ ...defaultTheme });
  * Theme manager
  * @returns {ThemeContent}
  */
-export function useRotkiTheme(): ThemeContent {
-  const { state, store, system } = useColorMode<ThemeMode>();
+export const useRotkiTheme = createSharedComposable<() => ThemeContent>(() => {
+  const { state, store } = useColorMode<ThemeMode>();
 
   /**
    * whether the current theme is controlled by system or user
    * @type {ComputedRef<boolean>}
    */
-  const isAutoControlled: ComputedRef<boolean> = computed(
-    () => get(store) === ThemeMode.auto,
-  );
+  const isAutoControlled: ComputedRef<boolean> = computed(() => get(store) === ThemeMode.auto);
 
   /**
    * truthy for light theme
    * @type {ComputedRef<boolean>}
    */
-  const isLight: ComputedRef<boolean> = computed(
-    () =>
-      (get(isAutoControlled) && get(system) === ThemeMode.light)
-      || get(state) === ThemeMode.light,
-  );
+  const isLight: ComputedRef<boolean> = computed(() => get(state) === ThemeMode.light);
 
   /**
    * truthy for dark theme
    * @type {ComputedRef<boolean>}
    */
-  const isDark: ComputedRef<boolean> = computed(
-    () =>
-      (get(isAutoControlled) && get(system) === ThemeMode.dark)
-      || get(state) === ThemeMode.dark,
-  );
+  const isDark: ComputedRef<boolean> = computed(() => get(state) === ThemeMode.dark);
 
   /**
    * current theme based on light or dark mode
@@ -95,33 +85,30 @@ export function useRotkiTheme(): ThemeContent {
     setThemeConfig(options.config ?? { ...defaultTheme });
 
     if (typeof window !== 'undefined') {
-      watch(
-        [isLight, theme],
-        ([isLight, theme]) => {
-          const contextVariables = Object.entries(theme)
-            .map(([context, contextObject]: [string, ColorIntensity]) => ({
-              [`--rui-${context}-darker`]: contextObject.darker,
-              [`--rui-${context}-lighter`]: contextObject.lighter,
-              [`--rui-${context}-main`]: contextObject.DEFAULT,
-            }))
-            .reduce((acc, obj) => ({ ...acc, ...obj }), {});
+      watch([isLight, theme], ([isLight, theme]) => {
+        const styleVariables = new Map();
 
-          const state = isLight ? ThemeMode.light : ThemeMode.dark;
-          const textColorsVariables = {
-            '--rui-text-disabled': `var(--rui-${state}-text-disabled)`,
-            '--rui-text-primary': `var(--rui-${state}-text-primary)`,
-            '--rui-text-secondary': `var(--rui-${state}-text-secondary)`,
-          };
+        // Compute context variables
+        Object.entries(theme).forEach(([context, contextObject]: [string, ColorIntensity]) => {
+          styleVariables.set(`--rui-${context}-darker`, contextObject.darker);
+          styleVariables.set(`--rui-${context}-lighter`, contextObject.lighter);
+          styleVariables.set(`--rui-${context}-main`, contextObject.DEFAULT);
+        });
 
-          Object.entries({
-            ...contextVariables,
-            ...textColorsVariables,
-          }).forEach(([variableName, value]) => {
-            document.documentElement.style.setProperty(variableName, value);
-          });
-        },
-        { immediate: true },
-      );
+        // Determine the theme mode
+        const state = isLight ? ThemeMode.light : ThemeMode.dark;
+
+        // Add text color variables
+        styleVariables.set('--rui-text-disabled', `var(--rui-${state}-text-disabled)`);
+        styleVariables.set('--rui-text-primary', `var(--rui-${state}-text-primary)`);
+        styleVariables.set('--rui-text-secondary', `var(--rui-${state}-text-secondary)`);
+
+        // Apply all style variables in one operation
+        const rootStyle = document.documentElement.style;
+        styleVariables.forEach((value, variableName) => {
+          rootStyle.setProperty(variableName, value);
+        });
+      }, { immediate: true });
     }
   };
 
@@ -138,4 +125,4 @@ export function useRotkiTheme(): ThemeContent {
     theme,
     toggleThemeMode,
   };
-}
+});
