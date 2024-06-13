@@ -39,16 +39,16 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   (event: 'click:close'): void;
-  (event: 'click'): void;
+  (event: 'click', e: any): void;
 }>();
 
 const { clickable, disabled, bgColor, textColor } = toRefs(props);
 
-function click() {
+function click(e: any) {
   if (get(logicOr(logicNot(clickable), disabled)))
     return;
 
-  emit('click');
+  emit('click', e);
 }
 
 const css = useCssModule();
@@ -86,7 +86,7 @@ const style: ComputedRef<Partial<StyleValue>> = computed(() => {
     role="button"
     tabindex="0"
     v-bind="objectOmit(attrs, ['onClick'])"
-    @click="click()"
+    @click="click($event)"
   >
     <div
       v-if="slots.prepend"
@@ -117,22 +117,22 @@ const style: ComputedRef<Partial<StyleValue>> = computed(() => {
 @use '@/styles/colors.scss' as c;
 
 .chip {
-  @apply inline-flex items-center justify-between rounded-full px-1.5 py-[0.25rem] transition-all cursor-default;
+  @apply inline-flex items-center justify-between rounded-full px-1.5 py-[0.25rem] transition-all cursor-default outline-none;
   @apply max-w-full truncate;
 
   &.tile {
     @apply rounded-sm;
   }
 
+  &:not(.readonly):not(.disabled) {
+    @apply hover:brightness-90 focus:brightness-75;
+  }
+
   &.grey {
     @apply text-rui-text;
 
     &.filled {
-      @apply bg-black/[0.08];
-
-      &:not(.readonly):not(.disabled) {
-        @apply hover:bg-black/[0.12] focus:bg-black/[0.20];
-      }
+      @apply bg-rui-grey-200;
     }
 
     &.outlined {
@@ -148,17 +148,13 @@ const style: ComputedRef<Partial<StyleValue>> = computed(() => {
     &.#{$color} {
       &.filled {
         @apply text-rui-dark-text bg-rui-#{$color};
-
-        &:not(.readonly):not(.disabled) {
-          @apply hover:bg-rui-#{$color}-darker;
-        }
       }
 
       &.outlined {
         @apply border text-rui-#{$color} border-rui-#{$color}/50 bg-transparent;
 
         &:not(.readonly):not(.disabled) {
-          @apply hover:bg-rui-#{$color}/[0.04];
+          @apply hover:bg-rui-#{$color}/[0.04] focus:bg-rui-#{$color}/[0.12];
         }
       }
     }
@@ -223,11 +219,21 @@ const style: ComputedRef<Partial<StyleValue>> = computed(() => {
 
 :global(.dark) {
   .chip {
-    &.grey {
-      @apply bg-white/[0.16];
+    &:not(.readonly):not(.disabled) {
+      @apply hover:brightness-110 focus:brightness-75;
+    }
 
-      &:not(.readonly):not(.disabled) {
-        @apply hover:bg-white/[0.20] focus:bg-white/[0.24];
+    &.grey {
+      &.filled {
+        @apply bg-rui-grey-800;
+      }
+
+      &.outlined {
+        @apply border-white/[0.26];
+
+        &:not(.readonly):not(.disabled) {
+          @apply hover:bg-white/[0.04] focus:bg-white/[0.12];
+        }
       }
     }
 

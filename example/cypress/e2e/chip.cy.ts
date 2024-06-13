@@ -9,8 +9,8 @@ describe('chip', () => {
     cy.contains('h2[data-cy=chips]', 'Chips');
 
     cy.get('[data-cy*=chip-0').first().as('dismissibleChip');
-    cy.get('[data-cy*=chip-6').first().as('disabledChip');
-    cy.get('[data-cy*=chip-12').first().as('inDismissibleChip');
+    cy.get('[data-cy*=chip-7').first().as('disabledChip');
+    cy.get('[data-cy*=chip-14').first().as('inDismissibleChip');
 
     cy.get('@dismissibleChip').find('button').should('not.be.disabled');
     cy.get('@dismissibleChip').find('button').trigger('click');

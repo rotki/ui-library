@@ -1,11 +1,17 @@
 <script lang="ts" setup>
 import { type ChipProps, RuiChip } from '@rotki/ui-library';
 
-const dismissed = reactive<Record<string | number, number>>({});
+const dismissed = ref<Record<string | number, number>>({});
 
 const chips = ref<ChipProps[]>([
   {
     disabled: false,
+    color: 'grey',
+    variant: 'filled',
+    closeable: true,
+  },
+  {
+    disabled: false,
     color: 'primary',
     variant: 'filled',
     closeable: true,
@@ -42,6 +48,12 @@ const chips = ref<ChipProps[]>([
   },
   {
     disabled: true,
+    color: 'grey',
+    variant: 'filled',
+    closeable: true,
+  },
+  {
+    disabled: true,
     color: 'primary',
     variant: 'filled',
     closeable: true,
@@ -78,6 +90,12 @@ const chips = ref<ChipProps[]>([
   },
   {
     disabled: false,
+    color: 'grey',
+    variant: 'filled',
+    closeable: false,
+  },
+  {
+    disabled: false,
     color: 'primary',
     variant: 'filled',
     closeable: false,
@@ -111,6 +129,13 @@ const chips = ref<ChipProps[]>([
     color: 'success',
     variant: 'filled',
     closeable: false,
+  },
+  {
+    disabled: false,
+    color: 'grey',
+    variant: 'filled',
+    closeable: false,
+    tile: true,
   },
   {
     disabled: false,
@@ -157,6 +182,14 @@ const chips = ref<ChipProps[]>([
 
   {
     disabled: false,
+    color: 'grey',
+    variant: 'filled',
+    closeable: false,
+    tile: true,
+    clickable: true,
+  },
+  {
+    disabled: false,
     color: 'primary',
     variant: 'filled',
     closeable: false,
@@ -205,6 +238,13 @@ const chips = ref<ChipProps[]>([
   },
   {
     disabled: false,
+    color: 'grey',
+    variant: 'filled',
+    size: 'sm',
+    closeable: true,
+  },
+  {
+    disabled: false,
     color: 'primary',
     variant: 'filled',
     size: 'sm',
@@ -247,6 +287,13 @@ const chips = ref<ChipProps[]>([
   },
   {
     disabled: true,
+    color: 'grey',
+    variant: 'filled',
+    size: 'sm',
+    closeable: true,
+  },
+  {
+    disabled: true,
     color: 'primary',
     variant: 'filled',
     size: 'sm',
@@ -289,6 +336,12 @@ const chips = ref<ChipProps[]>([
   },
   {
     disabled: false,
+    color: 'grey',
+    variant: 'filled',
+    closeable: false,
+  },
+  {
+    disabled: false,
     color: 'primary',
     variant: 'filled',
     closeable: false,
@@ -325,6 +378,12 @@ const chips = ref<ChipProps[]>([
   },
   {
     disabled: false,
+    color: 'grey',
+    variant: 'outlined',
+    closeable: true,
+  },
+  {
+    disabled: false,
     color: 'primary',
     variant: 'outlined',
     closeable: true,
@@ -361,6 +420,12 @@ const chips = ref<ChipProps[]>([
   },
   {
     disabled: true,
+    color: 'grey',
+    variant: 'outlined',
+    closeable: true,
+  },
+  {
+    disabled: true,
     color: 'primary',
     variant: 'outlined',
     closeable: true,
@@ -397,6 +462,12 @@ const chips = ref<ChipProps[]>([
   },
   {
     disabled: false,
+    color: 'grey',
+    variant: 'outlined',
+    closeable: false,
+  },
+  {
+    disabled: false,
     color: 'primary',
     variant: 'outlined',
     closeable: false,
@@ -433,6 +504,13 @@ const chips = ref<ChipProps[]>([
   },
   {
     disabled: false,
+    color: 'grey',
+    variant: 'outlined',
+    size: 'sm',
+    closeable: true,
+  },
+  {
+    disabled: false,
     color: 'primary',
     variant: 'outlined',
     size: 'sm',
@@ -475,6 +553,13 @@ const chips = ref<ChipProps[]>([
   },
   {
     disabled: true,
+    color: 'grey',
+    variant: 'outlined',
+    size: 'sm',
+    closeable: true,
+  },
+  {
+    disabled: true,
     color: 'primary',
     variant: 'outlined',
     size: 'sm',
@@ -514,6 +599,12 @@ const chips = ref<ChipProps[]>([
     variant: 'outlined',
     size: 'sm',
     closeable: true,
+  },
+  {
+    disabled: false,
+    color: 'grey',
+    variant: 'outlined',
+    closeable: false,
   },
   {
     disabled: false,
@@ -556,6 +647,12 @@ const chips = ref<ChipProps[]>([
 const prependChips = ref<ChipProps[]>([
   {
     disabled: false,
+    color: 'grey',
+    variant: 'filled',
+    closeable: true,
+  },
+  {
+    disabled: false,
     color: 'primary',
     variant: 'filled',
     closeable: true,
@@ -592,6 +689,12 @@ const prependChips = ref<ChipProps[]>([
   },
   {
     disabled: true,
+    color: 'grey',
+    variant: 'filled',
+    closeable: true,
+  },
+  {
+    disabled: true,
     color: 'primary',
     variant: 'filled',
     closeable: true,
@@ -628,6 +731,12 @@ const prependChips = ref<ChipProps[]>([
   },
   {
     disabled: false,
+    color: 'grey',
+    variant: 'filled',
+    closeable: false,
+  },
+  {
+    disabled: false,
     color: 'primary',
     variant: 'filled',
     closeable: false,
@@ -664,6 +773,13 @@ const prependChips = ref<ChipProps[]>([
   },
   {
     disabled: false,
+    color: 'grey',
+    variant: 'filled',
+    size: 'sm',
+    closeable: true,
+  },
+  {
+    disabled: false,
     color: 'primary',
     variant: 'filled',
     size: 'sm',
@@ -706,6 +822,13 @@ const prependChips = ref<ChipProps[]>([
   },
   {
     disabled: true,
+    color: 'grey',
+    variant: 'filled',
+    size: 'sm',
+    closeable: true,
+  },
+  {
+    disabled: true,
     color: 'primary',
     variant: 'filled',
     size: 'sm',
@@ -748,6 +871,13 @@ const prependChips = ref<ChipProps[]>([
   },
   {
     disabled: false,
+    color: 'grey',
+    variant: 'filled',
+    size: 'sm',
+    closeable: false,
+  },
+  {
+    disabled: false,
     color: 'primary',
     variant: 'filled',
     size: 'sm',
@@ -790,6 +920,12 @@ const prependChips = ref<ChipProps[]>([
   },
   {
     disabled: false,
+    color: 'grey',
+    variant: 'outlined',
+    closeable: true,
+  },
+  {
+    disabled: false,
     color: 'primary',
     variant: 'outlined',
     closeable: true,
@@ -826,6 +962,12 @@ const prependChips = ref<ChipProps[]>([
   },
   {
     disabled: true,
+    color: 'grey',
+    variant: 'outlined',
+    closeable: true,
+  },
+  {
+    disabled: true,
     color: 'primary',
     variant: 'outlined',
     closeable: true,
@@ -862,6 +1004,12 @@ const prependChips = ref<ChipProps[]>([
   },
   {
     disabled: false,
+    color: 'grey',
+    variant: 'outlined',
+    closeable: false,
+  },
+  {
+    disabled: false,
     color: 'primary',
     variant: 'outlined',
     closeable: false,
@@ -898,6 +1046,13 @@ const prependChips = ref<ChipProps[]>([
   },
   {
     disabled: false,
+    color: 'grey',
+    variant: 'outlined',
+    size: 'sm',
+    closeable: true,
+  },
+  {
+    disabled: false,
     color: 'primary',
     variant: 'outlined',
     size: 'sm',
@@ -940,6 +1095,13 @@ const prependChips = ref<ChipProps[]>([
   },
   {
     disabled: true,
+    color: 'grey',
+    variant: 'outlined',
+    size: 'sm',
+    closeable: true,
+  },
+  {
+    disabled: true,
     color: 'primary',
     variant: 'outlined',
     size: 'sm',
@@ -979,6 +1141,13 @@ const prependChips = ref<ChipProps[]>([
     variant: 'outlined',
     size: 'sm',
     closeable: true,
+  },
+  {
+    disabled: false,
+    color: 'grey',
+    variant: 'outlined',
+    size: 'sm',
+    closeable: false,
   },
   {
     disabled: false,
@@ -1025,10 +1194,13 @@ const prependChips = ref<ChipProps[]>([
 ]);
 
 function onRemove(identifier: number | string) {
-  if (!(identifier in dismissed))
-    dismissed[identifier] = 0;
+  const status = { ...get(dismissed) };
+  if (!(identifier in status))
+    status[identifier] = 0;
 
-  dismissed[identifier]++;
+  status[identifier]++;
+
+  set(dismissed, status);
 }
 </script>
 
@@ -1040,7 +1212,7 @@ function onRemove(identifier: number | string) {
     >
       Chips
     </h2>
-    <div class="grid gap-6 grid-cols-6">
+    <div class="grid gap-6 grid-cols-7">
       <div
         v-for="(chip, i) in chips"
         :key="i"
@@ -1063,7 +1235,7 @@ function onRemove(identifier: number | string) {
     >
       Chips with Prepend
     </h2>
-    <div class="grid gap-6 grid-cols-6">
+    <div class="grid gap-6 grid-cols-7">
       <div
         v-for="(chip, i) in prependChips"
         :key="i"
