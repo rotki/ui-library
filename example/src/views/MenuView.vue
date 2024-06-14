@@ -219,7 +219,6 @@ const menuSelectCustom = ref<MenuSelectProps<SelectOption>[]>([
     dense: true,
     errorMessages: ['This is required'],
     hint: 'lorem ipsum dolor',
-    showDetails: true,
     options,
   },
   {
@@ -229,7 +228,6 @@ const menuSelectCustom = ref<MenuSelectProps<SelectOption>[]>([
     keyAttr: 'id',
     textAttr: 'label',
     successMessages: ['lgtm!'],
-    showDetails: true,
     modelValue: undefined,
     options,
   },
@@ -314,12 +312,12 @@ const menuSelectPrimitive = ref<MenuSelectProps<string>[]>([
           :data-cy="`menu-${i}`"
           :open-delay="10"
         >
-          <template #activator="{ on, disabled }">
+          <template #activator="{ attrs, disabled }">
             <RuiButton
               data-cy="activator"
               :color="menu.buttonColor"
               :disabled="disabled"
-              v-on="on"
+              v-bind="attrs"
             >
               {{ menu.buttonText }}
             </RuiButton>
@@ -366,13 +364,13 @@ const menuSelectPrimitive = ref<MenuSelectProps<string>[]>([
           v-bind="objectOmit(menu, ['modelValue'])"
           :data-cy="`select-menu-custom-${i}`"
         >
-          <template #activator="{ on, disabled, open, value }">
+          <template #activator="{ attrs, disabled, open, value }">
             <RuiButton
               class="!rounded-md border"
               data-cy="activator"
               variant="list"
               :disabled="disabled"
-              v-on="on"
+              v-bind="attrs"
             >
               {{ value ? value.label : 'Choose option' }}
               <template #append>
@@ -409,15 +407,15 @@ const menuSelectPrimitive = ref<MenuSelectProps<string>[]>([
           :label-class="menu.dense ? undefined : 'h-20'"
           variant="outlined"
         >
-          <template #activator.text="{ value }">
-            {{ value.id }} | {{ value.label }}
+          <template #selection="{ item }">
+            {{ item.id }} | {{ item.label }}
           </template>
-          <template #item.text="{ option }">
+          <template #item="{ item }">
             <span
               class="block"
               :class="{ 'my-4': !menu.dense }"
             >
-              {{ option.label }}
+              {{ item.label }}
             </span>
           </template>
         </RuiMenuSelect>

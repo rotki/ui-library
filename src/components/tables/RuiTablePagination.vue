@@ -33,9 +33,7 @@ const css = useCssModule();
 
 const tableDefaults = useTable();
 
-const limits = computed(
-  () => (get(modelValue).limits ?? get(tableDefaults.limits)).map(limit => ({ limit })),
-);
+const limits = computed(() => (get(modelValue).limits ?? get(tableDefaults.limits)).map(limit => ({ limit })));
 
 const currentLimit = computed({
   get: () => get(modelValue).limit,
@@ -140,6 +138,7 @@ function onLast() {
         name="limit"
         key-attr="limit"
         text-attr="limit"
+        hide-details
         dense
       />
     </div>
@@ -154,6 +153,7 @@ function onLast() {
         name="ranges"
         key-attr="page"
         text-attr="text"
+        hide-details
         dense
       />
       <span :class="css.indicator">

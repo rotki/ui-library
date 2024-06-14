@@ -11,8 +11,8 @@ const render: StoryFn<MenuProps> = args => ({
   template: `
     <div class="text-center p-4">
       <RuiMenu v-bind="args">
-        <template #activator="{ on }">
-          <RuiButton v-on="on">Click Me!</RuiButton>
+        <template #activator="{ attrs }">
+          <RuiButton v-bind='attrs'>Click Me!</RuiButton>
         </template>
         <div class="px-4 py-3">
           This is menu

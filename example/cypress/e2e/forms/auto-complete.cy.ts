@@ -1,6 +1,6 @@
 describe('forms/TextField', () => {
   beforeEach(() => {
-    cy.visit('/auto-complete');
+    cy.visit('/auto-completes');
   });
 
   it('checks for auto-complete and interacts with it', () => {

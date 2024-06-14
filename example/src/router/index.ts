@@ -58,11 +58,6 @@ export const router = createRouter({
       component: () => import('@/views/SliderView.vue'),
     },
     {
-      path: '/auto-complete',
-      name: 'auto-complete',
-      component: () => import('@/views/AutoCompleteView.vue'),
-    },
-    {
       path: '/steppers',
       name: 'steppers',
       component: () => import('@/views/StepperView.vue'),
@@ -141,6 +136,11 @@ export const router = createRouter({
       path: '/color-pickers',
       name: 'color-pickers',
       component: () => import('@/views/ColorPickerView.vue'),
+    },
+    {
+      path: '/auto-completes',
+      name: 'auto-completes',
+      component: () => import('@/views/AutoCompleteView.vue'),
     },
     {
       path: '/navigation-drawers',

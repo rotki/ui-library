@@ -1,12 +1,8 @@
 import RuiMenuSelect, { type Props } from '@/components/forms/select/RuiMenuSelect.vue';
+import { type SelectOption, options } from '@/__test__/options';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-interface SelectOption {
-  id: string | number;
-  label: string | number;
-}
-
-type SelectProps = Props<SelectOption>;
+type SelectProps<T extends SelectOption | string = SelectOption> = Props<T>;
 
 const render: StoryFn<SelectProps> = args => ({
   components: { RuiMenuSelect },
@@ -24,21 +20,6 @@ const render: StoryFn<SelectProps> = args => ({
   },
   template: `<RuiMenuSelect v-bind="args" v-model="modelValue" />`,
 });
-
-const options: SelectOption[] = [
-  { id: '1', label: 'Germany' },
-  { id: '2', label: 'Nigeria' },
-  { id: '3', label: 'Greece' },
-  { id: '4', label: 'Indonesia' },
-  { id: '5', label: 'Spain' },
-  { id: '6', label: 'India' },
-  { id: '7', label: 'France' },
-  { id: '8', label: 'England' },
-  ...[...new Array(12).keys()].map(index => ({
-    id: index + 9,
-    label: index + 9,
-  })),
-];
 
 const meta: Meta<SelectProps> = {
   args: {
@@ -67,13 +48,19 @@ const meta: Meta<SelectProps> = {
   title: 'Components/Forms/MenuSelect',
 };
 
-type Story = StoryObj<SelectProps>;
+type Story<T extends SelectOption | string = SelectOption> = StoryObj<SelectProps<T>>;
 
 export const Default: Story = {
   args: {
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
+  },
+};
+
+export const PrimitiveItems: Story<string> = {
+  args: {
+    options: options.map(item => item.label),
   },
 };
 

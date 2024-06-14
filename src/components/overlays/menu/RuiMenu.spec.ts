@@ -9,12 +9,12 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiMenu>) {
   return mount(RuiMenu, {
     ...options,
     global: {
-      stubs: { 'rui-button': RuiButton },
+      components: {
+        RuiButton,
+      },
     },
     slots: {
-      activator: `<rui-button id="trigger" v-on="params.on">
-        Click me!
-      </rui-button>`,
+      activator: `<RuiButton id="trigger" v-bind="attrs">Click me!</RuiButton>`,
       default: `<div class="py-2 px-3">${text}</div>`,
     },
   });
