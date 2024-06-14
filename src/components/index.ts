@@ -1,6 +1,6 @@
 /* eslint-disable import/max-dependencies */
 import RuiAlert, { type Props as AlertProps } from '@/components/alerts/RuiAlert.vue';
-import RuiAutoComplete, { type Props as AutoCompleteProps } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
+import RuiAutoComplete, { type AutoCompleteProps } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
 import RuiButton, { type Props as ButtonProps } from '@/components/buttons/button/RuiButton.vue';
 import RuiButtonGroup, { type Props as ButtonGroupProps } from '@/components/buttons/button-group/RuiButtonGroup.vue';
 import RuiIcon, { type Props as IconProps } from '@/components/icons/RuiIcon.vue';

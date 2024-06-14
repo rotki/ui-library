@@ -69,6 +69,8 @@ const {
   popper: menu,
   open,
   popperEnter,
+  leavePending,
+  onLeavePending,
   onOpen,
   onClose,
   onPopperLeave,
@@ -174,7 +176,8 @@ const { hasError, hasSuccess } = useFormTextDetail(
           leave-from-class="opacity-100 translate-y-0"
           leave-to-class="opacity-0 translate-y-1"
           @before-enter="updatePopper()"
-          @after-leave="onPopperLeave()"
+          @after-leave="leavePending ? onPopperLeave() : undefined"
+          @before-leave="onLeavePending()"
         >
           <div
             v-if="open"

@@ -1,30 +1,49 @@
-<script lang="ts" setup generic='T extends object'>
-import { Combobox, ComboboxButton, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import RuiAutoCompleteSelection from '@/components/forms/auto-complete/RuiAutoCompleteSelection.vue';
-import { defaultKeyProp } from '@/consts/forms/auto-complete';
+<script lang="ts" setup generic='T extends string | object, K extends keyof T'>
+import { logicAnd, logicOr } from '@vueuse/math';
+import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
-import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
-import type { ContextColorsType } from '@/consts/colors';
+import RuiChip from '@/components/chips/RuiChip.vue';
+import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
+import RuiProgress from '@/components/progress/RuiProgress.vue';
+import { getTextToken } from '@/utils/helpers';
+import type { ComputedRef } from 'vue';
 
-export type ModelValue<T> = T | null | T[];
+export type ModelValue<T extends string | object, K extends keyof T> = T | T[] | T[K] | T[K][];
 
-export interface Props<T extends object> {
-  data: T[];
-  modelValue: ModelValue<T>;
-  nullable?: boolean;
+export interface AutoCompleteProps<T extends string | object, K extends keyof T> {
+  options?: T[];
+  keyAttr?: T extends object ? K : never;
+  textAttr?: keyof T;
+  modelValue?: ModelValue<T, K>;
   disabled?: boolean;
-  searchQuery?: string;
-  searchProp?: Extract<keyof T, string>;
-  placeholder?: string;
-  label?: string;
-  keyProp?: Extract<keyof T, string>;
-  textProp?: Extract<keyof T, string>;
-  itemDisabledProp?: Extract<keyof T, string>;
-  variant?: 'default' | 'filled' | 'outlined';
-  color?: ContextColorsType;
+  loading?: boolean;
+  readOnly?: boolean;
   dense?: boolean;
+  clearable?: boolean;
+  label?: string;
+  menuOptions?: MenuProps;
+  labelClass?: string;
+  menuClass?: string;
+  itemClass?: string;
+  prependWidth?: number; // in rem
+  appendWidth?: number; // in rem
+  itemHeight?: number; // in px
+  variant?: 'default' | 'filled' | 'outlined';
   hint?: string;
-  errorMessages?: string[];
+  errorMessages?: string | string[];
+  successMessages?: string | string[];
+  hideDetails?: boolean;
+  autoSelectFirst?: boolean;
+  chips?: boolean;
+  searchInput?: string;
+  noFilter?: boolean;
+  hideNoData?: boolean;
+  noDataText?: string;
+  filter?: (item: T, queryText: string) => boolean;
+  hideSelected?: boolean;
+  placeholder?: string;
+  returnObject?: boolean;
+  customValue?: boolean;
 }
 
 defineOptions({
@@ -32,407 +51,897 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<Props<T>>(), {
-  keyProp: undefined,
-  textProp: undefined,
-  itemDisabledProp: undefined,
-  searchProp: undefined,
-  searchQuery: '',
-  placeholder: '',
-  label: '',
+const props = withDefaults(defineProps<AutoCompleteProps<T, K>>(), {
+  options: () => [],
   disabled: false,
-  nullable: false,
-  variant: 'default',
-  color: undefined,
+  loading: false,
+  readOnly: false,
   dense: false,
-  hint: '',
+  clearable: false,
+  hideDetails: false,
+  chips: false,
+  label: 'Select',
+  prependWidth: 0,
+  appendWidth: 0,
+  variant: 'default',
+  hint: undefined,
+  keyAttr: undefined,
+  textAttr: undefined,
+  itemHeight: undefined,
   errorMessages: () => [],
+  successMessages: () => [],
+  autoSelectFirst: false,
+  searchInput: '',
+  noFilter: false,
+  hideNoData: false,
+  noDataText: 'No data available',
+  hideSelected: false,
+  returnObject: false,
+  customValue: false,
 });
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', modelValue: ModelValue<T>): void;
-}>();
+const modelValue = defineModel<ModelValue<T, K>>();
+const searchInputModel = defineModel<string>('searchInput');
 
 const css = useCssModule();
 const slots = useSlots();
 
-const query = ref(props.searchQuery ?? '');
-const button = ref<{
-  el: HTMLButtonElement;
-}>();
+const { dense, variant, disabled, options } = toRefs(props);
 
-function matches(search: string, text?: string): boolean {
-  return !!text && text.toLowerCase().includes(search);
-}
-
-const internalKeyProp = computed<string>(() => props.keyProp ?? defaultKeyProp);
-
-const internalModelValue = computed<object | object[] | null>(() => props.modelValue);
-
-const filtered = computed<T[]>(() => {
-  const search = get(query).toLowerCase();
-  const searchKey = props.searchProp;
-  const textKey = props.textProp;
-  return !search
-    ? props.data
-    : props.data.filter((item) => {
-      const itemText = getText(item, textKey);
-      if (searchKey) {
-        const searchText = getStringValue(item[searchKey]);
-        return matches(search, itemText) || matches(search, searchText);
-      }
-      return matches(search, itemText);
-    });
-});
+const textInput = ref();
+const activator = ref();
+const noDataContainer = ref();
+const menuRef = ref();
 
 const multiple = computed(() => Array.isArray(props.modelValue));
 
-const hasValue = computed(() => {
-  const value = props.modelValue;
-  return Array.isArray(value) ? value.length > 0 : !!value;
+const shouldApplyValueAsSearch = computed(() => !(slots.selection || get(multiple) || props.chips));
+
+const { focused: searchInputFocused } = useFocus(textInput);
+
+const internalSearch = ref<string>('');
+const debouncedInternalSearch = refDebounced(internalSearch, 100);
+
+watch(searchInputModel, (search) => {
+  set(internalSearch, search);
+}, { immediate: true });
+
+const justOpened = ref(false);
+
+const filteredOptions = computed<T[]>(() => {
+  const search = get(debouncedInternalSearch);
+  const options = props.options;
+  if (props.noFilter || !search || get(justOpened))
+    return options;
+
+  const keyAttr = props.keyAttr;
+  const textAttr = props.textAttr;
+
+  const usedFilter = props.filter || ((item, search) => {
+    const keywords: string[] = [keyAttr ? getTextToken(item[keyAttr]) : item.toString()];
+
+    if (textAttr && typeof item === 'object')
+      keywords.push(getTextToken(item[textAttr]));
+
+    return keywords.some(keyword => getTextToken(keyword).includes(getTextToken(search)));
+  });
+
+  return options.filter(item => usedFilter(item, search));
 });
 
-const hideDetails = computed(() => !(props.hint || props.errorMessages?.length > 0));
-
-function onChange(newVal: ModelValue<T>) {
-  const value = props.modelValue;
-  if (!(newVal && value) || newVal !== value)
-    emit('update:modelValue', newVal);
+function onUpdateModelValue(value?: ModelValue<T, K>) {
+  set(modelValue, value);
 }
 
-function setQuery(q: string) {
-  set(query, q);
+function isMapped<T extends object | string, K extends keyof T>(
+  _x?: ModelValue<T, K>,
+  key?: T extends object ? K : never,
+  returnObject?: boolean,
+): _x is T[K] | T[K][] {
+  return !!key && !returnObject;
 }
 
-function toggleDropdown() {
-  get(button)?.el?.click();
+function setSelected(selected: T[]): void {
+  const keyAttr = props.keyAttr;
+  const selection = keyAttr && !props.returnObject ? selected.map(item => item[keyAttr]) : selected;
+
+  if (get(multiple))
+    return onUpdateModelValue(selection);
+
+  if (selection.length === 0)
+    return onUpdateModelValue(undefined);
+
+  return onUpdateModelValue(selection[0]);
 }
 
-function onClear() {
-  emit('update:modelValue', get(multiple) ? [] : null);
-  setQuery('');
-}
+const value = computed<T[]>({
+  get: () => {
+    const value = props.modelValue;
+    const keyAttr = props.keyAttr;
+    const multiple = Array.isArray(value);
 
-function onRemove(option: unknown) {
-  const value = props.modelValue;
+    if (isMapped(value, keyAttr, props.returnObject)) {
+      const valueToArray = value ? (multiple ? value : [value]) : [];
+      const filtered: T[] = [];
+      valueToArray.forEach((val) => {
+        const inOptions = props.options.find(item => getIdentifier(item) === val);
 
-  if (!get(multiple) || !Array.isArray(value))
-    return;
+        if (inOptions)
+          return filtered.push(inOptions);
+        if (props.customValue)
+          return filtered.push(textValueToProperValue(val));
+      });
 
-  const key = props.keyProp ?? defaultKeyProp as Extract<keyof T, string>;
+      if (multiple || filtered.length === 0) {
+        if (get(shouldApplyValueAsSearch))
+          updateInternalSearch();
+        return filtered;
+      }
+      else {
+        const val = filtered[0];
+        if (get(shouldApplyValueAsSearch))
+          updateInternalSearch(getText(val));
 
-  emit(
-    'update:modelValue',
-    value.filter((opt: T) => opt[key] !== (option as T)[key]),
-  );
-}
+        return [val];
+      }
+    }
+    else {
+      const valueToArray = value ? (multiple ? value : [value]) : [];
+      const filtered: T[] = [];
+      valueToArray.forEach((val) => {
+        const inOptions = props.options.find(item => getIdentifier(item) === val);
 
-watch(multiple, (multiple) => {
-  const value = props.modelValue;
+        if (inOptions)
+          return filtered.push(inOptions);
+        if (props.customValue)
+          return filtered.push(textValueToProperValue(val));
+      });
 
-  if (multiple) {
-    if (Array.isArray(value))
-      emit('update:modelValue', value);
-    else
-      emit('update:modelValue', value ? [value] : []);
-  }
-  else {
-    if (Array.isArray(value))
-      emit('update:modelValue', value.length > 0 ? value[0] : null);
-    else
-      emit('update:modelValue', value || null);
-  }
-});
+      if (get(shouldApplyValueAsSearch)) {
+        if (filtered.length > 0)
+          updateInternalSearch(getText(filtered[0]));
+        else
+          updateInternalSearch();
+      }
 
-const { list, containerProps, wrapperProps, scrollTo } = useVirtualList<T>(
-  filtered,
-  {
-    itemHeight: 40,
-    overscan: 1,
+      return valueToArray;
+    }
   },
+  set: (selected: T[]): void => {
+    setSelected(selected);
+  },
+});
+
+const valueSet = computed<boolean>(() => get(value).length > 0);
+
+const labelWithQuote = computed<string>(() => {
+  if (!props.label)
+    return '"\\200B"';
+
+  return `'  ${props.label}  '`;
+});
+
+const {
+  containerProps,
+  wrapperProps,
+  renderedData,
+  isOpen,
+  menuWidth,
+  getText,
+  getIdentifier,
+  isActiveItem,
+  itemIndexInValue,
+  highlightedIndex,
+  moveHighlight,
+  applyHighlighted,
+  optionsWithSelectedHidden,
+} = useDropdownMenu<T, K>({
+  itemHeight: props.itemHeight ?? (props.dense ? 30 : 48),
+  keyAttr: props.keyAttr,
+  textAttr: props.textAttr,
+  options: filteredOptions,
+  dense,
+  value,
+  menuRef,
+  setValue,
+  autoSelectFirst: props.autoSelectFirst,
+  hideSelected: props.hideSelected,
+});
+
+const outlined = computed<boolean>(() => get(variant) === 'outlined');
+
+const float: ComputedRef<boolean> = logicAnd(
+  logicOr(
+    isOpen,
+    valueSet,
+    searchInputFocused,
+  ),
+  outlined,
 );
 
-watch(filtered, () => {
-  scrollTo(0);
+const virtualContainerProps = computed(() => ({
+  style: containerProps.style as any,
+  ref: containerProps.ref as any,
+}));
+
+function updateInternalSearch(value: string = '') {
+  set(searchInputModel, value);
+  set(internalSearch, value);
+}
+
+function updateSearchInput(event: any) {
+  const value = event.target.value;
+  set(isOpen, true);
+  updateInternalSearch(value);
+  set(justOpened, false);
+}
+
+async function setValue(val: T, index?: number, skipRefocused = false): Promise<void> {
+  if (isDefined(index))
+    set(highlightedIndex, index);
+
+  if (get(multiple)) {
+    const newValue = [...get(value)];
+    const indexInValue = itemIndexInValue(val);
+    if (indexInValue === -1) {
+      updateInternalSearch();
+      newValue.push(val);
+    }
+
+    else { newValue.splice(indexInValue, 1); }
+    set(value, newValue);
+  }
+  else {
+    await nextTick(() => {
+      set(isOpen, false);
+    });
+    if (get(shouldApplyValueAsSearch))
+      updateInternalSearch(getText(val));
+    else
+      updateInternalSearch();
+
+    set(value, [val]);
+  }
+
+  if (!skipRefocused)
+    set(searchInputFocused, true);
+}
+
+async function setInputFocus(): Promise<void> {
+  await nextTick(() => {
+    set(searchInputFocused, true);
+  });
+}
+
+const focusedValueIndex = ref<number>(-1);
+
+function setValueFocus(index: number): void {
+  set(focusedValueIndex, index);
+}
+
+watch(value, () => {
+  set(focusedValueIndex, -1);
 });
 
-const renderedData = useArrayMap(list, ({ data }) => data);
+watch(focusedValueIndex, async (index) => {
+  if (index === -1 || !get(multiple))
+    return;
 
-function updateOpen(open: boolean) {
-  if (!open && get(hasValue)) {
-    const value = props.modelValue;
-    const key = props.keyProp ?? defaultKeyProp as Extract<keyof T, string>;
-    const lastKey = Array.isArray(value)
-      ? value.at(-1)?.[key]
-      : value;
+  await nextTick(() => {
+    const keyAttr = props.keyAttr;
+    const entry = get(value)[index];
+    const data = keyAttr ? entry[keyAttr] : entry;
+    const activeChip = get(activator).querySelector(`[data-value="${data}"]`);
+    activeChip?.focus();
+  });
+});
 
-    nextTick(() => {
-      scrollTo(get(filtered).findIndex(item => item[key] === lastKey));
-    });
+function moveSelectedValueHighlight(event: KeyboardEvent, next: boolean): void {
+  if (!get(multiple))
+    return;
+
+  event.preventDefault();
+  const total = get(value).length;
+
+  let current = get(focusedValueIndex);
+
+  if (current === -1) {
+    set(focusedValueIndex, next ? 0 : total - 1);
+    return;
+  }
+
+  const move = next ? 1 : -1;
+  current += move;
+
+  if (current < 0 || current >= total) {
+    set(focusedValueIndex, -1);
+    set(searchInputFocused, true);
+  }
+  else {
+    set(focusedValueIndex, current);
   }
 }
 
-const { getTextValue, getItemKey, isItemDisabled } = useAutoCompleteProps(props);
+const { focused: activatorFocusedWithin } = useFocusWithin(activator);
+const { focused: noDataContainerFocusedWithin } = useFocusWithin(noDataContainer);
+const { focused: menuFocusedWithin } = useFocusWithin(containerProps.ref);
+const anyFocused = logicOr(activatorFocusedWithin, noDataContainerFocusedWithin, menuFocusedWithin);
 
-const attrs = useAttrs();
+function textValueToProperValue(val: any): T {
+  const keyAttr = props.keyAttr;
+  const textAttr = props.textAttr;
+  if (!keyAttr)
+    return val;
+
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  return {
+    [keyAttr]: val,
+    ...(
+      textAttr
+        ? { [textAttr]: val }
+        : {}
+    ),
+  } as T;
+}
+
+function setSearchAsValue() {
+  const searchToBeValue = get(internalSearch);
+  if (!searchToBeValue)
+    return;
+
+  const newValue: T = textValueToProperValue(searchToBeValue);
+  setValue(newValue, undefined, true);
+}
+
+// Close menu if the activator is not focused anymore
+// Using debounced to avoid the menu closing momentarily while focus switches.
+watchDebounced(anyFocused, (focused) => {
+  if (!focused) {
+    set(isOpen, false);
+    if (props.customValue && get(filteredOptions).length === 0 && get(internalSearch))
+      setSearchAsValue();
+
+    if (!get(shouldApplyValueAsSearch))
+      updateInternalSearch();
+  }
+}, {
+  debounce: 200,
+  maxWait: 400,
+});
+
+function onInputFocused() {
+  set(isOpen, true);
+  set(focusedValueIndex, -1);
+  if (get(shouldApplyValueAsSearch))
+    get(textInput)?.select();
+
+  set(justOpened, true);
+}
+
+function clear(): void {
+  updateInternalSearch();
+  set(modelValue, Array.isArray(props.modelValue) ? [] : undefined);
+}
+
+function onInputDeletePressed(): void {
+  const total = get(value).length;
+  if (!get(internalSearch) && total > 0) {
+    if (get(multiple))
+      set(focusedValueIndex, total - 1);
+    else
+      clear();
+  }
+}
+
+function chipAttrs(item: T, index: number) {
+  return {
+    'data-value': getIdentifier(item),
+    'onKeydown': (event: KeyboardEvent): void => {
+      const { key } = event;
+      if (['Backspace', 'Delete'].includes(key))
+        setValue(item);
+    },
+    'onClick.stop': (): void => {
+      setValueFocus(index);
+    },
+    'onClick:close': (): void => {
+      setValue(item);
+    },
+  };
+}
+
+function onEnter(): void {
+  if (get(filteredOptions).length > 0 && get(highlightedIndex) > -1) {
+    applyHighlighted();
+  }
+  else if (get(options).length > 0 && props.customValue) {
+    setSearchAsValue();
+    if (!get(multiple))
+      set(isOpen, false);
+  }
+}
+
+function onTab(event: KeyboardEvent): void {
+  if (get(isOpen) && get(filteredOptions).length > 0 && get(highlightedIndex) > -1 && !get(multiple)) {
+    applyHighlighted();
+    event.preventDefault();
+  }
+}
+
+function setSelectionRange(start: number, end: number): void {
+  set(searchInputFocused, true);
+  get(textInput)?.setSelectionRange?.(start, end);
+}
+
+watch(options, () => {
+  if (props.customValue)
+    return;
+
+  setSelected(get(value));
+});
+
+defineExpose({
+  focus: setInputFocus,
+  setSelectionRange,
+});
 </script>
 
 <template>
-  <div :class="[multiple ? css.multiple : css.single, css[variant ?? '']]">
-    <Combobox
-      #default="{ open }"
-      :by="internalKeyProp"
-      :class="[
-        {
-          [css.disabled]: disabled,
-          [css.has_details]: !hideDetails,
-        },
-      ]"
-      :disabled="disabled"
-      :model-value="internalModelValue"
-      :multiple="multiple"
-      :nullable="nullable"
-      @update:model-value="onChange($event)"
-    >
-      <div class="relative">
-        <RuiTextField
-          v-model="query"
-          :as="RuiAutoCompleteSelection"
-          v-bind="attrs"
-          :color="color"
-          :data="modelValue"
-          :dense="dense"
-          :disabled="disabled"
-          :error-messages="errorMessages"
-          :has-value="hasValue"
-          :hide-details="hideDetails"
-          :hint="hint"
-          :item-disabled-prop="itemDisabledProp"
-          :key-prop="keyProp"
-          :label="label"
-          :placeholder="placeholder"
-          :text-prop="textProp"
-          :variant="variant"
-          @remove="onRemove($event)"
-          @focus-input="!open && toggleDropdown()"
+  <RuiMenu
+    v-model="isOpen"
+    :class="css.wrapper"
+    v-bind="{
+      placement: 'bottom-start',
+      closeOnContentClick: false,
+      fullWidth: true,
+      persistOnActivatorClick: true,
+      ...menuOptions,
+      menuClass: [
+        { hidden: (optionsWithSelectedHidden.length === 0 && customValue && !slots['no-data']) },
+        menuOptions?.menuClass,
+      ],
+      errorMessages,
+      successMessages,
+      hint,
+      dense,
+      showDetails: !hideDetails,
+      disabled,
+    }"
+  >
+    <template #activator="{ attrs, open, hasError, hasSuccess }">
+      <slot
+        name="activator"
+        v-bind="{ disabled, value, variant, readOnly, attrs, open, hasError, hasSuccess }"
+      >
+        <div
+          ref="activator"
+          class="group"
+          :class="[
+            css.activator,
+            labelClass,
+            {
+              [css.disabled]: disabled,
+              [css.readonly]: readOnly,
+              [css.outlined]: outlined,
+              [css.dense]: dense,
+              [css.float]: float,
+              [css.opened]: open,
+              [css['with-value']]: valueSet,
+              [css['with-error']]: hasError,
+              [css['with-success']]: hasSuccess && !hasError,
+            },
+          ]"
+          v-bind="{ ...$attrs, ...(readOnly ? {} : attrs) }"
+          data-id="activator"
+          :tabindex="disabled || readOnly ? -1 : 0"
+          @click="setInputFocus()"
+          @focus="setInputFocus()"
+          @keydown.enter="onEnter()"
+          @keydown.tab="onTab($event)"
+          @keydown.left="moveSelectedValueHighlight($event, false)"
+          @keydown.right="moveSelectedValueHighlight($event, true)"
+          @keydown.up.prevent="moveHighlight(true)"
+          @keydown.down.prevent="moveHighlight(false)"
         >
-          <template #append>
-            <div class="flex space-x-1 items-center">
-              <button
-                v-if="nullable && hasValue"
-                :class="css.clear_button"
-                :disabled="disabled"
+          <span
+            v-if="outlined || (!valueSet && !searchInputFocused)"
+            :class="[
+              css.label,
+              {
+                'absolute': outlined,
+                'pr-2': !valueSet && !open && outlined,
+              },
+            ]"
+          >
+            <slot
+              name="activator.label"
+              v-bind="{ value }"
+            >
+              {{ label }}
+            </slot>
+          </span>
+          <div :class="css.value">
+            <template
+              v-for="(item, i) in value"
+              :key="getIdentifier(item)"
+            >
+              <RuiChip
+                v-if="chips"
+                :key="getTextToken(getIdentifier(item))"
                 tabindex="-1"
-                type="button"
-                @click.prevent.stop="onClear()"
+                :size="dense ? 'sm' : 'md'"
+                closeable
+                :class="{ 'leading-3': dense }"
+                clickable
+                v-bind="chipAttrs(item, i)"
               >
-                <RuiIcon
-                  :class="css.clear_icon"
-                  name="close-line"
-                />
-              </button>
-              <ComboboxButton
-                ref="button"
-                :class="[{ [css.toggle_disabled]: disabled }]"
-                :disabled="disabled"
-                @click="updateOpen(open)"
-              >
-                <RuiIcon
-                  :class="[css.toggle_icon, { 'rotate-180': open }]"
-                  name="arrow-drop-down-fill"
-                />
-              </ComboboxButton>
-            </div>
-          </template>
-        </RuiTextField>
-        <Transition
-          enter-active-class="transition duration-100 ease-out"
-          enter-from-class="transform scale-95 opacity-0"
-          enter-to-class="transform scale-100 opacity-100"
-          leave-active-class="transition duration-75 ease-out"
-          leave-from-class="transform scale-100 opacity-100"
-          leave-to-class="transform scale-95 opacity-0"
-          @after-leave="setQuery('')"
-        >
-          <ComboboxOptions :class="css.options">
-            <div
-              v-if="filtered.length === 0 && query !== ''"
-              :class="css.empty"
-            >
-              <slot name="no-data">
-                No options found
-              </slot>
-            </div>
-            <div
-              v-else
-              v-bind="containerProps"
-              class="max-h-60"
-            >
-              <div v-bind="wrapperProps">
-                <ComboboxOption
-                  v-for="item in renderedData"
-                  :key="getItemKey(item)"
-                  #default="{ selected, disabled: itemDisabled }"
-                  class="h-10"
-                  :disabled="isItemDisabled(item)"
-                  :value="item"
-                  as="template"
-                >
-                  <li
-                    :class="[
-                      css.option,
-                      {
-                        [css.option__disabled]: itemDisabled,
-                        [css.option__selected]: selected,
-                        [css.option__prefixed]: !!slots.prefix,
-                      },
-                    ]"
+                <div class="flex">
+                  <slot
+                    name="selection.prepend"
+                    :index="i"
+                    v-bind="{ item }"
+                  />
+                  <slot
+                    :index="i"
+                    name="selection"
+                    v-bind="{ item }"
                   >
-                    <span
-                      v-if="!!slots.prefix"
-                      :class="{ prefix: !!slots.prefix }"
-                    >
-                      <slot
-                        class="prefix"
-                        name="prefix"
-                        :item="item"
-                      />
-                    </span>
-                    <span class="block truncate">
-                      <template v-if="slots.default">
-                        <slot :item="item" />
-                      </template>
-                      <template v-else> {{ getTextValue(item) }} </template>
-                    </span>
-                    <span
-                      v-if="selected"
-                      :class="css.option__selected_icon"
-                    >
-                      <RuiIcon
-                        aria-hidden="true"
-                        class="h-5 w-5"
-                        name="check-line"
-                      />
-                    </span>
-                  </li>
-                </ComboboxOption>
+                    {{ getText(item) }}
+                  </slot>
+                </div>
+              </RuiChip>
+              <div
+                v-else-if="multiple || slots['selection.prepend'] || slots.selection"
+                class="flex"
+              >
+                <slot
+                  name="selection.prepend"
+                  :index="i"
+                  v-bind="{ item }"
+                />
+                <slot
+                  v-if="multiple || slots.selection"
+                  :index="i"
+                  name="selection"
+                  v-bind="{ item, chipAttrs: chipAttrs(item, i) }"
+                >
+                  {{ getText(item) }}
+                </slot>
               </div>
-            </div>
-          </ComboboxOptions>
-        </Transition>
+            </template>
+            <input
+              ref="textInput"
+              :disabled="disabled"
+              :value="internalSearch"
+              class="bg-transparent outline-none"
+              type="text"
+              :placeholder="placeholder"
+              :class="(!anyFocused || disabled) && multiple ? 'w-0 h-0' : 'flex-1 min-w-[4rem]'"
+              @keydown.delete="onInputDeletePressed()"
+              @input="updateSearchInput($event)"
+              @focus="onInputFocused()"
+            />
+          </div>
+
+          <span
+            v-if="clearable && valueSet && !disabled"
+            class="group-hover:!visible"
+            :class="[css.clear, anyFocused && '!visible']"
+            @click.stop.prevent="clear()"
+          >
+            <RuiIcon
+              color="error"
+              name="close-line"
+              size="18"
+            />
+          </span>
+
+          <span :class="css.icon__wrapper">
+            <RuiIcon
+              :class="[css.icon, { 'rotate-180': open }]"
+              :size="dense ? 24 : 32"
+              name="arrow-drop-down-fill"
+            />
+          </span>
+
+          <RuiProgress
+            v-if="loading"
+            class="absolute left-0 bottom-0 w-full"
+            color="primary"
+            thickness="3"
+            variant="indeterminate"
+          />
+        </div>
+        <fieldset
+          v-if="outlined"
+          :class="css.fieldset"
+        >
+          <legend :class="{ 'px-2': float }" />
+        </fieldset>
+      </slot>
+    </template>
+    <template #default="{ width }">
+      <div
+        v-if="optionsWithSelectedHidden.length > 0"
+        :class="[css.menu, menuClass]"
+        :style="{ width: `${width}px`, minWidth: menuWidth }"
+        v-bind="virtualContainerProps"
+        @scroll="containerProps.onScroll"
+        @keydown.up.prevent="moveHighlight(true)"
+        @keydown.down.prevent="moveHighlight(false)"
+      >
+        <div
+          v-bind="wrapperProps"
+          ref="menuRef"
+        >
+          <RuiButton
+            v-for="({ item, index }) in renderedData"
+            :key="index"
+            :active="isActiveItem(item)"
+            :size="dense ? 'sm' : undefined"
+            tabindex="0"
+            variant="list"
+            :class="{
+              highlighted: highlightedIndex === index,
+              [css.highlighted]: highlightedIndex === index,
+              [css.active]: isActiveItem(item),
+            }"
+            @click.stop="setValue(item, index)"
+            @mousedown="highlightedIndex = index"
+          >
+            <template #prepend>
+              <slot
+                name="item.prepend"
+                v-bind="{ disabled, item, active: isActiveItem(item) }"
+              />
+            </template>
+            <slot
+              name="item"
+              v-bind="{ disabled, item, active: isActiveItem(item) }"
+            >
+              {{ getText(item) }}
+            </slot>
+            <template #append>
+              <slot
+                name="item.append"
+                v-bind="{ disabled, item, active: isActiveItem(item) }"
+              />
+            </template>
+          </RuiButton>
+        </div>
       </div>
-    </Combobox>
-  </div>
+
+      <div
+        v-else-if="!hideNoData"
+        ref="noDataContainer"
+        :style="{ width: `${width}px`, minWidth: menuWidth }"
+        :class="menuClass"
+      >
+        <slot name="no-data">
+          <div
+            v-if="!customValue"
+            class="p-4"
+          >
+            {{ noDataText }}
+          </div>
+        </slot>
+      </div>
+    </template>
+  </RuiMenu>
 </template>
 
 <style lang="scss" module>
-.toggle_icon {
-  @apply text-rui-grey-600 hover:text-rui-grey-800 transition-all;
-}
+.wrapper {
+  @apply w-full inline-flex flex-col;
 
-.clear {
-  &_button {
-    @apply inset-y-0 px-2 flex items-center focus:outline-none;
-  }
+  .activator {
+    @apply relative inline-flex items-center w-full;
+    @apply outline-none focus-within:outline-none cursor-pointer min-h-14 pl-3 py-2 pr-8 rounded;
+    @apply m-0 bg-white transition-all text-body-1 text-left hover:border-black;
 
-  &_icon {
-    @apply text-rui-grey-600 hover:text-rui-grey-800;
-  }
-}
+    &:not(.outlined) {
+      @apply hover:bg-gray-100 focus-within:bg-gray-100;
+    }
 
-.has_details {
-  .options {
-    @apply -mt-5;
-  }
-}
+    &.dense {
+      @apply py-1.5 min-h-10;
 
-.multiple,
-.single {
-  @apply max-w-full;
-}
-
-.default,
-.filled,
-.outlined {
-  @apply visible;
-}
-
-.options {
-  @apply absolute z-[999] mt-1 max-h-60 w-full overflow-auto rounded-md bg-white shadow-8;
-
-  .empty {
-    @apply relative cursor-default select-none py-2 px-4 text-rui-grey-700 pointer-events-none;
-  }
-
-  .option {
-    @apply relative cursor-pointer select-none py-2 pr-10 pl-4 text-rui-grey-900;
-    @apply hover:bg-rui-grey-100;
-
-    &__selected {
-      @apply bg-rui-grey-300/50;
-
-      &.option__disabled {
-        @apply hover:bg-rui-grey-300/50;
-      }
-
-      &_icon {
-        @apply absolute inset-y-0 right-0 flex items-center pr-3 text-rui-primary;
+      ~ .fieldset {
+        @apply px-2;
       }
     }
 
-    &__disabled {
-      @apply cursor-default hover:bg-transparent text-rui-grey-500;
+    &.disabled {
+      @apply opacity-65 text-rui-text-disabled active:text-rui-text-disabled cursor-default pointer-events-none;
     }
 
-    &__prefixed {
-      @apply flex items-center;
+    &.readonly {
+      @apply opacity-80 pointer-events-none cursor-default bg-gray-50;
     }
+
+    &.outlined {
+      @apply border-none hover:border-none;
+
+      &.opened,
+      &:focus,
+      &:focus-within {
+        @apply border-rui-primary;
+
+        ~ .fieldset {
+          @apply border-rui-primary #{!important};
+          @apply border-2 #{!important};
+        }
+      }
+
+      ~ .fieldset {
+        @apply border border-black/[0.23];
+      }
+
+      &:hover {
+        ~ .fieldset {
+          @apply border-black;
+        }
+      }
+
+      &.disabled {
+        ~ .fieldset {
+          @apply border-dotted;
+          @apply border border-black/[0.23] #{!important};
+        }
+      }
+
+      &.with-success {
+        .label {
+          @apply text-rui-success #{!important};
+        }
+
+        ~ .fieldset {
+          @apply border-rui-success #{!important};
+        }
+      }
+
+      &.with-error {
+        .label {
+          @apply text-rui-error #{!important};
+        }
+
+        ~ .fieldset {
+          @apply border-rui-error #{!important};
+        }
+      }
+    }
+
+    .label {
+      @apply text-rui-text-secondary;
+      max-width: calc(100% - 2.5rem);
+    }
+
+    .label,
+    .value {
+      @apply block truncate transition-all duration-75;
+    }
+
+    .value {
+      @apply flex gap-1 flex-wrap flex-1;
+    }
+
+    .clear {
+      @apply ml-auto shrink-0 invisible;
+    }
+
+    .icon {
+      @apply text-rui-text transition;
+
+      &__wrapper {
+        @apply flex items-center justify-end;
+        @apply absolute right-1 top-px bottom-0;
+      }
+    }
+
+    &.float {
+      .label {
+        @apply -translate-y-2 top-0 text-xs px-1;
+      }
+
+      ~ .fieldset {
+        legend {
+          &:after {
+            content: v-bind(labelWithQuote);
+          }
+        }
+      }
+
+      &.opened,
+      &.opened.with-value,
+      &:focus,
+      &:focus.with-value,
+      &:focus-within,
+      &:focus-within.with-value {
+        .label {
+          @apply text-rui-primary;
+        }
+
+        ~ .fieldset {
+          @apply border-rui-primary;
+          @apply border-2 #{!important};
+        }
+      }
+    }
+  }
+
+  .fieldset {
+    @apply absolute w-full min-w-0 h-[calc(100%+0.5rem)] top-0 left-0 rounded pointer-events-none px-2 transition-all -mt-2;
+
+    legend {
+      @apply opacity-0 text-xs truncate;
+      max-width: calc(100% - 1rem);
+
+      &:before {
+        content: ' ';
+      }
+
+      &:after {
+        @apply truncate max-w-full leading-[0];
+        content: '\200B';
+      }
+    }
+  }
+}
+
+.menu {
+  @apply overflow-y-auto max-h-60 min-w-[2.5rem];
+}
+
+.highlighted {
+  @apply bg-rui-grey-200 #{!important};
+
+  &.active {
+    @apply bg-rui-grey-300 #{!important};
   }
 }
 
 :global(.dark) {
-  .clear {
-    &_icon {
-      @apply text-rui-grey-400 hover:text-rui-grey-300;
-    }
-  }
+  .wrapper {
+    .activator {
+      @apply bg-transparent text-rui-text;
 
-  .toggle_icon {
-    @apply text-rui-grey-400 hover:text-rui-grey-300;
-  }
+      &:not(.outlined) {
+        @apply hover:bg-white/10 focus-within:bg-white/10;
 
-  .options {
-    @apply bg-white/[0.12];
-    background: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.12) 0%,
-        rgba(255, 255, 255, 0.12) 100%
-      ),
-      #121212;
-
-    .empty {
-      @apply text-rui-grey-500;
-    }
-
-    .option {
-      @apply text-white hover:bg-rui-grey-300/20;
-
-      &__selected {
-        @apply bg-rui-grey-300/10;
-        @apply hover:bg-rui-grey-300/20;
-
-        &.option__disabled {
-          @apply hover:bg-rui-grey-300/10;
-        }
-
-        &_icon {
-          @apply text-white;
+        &.disabled {
+          @apply bg-white/10;
         }
       }
 
-      &__disabled {
-        @apply hover:bg-transparent text-white/50;
+      &.readonly {
+        @apply bg-white/10;
       }
+
+      &.outlined {
+        ~ .fieldset {
+          @apply border-white/[0.23];
+        }
+
+        &.disabled {
+          ~ .fieldset {
+            @apply border-white/[0.23] #{!important};
+          }
+        }
+
+        &:hover {
+          ~ .fieldset {
+            @apply border-white;
+          }
+        }
+      }
+    }
+  }
+
+  .highlighted {
+    @apply bg-rui-grey-800 #{!important};
+
+    &.active {
+      @apply bg-rui-grey-700 #{!important};
     }
   }
 }

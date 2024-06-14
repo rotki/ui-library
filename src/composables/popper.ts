@@ -59,6 +59,7 @@ export function usePopper(options: Ref<PopperOptions>, disabled: Ref<boolean> = 
   const openTimeout: Ref<NodeJS.Timeout | undefined> = ref();
   const closeTimeout: Ref<NodeJS.Timeout | undefined> = ref();
   const popperEnter: Ref<boolean> = ref(false);
+  const leavePending = ref(false);
 
   const onPopperLeave = () => {
     set(popperEnter, false);
@@ -79,6 +80,7 @@ export function usePopper(options: Ref<PopperOptions>, disabled: Ref<boolean> = 
       set(closeTimeout, undefined);
     }
 
+    set(leavePending, false);
     if (!get(openTimeout)) {
       set(popperEnter, true);
 
@@ -111,6 +113,10 @@ export function usePopper(options: Ref<PopperOptions>, disabled: Ref<boolean> = 
 
       set(closeTimeout, timeout);
     }
+  };
+
+  const onLeavePending = () => {
+    set(leavePending, true);
   };
 
   onMounted(() => {
@@ -200,7 +206,9 @@ export function usePopper(options: Ref<PopperOptions>, disabled: Ref<boolean> = 
 
   return {
     instance,
+    leavePending,
     onClose,
+    onLeavePending,
     onOpen,
     onPopperLeave,
     open,

@@ -1,14 +1,8 @@
-import RuiAutoComplete, { type Props } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
-import { contextColors } from '@/consts/colors';
+import { type SelectOption, options } from '@/__test__/options';
+import RuiAutoComplete, { type AutoCompleteProps } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-interface AutoCompleteData {
-  disabled: boolean;
-  id: string;
-  text: string;
-}
-
-const render: StoryFn<Props<AutoCompleteData>> = args => ({
+const render: StoryFn<AutoCompleteProps<SelectOption, 'id'>> = args => ({
   components: { RuiAutoComplete },
   setup() {
     const modelValue = computed({
@@ -22,41 +16,30 @@ const render: StoryFn<Props<AutoCompleteData>> = args => ({
 
     return { args, modelValue };
   },
-  template: `
-    <div class="mb-60">
-      <RuiAutoComplete v-model="modelValue" v-bind="args" />
-    </div>
-  `,
+  template: `<RuiAutoComplete v-bind="args" v-model="modelValue" />`,
 });
 
-const meta: Meta<Props<AutoCompleteData>> = {
+const meta: Meta<AutoCompleteProps<SelectOption, 'id'>> = {
   args: {
-    errorMessages: [],
+    clearable: true,
+    disabled: false,
+    options,
   },
   argTypes: {
-    color: {
-      control: 'select',
-      options: contextColors,
-      table: { category: 'State' },
-    },
-    dense: { control: 'boolean', table: { category: 'State' } },
-    disabled: { control: 'boolean', table: { category: 'State' } },
-    errorMessages: { control: 'object' },
-    hint: { control: 'text' },
-    label: { control: 'text' },
-    placeholder: { control: 'text' },
+    dense: { control: 'boolean' },
+    disabled: { control: 'boolean' },
+    modelValue: { control: 'object' },
+    options: { control: 'object' },
     variant: {
       control: 'select',
-      options: ['default', 'filled', 'outlined'],
-      table: { category: 'State' },
+      defaultValue: 'default',
+      options: ['default', 'outlined', 'filled'],
     },
   },
   component: RuiAutoComplete as any,
   parameters: {
     docs: {
-      controls: {
-        exclude: ['default', 'prefix', 'selected', 'update:modelValue'],
-      },
+      controls: { exclude: ['update:model-value'] },
     },
   },
   render,
@@ -64,164 +47,100 @@ const meta: Meta<Props<AutoCompleteData>> = {
   title: 'Components/Forms/AutoComplete',
 };
 
-type Story = StoryObj<Props<AutoCompleteData>>;
+type Story = StoryObj<AutoCompleteProps<SelectOption, 'id'>>;
 
-const data: AutoCompleteData[] = [
-  { disabled: false, id: '1', text: 'Hello 1' },
-  { disabled: false, id: '2', text: 'Hello 2' },
-  { disabled: false, id: '3', text: 'Hello 3' },
-  { disabled: true, id: '4', text: 'Hello 4' },
-  { disabled: true, id: '5', text: 'Hello 5' },
-  { disabled: false, id: '6', text: 'Hello 6' },
-  { disabled: false, id: '7', text: 'Hello 7' },
-  { disabled: true, id: '8', text: 'Hello 8' },
-  { disabled: false, id: '9', text: 'Hello 9' },
-  ...[...new Array(300).keys()].map((i, index) => ({
-    disabled: false,
-    id: `${index + 10}`,
-    text: `Hello ${index + 10}`,
-  })),
-];
+type PrimitiveStory = StoryObj<AutoCompleteProps<string, never>>;
 
 export const Default: Story = {
   args: {
-    data,
-    hint: 'Lorem ipsum dolor sit amet',
-    label: 'Country',
-    modelValue: { disabled: false, id: '1', text: 'Hello 1' },
-    nullable: true,
-    placeholder: 'Placeholder',
+    keyAttr: 'id',
+    modelValue: undefined,
+    textAttr: 'label',
   },
 };
 
-export const Multiple: Story = {
+export const PrimitiveItems: PrimitiveStory = {
   args: {
-    data,
-    errorMessages: ['Lorem ipsum dolor sit amet'],
-    label: 'Country',
-    modelValue: [
-      { disabled: false, id: '3', text: 'Hello 3' },
-      { disabled: true, id: '4', text: 'Hello 4' },
-      { disabled: true, id: '5', text: 'Hello 5' },
-      { disabled: false, id: '6', text: 'Hello 6' },
-    ],
-    nullable: true,
-    placeholder: 'Placeholder',
-    variant: 'default',
+    options: options.map(item => item.label),
   },
 };
 
-export const MultipleDense: Story = {
+export const MultipleValue: PrimitiveStory = {
   args: {
-    data,
-    dense: true,
-    label: 'Country',
-    modelValue: [
-      { disabled: false, id: '3', text: 'Hello 3' },
-      { disabled: true, id: '4', text: 'Hello 4' },
-      { disabled: true, id: '5', text: 'Hello 5' },
-      { disabled: false, id: '6', text: 'Hello 6' },
-    ],
-    nullable: true,
-    placeholder: 'Placeholder',
-    variant: 'default',
+    modelValue: [],
+    options: options.map(item => item.label),
   },
 };
 
-export const MultipleOutline: Story = {
+export const DefaultDisabled: Story = {
   args: {
-    data,
-    label: 'Country',
-    modelValue: [{ disabled: false, id: '1', text: 'Hello 1' }],
-    nullable: true,
-    placeholder: 'Placeholder',
+    disabled: true,
+    keyAttr: 'id',
+    modelValue: undefined,
+    textAttr: 'label',
+  },
+};
+
+export const Outlined: Story = {
+  args: {
+    keyAttr: 'id',
+    modelValue: undefined,
+    textAttr: 'label',
     variant: 'outlined',
   },
 };
 
-export const MultipleOutlineDense: Story = {
+export const OutlinedDisabled: Story = {
   args: {
-    data,
-    dense: true,
-    label: 'Country',
-    modelValue: [
-      { disabled: false, id: '3', text: 'Hello 3' },
-      { disabled: true, id: '4', text: 'Hello 4' },
-      { disabled: true, id: '5', text: 'Hello 5' },
-      { disabled: false, id: '6', text: 'Hello 6' },
-    ],
-    nullable: true,
-    placeholder: 'Placeholder',
+    disabled: true,
+    keyAttr: 'id',
+    modelValue: undefined,
+    textAttr: 'label',
     variant: 'outlined',
   },
 };
 
-export const MultipleFilledDense: Story = {
+export const OutlinedDense: Story = {
   args: {
-    data,
-    dense: true,
-    label: 'Country',
-    modelValue: [
-      { disabled: false, id: '3', text: 'Hello 3' },
-      { disabled: true, id: '4', text: 'Hello 4' },
-      { disabled: true, id: '5', text: 'Hello 5' },
-      { disabled: false, id: '6', text: 'Hello 6' },
-    ],
-    nullable: true,
-    placeholder: 'Placeholder',
-    variant: 'filled',
-  },
-};
-
-export const MultipleFilled: Story = {
-  args: {
-    data,
-    label: 'Country',
-    modelValue: [
-      { disabled: false, id: '1', text: 'Hello 1' },
-      { disabled: false, id: '2', text: 'Hello 2' },
-      { disabled: false, id: '3', text: 'Hello 3' },
-      { disabled: true, id: '4', text: 'Hello 4' },
-      { disabled: true, id: '5', text: 'Hello 5' },
-      { disabled: false, id: '6', text: 'Hello 6' },
-      { disabled: false, id: '7', text: 'Hello 7' },
-      { disabled: true, id: '8', text: 'Hello 8' },
-      { disabled: false, id: '9', text: 'Hello 9' },
-      { disabled: false, id: '10', text: 'Hello 10' },
-      { disabled: false, id: '11', text: 'Hello 11' },
-      { disabled: false, id: '12', text: 'Hello 12' },
-      { disabled: false, id: '13', text: 'Hello 13' },
-      { disabled: false, id: '14', text: 'Hello 14' },
-      { disabled: false, id: '15', text: 'Hello 15' },
-      { disabled: false, id: '16', text: 'Hello 16' },
-    ],
-    nullable: true,
-    placeholder: 'Placeholder',
-    variant: 'filled',
-  },
-};
-
-export const FilledDense: Story = {
-  args: {
-    data,
-    dense: true,
-    label: 'Country',
-    modelValue: { disabled: false, id: '3', text: 'Hello 3' },
-    nullable: true,
-    placeholder: 'Placeholder',
-    variant: 'filled',
-  },
-};
-
-export const Filled: Story = {
-  args: {
-    data,
     dense: false,
-    label: 'Country',
-    modelValue: { disabled: false, id: '3', text: 'Hello 3' },
-    nullable: true,
-    placeholder: 'Placeholder',
-    variant: 'filled',
+    disabled: true,
+    keyAttr: 'id',
+    modelValue: undefined,
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+};
+
+export const OutlinedDisabledDense: Story = {
+  args: {
+    dense: true,
+    disabled: true,
+    keyAttr: 'id',
+    modelValue: undefined,
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+};
+
+export const Chips: Story = {
+  args: {
+    chips: true,
+    dense: true,
+    keyAttr: 'id',
+    modelValue: ['3', '4'],
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+};
+
+export const CustomValue: Story = {
+  args: {
+    customValue: true,
+    dense: false,
+    keyAttr: 'id',
+    modelValue: undefined,
+    textAttr: 'label',
+    variant: 'outlined',
   },
 };
 
