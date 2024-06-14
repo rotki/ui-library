@@ -3,6 +3,7 @@ import { useDropdownMenu } from '@/composables/dropdown-menu';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
+import RuiProgress from '@/components/progress/RuiProgress.vue';
 
 export interface Props<T, K extends keyof T = keyof T> {
   options: T[];
@@ -10,6 +11,7 @@ export interface Props<T, K extends keyof T = keyof T> {
   textAttr?: keyof T;
   modelValue?: T extends string ? T : T[K];
   disabled?: boolean;
+  loading?: boolean;
   readOnly?: boolean;
   dense?: boolean;
   clearable?: boolean;
@@ -25,24 +27,25 @@ export interface Props<T, K extends keyof T = keyof T> {
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
-  showDetails?: boolean;
+  hideDetails?: boolean;
+  autoSelectFirst?: boolean;
+  hideNoData?: boolean;
+  noDataText?: string;
 }
 
 defineOptions({
   name: 'RuiMenuSelect',
+  inheritAttrs: false,
 });
 
 const props = withDefaults(defineProps<Props<T, K>>(), {
   disabled: false,
+  loading: false,
   readOnly: false,
   dense: false,
   clearable: false,
-  showDetails: false,
+  hideDetails: false,
   label: 'Select',
-  menuOptions: () => ({
-    popper: { placement: 'bottom-start' },
-    closeOnContentClick: true,
-  }),
   prependWidth: 0,
   appendWidth: 0,
   variant: 'default',
@@ -52,6 +55,9 @@ const props = withDefaults(defineProps<Props<T, K>>(), {
   itemHeight: undefined,
   errorMessages: () => [],
   successMessages: () => [],
+  autoSelectFirst: false,
+  hideNoData: false,
+  noDataText: 'No data available',
 });
 
 const emit = defineEmits<{
@@ -76,7 +82,7 @@ const value = computed<T | undefined>({
   set: (selected?: T) => {
     const keyAttr = props.keyAttr;
     const selection = keyAttr && selected ? selected[keyAttr] : selected;
-    return emit('update:model-value', selection);
+    emit('update:model-value', selection);
   },
 });
 
@@ -92,19 +98,23 @@ const {
   wrapperProps,
   renderedData,
   isOpen,
-  valueKey,
   menuWidth,
   getText,
   getIdentifier,
   isActiveItem,
+  highlightedIndex,
+  moveHighlight,
+  valueKey,
 } = useDropdownMenu<T, K>({
   itemHeight: props.itemHeight ?? (props.dense ? 30 : 48),
   keyAttr: props.keyAttr,
   textAttr: props.textAttr,
   options,
+  autoFocus: true,
   dense,
   value,
   menuRef,
+  autoSelectFirst: props.autoSelectFirst,
 });
 
 const outlined = computed(() => props.variant === 'outlined');
@@ -116,7 +126,10 @@ const virtualContainerProps = computed(() => ({
   ref: containerProps.ref as any,
 }));
 
-function setValue(val: T) {
+function setValue(val: T, index?: number) {
+  if (isDefined(index))
+    set(highlightedIndex, index);
+
   set(value, val);
   set(focused, true);
 }
@@ -126,18 +139,31 @@ function setValue(val: T) {
   <RuiMenu
     v-model="isOpen"
     :class="css.wrapper"
-    full-width
-    v-bind="{ ...menuOptions, errorMessages, successMessages, hint, dense, showDetails, disabled }"
+    v-bind="{
+      placement: 'bottom-start',
+      closeOnContentClick: true,
+      fullWidth: true,
+      ...menuOptions,
+      errorMessages,
+      successMessages,
+      hint,
+      dense,
+      showDetails: !hideDetails,
+      disabled,
+    }"
   >
-    <template #activator="{ on, open, hasError, hasSuccess }">
+    <template #activator="{ attrs, open, hasError, hasSuccess }">
       <slot
         name="activator"
-        v-bind="{ disabled, value, variant, readOnly, on, open, hasError, hasSuccess }"
+        v-bind="{ disabled, value, variant, readOnly, attrs, open, hasError, hasSuccess }"
       >
         <button
           ref="activator"
           :disabled="disabled"
           :aria-disabled="disabled"
+          type="button"
+          :tabindex="disabled || readOnly ? -1 : 0"
+          class="group"
           :class="[
             css.activator,
             labelClass,
@@ -153,8 +179,10 @@ function setValue(val: T) {
               [css['with-success']]: hasSuccess && !hasError,
             },
           ]"
+          v-bind="{ ...$attrs, ...(readOnly ? {} : attrs) }"
           data-id="activator"
-          v-on="readOnly ? {} : on"
+          @keydown.up.prevent="moveHighlight(true)"
+          @keydown.down.prevent="moveHighlight(false)"
         >
           <span
             v-if="outlined || !value"
@@ -179,12 +207,12 @@ function setValue(val: T) {
             :class="css.value"
           >
             <slot
-              name="activator.prepend"
-              v-bind="{ value }"
+              name="selection.prepend"
+              v-bind="{ item: value }"
             />
             <slot
-              name="activator.text"
-              v-bind="{ value }"
+              name="selection"
+              v-bind="{ item: value }"
             >
               {{ getText(value) }}
             </slot>
@@ -192,7 +220,8 @@ function setValue(val: T) {
 
           <span
             v-if="clearable && value && !disabled"
-            :class="css.clear"
+            class="group-hover:!visible"
+            :class="[css.clear, focused && '!visible']"
             @click.stop.prevent="emit('update:model-value', undefined)"
           >
             <RuiIcon
@@ -209,12 +238,20 @@ function setValue(val: T) {
               name="arrow-drop-down-fill"
             />
           </span>
+
+          <RuiProgress
+            v-if="loading"
+            class="absolute left-0 bottom-0 w-full"
+            color="primary"
+            thickness="3"
+            variant="indeterminate"
+          />
         </button>
         <fieldset
           v-if="outlined"
           :class="css.fieldset"
         >
-          <legend :class="{ 'px-2': float && !dense, 'px-1': float && dense }" />
+          <legend :class="{ 'px-2': float }" />
         </fieldset>
       </slot>
       <input
@@ -225,44 +262,64 @@ function setValue(val: T) {
     </template>
     <template #default="{ width }">
       <div
+        v-if="options.length > 0"
         :class="[css.menu, menuClass]"
         :style="{ width: `${width}px`, minWidth: menuWidth }"
         v-bind="virtualContainerProps"
         @scroll="containerProps.onScroll"
+        @keydown.up.prevent="moveHighlight(true)"
+        @keydown.down.prevent="moveHighlight(false)"
       >
         <div
           v-bind="wrapperProps"
           ref="menuRef"
         >
           <RuiButton
-            v-for="(option, i) in renderedData"
-            :key="i"
-            :active="isActiveItem(option)"
+            v-for="({ item, index }) in renderedData"
+            :key="index"
+            :active="isActiveItem(item)"
             :size="dense ? 'sm' : undefined"
-            :model-value="getIdentifier(option)"
+            :model-value="getIdentifier(item)"
             variant="list"
-            @update:model-value="setValue(option)"
+            :class="{
+              highlighted: highlightedIndex === index,
+              [css.highlighted]: !isActiveItem(item) && highlightedIndex === index,
+            }"
+            @update:model-value="setValue(item, index)"
+            @mousedown="highlightedIndex = index"
           >
             <template #prepend>
               <slot
                 name="item.prepend"
-                v-bind="{ disabled, option, active: isActiveItem(option) }"
+                v-bind="{ disabled, item, active: isActiveItem(item) }"
               />
             </template>
             <slot
-              name="item.text"
-              v-bind="{ disabled, option, active: isActiveItem(option) }"
+              name="item"
+              v-bind="{ disabled, item, active: isActiveItem(item) }"
             >
-              {{ getText(option) }}
+              {{ getText(item) }}
             </slot>
             <template #append>
               <slot
                 name="item.append"
-                v-bind="{ disabled, option, active: isActiveItem(option) }"
+                v-bind="{ disabled, item, active: isActiveItem(item) }"
               />
             </template>
           </RuiButton>
         </div>
+      </div>
+
+      <div
+        v-else-if="!hideNoData"
+        :style="{ width: `${width}px`, minWidth: menuWidth }"
+        :class="menuClass"
+      >
+        <slot name="no-data">
+          <div class="p-4">
+            {{ noDataText }}
+          </div>
+        </slot>
       </div>
     </template>
   </RuiMenu>
@@ -282,7 +339,7 @@ function setValue(val: T) {
     }
 
     &.dense {
-      @apply py-1 min-h-10;
+      @apply py-1.5 min-h-10;
 
       ~ .fieldset {
         @apply px-2;
@@ -323,6 +380,7 @@ function setValue(val: T) {
       &.disabled {
         ~ .fieldset {
           @apply border-dotted;
+          @apply border-black/[0.23] #{!important};
         }
       }
 
@@ -358,7 +416,7 @@ function setValue(val: T) {
     }
 
     .clear {
-      @apply ml-auto shrink-0;
+      @apply ml-auto shrink-0 invisible;
     }
 
     .icon {
@@ -422,6 +480,14 @@ function setValue(val: T) {
   @apply overflow-y-auto max-h-60 min-w-[2.5rem];
 }
 
+.highlighted {
+  @apply bg-rui-grey-200 #{!important};
+
+  &.active {
+    @apply bg-rui-grey-300 #{!important};
+  }
+}
+
 :global(.dark) {
   .wrapper {
     .activator {
@@ -444,12 +510,26 @@ function setValue(val: T) {
           @apply border-white/[0.23];
         }
 
+        &.disabled {
+          ~ .fieldset {
+            @apply border-white/[0.23] #{!important};
+          }
+        }
+
         &:hover {
           ~ .fieldset {
             @apply border-white;
           }
         }
       }
+    }
+  }
+
+  .highlighted {
+    @apply bg-rui-grey-800 #{!important};
+
+    &.active {
+      @apply bg-rui-grey-700 #{!important};
     }
   }
 }

@@ -77,7 +77,7 @@ const {
 
 const { width } = useElementSize(activator);
 
-const click: Ref<boolean> = ref(false);
+const click = ref<boolean>(false);
 
 function onLeave() {
   onClose();
@@ -114,22 +114,22 @@ onClickOutside(menu, () => {
     onLeave();
 }, { ignore: [activator] });
 
-const on = computed(() => {
+const menuAttrs = computed(() => {
   if (get(disabled))
     return {};
 
   const openOnHoverVal = get(openOnHover);
   const clickVal = get(click);
   return {
-    mouseover: () => {
+    onMouseover: () => {
       if (openOnHoverVal)
         onOpen();
     },
-    mouseleave: () => {
+    onMouseleave: () => {
       if (openOnHoverVal && !clickVal)
         onClose();
     },
-    click: checkClick,
+    onClick: checkClick,
   };
 });
 
@@ -148,7 +148,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
     >
       <slot
         name="activator"
-        v-bind="{ on, open, disabled, hasError, hasSuccess }"
+        v-bind="{ attrs: menuAttrs, open, disabled, hasError, hasSuccess }"
       />
     </div>
     <Teleport

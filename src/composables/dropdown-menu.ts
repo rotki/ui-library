@@ -3,29 +3,45 @@ import type { Ref } from 'vue';
 export interface DropdownOptions<T, K extends keyof T = keyof T> {
   options: Ref<T[]>;
   dense?: Ref<boolean>;
-  value: Ref<T | undefined>;
+  value: Ref<T | T[] | undefined>;
   menuRef: Ref<HTMLElement>;
   keyAttr?: K;
-  textAttr?: keyof T;
+  textAttr?: keyof T | ((item: T) => string);
   appendWidth?: number;
   prependWidth?: number;
   itemHeight?: number;
   overscan?: number;
+  autoSelectFirst?: boolean;
+  autoFocus?: boolean;
+  setValue?: (val: T) => void;
+  hideSelected?: boolean;
 }
 
 export function useDropdownMenu<T extends object | string, K extends keyof T>({
   appendWidth,
+  autoFocus,
+  autoSelectFirst,
   dense,
+  hideSelected,
   itemHeight = 48,
   keyAttr,
   menuRef,
-  options,
+  options: allOptions,
   overscan = 5,
   prependWidth,
+  setValue,
   textAttr,
   value,
 }: DropdownOptions<T, K>) {
-  const { containerProps, list, wrapperProps } = useVirtualList<T>(
+  const options = computed(() => {
+    const options = get(allOptions);
+    if (!hideSelected)
+      return options;
+
+    return options.filter(item => !isActiveItem(item));
+  });
+
+  const { containerProps, list, scrollTo, wrapperProps } = useVirtualList<T>(
     options,
     {
       itemHeight,
@@ -33,7 +49,7 @@ export function useDropdownMenu<T extends object | string, K extends keyof T>({
     },
   );
 
-  const renderedData: ComputedRef<T[]> = useArrayMap(list, ({ data }) => data);
+  const renderedData = useArrayMap(list, ({ data, index }) => ({ index, item: data }));
 
   const isOpen = ref(false);
 
@@ -41,8 +57,10 @@ export function useDropdownMenu<T extends object | string, K extends keyof T>({
     const selected = get(value);
     if (!keyAttr || !selected)
       return selected;
-    return selected[keyAttr];
+    return Array.isArray(selected) ? selected.map(item => item[keyAttr]) : selected[keyAttr];
   });
+
+  const highlightedIndex: Ref<number> = ref(get(autoSelectFirst) ? 0 : -1);
 
   const menuWidth = computed(() => {
     const widths = { max: 0, min: 0 };
@@ -81,11 +99,16 @@ export function useDropdownMenu<T extends object | string, K extends keyof T>({
     set(isOpen, state);
   }
 
-  function getText(item: T): T[keyof T] | T {
-    if (textAttr)
-      return item[textAttr];
+  function getText(item: T): string | undefined {
+    if (textAttr) {
+      if (typeof textAttr === 'function')
+        return textAttr(item);
 
-    return item;
+      else
+        return item[textAttr]?.toString();
+    }
+
+    return item.toString();
   }
 
   function getIdentifier(item: T): T[K] | T {
@@ -95,38 +118,136 @@ export function useDropdownMenu<T extends object | string, K extends keyof T>({
     return item;
   }
 
+  function itemIndexInValue(item: T): number {
+    const val = get(value);
+    const selected: T[] = Array.isArray(val) ? val : (val ? [val] : []);
+
+    if (selected.length === 0)
+      return -1;
+
+    return selected.findIndex((selectedItem) => {
+      if (keyAttr)
+        return selectedItem[keyAttr] === item[keyAttr];
+      return selectedItem === item;
+    });
+  }
+
   function isActiveItem(item: T): boolean {
-    const selected = get(value);
-    if (!selected)
-      return false;
+    return itemIndexInValue(item) !== -1;
+  }
 
-    if (keyAttr)
-      return item[keyAttr] === selected[keyAttr];
+  async function adjustScrollByHighlightedIndex(smooth: boolean = false) {
+    const index = get(highlightedIndex);
+    if (index > -1) {
+      await nextTick(() => {
+        const container = get(menuRef)?.parentElement;
+        if (container) {
+          const highlightedElem = get(menuRef).getElementsByClassName('highlighted')[0];
 
-    return selected === item;
+          if (highlightedElem) {
+            highlightedElem.scrollIntoView?.({ behavior: smooth ? 'smooth' : 'auto', block: 'nearest' });
+            if (get(autoFocus) && 'focus' in highlightedElem && typeof highlightedElem.focus === 'function')
+              highlightedElem?.focus();
+          }
+          else {
+            scrollTo(index);
+            if (get(autoFocus)) {
+              const elem = get(menuRef).getElementsByClassName('highlighted')[0];
+              if (elem && 'focus' in elem && typeof elem.focus === 'function')
+                elem.focus();
+            }
+          }
+        }
+      });
+    }
   }
 
   async function updateOpen(open: boolean) {
     await nextTick(() => {
-      const container = get(menuRef)?.parentElement;
-      if (open && get(value) && container) {
-        const index = get(options).findIndex(isActiveItem);
-        container.scrollTop = index * itemHeight;
+      if (open) {
+        const val = get(value);
+
+        // set highlighted index to active item
+        if ((Array.isArray(val) && val.length > 0) || !!val) {
+          const index = get(options).findIndex(isActiveItem);
+          if (index > -1)
+            set(highlightedIndex, index);
+        }
+
+        watchOnce(list, async () => {
+          await adjustScrollByHighlightedIndex();
+        });
       }
     });
   }
 
-  watchDebounced(isOpen, updateOpen, { debounce: 100 });
-
   watch(isOpen, updateOpen);
 
+  watch(highlightedIndex, async (curr, prev) => {
+    if (curr !== prev)
+      await adjustScrollByHighlightedIndex(true);
+  });
+
+  watch(options, async () => {
+    if (get(highlightedIndex) !== -1) {
+      if (get(autoSelectFirst)) {
+        set(highlightedIndex, 0);
+        await adjustScrollByHighlightedIndex();
+      }
+      else {
+        set(highlightedIndex, -1);
+        scrollTo(0);
+      }
+    }
+    else {
+      scrollTo(0);
+    }
+  });
+
+  const moveHighlight = (up: boolean) => {
+    if (get(!isOpen))
+      return;
+
+    let position = get(highlightedIndex);
+    const move = up ? -1 : 1;
+
+    position += move;
+
+    const total = get(options).length;
+
+    if (position >= total)
+      set(highlightedIndex, 0);
+    else if (position < 0)
+      set(highlightedIndex, total - 1);
+    else
+      set(highlightedIndex, position);
+  };
+
+  const applyHighlighted = () => {
+    if (!setValue || !get(isOpen))
+      return;
+
+    const highlightedIndexVal = get(highlightedIndex);
+    if (highlightedIndexVal === -1)
+      return;
+
+    const entry = get(options).find((_data, index) => highlightedIndexVal === index);
+    if (entry)
+      setValue(entry);
+  };
+
   return {
+    applyHighlighted,
     containerProps,
     getIdentifier,
     getText,
+    highlightedIndex,
     isActiveItem,
     isOpen,
+    itemIndexInValue,
     menuWidth,
+    moveHighlight,
+    optionsWithSelectedHidden: options,
     renderedData,
     toggle,
     valueKey,
