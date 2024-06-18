@@ -23,9 +23,6 @@ importers:
       '@fontsource/roboto':
         specifier: 5.0.13
         version: 5.0.13
-      '@headlessui/vue':
-        specifier: 1.7.22
-        version: 1.7.22(vue@3.4.29(typescript@5.4.5))
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -188,9 +185,6 @@ importers:
 
   example:
     dependencies:
-      '@headlessui/vue':
-        specifier: 1.7.22
-        version: 1.7.22(vue@3.4.29(typescript@5.4.5))
       '@rotki/ui-library':
         specifier: workspace:*
         version: link:..
@@ -1337,12 +1331,6 @@ packages:
   '@hapi/topo@5.1.0':
     resolution: {integrity: sha512-foQZKJig7Ob0BMAYBfcJk8d77QtOe7Wo4ox7ff1lQYoNNAb6jwcY1ncdoy2e9wQZzvNy7ODZCYJkK8kzmcAnAg==}
 
-  '@headlessui/vue@1.7.22':
-    resolution: {integrity: sha512-Hoffjoolq1rY+LOfJ+B/OvkhuBXXBFgd8oBlN+l1TApma2dB0En0ucFZrwQtb33SmcCqd32EQd0y07oziXWNYg==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      vue: ^3.2.0
-
   '@humanwhocodes/config-array@0.11.14':
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
     engines: {node: '>=10.10.0'}
@@ -1937,14 +1925,6 @@ packages:
     engines: {node: ^16.0.0 || >=18.0.0}
     peerDependencies:
       eslint: '>=8.40.0'
-
-  '@tanstack/virtual-core@3.0.0':
-    resolution: {integrity: sha512-SYXOBTjJb05rXa2vl55TTwO40A6wKu0R5i1qQwhJYNDIqaIGF7D0HsLw+pJAyi2OvntlEIVusx3xtbbgSUi6zg==}
-
-  '@tanstack/vue-virtual@3.0.1':
-    resolution: {integrity: sha512-85Cyi8m7h1xzGB2FyXMurPVFOZvatycVU7OfhQ8QFk27E4tQ7ISNfYEMrakTTaE0ZyNsKRFlAzHuwL1Bv1vuMw==}
-    peerDependencies:
-      vue: ^2.7.0 || ^3.0.0
 
   '@testing-library/dom@9.3.4':
     resolution: {integrity: sha512-FlS4ZWlp97iiNWig0Muq8p+3rVDjRiYE+YKGbAqXOu9nwJFFOdL00kFpz42M+4huzYi86vAK1sOOfyOG45muIQ==}
@@ -7789,11 +7769,6 @@ snapshots:
     dependencies:
       '@hapi/hoek': 9.3.0
 
-  '@headlessui/vue@1.7.22(vue@3.4.29(typescript@5.4.5))':
-    dependencies:
-      '@tanstack/vue-virtual': 3.0.1(vue@3.4.29(typescript@5.4.5))
-      vue: 3.4.29(typescript@5.4.5)
-
   '@humanwhocodes/config-array@0.11.14':
     dependencies:
       '@humanwhocodes/object-schema': 2.0.3
@@ -8815,13 +8790,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
       - typescript
-
-  '@tanstack/virtual-core@3.0.0': {}
-
-  '@tanstack/vue-virtual@3.0.1(vue@3.4.29(typescript@5.4.5))':
-    dependencies:
-      '@tanstack/virtual-core': 3.0.0
-      vue: 3.4.29(typescript@5.4.5)
 
   '@testing-library/dom@9.3.4':
     dependencies:

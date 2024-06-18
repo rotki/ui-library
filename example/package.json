@@ -13,7 +13,6 @@
     "test:e2e:dev": "start-server-and-test 'vite dev --port 4173' http://localhost:4173 'cypress open --e2e'"
   },
   "dependencies": {
-    "@headlessui/vue": "1.7.22",
     "@rotki/ui-library": "workspace:*",
     "pinia": "2.1.7",
     "tailwindcss": "3.4.4",
