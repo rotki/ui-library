@@ -2,20 +2,20 @@ import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import RuiTabItem from '@/components/tabs/tab-item/RuiTabItem.vue';
 
-vi.mock('@headlessui/vue', () => ({
-  TransitionRoot: {
-    props: {
-      show: { type: Boolean },
-    },
-    template: `
-      <div v-if='show'><slot /></div>
-    `,
-  },
-}));
+vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+  const now = Date.now();
+  cb(now);
+  return now;
+});
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiTabItem>) {
   return mount(RuiTabItem, {
     ...options,
+    global: {
+      stubs: {
+        Transition: false,
+      },
+    },
     props: {
       value: 'value',
       ...options?.props,
