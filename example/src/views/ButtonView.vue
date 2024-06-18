@@ -600,7 +600,7 @@ const multipleToggleButtons = ref<ButtonGroupData[]>([
 </script>
 
 <template>
-  <div>
+  <div data-cy="content">
     <h2
       class="text-h4 mb-6"
       data-cy="buttons"

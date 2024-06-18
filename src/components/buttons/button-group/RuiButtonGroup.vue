@@ -1,4 +1,5 @@
 <script lang="ts" generic="T = undefined" setup>
+import { Fragment, isVNode } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
 
 export interface Props<T = undefined> {
@@ -35,21 +36,33 @@ const emit = defineEmits<{
 
 const slots = useSlots();
 const { modelValue, required, disabled, color, variant, size } = toRefs(props);
-const children = computed(() =>
-  (slots.default?.() ?? []).map((child, i) => {
+
+const children = computed(() => {
+  // if group is disabled, disable child buttons
+  const isDisabled = get(disabled);
+  const rootColor = get(color);
+  const selectedValue: T | T[] | undefined = get(modelValue);
+
+  const slotContent = slots.default?.() ?? [];
+
+  // When using dynamic content with v-for the slot content is a single fragment
+  // containing the children components.
+  const children = slotContent.length === 1 && slotContent[0].type === Fragment
+    ? Array.isArray(slotContent[0].children) ? slotContent[0].children.filter(isVNode) : []
+    : slotContent;
+
+  return children.map((child, i) => {
     // child props are in kebab-case it seems
     const value = child.props?.['model-value'];
 
     child.props = {
       ...child.props,
-      active: activeItem(value ?? i),
+      active: activeItem(value ?? i, selectedValue),
     };
 
-    // if group is disabled, disable child buttons
-    if (get(disabled))
+    if (isDisabled)
       child.props.disabled = true;
 
-    const rootColor = get(color);
     // if given root color, use it
     if (rootColor)
       child.props.color = rootColor;
@@ -58,11 +71,10 @@ const children = computed(() =>
       child.props.color = props.activeColor;
 
     return child;
-  }),
-);
+  });
+});
 
-function activeItem(id: T) {
-  const selected = get(modelValue);
+function activeItem(id: T, selected?: T | T[]) {
   if (Array.isArray(selected))
     return selected.includes(id);
 
@@ -87,7 +99,7 @@ function onClick(id: T) {
     emit('update:modelValue', id);
   }
   else {
-    emit('update:modelValue', activeItem(id) ? undefined : id);
+    emit('update:modelValue', activeItem(id, selected) ? undefined : id);
   }
 }
 
@@ -96,6 +108,10 @@ const colorClass = computed(() => (props.color ? css[props.color] : undefined));
 const variantClass = computed(() =>
   props.variant ? css[props.variant] : undefined,
 );
+
+onMounted(() => {
+  slots.default?.();
+});
 </script>
 
 <template>

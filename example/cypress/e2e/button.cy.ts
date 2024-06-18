@@ -8,18 +8,18 @@ describe('button', () => {
   it('checks for buttons and button text', () => {
     cy.contains('h2[data-cy=buttons]', 'Buttons');
 
-    cy.get('button[class*=_primary]').first().as('primaryButton');
-    cy.get('button[class*=_secondary]').first().as('secondaryButton');
-    cy.get('button[disabled]').first().as('disabledButton');
+    cy.get('[data-cy=content]').find('button[class*=_primary]').first().as('primaryButton');
+    cy.get('[data-cy=content]').find('button[class*=_secondary]').first().as('secondaryButton');
+    cy.get('[data-cy=content]').find('button[disabled]').first().as('disabledButton');
 
     // prefix button
-    cy.get('button > svg[class^=_remixicon_] + span')
+    cy.get('[data-cy=content]').find('button > svg[class^=_remixicon_] + span')
       .first()
       .parent('button')
       .as('prefixedButton');
 
     // suffix button
-    cy.get('button > span + svg[class^=_remixicon_]')
+    cy.get('[data-cy=content]').find('button > span + svg[class^=_remixicon_]')
       .first()
       .parent('button')
       .as('suffixedButton');
