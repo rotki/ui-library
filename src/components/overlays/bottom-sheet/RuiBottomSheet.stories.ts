@@ -13,8 +13,8 @@ const render: StoryFn<BottomSheetProps> = args => ({
       v-bind="args"
       width="900px"
     >
-      <template #activator="{ on }">
-        <RuiButton v-on="on">
+      <template #activator="{ attrs }">
+        <RuiButton v-bind="attrs">
           Click me!
         </RuiButton>
       </template>

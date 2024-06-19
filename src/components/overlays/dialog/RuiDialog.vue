@@ -56,7 +56,7 @@ watch(internalValue, (value) => {
   }
 });
 
-function input(value: boolean) {
+function onUpdateModelValue(value: boolean) {
   emit('update:model-value', value);
 
   if (!value)
@@ -65,12 +65,12 @@ function input(value: boolean) {
 
 watch(isOpen, (isOpen) => {
   if (isOpen) {
-    input(isOpen);
+    onUpdateModelValue(isOpen);
     set(internalValue, isOpen);
   }
   else {
     setTimeout(() => {
-      input(isOpen);
+      onUpdateModelValue(isOpen);
       set(internalValue, isOpen);
     }, 100);
   }
@@ -95,11 +95,11 @@ watch(contentRef, (contentRef) => {
   }
 });
 
-const on = computed(() => ({
-  click: () => {
+const dialogAttrs = computed(() => ({
+  onClick: () => {
     const newValue = !get(internalValue);
     set(internalValue, newValue);
-    input(newValue);
+    onUpdateModelValue(newValue);
   },
 }));
 
@@ -130,7 +130,7 @@ const contentTransition = computed(() => {
   <div>
     <slot
       name="activator"
-      v-bind="{ on, isOpen }"
+      v-bind="{ attrs: dialogAttrs, isOpen }"
     />
     <Teleport to="body">
       <div

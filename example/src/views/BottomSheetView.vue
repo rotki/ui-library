@@ -34,10 +34,10 @@ const bottomSheets = ref<BottomSheetData[]>([
         width="900px"
         :data-cy="`bottom-sheet-${i}`"
       >
-        <template #activator="{ on }">
+        <template #activator="{ attrs }">
           <RuiButton
             data-cy="activator"
-            v-on="on"
+            v-bind="attrs"
           >
             {{ bottomSheet.label }}
           </RuiButton>

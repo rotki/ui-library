@@ -293,13 +293,13 @@ function getDisplayText(options?: Options | Options[]): string {
           v-bind="objectOmit(item, ['modelValue'])"
           :data-cy="`auto-complete-custom-${i}`"
         >
-          <template #activator="{ on, disabled, open, value }">
+          <template #activator="{ attrs, disabled, open, value }">
             <RuiButton
               class="!rounded-md border"
               data-cy="activator"
               variant="list"
               :disabled="disabled"
-              v-on="on"
+              v-bind="attrs"
             >
               {{ getDisplayText(value) }}
               <template #append>

@@ -9,17 +9,15 @@ function createWrapper(options?: any) {
   return mount(RuiDialog, {
     ...options,
     global: {
-      stubs: { 'rui-button': RuiButton },
+      components: { RuiButton },
     },
     slots: {
-      activator: `<rui-button id="trigger" v-on="params.on">
-        Click me!
-      </rui-button>`,
+      activator: `<RuiButton id="trigger" v-bind="attrs">Click me!</RuiButton>`,
       default: `
         <div>
           ${text}
           
-          <rui-button id="close" @click="params.close()" />
+          <RuiButton id="close" @click="close()" />
         </div>
       `,
     },
@@ -89,6 +87,7 @@ describe('dialog', () => {
 
     // Open dialog by clicking activator
     await wrapper.find('#trigger').trigger('click');
+    await nextTick();
     await vi.delay();
 
     let dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;

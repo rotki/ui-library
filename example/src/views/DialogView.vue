@@ -34,10 +34,10 @@ const dialogs = ref<DialogData[]>([
         width="900px"
         :data-cy="`dialog-${i}`"
       >
-        <template #activator="{ on }">
+        <template #activator="{ attrs }">
           <RuiButton
             data-cy="activator"
-            v-on="on"
+            v-bind="attrs"
           >
             {{ dialog.label }}
           </RuiButton>

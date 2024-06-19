@@ -9,17 +9,17 @@ function createWrapper(options?: any) {
   return mount(RuiBottomSheet, {
     ...options,
     global: {
-      stubs: { 'rui-button': RuiButton },
+      components: {
+        RuiButton,
+      },
     },
     slots: {
-      activator: `<rui-button id="trigger" v-on="params.on">
-        Click me!
-      </rui-button>`,
+      activator: `<RuiButton id="trigger" v-bind="attrs">Click me!</RuiButton>`,
       default: `
         <div>
           ${text}
           
-          <rui-button id="close" @click="params.close()" />
+          <RuiButton id="close" @click="close()" />
         </div>
       `,
     },
