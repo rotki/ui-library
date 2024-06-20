@@ -1,6 +1,6 @@
 import { contextColors } from '@/consts/colors';
-import * as Icons from '@/icons';
 import RuiAlert, { type Props } from '@/components/alerts/RuiAlert.vue';
+import { RuiIcons } from '@/icons';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 const render: StoryFn<Props> = args => ({
@@ -18,7 +18,7 @@ const meta: Meta<Props> = {
     description: { control: 'text' },
     icon: {
       control: 'select',
-      options: Object.values(Icons).map(({ name }) => name.slice(3)),
+      options: RuiIcons,
     },
     title: { control: 'text' },
     type: { control: 'select', options: contextColors },

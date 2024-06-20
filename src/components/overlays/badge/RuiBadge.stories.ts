@@ -1,7 +1,7 @@
 import { objectOmit } from '@vueuse/shared';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { contextColors } from '@/consts/colors';
-import * as Icons from '@/icons';
+import { RuiIcons } from '@/icons';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiBadge, { type Props as BadgeProps } from '@/components/overlays/badge/RuiBadge.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
@@ -57,7 +57,7 @@ const meta: Meta<Props> = {
     color: { control: 'select', options: ['default', ...contextColors] },
     icon: {
       control: 'select',
-      options: [null, ...Object.values(Icons).map(({ name }) => name.slice(3))],
+      options: [null, ...RuiIcons],
     },
     offsetX: {
       control: 'number',

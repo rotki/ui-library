@@ -123,9 +123,16 @@ import { type GeneratedIcon } from '@/types/icons';\n
     );
   });
 
-  indexFileContent += `export type RuiIcons = ${names
+  indexFileContent += `export const RuiIcons = [${names
     .map(x => `"${x.replace('ri-', '')}"`)
-    .join(' | ')};\n`;
+    .join(',')}] as const;\n`;
+
+  indexFileContent += `export type RuiIcons = (typeof RuiIcons)[number];\n`;
+
+  indexFileContent += `
+export function isRuiIcon(x: any): x is RuiIcons {
+  return RuiIcons.includes(x);
+}\n`.trim();
 
   await writeFile(resolveRoot(`${TARGET}index.ts`), indexFileContent, 'utf8');
 }
