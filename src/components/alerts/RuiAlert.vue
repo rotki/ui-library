@@ -152,6 +152,19 @@ const slots = useSlots();
           }
         }
       }
+
+      @if index((warning, success, info), $color) {
+        &.#{$color} {
+          &.filled {
+            .icon,
+            .texts,
+            .action,
+            .close {
+              @apply text-rui-light-text #{!important};
+            }
+          }
+        }
+      }
     }
 
     &.outlined {
@@ -196,7 +209,7 @@ const slots = useSlots();
     .texts,
     .action,
     .close {
-      @apply text-white #{!important};
+      @apply text-rui-dark-text #{!important};
     }
   }
 
