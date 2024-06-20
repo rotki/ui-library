@@ -81,9 +81,12 @@ const { width } = useElementSize(activator);
 
 const click = ref<boolean>(false);
 
-function onLeave() {
+function onLeave(event?: KeyboardEvent) {
+  if (!get(open))
+    return;
   onClose();
   set(click, false);
+  event?.stopPropagation();
 }
 
 function checkClick() {
@@ -142,7 +145,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
 </script>
 
 <template>
-  <div @keydown.esc.exact.stop="onLeave()">
+  <div @keydown.esc="onLeave()">
     <div
       ref="activator"
       :class="[css.wrapper, wrapperClass, { 'w-full': fullWidth }]"

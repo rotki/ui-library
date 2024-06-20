@@ -3,11 +3,20 @@ import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import RuiMenuSelect from '@/components/forms/select/RuiMenuSelect.vue';
 import { options } from '@/__test__/options';
 
+vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+  const now = Date.now();
+  cb(now);
+  return now;
+});
+
 function createWrapper<T extends string | object>(options?: ComponentMountingOptions<typeof RuiMenuSelect<T>>) {
   const opts: ComponentMountingOptions<typeof RuiMenuSelect<T>> = {
     ...options,
     global: {
-      stubs: ['RuiProgress'],
+      stubs: {
+        RuiProgress: true,
+        TransitionGroup: false,
+      },
     },
   };
   return mount(RuiMenuSelect, opts);
