@@ -173,13 +173,13 @@ const value = computed<T[]>({
       });
 
       if (multiple || filtered.length === 0) {
-        if (get(shouldApplyValueAsSearch))
+        if (get(shouldApplyValueAsSearch) && !get(searchInputFocused))
           updateInternalSearch();
         return filtered;
       }
       else {
         const val = filtered[0];
-        if (get(shouldApplyValueAsSearch))
+        if (get(shouldApplyValueAsSearch) && !get(searchInputFocused))
           updateInternalSearch(getText(val));
 
         return [val];
@@ -189,7 +189,7 @@ const value = computed<T[]>({
       const valueToArray = value ? (multiple ? value : [value]) : [];
       const filtered: T[] = [];
       valueToArray.forEach((val) => {
-        const inOptions = props.options.find(item => getIdentifier(item) === val);
+        const inOptions = props.options.find(item => getIdentifier(item) === getIdentifier(val));
 
         if (inOptions)
           return filtered.push(inOptions);
@@ -197,7 +197,7 @@ const value = computed<T[]>({
           return filtered.push(textValueToProperValue(val));
       });
 
-      if (get(shouldApplyValueAsSearch)) {
+      if (get(shouldApplyValueAsSearch) && !get(searchInputFocused)) {
         if (filtered.length > 0)
           updateInternalSearch(getText(filtered[0]));
         else
@@ -450,14 +450,16 @@ function chipAttrs(item: T, index: number) {
   };
 }
 
-function onEnter(): void {
-  if (get(filteredOptions).length > 0 && get(highlightedIndex) > -1) {
+function onEnter(event: KeyboardEvent): void {
+  if (get(filteredOptions).length > 0 && get(highlightedIndex) > -1 && get(isOpen)) {
     applyHighlighted();
+    event.preventDefault();
   }
   else if (get(options).length > 0 && props.customValue) {
     setSearchAsValue();
     if (!get(multiple))
       set(isOpen, false);
+    event.preventDefault();
   }
 }
 
@@ -473,8 +475,8 @@ function setSelectionRange(start: number, end: number): void {
   get(textInput)?.setSelectionRange?.(start, end);
 }
 
-watch(options, () => {
-  if (props.customValue)
+watch(options, (curr, old) => {
+  if (isEqual(curr, old) || props.customValue)
     return;
 
   setSelected(get(value));
@@ -536,7 +538,7 @@ defineExpose({
           :tabindex="disabled || readOnly ? -1 : 0"
           @click="setInputFocus()"
           @focus="setInputFocus()"
-          @keydown.enter="onEnter()"
+          @keydown.enter="onEnter($event)"
           @keydown.tab="onTab($event)"
           @keydown.left="moveSelectedValueHighlight($event, false)"
           @keydown.right="moveSelectedValueHighlight($event, true)"

@@ -123,8 +123,10 @@ describe('autocomplete', () => {
     expect(highlightedItemButton.classList).toContain('highlighted');
 
     await wrapper.find('[data-id=activator]').trigger('keydown.enter');
+    await wrapper.find('[data-id=activator]').trigger('keydown.esc');
     const newSelectedIndexToString = newSelectedIndex.toString();
     expect(wrapper.emitted('update:modelValue')?.[1]).toEqual([newSelectedIndexToString]);
+    expect((wrapper.find('input').element as HTMLInputElement).value).toBe('Greece');
 
     // Delete option should also remove selected value with that option
     const newOptions = options.filter(item => item.id !== newSelectedIndexToString);
@@ -135,6 +137,14 @@ describe('autocomplete', () => {
     await nextTick();
 
     expect(wrapper.emitted('update:modelValue')?.[2]).toEqual([undefined]);
+
+    // Even if the options changed, the search value should not be touch as long as the focus still there, so the UX is not breaking
+    expect((wrapper.find('input').element as HTMLInputElement).value).toBe('Greece');
+
+    // Only after the search value is blurred, the search value can be reset
+    (wrapper.find('input').element as HTMLInputElement).blur();
+    await nextTick();
+    expect((wrapper.find('input').element as HTMLInputElement).value).toBe('');
 
     // doesn't break when use chips
     await wrapper.setProps({
