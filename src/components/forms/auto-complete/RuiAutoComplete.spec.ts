@@ -180,6 +180,11 @@ describe('autocomplete', () => {
     expect(itemButton.innerHTML).toContain('India');
     itemButton.click();
 
+    await nextTick();
+    const input = wrapper.find('div[data-id=activator] input').element as HTMLInputElement;
+    expect(input.value).toMatch('');
+    expect(input.classList).toContain('h-0');
+
     let newValue = ['7', '8', '6'];
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([newValue]);
 
