@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { objectPick } from '@vueuse/shared';
+import { Fragment, isVNode } from 'vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import type { ContextColorsType } from '@/consts/colors';
 
@@ -44,7 +45,15 @@ onMounted(() => {
 });
 
 const slots = useSlots();
-const children = computed(() => slots.default?.()?.[0].children ?? []);
+const children = computed(() => {
+  const slotContent = slots.default?.() ?? [];
+
+  // When using dynamic content with v-for the slot content is a single fragment
+  // containing the children components.
+  return slotContent.length === 1 && slotContent[0].type === Fragment
+    ? Array.isArray(slotContent[0].children) ? slotContent[0].children.filter(isVNode) : []
+    : slotContent;
+});
 
 const css = useCssModule();
 </script>
