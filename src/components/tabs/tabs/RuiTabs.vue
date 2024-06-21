@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useRoute } from 'vue-router';
 import { throttleFilter } from '@vueuse/shared';
+import { Fragment, isVNode } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import type { ContextColorsType } from '@/consts/colors';
@@ -41,7 +42,14 @@ const showArrows: Ref<boolean> = ref(false);
 
 const slots = useSlots();
 const children = computed(() => {
-  const tabs = slots.default?.() ?? [];
+  const slotContent = slots.default?.() ?? [];
+
+  // When using dynamic content with v-for the slot content is a single fragment
+  // containing the children components.
+  const tabs = slotContent.length === 1 && slotContent[0].type === Fragment
+    ? Array.isArray(slotContent[0].children) ? slotContent[0].children.filter(isVNode) : []
+    : slotContent;
+
   const currentModelValue = get(internalModelValue);
   const inheritedProps = {
     color: get(color),
