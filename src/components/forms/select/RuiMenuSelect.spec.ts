@@ -9,8 +9,8 @@ vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
   return now;
 });
 
-function createWrapper<T extends string | object>(options?: ComponentMountingOptions<typeof RuiMenuSelect<T>>) {
-  const opts: ComponentMountingOptions<typeof RuiMenuSelect<T>> = {
+function createWrapper<TItem>(options?: ComponentMountingOptions<typeof RuiMenuSelect<string | undefined, TItem>>) {
+  const opts: ComponentMountingOptions<typeof RuiMenuSelect<string | undefined, TItem>> = {
     ...options,
     global: {
       stubs: {
@@ -69,6 +69,7 @@ describe('menu select', () => {
       props: {
         autoSelectFirst: true,
         keyAttr: 'id',
+        modelValue: undefined,
         options,
         textAttr: 'label',
       },
@@ -87,7 +88,7 @@ describe('menu select', () => {
 
     const buttonToSelect = document.body.querySelector(`button:nth-child(${selectedIndex})`) as HTMLButtonElement;
     buttonToSelect?.click();
-    expect(wrapper.emitted()).toHaveProperty('update:model-value', [[selectedIndex.toString()]]);
+    expect(wrapper.emitted('update:modelValue')).toEqual([[selectedIndex.toString()]]);
 
     await vi.delay();
     expect(document.body.querySelector('div[role=menu]')).toBeFalsy();
@@ -118,7 +119,7 @@ describe('menu select', () => {
     expect(highlightedItemButton.classList).toContain('highlighted');
 
     highlightedItemButton?.click();
-    const updates = wrapper.emitted('update:model-value');
+    const updates = wrapper.emitted('update:modelValue');
     assert(updates);
     expect(updates).toHaveLength(2);
     expect(updates[1]).toEqual([newSelectedIndex.toString()]);

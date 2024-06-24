@@ -1,23 +1,27 @@
 import type { Ref } from 'vue';
 
-export interface DropdownOptions<T, K extends keyof T = keyof T> {
-  options: Ref<T[]>;
+export type KeyOfType<T, V> = keyof {
+  [P in keyof T as T[P] extends V ? P : never]: any
+};
+
+export interface DropdownOptions<TValue, TItem> {
+  options: Ref<TItem[]>;
   dense?: Ref<boolean>;
-  value: Ref<T | T[] | undefined>;
+  value: Ref<TItem | TItem[] | undefined>;
   menuRef: Ref<HTMLElement>;
-  keyAttr?: K;
-  textAttr?: keyof T | ((item: T) => string);
+  keyAttr?: KeyOfType<TItem, TValue extends Array<infer U> ? U : TValue>;
+  textAttr?: keyof TItem | ((item: TItem) => string);
   appendWidth?: number;
   prependWidth?: number;
   itemHeight?: number;
   overscan?: number;
   autoSelectFirst?: boolean;
   autoFocus?: boolean;
-  setValue?: (val: T) => void;
+  setValue?: (val: TItem) => void;
   hideSelected?: boolean;
 }
 
-export function useDropdownMenu<T extends object | string, K extends keyof T>({
+export function useDropdownMenu<TValue, TItem>({
   appendWidth,
   autoFocus,
   autoSelectFirst,
@@ -32,7 +36,7 @@ export function useDropdownMenu<T extends object | string, K extends keyof T>({
   setValue,
   textAttr,
   value,
-}: DropdownOptions<T, K>) {
+}: DropdownOptions<TValue, TItem>) {
   const options = computed(() => {
     const options = get(allOptions);
     if (!hideSelected)
@@ -41,7 +45,7 @@ export function useDropdownMenu<T extends object | string, K extends keyof T>({
     return options.filter(item => !isActiveItem(item));
   });
 
-  const { containerProps, list, scrollTo, wrapperProps } = useVirtualList<T>(
+  const { containerProps, list, scrollTo, wrapperProps } = useVirtualList<TItem>(
     options,
     {
       itemHeight,
@@ -99,7 +103,7 @@ export function useDropdownMenu<T extends object | string, K extends keyof T>({
     set(isOpen, state);
   }
 
-  function getText(item: T): string | undefined {
+  function getText(item: TItem): string | undefined {
     if (textAttr) {
       if (typeof textAttr === 'function')
         return textAttr(item);
@@ -108,19 +112,19 @@ export function useDropdownMenu<T extends object | string, K extends keyof T>({
         return item[textAttr]?.toString();
     }
 
-    return item.toString();
+    return item?.toString();
   }
 
-  function getIdentifier(item: T): T[K] | T {
+  function getIdentifier(item: TItem): TItem | TItem[KeyOfType<TItem, TValue>] {
     if (keyAttr)
       return item[keyAttr];
 
     return item;
   }
 
-  function itemIndexInValue(item: T): number {
+  function itemIndexInValue(item: TItem): number {
     const val = get(value);
-    const selected: T[] = Array.isArray(val) ? val : (val ? [val] : []);
+    const selected: TItem[] = Array.isArray(val) ? val : (val ? [val] : []);
 
     if (selected.length === 0)
       return -1;
@@ -132,7 +136,7 @@ export function useDropdownMenu<T extends object | string, K extends keyof T>({
     });
   }
 
-  function isActiveItem(item: T): boolean {
+  function isActiveItem(item: TItem): boolean {
     return itemIndexInValue(item) !== -1;
   }
 

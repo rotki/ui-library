@@ -1,15 +1,14 @@
-<script lang="ts" setup generic="T extends object | string, K extends keyof T = keyof T">
-import { useDropdownMenu } from '@/composables/dropdown-menu';
+<script lang="ts" setup generic="TValue, TItem">
+import { type KeyOfType, useDropdownMenu } from '@/composables/dropdown-menu';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 
-export interface Props<T, K extends keyof T = keyof T> {
-  options: T[];
-  keyAttr?: K;
-  textAttr?: keyof T;
-  modelValue?: T extends string ? T : T[K];
+export interface Props<TValue, TItem> {
+  options: TItem[];
+  keyAttr?: KeyOfType<TItem, TValue>;
+  textAttr?: keyof TItem;
   disabled?: boolean;
   loading?: boolean;
   readOnly?: boolean;
@@ -38,7 +37,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<Props<T, K>>(), {
+const props = withDefaults(defineProps<Props<TValue, TItem>>(), {
   disabled: false,
   loading: false,
   readOnly: false,
@@ -60,9 +59,7 @@ const props = withDefaults(defineProps<Props<T, K>>(), {
   noDataText: 'No data available',
 });
 
-const emit = defineEmits<{
-  (e: 'update:model-value', value?: T | T[K]): void;
-}>();
+const modelValue = defineModel<TValue | undefined>({ required: true });
 
 const css = useCssModule();
 
@@ -72,17 +69,18 @@ const menuRef = ref();
 const activator = ref();
 const { focused } = useFocus(activator);
 
-const value = computed<T | undefined>({
+const value = computed<TItem | undefined>({
   get: () => {
     const keyAttr = props.keyAttr;
+    const value = get(modelValue);
     if (keyAttr)
-      return props.options.find(option => option[keyAttr] === props.modelValue);
-    return props.modelValue as T;
+      return props.options.find(option => option[keyAttr] === value);
+    return value as unknown as TItem;
   },
-  set: (selected?: T) => {
+  set: (selected?: TItem) => {
     const keyAttr = props.keyAttr;
     const selection = keyAttr && selected ? selected[keyAttr] : selected;
-    emit('update:model-value', selection);
+    set(modelValue, selection as TValue);
   },
 });
 
@@ -105,7 +103,7 @@ const {
   highlightedIndex,
   moveHighlight,
   valueKey,
-} = useDropdownMenu<T, K>({
+} = useDropdownMenu<TValue, TItem>({
   itemHeight: props.itemHeight ?? (props.dense ? 30 : 48),
   keyAttr: props.keyAttr,
   textAttr: props.textAttr,
@@ -126,12 +124,16 @@ const virtualContainerProps = computed(() => ({
   ref: containerProps.ref as any,
 }));
 
-function setValue(val: T, index?: number) {
+function setValue(val: TItem, index?: number) {
   if (isDefined(index))
     set(highlightedIndex, index);
 
   set(value, val);
   set(focused, true);
+}
+
+function clear() {
+  set(modelValue, undefined);
 }
 </script>
 
@@ -222,7 +224,7 @@ function setValue(val: T, index?: number) {
             v-if="clearable && value && !disabled"
             class="group-hover:!visible"
             :class="[css.clear, focused && '!visible']"
-            @click.stop.prevent="emit('update:model-value', undefined)"
+            @click.stop.prevent="clear()"
           >
             <RuiIcon
               color="error"

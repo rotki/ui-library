@@ -1,4 +1,4 @@
-<script lang="ts" setup generic='T extends string | object, K extends keyof T'>
+<script lang="ts" setup generic='TValue, TItem'>
 import { logicAnd, logicOr } from '@vueuse/math';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
@@ -6,15 +6,15 @@ import RuiChip from '@/components/chips/RuiChip.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { getTextToken } from '@/utils/helpers';
+import type { KeyOfType } from '@/composables/dropdown-menu';
 import type { ComputedRef } from 'vue';
 
-export type ModelValue<T extends string | object, K extends keyof T> = T | T[] | T[K] | T[K][];
+export type AutoCompleteModelValue<TValue> = TValue extends Array<infer U> ? U[] : TValue | undefined;
 
-export interface AutoCompleteProps<T extends string | object, K extends keyof T> {
-  options?: T[];
-  keyAttr?: T extends object ? K : never;
-  textAttr?: keyof T;
-  modelValue?: ModelValue<T, K>;
+export interface AutoCompleteProps<TValue, TItem> {
+  options?: TItem[];
+  keyAttr?: KeyOfType<TItem, TValue extends Array<infer U> ? U : TValue>;
+  textAttr?: keyof TItem;
   disabled?: boolean;
   loading?: boolean;
   readOnly?: boolean;
@@ -35,11 +35,10 @@ export interface AutoCompleteProps<T extends string | object, K extends keyof T>
   hideDetails?: boolean;
   autoSelectFirst?: boolean;
   chips?: boolean;
-  searchInput?: string;
   noFilter?: boolean;
   hideNoData?: boolean;
   noDataText?: string;
-  filter?: (item: T, queryText: string) => boolean;
+  filter?: (item: TItem, queryText: string) => boolean;
   hideSelected?: boolean;
   placeholder?: string;
   returnObject?: boolean;
@@ -51,7 +50,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<AutoCompleteProps<T, K>>(), {
+const props = withDefaults(defineProps<AutoCompleteProps<TValue, TItem>>(), {
   options: () => [],
   disabled: false,
   loading: false,
@@ -61,6 +60,7 @@ const props = withDefaults(defineProps<AutoCompleteProps<T, K>>(), {
   hideDetails: false,
   chips: false,
   label: 'Select',
+  menuOptions: undefined,
   prependWidth: 0,
   appendWidth: 0,
   variant: 'default',
@@ -71,16 +71,16 @@ const props = withDefaults(defineProps<AutoCompleteProps<T, K>>(), {
   errorMessages: () => [],
   successMessages: () => [],
   autoSelectFirst: false,
-  searchInput: '',
   noFilter: false,
   hideNoData: false,
   noDataText: 'No data available',
   hideSelected: false,
+  placeholder: '',
   returnObject: false,
   customValue: false,
 });
 
-const modelValue = defineModel<ModelValue<T, K>>();
+const modelValue = defineModel<AutoCompleteModelValue<TValue>>({ required: true });
 const searchInputModel = defineModel<string>('searchInput');
 
 const css = useCssModule();
@@ -93,7 +93,7 @@ const activator = ref();
 const noDataContainer = ref();
 const menuRef = ref();
 
-const multiple = computed(() => Array.isArray(props.modelValue));
+const multiple = computed(() => Array.isArray(get(modelValue)));
 
 const shouldApplyValueAsSearch = computed(() => !(slots.selection || get(multiple) || props.chips));
 
@@ -108,7 +108,7 @@ watch(searchInputModel, (search) => {
 
 const justOpened = ref(false);
 
-const filteredOptions = computed<T[]>(() => {
+const filteredOptions = computed<TItem[]>(() => {
   const search = get(debouncedInternalSearch);
   const options = props.options;
   if (props.noFilter || !search || get(justOpened))
@@ -118,6 +118,9 @@ const filteredOptions = computed<T[]>(() => {
   const textAttr = props.textAttr;
 
   const usedFilter = props.filter || ((item, search) => {
+    if (!item)
+      return false;
+
     const keywords: string[] = [keyAttr ? getTextToken(item[keyAttr]) : item.toString()];
 
     if (textAttr && typeof item === 'object')
@@ -129,42 +132,34 @@ const filteredOptions = computed<T[]>(() => {
   return options.filter(item => usedFilter(item, search));
 });
 
-function onUpdateModelValue(value?: ModelValue<T, K>) {
+function onUpdateModelValue(value: AutoCompleteModelValue<TValue>) {
   set(modelValue, value);
 }
 
-function isMapped<T extends object | string, K extends keyof T>(
-  _x?: ModelValue<T, K>,
-  key?: T extends object ? K : never,
-  returnObject?: boolean,
-): _x is T[K] | T[K][] {
-  return !!key && !returnObject;
-}
-
-function setSelected(selected: T[]): void {
+function setSelected(selected: TItem[]): void {
   const keyAttr = props.keyAttr;
   const selection = keyAttr && !props.returnObject ? selected.map(item => item[keyAttr]) : selected;
 
   if (get(multiple))
-    return onUpdateModelValue(selection);
+    return onUpdateModelValue(selection as AutoCompleteModelValue<TValue>);
 
   if (selection.length === 0)
-    return onUpdateModelValue(undefined);
+    return onUpdateModelValue(undefined as AutoCompleteModelValue<TValue>);
 
-  return onUpdateModelValue(selection[0]);
+  return onUpdateModelValue(selection[0] as AutoCompleteModelValue<TValue>);
 }
 
-const value = computed<T[]>({
+const value = computed<TItem[]>({
   get: () => {
-    const value = props.modelValue;
+    const value = get(modelValue);
     const keyAttr = props.keyAttr;
     const multiple = Array.isArray(value);
 
-    if (isMapped(value, keyAttr, props.returnObject)) {
+    if (keyAttr && props.returnObject) {
       const valueToArray = value ? (multiple ? value : [value]) : [];
-      const filtered: T[] = [];
+      const filtered: TItem[] = [];
       valueToArray.forEach((val) => {
-        const inOptions = props.options.find(item => getIdentifier(item) === val);
+        const inOptions = props.options.find(item => getIdentifier(item) === getIdentifier(val));
 
         if (inOptions)
           return filtered.push(inOptions);
@@ -187,9 +182,9 @@ const value = computed<T[]>({
     }
     else {
       const valueToArray = value ? (multiple ? value : [value]) : [];
-      const filtered: T[] = [];
+      const filtered: TItem[] = [];
       valueToArray.forEach((val) => {
-        const inOptions = props.options.find(item => getIdentifier(item) === getIdentifier(val));
+        const inOptions = props.options.find(item => getIdentifier(item) === val);
 
         if (inOptions)
           return filtered.push(inOptions);
@@ -204,10 +199,10 @@ const value = computed<T[]>({
           updateInternalSearch();
       }
 
-      return valueToArray;
+      return filtered;
     }
   },
-  set: (selected: T[]): void => {
+  set: (selected: TItem[]): void => {
     setSelected(selected);
   },
 });
@@ -235,7 +230,7 @@ const {
   moveHighlight,
   applyHighlighted,
   optionsWithSelectedHidden,
-} = useDropdownMenu<T, K>({
+} = useDropdownMenu<TValue, TItem>({
   itemHeight: props.itemHeight ?? (props.dense ? 30 : 48),
   keyAttr: props.keyAttr,
   textAttr: props.textAttr,
@@ -276,7 +271,7 @@ function updateSearchInput(event: any) {
   set(justOpened, false);
 }
 
-async function setValue(val: T, index?: number, skipRefocused = false): Promise<void> {
+async function setValue(val: TItem, index?: number, skipRefocused = false): Promise<void> {
   if (isDefined(index))
     set(highlightedIndex, index);
 
@@ -375,7 +370,7 @@ const inputClass = computed<string>(() => {
   return 'flex-1 min-w-0';
 });
 
-function textValueToProperValue(val: any): T {
+function textValueToProperValue(val: any): TItem {
   const keyAttr = props.keyAttr;
   const textAttr = props.textAttr;
   if (!keyAttr)
@@ -389,7 +384,7 @@ function textValueToProperValue(val: any): T {
         ? { [textAttr]: val }
         : {}
     ),
-  } as T;
+  } as TItem;
 }
 
 function setSearchAsValue() {
@@ -397,7 +392,7 @@ function setSearchAsValue() {
   if (!searchToBeValue)
     return;
 
-  const newValue: T = textValueToProperValue(searchToBeValue);
+  const newValue: TItem = textValueToProperValue(searchToBeValue);
   setValue(newValue, undefined, true);
 }
 
@@ -428,7 +423,7 @@ function onInputFocused() {
 
 function clear(): void {
   updateInternalSearch();
-  set(modelValue, Array.isArray(props.modelValue) ? [] : undefined);
+  set(modelValue, (Array.isArray(get(modelValue)) ? [] : undefined) as AutoCompleteModelValue<TValue>);
 }
 
 function onInputDeletePressed(): void {
@@ -441,7 +436,7 @@ function onInputDeletePressed(): void {
   }
 }
 
-function chipAttrs(item: T, index: number) {
+function chipAttrs(item: TItem, index: number) {
   return {
     'data-value': getIdentifier(item),
     'onKeydown': (event: KeyboardEvent): void => {

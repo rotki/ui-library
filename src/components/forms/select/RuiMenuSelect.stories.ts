@@ -2,7 +2,7 @@ import RuiMenuSelect, { type Props } from '@/components/forms/select/RuiMenuSele
 import { type SelectOption, options } from '@/__test__/options';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-type SelectProps<T extends SelectOption | string = SelectOption> = Props<T>;
+type SelectProps<T extends SelectOption | string = SelectOption> = Props<string, T> & { modelValue: string | undefined };
 
 const render: StoryFn<SelectProps> = args => ({
   components: { RuiMenuSelect },

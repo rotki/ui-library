@@ -7,24 +7,15 @@ import {
 } from '@rotki/ui-library/components';
 import { objectOmit } from '@vueuse/shared';
 import { ref } from 'vue';
+import { type SelectOption, createOptions } from '@/data/options';
 
-interface Options { id: string | number; label: string | number }
-const options: Options[] = [
-  { id: '1', label: 'Germany' },
-  { id: '2', label: 'Nigeria' },
-  { id: '3', label: 'Greece' },
-  { id: '4', label: 'Indonesia' },
-  { id: '5', label: 'Spain' },
-  { id: '6', label: 'India' },
-  { id: '7', label: 'France' },
-  { id: '8', label: 'Option with very long name to test and see truncate behaviour' },
-  ...[...new Array(5000).keys()].map(index => ({
-    id: index + 9,
-    label: index + 9,
-  })),
-];
+type RuiAutoCompleteProps<TValue = number, TItem = SelectOption> = AutoCompleteProps<TValue, TItem> & {
+  modelValue: TValue extends Array<infer U> ? U[] : TValue | undefined;
+};
 
-const autoComplete = ref<AutoCompleteProps<Options>[]>([
+const options = createOptions();
+
+const autoComplete = ref<AutoCompleteProps<RuiAutoCompleteProps>[]>([
   {
     disabled: false,
     keyAttr: 'id',
@@ -91,7 +82,7 @@ const autoComplete = ref<AutoCompleteProps<Options>[]>([
   },
 ]);
 
-const autoCompleteCustom = ref<AutoCompleteProps<Options>[]>([
+const autoCompleteCustom = ref<RuiAutoCompleteProps[]>([
   {
     disabled: false,
     keyAttr: 'id',
@@ -245,7 +236,7 @@ const autoCompletePrimitive = ref<AutoCompleteProps<string>[]>([
   },
 ]);
 
-function getDisplayText(options?: Options | Options[]): string {
+function getDisplayText(options?: SelectOption | SelectOption[]): string {
   const defaultText = 'Choose Option';
   return (Array.isArray(options) ? options?.[0]?.label?.toString() : options?.label?.toString()) ?? defaultText;
 }

@@ -9,6 +9,9 @@ import {
   RuiMenuSelect,
 } from '@rotki/ui-library';
 import { objectOmit } from '@vueuse/shared';
+import { type SelectOption, createOptions } from '@/data/options';
+
+const options = createOptions();
 
 type SimpleMenu = MenuProps & { buttonColor?: ButtonProps['color']; buttonText: string };
 const menus = ref<SimpleMenu[]>([
@@ -118,24 +121,8 @@ const menus = ref<SimpleMenu[]>([
   },
 ]);
 
-interface SelectOption { id: string | number; label: string | number }
-
-const options: SelectOption[] = [
-  { id: '1', label: 'Germany' },
-  { id: '2', label: 'Nigeria' },
-  { id: '3', label: 'Greece' },
-  { id: '4', label: 'Indonesia' },
-  { id: '5', label: 'Spain' },
-  { id: '6', label: 'India' },
-  { id: '7', label: 'France' },
-  { id: '8', label: 'Option with very long name to test and see truncate behaviour' },
-  ...[...new Array(5000).keys()].map(index => ({
-    id: index + 9,
-    label: index + 9,
-  })),
-];
-
-const menuSelect = ref<MenuSelectProps<SelectOption>[]>([
+type RuiMenuSelectProps<TValue = number, TItem = SelectOption> = MenuSelectProps<TValue, TItem> & { modelValue: TValue | undefined };
+const menuSelect = ref<RuiMenuSelectProps[]>([
   {
     disabled: false,
     keyAttr: 'id',
@@ -202,7 +189,7 @@ const menuSelect = ref<MenuSelectProps<SelectOption>[]>([
   },
 ]);
 
-const menuSelectCustom = ref<MenuSelectProps<SelectOption>[]>([
+const menuSelectCustom = ref<RuiMenuSelectProps[]>([
   {
     disabled: false,
     keyAttr: 'id',
@@ -243,7 +230,7 @@ const menuSelectCustom = ref<MenuSelectProps<SelectOption>[]>([
 
 const primitiveOptions: string[] = ['Lorem', 'Ipsum', 'Dolor', 'Sit amet', 'Consecteur'];
 
-const menuSelectPrimitive = ref<MenuSelectProps<string>[]>([
+const menuSelectPrimitive = ref<RuiMenuSelectProps<string, string>[]>([
   {
     modelValue: undefined,
     options: primitiveOptions,

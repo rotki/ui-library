@@ -1,8 +1,12 @@
 import { type SelectOption, options } from '@/__test__/options';
-import RuiAutoComplete, { type AutoCompleteProps } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
+import RuiAutoComplete, { type AutoCompleteModelValue, type AutoCompleteProps } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-const render: StoryFn<AutoCompleteProps<SelectOption, 'id'>> = args => ({
+type ComponentProps<TValue = string, TItem = SelectOption> = AutoCompleteProps<TValue, TItem> & {
+  modelValue: AutoCompleteModelValue<TValue>;
+};
+
+const render: StoryFn<ComponentProps> = args => ({
   components: { RuiAutoComplete },
   setup() {
     const modelValue = computed({
@@ -19,7 +23,7 @@ const render: StoryFn<AutoCompleteProps<SelectOption, 'id'>> = args => ({
   template: `<RuiAutoComplete v-bind="args" v-model="modelValue" />`,
 });
 
-const meta: Meta<AutoCompleteProps<SelectOption, 'id'>> = {
+const meta: Meta<ComponentProps> = {
   args: {
     clearable: true,
     disabled: false,
@@ -47,9 +51,9 @@ const meta: Meta<AutoCompleteProps<SelectOption, 'id'>> = {
   title: 'Components/Forms/AutoComplete',
 };
 
-type Story = StoryObj<AutoCompleteProps<SelectOption, 'id'>>;
+type Story<TValue = string> = StoryObj<ComponentProps<TValue>>;
 
-type PrimitiveStory = StoryObj<AutoCompleteProps<string, never>>;
+type PrimitiveStory<TValue = string> = StoryObj<ComponentProps<TValue, string>>;
 
 export const Default: Story = {
   args: {
@@ -65,7 +69,7 @@ export const PrimitiveItems: PrimitiveStory = {
   },
 };
 
-export const MultipleValue: PrimitiveStory = {
+export const MultipleValue: PrimitiveStory<string[]> = {
   args: {
     modelValue: [],
     options: options.map(item => item.label),
@@ -122,7 +126,7 @@ export const OutlinedDisabledDense: Story = {
   },
 };
 
-export const Chips: Story = {
+export const Chips: Story<string[]> = {
   args: {
     chips: true,
     dense: true,

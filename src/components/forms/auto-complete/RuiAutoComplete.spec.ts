@@ -5,10 +5,10 @@ import RuiChip from '@/components/chips/RuiChip.vue';
 import { type SelectOption, options } from '@/__test__/options';
 
 function createWrapper<
-  T extends string | object,
-  K extends keyof T = never,
->(options?: ComponentMountingOptions<typeof RuiAutoComplete<T, K>>) {
-  const opts: ComponentMountingOptions<typeof RuiAutoComplete<T, K>> = {
+  TValue,
+  TItem,
+>(options?: ComponentMountingOptions<typeof RuiAutoComplete<TValue, TItem>>) {
+  const opts: ComponentMountingOptions<typeof RuiAutoComplete<TValue, TItem>> = {
     ...options,
     global: {
       stubs: {
@@ -27,7 +27,7 @@ vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
 
 describe('autocomplete', () => {
   it('renders properly', () => {
-    const wrapper = createWrapper<SelectOption, 'id'>({
+    const wrapper = createWrapper<string | undefined, SelectOption>({
       props: {
         keyAttr: 'id',
         modelValue: undefined,
@@ -44,7 +44,7 @@ describe('autocomplete', () => {
   });
 
   it('passes props correctly', () => {
-    const wrapper = createWrapper<SelectOption, 'id'>({
+    const wrapper = createWrapper<string, SelectOption>({
       props: {
         disabled: true,
         keyAttr: 'id',
@@ -58,7 +58,7 @@ describe('autocomplete', () => {
   });
 
   it('works with primitive options', () => {
-    const wrapper = createWrapper<string>({
+    const wrapper = createWrapper<string, string>({
       props: {
         modelValue: options[4].label,
         options: options.map(item => item.label),
@@ -68,11 +68,12 @@ describe('autocomplete', () => {
   });
 
   it('value passed and emitted properly', async () => {
-    const wrapper = createWrapper({
+    const wrapper = createWrapper<string, SelectOption>({
       attachTo: document.body,
       props: {
         autoSelectFirst: true,
         keyAttr: 'id',
+        modelValue: undefined,
         options,
         textAttr: 'label',
       },
@@ -153,7 +154,7 @@ describe('autocomplete', () => {
   });
 
   it('multiple values', async () => {
-    const wrapper = createWrapper<SelectOption, 'id'>({
+    const wrapper = createWrapper<string[], SelectOption>({
       props: {
         autoSelectFirst: true,
         chips: true,
@@ -221,7 +222,7 @@ describe('autocomplete', () => {
   });
 
   it('custom value', async () => {
-    const wrapper = createWrapper<SelectOption, 'id'>({
+    const wrapper = createWrapper<string[], SelectOption>({
       props: {
         autoSelectFirst: true,
         chips: true,
