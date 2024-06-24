@@ -1,22 +1,21 @@
-<script lang="ts" setup>
-export interface Props {
-  modelValue?: number | string;
+<script lang="ts" setup generic='T extends string | number'>
+import { Fragment, isVNode } from 'vue';
+
+export interface Props<T> {
+  modelValue?: T;
 }
 
 defineOptions({
   name: 'RuiTabItems',
+  inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<Props>(), {
-  modelValue: undefined,
-});
-
-const { modelValue } = toRefs(props);
+const modelValue = defineModel<Props<T>['modelValue']>();
 
 const slots = useSlots();
-const reverse: Ref<boolean> = ref(false);
-const currIndex: Ref<number> = ref(-1);
-const activeIndex: Ref<number> = ref(-1);
+const reverse = ref<boolean>(false);
+const currIndex = ref<number>(-1);
+const activeIndex = ref<number>(-1);
 
 watch(currIndex, (index) => {
   nextTick(() => {
@@ -25,7 +24,14 @@ watch(currIndex, (index) => {
 });
 
 const children = computed(() => {
-  const tabs = slots.default?.() ?? [];
+  const slotContent = slots.default?.() ?? [];
+
+  // When using dynamic content with v-for the slot content is a single fragment
+  // containing the children components.
+  const tabs = slotContent.length === 1 && slotContent[0].type === Fragment
+    ? Array.isArray(slotContent[0].children) ? slotContent[0].children.filter(isVNode) : []
+    : slotContent;
+
   let anyActive = false;
   const children = tabs.map((tab, index) => {
     const value = tab.props?.value ?? index;
@@ -55,13 +61,13 @@ const wrapper = ref<HTMLDivElement>();
 const inner = ref<HTMLDivElement>();
 
 const { height: innerHeight } = useElementSize(inner);
-const css = useCssModule();
 </script>
 
 <template>
   <div
     ref="wrapper"
-    :class="css.tabs"
+    :class="$style.tabs"
+    v-bind="$attrs"
   >
     <div ref="inner">
       <Component
