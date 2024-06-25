@@ -6,6 +6,7 @@ import RuiChip from '@/components/chips/RuiChip.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { getTextToken } from '@/utils/helpers';
+import { isEqual } from '@/utils/is-equal';
 import type { KeyOfType } from '@/composables/dropdown-menu';
 import type { ComputedRef } from 'vue';
 
@@ -413,7 +414,6 @@ watchDebounced(anyFocused, (focused) => {
 });
 
 function onInputFocused() {
-  set(isOpen, true);
   set(focusedValueIndex, -1);
   if (get(shouldApplyValueAsSearch))
     get(textInput)?.select();
@@ -464,6 +464,10 @@ function onEnter(event: KeyboardEvent): void {
       set(isOpen, false);
     event.preventDefault();
   }
+  else if (!get(isOpen)) {
+    set(isOpen, true);
+    event.preventDefault();
+  }
 }
 
 function onTab(event: KeyboardEvent): void {
@@ -484,6 +488,13 @@ watch(options, (curr, old) => {
 
   setSelected(get(value));
 });
+
+function arrowClicked(event: any): void {
+  if (get(isOpen)) {
+    set(isOpen, false);
+    event.stopPropagation();
+  }
+}
 
 defineExpose({
   focus: setInputFocus,
@@ -641,7 +652,10 @@ defineExpose({
             />
           </span>
 
-          <span :class="css.icon__wrapper">
+          <span
+            :class="css.icon__wrapper"
+            @click="arrowClicked($event)"
+          >
             <RuiIcon
               :class="[css.icon, { 'rotate-180': open }]"
               :size="dense ? 24 : 32"
