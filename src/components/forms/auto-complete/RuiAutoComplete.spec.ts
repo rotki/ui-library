@@ -79,7 +79,12 @@ describe('autocomplete', () => {
       },
     });
 
+    await wrapper.find('input').trigger('focus');
+    await nextTick();
+    expect(document.body.querySelector('div[role=menu]')).toBeFalsy();
+
     // Open Menu Select
+    await wrapper.find('[data-id=activator]').trigger('focus');
     await wrapper.find('[data-id=activator]').trigger('click');
     await vi.delay();
     await nextTick();
