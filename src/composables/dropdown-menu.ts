@@ -209,8 +209,10 @@ export function useDropdownMenu<TValue, TItem>({
   });
 
   const moveHighlight = (up: boolean) => {
-    if (get(!isOpen))
+    if (!get(isOpen)) {
+      toggle(true);
       return;
+    }
 
     let position = get(highlightedIndex);
     const move = up ? -1 : 1;
