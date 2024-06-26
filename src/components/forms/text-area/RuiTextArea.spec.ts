@@ -209,4 +209,16 @@ describe('forms/TextArea', () => {
 
     expect(wrapper.find('div[class*=append]').text()).toBe(append);
   });
+
+  it('passes value', () => {
+    const text = 'test text';
+
+    const wrapper = createWrapper({
+      props: {
+        modelValue: text,
+      },
+    });
+
+    expect((wrapper.find('textarea:not([aria-hidden="true"])').element as HTMLTextAreaElement).value).toBe(text);
+  });
 });

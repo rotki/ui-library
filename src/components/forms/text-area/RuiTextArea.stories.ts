@@ -2,15 +2,16 @@ import { contextColors } from '@/consts/colors';
 import RuiTextArea, { type Props } from '@/components/forms/text-area/RuiTextArea.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-const render: StoryFn<Props> = args => ({
+type RuiTextAreaProps = Props & { modelValue: string };
+const render: StoryFn<RuiTextAreaProps> = args => ({
   components: { RuiTextArea },
   setup() {
     const modelValue = computed({
       get() {
-        return args.value;
+        return args.modelValue;
       },
       set(val) {
-        args.value = val;
+        args.modelValue = val;
       },
     });
 
@@ -19,7 +20,7 @@ const render: StoryFn<Props> = args => ({
   template: `<RuiTextArea v-model="modelValue" v-bind="args" />`,
 });
 
-const meta: Meta<Props> = {
+const meta: Meta<RuiTextAreaProps> = {
   args: {
     errorMessages: [],
     successMessages: [],
@@ -40,6 +41,7 @@ const meta: Meta<Props> = {
     label: { control: 'text' },
     maxRows: { control: 'number' },
     minRows: { control: 'number', default: 2 },
+    modelValue: { control: 'text' },
     placeholder: { control: 'text' },
     prependIcon: { control: 'text' },
     readonly: { control: 'boolean' },
@@ -50,7 +52,6 @@ const meta: Meta<Props> = {
       options: contextColors,
       table: { category: 'State' },
     },
-    value: { control: 'text' },
     variant: {
       control: 'select',
       options: ['default', 'filled', 'outlined'],
@@ -68,7 +69,7 @@ const meta: Meta<Props> = {
   title: 'Components/Forms/TextArea',
 };
 
-type Story = StoryObj<Props>;
+type Story = StoryObj<RuiTextAreaProps>;
 
 export const Default: Story = {
   args: {
@@ -178,9 +179,9 @@ export const WithAppendIcon: Story = {
 export const Readonly: Story = {
   args: {
     label: 'Label',
+    modelValue: 'Readonly text',
     placeholder: 'Placeholder',
     readonly: true,
-    value: 'Readonly text',
     variant: 'outlined',
   },
 };
@@ -189,8 +190,8 @@ export const Clearable: Story = {
   args: {
     clearable: true,
     label: 'Label',
+    modelValue: 'Clearable text',
     placeholder: 'Placeholder',
-    value: 'Clearable text',
     variant: 'outlined',
   },
 };
