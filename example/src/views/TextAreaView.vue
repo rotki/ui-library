@@ -1,137 +1,143 @@
 <script lang="ts" setup>
 import { RuiTextArea, type TextAreaProps } from '@rotki/ui-library';
+import { objectOmit } from '@vueuse/shared';
 import type { Slots } from '@/types';
 
-type TextAreaData = TextAreaProps & Slots;
+type TextAreaData = TextAreaProps & Slots & { modelValue: string };
 
 const textAreas = ref<TextAreaData[]>([
   {
-    value: '',
+    modelValue: '',
     color: 'primary',
     textColor: 'primary',
     autoGrow: true,
   },
-  { value: '', color: 'secondary', textColor: 'secondary', maxRows: 5 },
   {
-    value: '',
+    modelValue: '',
+    color: 'secondary',
+    textColor: 'secondary',
+    maxRows: 5,
+  },
+  {
+    modelValue: '',
     color: 'error',
     textColor: 'error',
     minRows: 2,
   },
   {
-    value: '',
+    modelValue: '',
     color: 'warning',
     textColor: 'warning',
     minRows: 1,
     maxRows: 5,
   },
-  { value: '', color: 'info', textColor: 'info' },
-  { value: '', color: 'success', textColor: 'success' },
+  { modelValue: '', color: 'info', textColor: 'info' },
+  { modelValue: '', color: 'success', textColor: 'success' },
 
-  { value: '', color: 'primary', dense: true },
-  { value: '', color: 'secondary', dense: true },
-  { value: '', color: 'error', dense: true },
-  { value: '', color: 'warning', dense: true },
-  { value: '', color: 'info', dense: true },
-  { value: '', color: 'success', dense: true },
+  { modelValue: '', color: 'primary', dense: true },
+  { modelValue: '', color: 'secondary', dense: true },
+  { modelValue: '', color: 'error', dense: true },
+  { modelValue: '', color: 'warning', dense: true },
+  { modelValue: '', color: 'info', dense: true },
+  { modelValue: '', color: 'success', dense: true },
 
-  { value: '', color: 'primary', variant: 'filled' },
-  { value: '', color: 'secondary', variant: 'filled' },
-  { value: '', color: 'error', variant: 'filled' },
-  { value: '', color: 'warning', variant: 'filled' },
-  { value: '', color: 'info', variant: 'filled' },
-  { value: '', color: 'success', variant: 'filled' },
+  { modelValue: '', color: 'primary', variant: 'filled' },
+  { modelValue: '', color: 'secondary', variant: 'filled' },
+  { modelValue: '', color: 'error', variant: 'filled' },
+  { modelValue: '', color: 'warning', variant: 'filled' },
+  { modelValue: '', color: 'info', variant: 'filled' },
+  { modelValue: '', color: 'success', variant: 'filled' },
 
-  { value: '', color: 'primary', variant: 'filled', dense: true },
-  { value: '', color: 'secondary', variant: 'filled', dense: true },
-  { value: '', color: 'error', variant: 'filled', dense: true },
-  { value: '', color: 'warning', variant: 'filled', dense: true },
-  { value: '', color: 'info', variant: 'filled', dense: true },
-  { value: '', color: 'success', variant: 'filled', dense: true },
+  { modelValue: '', color: 'primary', variant: 'filled', dense: true },
+  { modelValue: '', color: 'secondary', variant: 'filled', dense: true },
+  { modelValue: '', color: 'error', variant: 'filled', dense: true },
+  { modelValue: '', color: 'warning', variant: 'filled', dense: true },
+  { modelValue: '', color: 'info', variant: 'filled', dense: true },
+  { modelValue: '', color: 'success', variant: 'filled', dense: true },
 
-  { value: '', color: 'primary', variant: 'outlined' },
-  { value: '', color: 'secondary', variant: 'outlined' },
-  { value: '', color: 'error', variant: 'outlined' },
-  { value: '', color: 'warning', variant: 'outlined' },
-  { value: '', color: 'info', variant: 'outlined' },
-  { value: '', color: 'success', variant: 'outlined' },
+  { modelValue: '', color: 'primary', variant: 'outlined' },
+  { modelValue: '', color: 'secondary', variant: 'outlined' },
+  { modelValue: '', color: 'error', variant: 'outlined' },
+  { modelValue: '', color: 'warning', variant: 'outlined' },
+  { modelValue: '', color: 'info', variant: 'outlined' },
+  { modelValue: '', color: 'success', variant: 'outlined' },
 
-  { value: '', color: 'primary', variant: 'outlined', dense: true },
-  { value: '', color: 'secondary', variant: 'outlined', dense: true },
-  { value: '', color: 'error', variant: 'outlined', dense: true },
-  { value: '', color: 'warning', variant: 'outlined', dense: true },
-  { value: '', color: 'info', variant: 'outlined', dense: true },
-  { value: '', color: 'success', variant: 'outlined', dense: true },
+  { modelValue: '', color: 'primary', variant: 'outlined', dense: true },
+  { modelValue: '', color: 'secondary', variant: 'outlined', dense: true },
+  { modelValue: '', color: 'error', variant: 'outlined', dense: true },
+  { modelValue: '', color: 'warning', variant: 'outlined', dense: true },
+  { modelValue: '', color: 'info', variant: 'outlined', dense: true },
+  { modelValue: '', color: 'success', variant: 'outlined', dense: true },
 
-  { value: '', color: 'primary', variant: 'outlined', disabled: true },
-  { value: '', color: 'secondary', variant: 'outlined', disabled: true },
-  { value: '', color: 'error', variant: 'outlined', disabled: true },
-  { value: '', color: 'warning', variant: 'outlined', disabled: true },
-  { value: '', color: 'info', variant: 'outlined', disabled: true },
-  { value: '', color: 'success', variant: 'outlined', disabled: true },
+  { modelValue: '', color: 'primary', variant: 'outlined', disabled: true },
+  { modelValue: '', color: 'secondary', variant: 'outlined', disabled: true },
+  { modelValue: '', color: 'error', variant: 'outlined', disabled: true },
+  { modelValue: '', color: 'warning', variant: 'outlined', disabled: true },
+  { modelValue: '', color: 'info', variant: 'outlined', disabled: true },
+  { modelValue: '', color: 'success', variant: 'outlined', disabled: true },
 
-  { value: '', color: 'primary', variant: 'outlined', hint: 'Text field hint' },
+  { modelValue: '', color: 'primary', variant: 'outlined', hint: 'Text field hint' },
   {
-    value: '',
+    modelValue: '',
     color: 'secondary',
     variant: 'outlined',
     hint: 'Text field hint',
   },
-  { value: '', color: 'error', variant: 'outlined', hint: 'Text field hint' },
-  { value: '', color: 'warning', variant: 'outlined', hint: 'Text field hint' },
-  { value: '', color: 'info', variant: 'outlined', hint: 'Text field hint' },
-  { value: '', color: 'success', variant: 'outlined', hint: 'Text field hint' },
+  { modelValue: '', color: 'error', variant: 'outlined', hint: 'Text field hint' },
+  { modelValue: '', color: 'warning', variant: 'outlined', hint: 'Text field hint' },
+  { modelValue: '', color: 'info', variant: 'outlined', hint: 'Text field hint' },
+  { modelValue: '', color: 'success', variant: 'outlined', hint: 'Text field hint' },
 
   {
-    value: '',
+    modelValue: '',
     color: 'primary',
     variant: 'outlined',
     errorMessages: ['Text field error message'],
   },
   {
-    value: '',
+    modelValue: '',
     color: 'secondary',
     variant: 'outlined',
     errorMessages: 'Text field error message',
   },
   {
-    value: '',
+    modelValue: '',
     color: 'error',
     variant: 'outlined',
     errorMessages: ['Text field error message'],
   },
   {
-    value: '',
+    modelValue: '',
     color: 'warning',
     variant: 'outlined',
     successMessages: ['Text field success message'],
   },
   {
-    value: '',
+    modelValue: '',
     color: 'info',
     variant: 'outlined',
     successMessages: 'Text field success message',
   },
   {
-    value: '',
+    modelValue: '',
     color: 'success',
     variant: 'outlined',
     successMessages: ['Text field success message'],
   },
 
   {
-    value: '',
+    modelValue: '',
     color: 'primary',
     appendIcon: 'arrow-right-line',
   },
   {
-    value: '',
+    modelValue: '',
     color: 'primary',
     variant: 'filled',
     appendIcon: 'arrow-right-line',
   },
   {
-    value: '',
+    modelValue: '',
     color: 'primary',
     variant: 'outlined',
     appendIcon: 'arrow-right-line',
@@ -139,18 +145,18 @@ const textAreas = ref<TextAreaData[]>([
   },
 
   {
-    value: '',
+    modelValue: '',
     color: 'primary',
     prependIcon: 'arrow-right-line',
   },
   {
-    value: '',
+    modelValue: '',
     color: 'primary',
     variant: 'filled',
     prependIcon: 'arrow-right-line',
   },
   {
-    value: '',
+    modelValue: '',
     color: 'primary',
     variant: 'outlined',
     prependIcon: 'arrow-right-line',
@@ -158,56 +164,56 @@ const textAreas = ref<TextAreaData[]>([
   },
 
   {
-    value: 'lorem ipsum dolor',
+    modelValue: 'lorem ipsum dolor',
     color: 'primary',
     clearable: true,
   },
   {
-    value: '',
+    modelValue: '',
     color: 'primary',
     variant: 'filled',
     prepend: 'Prepend',
     textColor: 'primary',
   },
   {
-    value: '',
+    modelValue: '',
     color: 'primary',
     variant: 'outlined',
     prepend: 'Prepend',
   },
   {
-    value: '',
+    modelValue: '',
     color: 'primary',
     append: 'Append',
   },
   {
-    value: '',
+    modelValue: '',
     color: 'primary',
     variant: 'filled',
     append: 'Append',
   },
   {
-    value: '',
+    modelValue: '',
     color: 'primary',
     variant: 'outlined',
     append: 'Append',
     textColor: 'primary',
   },
   {
-    value: '',
+    modelValue: '',
     color: 'primary',
     append: 'Append',
     clearable: true,
   },
   {
-    value: '',
+    modelValue: '',
     color: 'primary',
     variant: 'filled',
     append: 'Append',
     clearable: true,
   },
   {
-    value: '',
+    modelValue: '',
     color: 'primary',
     variant: 'outlined',
     append: 'Append',
@@ -229,10 +235,10 @@ const textAreas = ref<TextAreaData[]>([
       <RuiTextArea
         v-for="(field, i) in textAreas"
         :key="i"
-        v-model="field.value"
+        v-model="field.modelValue"
         :label="field.color"
         placeholder="Placeholder"
-        v-bind="field"
+        v-bind="objectOmit(field, ['modelValue'])"
       >
         <template
           v-if="field.prepend"

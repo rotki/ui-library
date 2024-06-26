@@ -7,7 +7,6 @@ import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
 
 export interface Props {
-  value?: string;
   label?: string;
   placeholder?: string;
   disabled?: boolean;
@@ -36,7 +35,6 @@ defineOptions({
 });
 
 const props = withDefaults(defineProps<Props>(), {
-  value: '',
   label: '',
   placeholder: '',
   disabled: false,
@@ -60,13 +58,13 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'input', modelValue: string): void;
   (e: 'click:clear'): void;
 }>();
 
+const modelValue = defineModel<string>({ required: true });
+
 const {
   label,
-  value,
   autoGrow,
   clearable,
   disabled,
@@ -110,11 +108,6 @@ const fieldStyles = computed(() => {
   return value;
 });
 
-const internalValue = computed({
-  get: () => get(value),
-  set: (val: string) => emit('input', val),
-});
-
 const prependWidth = computed(() => {
   const width = get(useElementBounding(prepend).width);
   if (!width)
@@ -135,7 +128,7 @@ const colorClass = computed(() => (props.color ? css[props.color] : undefined));
 
 const showClearIcon = logicAnd(
   clearable,
-  internalValue,
+  modelValue,
   logicNot(disabled),
   logicNot(readonly),
 );
@@ -146,7 +139,7 @@ const { hasError, hasSuccess, hasMessages } = useFormTextDetail(
 );
 
 function clearIconClicked() {
-  set(internalValue, '');
+  set(modelValue, '');
   emit('click:clear');
 }
 
@@ -155,7 +148,7 @@ function computeFieldHeight(newVal?: string, oldVal?: string) {
     return;
 
   const field = get(textarea);
-  const fieldValue = newVal ?? get(value);
+  const fieldValue = newVal ?? get(modelValue);
   const fieldSizer = get(textareaSizer);
   if (!(field && fieldSizer))
     return;
@@ -182,7 +175,7 @@ watchDebounced(
   { debounce: 500 },
 );
 
-watch(value, computeFieldHeight);
+watch(modelValue, computeFieldHeight);
 onMounted(computeFieldHeight);
 </script>
 
@@ -224,7 +217,7 @@ onMounted(computeFieldHeight);
         <textarea
           v-if="autoGrow"
           ref="textareaSizer"
-          :value="internalValue"
+          :value="modelValue"
           :class="[css.textarea_sizer]"
           :style="fieldStyles"
           aria-hidden="true"
@@ -233,7 +226,7 @@ onMounted(computeFieldHeight);
         />
         <textarea
           ref="textarea"
-          v-model="internalValue"
+          v-model="modelValue"
           :placeholder="placeholder || ' '"
           :class="[css.textarea, noResize ? 'resize-none' : 'resize-y']"
           :style="fieldStyles"
