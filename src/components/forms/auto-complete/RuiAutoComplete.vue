@@ -548,7 +548,10 @@ defineExpose({
               [css['with-success']]: hasSuccess && !hasError,
             },
           ]"
-          v-bind="{ ...getNonRootAttrs($attrs, ['onClick']), ...(readOnly ? {} : attrs) }"
+          v-bind="{
+            ...getNonRootAttrs($attrs, ['onClick', 'class']),
+            ...(readOnly ? {} : attrs) }
+          "
           data-id="activator"
           :tabindex="disabled || readOnly ? -1 : 0"
           @click="setInputFocus()"
