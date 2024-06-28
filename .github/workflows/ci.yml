@@ -97,7 +97,7 @@ jobs:
         run: pnpm exec cypress install
 
       - name: Run cypress tests
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         with:
           install: false
           working-directory: example
@@ -106,6 +106,7 @@ jobs:
           start: pnpm run preview --host
           browser: chrome
           wait-on: http://127.0.0.1:4173
+          config: video=true
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
@@ -117,7 +118,7 @@ jobs:
 
       - name: Upload videos
         uses: actions/upload-artifact@v4
-        if: always()
+        if: failure()
         with:
           name: cypress-videos
           path: example/cypress/e2e/videos
