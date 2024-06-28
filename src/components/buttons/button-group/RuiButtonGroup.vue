@@ -109,10 +109,6 @@ const colorClass = computed(() => (props.color ? css[props.color] : undefined));
 const variantClass = computed(() =>
   props.variant ? css[props.variant] : undefined,
 );
-
-onMounted(() => {
-  slots.default?.();
-});
 </script>
 
 <template>

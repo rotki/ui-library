@@ -1,8 +1,8 @@
-import { mount } from '@vue/test-utils';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import RuiAccordion from '@/components/accordions/accordion/RuiAccordion.vue';
 
-function createWrapper(options?: any) {
+function createWrapper(options?: ComponentMountingOptions<typeof RuiAccordion>) {
   return mount(RuiAccordion, {
     ...options,
     slots: {
@@ -15,7 +15,7 @@ function createWrapper(options?: any) {
 describe('accordions/Accordion', () => {
   it('renders properly', () => {
     const wrapper = createWrapper({
-      propsData: {
+      props: {
         open: true,
       },
     });
@@ -51,7 +51,7 @@ describe('accordions/Accordion', () => {
 
   it('pass `headerClass` and `contentClass` props', async () => {
     const wrapper = createWrapper({
-      propsData: {
+      props: {
         open: true,
       },
     });

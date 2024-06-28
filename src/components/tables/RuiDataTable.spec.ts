@@ -431,7 +431,7 @@ describe('dataTable', () => {
       });
 
       const select = paginationInstances[0].findComponent({ name: 'RuiMenuSelect' });
-      select.vm.$emit('update:model-value', 10);
+      select.vm.$emit('update:modelValue', 10);
 
       await nextTick();
 
@@ -480,8 +480,8 @@ describe('dataTable', () => {
 
       const globalSelect = paginate[0].findComponent({ name: 'RuiMenuSelect' });
       const localSelect = paginate[1].findComponent({ name: 'RuiMenuSelect' });
-      globalSelect.vm.$emit('update:model-value', 10);
-      localSelect.vm.$emit('update:model-value', 25);
+      globalSelect.vm.$emit('update:modelValue', 10);
+      localSelect.vm.$emit('update:modelValue', 25);
 
       await nextTick();
 
@@ -532,8 +532,8 @@ describe('dataTable', () => {
 
       const globalSelect = paginate[0].findComponent({ name: 'RuiMenuSelect' });
       const localSelect = paginate[1].findComponent({ name: 'RuiMenuSelect' });
-      globalSelect.vm.$emit('update:model-value', 25);
-      localSelect.vm.$emit('update:model-value', 10);
+      globalSelect.vm.$emit('update:modelValue', 25);
+      localSelect.vm.$emit('update:modelValue', 10);
 
       await nextTick();
 
@@ -594,7 +594,7 @@ describe('dataTable', () => {
     expect(limits.exists()).toBeTruthy();
     expect(ranges.exists()).toBeTruthy();
 
-    limits.vm.$emit('update:model-value', 5);
+    limits.vm.$emit('update:modelValue', 5);
 
     await nextTick();
 
@@ -604,7 +604,7 @@ describe('dataTable', () => {
     expect(navButtons.filter(b => b.attributes('disabled') === '')).toHaveLength(2);
     expect(navButtons.filter(b => b.attributes('disabled') === undefined)).toHaveLength(2);
 
-    ranges.vm.$emit('update:model-value', 2);
+    ranges.vm.$emit('update:modelValue', 2);
 
     await nextTick();
 
@@ -612,7 +612,7 @@ describe('dataTable', () => {
     expect(ranges.find('[data-id="activator"] span').text()).toStrictEqual('6 - 10');
     expect(ranges.find('input[type=hidden]').element).toHaveProperty('value', '2');
 
-    limits.vm.$emit('update:model-value', 10);
+    limits.vm.$emit('update:modelValue', 10);
 
     await nextTick();
 

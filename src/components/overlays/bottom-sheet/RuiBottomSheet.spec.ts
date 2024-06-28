@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import RuiBottomSheet from '@/components/overlays/bottom-sheet/RuiBottomSheet.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 
 const text = 'This is content';
 
-function createWrapper(options?: any) {
+function createWrapper(options?: ComponentMountingOptions<typeof RuiBottomSheet>) {
   return mount(RuiBottomSheet, {
     ...options,
     global: {
@@ -126,7 +126,7 @@ describe('bottom-sheet', () => {
 
   it('bottom sheet works with `persistent=true`', async () => {
     const wrapper = createWrapper({
-      propsData: {
+      props: {
         persistent: true,
       },
     });

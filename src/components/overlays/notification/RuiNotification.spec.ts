@@ -80,7 +80,7 @@ describe('notification', () => {
   it('closes automatically after timeout', async () => {
     vi.useFakeTimers();
     const wrapper = createWrapper({
-      propsData: {
+      props: {
         modelValue: true,
         timeout: 5000,
       },

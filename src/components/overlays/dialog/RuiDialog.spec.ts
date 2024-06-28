@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
-import { mount } from '@vue/test-utils';
-import RuiDialog from '@/components/overlays/dialog/RuiDialog.vue';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiDialog from '@/components/overlays/dialog/RuiDialog.vue';
 
 const text = 'This is content';
 
-function createWrapper(options?: any) {
+function createWrapper(options?: ComponentMountingOptions<typeof RuiDialog>) {
   return mount(RuiDialog, {
     ...options,
     global: {
@@ -125,7 +125,7 @@ describe('dialog', () => {
 
   it('dialog works with `persistent=true`', async () => {
     const wrapper = createWrapper({
-      propsData: {
+      props: {
         persistent: true,
       },
     });

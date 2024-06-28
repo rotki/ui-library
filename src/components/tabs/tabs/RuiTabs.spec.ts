@@ -3,9 +3,13 @@ import {
   RouterLinkStub,
   mount,
 } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import RuiTabs from '@/components/tabs/tabs/RuiTabs.vue';
 import RuiTab from '@/components/tabs/tab/RuiTab.vue';
+
+vi.mock('vue-router', () => ({
+  useRoute: vi.fn().mockImplementation(() => ref()),
+}));
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiTabs>) {
   return mount(RuiTabs, {

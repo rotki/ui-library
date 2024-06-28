@@ -1,10 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import RuiTextArea from '@/components/forms/text-area/RuiTextArea.vue';
 
-function createWrapper(options?: any) {
-  return mount(RuiTextArea, {
+function createWrapper(options?: ComponentMountingOptions<typeof RuiTextArea>) {
+  const opts: ComponentMountingOptions<typeof RuiTextArea> = {
+    props: {
+      modelValue: '',
+    },
     ...options,
+  };
+  return mount(RuiTextArea, {
+    ...opts,
     global: {
       stubs: { RuiIcon: true },
     },
@@ -15,8 +21,9 @@ describe('forms/TextArea', () => {
   it('renders properly', () => {
     const label = 'Text Area Label';
     const wrapper = createWrapper({
-      propsData: {
+      props: {
         label,
+        modelValue: '',
       },
     });
     expect(wrapper.find('label').text()).toContain(label);
@@ -56,8 +63,9 @@ describe('forms/TextArea', () => {
 
   it('passes color props', async () => {
     const wrapper = createWrapper({
-      propsData: {
+      props: {
         color: 'primary',
+        modelValue: '',
       },
     });
     expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
@@ -152,9 +160,10 @@ describe('forms/TextArea', () => {
 
   it('passes hideDetails', () => {
     const wrapper = createWrapper({
-      propsData: {
+      props: {
         hideDetails: true,
         hint: 'This hint should not be rendered',
+        modelValue: '',
       },
     });
     expect(wrapper.find('.details > div').exists()).toBeFalsy();
@@ -163,7 +172,8 @@ describe('forms/TextArea', () => {
   it('passes prependIcon', () => {
     const icon = 'heart-fill';
     const wrapper = createWrapper({
-      propsData: {
+      props: {
+        modelValue: '',
         prependIcon: icon,
       },
     });
@@ -176,8 +186,9 @@ describe('forms/TextArea', () => {
   it('passes appendIcon', () => {
     const icon = 'heart-fill';
     const wrapper = createWrapper({
-      propsData: {
+      props: {
         appendIcon: icon,
+        modelValue: '',
       },
     });
 

@@ -101,7 +101,7 @@ describe('navigation drawer', () => {
 
   it('dialog works with `temporary=true`', async () => {
     const wrapper = createWrapper({
-      propsData: {
+      props: {
         temporary: true,
       },
     });

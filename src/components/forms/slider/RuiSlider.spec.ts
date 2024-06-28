@@ -105,7 +105,7 @@ describe('forms/Slider', () => {
 
   it('passes tickSize props', async () => {
     const wrapper = createWrapper({
-      propsData: {
+      props: {
         showTicks: true,
       },
     });
