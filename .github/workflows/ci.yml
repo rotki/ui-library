@@ -113,7 +113,7 @@ jobs:
         if: failure()
         with:
           name: cypress-screenshots
-          path: example/cypress/e2e/screenshots
+          path: example/cypress/screenshots
           retention-days: 7
 
       - name: Upload videos
@@ -121,7 +121,7 @@ jobs:
         if: failure()
         with:
           name: cypress-videos
-          path: example/cypress/e2e/videos
+          path: example/cypress/videos
           retention-days: 7
 
       - name: Upload coverage
