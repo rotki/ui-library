@@ -1,6 +1,11 @@
 <script setup lang='ts'>
 import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
 
+defineOptions({
+  name: 'RuiColorDisplay',
+  inheritAttrs: false,
+});
+
 const props = defineProps<{
   color: string;
 }>();
@@ -15,6 +20,7 @@ const { copy, copied } = useClipboard({ source: color });
     :popper="{ placement: 'top' }"
     :close-delay="400"
     tooltip-class="text-center"
+    v-bind="$attrs"
   >
     <template #activator>
       <div

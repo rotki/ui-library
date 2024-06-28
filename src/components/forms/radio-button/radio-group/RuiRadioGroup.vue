@@ -19,6 +19,7 @@ export interface Props {
 
 defineOptions({
   name: 'RuiRadioGroup',
+  inheritAttrs: false,
 });
 
 withDefaults(defineProps<Props>(), {
@@ -59,7 +60,7 @@ const css = useCssModule();
 </script>
 
 <template>
-  <div>
+  <div v-bind="$attrs">
     <div
       v-if="label"
       class="text-rui-text-secondary text-body-1"

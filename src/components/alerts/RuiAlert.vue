@@ -16,6 +16,7 @@ export interface Props {
 
 defineOptions({
   name: 'RuiAlert',
+  inheritAttrs: false,
 });
 
 const props = withDefaults(defineProps<Props>(), {
@@ -35,7 +36,7 @@ const emit = defineEmits<{
 
 const { icon, type } = toRefs(props);
 
-const usedIcon: ComputedRef<RuiIcons | undefined> = computed(() => {
+const usedIcon = computed<RuiIcons | undefined>(() => {
   const iconVal = get(icon);
   if (iconVal)
     return iconVal;
@@ -53,15 +54,13 @@ const usedIcon: ComputedRef<RuiIcons | undefined> = computed(() => {
 });
 
 const css = useCssModule();
-const attrs = useAttrs();
-
 const slots = useSlots();
 </script>
 
 <template>
   <div
     :class="[css.alert, css[type], css[variant]]"
-    v-bind="attrs"
+    v-bind="$attrs"
   >
     <div class="flex space-x-3 py-1 flex-grow">
       <div

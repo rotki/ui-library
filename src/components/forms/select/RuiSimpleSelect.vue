@@ -11,6 +11,7 @@ export interface Props {
 
 defineOptions({
   name: 'RuiSimpleSelect',
+  inheritAttrs: false,
 });
 
 const props = withDefaults(defineProps<Props>(), {
@@ -34,7 +35,10 @@ const value = computed({
 </script>
 
 <template>
-  <div :class="css.wrapper">
+  <div
+    :class="css.wrapper"
+    v-bind="$attrs"
+  >
     <select
       v-model="value"
       :class="[

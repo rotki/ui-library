@@ -6,6 +6,11 @@ import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import type { Color } from './utils';
 
+defineOptions({
+  name: 'RuiColorInput',
+  inheritAttrs: false,
+});
+
 const modelValue = defineModel<Color>({ required: true });
 
 const inputType = ref<'hex' | 'rgb'>('hex');
@@ -75,7 +80,10 @@ whenever(
 </script>
 
 <template>
-  <div class="rui-color-input flex justify-center gap-2">
+  <div
+    class="rui-color-input flex justify-center gap-2"
+    v-bind="$attrs"
+  >
     <div class="flex flex-col items-center gap-1 w-[16rem]">
       <div class="w-full">
         <RuiTextField

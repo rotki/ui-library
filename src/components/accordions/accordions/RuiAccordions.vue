@@ -6,6 +6,7 @@ export interface Props {
 
 defineOptions({
   name: 'RuiAccordions',
+  inheritAttrs: false,
 });
 
 const props = withDefaults(defineProps<Props>(), {
@@ -74,7 +75,7 @@ watch([modelValue, multiple], ([value, multiple]) => {
 </script>
 
 <template>
-  <div>
+  <div v-bind="$attrs">
     <Component
       :is="child"
       v-for="(child, i) in children"

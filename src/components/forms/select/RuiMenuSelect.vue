@@ -142,6 +142,7 @@ function clear() {
     v-model="isOpen"
     :class="css.wrapper"
     v-bind="{
+      ...getRootAttrs($attrs),
       placement: 'bottom-start',
       closeOnContentClick: true,
       fullWidth: true,
@@ -181,7 +182,7 @@ function clear() {
               [css['with-success']]: hasSuccess && !hasError,
             },
           ]"
-          v-bind="{ ...$attrs, ...(readOnly ? {} : attrs) }"
+          v-bind="{ ...getNonRootAttrs($attrs), ...(readOnly ? {} : attrs) }"
           data-id="activator"
           @keydown.up.prevent="moveHighlight(true)"
           @keydown.down.prevent="moveHighlight(false)"

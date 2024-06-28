@@ -5,6 +5,7 @@ export interface Props {
 
 defineOptions({
   name: 'RuiCardHeader',
+  inheritAttrs: false,
 });
 
 withDefaults(defineProps<Props>(), {
@@ -21,6 +22,7 @@ const slots = useSlots();
       css.head,
       { [css.dense]: dense, [css.has_prepend]: !!slots.prepend },
     ]"
+    v-bind="$attrs"
   >
     <div
       v-if="slots.prepend"

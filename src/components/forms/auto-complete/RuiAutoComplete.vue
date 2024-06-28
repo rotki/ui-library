@@ -507,6 +507,7 @@ defineExpose({
     v-model="isOpen"
     :class="css.wrapper"
     v-bind="{
+      ...getRootAttrs($attrs),
       placement: 'bottom-start',
       closeOnContentClick: false,
       fullWidth: true,
@@ -547,7 +548,7 @@ defineExpose({
               [css['with-success']]: hasSuccess && !hasError,
             },
           ]"
-          v-bind="{ ...$attrs, ...(readOnly ? {} : attrs) }"
+          v-bind="{ ...getNonRootAttrs($attrs, ['onClick']), ...(readOnly ? {} : attrs) }"
           data-id="activator"
           :tabindex="disabled || readOnly ? -1 : 0"
           @click="setInputFocus()"

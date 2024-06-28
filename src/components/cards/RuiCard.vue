@@ -13,6 +13,7 @@ export interface Props {
 
 defineOptions({
   name: 'RuiCard',
+  inheritAttrs: false,
 });
 
 withDefaults(defineProps<Props>(), {
@@ -43,6 +44,7 @@ const hasHeadContent = computed(() => !!slots.header || !!slots.subheader);
         [css['no-padding']]: noPadding,
       },
     ]"
+    v-bind="$attrs"
   >
     <div
       v-if="slots.image"

@@ -16,6 +16,7 @@ export interface Props<T = undefined> {
 
 defineOptions({
   name: 'RuiButtonGroup',
+  inheritAttrs: false,
 });
 
 const props = withDefaults(defineProps<Props<T>>(), {
@@ -126,6 +127,7 @@ onMounted(() => {
         [css[`separated__${gap}`]]: !!gap,
       },
     ]"
+    v-bind="$attrs"
   >
     <Component
       :is="child"

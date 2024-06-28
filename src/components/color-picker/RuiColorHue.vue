@@ -2,9 +2,14 @@
 import { clamp } from '@vueuse/shared';
 import { roundTwoDecimal, useElementDrag } from './utils';
 
+defineOptions({
+  name: 'RuiColorHue',
+  inheritAttrs: false,
+});
+
 const modelValue = defineModel<number>({ required: true });
 
-const barElement: Ref<HTMLElement | null> = ref(null);
+const barElement = ref<HTMLElement>();
 
 const cursorWidth = 16;
 
@@ -16,7 +21,7 @@ function getLimit(width: number) {
   return { lowerLimit, upperLimit, availableWidth };
 }
 
-const cursorLeft: Ref<string> = ref('');
+const cursorLeft = ref<string>('');
 
 function updatePosition() {
   set(cursorLeft, getCursorLeft().toString());
@@ -87,6 +92,7 @@ watch(modelValue, () => {
     ref="barElement"
     :class="css.bar"
     class="rui-color-hue"
+    v-bind="$attrs"
     @click="handleClick($event)"
     @mousedown="onMouseDown($event)"
   >

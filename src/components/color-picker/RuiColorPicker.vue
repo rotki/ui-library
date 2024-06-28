@@ -4,7 +4,6 @@ import RuiColorBoard from '@/components/color-picker/RuiColorBoard.vue';
 import RuiColorHue from '@/components/color-picker/RuiColorHue.vue';
 import RuiColorInput from '@/components/color-picker/RuiColorInput.vue';
 import RuiColorDisplay from '@/components/color-picker/RuiColorDisplay.vue';
-import { getRootAttrs } from '@/utils/helpers';
 import { Color } from './utils';
 
 export interface Props {
@@ -45,18 +44,16 @@ whenever(
 watch(state, (state) => {
   emit('update:model-value', state.color.hex);
 }, { immediate: true, deep: true });
-
-const attrs = useAttrs();
 </script>
 
 <template>
   <div
     class="rui-color-picker relative select-none bg-initial"
-    v-bind="getRootAttrs(attrs)"
+    v-bind="$attrs"
   >
     <RuiColorBoard
       :color="state.color"
-      @input="onBoardChange($event)"
+      @update:board="onBoardChange($event)"
     />
     <div class="flex flex-col gap-5 p-4">
       <div class="flex items-center gap-4">

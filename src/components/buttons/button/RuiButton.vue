@@ -19,6 +19,7 @@ export interface Props<T = undefined> {
 
 defineOptions({
   name: 'RuiButton',
+  inheritAttrs: false,
 });
 
 const props = withDefaults(defineProps<Props<T>>(), {
@@ -40,12 +41,11 @@ const emit = defineEmits<{
   (e: 'update:model-value', value?: T): void;
 }>();
 
-const btnValue = computed(() => props.modelValue);
+const btnValue = computed<T | undefined>(() => props.modelValue);
 
-const attrs = useAttrs();
 const css = useCssModule();
 
-const usedElevation: ComputedRef<number | string> = computed(() => {
+const usedElevation = computed<number | string>(() => {
   if (props.disabled)
     return 0;
 
@@ -58,7 +58,7 @@ const usedElevation: ComputedRef<number | string> = computed(() => {
   return 0;
 });
 
-const spinnerSize: ComputedRef<number> = computed(() => {
+const spinnerSize = computed<number>(() => {
   const size = props.size;
   if (size === 'lg')
     return 26;
@@ -91,7 +91,7 @@ const slots = useSlots();
     ]"
     :disabled="disabled || loading"
     :type="tag === 'button' ? type : undefined"
-    v-bind="attrs"
+    v-bind="$attrs"
     @click="emit('update:model-value', btnValue)"
   >
     <slot

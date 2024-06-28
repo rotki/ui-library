@@ -2,12 +2,17 @@
 import { clamp } from '@vueuse/shared';
 import { Color, useElementDrag } from './utils';
 
+defineOptions({
+  name: 'RuiColorBoard',
+  inheritAttrs: false,
+});
+
 const props = defineProps<{
   color: Color;
 }>();
 
 const emit = defineEmits<{
-  (e: 'input', event: { saturation: number; brightness: number }): void;
+  (e: 'update:board', event: { saturation: number; brightness: number }): void;
 }>();
 
 function hueToHex(hue: number) {
@@ -20,15 +25,15 @@ const state = reactive({
   brightness: props.color.brightness,
 });
 
-const cursorTop: Ref<number> = ref(0);
-const cursorLeft: Ref<number> = ref(0);
+const cursorTop = ref<number>(0);
+const cursorLeft = ref<number>(0);
 
 const cursorStyle = computed(() => ({
   top: `${get(cursorTop) * 100}%`,
   left: `${get(cursorLeft) * 100}%`,
 }));
 
-const wrapper: Ref<HTMLElement | null> = ref(null);
+const wrapper = ref<HTMLElement>();
 
 function updatePosition() {
   set(cursorLeft, state.saturation);
@@ -68,7 +73,7 @@ function emitColor(x: number, y: number) {
   state.saturation = saturation;
   state.brightness = brightness;
 
-  emit('input', { saturation, brightness });
+  emit('update:board', { saturation, brightness });
 }
 
 onMounted(() => {
@@ -94,6 +99,7 @@ const css = useCssModule();
     ref="wrapper"
     class="rui-color-board"
     :class="css.saturation"
+    v-bind="$attrs"
     :style="{ backgroundColor: state.hexString }"
     @click="handleClick($event)"
     @mousedown="onMouseDown($event)"

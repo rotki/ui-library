@@ -5,6 +5,7 @@ export interface Props {
 
 defineOptions({
   name: 'RuiDivider',
+  inheritAttrs: false,
 });
 
 withDefaults(defineProps<Props>(), {
@@ -16,5 +17,6 @@ withDefaults(defineProps<Props>(), {
   <div
     :class="vertical ? 'border-l' : 'border-t'"
     class="border-default"
+    v-bind="$attrs"
   />
 </template>

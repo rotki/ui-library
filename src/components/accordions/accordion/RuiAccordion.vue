@@ -11,6 +11,7 @@ export interface AccordionProps {
 
 defineOptions({
   name: 'RuiAccordion',
+  inheritAttrs: false,
 });
 
 withDefaults(defineProps<AccordionProps>(), {
@@ -41,6 +42,7 @@ const slots = useSlots();
   <div
     class="accordion"
     :class="[css.accordion, { [css.open]: open }]"
+    v-bind="$attrs"
   >
     <div
       v-if="slots.header"
