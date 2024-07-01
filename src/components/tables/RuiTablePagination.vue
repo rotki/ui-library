@@ -163,7 +163,7 @@ function onLast() {
     <div :class="css.navigation">
       <RuiButton
         :size="dense ? 'sm' : undefined"
-        :disabled="!hasPrev"
+        :disabled="!hasPrev || loading"
         variant="text"
         icon
         @click="onFirst()"
@@ -172,7 +172,7 @@ function onLast() {
       </RuiButton>
       <RuiButton
         :size="dense ? 'sm' : undefined"
-        :disabled="!hasPrev"
+        :disabled="!hasPrev || loading"
         variant="text"
         icon
         @click="onPrev()"
@@ -181,7 +181,7 @@ function onLast() {
       </RuiButton>
       <RuiButton
         :size="dense ? 'sm' : undefined"
-        :disabled="!hasNext"
+        :disabled="!hasNext || loading"
         variant="text"
         icon
         @click="onNext()"
@@ -190,7 +190,7 @@ function onLast() {
       </RuiButton>
       <RuiButton
         :size="dense ? 'sm' : undefined"
-        :disabled="!hasNext"
+        :disabled="!hasNext || loading"
         variant="text"
         icon
         @click="onLast()"
