@@ -222,7 +222,7 @@ function onLast() {
   }
 
   .indicator {
-    @apply text-rui-text text-caption;
+    @apply text-rui-text text-caption whitespace-nowrap;
   }
 
   .navigation {
