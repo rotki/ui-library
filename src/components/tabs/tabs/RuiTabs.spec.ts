@@ -11,7 +11,7 @@ vi.mock('vue-router', () => ({
   useRoute: vi.fn().mockImplementation(() => ref()),
 }));
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiTabs>) {
+function createWrapper(options: ComponentMountingOptions<typeof RuiTabs> = {}, customTabValue: boolean = false) {
   return mount(RuiTabs, {
     ...options,
     global: {
@@ -21,12 +21,10 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiTabs>) {
       },
     },
     slots: {
-      default: [
-        { template: '<RuiTab><div>Tab 1</div></RuiTab>' },
-        { template: '<RuiTab><div>Tab 2</div></RuiTab>' },
-        { template: '<RuiTab><div>Tab 3</div></RuiTab>' },
-        { template: '<RuiTab><div>Tab 4</div></RuiTab>' },
-      ],
+      default: [...new Array(4).keys()].map(item => (
+        { template: customTabValue
+          ? `<RuiTab value="tab-${item}"><div>Tab ${item}</div></RuiTab>`
+          : `<RuiTab><div>Tab ${item}</div></RuiTab>` })),
     },
   });
 }
@@ -46,7 +44,7 @@ describe('tabs/Tabs', () => {
   });
 
   it('pass vertical props', async () => {
-    const wrapper = createWrapper({});
+    const wrapper = createWrapper();
 
     expect(wrapper.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_tabs--vertical_/)]),
@@ -68,7 +66,7 @@ describe('tabs/Tabs', () => {
   });
 
   it('pass grow props', async () => {
-    const wrapper = createWrapper({});
+    const wrapper = createWrapper();
 
     expect(wrapper.find('div[class*=tabs-bar]').classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_tabs-bar--grow/)]),
@@ -89,7 +87,7 @@ describe('tabs/Tabs', () => {
   });
 
   it('pass disabled props', async () => {
-    const wrapper = createWrapper({});
+    const wrapper = createWrapper();
 
     expect(wrapper.find('button').attributes('disabled')).toBeUndefined();
 
@@ -101,7 +99,7 @@ describe('tabs/Tabs', () => {
   });
 
   it('pass align props', async () => {
-    const wrapper = createWrapper({});
+    const wrapper = createWrapper();
 
     expect(wrapper.find('button').classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_tab--center_/)]),
@@ -148,5 +146,18 @@ describe('tabs/Tabs', () => {
     await buttons[3].trigger('click');
     await nextTick();
     expect(get(modelValue)).toBe(3);
+  });
+
+  it ('works with custom tab value', async () => {
+    const wrapper = createWrapper({}, true);
+
+    await nextTick();
+
+    const buttons = wrapper.findAll('div[class*=_tabs-wrapper] > button');
+
+    expect(buttons).toHaveLength(4);
+    expect(buttons[0].classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/active-tab/)]),
+    );
   });
 });

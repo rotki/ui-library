@@ -6,8 +6,9 @@ export interface Props {
   color?: ContextColorsType;
   disabled?: boolean;
   grow?: boolean;
-  tabValue?: number | string;
+  value?: number | string;
   active?: boolean;
+  activeClass?: string;
   link?: boolean;
   target?: string;
   to?: string;
@@ -25,8 +26,9 @@ const props = withDefaults(defineProps<Props>(), {
   color: undefined,
   disabled: false,
   grow: false,
-  tabValue: generateId(),
+  value: generateId(),
   active: false,
+  activeClass: '',
   link: false,
   to: '',
   target: '_self',
@@ -37,7 +39,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'click', tabValue: string | number): void;
+  (e: 'click', value: string | number): void;
 }>();
 
 const slots = defineSlots<{
@@ -46,7 +48,7 @@ const slots = defineSlots<{
   append?: (props?: object) => any;
 }>();
 
-const { target, grow, active, disabled, vertical, align, tabValue }
+const { target, grow, active, activeClass, disabled, vertical, align, value }
   = toRefs(props);
 
 const css = useCssModule();
@@ -58,7 +60,7 @@ const tabClass = computed(() => [
   css[`tab--${get(align)}`],
   {
     [css['tab--grow']]: get(grow),
-    [`${css['tab--active']} active-tab`]: get(active),
+    [`${css['tab--active']} active-tab ${get(activeClass)}`]: get(active),
     [css['tab--disabled']]: get(disabled),
     [css['tab--vertical']]: get(vertical),
   },
@@ -67,7 +69,7 @@ const tabClass = computed(() => [
 const attrs = useAttrs();
 
 function click() {
-  emit('click', get(tabValue));
+  emit('click', get(value));
 }
 </script>
 
