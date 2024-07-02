@@ -59,7 +59,7 @@ const children = computed(() => {
     align: get(align),
   };
   return tabs.map((tab, index) => {
-    let tabValue = tab.props?.tabValue ?? index;
+    let tabValue = tab.props?.value ?? index;
     if (tab.props?.link !== false && tab.props?.to)
       tabValue = tab.props.to;
 
@@ -67,7 +67,7 @@ const children = computed(() => {
     return {
       ...tab,
       props: {
-        tabValue,
+        value: tabValue,
         active,
         ...inheritedProps,
         ...tab.props,
@@ -148,8 +148,8 @@ function applyNewValue(onlyLink = false) {
     let newModelValue: string | number = get(modelValue) || 0;
     enabledChildren.forEach((child, index) => {
       const props = child.props as TabProps;
-      if (!onlyLink && index === 0 && props.tabValue)
-        newModelValue = props.tabValue;
+      if (!onlyLink && index === 0 && props.value)
+        newModelValue = props.value;
 
       if (props.link !== false && props.to && isPathMatch(props.to, props))
         newModelValue = props.to;
@@ -181,7 +181,8 @@ const { top, bottom, left, right } = toRefs(arrivedState);
 const { trigger: triggerHorizontal, stop: stopHorizontal } = watchTriggerable(
   [wrapperWidth, width],
   ([ww, w]) => {
-    set(showArrows, ww > w);
+    if (w > 0)
+      set(showArrows, ww > w);
   },
   {
     eventFilter: throttleFilter(50),
@@ -191,7 +192,8 @@ const { trigger: triggerHorizontal, stop: stopHorizontal } = watchTriggerable(
 const { trigger: triggerVertical, stop: stopVertical } = watchTriggerable(
   [wrapperHeight, height],
   ([wh, h]) => {
-    set(showArrows, wh > h);
+    if (h > 0)
+      set(showArrows, wh > h);
   },
   {
     eventFilter: throttleFilter(500),
