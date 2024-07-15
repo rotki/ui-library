@@ -84,7 +84,7 @@
     "coverage": "vitest run --coverage",
     "coverage:preview": "npx vite preview --open --outDir tests/coverage",
     "typecheck": "vue-tsc --noEmit",
-    "prepare": "husky install && node scripts/prepare.mjs",
+    "prepare": "husky && node scripts/prepare.mjs",
     "release": "bumpp -r --no-push",
     "new": "node --experimental-specifier-resolution=node --loader ts-node/esm scripts/new-story.ts"
   },
