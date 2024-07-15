@@ -14,7 +14,7 @@ export default rotki({
     testDirectory: path.join('example', 'cypress'),
   },
 }, {
-  files: ['src/**/*.ts'],
+  files: ['src/**/*.@(ts|js)'],
   rules: {
     'perfectionist/sort-objects': 'error',
   },
@@ -27,5 +27,10 @@ export default rotki({
   files: ['src/**/*.@(ts|vue)'],
   rules: {
     'import/no-named-default': 'warn', // todo: fix and turn into an error
+  },
+}, {
+  files: ['**/*.ts'],
+  rules: {
+    'storybook/no-uninstalled-addons': 'off', // until storybook eslint official supports eslint 9
   },
 });

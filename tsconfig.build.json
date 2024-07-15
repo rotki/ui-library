@@ -17,5 +17,8 @@
   ],
   "tsc-alias": {
     "resolveFullPaths": true
+  },
+  "vueCompilerOptions": {
+    "target": 3.4
   }
 }

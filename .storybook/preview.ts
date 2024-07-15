@@ -4,7 +4,8 @@ import '@fontsource/roboto/latin.css';
 import { type Preview, setup } from '@storybook/vue3';
 import { useEffect, useGlobals } from '@storybook/preview-api';
 import { ref } from 'vue';
-import { createRui, useRotkiTheme } from '../src';
+import { createRui } from '../src';
+import { useRotkiTheme } from '../src/composables/theme';
 import * as Icons from '../src/icons';
 
 const RuiPlugin = createRui({
@@ -51,6 +52,7 @@ const preview: Preview = {
       },
     },
   },
+  tags: ['autodocs'],
   decorators: [(story) => {
     const [{ theme }] = useGlobals();
     const { switchThemeScheme } = useRotkiTheme();
