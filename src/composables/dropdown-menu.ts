@@ -4,6 +4,11 @@ export type KeyOfType<T, V> = keyof {
   [P in keyof T as T[P] extends V ? P : never]: any
 };
 
+export interface DropdownItemAttr<TValue, TItem> {
+  keyAttr?: KeyOfType<TItem, TValue extends Array<infer U> ? U : TValue>;
+  textAttr?: keyof TItem | ((item: TItem) => string);
+}
+
 export interface DropdownOptions<TValue, TItem> {
   options: Ref<TItem[]>;
   dense?: Ref<boolean>;
@@ -19,6 +24,35 @@ export interface DropdownOptions<TValue, TItem> {
   autoFocus?: boolean;
   setValue?: (val: TItem) => void;
   hideSelected?: boolean;
+}
+
+export function useDropdownOptionProperty<TValue, TItem>({
+  keyAttr,
+  textAttr,
+}: DropdownItemAttr<TValue, TItem>) {
+  function getText(item: TItem): string | undefined {
+    if (textAttr) {
+      if (typeof textAttr === 'function')
+        return textAttr(item);
+
+      else
+        return item[textAttr]?.toString();
+    }
+
+    return item?.toString();
+  }
+
+  function getIdentifier(item: TItem): TItem | TItem[KeyOfType<TItem, TValue>] {
+    if (keyAttr)
+      return item[keyAttr];
+
+    return item;
+  }
+
+  return {
+    getIdentifier,
+    getText,
+  };
 }
 
 export function useDropdownMenu<TValue, TItem>({
@@ -43,6 +77,11 @@ export function useDropdownMenu<TValue, TItem>({
       return options;
 
     return options.filter(item => !isActiveItem(item));
+  });
+
+  const { getIdentifier, getText } = useDropdownOptionProperty({
+    keyAttr,
+    textAttr,
   });
 
   const { containerProps, list, scrollTo, wrapperProps } = useVirtualList<TItem>(
@@ -101,25 +140,6 @@ export function useDropdownMenu<TValue, TItem>({
 
   function toggle(state: boolean = false) {
     set(isOpen, state);
-  }
-
-  function getText(item: TItem): string | undefined {
-    if (textAttr) {
-      if (typeof textAttr === 'function')
-        return textAttr(item);
-
-      else
-        return item[textAttr]?.toString();
-    }
-
-    return item?.toString();
-  }
-
-  function getIdentifier(item: TItem): TItem | TItem[KeyOfType<TItem, TValue>] {
-    if (keyAttr)
-      return item[keyAttr];
-
-    return item;
   }
 
   function itemIndexInValue(item: TItem): number {

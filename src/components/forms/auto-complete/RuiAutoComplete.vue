@@ -89,6 +89,11 @@ const slots = useSlots();
 
 const { dense, variant, disabled, options } = toRefs(props);
 
+const { getText, getIdentifier } = useDropdownOptionProperty<TValue, TItem>({
+  keyAttr: props.keyAttr,
+  textAttr: props.textAttr,
+});
+
 const textInput = ref();
 const activator = ref();
 const noDataContainer = ref();
@@ -223,8 +228,6 @@ const {
   renderedData,
   isOpen,
   menuWidth,
-  getText,
-  getIdentifier,
   isActiveItem,
   itemIndexInValue,
   highlightedIndex,
