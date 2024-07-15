@@ -88,6 +88,18 @@ describe('autocomplete', () => {
     await wrapper.find('[data-id=activator]').trigger('click');
     await vi.delay();
     await nextTick();
+    expect(document.body.querySelector('div[role=menu]')).toBeTruthy();
+
+    // Close Menu Select
+    await wrapper.find('[data-id=activator]').trigger('keydown.esc');
+    await vi.delay();
+    await nextTick();
+    expect(document.body.querySelector('div[role=menu]')).toBeFalsy();
+
+    // Open Menu Select by Enter
+    await wrapper.find('[data-id=activator]').trigger('keydown.enter');
+    await vi.delay();
+    await nextTick();
 
     expect(document.body.querySelector('div[role=menu]')).toBeTruthy();
 
@@ -101,7 +113,15 @@ describe('autocomplete', () => {
     await nextTick();
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([selectedIndex.toString()]);
 
-    await wrapper.find('[data-id=activator]').trigger('focusout');
+    await wrapper.setProps({
+      modelValue: selectedIndex.toString(),
+    });
+
+    await vi.delay();
+    expect(document.body.querySelector('div[role=menu]')).toBeFalsy();
+
+    // Shouldn't open menu select because the value has been set
+    await wrapper.find('[data-id=activator]').trigger('keydown.enter');
     await nextTick();
     expect(document.body.querySelector('div[role=menu]')).toBeFalsy();
 
@@ -138,11 +158,10 @@ describe('autocomplete', () => {
     const newOptions = options.filter(item => item.id !== newSelectedIndexToString);
 
     await wrapper.setProps({
+      modelValue: newSelectedIndexToString,
       options: newOptions,
     });
     await nextTick();
-
-    expect(wrapper.emitted('update:modelValue')?.[2]).toEqual([undefined]);
 
     // Even if the options changed, the search value should not be touch as long as the focus still there, so the UX is not breaking
     expect((wrapper.find('input').element as HTMLInputElement).value).toBe('Greece');

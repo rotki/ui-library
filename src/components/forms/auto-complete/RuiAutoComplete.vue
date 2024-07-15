@@ -467,7 +467,7 @@ function onEnter(event: KeyboardEvent): void {
       set(isOpen, false);
     event.preventDefault();
   }
-  else if (!get(isOpen)) {
+  else if (!get(isOpen) && get(value).length === 0) {
     set(isOpen, true);
     event.preventDefault();
   }
