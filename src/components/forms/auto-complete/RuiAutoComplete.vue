@@ -8,7 +8,7 @@ import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { getTextToken } from '@/utils/helpers';
 import { isEqual } from '@/utils/is-equal';
 import type { KeyOfType } from '@/composables/dropdown-menu';
-import type { ComputedRef } from 'vue';
+import type { ComponentPublicInstance, ComputedRef } from 'vue';
 
 export type AutoCompleteModelValue<TValue> = TValue extends Array<infer U> ? U[] : TValue | undefined;
 
@@ -98,6 +98,12 @@ const textInput = ref();
 const activator = ref();
 const noDataContainer = ref();
 const menuRef = ref();
+const renderedOptions = ref<ComponentPublicInstance[]>([]);
+
+const menuMinHeight = computed<number>(() => {
+  const renderedOptionsData = get(renderedOptions).slice(0, 5);
+  return renderedOptionsData.reduce((currentValue, item) => currentValue + item.$el.offsetHeight, 0);
+});
 
 const multiple = computed(() => Array.isArray(get(modelValue)));
 
@@ -690,7 +696,7 @@ defineExpose({
       <div
         v-if="optionsWithSelectedHidden.length > 0"
         :class="[css.menu, menuClass]"
-        :style="{ width: `${width}px`, minWidth: menuWidth }"
+        :style="{ width: `${width}px`, minWidth: menuWidth, minHeight: `${menuMinHeight}px` }"
         v-bind="virtualContainerProps"
         @scroll="containerProps.onScroll"
         @keydown.up.prevent="moveHighlight(true)"
@@ -702,7 +708,8 @@ defineExpose({
         >
           <RuiButton
             v-for="({ item, index }) in renderedData"
-            :key="index"
+            ref="renderedOptions"
+            :key="getIdentifier(item)?.toString()"
             :active="isActiveItem(item)"
             :size="dense ? 'sm' : undefined"
             tabindex="0"
