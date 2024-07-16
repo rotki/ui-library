@@ -9,9 +9,9 @@ if (fs.existsSync(dist))
   fs.rmSync(dist, { recursive: true });
 
 consola.info('Building library');
-execSync('pnpm run build');
+execSync('pnpm run build', { stdio: 'inherit' });
 consola.info('Building types');
-execSync('pnpm run build:types');
+execSync('pnpm run build:types', { stdio: 'inherit' });
 consola.info('resolving aliases');
-execSync('pnpm run resolve:alias');
+execSync('pnpm run resolve:alias', { stdio: 'inherit' });
 consola.success('build done');

@@ -3,7 +3,7 @@ import process from 'node:process';
 import consola from 'consola';
 
 consola.info('Generating icons');
-execSync('pnpm run generate-icons');
+execSync('pnpm run generate-icons', { stdio: 'inherit' });
 
 const env = process.env;
 if (
@@ -19,4 +19,4 @@ if (
 }
 
 consola.info('Running production build');
-execSync('pnpm run build:prod');
+execSync('pnpm run build:prod', { stdio: 'inherit' });
