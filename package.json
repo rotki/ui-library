@@ -70,7 +70,7 @@
     "build:tailwind": "tailwindcss -o dist/style.css --minify",
     "build:types": "vue-tsc -p tsconfig.build.json",
     "generate-icons": "node scripts/generate-icons.mjs",
-    "resolve:alias": "tsc-alias -p tsconfig.build.json",
+    "resolve:alias": "tsc-alias --replacer ./scripts/tsc-alias-replacer.cjs -p tsconfig.build.json",
     "dev": "vite",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
