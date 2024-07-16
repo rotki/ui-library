@@ -69,6 +69,7 @@
     "build:storybook": "STORYBOOK=true storybook build",
     "build:tailwind": "tailwindcss -o dist/style.css --minify",
     "build:types": "vue-tsc -p tsconfig.build.json",
+    "build:web-types": "node scripts/build-web-types.mjs",
     "generate-icons": "node scripts/generate-icons.mjs",
     "resolve:alias": "tsc-alias --replacer ./scripts/tsc-alias-replacer.cjs -p tsconfig.build.json",
     "dev": "vite",
@@ -93,6 +94,7 @@
     "@vueuse/shared": ">10.0.0",
     "vue": ">=3.4.0"
   },
+  "web-types": "dist/web-types.json",
   "devDependencies": {
     "@babel/core": "7.24.9",
     "@babel/types": "7.24.9",
@@ -150,6 +152,7 @@
     "vite": "5.3.5",
     "vitest": "2.0.4",
     "vue": "3.4.31",
+    "vue-component-meta": "2.0.26",
     "vue-loader": "17.4.2",
     "vue-router": "4.4.0",
     "vue-tsc": "2.0.26"

@@ -14,4 +14,6 @@ consola.info('Building types');
 execSync('pnpm run build:types', { stdio: 'inherit' });
 consola.info('resolving aliases');
 execSync('pnpm run resolve:alias', { stdio: 'inherit' });
+consola.info('build web-types.json');
+execSync('pnpm run build:web-types', { stdio: 'inherit' });
 consola.success('build done');

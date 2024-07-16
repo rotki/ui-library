@@ -36,6 +36,10 @@ export const baseColorsIntensities = [
   'a700',
 ];
 
+/**
+ * The available context colors.
+ * Keep in sync with build-web-types.mjs
+ */
 export const contextColors = [
   'primary',
   'secondary',
