@@ -1,16 +1,9 @@
-import { spawn } from 'node:child_process';
+import { execSync } from 'node:child_process';
 import process from 'node:process';
+import consola from 'consola';
 
-const generateIcons = spawn('pnpm', ['generate-icons'], {
-  stdio: [process.stdout, process.stderr],
-});
-
-generateIcons.on('close', (code) => {
-  if (code !== 0) {
-    console.error('[rotki-ui] generate-icons failed');
-    process.exit(code);
-  }
-});
+consola.info('Generating icons');
+execSync('pnpm run generate-icons');
 
 const env = process.env;
 if (
@@ -21,17 +14,9 @@ if (
   // from a project sub-folder
   || env.INIT_CWD.indexOf(env.PWD) === 0
 ) {
-  console.info('Skipping `prepare` script on local installs');
+  consola.info('Skipping `prepare` script on local installs');
   process.exit(0);
 }
 
-const prodBuild = spawn('pnpm', ['build:prod'], {
-  stdio: [process.stdout, process.stderr],
-});
-
-prodBuild.on('close', (code) => {
-  if (code !== 0) {
-    console.error('[rotki-ui] build:prod failed');
-    process.exit(code);
-  }
-});
+consola.info('Running production build');
+execSync('pnpm run build:prod');

@@ -1,6 +1,5 @@
 import path from 'node:path';
 import { lstat, readFile, readdir, writeFile } from 'node:fs/promises';
-import url from 'node:url';
 import fs from 'fs-extra';
 import { pascalCase } from 'scule';
 import { XMLParser } from 'fast-xml-parser';
@@ -9,10 +8,8 @@ const PREFIX = 'ri-';
 const TARGET = 'src/icons/';
 const CHUNK_SIZE = 500;
 
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
-
 function resolveRoot(...dir) {
-  return path.resolve(__dirname, '..', ...dir);
+  return path.resolve(import.meta.dirname, '..', ...dir);
 }
 
 function resolveRemixIconDir() {
