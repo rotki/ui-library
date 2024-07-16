@@ -334,13 +334,6 @@ import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
-    readonly $$: UnwrapRef<typeof import('vue/macros')['$$']>
-    readonly $: UnwrapRef<typeof import('vue/macros')['$']>
-    readonly $computed: UnwrapRef<typeof import('vue/macros')['$computed']>
-    readonly $customRef: UnwrapRef<typeof import('vue/macros')['$customRef']>
-    readonly $ref: UnwrapRef<typeof import('vue/macros')['$ref']>
-    readonly $shallowRef: UnwrapRef<typeof import('vue/macros')['$shallowRef']>
-    readonly $toRef: UnwrapRef<typeof import('vue/macros')['$toRef']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
@@ -656,13 +649,6 @@ declare module 'vue' {
 declare module '@vue/runtime-core' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
-    readonly $$: UnwrapRef<typeof import('vue/macros')['$$']>
-    readonly $: UnwrapRef<typeof import('vue/macros')['$']>
-    readonly $computed: UnwrapRef<typeof import('vue/macros')['$computed']>
-    readonly $customRef: UnwrapRef<typeof import('vue/macros')['$customRef']>
-    readonly $ref: UnwrapRef<typeof import('vue/macros')['$ref']>
-    readonly $shallowRef: UnwrapRef<typeof import('vue/macros')['$shallowRef']>
-    readonly $toRef: UnwrapRef<typeof import('vue/macros')['$toRef']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
