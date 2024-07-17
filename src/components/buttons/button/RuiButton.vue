@@ -170,7 +170,7 @@ const slots = useSlots();
   @apply disabled:bg-black/[.12] disabled:text-rui-text-disabled disabled:active:text-rui-text-disabled #{!important};
 
   .label {
-    @apply inline-block;
+    @apply inline-block text-nowrap;
   }
 
   &._rounded {
