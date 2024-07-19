@@ -108,20 +108,19 @@ const fieldStyles = computed(() => {
   return value;
 });
 
-const prependWidth = computed(() => {
-  const width = get(useElementBounding(prepend).width);
-  if (!width)
-    return '0rem';
+const prependWidth = ref('0px');
+const appendWidth = ref('0px');
 
-  return `${(width + 24) / 16}rem`;
+useResizeObserver(prepend, (entries) => {
+  const [entry] = entries;
+  const { width, left } = entry.contentRect;
+  set(prependWidth, `${width + left + 24}px`);
 });
 
-const appendWidth = computed(() => {
-  const width = get(useElementBounding(append).width);
-  if (!width)
-    return '0rem';
-
-  return `${(width + 24) / 16}rem`;
+useResizeObserver(append, (entries) => {
+  const [entry] = entries;
+  const { width, right } = entry.contentRect;
+  set(appendWidth, `${width + right + 24}px`);
 });
 
 const colorClass = computed(() => (props.color ? css[props.color] : undefined));
