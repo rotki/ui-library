@@ -1,11 +1,11 @@
 export const useGlobalId = createGlobalState(() => {
-  const count = ref(0);
+  const count = ref<number>(0);
 
-  const nextId = () => {
-    const countVal = get(count) + 1;
-    set(count, countVal);
+  const nextId = (): number => {
+    const increasedCount = get(count) + 1;
+    set(count, increasedCount);
 
-    return countVal;
+    return increasedCount;
   };
 
   return { count, nextId };
