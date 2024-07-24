@@ -96,9 +96,12 @@ const tabs = ref<TabsProps[]>([
         <RuiTab disabled>
           Tab 2
         </RuiTab>
-        <RuiTab>Tab 3</RuiTab>
-        <RuiTab>Tab 4</RuiTab>
-        <RuiTab>Tab 5</RuiTab>
+        <RuiTab
+          v-for="n in 3"
+          :key="n"
+        >
+          Tab {{ n + 2 }}
+        </RuiTab>
         <RuiTab
           link
           to="/steppers"
@@ -110,17 +113,11 @@ const tabs = ref<TabsProps[]>([
         v-model="data.modelValue"
         data-cy="tab-items"
       >
-        <RuiTabItem>
-          <RuiCard>Tab 1 Content</RuiCard>
-        </RuiTabItem>
-        <RuiTabItem>
-          <RuiCard>Tab 2 Content</RuiCard>
-        </RuiTabItem>
-        <RuiTabItem>
-          <RuiCard>Tab 3 Content</RuiCard>
-        </RuiTabItem>
-        <RuiTabItem>
-          <RuiCard>Tab 4 Content</RuiCard>
+        <RuiTabItem
+          v-for="n in 4"
+          :key="n"
+        >
+          <RuiCard>Tab {{ n }} Content</RuiCard>
         </RuiTabItem>
         <RuiTabItem>
           <RuiCard>

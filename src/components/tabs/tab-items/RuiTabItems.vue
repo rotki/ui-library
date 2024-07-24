@@ -23,14 +23,21 @@ watch(currIndex, (index) => {
   });
 });
 
+// When using dynamic content with v-for the slot content can contain fragment,
+// Go through the fragment and always return RuiTabItem only
+function getChildrenTabs(children: VNode[]): VNode[] {
+  return children.flatMap((item) => {
+    if (item.type === Fragment && Array.isArray(item.children) && item.children.length > 0)
+      return getChildrenTabs(item.children.filter(isVNode));
+
+    return [item];
+  }).flat();
+}
+
 const children = computed(() => {
   const slotContent = slots.default?.() ?? [];
 
-  // When using dynamic content with v-for the slot content is a single fragment
-  // containing the children components.
-  const tabs = slotContent.length === 1 && slotContent[0].type === Fragment
-    ? Array.isArray(slotContent[0].children) ? slotContent[0].children.filter(isVNode) : []
-    : slotContent;
+  const tabs = getChildrenTabs(slotContent);
 
   let anyActive = false;
   const children = tabs.map((tab, index) => {
