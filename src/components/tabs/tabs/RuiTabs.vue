@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { useRoute } from 'vue-router';
 import { throttleFilter } from '@vueuse/shared';
-import { Fragment, isVNode } from 'vue';
+import { Fragment, type VNode, isVNode } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
-import type { ContextColorsType } from '@/consts/colors';
 import type { Props as TabProps } from '@/components/tabs/tab/RuiTab.vue';
+import type { ContextColorsType } from '@/consts/colors';
 
 export interface Props {
   color?: ContextColorsType;
@@ -40,15 +40,22 @@ const bar = ref<HTMLDivElement>();
 const wrapper = ref<HTMLDivElement>();
 const showArrows: Ref<boolean> = ref(false);
 
+// When using dynamic content with v-for the slot content can contain fragment,
+// Go through the fragment and always return RuiTab only
+function getChildrenTabs(children: VNode[]): VNode[] {
+  return children.flatMap((item) => {
+    if (item.type === Fragment && Array.isArray(item.children) && item.children.length > 0)
+      return getChildrenTabs(item.children.filter(isVNode));
+
+    return [item];
+  }).flat();
+}
+
 const slots = useSlots();
 const children = computed(() => {
   const slotContent = slots.default?.() ?? [];
 
-  // When using dynamic content with v-for the slot content is a single fragment
-  // containing the children components.
-  const tabs = slotContent.length === 1 && slotContent[0].type === Fragment
-    ? Array.isArray(slotContent[0].children) ? slotContent[0].children.filter(isVNode) : []
-    : slotContent;
+  const tabs = getChildrenTabs(slotContent);
 
   const currentModelValue = get(internalModelValue);
   const inheritedProps = {
