@@ -166,9 +166,17 @@ describe('autocomplete', () => {
     // Even if the options changed, the search value should not be touch as long as the focus still there, so the UX is not breaking
     expect((wrapper.find('input').element as HTMLInputElement).value).toBe('Greece');
 
-    // Only after the search value is blurred, the search value can be reset
+    // Still not supposed to change the search value
+    const menu = document.body.querySelector('div[role=menu]') as HTMLDivElement;
+    menu.focus();
+    await nextTick();
+    expect((wrapper.find('input').element as HTMLInputElement).value).toBe('Greece');
+
+    // Only after nothing is focused anymore, the search value can be reset
+    menu.blur();
     (wrapper.find('input').element as HTMLInputElement).blur();
     await nextTick();
+    await vi.delay(100);
     expect((wrapper.find('input').element as HTMLInputElement).value).toBe('');
 
     // doesn't break when use chips
