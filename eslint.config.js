@@ -3,9 +3,7 @@ import rotki from '@rotki/eslint-config';
 
 export default rotki({
   vue: true,
-  typescript: {
-    tsconfigPath: 'tsconfig.eslint.json',
-  },
+  typescript: true,
   stylistic: true,
   formatters: true,
   storybook: true,

@@ -31,9 +31,8 @@ import '@fontsource/roboto/latin.css';
 To use the library you must install the library plugin:
 
 ```typescript
-import { createRui } from "@rotki/ui-library";
+import { createRui } from '@rotki/ui-library';
 
-...
 const RuiPlugin = createRui(options);
 app.use(RuiPlugin);
 ```
@@ -83,9 +82,9 @@ import { Ri4kFill, Ri4kLine, createRui } from '@rotki/ui-library';
 
 const RuiPlugin = createRui({
   theme: {
-    icons: [Ri4kFill, Ri4kLine]
-  }
-})
+    icons: [Ri4kFill, Ri4kLine],
+  },
+});
 app.use(RuiPlugin);
 ```
 

@@ -1,43 +1,43 @@
 <script lang="ts" setup>
 import { RuiSkeletonLoader, type SkeletonLoaderProps } from '@rotki/ui-library';
 
-const loaders = ref<
-(SkeletonLoaderProps & {
+type SkeletonData = SkeletonLoaderProps & {
   class?: string;
-})[]
-  >([
-    {},
-    {
-      type: 'paragraph',
-    },
-    {
-      type: 'heading',
-    },
-    {
-      type: 'article',
-    },
-    {
-      type: 'button',
-    },
-    {
-      type: 'icon',
-    },
-    {
-      type: 'avatar',
-    },
-    {
-      type: 'thumbnail',
-    },
-    {
-      type: 'custom',
-      class: 'w-20 h-20',
-    },
-    {
-      type: 'custom',
-      class: 'w-20 h-20',
-      rounded: 'full',
-    },
-  ]);
+};
+
+const loaders = ref<(SkeletonData)[]>([
+  {},
+  {
+    type: 'paragraph',
+  },
+  {
+    type: 'heading',
+  },
+  {
+    type: 'article',
+  },
+  {
+    type: 'button',
+  },
+  {
+    type: 'icon',
+  },
+  {
+    type: 'avatar',
+  },
+  {
+    type: 'thumbnail',
+  },
+  {
+    type: 'custom',
+    class: 'w-20 h-20',
+  },
+  {
+    type: 'custom',
+    class: 'w-20 h-20',
+    rounded: 'full',
+  },
+]);
 </script>
 
 <template>

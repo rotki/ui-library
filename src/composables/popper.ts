@@ -67,7 +67,6 @@ export function usePopper(options: Ref<PopperOptions>, disabled: Ref<boolean> = 
 
   const updatePopper = () => {
     // todo: see making things async/await has any side-effects
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     get(instance)?.update();
   };
 

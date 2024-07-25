@@ -7,489 +7,489 @@ import {
 } from '@rotki/ui-library/components';
 import { objectOmit } from '@vueuse/shared';
 
-const sections = ref<
-  {
-    title: string;
-    cards: (CardProps & {
-      image?: string;
-      header?: string;
-      customHeader?: string;
-      subheader?: string;
-      content?: string;
-      prepend?: string;
-      actions?: (ButtonProps & {
-        text: string;
-        clicks: number;
-      })[];
+interface CardData {
+  title: string;
+  cards: (CardProps & {
+    image?: string;
+    header?: string;
+    customHeader?: string;
+    subheader?: string;
+    content?: string;
+    prepend?: string;
+    actions?: (ButtonProps & {
+      text: string;
+      clicks: number;
     })[];
-  }[]
-      >([
-        {
-          title: 'Outline cards: default',
-          cards: [
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Card header',
-              subheader: 'Card subheader',
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Card with divider',
-              subheader: 'Card subheader',
-              divide: true,
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Dense Card',
-              subheader: 'Card subheader',
-              dense: true,
-              actions: [
-                {
-                  size: 'sm',
-                  variant: 'text',
-                  text: 'Action 1',
-                  color: 'secondary',
-                  clicks: 0,
-                },
-                {
-                  size: 'sm',
-                  variant: 'text',
-                  text: 'Action 2',
-                  color: 'primary',
-                  clicks: 0,
-                },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Dense Card',
-              subheader: 'Card subheader',
-              dense: true,
-              divide: true,
-              actions: [
-                {
-                  size: 'sm',
-                  variant: 'text',
-                  text: 'Action 1',
-                  color: 'secondary',
-                  clicks: 0,
-                },
-                {
-                  size: 'sm',
-                  variant: 'text',
-                  text: 'Action 2',
-                  color: 'primary',
-                  clicks: 0,
-                },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Elevated Card',
-              subheader: 'Card subheader',
-              elevation: 1,
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Elevated Card',
-              subheader: 'Card subheader',
-              elevation: 1,
-              divide: true,
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Card with Image',
-              subheader: 'Card subheader',
-              image: 'https://placehold.co/480x160',
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Divided Card with Image',
-              subheader: 'Card subheader',
-              image: 'https://placehold.co/480x160',
-              divide: true,
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Card with title prepend',
-              subheader: 'Card subheader',
-              prepend: 'OP',
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Divided Card with title prepend',
-              subheader: 'Card subheader',
-              prepend: 'OP',
-              divide: true,
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Dense Card with title prepend',
-              subheader: 'Card subheader',
-              prepend: 'OP',
-              dense: true,
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Dense Divided Card with title prepend',
-              subheader: 'Card subheader',
-              prepend: 'OP',
-              divide: true,
-              dense: true,
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Card without footer',
-              subheader: 'Card subheader',
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Divided Card without footer',
-              subheader: 'Card subheader',
-              divide: true,
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Card without footer',
-              subheader: 'Card subheader',
-              prepend: 'OP',
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Divided Card without footer',
-              subheader: 'Card subheader',
-              prepend: 'OP',
-              divide: true,
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Dense Card without footer',
-              subheader: 'Card subheader',
-              prepend: 'OP',
-              dense: true,
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Dense Divided Card without footer',
-              subheader: 'Card subheader',
-              prepend: 'OP',
-              divide: true,
-              dense: true,
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              customHeader: 'Dense with Custom header',
-              dense: true,
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              customHeader: 'Divided with Custom header',
-              divide: true,
-              dense: true,
-            },
-          ],
-        },
-        {
-          title: 'Flat cards',
-          cards: [
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              variant: 'flat',
-              header: 'Card header',
-              subheader: 'Card subheader',
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              variant: 'flat',
-              header: 'Card with divider',
-              subheader: 'Card subheader',
-              divide: true,
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              variant: 'flat',
-              header: 'Dense Card',
-              subheader: 'Card subheader',
-              dense: true,
-              actions: [
-                {
-                  size: 'sm',
-                  variant: 'text',
-                  text: 'Action 1',
-                  color: 'secondary',
-                  clicks: 0,
-                },
-                {
-                  size: 'sm',
-                  variant: 'text',
-                  text: 'Action 2',
-                  color: 'primary',
-                  clicks: 0,
-                },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              variant: 'flat',
-              header: 'Dense Card',
-              subheader: 'Card subheader',
-              dense: true,
-              divide: true,
-              actions: [
-                {
-                  size: 'sm',
-                  variant: 'text',
-                  text: 'Action 1',
-                  color: 'secondary',
-                  clicks: 0,
-                },
-                {
-                  size: 'sm',
-                  variant: 'text',
-                  text: 'Action 2',
-                  color: 'primary',
-                  clicks: 0,
-                },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              variant: 'flat',
-              header: 'Elevated Card',
-              subheader: 'Card subheader',
-              elevation: 1,
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              variant: 'flat',
-              header: 'Elevated Card',
-              subheader: 'Card subheader',
-              elevation: 1,
-              divide: true,
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              variant: 'flat',
-              header: 'Card with Image',
-              subheader: 'Card subheader',
-              image: 'https://placehold.co/480x160',
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              variant: 'flat',
-              header: 'Divided Card with Image',
-              subheader: 'Card subheader',
-              image: 'https://placehold.co/480x160',
-              divide: true,
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              variant: 'flat',
-              header: 'Card with title prepend',
-              subheader: 'Card subheader',
-              prepend: 'OP',
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              variant: 'flat',
-              header: 'Divided Card with title prepend',
-              subheader: 'Card subheader',
-              prepend: 'OP',
-              divide: true,
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              variant: 'flat',
-              header: 'Dense Card with title prepend',
-              subheader: 'Card subheader',
-              prepend: 'OP',
-              dense: true,
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              variant: 'flat',
-              header: 'Dense Divided Card with title prepend',
-              subheader: 'Card subheader',
-              prepend: 'OP',
-              divide: true,
-              dense: true,
-              actions: [
-                { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
-                { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
-              ],
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Card without footer',
-              subheader: 'Card subheader',
-              variant: 'flat',
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Divided Card without footer',
-              subheader: 'Card subheader',
-              variant: 'flat',
-              divide: true,
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Card without footer',
-              subheader: 'Card subheader',
-              variant: 'flat',
-              prepend: 'OP',
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Divided Card without footer',
-              subheader: 'Card subheader',
-              variant: 'flat',
-              prepend: 'OP',
-              divide: true,
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Dense Card without footer',
-              subheader: 'Card subheader',
-              variant: 'flat',
-              prepend: 'OP',
-              dense: true,
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Dense Divided Card without footer',
-              subheader: 'Card subheader',
-              variant: 'flat',
-              prepend: 'OP',
-              divide: true,
-              dense: true,
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              customHeader: 'Dense with Custom header',
-              variant: 'flat',
-              dense: true,
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              customHeader: 'Divided with Custom header',
-              variant: 'flat',
-              divide: true,
-              dense: true,
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Card with small border radius',
-              subheader: 'Card subheader',
-              variant: 'outlined',
-              prepend: 'OP',
-              rounded: 'sm',
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Divided Card with large border radius',
-              subheader: 'Card subheader',
-              variant: 'outlined',
-              prepend: 'OP',
-              rounded: 'lg',
-              divide: true,
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Card with image and small border radius',
-              subheader: 'Card subheader',
-              variant: 'outlined',
-              prepend: 'OP',
-              rounded: 'sm',
-              image: 'https://placehold.co/480x160',
-            },
-            {
-              content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-              header: 'Card with image and large border radius',
-              subheader: 'Card subheader',
-              variant: 'outlined',
-              prepend: 'OP',
-              rounded: 'lg',
-              image: 'https://placehold.co/480x160',
-            },
-          ],
-        },
-      ]);
+  })[];
+}
+
+const sections = ref<CardData[]>([
+  {
+    title: 'Outline cards: default',
+    cards: [
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Card header',
+        subheader: 'Card subheader',
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Card with divider',
+        subheader: 'Card subheader',
+        divide: true,
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Dense Card',
+        subheader: 'Card subheader',
+        dense: true,
+        actions: [
+          {
+            size: 'sm',
+            variant: 'text',
+            text: 'Action 1',
+            color: 'secondary',
+            clicks: 0,
+          },
+          {
+            size: 'sm',
+            variant: 'text',
+            text: 'Action 2',
+            color: 'primary',
+            clicks: 0,
+          },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Dense Card',
+        subheader: 'Card subheader',
+        dense: true,
+        divide: true,
+        actions: [
+          {
+            size: 'sm',
+            variant: 'text',
+            text: 'Action 1',
+            color: 'secondary',
+            clicks: 0,
+          },
+          {
+            size: 'sm',
+            variant: 'text',
+            text: 'Action 2',
+            color: 'primary',
+            clicks: 0,
+          },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Elevated Card',
+        subheader: 'Card subheader',
+        elevation: 1,
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Elevated Card',
+        subheader: 'Card subheader',
+        elevation: 1,
+        divide: true,
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Card with Image',
+        subheader: 'Card subheader',
+        image: 'https://placehold.co/480x160',
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Divided Card with Image',
+        subheader: 'Card subheader',
+        image: 'https://placehold.co/480x160',
+        divide: true,
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Card with title prepend',
+        subheader: 'Card subheader',
+        prepend: 'OP',
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Divided Card with title prepend',
+        subheader: 'Card subheader',
+        prepend: 'OP',
+        divide: true,
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Dense Card with title prepend',
+        subheader: 'Card subheader',
+        prepend: 'OP',
+        dense: true,
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Dense Divided Card with title prepend',
+        subheader: 'Card subheader',
+        prepend: 'OP',
+        divide: true,
+        dense: true,
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Card without footer',
+        subheader: 'Card subheader',
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Divided Card without footer',
+        subheader: 'Card subheader',
+        divide: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Card without footer',
+        subheader: 'Card subheader',
+        prepend: 'OP',
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Divided Card without footer',
+        subheader: 'Card subheader',
+        prepend: 'OP',
+        divide: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Dense Card without footer',
+        subheader: 'Card subheader',
+        prepend: 'OP',
+        dense: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Dense Divided Card without footer',
+        subheader: 'Card subheader',
+        prepend: 'OP',
+        divide: true,
+        dense: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        customHeader: 'Dense with Custom header',
+        dense: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        customHeader: 'Divided with Custom header',
+        divide: true,
+        dense: true,
+      },
+    ],
+  },
+  {
+    title: 'Flat cards',
+    cards: [
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        variant: 'flat',
+        header: 'Card header',
+        subheader: 'Card subheader',
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        variant: 'flat',
+        header: 'Card with divider',
+        subheader: 'Card subheader',
+        divide: true,
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        variant: 'flat',
+        header: 'Dense Card',
+        subheader: 'Card subheader',
+        dense: true,
+        actions: [
+          {
+            size: 'sm',
+            variant: 'text',
+            text: 'Action 1',
+            color: 'secondary',
+            clicks: 0,
+          },
+          {
+            size: 'sm',
+            variant: 'text',
+            text: 'Action 2',
+            color: 'primary',
+            clicks: 0,
+          },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        variant: 'flat',
+        header: 'Dense Card',
+        subheader: 'Card subheader',
+        dense: true,
+        divide: true,
+        actions: [
+          {
+            size: 'sm',
+            variant: 'text',
+            text: 'Action 1',
+            color: 'secondary',
+            clicks: 0,
+          },
+          {
+            size: 'sm',
+            variant: 'text',
+            text: 'Action 2',
+            color: 'primary',
+            clicks: 0,
+          },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        variant: 'flat',
+        header: 'Elevated Card',
+        subheader: 'Card subheader',
+        elevation: 1,
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        variant: 'flat',
+        header: 'Elevated Card',
+        subheader: 'Card subheader',
+        elevation: 1,
+        divide: true,
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        variant: 'flat',
+        header: 'Card with Image',
+        subheader: 'Card subheader',
+        image: 'https://placehold.co/480x160',
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        variant: 'flat',
+        header: 'Divided Card with Image',
+        subheader: 'Card subheader',
+        image: 'https://placehold.co/480x160',
+        divide: true,
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        variant: 'flat',
+        header: 'Card with title prepend',
+        subheader: 'Card subheader',
+        prepend: 'OP',
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        variant: 'flat',
+        header: 'Divided Card with title prepend',
+        subheader: 'Card subheader',
+        prepend: 'OP',
+        divide: true,
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        variant: 'flat',
+        header: 'Dense Card with title prepend',
+        subheader: 'Card subheader',
+        prepend: 'OP',
+        dense: true,
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        variant: 'flat',
+        header: 'Dense Divided Card with title prepend',
+        subheader: 'Card subheader',
+        prepend: 'OP',
+        divide: true,
+        dense: true,
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Card without footer',
+        subheader: 'Card subheader',
+        variant: 'flat',
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Divided Card without footer',
+        subheader: 'Card subheader',
+        variant: 'flat',
+        divide: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Card without footer',
+        subheader: 'Card subheader',
+        variant: 'flat',
+        prepend: 'OP',
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Divided Card without footer',
+        subheader: 'Card subheader',
+        variant: 'flat',
+        prepend: 'OP',
+        divide: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Dense Card without footer',
+        subheader: 'Card subheader',
+        variant: 'flat',
+        prepend: 'OP',
+        dense: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Dense Divided Card without footer',
+        subheader: 'Card subheader',
+        variant: 'flat',
+        prepend: 'OP',
+        divide: true,
+        dense: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        customHeader: 'Dense with Custom header',
+        variant: 'flat',
+        dense: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        customHeader: 'Divided with Custom header',
+        variant: 'flat',
+        divide: true,
+        dense: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Card with small border radius',
+        subheader: 'Card subheader',
+        variant: 'outlined',
+        prepend: 'OP',
+        rounded: 'sm',
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Divided Card with large border radius',
+        subheader: 'Card subheader',
+        variant: 'outlined',
+        prepend: 'OP',
+        rounded: 'lg',
+        divide: true,
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Card with image and small border radius',
+        subheader: 'Card subheader',
+        variant: 'outlined',
+        prepend: 'OP',
+        rounded: 'sm',
+        image: 'https://placehold.co/480x160',
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Card with image and large border radius',
+        subheader: 'Card subheader',
+        variant: 'outlined',
+        prepend: 'OP',
+        rounded: 'lg',
+        image: 'https://placehold.co/480x160',
+      },
+    ],
+  },
+]);
 </script>
 
 <template>
