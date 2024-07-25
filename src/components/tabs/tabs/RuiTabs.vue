@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { throttleFilter } from '@vueuse/shared';
 import { Fragment, type VNode, isVNode } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
@@ -147,6 +147,8 @@ function keepActiveTabVisible() {
   });
 }
 
+const router = useRouter();
+
 function applyNewValue(onlyLink = false) {
   const enabledChildren = get(children).filter(
     child => !child.props.disabled,
@@ -158,8 +160,10 @@ function applyNewValue(onlyLink = false) {
       if (!onlyLink && index === 0 && props.value)
         newModelValue = props.value;
 
-      if (props.link !== false && props.to && isPathMatch(props.to, props))
-        newModelValue = props.to;
+      const to = props.to ? router.resolve(props.to) : undefined;
+
+      if (props.link !== false && to && isPathMatch(to.fullPath, props))
+        newModelValue = to.fullPath;
     });
     updateModelValue(newModelValue);
   }

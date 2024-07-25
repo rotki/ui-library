@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import type { RouteLocationRaw } from 'vue-router';
 import type { ContextColorsType } from '@/consts/colors';
 
 export interface Props {
@@ -11,7 +12,7 @@ export interface Props {
   activeClass?: string;
   link?: boolean;
   target?: string;
-  to?: string;
+  to?: RouteLocationRaw;
   exact?: boolean;
   exactPath?: boolean;
   vertical?: boolean;

@@ -9,6 +9,9 @@ import RuiTab from '@/components/tabs/tab/RuiTab.vue';
 
 vi.mock('vue-router', () => ({
   useRoute: vi.fn().mockImplementation(() => ref()),
+  useRouter: vi.fn().mockImplementation(() => ({
+    resolve: vi.fn(),
+  })),
 }));
 
 function createWrapper(options: ComponentMountingOptions<typeof RuiTabs> = {}, customTabValue: boolean = false) {
