@@ -12,7 +12,7 @@ export function useStickyTableHeader(sticky: MaybeRef<boolean> = ref(false), off
     head: ':scope > thead[data-id=head-main]',
     headClone: ':scope > thead[data-id=head-clone]',
     row: ':scope > tbody > tr:not([hidden])',
-    th: ':scope > tr > th',
+    th: ':scope > th',
   };
 
   const watchCellWidth = () => {
@@ -22,27 +22,43 @@ export function useStickyTableHeader(sticky: MaybeRef<boolean> = ref(false), off
       return;
 
     const theadClone: HTMLHeadElement | null = root.querySelector(
-      selectors.headClone,
+      `${selectors.headClone} > tr`,
     );
 
     const head: HTMLHeadElement | null
-      = root.querySelector(selectors.head) ?? null;
+      = root.querySelector(`${selectors.head} > tr`) ?? null;
 
-    const columns: NodeListOf<HTMLElement> | undefined = head?.querySelectorAll(
-      selectors.th,
-    );
+    const observeChildTh = () => {
+      const columns: NodeListOf<HTMLElement> | undefined = head?.querySelectorAll(
+        selectors.th,
+      );
 
-    const clonedColumns: NodeListOf<HTMLElement> | undefined
-      = theadClone?.querySelectorAll(selectors.th);
+      const clonedColumns: NodeListOf<HTMLElement> | undefined
+        = theadClone?.querySelectorAll(selectors.th);
 
-    clonedColumns?.forEach((th: HTMLElement, i: number) => {
-      useResizeObserver(th, (entries) => {
-        const cellRect = entries[0].target.getBoundingClientRect();
-        const column = columns?.item(i);
-        if (column)
-          column.style.width = `${cellRect.width}px`;
+      clonedColumns?.forEach((th: HTMLElement, i: number) => {
+        useResizeObserver(th, (entries) => {
+          const cellRect = entries[0].target.getBoundingClientRect();
+          const column = columns?.item(i);
+          if (column)
+            column.style.width = `${cellRect.width}px`;
+        });
       });
+    };
+
+    useMutationObserver(theadClone, (mutationsList) => {
+      for (const mutation of mutationsList) {
+        if (mutation.type === 'childList' || mutation.type === 'attributes')
+          observeChildTh();
+      }
+    }, {
+      attributes: true,
+      childList: true,
+      subtree: true,
     });
+
+    // Initial setup to observe the existing th elements
+    observeChildTh();
   };
 
   const toggleStickyClass = () => {
