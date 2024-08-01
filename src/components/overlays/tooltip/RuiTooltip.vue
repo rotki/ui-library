@@ -7,6 +7,7 @@ export interface Props {
   hideArrow?: boolean;
   openDelay?: number;
   closeDelay?: number;
+  persistOnTooltipHover?: boolean;
   popper?: PopperOptions;
   tooltipClass?: string;
 }
@@ -21,6 +22,7 @@ const props = withDefaults(defineProps<Props>(), {
   hideArrow: false,
   openDelay: 0,
   closeDelay: 500,
+  persistOnTooltipHover: false,
   popper: () => ({}),
   tooltipClass: '',
 });
@@ -52,6 +54,7 @@ const {
     <slot
       name="activator"
       :open="open"
+      :close="onClose"
     />
 
     <Teleport
@@ -83,6 +86,8 @@ const {
             key="tooltip"
             :class="css.base"
             role="tooltip-content"
+            @mouseover="persistOnTooltipHover && onOpen()"
+            @mouseleave="persistOnTooltipHover && onClose()"
           >
             <slot>
               {{ text }}
