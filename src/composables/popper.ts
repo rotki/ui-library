@@ -70,7 +70,7 @@ export function usePopper(options: Ref<PopperOptions>, disabled: Ref<boolean> = 
     get(instance)?.update();
   };
 
-  const onOpen = () => {
+  const onOpen = (immediate = false) => {
     if (get(disabled))
       return;
 
@@ -86,13 +86,13 @@ export function usePopper(options: Ref<PopperOptions>, disabled: Ref<boolean> = 
       const timeout = setTimeout(() => {
         set(open, true);
         set(openTimeout, undefined);
-      }, get(openDelay));
+      }, immediate ? 0 : get(openDelay));
 
       set(openTimeout, timeout);
     }
   };
 
-  const onClose = () => {
+  const onClose = (immediate = false) => {
     if (get(disabled))
       return;
 
@@ -108,7 +108,7 @@ export function usePopper(options: Ref<PopperOptions>, disabled: Ref<boolean> = 
 
         set(open, false);
         set(closeTimeout, undefined);
-      }, get(closeDelay));
+      }, immediate ? 0 : get(closeDelay));
 
       set(closeTimeout, timeout);
     }
