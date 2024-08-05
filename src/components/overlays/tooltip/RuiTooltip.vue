@@ -41,6 +41,11 @@ const {
   onPopperLeave,
   updatePopper,
 } = usePopper(popper, disabled, openDelay, closeDelay);
+
+defineExpose({
+  onOpen,
+  onClose,
+});
 </script>
 
 <template>
