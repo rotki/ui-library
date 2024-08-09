@@ -87,7 +87,7 @@ const searchInputModel = defineModel<string>('searchInput');
 const css = useCssModule();
 const slots = useSlots();
 
-const { dense, variant, disabled, options } = toRefs(props);
+const { dense, disabled, options } = toRefs(props);
 
 const { getText, getIdentifier } = useDropdownOptionProperty<TValue, TItem>({
   keyAttr: props.keyAttr,
@@ -260,7 +260,7 @@ const {
   hideSelected: props.hideSelected,
 });
 
-const outlined = computed<boolean>(() => get(variant) === 'outlined');
+const outlined = computed<boolean>(() => props.variant === 'outlined');
 
 const float: ComputedRef<boolean> = logicAnd(
   logicOr(

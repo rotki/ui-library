@@ -15,7 +15,7 @@ type RuiAutoCompleteProps<TValue = number, TItem = SelectOption> = AutoCompleteP
 
 const options = createOptions();
 
-const autoComplete = ref<AutoCompleteProps<RuiAutoCompleteProps>[]>([
+const autoComplete = ref<RuiAutoCompleteProps[]>([
   {
     disabled: false,
     keyAttr: 'id',
@@ -123,7 +123,7 @@ const autoCompleteCustom = ref<RuiAutoCompleteProps[]>([
 
 const primitiveOptions: string[] = ['Lorem', 'Ipsum', 'Dolor', 'Sit amet', 'Consecteur'];
 
-const autoCompletePrimitive = ref<AutoCompleteProps<string>[]>([
+const autoCompletePrimitive = ref<RuiAutoCompleteProps<string[] | string, string>[]>([
   {
     modelValue: 'Lorem',
     options: primitiveOptions,

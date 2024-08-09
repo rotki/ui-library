@@ -5,7 +5,7 @@ import type { SetupContext } from 'vue';
 interface CurrencyOptions {
   currency?: string;
   locale?: string;
-  style?: string;
+  style?: Intl.NumberFormatOptionsStyle;
   fractionDigits?: number;
 }
 
