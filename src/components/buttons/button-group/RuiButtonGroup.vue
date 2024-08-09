@@ -38,6 +38,17 @@ const emit = defineEmits<{
 const slots = useSlots();
 const { modelValue, required, disabled, color, variant, size } = toRefs(props);
 
+// When using dynamic content with v-for the slot content can contain fragment,
+// Go through the fragment and always return RuiButton only
+function getChildren(children: VNode[]): VNode[] {
+  return children.flatMap((item) => {
+    if (item.type === Fragment && Array.isArray(item.children) && item.children.length > 0)
+      return getChildren(item.children.filter(isVNode));
+
+    return [item];
+  }).flat();
+}
+
 const children = computed(() => {
   // if group is disabled, disable child buttons
   const isDisabled = get(disabled);
@@ -48,9 +59,7 @@ const children = computed(() => {
 
   // When using dynamic content with v-for the slot content is a single fragment
   // containing the children components.
-  const children = slotContent.length === 1 && slotContent[0].type === Fragment
-    ? Array.isArray(slotContent[0].children) ? slotContent[0].children.filter(isVNode) : []
-    : slotContent;
+  const children = getChildren(slotContent);
 
   return children.map((child, i) => {
     // child props are in kebab-case it seems
