@@ -388,7 +388,6 @@ function textValueToProperValue(val: any): TItem {
   if (!keyAttr)
     return val;
 
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return {
     [keyAttr]: val,
     ...(

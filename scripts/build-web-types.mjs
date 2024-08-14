@@ -4,9 +4,10 @@ import consola from 'consola';
 import fg from 'fast-glob';
 import { kebabCase, pascalCase } from 'scule';
 import { createChecker } from 'vue-component-meta';
-import pkg from '../package.json' assert { type: 'json' };
 
 const __dirname = import.meta.dirname;
+
+const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), { encoding: 'utf8' }));
 
 /**
  * Replaces the double quotes in a string with single quotes and returns it.

@@ -115,7 +115,7 @@ export function getTextToken(string: any): string {
   if (!string)
     return '';
 
-  return string.toString().toLowerCase().replace(/[^\dA-Za-z]/g, '');
+  return string.toString().toLowerCase().replace(/[^\da-z]/gi, '');
 }
 
 export function transformPropsUnit(value?: string | number): string | undefined {

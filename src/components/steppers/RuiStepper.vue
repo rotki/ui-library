@@ -67,8 +67,9 @@ watch(step, () => {
   if (
     !get(keepActiveVisible)
     || get(orientation) !== StepperOrientation.horizontal
-  )
+  ) {
     return;
+  }
 
   nextTick(() => {
     const elem = get(wrapperRef);
