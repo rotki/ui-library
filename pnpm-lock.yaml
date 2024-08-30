@@ -177,8 +177,8 @@ importers:
         specifier: 3.4.38
         version: 3.4.38(typescript@5.5.4)
       vue-component-meta:
-        specifier: 2.1.2
-        version: 2.1.2(typescript@5.5.4)
+        specifier: 2.0.29
+        version: 2.0.29(typescript@5.5.4)
       vue-loader:
         specifier: 17.4.2
         version: 17.4.2(@vue/compiler-sfc@3.4.38)(vue@3.4.38(typescript@5.5.4))(webpack@5.85.0(esbuild@0.21.5))
@@ -2154,14 +2154,6 @@ packages:
 
   '@vue/language-core@2.0.29':
     resolution: {integrity: sha512-o2qz9JPjhdoVj8D2+9bDXbaI4q2uZTHQA/dbyZT4Bj1FR9viZxDJnLcKVHfxdn6wsOzRgpqIzJEEmSSvgMvDTQ==}
-    peerDependencies:
-      typescript: '*'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-
-  '@vue/language-core@2.1.2':
-    resolution: {integrity: sha512-tt2J7C+l0J/T5PaLhJ0jvCCi0JNwu3e8azWTYxW3jmAW5B/dac0g5UxmI7l59CQgCGFotqUqI3tXjfZgoWNtog==}
     peerDependencies:
       typescript: '*'
     peerDependenciesMeta:
@@ -5830,8 +5822,8 @@ packages:
   vscode-uri@3.0.8:
     resolution: {integrity: sha512-AyFQ0EVmsOZOlAnxoFOGOq1SQDWAB7C6aqMGS23svWAllfOaxbuFvcT8D1i8z3Gyn8fraVeZNNmN6e9bxxXkKw==}
 
-  vue-component-meta@2.1.2:
-    resolution: {integrity: sha512-e6N0n6LgcA1un5asYzOjo5+oOUjJopJEQthyJRraBUMt8tdNKobmziplz9X2wx4PFLUMUW12Pd4SjF6FtADAyg==}
+  vue-component-meta@2.0.29:
+    resolution: {integrity: sha512-yIfkOnlv4esuTWA3zyUMl5g6k1BLtwuykRbBH4/bcmaxFgtVSDS4nkrNwvb4Pf30nmAghtL3/YClRKc5dvxaBA==}
     peerDependencies:
       typescript: '*'
     peerDependenciesMeta:
@@ -5840,6 +5832,9 @@ packages:
 
   vue-component-type-helpers@2.0.17:
     resolution: {integrity: sha512-2car49m8ciqg/JjgMBkx7o/Fd2A7fHESxNqL/2vJYFLXm4VwYO4yH0rexOi4a35vwNgDyvt17B07Vj126l9rAQ==}
+
+  vue-component-type-helpers@2.0.29:
+    resolution: {integrity: sha512-58i+ZhUAUpwQ+9h5Hck0D+jr1qbYl4voRt5KffBx8qzELViQ4XdT/Tuo+mzq8u63teAG8K0lLaOiL5ofqW38rg==}
 
   vue-component-type-helpers@2.1.2:
     resolution: {integrity: sha512-URuxnrOhO9lUG4LOAapGWBaa/WOLDzzyAbL+uKZqT7RS+PFy0cdXI2mUSh7GaMts6vtHaeVbGk7trd0FPJi65Q==}
@@ -7696,7 +7691,7 @@ snapshots:
       storybook: 8.2.9(@babel/preset-env@7.24.5(@babel/core@7.25.2))
       typescript: 5.5.4
       vite: 5.4.2(@types/node@20.16.2)(sass@1.77.8)(terser@5.17.7)
-      vue-component-meta: 2.1.2(typescript@5.5.4)
+      vue-component-meta: 2.0.29(typescript@5.5.4)
       vue-docgen-api: 4.78.0(vue@3.4.38(typescript@5.5.4))
     transitivePeerDependencies:
       - '@preact/preset-vite'
@@ -8305,19 +8300,6 @@ snapshots:
       '@vue/compiler-dom': 3.4.38
       '@vue/compiler-vue2': 2.7.16
       '@vue/shared': 3.4.38
-      computeds: 0.0.1
-      minimatch: 9.0.5
-      muggle-string: 0.4.1
-      path-browserify: 1.0.1
-    optionalDependencies:
-      typescript: 5.5.4
-
-  '@vue/language-core@2.1.2(typescript@5.5.4)':
-    dependencies:
-      '@volar/language-core': 2.4.1
-      '@vue/compiler-dom': 3.4.37
-      '@vue/compiler-vue2': 2.7.16
-      '@vue/shared': 3.4.37
       computeds: 0.0.1
       minimatch: 9.0.5
       muggle-string: 0.4.1
@@ -12258,16 +12240,18 @@ snapshots:
 
   vscode-uri@3.0.8: {}
 
-  vue-component-meta@2.1.2(typescript@5.5.4):
+  vue-component-meta@2.0.29(typescript@5.5.4):
     dependencies:
       '@volar/typescript': 2.4.1
-      '@vue/language-core': 2.1.2(typescript@5.5.4)
+      '@vue/language-core': 2.0.29(typescript@5.5.4)
       path-browserify: 1.0.1
-      vue-component-type-helpers: 2.1.2
+      vue-component-type-helpers: 2.0.29
     optionalDependencies:
       typescript: 5.5.4
 
   vue-component-type-helpers@2.0.17: {}
+
+  vue-component-type-helpers@2.0.29: {}
 
   vue-component-type-helpers@2.1.2: {}
 

@@ -152,7 +152,7 @@
     "vite": "5.4.2",
     "vitest": "2.0.5",
     "vue": "3.4.38",
-    "vue-component-meta": "2.1.2",
+    "vue-component-meta": "2.0.29",
     "vue-loader": "17.4.2",
     "vue-router": "4.4.3",
     "vue-tsc": "2.0.29"
