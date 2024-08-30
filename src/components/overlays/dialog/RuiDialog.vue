@@ -6,7 +6,7 @@ export interface DialogProps {
   maxWidth?: string | number;
   bottomSheet?: boolean;
   contentClass?: any;
-  zIndex?: number;
+  zIndex?: string | number;
 }
 
 defineOptions({
@@ -138,6 +138,7 @@ const contentTransition = computed(() => {
       <div
         v-if="isOpen || internalValue"
         :class="css.wrapper"
+        :style="{ zIndex }"
         role="dialog"
         tabindex="0"
         @keydown.esc.stop="!persistent && close()"
@@ -175,8 +176,6 @@ const contentTransition = computed(() => {
 <style lang="scss" module>
 .wrapper {
   @apply fixed w-full h-full top-0 left-0;
-
-  z-index: v-bind(zIndex);
 }
 
 .overlay {
