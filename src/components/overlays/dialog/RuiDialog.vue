@@ -6,6 +6,7 @@ export interface DialogProps {
   maxWidth?: string | number;
   bottomSheet?: boolean;
   contentClass?: any;
+  zIndex?: number;
 }
 
 defineOptions({
@@ -18,6 +19,7 @@ const props = withDefaults(defineProps<DialogProps>(), {
   width: '98%',
   bottomSheet: false,
   contentClass: '',
+  zIndex: 9999,
 });
 
 const emit = defineEmits<{
@@ -172,7 +174,9 @@ const contentTransition = computed(() => {
 
 <style lang="scss" module>
 .wrapper {
-  @apply fixed z-[9999] w-full h-full top-0 left-0;
+  @apply fixed w-full h-full top-0 left-0;
+
+  z-index: v-bind(zIndex);
 }
 
 .overlay {
