@@ -1,6 +1,6 @@
 <script lang="ts" setup>
+import { type RuiIcons, isRuiIcon } from '@/icons';
 import type { ContextColorsType } from '@/consts/colors';
-import type { RuiIcons } from '@/icons';
 
 export interface Props {
   name: RuiIcons;
@@ -17,20 +17,18 @@ const props = withDefaults(defineProps<Props>(), {
   color: undefined,
 });
 
-const css = useCssModule();
 const { registeredIcons } = useIcons();
 
-const { name } = toRefs(props);
-
 const path: ComputedRef<string | undefined> = computed(() => {
-  const nameVal = get(name);
-  const iconName = `ri-${nameVal}`;
+  const name = props.name;
+  if (!isRuiIcon(name)) {
+    console.warn(`icon ${name} must be a valid RuiIcon`);
+  }
+  const iconName = `ri-${name}`;
   const found = get(registeredIcons)[iconName];
 
   if (!found) {
-    console.error(
-      `Icons "${nameVal}" not found. Make sure that you have register the icon when installing the RuiPlugin`,
-    );
+    console.error(`Icons "${name}" not found. Make sure that you have register the icon when installing the RuiPlugin`);
   }
   return found;
 });
@@ -38,7 +36,7 @@ const path: ComputedRef<string | undefined> = computed(() => {
 
 <template>
   <svg
-    :class="[css.remixicon, css[color ?? '']]"
+    :class="[$style.remixicon, $style[color ?? '']]"
     :height="size"
     :width="size"
     viewBox="0 0 24 24"

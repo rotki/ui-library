@@ -124,8 +124,7 @@ import { type GeneratedIcon } from '@/types/icons';\n
     .map(x => `"${x.replace('ri-', '')}"`)
     .join(',')}] as const;\n`;
 
-  indexFileContent += `export type RuiIcons = (typeof RuiIcons)[number];\n`;
-
+  indexFileContent += `export type RuiIcons = string;\n`;
   indexFileContent += `
 export function isRuiIcon(x: any): x is RuiIcons {
   return RuiIcons.includes(x);
