@@ -92,7 +92,7 @@ export function useDropdownMenu<TValue, TItem>({
     },
   );
 
-  const renderedData = useArrayMap(list, ({ data, index }) => ({ index, item: data }));
+  const renderedData = useArrayMap(list, ({ data, index: _index }) => ({ _index, item: data }));
 
   const isOpen = ref(false);
 

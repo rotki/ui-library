@@ -278,18 +278,18 @@ function clear() {
           ref="menuRef"
         >
           <RuiButton
-            v-for="({ item, index }) in renderedData"
-            :key="index"
+            v-for="({ item, _index }) in renderedData"
+            :key="_index"
             :active="isActiveItem(item)"
             :size="dense ? 'sm' : undefined"
             :model-value="getIdentifier(item)"
             variant="list"
             :class="{
-              highlighted: highlightedIndex === index,
-              [css.highlighted]: !isActiveItem(item) && highlightedIndex === index,
+              highlighted: highlightedIndex === _index,
+              [css.highlighted]: !isActiveItem(item) && highlightedIndex === _index,
             }"
-            @update:model-value="setValue(item, index)"
-            @mousedown="highlightedIndex = index"
+            @update:model-value="setValue(item, _index)"
+            @mousedown="highlightedIndex = _index"
           >
             <template #prepend>
               <slot
