@@ -141,6 +141,7 @@ const contentTransition = computed(() => {
         :style="{ zIndex }"
         role="dialog"
         tabindex="0"
+        v-bind="$attrs"
         @keydown.esc.stop="!persistent && close()"
       >
         <Transition
