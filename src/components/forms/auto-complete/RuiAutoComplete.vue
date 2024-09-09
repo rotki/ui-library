@@ -183,7 +183,7 @@ const value = computed<TItem[]>({
         if (inOptions)
           return filtered.push(inOptions);
         if (props.customValue)
-          return filtered.push(textValueToProperValue(val));
+          return filtered.push(textValueToProperValue(val, props.returnObject));
       });
 
       if (multiple || filtered.length === 0) {
@@ -208,7 +208,7 @@ const value = computed<TItem[]>({
         if (inOptions)
           return filtered.push(inOptions);
         if (props.customValue)
-          return filtered.push(textValueToProperValue(val));
+          return filtered.push(textValueToProperValue(val, props.returnObject));
       });
 
       if (get(shouldApplyValueAsSearch) && !get(recentlyFocused)) {
@@ -340,10 +340,7 @@ watch(focusedValueIndex, async (index) => {
     return;
 
   await nextTick(() => {
-    const keyAttr = props.keyAttr;
-    const entry = get(value)[index];
-    const data = keyAttr ? entry[keyAttr] : entry;
-    const activeChip = get(activator).querySelector(`[data-value="${data}"]`);
+    const activeChip = get(activator).querySelector(`[data-index="${index}"]`);
     activeChip?.focus();
   });
 });
@@ -382,10 +379,10 @@ const inputClass = computed<string>(() => {
   return 'flex-1 min-w-0';
 });
 
-function textValueToProperValue(val: any): TItem {
+function textValueToProperValue(val: any, returnObject: boolean = false): TItem {
   const keyAttr = props.keyAttr;
   const textAttr = props.textAttr;
-  if (!keyAttr)
+  if (!keyAttr || returnObject)
     return val;
 
   return {
@@ -449,6 +446,7 @@ function onInputDeletePressed(): void {
 
 function chipAttrs(item: TItem, index: number) {
   return {
+    'data-index': index,
     'data-value': getIdentifier(item),
     'onKeydown': (event: KeyboardEvent): void => {
       const { key } = event;
@@ -710,7 +708,7 @@ defineExpose({
             ref="menuRef"
           >
             <RuiButton
-              v-for="({ item, index }) in renderedData"
+              v-for="({ item, _index }) in renderedData"
               ref="renderedOptions"
               :key="getIdentifier(item)?.toString()"
               :active="isActiveItem(item)"
@@ -718,12 +716,12 @@ defineExpose({
               tabindex="0"
               variant="list"
               :class="{
-                highlighted: highlightedIndex === index,
-                [css.highlighted]: highlightedIndex === index,
+                highlighted: highlightedIndex === _index,
+                [css.highlighted]: highlightedIndex === _index,
                 [css.active]: isActiveItem(item),
               }"
-              @click="setValue(item, index)"
-              @mousedown="highlightedIndex = index"
+              @click="setValue(item, _index)"
+              @mousedown="highlightedIndex = _index"
             >
               <template #prepend>
                 <slot
