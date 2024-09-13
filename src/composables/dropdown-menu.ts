@@ -1,8 +1,14 @@
 import type { Ref } from 'vue';
 
-export type KeyOfType<T, V> = keyof {
-  [P in keyof T as T[P] extends V ? P : never]: any
-};
+export type KeyOfType<T, V> = V extends object
+  ? keyof T
+  : keyof {
+    [P in keyof T as T[P] extends V
+      ? P
+      : V extends T[P]
+        ? P
+        : never]: any
+  };
 
 export interface DropdownItemAttr<TValue, TItem> {
   keyAttr?: KeyOfType<TItem, TValue extends Array<infer U> ? U : TValue>;
@@ -42,7 +48,7 @@ export function useDropdownOptionProperty<TValue, TItem>({
     return item?.toString();
   }
 
-  function getIdentifier(item: TItem): TItem | TItem[KeyOfType<TItem, TValue>] {
+  function getIdentifier(item: TItem): TItem | TItem[KeyOfType<TItem, TValue extends Array<infer U> ? U : TValue>] {
     if (keyAttr)
       return item[keyAttr];
 
