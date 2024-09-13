@@ -45,8 +45,10 @@ const children = computed(() => {
     const active = get(modelValue) === value;
     if (active) {
       anyActive = true;
-      set(reverse, index < get(currIndex));
-      set(currIndex, index);
+      if (index !== get(currIndex)) {
+        set(reverse, index < get(currIndex));
+        set(currIndex, index);
+      }
     }
 
     return {
@@ -90,7 +92,7 @@ const { height: innerHeight } = useElementSize(inner);
 
 <style lang="scss" module>
 .tabs {
-  @apply grow transition-all;
+  @apply grow transition-all overflow-hidden;
   height: calc(v-bind(innerHeight) * 1px);
 }
 </style>
