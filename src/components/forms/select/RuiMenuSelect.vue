@@ -7,7 +7,7 @@ import RuiProgress from '@/components/progress/RuiProgress.vue';
 
 export interface Props<TValue, TItem> {
   options: TItem[];
-  keyAttr?: KeyOfType<TItem, TValue>;
+  keyAttr?: KeyOfType<TItem, TValue extends Array<infer U> ? U : TValue>;
   textAttr?: keyof TItem;
   disabled?: boolean;
   loading?: boolean;
