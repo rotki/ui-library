@@ -2,7 +2,7 @@ import { contextColors } from '@/consts/colors';
 import RuiRadio, { type RadioProps } from '@/components/forms/radio-button/radio/RuiRadio.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-type PropsAndLabel = RadioProps & { label: string };
+type PropsAndLabel = RadioProps<string> & { label: string; modelValue: string };
 
 const render: StoryFn<PropsAndLabel> = args => ({
   components: { RuiRadio },
@@ -37,7 +37,7 @@ const meta: Meta<PropsAndLabel> = {
     size: { control: 'select', options: ['medium', 'sm', 'lg'] },
     value: { control: 'text' },
   },
-  component: RuiRadio,
+  component: RuiRadio as any,
   parameters: {
     docs: {
       controls: { exclude: ['default'] },
