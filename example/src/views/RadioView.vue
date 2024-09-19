@@ -224,6 +224,34 @@ const radioGroups = ref<
     ],
   },
 ]);
+
+const customTypeRadioGroup = ref<
+  {
+    value: string | number | boolean;
+    options: {
+      value: string | number | boolean;
+      label: string;
+    }[];
+  }[]
+>([
+  {
+    value: true,
+    options: [
+      { value: false, label: 'False' },
+      { value: true, label: 'True' },
+    ],
+  },
+  {
+    value: 1,
+    options: [
+      { value: 1, label: '1' },
+      { value: 2, label: '2' },
+      { value: 3, label: '3' },
+      { value: 4, label: '4' },
+      { value: 5, label: '5' },
+    ],
+  },
+]);
 </script>
 
 <template>
@@ -277,6 +305,21 @@ const radioGroups = ref<
           :value="radio.color"
         >
           <span class="capitalize"> {{ radio.color }} </span>
+        </RuiRadio>
+      </RuiRadioGroup>
+      <RuiRadioGroup
+        v-for="(radioGroup, i) in customTypeRadioGroup"
+        :key="i"
+        v-model="radioGroup.value"
+        :hint="`Selected value: ${radioGroup.value}`"
+        inline
+      >
+        <RuiRadio
+          v-for="(radio, j) in radioGroup.options"
+          :key="j"
+          :value="radio.value"
+        >
+          <span class="capitalize"> {{ radio.label }} </span>
         </RuiRadio>
       </RuiRadioGroup>
     </div>

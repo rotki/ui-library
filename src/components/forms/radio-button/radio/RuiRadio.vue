@@ -4,9 +4,11 @@ import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import type { ContextColorsType } from '@/consts/colors';
 
+type ModelValue = string | number | boolean;
+
 export interface RadioProps {
-  value: string;
-  modelValue?: string;
+  value: ModelValue;
+  modelValue?: ModelValue;
   disabled?: boolean;
   color?: ContextColorsType;
   size?: 'sm' | 'lg';
@@ -35,7 +37,7 @@ const props = withDefaults(defineProps<RadioProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', modelValue: string): void;
+  (e: 'update:modelValue', modelValue: ModelValue): void;
 }>();
 
 const { modelValue, size, value, successMessages, errorMessages }
