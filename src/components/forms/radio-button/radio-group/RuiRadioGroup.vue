@@ -4,8 +4,10 @@ import { Fragment, isVNode } from 'vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import type { ContextColorsType } from '@/consts/colors';
 
+type ModelValue = string | number | boolean;
+
 export interface Props {
-  modelValue?: string;
+  modelValue?: ModelValue;
   inline?: boolean;
   label?: string;
   hint?: string;
@@ -36,7 +38,7 @@ withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: string): void;
+  (e: 'update:modelValue', value: ModelValue): void;
 }>();
 
 const radioGroupName = ref('');
