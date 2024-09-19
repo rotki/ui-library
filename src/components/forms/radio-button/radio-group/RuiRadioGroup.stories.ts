@@ -3,7 +3,8 @@ import { contextColors } from '@/consts/colors';
 import RuiRadioGroup, { type Props } from '@/components/forms/radio-button/radio-group/RuiRadioGroup.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-const render: StoryFn<Props> = args => ({
+type RuiRadioGroupProps = Props & { modelValue: string };
+const render: StoryFn<RuiRadioGroupProps> = args => ({
   components: { RuiRadio, RuiRadioGroup },
   setup() {
     const modelValue = computed({
@@ -23,7 +24,7 @@ const render: StoryFn<Props> = args => ({
   </RuiRadioGroup>`,
 });
 
-const meta: Meta<Props> = {
+const meta: Meta<RuiRadioGroupProps> = {
   argTypes: {
     color: { control: 'select', options: contextColors },
     disabled: { control: 'boolean', table: { category: 'State' } },
@@ -35,13 +36,13 @@ const meta: Meta<Props> = {
     size: { control: 'select', options: ['medium', 'sm', 'lg'] },
     successMessages: { control: 'object' },
   },
-  component: RuiRadioGroup,
+  component: RuiRadioGroup as any,
   render,
   tags: ['autodocs'],
   title: 'Components/Forms/Radio/RadioGroup',
 };
 
-type Story = StoryObj<Props>;
+type Story = StoryObj<RuiRadioGroupProps>;
 
 export const Default: Story = {
   args: {},

@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { type RadioProps, RuiRadio, RuiRadioGroup } from '@rotki/ui-library';
 
-type RadioData = RadioProps & {
+type RadioData = RadioProps<string> & {
   label?: string;
+  modelValue?: string;
 };
 
 const radios = ref<RadioData[]>([

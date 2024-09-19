@@ -1,13 +1,10 @@
-<script setup lang="ts">
+<script lang="ts" setup generic='TValue'>
 import { objectPick } from '@vueuse/shared';
 import { Fragment, isVNode } from 'vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import type { ContextColorsType } from '@/consts/colors';
 
-type ModelValue = string | number | boolean;
-
 export interface Props {
-  modelValue?: ModelValue;
   inline?: boolean;
   label?: string;
   hint?: string;
@@ -25,7 +22,6 @@ defineOptions({
 });
 
 withDefaults(defineProps<Props>(), {
-  modelValue: '',
   inline: false,
   label: '',
   hint: '',
@@ -37,9 +33,7 @@ withDefaults(defineProps<Props>(), {
   size: undefined,
 });
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: ModelValue): void;
-}>();
+const modelValue = defineModel<TValue>({ required: false });
 
 const radioGroupName = ref('');
 
@@ -75,10 +69,9 @@ const css = useCssModule();
         v-for="(child, i) in children"
         v-bind="objectPick($props, ['disabled', 'color', 'size'])"
         :key="i"
-        :model-value="modelValue"
+        v-model="modelValue"
         hide-details
         :name="radioGroupName"
-        @update:model-value="emit('update:modelValue', $event)"
       />
     </div>
     <RuiFormTextDetail

@@ -1,14 +1,11 @@
-<script lang="ts" setup>
+<script lang="ts" setup generic='TValue'>
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import type { ContextColorsType } from '@/consts/colors';
 
-type ModelValue = string | number | boolean;
-
-export interface RadioProps {
-  value: ModelValue;
-  modelValue?: ModelValue;
+export interface RadioProps<TValue> {
+  value: TValue;
   disabled?: boolean;
   color?: ContextColorsType;
   size?: 'sm' | 'lg';
@@ -24,8 +21,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<RadioProps>(), {
-  modelValue: '',
+const props = withDefaults(defineProps<RadioProps<TValue>>(), {
   disabled: false,
   color: undefined,
   size: undefined,
@@ -36,25 +32,23 @@ const props = withDefaults(defineProps<RadioProps>(), {
   hideDetails: false,
 });
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', modelValue: ModelValue): void;
-}>();
+const modelValue = defineModel<TValue>({ required: false });
 
-const { modelValue, size, value, successMessages, errorMessages }
+const { value, successMessages, errorMessages }
   = toRefs(props);
 
 function input(event: Event) {
   const checked = (event.target as HTMLInputElement).checked;
   if (checked)
-    emit('update:modelValue', get(value));
+    set(modelValue, get(value));
 }
 
 const iconSize: ComputedRef<number> = computed(() => {
-  const sizeVal = get(size);
-  if (sizeVal === 'lg')
+  const size = props.size;
+  if (size === 'lg')
     return 28;
 
-  if (sizeVal === 'sm')
+  if (size === 'sm')
     return 20;
 
   return 24;

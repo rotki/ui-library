@@ -2,8 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import RuiRadioGroup from '@/components/forms/radio-button/radio-group/RuiRadioGroup.vue';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiRadioGroup>) {
-  return mount(RuiRadioGroup, { ...options, global: { stubs: ['icon'] } });
+function createWrapper(options?: ComponentMountingOptions<typeof RuiRadioGroup<string>>) {
+  const opts: ComponentMountingOptions<typeof RuiRadioGroup<string>> = {
+    ...options,
+    global: {
+      stubs: ['icon'],
+    },
+  };
+
+  return mount(RuiRadioGroup, opts);
 }
 
 describe('forms/RadioButton/RadioGroup', () => {
