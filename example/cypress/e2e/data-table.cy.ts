@@ -214,7 +214,8 @@ describe('dataTable', () => {
 
     cy.get('@row4')
       .scrollIntoView();
-    cy.get('@row4').get('@mainHead')
+    cy.get('@row4')
+      .get('@mainHead')
       .should((thead) => {
         const classes = Cypress.$(thead).attr('class');
         expect(classes).to.contain('_sticky__header_');
@@ -225,7 +226,8 @@ describe('dataTable', () => {
       .get('body')
       .scrollTo('top');
     cy.window()
-      .get('body').get('@mainHead')
+      .get('body')
+      .get('@mainHead')
       .should((thead) => {
         const classes = Cypress.$(thead).attr('class');
         expect(classes).not.to.contain('_stick__top_');

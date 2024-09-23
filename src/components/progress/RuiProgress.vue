@@ -151,8 +151,7 @@ $colors: 'primary', 'secondary';
 
     .indeterminate {
       @apply absolute left-0 top-0 h-full w-auto transition-transform duration-200 ease-linear delay-0 origin-left;
-      animation: 1.6s cubic-bezier(0.65, 0.815, 0.735, 0.395) 0s infinite normal
-        none running slide-rail;
+      animation: 1.6s cubic-bezier(0.65, 0.815, 0.735, 0.395) 0s infinite normal none running slide-rail;
     }
 
     .buffer-dots {
@@ -232,8 +231,7 @@ $colors: 'primary', 'secondary';
         circle {
           stroke-dasharray: 126.92;
           stroke-dashoffset: calc(v-bind(progress) / 100 * -126.92);
-          -webkit-transition: stroke-dashoffset 300ms
-            cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+          -webkit-transition: stroke-dashoffset 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
           transition: stroke-dashoffset 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
         }
       }

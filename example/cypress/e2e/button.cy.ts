@@ -13,13 +13,15 @@ describe('button', () => {
     cy.get('[data-cy=content]').find('button[disabled]').first().as('disabledButton');
 
     // prefix button
-    cy.get('[data-cy=content]').find('button > svg[class^=_remixicon_] + span')
+    cy.get('[data-cy=content]')
+      .find('button > svg[class^=_remixicon_] + span')
       .first()
       .parent('button')
       .as('prefixedButton');
 
     // suffix button
-    cy.get('[data-cy=content]').find('button > span + svg[class^=_remixicon_]')
+    cy.get('[data-cy=content]')
+      .find('button > span + svg[class^=_remixicon_]')
       .first()
       .parent('button')
       .as('suffixedButton');

@@ -36,7 +36,7 @@ function createStory(directory: string, component: string) {
 
   fs.writeFileSync(
     testFile,
-`import { describe, expect, it } from 'vitest';
+    `import { describe, expect, it } from 'vitest';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import ${componentName} from './${componentName}.vue';
 

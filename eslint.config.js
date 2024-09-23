@@ -8,6 +8,7 @@ export default rotki({
   formatters: true,
   storybook: true,
   test: true,
+  regexp: true,
   cypress: {
     testDirectory: path.join('example', 'cypress'),
   },
@@ -20,11 +21,6 @@ export default rotki({
   files: ['src/**/*.stories.ts', '**/vue-shim.d.ts', '.storybook/**/*.ts'],
   rules: {
     'import/no-default-export': 'off',
-  },
-}, {
-  files: ['src/**/*.@(ts|vue)'],
-  rules: {
-    'import/no-named-default': 'warn', // todo: fix and turn into an error
   },
 }, {
   files: ['**/*.ts'],

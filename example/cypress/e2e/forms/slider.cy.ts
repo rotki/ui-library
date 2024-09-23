@@ -11,7 +11,8 @@ describe('forms/Slider', () => {
     cy.get('input[type="range"][disabled]').first().as('disabledSlider');
 
     cy.get('@firstSlider').should('have.value', '50');
-    cy.get('@firstSlider').invoke('val', 30)
+    cy.get('@firstSlider')
+      .invoke('val', 30)
       .trigger('change');
     cy.get('@firstSlider').should('have.value', '30');
 
