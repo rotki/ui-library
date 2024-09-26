@@ -232,4 +232,32 @@ describe('forms/TextArea', () => {
 
     expect((wrapper.find('textarea:not([aria-hidden="true"])').element as HTMLTextAreaElement).value).toBe(text);
   });
+
+  it('clearable', async () => {
+    const text = 'test text';
+    const wrapper = createWrapper({
+      props: {
+        clearable: true,
+        modelValue: text,
+      },
+    });
+
+    expect(wrapper.find('.clear-btn').exists()).toBeTruthy();
+
+    expect(wrapper.find('textarea').element.value).toBe(text);
+    await wrapper.find('.clear-btn').trigger('click');
+    expect(wrapper.find('textarea').element.value).toBe('');
+    await nextTick();
+
+    // Clear button not rendered if value is empty
+    expect(wrapper.find('.clear-btn').exists()).toBeFalsy();
+
+    // Clear button not rendered if the textarea is disabled
+    await wrapper.setProps({ disabled: true });
+    expect(wrapper.find('.clear-btn').exists()).toBeFalsy();
+
+    // Clear button not rendered if the textarea is readonly
+    await wrapper.setProps({ disabled: false, readonly: true });
+    expect(wrapper.find('.clear-btn').exists()).toBeFalsy();
+  });
 });

@@ -81,7 +81,6 @@ const prepend = ref<HTMLDivElement>();
 const append = ref<HTMLDivElement>();
 const textarea = ref<HTMLTextAreaElement>();
 const textareaSizer = ref<HTMLTextAreaElement>();
-const focusedDebounced = ref(false);
 
 const css = useCssModule();
 const attrs = useAttrs();
@@ -165,14 +164,7 @@ function computeFieldHeight(newVal?: string, oldVal?: string) {
 }
 
 const { focused } = useFocus(textarea);
-
-watchDebounced(
-  focused,
-  (focused) => {
-    set(focusedDebounced, focused);
-  },
-  { debounce: 500 },
-);
+const focusedDebounced = refDebounced(focused, 500);
 
 watch(modelValue, computeFieldHeight);
 onMounted(computeFieldHeight);
@@ -255,9 +247,10 @@ onMounted(computeFieldHeight);
           variant="text"
           type="button"
           icon
-          class="!p-2"
-          :color="color"
-          @click="clearIconClicked()"
+          class="!p-2 clear-btn"
+          color="error"
+          tabindex="-1"
+          @click.stop="clearIconClicked()"
         >
           <RuiIcon
             name="close-line"
