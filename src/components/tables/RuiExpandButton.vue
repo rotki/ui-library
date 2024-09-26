@@ -11,7 +11,6 @@ export interface Props {
 withDefaults(defineProps<Props>(), { icon: 'arrow-down-s-line' });
 
 const css = useCssModule();
-const attrs = useAttrs();
 </script>
 
 <template>
@@ -25,7 +24,7 @@ const attrs = useAttrs();
     icon
     size="sm"
     variant="text"
-    v-bind="attrs"
+    v-bind="$attrs"
   >
     <slot>
       <RuiIcon

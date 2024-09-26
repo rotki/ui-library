@@ -35,7 +35,6 @@ const emit = defineEmits<{
   (e: 'closed'): void;
 }>();
 
-const attrs = useAttrs();
 const css = useCssModule();
 
 const {
@@ -125,7 +124,7 @@ const activatorAttrs = computed(() => ({
             [css['with-overlay']]: overlay,
           },
         ]"
-        v-bind="getRootAttrs(attrs)"
+        v-bind="getRootAttrs($attrs)"
       >
         <slot v-bind="{ attrs: activatorAttrs, close }" />
       </aside>

@@ -66,7 +66,6 @@ const iconSize: ComputedRef<number> = computed(() => {
 });
 
 const css = useCssModule();
-const attrs = useAttrs();
 
 const { hasError, hasSuccess } = useFormTextDetail(
   errorMessages,
@@ -92,7 +91,7 @@ watch(internalModelValue, (val) => {
 </script>
 
 <template>
-  <div v-bind="getRootAttrs(attrs)">
+  <div v-bind="getRootAttrs($attrs)">
     <label
       :class="[
         css.wrapper,
@@ -101,7 +100,7 @@ watch(internalModelValue, (val) => {
           [css.disabled]: disabled,
         },
       ]"
-      v-bind="objectPick(attrs, ['onClick'])"
+      v-bind="objectPick($attrs, ['onClick'])"
     >
       <input
         ref="el"
@@ -109,7 +108,7 @@ watch(internalModelValue, (val) => {
         type="checkbox"
         :class="css.input"
         :disabled="disabled"
-        v-bind="getNonRootAttrs(attrs, ['onInput', 'onClick'])"
+        v-bind="getNonRootAttrs($attrs, ['onInput', 'onClick'])"
       />
       <span
         :class="[

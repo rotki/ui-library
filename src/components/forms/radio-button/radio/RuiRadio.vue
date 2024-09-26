@@ -57,7 +57,6 @@ const iconSize: ComputedRef<number> = computed(() => {
 const selected = computed(() => get(modelValue) === get(value));
 
 const css = useCssModule();
-const attrs = useAttrs();
 
 const { hasError, hasSuccess } = useFormTextDetail(
   errorMessages,
@@ -66,7 +65,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
 </script>
 
 <template>
-  <div v-bind="getRootAttrs(attrs)">
+  <div v-bind="getRootAttrs($attrs)">
     <label
       :class="[
         css.wrapper,
@@ -81,7 +80,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
         type="radio"
         :class="css.input"
         :disabled="disabled"
-        v-bind="getNonRootAttrs(attrs)"
+        v-bind="getNonRootAttrs($attrs)"
         :value="value"
         @input="input($event)"
       />
