@@ -12,6 +12,7 @@ describe('forms/TextField', () => {
     const wrapper = createWrapper({
       props: {
         label,
+        modelValue: '',
       },
     });
     expect(wrapper.find('label').text()).toContain(label);
@@ -137,6 +138,7 @@ describe('forms/TextField', () => {
       props: {
         hideDetails: true,
         hint: 'This hint should not be rendered',
+        modelValue: '',
       },
     });
     expect(wrapper.find('.details div').exists()).toBeFalsy();
@@ -146,6 +148,7 @@ describe('forms/TextField', () => {
     const icon = 'heart-fill';
     const wrapper = createWrapper({
       props: {
+        modelValue: '',
         prependIcon: icon,
       },
     });
@@ -160,6 +163,7 @@ describe('forms/TextField', () => {
     const wrapper = createWrapper({
       props: {
         appendIcon: icon,
+        modelValue: '',
       },
     });
 
@@ -190,5 +194,33 @@ describe('forms/TextField', () => {
     });
 
     expect(wrapper.find('div[class*=append]').text()).toBe(append);
+  });
+
+  it('clearable', async () => {
+    const text = 'test text';
+    const wrapper = createWrapper({
+      props: {
+        clearable: true,
+        modelValue: text,
+      },
+    });
+
+    expect(wrapper.find('.clear-btn').exists()).toBeTruthy();
+
+    expect(wrapper.find('input').element.value).toBe(text);
+    await wrapper.find('.clear-btn').trigger('click');
+    expect(wrapper.find('input').element.value).toBe('');
+    await nextTick();
+
+    // Clear button not rendered if value is empty
+    expect(wrapper.find('.clear-btn').exists()).toBeFalsy();
+
+    // Clear button not rendered if the text field is disabled
+    await wrapper.setProps({ disabled: true });
+    expect(wrapper.find('.clear-btn').exists()).toBeFalsy();
+
+    // Clear button not rendered if the text field is readonly
+    await wrapper.setProps({ disabled: false, readonly: true });
+    expect(wrapper.find('.clear-btn').exists()).toBeFalsy();
   });
 });

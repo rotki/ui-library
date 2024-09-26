@@ -2,7 +2,9 @@ import { contextColors } from '@/consts/colors';
 import RuiTextField, { type TextFieldProps } from '@/components/forms/text-field/RuiTextField.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-const render: StoryFn<TextFieldProps> = args => ({
+type Props = TextFieldProps & { modelValue: string };
+
+const render: StoryFn<Props> = args => ({
   components: { RuiTextField },
   setup() {
     const modelValue = computed({
@@ -19,7 +21,7 @@ const render: StoryFn<TextFieldProps> = args => ({
   template: `<RuiTextField v-model="modelValue" v-bind="args" />`,
 });
 
-const meta: Meta<TextFieldProps> = {
+const meta: Meta<Props> = {
   args: {
     errorMessages: [],
     successMessages: [],
@@ -64,7 +66,7 @@ const meta: Meta<TextFieldProps> = {
   title: 'Components/Forms/TextField',
 };
 
-type Story = StoryObj<TextFieldProps>;
+type Story = StoryObj<Props>;
 
 export const Default: Story = {
   args: {

@@ -2,7 +2,8 @@ import { contextColors } from '@/consts/colors';
 import RuiRevealableTextField, { type Props } from '@/components/forms/revealable-text-field/RuiRevealableTextField.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-const render: StoryFn<Props> = args => ({
+type RuiRevealableTextFieldProps = Props & { modelValue: string };
+const render: StoryFn<RuiRevealableTextFieldProps> = args => ({
   components: { RuiRevealableTextField },
   setup() {
     const modelValue = computed({
@@ -19,7 +20,7 @@ const render: StoryFn<Props> = args => ({
   template: `<RuiRevealableTextField v-model="modelValue" v-bind="args" />`,
 });
 
-const meta: Meta<Props> = {
+const meta: Meta<RuiRevealableTextFieldProps> = {
   args: {
     errorMessages: [],
     successMessages: [],
@@ -63,7 +64,7 @@ const meta: Meta<Props> = {
   title: 'Components/Forms/RevealableTextField',
 };
 
-type Story = StoryObj<Props>;
+type Story = StoryObj<RuiRevealableTextFieldProps>;
 
 export const Default: Story = {
   args: {
