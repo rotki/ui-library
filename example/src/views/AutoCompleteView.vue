@@ -330,10 +330,9 @@ function getDisplayText(options?: SelectOption | SelectOption[]): string {
           <template #activator="{ attrs, disabled, open, value }">
             <RuiButton
               class="!rounded-md border"
-              data-cy="activator"
               variant="list"
               :disabled="disabled"
-              v-bind="attrs"
+              v-bind="{ ...attrs, 'data-cy': 'activator' }"
             >
               {{ getDisplayText(value) }}
               <template #append>
@@ -371,10 +370,9 @@ function getDisplayText(options?: SelectOption | SelectOption[]): string {
           <template #activator="{ attrs, disabled, open, value }">
             <RuiButton
               class="!rounded-md border"
-              data-cy="activator"
               variant="list"
               :disabled="disabled"
-              v-bind="attrs"
+              v-bind="{ ...attrs, 'data-cy': 'activator' }"
             >
               {{ getDisplayText(value) }}
               <template #append>
