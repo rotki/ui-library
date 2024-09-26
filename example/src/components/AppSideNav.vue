@@ -9,11 +9,10 @@ defineProps<{
 }>();
 
 const route = useRoute();
-const css = useCssModule();
 </script>
 
 <template>
-  <nav :class="css.navigation">
+  <nav :class="$style.navigation">
     <ul
       class="space-y-9"
       role="list"
@@ -22,11 +21,11 @@ const css = useCssModule();
         v-for="(section, i) in navigation"
         :key="i"
       >
-        <h2 :class="css.section__title">
+        <h2 :class="$style.section__title">
           {{ section.title }}
         </h2>
         <ul
-          :class="css.section__menu"
+          :class="$style.section__menu"
           role="list"
         >
           <li
@@ -36,10 +35,10 @@ const css = useCssModule();
           >
             <RouterLink
               :class="[
-                css.link,
-                { [css.link__inactive]: link.to.name !== route.name },
+                $style.link,
+                { [$style.link__inactive]: link.to.name !== route.name },
               ]"
-              :exact-active-class="css.link__active"
+              :exact-active-class="$style.link__active"
               :to="link.to"
             >
               {{ link.title }}

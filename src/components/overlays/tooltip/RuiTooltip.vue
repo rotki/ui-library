@@ -27,8 +27,6 @@ const props = withDefaults(defineProps<Props>(), {
   tooltipClass: '',
 });
 
-const css = useCssModule();
-
 const { closeDelay, openDelay, popper, disabled } = toRefs(props);
 
 const {
@@ -51,7 +49,7 @@ defineExpose({
 <template>
   <div
     ref="activator"
-    :class="css.wrapper"
+    :class="$style.wrapper"
     :data-tooltip-disabled="disabled"
     @mouseover="onOpen()"
     @mouseleave="onClose()"
@@ -70,9 +68,9 @@ defineExpose({
         v-if="popperEnter"
         ref="tooltip"
         :class="[
-          css.tooltip,
+          $style.tooltip,
           tooltipClass,
-          css[`tooltip__${popper?.strategy ?? 'absolute'}`],
+          $style[`tooltip__${popper?.strategy ?? 'absolute'}`],
         ]"
         role="tooltip"
       >
@@ -89,7 +87,7 @@ defineExpose({
           <div
             v-if="open"
             key="tooltip"
-            :class="css.base"
+            :class="$style.base"
             role="tooltip-content"
             @mouseover="persistOnTooltipHover && onOpen()"
             @mouseleave="persistOnTooltipHover && onClose()"
@@ -100,7 +98,7 @@ defineExpose({
           </div>
           <span
             v-if="!hideArrow"
-            :class="[css.arrow, { [css.arrow__open]: open }]"
+            :class="[$style.arrow, { [$style.arrow__open]: open }]"
             data-popper-arrow
           />
         </TransitionGroup>

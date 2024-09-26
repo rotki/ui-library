@@ -25,30 +25,29 @@ withDefaults(defineProps<Props>(), {
   noPadding: false,
 });
 
-const css = useCssModule();
 const slots = useSlots();
 
-const hasHeadContent = computed(() => !!slots.header || !!slots.subheader);
+const hasHeadContent = computed<boolean>(() => !!slots.header || !!slots.subheader);
 </script>
 
 <template>
   <div
     :class="[
-      css.card,
+      $style.card,
       `shadow-${elevation}`,
-      css[`rounded__${rounded}`],
+      $style[`rounded__${rounded}`],
       {
-        [css.outlined]: variant === 'outlined',
-        [css.dense]: dense,
-        [css.divide]: divide,
-        [css['no-padding']]: noPadding,
+        [$style.outlined]: variant === 'outlined',
+        [$style.dense]: dense,
+        [$style.divide]: divide,
+        [$style['no-padding']]: noPadding,
       },
     ]"
     v-bind="$attrs"
   >
     <div
       v-if="slots.image"
-      :class="css.image"
+      :class="$style.image"
     >
       <slot name="image" />
     </div>
@@ -79,13 +78,13 @@ const hasHeadContent = computed(() => !!slots.header || !!slots.subheader);
     </slot>
     <div
       v-if="slots.default"
-      :class="css.content"
+      :class="$style.content"
     >
       <slot />
     </div>
     <div
       v-if="slots.footer"
-      :class="css.footer"
+      :class="$style.footer"
     >
       <slot name="footer" />
     </div>

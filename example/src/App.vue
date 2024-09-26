@@ -47,19 +47,17 @@ const navigation = ref([
     ],
   },
 ]);
-
-const css = useCssModule();
 </script>
 
 <template>
   <AppNav />
   <main
-    :class="css.main"
+    :class="$style.main"
     class="wrapper"
   >
     <div class="relative flex">
       <div class="relative flex-none">
-        <div :class="css.sidenav">
+        <div :class="$style.sidenav">
           <AppSideNav :navigation="navigation" />
         </div>
       </div>

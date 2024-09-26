@@ -27,8 +27,6 @@ const emit = defineEmits<{
   (e: 'closed'): void;
 }>();
 
-const css = useCssModule();
-
 const {
   modelValue,
   width,
@@ -137,7 +135,7 @@ const contentTransition = computed(() => {
     <Teleport to="body">
       <div
         v-if="isOpen || internalValue"
-        :class="css.wrapper"
+        :class="$style.wrapper"
         :style="{ zIndex }"
         role="dialog"
         tabindex="0"
@@ -154,7 +152,7 @@ const contentTransition = computed(() => {
         >
           <div
             v-if="isOpen && internalValue"
-            :class="css.overlay"
+            :class="$style.overlay"
             @click.stop="!persistent && close()"
           />
         </Transition>
@@ -164,7 +162,7 @@ const contentTransition = computed(() => {
             ref="contentRef"
             :style="style"
             tabindex="0"
-            :class="[css.content, contentClass, { [css.center]: !bottomSheet }]"
+            :class="[$style.content, contentClass, { [$style.center]: !bottomSheet }]"
           >
             <slot v-bind="{ isOpen, close }" />
           </div>

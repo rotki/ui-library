@@ -117,8 +117,6 @@ const emit = defineEmits<{
   ): void;
 }>();
 
-const css = useCssModule();
-
 function onSort({ key, direction }: TableColumn<T>) {
   return emit('sort', {
     key: key as TableRowKey<T>,
@@ -148,18 +146,18 @@ function getSortDirection(key: TableColumn<T>['key']) {
   <thead
     :data-id="dataId"
     :class="[
-      css.thead,
+      $style.thead,
       {
-        [css.sticky__header]: stickyHeader,
-        [css.stick__top]: stick,
-        [css.dense]: dense,
+        [$style.sticky__header]: stickyHeader,
+        [$style.stick__top]: stick,
+        [$style.dense]: dense,
       },
     ]"
   >
-    <tr :class="css.tr">
+    <tr :class="$style.tr">
       <th
         v-if="selectable"
-        :class="css.checkbox"
+        :class="$style.checkbox"
         scope="col"
         colspan="1"
         rowspan="1"
@@ -180,12 +178,12 @@ function getSortDirection(key: TableColumn<T>['key']) {
         v-for="(column, index) in columns"
         :key="index"
         :class="[
-          css.th,
+          $style.th,
           column.class,
-          css[`align__${column.align ?? 'start'}`],
+          $style[`align__${column.align ?? 'start'}`],
           {
             capitalize: !capitalizeHeaders,
-            [css.sortable]: column.sortable,
+            [$style.sortable]: column.sortable,
           },
         ]"
         scope="col"
@@ -206,10 +204,10 @@ function getSortDirection(key: TableColumn<T>['key']) {
           >
             <RuiButton
               :class="[
-                css.sort__button,
+                $style.sort__button,
                 {
-                  [css.sort__active]: isSortedBy(column.key),
-                  [css[`sort__${getSortDirection(column.key)}`]]: isSortedBy(
+                  [$style.sort__active]: isSortedBy(column.key),
+                  [$style[`sort__${getSortDirection(column.key)}`]]: isSortedBy(
                     column.key,
                   ),
                 },
@@ -218,7 +216,7 @@ function getSortDirection(key: TableColumn<T>['key']) {
               variant="text"
               @click="onSort(column)"
             >
-              <span :class="css.column__text">
+              <span :class="$style.column__text">
                 <slot
                   :name="`header.text.${column.key.toString()}`"
                   :column="column"
@@ -232,7 +230,7 @@ function getSortDirection(key: TableColumn<T>['key']) {
                 #prepend
               >
                 <RuiIcon
-                  :class="css.sort__icon"
+                  :class="$style.sort__icon"
                   name="arrow-down-line"
                   size="18"
                 />
@@ -241,7 +239,7 @@ function getSortDirection(key: TableColumn<T>['key']) {
               <template #append>
                 <RuiIcon
                   v-if="column.align !== 'end'"
-                  :class="css.sort__icon"
+                  :class="$style.sort__icon"
                   name="arrow-down-line"
                   size="18"
                 />
@@ -250,7 +248,7 @@ function getSortDirection(key: TableColumn<T>['key']) {
           </RuiBadge>
           <span
             v-else
-            :class="css.column__text"
+            :class="$style.column__text"
           >
             <slot
               :name="`header.text.${column.key.toString()}`"
@@ -264,14 +262,14 @@ function getSortDirection(key: TableColumn<T>['key']) {
     </tr>
     <tr
       v-if="loading"
-      :class="[css.thead__loader, css.thead__loader_linear]"
+      :class="[$style.thead__loader, $style.thead__loader_linear]"
     >
       <th
-        :class="css.progress"
+        :class="$style.progress"
         :colspan="colspan"
         scope="col"
       >
-        <div :class="css.progress__wrapper">
+        <div :class="$style.progress__wrapper">
           <RuiProgress
             color="primary"
             variant="indeterminate"

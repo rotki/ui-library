@@ -43,8 +43,6 @@ function input(event: Event) {
   emit('update:modelValue', checked);
 }
 
-const css = useCssModule();
-
 const { hasError, hasSuccess } = useFormTextDetail(
   errorMessages,
   successMessages,
@@ -55,33 +53,33 @@ const { hasError, hasSuccess } = useFormTextDetail(
   <div v-bind="getRootAttrs($attrs)">
     <label
       :class="[
-        css.wrapper,
-        css[size ?? ''],
-        css[color ?? ''],
+        $style.wrapper,
+        $style[size ?? ''],
+        $style[color ?? ''],
         {
-          [css.checked]: modelValue,
-          [css.disabled]: disabled,
-          [css['with-error']]: hasError,
-          [css['with-success']]: hasSuccess && !hasError,
+          [$style.checked]: modelValue,
+          [$style.disabled]: disabled,
+          [$style['with-error']]: hasError,
+          [$style['with-success']]: hasSuccess && !hasError,
         },
       ]"
     >
-      <div :class="css.inner">
+      <div :class="$style.inner">
         <input
           :checked="modelValue"
           type="checkbox"
-          :class="css.input"
+          :class="$style.input"
           :disabled="disabled"
           v-bind="getNonRootAttrs($attrs)"
           @input="input($event)"
         />
         <div
-          :class="css.toggle"
+          :class="$style.toggle"
         />
       </div>
       <span
         v-if="label || $slots.default"
-        :class="css.label"
+        :class="$style.label"
         class="text-body-1"
       >
         <slot>{{ label }}</slot>

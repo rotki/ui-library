@@ -48,8 +48,6 @@ const emit = defineEmits<{
   (e: 'update:model-value', value: boolean): void;
 }>();
 
-const css = useCssModule();
-
 const {
   modelValue,
   closeDelay,
@@ -148,7 +146,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
   <div @keydown.esc.stop="onLeave()">
     <div
       ref="activator"
-      :class="[css.wrapper, wrapperClass, { 'w-full': fullWidth }]"
+      :class="[$style.wrapper, wrapperClass, { 'w-full': fullWidth }]"
       :data-menu-disabled="disabled"
     >
       <slot
@@ -164,9 +162,9 @@ const { hasError, hasSuccess } = useFormTextDetail(
         v-if="popperEnter"
         ref="menu"
         :class="[
-          css.menu,
+          $style.menu,
           menuClass,
-          css[`menu__${popper?.strategy ?? 'absolute'}`],
+          $style[`menu__${popper?.strategy ?? 'absolute'}`],
         ]"
         role="menu"
         @click="closeOnContentClick ? onLeave() : undefined"
@@ -185,7 +183,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
           <div
             v-if="open"
             key="menu"
-            :class="css.base"
+            :class="$style.base"
             role="menu-content"
           >
             <slot v-bind="{ width }" />

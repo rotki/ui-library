@@ -65,8 +65,6 @@ const vModel = computed({
   },
 });
 
-const css = useCssModule();
-
 const ticksData = computed(() => {
   const minVal = get(min);
   const stepVal = get(step);
@@ -100,33 +98,33 @@ const tickSizeInPx = computed(() => `${get(tickSize)}px`);
   <div v-bind="getRootAttrs($attrs)">
     <label
       :class="[
-        css.wrapper,
+        $style.wrapper,
         {
-          [css.disabled]: disabled,
-          [css.vertical]: vertical,
-          [css[color]]: color,
-          [css['hide-track']]: hideTrack,
-          [css['big-tick']]: tickSize > 4,
-          [css['with-error']]: hasError,
-          [css['with-success']]: hasSuccess && !hasError,
+          [$style.disabled]: disabled,
+          [$style.vertical]: vertical,
+          [$style[color]]: color,
+          [$style['hide-track']]: hideTrack,
+          [$style['big-tick']]: tickSize > 4,
+          [$style['with-error']]: hasError,
+          [$style['with-success']]: hasSuccess && !hasError,
         },
       ]"
     >
       <div
         v-if="label"
-        :class="css.label"
+        :class="$style.label"
         class="text-body-1"
       >
         {{ label }}
       </div>
       <div
         ref="outer"
-        :class="css.outer"
+        :class="$style.outer"
       >
-        <div :class="css.inner">
+        <div :class="$style.inner">
           <input
             v-model="vModel"
-            :class="css.input"
+            :class="$style.input"
             type="range"
             :max="max"
             :min="min"
@@ -134,28 +132,28 @@ const tickSizeInPx = computed(() => `${get(tickSize)}px`);
             :disabled="disabled"
             v-bind="getNonRootAttrs($attrs)"
           />
-          <div :class="css.slider">
-            <div :class="css.slider__inner">
-              <div :class="[css.slider__container, sliderClass]">
+          <div :class="$style.slider">
+            <div :class="$style.slider__inner">
+              <div :class="[$style.slider__container, sliderClass]">
                 <div
                   v-if="!hideTrack"
-                  :class="css.slider__container__track"
+                  :class="$style.slider__container__track"
                 />
                 <div
                   v-if="showTicks && !disabled"
-                  :class="css.slider__ticks"
+                  :class="$style.slider__ticks"
                 >
                   <span
                     v-for="i in (ticksData[1] + 1)"
                     :key="i"
-                    :class="hideTrack ? [tickClass] : { [css.highlighted]: i - 1 <= ticksData[0], [tickClass]: i - 1 > ticksData[0] }"
+                    :class="hideTrack ? [tickClass] : { [$style.highlighted]: i - 1 <= ticksData[0], [tickClass]: i - 1 > ticksData[0] }"
                   />
                 </div>
               </div>
-              <div :class="css.slider__thumb" />
+              <div :class="$style.slider__thumb" />
               <div
                 v-if="showThumbLabel && !disabled"
-                :class="css.slider__thumb_label"
+                :class="$style.slider__thumb_label"
               >
                 {{ modelValue }}
               </div>

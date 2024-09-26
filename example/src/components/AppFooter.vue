@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-const css = useCssModule();
 const year = new Date().getFullYear();
 </script>
 
 <template>
   <footer
-    :class="css.footer"
+    :class="$style.footer"
     class="wrapper"
   >
     &copy; {{ year }} Rotki

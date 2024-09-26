@@ -181,8 +181,6 @@ watch(route, () => {
   applyNewValue(true);
 });
 
-const css = useCssModule();
-
 const { width, height } = useElementSize(bar);
 const { width: wrapperWidth, height: wrapperHeight } = useElementSize(wrapper);
 const { arrivedState, x, y } = useScroll(bar, { behavior: 'smooth' });
@@ -264,10 +262,10 @@ watch(internalModelValue, () => {
 </script>
 
 <template>
-  <div :class="[css.tabs, { [css['tabs--vertical']]: vertical }]">
+  <div :class="[$style.tabs, { [$style['tabs--vertical']]: vertical }]">
     <div
       v-if="showArrows"
-      :class="[css.arrow, { [css['arrow--vertical']]: vertical }]"
+      :class="[$style.arrow, { [$style['arrow--vertical']]: vertical }]"
     >
       <RuiButton
         class="w-full h-full !rounded-none"
@@ -283,18 +281,18 @@ watch(internalModelValue, () => {
       ref="bar"
       class="no-scrollbar"
       :class="[
-        css['tabs-bar'],
-        { [css['tabs-bar--vertical']]: vertical },
-        { [css['tabs-bar--grow']]: grow },
+        $style['tabs-bar'],
+        { [$style['tabs-bar--vertical']]: vertical },
+        { [$style['tabs-bar--grow']]: grow },
       ]"
     >
       <div
         ref="wrapper"
         role="tablist"
         :class="[
-          css['tabs-wrapper'],
-          { [css['tabs-wrapper--vertical']]: vertical },
-          { [css['tabs-wrapper--grow']]: grow },
+          $style['tabs-wrapper'],
+          { [$style['tabs-wrapper--vertical']]: vertical },
+          { [$style['tabs-wrapper--grow']]: grow },
         ]"
       >
         <Component
@@ -307,7 +305,7 @@ watch(internalModelValue, () => {
     </div>
     <div
       v-if="showArrows"
-      :class="[css.arrow, { [css['arrow--vertical']]: vertical }]"
+      :class="[$style.arrow, { [$style['arrow--vertical']]: vertical }]"
     >
       <RuiButton
         class="w-full h-full !rounded-none"

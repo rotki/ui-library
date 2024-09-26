@@ -33,8 +33,6 @@ const props = withDefaults(defineProps<Props>(), {
   keepActiveVisible: true,
 });
 
-const css = useCssModule();
-
 const { custom, steps, step, orientation, keepActiveVisible } = toRefs(props);
 
 // automatically set step state to stepper.
@@ -88,9 +86,9 @@ watch(step, () => {
   <div
     ref="wrapperRef"
     :class="[
-      css.stepper,
-      css[orientation ?? ''],
-      { [css['icon-top']]: iconTop, [css.custom]: custom },
+      $style.stepper,
+      $style[orientation ?? ''],
+      { [$style['icon-top']]: iconTop, [$style.custom]: custom },
     ]"
     class="no-scrollbar overflow-auto"
   >
@@ -100,12 +98,12 @@ watch(step, () => {
     >
       <hr
         v-if="index > 0"
-        :class="css.divider"
+        :class="$style.divider"
       />
       <div
         :class="[
-          css.step,
-          css[state ?? StepperState.inactive],
+          $style.step,
+          $style[state ?? StepperState.inactive],
           {
             'active-step': state === StepperState.active,
           },
@@ -139,18 +137,18 @@ watch(step, () => {
         </slot>
         <div
           v-if="title || description"
-          :class="css.label"
+          :class="$style.label"
         >
           <span
             v-if="title"
-            :class="[css.title, { [titleClass]: custom }]"
+            :class="[$style.title, { [titleClass]: custom }]"
             class="text-subtitle-2"
           >
             {{ title }}
           </span>
           <span
             v-if="description"
-            :class="[css.subtitle, { [subtitleClass]: custom }]"
+            :class="[$style.subtitle, { [subtitleClass]: custom }]"
             class="text-caption"
           >
             {{ description }}

@@ -2,30 +2,25 @@
 import { StepperState } from '@/types/stepper';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 
-withDefaults(
-  defineProps<{
-    state?: StepperState;
-    index: number;
-  }>(),
-  {
-    state: StepperState.inactive,
-  },
-);
-
-const css = useCssModule();
+withDefaults(defineProps<{
+  state?: StepperState;
+  index: number;
+}>(), {
+  state: StepperState.inactive,
+});
 </script>
 
 <template>
-  <span :class="[css.indicator, css[state]]">
+  <span :class="[$style.indicator, $style[state]]">
     <span
       v-if="state === StepperState.inactive || state === StepperState.active"
-      :class="css.text"
+      :class="$style.text"
     >
       {{ index }}
     </span>
     <RuiIcon
       v-else-if="state === StepperState.done"
-      :class="css.text"
+      :class="$style.text"
       :size="20"
       name="check-line"
     />

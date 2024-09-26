@@ -41,8 +41,6 @@ const props = withDefaults(defineProps<Props>(), {
   size: 32,
 });
 
-const css = useCssModule();
-
 const { variant, value, bufferValue, thickness, size } = toRefs(props);
 
 const currentValue = computed(() =>
@@ -69,17 +67,17 @@ const circularViewSize = computed(() => 40 + get(circularScaledThickness));
 <template>
   <div
     :class="[
-      css.wrapper,
+      $style.wrapper,
       circular ? 'inline-flex' : 'w-full',
-      { [css['has-label']]: showLabel && variant !== 'indeterminate' },
+      { [$style['has-label']]: showLabel && variant !== 'indeterminate' },
     ]"
   >
     <div
       :aria-valuenow="value"
       :class="[
-        circular && variant !== 'buffer' ? css.circular : css.progress,
-        css[variant ?? ''],
-        css[color ?? ''],
+        circular && variant !== 'buffer' ? $style.circular : $style.progress,
+        $style[variant ?? ''],
+        $style[color ?? ''],
       ]"
       aria-valuemax="100"
       aria-valuemin="0"
@@ -100,17 +98,17 @@ const circularViewSize = computed(() => 40 + get(circularScaledThickness));
       <template v-else>
         <div
           v-if="variant === 'buffer'"
-          :class="css['buffer-dots']"
+          :class="$style['buffer-dots']"
         />
         <div
-          :class="[css.rail, { [css['buffer-rail']]: variant === 'buffer' }]"
+          :class="[$style.rail, { [$style['buffer-rail']]: variant === 'buffer' }]"
         />
-        <div :class="css[variant ?? '']" />
+        <div :class="$style[variant ?? '']" />
       </template>
     </div>
     <div
       v-if="showLabel && variant !== 'indeterminate'"
-      :class="css.label"
+      :class="$style.label"
     >
       {{ label }}
     </div>

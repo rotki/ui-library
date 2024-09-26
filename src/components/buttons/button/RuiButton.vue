@@ -43,8 +43,6 @@ const emit = defineEmits<{
 
 const btnValue = computed<T | undefined>(() => props.modelValue);
 
-const css = useCssModule();
-
 const usedElevation = computed<number | string>(() => {
   if (props.disabled)
     return 0;
@@ -74,17 +72,17 @@ const spinnerSize = computed<number>(() => {
   <Component
     :is="tag"
     :class="[
-      css.btn,
-      css[color ?? 'grey'],
-      css[size ?? ''],
-      css[variant],
+      $style.btn,
+      $style[color ?? 'grey'],
+      $style[size ?? ''],
+      $style[variant ?? ''],
       `shadow-${usedElevation}`,
       {
-        [css.loading]: loading,
-        [css._rounded]: rounded,
-        [css.icon]: icon,
-        [css.active]: active,
-        [css.text]: variant === 'list',
+        [$style.loading]: loading,
+        [$style._rounded]: rounded,
+        [$style.icon]: icon,
+        [$style.active]: active,
+        [$style.text]: variant === 'list',
       },
     ]"
     :disabled="disabled || loading"
@@ -98,7 +96,7 @@ const spinnerSize = computed<number>(() => {
     />
     <span
       v-if="$slots.default"
-      :class="css.label"
+      :class="$style.label"
     >
       <slot />
     </span>
@@ -109,7 +107,7 @@ const spinnerSize = computed<number>(() => {
     <RuiProgress
       v-if="loading"
       circular
-      :class="css.spinner"
+      :class="$style.spinner"
       variant="indeterminate"
       thickness="2"
       :size="spinnerSize"

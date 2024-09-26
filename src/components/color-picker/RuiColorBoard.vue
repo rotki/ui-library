@@ -90,24 +90,22 @@ whenever(
   },
   { deep: true },
 );
-
-const css = useCssModule();
 </script>
 
 <template>
   <div
     ref="wrapper"
     class="rui-color-board"
-    :class="css.saturation"
+    :class="$style.saturation"
     v-bind="$attrs"
     :style="{ backgroundColor: state.hexString }"
     @click="handleClick($event)"
     @mousedown="onMouseDown($event)"
   >
-    <div :class="css.saturation__white" />
-    <div :class="css.saturation__black" />
+    <div :class="$style.saturation__white" />
+    <div :class="$style.saturation__black" />
     <div
-      :class="css.cursor"
+      :class="$style.cursor"
       :style="cursorStyle"
     />
   </div>

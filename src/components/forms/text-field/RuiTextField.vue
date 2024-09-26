@@ -108,7 +108,6 @@ const { hasError, hasSuccess, hasMessages } = useFormTextDetail(
   successMessages,
 );
 
-const css = useCssModule();
 const { focused } = useFocus(inputRef);
 const focusedDebounced = refDebounced(focused, 500);
 
@@ -129,16 +128,16 @@ function clearIconClicked() {
   <div v-bind="getRootAttrs($attrs)">
     <div
       :class="[
-        css.wrapper,
-        css[color ?? ''],
-        css[variant],
+        $style.wrapper,
+        $style[color ?? ''],
+        $style[variant ?? ''],
         {
-          [css.dense]: dense,
-          [css.disabled]: disabled,
-          [css['no-label']]: !label,
-          [css['with-error']]: hasError,
-          [css['with-success']]: hasSuccess && !hasError,
-          [css[`text_${textColor}`]]: textColor && !hasMessages,
+          [$style.dense]: dense,
+          [$style.disabled]: disabled,
+          [$style['no-label']]: !label,
+          [$style['with-error']]: hasError,
+          [$style['with-success']]: hasSuccess && !hasError,
+          [$style[`text_${textColor}`]]: textColor && !hasMessages,
         },
       ]"
     >
@@ -146,7 +145,7 @@ function clearIconClicked() {
         v-if="$slots.prepend || prependIcon"
         ref="prepend"
         class="flex items-center gap-1 shrink-0"
-        :class="css.prepend"
+        :class="$style.prepend"
       >
         <slot
           v-if="$slots.prepend"
@@ -154,7 +153,7 @@ function clearIconClicked() {
         />
         <div
           v-else-if="prependIcon"
-          :class="[css.icon]"
+          :class="[$style.icon]"
         >
           <RuiIcon :name="prependIcon" />
         </div>
@@ -169,7 +168,7 @@ function clearIconClicked() {
           ref="inputRef"
           :value="modelValue"
           :placeholder="placeholder || ' '"
-          :class="css.input"
+          :class="$style.input"
           :disabled="disabled"
           :dense="dense"
           :variant="variant"
@@ -180,23 +179,23 @@ function clearIconClicked() {
           @blur="emit('blur', $event)"
           @remove="emit('remove', $event)"
         />
-        <label :class="css.label">
+        <label :class="$style.label">
           <span>
             {{ label }}
           </span>
         </label>
         <fieldset
           v-if="variant === 'outlined'"
-          :class="css.fieldset"
+          :class="$style.fieldset"
         >
-          <legend :class="{ [css.show]: label }" />
+          <legend :class="{ [$style.show]: label }" />
         </fieldset>
       </div>
       <div
         v-if="$slots.append || appendIcon || showClearIcon"
         ref="append"
         class="flex items-center gap-1 shrink-0"
-        :class="css.append"
+        :class="$style.append"
       >
         <RuiButton
           v-if="showClearIcon"
@@ -220,7 +219,7 @@ function clearIconClicked() {
         />
         <div
           v-else-if="appendIcon"
-          :class="[css.icon]"
+          :class="[$style.icon]"
         >
           <RuiIcon :name="appendIcon" />
         </div>

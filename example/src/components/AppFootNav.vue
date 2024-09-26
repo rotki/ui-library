@@ -9,7 +9,6 @@ const props = defineProps<{
 }>();
 
 const route = useRoute();
-const css = useCssModule();
 
 const { navigation } = toRefs(props);
 const links = computed(() =>
@@ -36,15 +35,15 @@ const nextPage = computed(
 </script>
 
 <template>
-  <div :class="css.nav">
-    <dl :class="css.nav__list">
+  <div :class="$style.nav">
+    <dl :class="$style.nav__list">
       <div v-if="previousPage">
-        <dt :class="css.nav__item">
+        <dt :class="$style.nav__item">
           Previous
         </dt>
         <dd class="mt-1">
           <RouterLink
-            :class="css.nav__link"
+            :class="$style.nav__link"
             :to="previousPage.to"
           >
             <span aria-hidden="true">&larr;</span> {{ previousPage.title }}
@@ -53,14 +52,14 @@ const nextPage = computed(
       </div>
       <div
         v-if="nextPage"
-        :class="css.nav__next"
+        :class="$style.nav__next"
       >
-        <dt :class="css.nav__item">
+        <dt :class="$style.nav__item">
           Next
         </dt>
         <dd class="mt-1">
           <RouterLink
-            :class="css.nav__link"
+            :class="$style.nav__link"
             :to="nextPage.to"
           >
             {{ nextPage.title }} <span aria-hidden="true">&rarr;</span>

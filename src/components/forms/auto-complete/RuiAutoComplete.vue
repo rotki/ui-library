@@ -84,7 +84,6 @@ const props = withDefaults(defineProps<AutoCompleteProps<TValue, TItem>>(), {
 const modelValue = defineModel<AutoCompleteModelValue<TValue>>({ required: true });
 const searchInputModel = defineModel<string>('searchInput');
 
-const css = useCssModule();
 const slots = useSlots();
 
 const { dense, disabled, options } = toRefs(props);
@@ -514,7 +513,7 @@ defineExpose({
 <template>
   <RuiMenu
     v-model="isOpen"
-    :class="css.wrapper"
+    :class="$style.wrapper"
     v-bind="{
       ...getRootAttrs($attrs),
       placement: 'bottom-start',
@@ -543,18 +542,18 @@ defineExpose({
           ref="activator"
           class="group"
           :class="[
-            css.activator,
+            $style.activator,
             labelClass,
             {
-              [css.disabled]: disabled,
-              [css.readonly]: readOnly,
-              [css.outlined]: outlined,
-              [css.dense]: dense,
-              [css.float]: float,
-              [css.opened]: open,
-              [css['with-value']]: valueSet,
-              [css['with-error']]: hasError,
-              [css['with-success']]: hasSuccess && !hasError,
+              [$style.disabled]: disabled,
+              [$style.readonly]: readOnly,
+              [$style.outlined]: outlined,
+              [$style.dense]: dense,
+              [$style.float]: float,
+              [$style.opened]: open,
+              [$style['with-value']]: valueSet,
+              [$style['with-error']]: hasError,
+              [$style['with-success']]: hasSuccess && !hasError,
             },
           ]"
           v-bind="{
@@ -575,7 +574,7 @@ defineExpose({
           <span
             v-if="outlined || (!valueSet && !searchInputFocused)"
             :class="[
-              css.label,
+              $style.label,
               {
                 'absolute': outlined,
                 'pr-2': !valueSet && !open && outlined,
@@ -589,7 +588,7 @@ defineExpose({
               {{ label }}
             </slot>
           </span>
-          <div :class="css.value">
+          <div :class="$style.value">
             <template
               v-for="(item, i) in value"
               :key="getIdentifier(item)"
@@ -655,7 +654,7 @@ defineExpose({
           <span
             v-if="clearable && valueSet && !disabled"
             class="group-hover:!visible"
-            :class="[css.clear, anyFocused && '!visible']"
+            :class="[$style.clear, anyFocused && '!visible']"
             @click.stop.prevent="clear()"
           >
             <RuiIcon
@@ -666,11 +665,11 @@ defineExpose({
           </span>
 
           <span
-            :class="css.icon__wrapper"
+            :class="$style.icon__wrapper"
             @click="arrowClicked($event)"
           >
             <RuiIcon
-              :class="[css.icon, { 'rotate-180': open }]"
+              :class="[$style.icon, { 'rotate-180': open }]"
               :size="dense ? 24 : 32"
               name="arrow-drop-down-fill"
             />
@@ -686,7 +685,7 @@ defineExpose({
         </div>
         <fieldset
           v-if="outlined"
-          :class="css.fieldset"
+          :class="$style.fieldset"
         >
           <legend :class="{ 'px-2': float }" />
         </fieldset>
@@ -696,7 +695,7 @@ defineExpose({
       <div ref="menuWrapperRef">
         <div
           v-if="optionsWithSelectedHidden.length > 0"
-          :class="[css.menu, menuClass]"
+          :class="[$style.menu, menuClass]"
           :style="{ width: `${width}px`, minWidth: menuWidth, minHeight: `${menuMinHeight}px` }"
           v-bind="virtualContainerProps"
           @scroll="containerProps.onScroll"
@@ -717,8 +716,8 @@ defineExpose({
               variant="list"
               :class="{
                 highlighted: highlightedIndex === _index,
-                [css.highlighted]: highlightedIndex === _index,
-                [css.active]: isActiveItem(item),
+                [$style.highlighted]: highlightedIndex === _index,
+                [$style.active]: isActiveItem(item),
               }"
               @click="setValue(item, _index)"
               @mousedown="highlightedIndex = _index"

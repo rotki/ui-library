@@ -52,19 +52,21 @@ const usedIcon = computed<RuiIcons | undefined>(() => {
 
   return iconMap[get(type)];
 });
-
-const css = useCssModule();
 </script>
 
 <template>
   <div
-    :class="[css.alert, css[type], css[variant]]"
+    :class="[
+      $style.alert,
+      $style[type],
+      $style[variant],
+    ]"
     v-bind="$attrs"
   >
     <div class="flex space-x-3 py-1 flex-grow">
       <div
         v-if="usedIcon"
-        :class="css.icon"
+        :class="$style.icon"
       >
         <RuiIcon
           :name="usedIcon"
@@ -73,7 +75,7 @@ const css = useCssModule();
       </div>
       <div
         class="space-y-1 flex-grow"
-        :class="css.texts"
+        :class="$style.texts"
       >
         <div
           v-if="$slots.title || title"
@@ -101,7 +103,7 @@ const css = useCssModule();
         variant="text"
         size="sm"
         :color="variant === 'filled' ? undefined : type"
-        :class="css.action"
+        :class="$style.action"
         @click="emit('action')"
       >
         {{ actionText }}
@@ -113,7 +115,7 @@ const css = useCssModule();
         size="sm"
         icon
         variant="text"
-        :class="css.close"
+        :class="$style.close"
         @click="emit('close')"
       >
         <RuiIcon

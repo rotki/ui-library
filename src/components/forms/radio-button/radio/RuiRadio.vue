@@ -56,8 +56,6 @@ const iconSize: ComputedRef<number> = computed(() => {
 
 const selected = computed(() => get(modelValue) === get(value));
 
-const css = useCssModule();
-
 const { hasError, hasSuccess } = useFormTextDetail(
   errorMessages,
   successMessages,
@@ -68,17 +66,17 @@ const { hasError, hasSuccess } = useFormTextDetail(
   <div v-bind="getRootAttrs($attrs)">
     <label
       :class="[
-        css.wrapper,
-        css[size ?? ''],
+        $style.wrapper,
+        $style[size ?? ''],
         {
-          [css.disabled]: disabled,
+          [$style.disabled]: disabled,
         },
       ]"
     >
       <input
         :checked="selected"
         type="radio"
-        :class="css.input"
+        :class="$style.input"
         :disabled="disabled"
         v-bind="getNonRootAttrs($attrs)"
         :value="value"
@@ -86,14 +84,14 @@ const { hasError, hasSuccess } = useFormTextDetail(
       />
       <div
         :class="[
-          css.radio,
-          css[color ?? ''],
-          css[size ?? ''],
+          $style.radio,
+          $style[color ?? ''],
+          $style[size ?? ''],
           {
-            [css.checked]: selected,
-            [css.disabled]: disabled,
-            [css['with-error']]: hasError,
-            [css['with-success']]: hasSuccess && !hasError,
+            [$style.checked]: selected,
+            [$style.disabled]: disabled,
+            [$style['with-error']]: hasError,
+            [$style['with-success']]: hasSuccess && !hasError,
           },
         ]"
       >
@@ -109,7 +107,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
         />
       </div>
       <div
-        :class="css.label"
+        :class="$style.label"
         class="text-body-1"
       >
         <slot>{{ label }}</slot>

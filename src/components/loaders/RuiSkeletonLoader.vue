@@ -23,37 +23,35 @@ withDefaults(defineProps<Props>(), {
   type: 'text',
   rounded: undefined,
 });
-
-const css = useCssModule();
 </script>
 
 <template>
   <RuiSkeletonBase
     v-if="!['paragraph', 'article'].includes(type)"
-    :class="css[`skeleton_${type}`]"
+    :class="$style[`skeleton_${type}`]"
     :rounded="rounded"
     v-bind="$attrs"
   />
   <div
     v-else
-    :class="css[`skeleton_${type}`]"
+    :class="$style[`skeleton_${type}`]"
     v-bind="$attrs"
   >
     <RuiSkeletonBase
       v-if="type === 'article'"
-      :class="css.skeleton_heading"
+      :class="$style.skeleton_heading"
       :rounded="rounded"
     />
     <RuiSkeletonBase
-      :class="css.skeleton_text"
+      :class="$style.skeleton_text"
       :rounded="rounded"
     />
     <RuiSkeletonBase
-      :class="css.skeleton_text"
+      :class="$style.skeleton_text"
       :rounded="rounded"
     />
     <RuiSkeletonBase
-      :class="css.skeleton_text"
+      :class="$style.skeleton_text"
       :rounded="rounded"
     />
   </div>

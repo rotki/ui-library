@@ -76,8 +76,6 @@ const {
   onMouseDown,
 } = useElementDrag(emitHue);
 
-const css = useCssModule();
-
 onMounted(() => {
   updatePosition();
 });
@@ -90,14 +88,14 @@ watch(modelValue, () => {
 <template>
   <div
     ref="barElement"
-    :class="css.bar"
+    :class="$style.bar"
     class="rui-color-hue"
     v-bind="$attrs"
     @click="handleClick($event)"
     @mousedown="onMouseDown($event)"
   >
     <div
-      :class="css.cursor"
+      :class="$style.cursor"
       :style="cursorStyle"
     />
   </div>

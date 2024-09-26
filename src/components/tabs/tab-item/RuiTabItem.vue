@@ -16,12 +16,10 @@ withDefaults(defineProps<Props>(), {
   active: false,
   reverse: false,
 });
-
-const css = useCssModule();
 </script>
 
 <template>
-  <div :class="[css.tab, { 'active-tab-item': active }]">
+  <div :class="[$style.tab, { 'active-tab-item': active }]">
     <Transition
       :enter-from-class="`opacity-0 ${reverse ? '-translate-x-8' : 'translate-x-8'}`"
       :leave-to-class="`opacity-0 !h-0 overflow-hidden ${

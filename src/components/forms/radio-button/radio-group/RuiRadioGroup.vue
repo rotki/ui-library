@@ -51,8 +51,6 @@ const children = computed(() => {
     ? Array.isArray(slotContent[0].children) ? slotContent[0].children.filter(isVNode) : []
     : slotContent;
 });
-
-const css = useCssModule();
 </script>
 
 <template>
@@ -63,7 +61,7 @@ const css = useCssModule();
     >
       {{ label }}
     </div>
-    <div :class="[css.wrapper, { [css.wrapper__inline]: inline }]">
+    <div :class="[$style.wrapper, { [$style.wrapper__inline]: inline }]">
       <Component
         :is="child"
         v-for="(child, i) in children"

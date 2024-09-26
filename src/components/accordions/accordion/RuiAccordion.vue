@@ -33,13 +33,12 @@ function click() {
 const inner = ref<HTMLDivElement>();
 
 const { height: innerHeight } = useElementSize(inner);
-const css = useCssModule();
 </script>
 
 <template>
   <div
     class="accordion"
-    :class="[css.accordion, { [css.open]: open }]"
+    :class="[$style.accordion, { [$style.open]: open }]"
     v-bind="$attrs"
   >
     <div
@@ -59,13 +58,13 @@ const css = useCssModule();
       </div>
       <Icon
         class="text-rui-text-secondary"
-        :class="css.icon"
+        :class="$style.icon"
         name="arrow-down-s-line"
       />
     </div>
     <div
       v-if="open || eager"
-      :class="[contentClass, css.accordion__content]"
+      :class="[contentClass, $style.accordion__content]"
       class="accordion__content"
     >
       <div

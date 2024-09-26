@@ -248,7 +248,6 @@ function isHeaderSlot(slotName: string): slotName is `header.${string}` {
   return slotName.startsWith('header.');
 }
 
-const css = useCssModule();
 const { stick, table, tableScroller } = useStickyTableHeader(
   stickyHeader,
   get(stickyHeaderOffset),
@@ -992,14 +991,14 @@ onMounted(() => {
 <template>
   <div
     :class="[
-      css.wrapper,
-      css[`rounded__${rounded}`],
-      { [css.outlined]: outlined },
+      $style.wrapper,
+      $style[`rounded__${rounded}`],
+      { [$style.outlined]: outlined },
     ]"
   >
     <div
       ref="tableScroller"
-      :class="css.scroller"
+      :class="$style.scroller"
     >
       <RuiTablePagination
         v-if="paginationData && !hideDefaultHeader"
@@ -1012,7 +1011,7 @@ onMounted(() => {
       />
       <table
         ref="table"
-        :class="[css.table, { [css.dense]: dense }]"
+        :class="[$style.table, { [$style.dense]: dense }]"
         aria-label=""
       >
         <RuiTableHead
@@ -1069,7 +1068,7 @@ onMounted(() => {
             />
           </template>
         </RuiTableHead>
-        <tbody :class="[css.tbody, { [css['tbody--striped']]: striped }]">
+        <tbody :class="[$style.tbody, { [$style['tbody--striped']]: striped }]">
           <slot
             v-if="slots['body.prepend']"
             :colspan="colspan"
@@ -1079,7 +1078,7 @@ onMounted(() => {
             <tr
               v-if="!isRow(row)"
               :key="`row-${index}`"
-              :class="[css.tr, css.tr__group]"
+              :class="[$style.tr, $style.tr__group]"
             >
               <slot
                 name="group.header"
@@ -1089,7 +1088,7 @@ onMounted(() => {
                 :toggle="() => onToggleExpandGroup(row.group, row.identifier)"
               >
                 <td
-                  :class="[css.td]"
+                  :class="[$style.td]"
                   class="!p-2"
                   :colspan="colspan"
                 >
@@ -1151,14 +1150,14 @@ onMounted(() => {
               <tr
                 :key="`row-${index}`"
                 :class="[
-                  css.tr,
-                  { [css.tr__selected]: isSelected(row[rowIdentifier]) },
+                  $style.tr,
+                  { [$style.tr__selected]: isSelected(row[rowIdentifier]) },
                   typeof itemClass === 'string' ? itemClass : itemClass(row),
                 ]"
               >
                 <td
                   v-if="selectedData"
-                  :class="css.checkbox"
+                  :class="$style.checkbox"
                   colspan="1"
                   rowspan="1"
                 >
@@ -1179,9 +1178,9 @@ onMounted(() => {
                   v-for="(column, subIndex) in columns"
                   :key="subIndex"
                   :class="[
-                    css.td,
+                    $style.td,
                     column.cellClass,
-                    css[`align__${column.align ?? 'start'}`],
+                    $style[`align__${column.align ?? 'start'}`],
                   ]"
                   :colspan="column.colspan ?? 1"
                   :rowspan="column.rowspan ?? 1"
@@ -1214,11 +1213,11 @@ onMounted(() => {
               <tr
                 v-if="expandable && isExpanded(row[rowIdentifier])"
                 :key="`row-expand-${index}`"
-                :class="[css.tr, css.tr__expandable]"
+                :class="[$style.tr, $style.tr__expandable]"
               >
                 <td
                   :colspan="colspan"
-                  :class="[css.td]"
+                  :class="[$style.td]"
                 >
                   <slot
                     name="expanded-item"
@@ -1233,7 +1232,7 @@ onMounted(() => {
             v-if="loading && noData"
           >
             <td
-              :class="css.tbody__loader"
+              :class="$style.tbody__loader"
               :colspan="colspan"
             >
               <RuiProgress
@@ -1245,7 +1244,7 @@ onMounted(() => {
           </tr>
           <tr
             v-if="noData && empty && !loading"
-            :class="[css.tr, css.tr__empty]"
+            :class="[$style.tr, $style.tr__empty]"
           >
             <Transition
               appear
@@ -1257,14 +1256,14 @@ onMounted(() => {
               leave-to-class="opacity-0 translate-y-1"
             >
               <td
-                :class="css.td"
+                :class="$style.td"
                 :colspan="colspan"
               >
                 <slot name="no-data">
-                  <div :class="css.empty">
+                  <div :class="$style.empty">
                     <p
                       v-if="empty.label"
-                      :class="css.empty__label"
+                      :class="$style.empty__label"
                     >
                       {{ empty.label }}
                     </p>
@@ -1272,7 +1271,7 @@ onMounted(() => {
                     <slot name="empty-description">
                       <p
                         v-if="empty.description"
-                        :class="css.empty__description"
+                        :class="$style.empty__description"
                       >
                         {{ empty.description }}
                       </p>

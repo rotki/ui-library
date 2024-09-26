@@ -65,8 +65,6 @@ const iconSize: ComputedRef<number> = computed(() => {
   return 24;
 });
 
-const css = useCssModule();
-
 const { hasError, hasSuccess } = useFormTextDetail(
   errorMessages,
   successMessages,
@@ -94,10 +92,10 @@ watch(internalModelValue, (val) => {
   <div v-bind="getRootAttrs($attrs)">
     <label
       :class="[
-        css.wrapper,
-        css[size ?? ''],
+        $style.wrapper,
+        $style[size ?? ''],
         {
-          [css.disabled]: disabled,
+          [$style.disabled]: disabled,
         },
       ]"
       v-bind="objectPick($attrs, ['onClick'])"
@@ -106,20 +104,20 @@ watch(internalModelValue, (val) => {
         ref="el"
         v-model="internalModelValue"
         type="checkbox"
-        :class="css.input"
+        :class="$style.input"
         :disabled="disabled"
         v-bind="getNonRootAttrs($attrs, ['onInput', 'onClick'])"
       />
       <span
         :class="[
-          css.checkbox,
-          css[color ?? ''],
-          css[size ?? ''],
+          $style.checkbox,
+          $style[color ?? ''],
+          $style[size ?? ''],
           {
-            [css.checked]: modelValue || indeterminate,
-            [css.disabled]: disabled,
-            [css['with-error']]: hasError,
-            [css['with-success']]: hasSuccess && !hasError,
+            [$style.checked]: modelValue || indeterminate,
+            [$style.disabled]: disabled,
+            [$style['with-error']]: hasError,
+            [$style['with-success']]: hasSuccess && !hasError,
           },
         ]"
       >
@@ -141,7 +139,7 @@ watch(internalModelValue, (val) => {
       </span>
       <span
         v-if="label || $slots.default"
-        :class="css.label"
+        :class="$style.label"
         class="text-body-1"
       >
         <slot>{{ label }}</slot>

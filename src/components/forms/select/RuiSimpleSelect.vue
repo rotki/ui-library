@@ -26,8 +26,6 @@ const emit = defineEmits<{
 
 const { modelValue } = toRefs(props);
 
-const css = useCssModule();
-
 const value = computed({
   get: () => get(modelValue),
   set: value => emit('update:model-value', value),
@@ -36,15 +34,15 @@ const value = computed({
 
 <template>
   <div
-    :class="css.wrapper"
+    :class="$style.wrapper"
     v-bind="$attrs"
   >
     <select
       v-model="value"
       :class="[
-        css.select,
-        css[variant ?? 'default'],
-        { [css.disabled]: disabled },
+        $style.select,
+        $style[variant ?? 'default'],
+        { [$style.disabled]: disabled },
       ]"
       :name="name"
       :disabled="disabled"
@@ -57,9 +55,9 @@ const value = computed({
         {{ option }}
       </option>
     </select>
-    <span :class="css.icon__wrapper">
+    <span :class="$style.icon__wrapper">
       <RuiIcon
-        :class="css.icon"
+        :class="$style.icon"
         name="arrow-drop-down-fill"
         size="24"
       />

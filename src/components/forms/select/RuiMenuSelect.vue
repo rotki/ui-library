@@ -61,8 +61,6 @@ const props = withDefaults(defineProps<Props<TValue, TItem>>(), {
 
 const modelValue = defineModel<TValue | undefined>({ required: true });
 
-const css = useCssModule();
-
 const { dense, options } = toRefs(props);
 
 const menuRef = ref();
@@ -140,7 +138,7 @@ function clear() {
 <template>
   <RuiMenu
     v-model="isOpen"
-    :class="css.wrapper"
+    :class="$style.wrapper"
     v-bind="{
       ...getRootAttrs($attrs),
       placement: 'bottom-start',
@@ -168,18 +166,18 @@ function clear() {
           :tabindex="disabled || readOnly ? -1 : 0"
           class="group"
           :class="[
-            css.activator,
+            $style.activator,
             labelClass,
             {
-              [css.disabled]: disabled,
-              [css.readonly]: readOnly,
-              [css.outlined]: outlined,
-              [css.dense]: dense,
-              [css.float]: float,
-              [css.opened]: open,
-              [css['with-value']]: !!value,
-              [css['with-error']]: hasError,
-              [css['with-success']]: hasSuccess && !hasError,
+              [$style.disabled]: disabled,
+              [$style.readonly]: readOnly,
+              [$style.outlined]: outlined,
+              [$style.dense]: dense,
+              [$style.float]: float,
+              [$style.opened]: open,
+              [$style['with-value']]: !!value,
+              [$style['with-error']]: hasError,
+              [$style['with-success']]: hasSuccess && !hasError,
             },
           ]"
           v-bind="{ ...getNonRootAttrs($attrs), ...(readOnly ? {} : attrs) }"
@@ -190,7 +188,7 @@ function clear() {
           <span
             v-if="outlined || !value"
             :class="[
-              css.label,
+              $style.label,
               {
                 'absolute': outlined,
                 'pr-2': !value && !open && outlined,
@@ -207,7 +205,7 @@ function clear() {
           <span
             v-if="value"
             class="w-full"
-            :class="css.value"
+            :class="$style.value"
           >
             <slot
               name="selection.prepend"
@@ -224,7 +222,7 @@ function clear() {
           <span
             v-if="clearable && value && !disabled"
             class="group-hover:!visible"
-            :class="[css.clear, focused && '!visible']"
+            :class="[$style.clear, focused && '!visible']"
             @click.stop.prevent="clear()"
           >
             <RuiIcon
@@ -234,9 +232,9 @@ function clear() {
             />
           </span>
 
-          <span :class="css.icon__wrapper">
+          <span :class="$style.icon__wrapper">
             <RuiIcon
-              :class="[css.icon, { 'rotate-180': open }]"
+              :class="[$style.icon, { 'rotate-180': open }]"
               :size="dense ? 24 : 32"
               name="arrow-drop-down-fill"
             />
@@ -252,7 +250,7 @@ function clear() {
         </button>
         <fieldset
           v-if="outlined"
-          :class="css.fieldset"
+          :class="$style.fieldset"
         >
           <legend :class="{ 'px-2': float }" />
         </fieldset>
@@ -266,7 +264,7 @@ function clear() {
     <template #default="{ width }">
       <div
         v-if="options.length > 0"
-        :class="[css.menu, menuClass]"
+        :class="[$style.menu, menuClass]"
         :style="{ width: `${width}px`, minWidth: menuWidth }"
         v-bind="virtualContainerProps"
         @scroll="containerProps.onScroll"
@@ -286,7 +284,7 @@ function clear() {
             variant="list"
             :class="{
               highlighted: highlightedIndex === _index,
-              [css.highlighted]: !isActiveItem(item) && highlightedIndex === _index,
+              [$style.highlighted]: !isActiveItem(item) && highlightedIndex === _index,
             }"
             @update:model-value="setValue(item, _index)"
             @mousedown="highlightedIndex = _index"

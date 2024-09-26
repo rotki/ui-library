@@ -11,15 +11,13 @@ withDefaults(
     state: StepperState.inactive,
   },
 );
-
-const css = useCssModule();
 </script>
 
 <template>
-  <span :class="[css.indicator, css[state]]">
+  <span :class="[$style.indicator, $style[state]]">
     <span
       v-if="state === StepperState.inactive"
-      :class="css.text"
+      :class="$style.text"
     >
       {{ index }}
     </span>
@@ -30,13 +28,13 @@ const css = useCssModule();
     />
     <RuiIcon
       v-else-if="state === StepperState.done"
-      :class="css.text"
+      :class="$style.text"
       :size="20"
       name="check-line"
     />
     <span
       v-else
-      :class="css.text"
+      :class="$style.text"
     >
       {{ index }}
     </span>

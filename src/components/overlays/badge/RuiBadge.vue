@@ -36,7 +36,6 @@ const props = withDefaults(defineProps<Props>(), {
   offsetY: 0,
 });
 
-const css = useCssModule();
 const slots = useSlots();
 
 const { modelValue, offsetX, offsetY, icon, text } = toRefs(props);
@@ -49,7 +48,7 @@ const hasIconAndText = logicAnd(hasIcon, hasText);
 </script>
 
 <template>
-  <div :class="css.wrapper">
+  <div :class="$style.wrapper">
     <slot />
     <Transition
       appear
@@ -63,12 +62,12 @@ const hasIconAndText = logicAnd(hasIcon, hasText);
       <div
         v-if="modelValue"
         :class="[
-          css.badge,
-          css[color ?? 'primary'],
-          css[`placement__${placement}`],
-          css[`rounded__${rounded}`],
-          css[`size__${size}`],
-          { [css.left]: left, [css.dot]: dot },
+          $style.badge,
+          $style[color ?? 'primary'],
+          $style[`placement__${placement}`],
+          $style[`rounded__${rounded}`],
+          $style[`size__${size}`],
+          { [$style.left]: left, [$style.dot]: dot },
         ]"
         aria-atomic="true"
         aria-label="Badge"
@@ -78,9 +77,9 @@ const hasIconAndText = logicAnd(hasIcon, hasText);
         <span
           v-if="!dot"
           :class="[
-            css.content,
+            $style.content,
             {
-              [css.text_icon]: hasIconAndText,
+              [$style.text_icon]: hasIconAndText,
             },
           ]"
         >

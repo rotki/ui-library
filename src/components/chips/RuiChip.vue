@@ -51,8 +51,6 @@ function click(e: any) {
   emit('click', e);
 }
 
-const css = useCssModule();
-
 const style: ComputedRef<Partial<StyleValue>> = computed(() => {
   const style: Partial<StyleValue> = {};
   const bg = get(bgColor);
@@ -70,14 +68,14 @@ const style: ComputedRef<Partial<StyleValue>> = computed(() => {
 <template>
   <div
     :class="[
-      css.chip,
-      css[color ?? ''],
-      css[size ?? ''],
-      css[variant ?? ''],
+      $style.chip,
+      $style[color ?? ''],
+      $style[size ?? ''],
+      $style[variant ?? ''],
       {
-        [css.disabled]: disabled,
-        [css.tile]: tile,
-        [css.readonly]: !clickable,
+        [$style.disabled]: disabled,
+        [$style.tile]: tile,
+        [$style.readonly]: !clickable,
       },
     ]"
     :style="style"
@@ -88,22 +86,22 @@ const style: ComputedRef<Partial<StyleValue>> = computed(() => {
   >
     <div
       v-if="$slots.prepend"
-      :class="css.chip__prepend"
+      :class="$style.chip__prepend"
     >
       <slot name="prepend" />
     </div>
-    <span :class="css.chip__label">
+    <span :class="$style.chip__label">
       <slot />
     </span>
     <button
       v-if="closeable"
-      :class="css.chip__close"
+      :class="$style.chip__close"
       :disabled="disabled"
       type="button"
       @click.stop="emit('click:close')"
     >
       <RuiIcon
-        :class="css.chip__close_icon"
+        :class="$style.chip__close_icon"
         :size="size === 'sm' ? 16 : 24"
         :name="closeIcon"
       />

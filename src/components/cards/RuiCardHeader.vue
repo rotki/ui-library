@@ -11,34 +11,35 @@ defineOptions({
 withDefaults(defineProps<Props>(), {
   dense: false,
 });
-
-const css = useCssModule();
 </script>
 
 <template>
   <div
     :class="[
-      css.head,
-      { [css.dense]: dense, [css.has_prepend]: !!$slots.prepend },
+      $style.head,
+      {
+        [$style.dense]: dense,
+        [$style.has_prepend]: !!$slots.prepend,
+      },
     ]"
     v-bind="$attrs"
   >
     <div
       v-if="$slots.prepend"
-      :class="css.prepend"
+      :class="$style.prepend"
     >
       <slot name="prepend" />
     </div>
-    <div :class="css.headers">
+    <div :class="$style.headers">
       <h5
         v-if="$slots.header"
-        :class="css.header"
+        :class="$style.header"
       >
         <slot name="header" />
       </h5>
       <p
         v-if="$slots.subheader"
-        :class="css.subheader"
+        :class="$style.subheader"
       >
         <slot name="subheader" />
       </p>

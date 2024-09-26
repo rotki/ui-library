@@ -10,13 +10,11 @@ defineOptions({
 withDefaults(defineProps<Props>(), {
   rounded: undefined,
 });
-
-const css = useCssModule();
 </script>
 
 <template>
   <div
-    :class="[css.skeleton, { [`rounded-${rounded}`]: !!rounded }]"
+    :class="[$style.skeleton, { [`rounded-${rounded}`]: !!rounded }]"
     role="alert"
   />
 </template>

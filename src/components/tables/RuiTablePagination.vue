@@ -29,8 +29,6 @@ const emit = defineEmits<{
 
 const { modelValue } = toRefs(props);
 
-const css = useCssModule();
-
 const tableDefaults = useTable();
 
 const limits = computed(() => (get(modelValue).limits ?? get(tableDefaults.limits)).map(limit => ({ limit })));
@@ -127,9 +125,9 @@ function onLast() {
 </script>
 
 <template>
-  <div :class="css.wrapper">
-    <div :class="css.limit">
-      <span :class="css.limit__text">Rows per page:</span>
+  <div :class="$style.wrapper">
+    <div :class="$style.limit">
+      <span :class="$style.limit__text">Rows per page:</span>
       <RuiMenuSelect
         v-model="currentLimit"
         :options="limits"
@@ -142,8 +140,8 @@ function onLast() {
         dense
       />
     </div>
-    <div :class="css.ranges">
-      <span :class="css.ranges__text">Items #</span>
+    <div :class="$style.ranges">
+      <span :class="$style.ranges__text">Items #</span>
       <RuiMenuSelect
         v-if="ranges.length > 0"
         v-model="currentRange"
@@ -156,11 +154,11 @@ function onLast() {
         hide-details
         dense
       />
-      <span :class="css.indicator">
+      <span :class="$style.indicator">
         {{ indicatorText }}
       </span>
     </div>
-    <div :class="css.navigation">
+    <div :class="$style.navigation">
       <RuiButton
         :size="dense ? 'sm' : undefined"
         :disabled="!hasPrev || loading"

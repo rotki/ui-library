@@ -35,8 +35,6 @@ const emit = defineEmits<{
   (e: 'closed'): void;
 }>();
 
-const css = useCssModule();
-
 const {
   modelValue,
   position,
@@ -106,7 +104,7 @@ const activatorAttrs = computed(() => ({
       >
         <div
           v-if="internalValue"
-          :class="css.overlay"
+          :class="$style.overlay"
           @click.stop="close()"
         />
       </Transition>
@@ -114,14 +112,14 @@ const activatorAttrs = computed(() => ({
         ref="content"
         :style="style"
         :class="[
-          css.content,
+          $style.content,
           contentClass,
           {
-            [css.visible]: internalValue,
-            [css[position]]: position,
-            [css.mini]: miniVariant,
-            [css.temporary]: temporary,
-            [css['with-overlay']]: overlay,
+            [$style.visible]: internalValue,
+            [$style[position]]: position,
+            [$style.mini]: miniVariant,
+            [$style.temporary]: temporary,
+            [$style['with-overlay']]: overlay,
           },
         ]"
         v-bind="getRootAttrs($attrs)"

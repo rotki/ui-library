@@ -174,7 +174,7 @@ onMounted(computeFieldHeight);
       :class="[
         css.wrapper,
         colorClass,
-        css[variant],
+        css[variant ?? ''],
         {
           [css.dense]: dense,
           [css.disabled]: disabled,

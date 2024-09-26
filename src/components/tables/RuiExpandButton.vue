@@ -9,16 +9,14 @@ export interface Props {
 }
 
 withDefaults(defineProps<Props>(), { icon: 'arrow-down-s-line' });
-
-const css = useCssModule();
 </script>
 
 <template>
   <RuiButton
     :class="[
-      css.tr__expander_button,
+      $style.tr__expander_button,
       {
-        [css.tr__expander_button_open]: expanded,
+        [$style.tr__expander_button_open]: expanded,
       },
     ]"
     icon
@@ -28,7 +26,7 @@ const css = useCssModule();
   >
     <slot>
       <RuiIcon
-        :class="css.tr__expander_button_icon"
+        :class="$style.tr__expander_button_icon"
         :name="icon"
       />
     </slot>

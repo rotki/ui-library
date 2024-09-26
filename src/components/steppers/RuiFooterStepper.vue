@@ -26,8 +26,6 @@ const emit = defineEmits<{
   (event: 'update:modelValue', modelValue: number): void;
 }>();
 
-const css = useCssModule();
-
 const { modelValue, pages } = toRefs(props);
 
 function onChange(delta: number) {
@@ -52,20 +50,20 @@ function onClick(index: number) {
 </script>
 
 <template>
-  <div :class="[css['footer-stepper'], css[variant ?? '']]">
+  <div :class="[$style['footer-stepper'], $style[variant ?? '']]">
     <template v-if="variant === 'pill'">
-      <div :class="css.pills">
+      <div :class="$style.pills">
         <span
           v-for="i in pages"
           :key="i"
-          :class="[css.pill, { [css.active]: modelValue === i }]"
+          :class="[$style.pill, { [$style.active]: modelValue === i }]"
         />
       </div>
     </template>
     <template v-else>
       <RuiButton
         v-if="!hideButtons"
-        :class="{ [css.arrow__button]: arrowButtons }"
+        :class="{ [$style.arrow__button]: arrowButtons }"
         :disabled="modelValue <= 1"
         :icon="arrowButtons"
         :variant="arrowButtons ? 'outlined' : 'text'"
@@ -90,30 +88,30 @@ function onClick(index: number) {
       </RuiButton>
       <span
         v-if="variant === 'numeric'"
-        :class="css.numeric"
+        :class="$style.numeric"
       >
         {{ modelValue }}/{{ pages }}
       </span>
       <div
         v-else-if="variant === 'bullet'"
-        :class="css.bullets"
+        :class="$style.bullets"
       >
         <span
           v-for="i in pages"
           :key="i"
-          :class="[css.bullet, { [css.active]: modelValue === i }]"
+          :class="[$style.bullet, { [$style.active]: modelValue === i }]"
           @click="onClick(i)"
         />
       </div>
       <RuiProgress
         v-else-if="variant === 'progress'"
-        :class="css.progress"
+        :class="$style.progress"
         color="primary"
         :value="(modelValue / pages) * 100"
       />
       <RuiButton
         v-if="!hideButtons"
-        :class="{ [css.arrow__button]: arrowButtons }"
+        :class="{ [$style.arrow__button]: arrowButtons }"
         :disabled="modelValue >= pages"
         :icon="arrowButtons"
         :variant="arrowButtons ? 'outlined' : 'text'"

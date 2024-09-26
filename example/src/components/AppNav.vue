@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { RuiButton, RuiButtonGroup, RuiIcon, type RuiIcons, ThemeMode, useRotkiTheme } from '@rotki/ui-library';
 
-const css = useCssModule();
 const { switchThemeScheme, store } = useRotkiTheme();
 
 interface Theme {
@@ -20,9 +19,9 @@ const onSwitchTheme = ({ value }: Theme) => switchThemeScheme(value);
 </script>
 
 <template>
-  <header :class="css.header">
+  <header :class="$style.header">
     <div
-      :class="css['header-wrapper']"
+      :class="$style['header-wrapper']"
       class="wrapper"
     >
       <RouterLink
