@@ -301,10 +301,9 @@ const menuSelectPrimitive = ref<RuiMenuSelectProps<string, string>[]>([
         >
           <template #activator="{ attrs, disabled }">
             <RuiButton
-              data-cy="activator"
               :color="menu.buttonColor"
               :disabled="disabled"
-              v-bind="attrs"
+              v-bind="{ ...attrs, 'data-cy': 'activator' }"
             >
               {{ menu.buttonText }}
             </RuiButton>
@@ -354,10 +353,9 @@ const menuSelectPrimitive = ref<RuiMenuSelectProps<string, string>[]>([
           <template #activator="{ attrs, disabled, open, value }">
             <RuiButton
               class="!rounded-md border"
-              data-cy="activator"
               variant="list"
               :disabled="disabled"
-              v-bind="attrs"
+              v-bind="{ ...attrs, 'data-cy': 'activator' }"
             >
               {{ value ? value.label : 'Choose option' }}
               <template #append>
