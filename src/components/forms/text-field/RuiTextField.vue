@@ -8,7 +8,6 @@ import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
 
 export interface TextFieldProps {
-  modelValue?: string;
   label?: string;
   placeholder?: string;
   disabled?: boolean;
@@ -33,7 +32,6 @@ defineOptions({
 });
 
 const props = withDefaults(defineProps<TextFieldProps>(), {
-  modelValue: '',
   label: '',
   placeholder: '',
   disabled: false,
@@ -53,16 +51,16 @@ const props = withDefaults(defineProps<TextFieldProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', modelValue: string): void;
   (e: 'focus-input', event: Event): void;
   (e: 'blur', event: Event): void;
   (e: 'remove', value: unknown): void;
   (e: 'clear'): void;
 }>();
 
+const modelValue = defineModel<string>({ required: true });
+
 const {
   label,
-  modelValue,
   clearable,
   disabled,
   readonly,
@@ -72,7 +70,7 @@ const {
 
 function input(event: Event) {
   const value = (event.target as HTMLInputElement).value;
-  emit('update:modelValue', value);
+  set(modelValue, value);
 }
 
 const labelWithQuote = computed(() => {
@@ -114,6 +112,7 @@ const css = useCssModule();
 const attrs = useAttrs();
 const slots = useSlots();
 const { focused } = useFocus(inputRef);
+const focusedDebounced = refDebounced(focused, 500);
 
 const showClearIcon = logicAnd(
   clearable,
@@ -123,7 +122,7 @@ const showClearIcon = logicAnd(
 );
 
 function clearIconClicked() {
-  emit('update:modelValue', '');
+  set(modelValue, '');
   emit('clear');
 }
 </script>
@@ -169,6 +168,7 @@ function clearIconClicked() {
       >
         <Component
           :is="as"
+          ref="inputRef"
           :value="modelValue"
           :placeholder="placeholder || ' '"
           :class="css.input"
@@ -202,12 +202,13 @@ function clearIconClicked() {
       >
         <RuiButton
           v-if="showClearIcon"
-          :class="{ hidden: !focused }"
+          :class="{ hidden: !focusedDebounced }"
           variant="text"
           type="button"
           icon
-          class="!p-2"
-          :color="color"
+          class="!p-2 clear-btn"
+          color="error"
+          tabindex="-1"
           @click.stop="clearIconClicked()"
         >
           <RuiIcon
