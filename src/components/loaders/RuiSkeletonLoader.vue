@@ -25,7 +25,6 @@ withDefaults(defineProps<Props>(), {
 });
 
 const css = useCssModule();
-const attrs = useAttrs();
 </script>
 
 <template>
@@ -33,12 +32,12 @@ const attrs = useAttrs();
     v-if="!['paragraph', 'article'].includes(type)"
     :class="css[`skeleton_${type}`]"
     :rounded="rounded"
-    v-bind="attrs"
+    v-bind="$attrs"
   />
   <div
     v-else
     :class="css[`skeleton_${type}`]"
-    v-bind="attrs"
+    v-bind="$attrs"
   >
     <RuiSkeletonBase
       v-if="type === 'article'"

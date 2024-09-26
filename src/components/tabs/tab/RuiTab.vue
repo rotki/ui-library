@@ -67,8 +67,6 @@ const tabClass = computed(() => [
   },
 ]);
 
-const attrs = useAttrs();
-
 function click() {
   emit('click', get(value));
 }
@@ -81,7 +79,7 @@ function click() {
     disabled
     :class="tabClass"
     role="tab"
-    v-bind="attrs"
+    v-bind="$attrs"
   >
     <template
       v-for="(_, name) in slots"
@@ -98,7 +96,7 @@ function click() {
     :class="tabClass"
     :color="active ? color : undefined"
     role="tab"
-    v-bind="attrs"
+    v-bind="$attrs"
     variant="text"
     @click="click()"
   >
@@ -134,7 +132,7 @@ function click() {
       :target="target"
       role="tab"
       tag="a"
-      v-bind="attrs"
+      v-bind="$attrs"
       variant="text"
       @click="
         click();

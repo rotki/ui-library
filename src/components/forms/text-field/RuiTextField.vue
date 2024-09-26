@@ -109,7 +109,6 @@ const { hasError, hasSuccess, hasMessages } = useFormTextDetail(
 );
 
 const css = useCssModule();
-const attrs = useAttrs();
 const slots = useSlots();
 const { focused } = useFocus(inputRef);
 const focusedDebounced = refDebounced(focused, 500);
@@ -128,7 +127,7 @@ function clearIconClicked() {
 </script>
 
 <template>
-  <div v-bind="getRootAttrs(attrs)">
+  <div v-bind="getRootAttrs($attrs)">
     <div
       :class="[
         css.wrapper,
@@ -177,7 +176,7 @@ function clearIconClicked() {
           :variant="variant"
           :readonly="readonly"
           :wrapper-width="width"
-          v-bind="getNonRootAttrs(attrs)"
+          v-bind="getNonRootAttrs($attrs)"
           @input="input($event)"
           @blur="emit('blur', $event)"
           @remove="emit('remove', $event)"

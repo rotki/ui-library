@@ -83,7 +83,6 @@ const textarea = ref<HTMLTextAreaElement>();
 const textareaSizer = ref<HTMLTextAreaElement>();
 
 const css = useCssModule();
-const attrs = useAttrs();
 const slots = useSlots();
 
 const labelWithQuote = computed(() => {
@@ -171,7 +170,7 @@ onMounted(computeFieldHeight);
 </script>
 
 <template>
-  <div v-bind="getRootAttrs(attrs)">
+  <div v-bind="getRootAttrs($attrs)">
     <div
       :class="[
         css.wrapper,
@@ -223,7 +222,7 @@ onMounted(computeFieldHeight);
           :style="fieldStyles"
           :disabled="disabled"
           :readonly="readonly"
-          v-bind="getNonRootAttrs(attrs)"
+          v-bind="getNonRootAttrs($attrs)"
         />
         <label :class="css.label">
           {{ label }}

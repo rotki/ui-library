@@ -18,14 +18,13 @@ const props = withDefaults(defineProps<BottomSheetProps>(), {
   persistent: false,
 });
 
-const attrs = useAttrs();
 const slots = useSlots();
 </script>
 
 <template>
   <RuiDialog
     bottom-sheet
-    v-bind="{ ...props, ...attrs }"
+    v-bind="{ ...props, ...$attrs }"
   >
     <template
       v-for="slot in Object.keys(slots)"

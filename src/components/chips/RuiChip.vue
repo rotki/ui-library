@@ -53,7 +53,6 @@ function click(e: any) {
 
 const css = useCssModule();
 const slots = useSlots();
-const attrs = useAttrs();
 
 const style: ComputedRef<Partial<StyleValue>> = computed(() => {
   const style: Partial<StyleValue> = {};
@@ -85,7 +84,7 @@ const style: ComputedRef<Partial<StyleValue>> = computed(() => {
     :style="style"
     role="button"
     tabindex="0"
-    v-bind="objectOmit(attrs, ['onClick'])"
+    v-bind="objectOmit($attrs, ['onClick'])"
     @click="click($event)"
   >
     <div

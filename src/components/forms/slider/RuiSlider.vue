@@ -66,7 +66,6 @@ const vModel = computed({
 });
 
 const css = useCssModule();
-const attrs = useAttrs();
 
 const ticksData = computed(() => {
   const minVal = get(min);
@@ -98,7 +97,7 @@ const tickSizeInPx = computed(() => `${get(tickSize)}px`);
 </script>
 
 <template>
-  <div v-bind="getRootAttrs(attrs)">
+  <div v-bind="getRootAttrs($attrs)">
     <label
       :class="[
         css.wrapper,
@@ -133,7 +132,7 @@ const tickSizeInPx = computed(() => `${get(tickSize)}px`);
             :min="min"
             :step="step"
             :disabled="disabled"
-            v-bind="getNonRootAttrs(attrs)"
+            v-bind="getNonRootAttrs($attrs)"
           />
           <div :class="css.slider">
             <div :class="css.slider__inner">

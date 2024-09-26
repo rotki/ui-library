@@ -32,13 +32,12 @@ const props = withDefaults(defineProps<Props>(), {
 
 const hidden: Ref<boolean> = ref(true);
 
-const attrs = useAttrs();
 const slots = useSlots();
 </script>
 
 <template>
   <RuiTextField
-    v-bind="{ ...props, ...attrs }"
+    v-bind="{ ...props, ...$attrs }"
     :type="hidden ? 'password' : 'text'"
   >
     <template

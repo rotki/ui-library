@@ -44,7 +44,6 @@ function input(event: Event) {
 }
 
 const css = useCssModule();
-const attrs = useAttrs();
 
 const { hasError, hasSuccess } = useFormTextDetail(
   errorMessages,
@@ -53,7 +52,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
 </script>
 
 <template>
-  <div v-bind="getRootAttrs(attrs)">
+  <div v-bind="getRootAttrs($attrs)">
     <label
       :class="[
         css.wrapper,
@@ -73,7 +72,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
           type="checkbox"
           :class="css.input"
           :disabled="disabled"
-          v-bind="getNonRootAttrs(attrs)"
+          v-bind="getNonRootAttrs($attrs)"
           @input="input($event)"
         />
         <div
