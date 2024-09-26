@@ -34,8 +34,6 @@ const inner = ref<HTMLDivElement>();
 
 const { height: innerHeight } = useElementSize(inner);
 const css = useCssModule();
-
-const slots = useSlots();
 </script>
 
 <template>
@@ -45,7 +43,7 @@ const slots = useSlots();
     v-bind="$attrs"
   >
     <div
-      v-if="slots.header"
+      v-if="$slots.header"
       class="accordion__header flex gap-2 items-center"
       :class="[headerClass, { 'w-full': headerGrow }]"
       role="button"

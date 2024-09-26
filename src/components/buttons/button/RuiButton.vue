@@ -68,8 +68,6 @@ const spinnerSize = computed<number>(() => {
 
   return 22;
 });
-
-const slots = useSlots();
 </script>
 
 <template>
@@ -95,17 +93,17 @@ const slots = useSlots();
     @click="emit('update:model-value', btnValue)"
   >
     <slot
-      v-if="slots.prepend"
+      v-if="$slots.prepend"
       name="prepend"
     />
     <span
-      v-if="slots.default"
+      v-if="$slots.default"
       :class="css.label"
     >
       <slot />
     </span>
     <slot
-      v-if="slots.append"
+      v-if="$slots.append"
       name="append"
     />
     <RuiProgress

@@ -52,7 +52,6 @@ function click(e: any) {
 }
 
 const css = useCssModule();
-const slots = useSlots();
 
 const style: ComputedRef<Partial<StyleValue>> = computed(() => {
   const style: Partial<StyleValue> = {};
@@ -88,7 +87,7 @@ const style: ComputedRef<Partial<StyleValue>> = computed(() => {
     @click="click($event)"
   >
     <div
-      v-if="slots.prepend"
+      v-if="$slots.prepend"
       :class="css.chip__prepend"
     >
       <slot name="prepend" />

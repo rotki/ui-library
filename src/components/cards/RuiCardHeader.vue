@@ -13,32 +13,31 @@ withDefaults(defineProps<Props>(), {
 });
 
 const css = useCssModule();
-const slots = useSlots();
 </script>
 
 <template>
   <div
     :class="[
       css.head,
-      { [css.dense]: dense, [css.has_prepend]: !!slots.prepend },
+      { [css.dense]: dense, [css.has_prepend]: !!$slots.prepend },
     ]"
     v-bind="$attrs"
   >
     <div
-      v-if="slots.prepend"
+      v-if="$slots.prepend"
       :class="css.prepend"
     >
       <slot name="prepend" />
     </div>
     <div :class="css.headers">
       <h5
-        v-if="slots.header"
+        v-if="$slots.header"
         :class="css.header"
       >
         <slot name="header" />
       </h5>
       <p
-        v-if="slots.subheader"
+        v-if="$slots.subheader"
         :class="css.subheader"
       >
         <slot name="subheader" />

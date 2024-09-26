@@ -17,8 +17,6 @@ const props = withDefaults(defineProps<BottomSheetProps>(), {
   modelValue: false,
   persistent: false,
 });
-
-const slots = useSlots();
 </script>
 
 <template>
@@ -27,7 +25,7 @@ const slots = useSlots();
     v-bind="{ ...props, ...$attrs }"
   >
     <template
-      v-for="slot in Object.keys(slots)"
+      v-for="slot in Object.keys($slots)"
       #[slot]="scope"
     >
       <slot

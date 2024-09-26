@@ -109,7 +109,6 @@ const { hasError, hasSuccess, hasMessages } = useFormTextDetail(
 );
 
 const css = useCssModule();
-const slots = useSlots();
 const { focused } = useFocus(inputRef);
 const focusedDebounced = refDebounced(focused, 500);
 
@@ -144,13 +143,13 @@ function clearIconClicked() {
       ]"
     >
       <div
-        v-if="slots.prepend || prependIcon"
+        v-if="$slots.prepend || prependIcon"
         ref="prepend"
         class="flex items-center gap-1 shrink-0"
         :class="css.prepend"
       >
         <slot
-          v-if="slots.prepend"
+          v-if="$slots.prepend"
           name="prepend"
         />
         <div
@@ -194,7 +193,7 @@ function clearIconClicked() {
         </fieldset>
       </div>
       <div
-        v-if="slots.append || appendIcon || showClearIcon"
+        v-if="$slots.append || appendIcon || showClearIcon"
         ref="append"
         class="flex items-center gap-1 shrink-0"
         :class="css.append"
@@ -216,7 +215,7 @@ function clearIconClicked() {
           />
         </RuiButton>
         <slot
-          v-if="slots.append"
+          v-if="$slots.append"
           name="append"
         />
         <div

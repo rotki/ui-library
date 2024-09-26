@@ -54,7 +54,6 @@ const usedIcon = computed<RuiIcons | undefined>(() => {
 });
 
 const css = useCssModule();
-const slots = useSlots();
 </script>
 
 <template>
@@ -77,7 +76,7 @@ const slots = useSlots();
         :class="css.texts"
       >
         <div
-          v-if="slots.title || title"
+          v-if="$slots.title || title"
           :class="{
             'font-medium': !!title,
           }"
@@ -88,7 +87,7 @@ const slots = useSlots();
         </div>
 
         <div
-          v-if="slots.default || description"
+          v-if="$slots.default || description"
           class="text-body-2"
         >
           <slot>

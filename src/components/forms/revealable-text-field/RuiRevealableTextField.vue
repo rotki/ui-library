@@ -11,7 +11,6 @@ defineOptions({
 });
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: '',
   label: '',
   placeholder: '',
   disabled: false,
@@ -32,16 +31,17 @@ const props = withDefaults(defineProps<Props>(), {
 
 const hidden: Ref<boolean> = ref(true);
 
-const slots = useSlots();
+const modelValue = defineModel<string>({ required: true });
 </script>
 
 <template>
   <RuiTextField
     v-bind="{ ...props, ...$attrs }"
+    v-model="modelValue"
     :type="hidden ? 'password' : 'text'"
   >
     <template
-      v-if="slots.prepend"
+      v-if="$slots.prepend"
       #prepend
     >
       <slot name="prepend" />

@@ -83,7 +83,6 @@ const textarea = ref<HTMLTextAreaElement>();
 const textareaSizer = ref<HTMLTextAreaElement>();
 
 const css = useCssModule();
-const slots = useSlots();
 
 const labelWithQuote = computed(() => {
   const labelVal = get(label);
@@ -187,13 +186,13 @@ onMounted(computeFieldHeight);
       ]"
     >
       <div
-        v-if="slots.prepend || prependIcon"
+        v-if="$slots.prepend || prependIcon"
         ref="prepend"
         class="flex items-center gap-1 shrink-0"
         :class="css.prepend"
       >
         <slot
-          v-if="slots.prepend"
+          v-if="$slots.prepend"
           name="prepend"
         />
         <div
@@ -235,7 +234,7 @@ onMounted(computeFieldHeight);
         </fieldset>
       </div>
       <div
-        v-if="slots.append || appendIcon || showClearIcon"
+        v-if="$slots.append || appendIcon || showClearIcon"
         ref="append"
         class="flex items-center gap-1 shrink-0"
         :class="css.append"
@@ -257,7 +256,7 @@ onMounted(computeFieldHeight);
           />
         </RuiButton>
         <slot
-          v-if="slots.append"
+          v-if="$slots.append"
           name="append"
         />
         <div
