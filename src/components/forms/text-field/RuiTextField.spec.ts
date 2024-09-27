@@ -19,7 +19,11 @@ describe('forms/TextField', () => {
   });
 
   it('passes disabled props', async () => {
-    const wrapper = createWrapper();
+    const wrapper = createWrapper({
+      props: {
+        modelValue: '',
+      },
+    });
     expect(wrapper.find('input').attributes('disabled')).toBeUndefined();
     await wrapper.setProps({ disabled: true });
     expect(wrapper.find('input').attributes('disabled')).toBeDefined();
@@ -28,7 +32,11 @@ describe('forms/TextField', () => {
   });
 
   it('passes readonly props', async () => {
-    const wrapper = createWrapper();
+    const wrapper = createWrapper({
+      props: {
+        modelValue: '',
+      },
+    });
     expect(wrapper.find('input').attributes('readonly')).toBeUndefined();
     await wrapper.setProps({ readonly: true });
     expect(wrapper.find('input').attributes('readonly')).toBeDefined();
@@ -37,7 +45,11 @@ describe('forms/TextField', () => {
   });
 
   it('passes color props', async () => {
-    const wrapper = createWrapper();
+    const wrapper = createWrapper({
+      props: {
+        modelValue: '',
+      },
+    });
     expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_default_/)]),
     );
@@ -64,7 +76,11 @@ describe('forms/TextField', () => {
   });
 
   it('passes variant props', async () => {
-    const wrapper = createWrapper();
+    const wrapper = createWrapper({
+      props: {
+        modelValue: '',
+      },
+    });
     expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_default_/)]),
     );
@@ -81,7 +97,11 @@ describe('forms/TextField', () => {
   });
 
   it('passes dense props', async () => {
-    const wrapper = createWrapper();
+    const wrapper = createWrapper({
+      props: {
+        modelValue: '',
+      },
+    });
     expect(wrapper.find('div[class*=wrapper]').classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_dense_/)]),
     );
@@ -98,7 +118,11 @@ describe('forms/TextField', () => {
   });
 
   it('passes hint props', async () => {
-    const wrapper = createWrapper();
+    const wrapper = createWrapper({
+      props: {
+        modelValue: '',
+      },
+    });
     expect(wrapper.find('.details div').exists()).toBeFalsy();
 
     const hint = 'Text Fields Hints';
@@ -110,7 +134,11 @@ describe('forms/TextField', () => {
   });
 
   it('passes hint errorMessages', async () => {
-    const wrapper = createWrapper();
+    const wrapper = createWrapper({
+      props: {
+        modelValue: '',
+      },
+    });
     expect(wrapper.find('.details div').exists()).toBeFalsy();
 
     const errorMessage = 'Text Fields Error Message';
@@ -122,7 +150,11 @@ describe('forms/TextField', () => {
   });
 
   it('passes hint successMessages', async () => {
-    const wrapper = createWrapper();
+    const wrapper = createWrapper({
+      props: {
+        modelValue: '',
+      },
+    });
     expect(wrapper.find('.details div').exists()).toBeFalsy();
 
     const successMessage = 'Text Fields Error Message';
@@ -176,6 +208,9 @@ describe('forms/TextField', () => {
     const prepend = 'Prepend text';
 
     const wrapper = createWrapper({
+      props: {
+        modelValue: '',
+      },
       slots: {
         prepend: () => prepend,
       },
@@ -188,6 +223,9 @@ describe('forms/TextField', () => {
     const append = 'Append text';
 
     const wrapper = createWrapper({
+      props: {
+        modelValue: '',
+      },
       slots: {
         append: () => append,
       },

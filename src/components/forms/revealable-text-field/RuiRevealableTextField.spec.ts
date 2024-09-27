@@ -12,13 +12,18 @@ describe('forms/RevealableTextField', () => {
     const wrapper = createWrapper({
       props: {
         label,
+        modelValue: '',
       },
     });
     expect(wrapper.find('label').text()).toContain(label);
   });
 
   it('toggle the type', async () => {
-    const wrapper = createWrapper();
+    const wrapper = createWrapper({
+      props: {
+        modelValue: '',
+      },
+    });
 
     expect(wrapper.find('input').attributes().type).toBe('password');
     expect(wrapper.find('rui-icon-stub').attributes().name).toBe(
