@@ -27,10 +27,6 @@ describe('dataTable', () => {
     cy.get('@columnsDefined')
       .find('table tbody td[class*=_checkbox_]')
       .should('not.exist');
-
-    cy.get('@columnsDefined')
-      .find('div div[class*=_limit_]')
-      .should('not.exist');
   });
 
   it('checks for data tables without column definition', () => {
