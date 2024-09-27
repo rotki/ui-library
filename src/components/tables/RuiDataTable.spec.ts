@@ -422,7 +422,7 @@ describe('dataTable', () => {
       await nextTick();
 
       const paginationInstances = wrapper.findAllComponents(RuiTablePagination);
-      expect(paginationInstances).toHaveLength(2);
+      expect(paginationInstances).toHaveLength(4);
 
       paginationInstances.forEach((instance) => {
         expect(instance.vm.modelValue).toMatchObject(
@@ -469,17 +469,17 @@ describe('dataTable', () => {
       await nextTick();
 
       const paginate = wrapper.findAllComponents(RuiTablePagination);
-      expect(paginate).toHaveLength(2);
+      expect(paginate).toHaveLength(4);
 
       expect(paginate[0].vm.modelValue).toMatchObject(
         expect.objectContaining({ limit: 25 }),
       );
-      expect(paginate[1].vm.modelValue).toMatchObject(
+      expect(paginate[2].vm.modelValue).toMatchObject(
         expect.objectContaining({ limit: 10 }),
       );
 
       const globalSelect = paginate[0].findComponent({ name: 'RuiMenuSelect' });
-      const localSelect = paginate[1].findComponent({ name: 'RuiMenuSelect' });
+      const localSelect = paginate[2].findComponent({ name: 'RuiMenuSelect' });
       globalSelect.vm.$emit('update:modelValue', 10);
       localSelect.vm.$emit('update:modelValue', 25);
 
@@ -489,7 +489,7 @@ describe('dataTable', () => {
         expect.objectContaining({ limit: 10 }),
       );
 
-      expect(paginate[1].vm.modelValue).toMatchObject(
+      expect(paginate[2].vm.modelValue).toMatchObject(
         expect.objectContaining({ limit: 25 }),
       );
 
@@ -520,18 +520,18 @@ describe('dataTable', () => {
       await nextTick();
 
       const paginate = wrapper.findAllComponents(RuiTablePagination);
-      expect(paginate).toHaveLength(2);
+      expect(paginate).toHaveLength(4);
 
       expect(paginate[0].vm.modelValue).toMatchObject(
         expect.objectContaining({ limit: 10 }),
       );
 
-      expect(paginate[1].vm.modelValue).toMatchObject(
+      expect(paginate[2].vm.modelValue).toMatchObject(
         expect.objectContaining({ limit: 25 }),
       );
 
       const globalSelect = paginate[0].findComponent({ name: 'RuiMenuSelect' });
-      const localSelect = paginate[1].findComponent({ name: 'RuiMenuSelect' });
+      const localSelect = paginate[2].findComponent({ name: 'RuiMenuSelect' });
       globalSelect.vm.$emit('update:modelValue', 25);
       localSelect.vm.$emit('update:modelValue', 10);
 
@@ -541,7 +541,7 @@ describe('dataTable', () => {
         expect.objectContaining({ limit: 25 }),
       );
 
-      expect(paginate[1].vm.modelValue).toMatchObject(
+      expect(paginate[2].vm.modelValue).toMatchObject(
         expect.objectContaining({ limit: 10 }),
       );
 
@@ -623,5 +623,37 @@ describe('dataTable', () => {
     expect(ranges.props().modelValue).toStrictEqual(1);
     expect(ranges.find('[data-id="activator"] span').text()).toStrictEqual('1 - 10');
     expect(ranges.find('input[type=hidden]').element).toHaveProperty('value', '1');
+  });
+
+  it('hideDefaultHeader', () => {
+    const wrapper = createWrapper({
+      props: {
+        cols: columns,
+        hideDefaultHeader: true,
+        rowAttr: 'id',
+        rows: data,
+      },
+    });
+
+    const paginate = wrapper.findAllComponents(RuiTablePagination);
+    expect(paginate).toHaveLength(1);
+
+    expect(wrapper.find('div > [data-cy="table-pagination"]:last-child').exists()).toBeTruthy();
+  });
+
+  it('hideDefaultFooter', () => {
+    const wrapper = createWrapper({
+      props: {
+        cols: columns,
+        hideDefaultFooter: true,
+        rowAttr: 'id',
+        rows: data,
+      },
+    });
+
+    const paginate = wrapper.findAllComponents(RuiTablePagination);
+    expect(paginate).toHaveLength(1);
+
+    expect(wrapper.find('div > [data-cy="table-pagination"]:first-child').exists()).toBeTruthy();
   });
 });

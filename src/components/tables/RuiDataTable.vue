@@ -115,7 +115,11 @@ export interface Props<T, K extends keyof T> {
     description?: string;
   };
   /**
-   * should hide the footer
+   * should hide the header navigation
+   */
+  hideDefaultHeader?: boolean;
+  /**
+   * should hide the footer navigation
    */
   hideDefaultFooter?: boolean;
 
@@ -173,6 +177,7 @@ const props = withDefaults(defineProps<Props<T, IdType>>(), {
   sortModifiers: undefined,
   empty: () => ({ description: 'No item found' }),
   rounded: 'md',
+  hideDefaultHeader: false,
   hideDefaultFooter: false,
   disablePerPage: false,
   striped: false,
@@ -996,6 +1001,15 @@ onMounted(() => {
       ref="tableScroller"
       :class="css.scroller"
     >
+      <RuiTablePagination
+        v-if="paginationData && !hideDefaultHeader"
+        v-model="paginationData"
+        :dense="dense"
+        :loading="loading"
+        :disable-per-page="disablePerPage"
+        data-cy="table-pagination"
+        @update:model-value="onPaginate()"
+      />
       <table
         ref="table"
         :class="[css.table, { [css.dense]: dense }]"
@@ -1328,7 +1342,7 @@ onMounted(() => {
   }
 
   .table {
-    @apply min-w-full table-fixed divide-y divide-black/[0.12] whitespace-nowrap mx-auto my-0 max-w-fit relative;
+    @apply min-w-full table-fixed divide-y divide-black/[0.12] whitespace-nowrap mx-auto my-0 max-w-fit relative border-t border-black/[0.12];
 
     .tbody {
       @apply divide-y divide-black/[0.12];
@@ -1421,7 +1435,7 @@ onMounted(() => {
     }
 
     .table {
-      @apply divide-white/[0.12];
+      @apply divide-white/[0.12] border-white/[0.12];
 
       .tbody {
         @apply divide-white/[0.12];
