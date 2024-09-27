@@ -919,33 +919,8 @@ function deselectRemovedRows() {
   });
 }
 
-function scrollToTop() {
-  const { top } = useElementBounding(table);
-
-  const { top: scrollerTop } = useElementBounding(props.scroller);
-  const wrapper = props.scroller ?? document.body;
-  const tableEl = get(table);
-
-  if (!(tableEl && wrapper))
-    return;
-
-  const tableTop = get(top);
-  setTimeout(() => {
-    let newScrollTop = tableTop + wrapper.scrollTop - 2;
-    if (props.scroller) {
-      newScrollTop -= get(scrollerTop) - tableEl.scrollTop;
-      wrapper.style.scrollBehavior = 'smooth';
-    }
-    else { newScrollTop -= (get(stickyHeaderOffset) ?? 0); }
-
-    if (wrapper.scrollTop > newScrollTop)
-      wrapper.scrollTop = newScrollTop;
-  }, 10);
-}
-
 function onPaginate() {
   emit('update:expanded', []);
-  scrollToTop();
   if (!props.multiPageSelect)
     onToggleAll(false);
   resetCheckboxShiftState();
