@@ -38,6 +38,13 @@ export default defineConfig({
       vueTemplate: true,
     }),
   ],
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern',
+      },
+    },
+  },
   build: {
     outDir: './dist',
     lib: {
