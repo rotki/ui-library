@@ -5,7 +5,10 @@ import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 type RuiRadioGroupProps = Props & { modelValue: string };
 const render: StoryFn<RuiRadioGroupProps> = args => ({
-  components: { RuiRadio, RuiRadioGroup },
+  components: {
+    RuiRadio: RuiRadio as any,
+    RuiRadioGroup: RuiRadioGroup as any,
+  },
   setup() {
     const modelValue = computed({
       get() {

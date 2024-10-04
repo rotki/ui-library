@@ -10,7 +10,14 @@ import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 type Props = TabsProps & { class?: string };
 
 const render: StoryFn<Props> = args => ({
-  components: { RuiCard, RuiIcon, RuiTab, RuiTabItem, RuiTabItems, RuiTabs },
+  components: {
+    RuiCard,
+    RuiIcon,
+    RuiTab,
+    RuiTabItem,
+    RuiTabItems: RuiTabItems as any,
+    RuiTabs,
+  },
   setup() {
     const modelValue = computed({
       get() {

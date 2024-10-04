@@ -7,7 +7,9 @@ type ComponentProps<TValue = string, TItem = SelectOption> = AutoCompleteProps<T
 };
 
 const render: StoryFn<ComponentProps> = args => ({
-  components: { RuiAutoComplete },
+  components: {
+    RuiAutoComplete: RuiAutoComplete as any,
+  },
   setup() {
     const modelValue = computed({
       get() {
