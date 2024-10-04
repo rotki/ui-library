@@ -11,6 +11,7 @@ export interface DialogProps {
 
 defineOptions({
   name: 'RuiDialog',
+  inheritAttrs: false,
 });
 
 const props = withDefaults(defineProps<DialogProps>(), {
@@ -127,7 +128,7 @@ const contentTransition = computed(() => {
 </script>
 
 <template>
-  <div>
+  <div v-bind="getRootAttrs($attrs)">
     <slot
       name="activator"
       v-bind="{ attrs: dialogAttrs, isOpen }"
@@ -139,7 +140,7 @@ const contentTransition = computed(() => {
         :style="{ zIndex }"
         role="dialog"
         tabindex="0"
-        v-bind="$attrs"
+        v-bind="getNonRootAttrs($attrs)"
         @keydown.esc.stop="!persistent && close()"
       >
         <Transition

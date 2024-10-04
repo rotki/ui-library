@@ -51,6 +51,10 @@ defineOptions({
   inheritAttrs: false,
 });
 
+const modelValue = defineModel<AutoCompleteModelValue<TValue>>({ required: true });
+
+const searchInputModel = defineModel<string>('searchInput');
+
 const props = withDefaults(defineProps<AutoCompleteProps<TValue, TItem>>(), {
   options: () => [],
   disabled: false,
@@ -80,9 +84,6 @@ const props = withDefaults(defineProps<AutoCompleteProps<TValue, TItem>>(), {
   returnObject: false,
   customValue: false,
 });
-
-const modelValue = defineModel<AutoCompleteModelValue<TValue>>({ required: true });
-const searchInputModel = defineModel<string>('searchInput');
 
 const slots = useSlots();
 

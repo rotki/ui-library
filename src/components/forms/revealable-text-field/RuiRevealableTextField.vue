@@ -10,6 +10,8 @@ defineOptions({
   inheritAttrs: false,
 });
 
+const modelValue = defineModel<string>({ required: true });
+
 const props = withDefaults(defineProps<Props>(), {
   label: '',
   placeholder: '',
@@ -30,8 +32,6 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const hidden: Ref<boolean> = ref(true);
-
-const modelValue = defineModel<string>({ required: true });
 </script>
 
 <template>

@@ -21,6 +21,7 @@ export interface Props {
 
 defineOptions({
   name: 'RuiTab',
+  inheritAttrs: false,
 });
 
 const props = withDefaults(defineProps<Props>(), {

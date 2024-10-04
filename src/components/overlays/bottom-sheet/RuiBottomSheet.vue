@@ -11,6 +11,7 @@ export interface BottomSheetProps {
 
 defineOptions({
   name: 'RuiBottomSheet',
+  inheritAttrs: false,
 });
 
 const props = withDefaults(defineProps<BottomSheetProps>(), {
