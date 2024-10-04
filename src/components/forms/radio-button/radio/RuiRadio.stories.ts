@@ -5,7 +5,9 @@ import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 type PropsAndLabel = RadioProps<string> & { label: string; modelValue: string };
 
 const render: StoryFn<PropsAndLabel> = args => ({
-  components: { RuiRadio },
+  components: {
+    RuiRadio: RuiRadio as any,
+  },
   setup() {
     const modelValue = computed({
       get() {
