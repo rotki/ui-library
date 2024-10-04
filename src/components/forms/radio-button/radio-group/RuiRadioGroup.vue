@@ -21,6 +21,8 @@ defineOptions({
   inheritAttrs: false,
 });
 
+const modelValue = defineModel<TValue>({ required: false });
+
 withDefaults(defineProps<Props>(), {
   inline: false,
   label: '',
@@ -32,8 +34,6 @@ withDefaults(defineProps<Props>(), {
   color: undefined,
   size: undefined,
 });
-
-const modelValue = defineModel<TValue>({ required: false });
 
 const radioGroupName = ref('');
 

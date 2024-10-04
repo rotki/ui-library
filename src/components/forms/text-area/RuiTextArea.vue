@@ -34,6 +34,8 @@ defineOptions({
   inheritAttrs: false,
 });
 
+const modelValue = defineModel<string>({ required: true });
+
 const props = withDefaults(defineProps<Props>(), {
   label: '',
   placeholder: '',
@@ -60,8 +62,6 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   (e: 'click:clear'): void;
 }>();
-
-const modelValue = defineModel<string>({ required: true });
 
 const {
   label,

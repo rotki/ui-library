@@ -37,6 +37,8 @@ defineOptions({
   inheritAttrs: false,
 });
 
+const modelValue = defineModel<TValue | undefined>({ required: true });
+
 const props = withDefaults(defineProps<Props<TValue, TItem>>(), {
   disabled: false,
   loading: false,
@@ -58,8 +60,6 @@ const props = withDefaults(defineProps<Props<TValue, TItem>>(), {
   hideNoData: false,
   noDataText: 'No data available',
 });
-
-const modelValue = defineModel<TValue | undefined>({ required: true });
 
 const { dense, options } = toRefs(props);
 

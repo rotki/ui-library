@@ -8,6 +8,10 @@ export interface Props {
   icon?: RuiIcons;
 }
 
+defineOptions({
+  inheritAttrs: false,
+});
+
 withDefaults(defineProps<Props>(), { icon: 'arrow-down-s-line' });
 </script>
 

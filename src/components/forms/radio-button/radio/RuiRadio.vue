@@ -21,6 +21,8 @@ defineOptions({
   inheritAttrs: false,
 });
 
+const modelValue = defineModel<TValue>({ required: false });
+
 const props = withDefaults(defineProps<RadioProps<TValue>>(), {
   disabled: false,
   color: undefined,
@@ -31,8 +33,6 @@ const props = withDefaults(defineProps<RadioProps<TValue>>(), {
   successMessages: () => [],
   hideDetails: false,
 });
-
-const modelValue = defineModel<TValue>({ required: false });
 
 const { value, successMessages, errorMessages }
   = toRefs(props);
