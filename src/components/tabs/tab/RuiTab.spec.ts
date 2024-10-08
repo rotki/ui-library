@@ -108,6 +108,24 @@ describe('tabs/Tab', () => {
     );
   });
 
+  it('passes indicatorPosition props', async () => {
+    const wrapper = createWrapper({});
+
+    expect(wrapper.find('button').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tab-indicator--end_/)]),
+    );
+
+    await wrapper.setProps({ indicatorPosition: 'start' });
+    expect(wrapper.find('button').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tab-indicator--start_/)]),
+    );
+
+    await wrapper.setProps({ indicatorPosition: 'end' });
+    expect(wrapper.find('button').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tab-indicator--end_/)]),
+    );
+  });
+
   it('tab as link', async () => {
     const wrapper = createWrapper({
       props: {

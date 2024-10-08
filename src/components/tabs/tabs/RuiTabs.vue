@@ -14,6 +14,7 @@ export interface Props {
   grow?: boolean;
   modelValue?: number | string;
   align?: 'start' | 'center' | 'end';
+  indicatorPosition?: 'start' | 'end';
 }
 
 defineOptions({
@@ -27,13 +28,14 @@ const props = withDefaults(defineProps<Props>(), {
   grow: false,
   modelValue: undefined,
   align: 'center',
+  indicatorPosition: 'end',
 });
 
 const emit = defineEmits<{
   (e: 'update:modelValue', modelValue: number | string): void;
 }>();
 
-const { color, grow, modelValue, disabled, vertical, align } = toRefs(props);
+const { color, grow, modelValue, disabled, vertical, align, indicatorPosition } = toRefs(props);
 
 const internalModelValue = ref();
 const bar = ref<HTMLDivElement>();
@@ -64,6 +66,7 @@ const children = computed(() => {
     disabled: get(disabled),
     vertical: get(vertical),
     align: get(align),
+    indicatorPosition: get(indicatorPosition),
   };
   return tabs.map((tab, index) => {
     let tabValue = tab.props?.value ?? index;

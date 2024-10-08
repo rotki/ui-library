@@ -119,6 +119,24 @@ describe('tabs/Tabs', () => {
     );
   });
 
+  it('passes indicatorPosition props', async () => {
+    const wrapper = createWrapper({});
+
+    expect(wrapper.find('button').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tab-indicator--end_/)]),
+    );
+
+    await wrapper.setProps({ indicatorPosition: 'start' });
+    expect(wrapper.find('button').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tab-indicator--start_/)]),
+    );
+
+    await wrapper.setProps({ indicatorPosition: 'end' });
+    expect(wrapper.find('button').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_tab-indicator--end_/)]),
+    );
+  });
+
   it('click tab change the modelValue', async () => {
     const modelValue = ref();
     const wrapper = createWrapper({
