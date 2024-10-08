@@ -84,6 +84,7 @@ const meta: Meta<Props> = {
     },
     disabled: { control: 'boolean', table: { category: 'State' } },
     grow: { control: 'boolean', table: { category: 'State' } },
+    indicatorPosition: { control: 'select', options: ['start', 'end'] },
     modelValue: { control: 'text' },
     vertical: { control: 'boolean', table: { category: 'State' } },
   },
@@ -133,6 +134,21 @@ export const DefaultWithArrow: Story = {
 export const VerticalWithArrow: Story = {
   args: {
     class: 'w-[200px] h-[300px]',
+    vertical: true,
+  },
+};
+
+export const IndicatorPositionOnTop: Story = {
+  args: {
+    class: 'w-[200px] h-[300px]',
+    indicatorPosition: 'start',
+  },
+};
+
+export const IndicatorPositionOnLeft: Story = {
+  args: {
+    class: 'w-[200px] h-[300px]',
+    indicatorPosition: 'start',
     vertical: true,
   },
 };

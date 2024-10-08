@@ -17,6 +17,7 @@ export interface Props {
   exactPath?: boolean;
   vertical?: boolean;
   align?: 'start' | 'center' | 'end';
+  indicatorPosition?: 'start' | 'end';
 }
 
 defineOptions({
@@ -38,6 +39,7 @@ const props = withDefaults(defineProps<Props>(), {
   exactPath: false,
   vertical: false,
   align: 'center',
+  indicatorPosition: 'end',
 });
 
 const emit = defineEmits<{
@@ -50,7 +52,7 @@ const slots = defineSlots<{
   append?: (props?: object) => any;
 }>();
 
-const { target, grow, active, activeClass, disabled, vertical, align, value }
+const { target, grow, active, activeClass, disabled, vertical, align, value, indicatorPosition }
   = toRefs(props);
 
 const css = useCssModule();
@@ -60,6 +62,7 @@ const isSelf = computed(() => get(target) === '_self');
 const tabClass = computed(() => [
   css.tab,
   css[`tab--${get(align)}`],
+  css[`tab-indicator--${get(indicatorPosition)}`],
   {
     [css['tab--grow']]: get(grow),
     [`${css['tab--active']} active-tab ${get(activeClass)}`]: get(active),
@@ -172,9 +175,21 @@ function click() {
       @apply absolute h-0 w-full bottom-0 left-0 border-b-2 border-current;
     }
 
+    &.tab-indicator--start {
+      &:after {
+        @apply top-0 bottom-auto;
+      }
+    }
+
     &.tab--vertical {
       &:after {
         @apply h-full w-0 right-0 left-auto border-b-0 border-r-2;
+      }
+
+      &.tab-indicator--start {
+        &:after {
+          @apply left-0 right-auto;
+        }
       }
     }
   }
