@@ -125,7 +125,7 @@ function onLast() {
 </script>
 
 <template>
-  <div :class="$style.wrapper">
+  <div :class="[$style.wrapper, { [$style['wrapper-dense']]: dense }]">
     <div :class="$style.limit">
       <span :class="$style.limit__text">Rows per page:</span>
       <RuiMenuSelect
@@ -201,21 +201,21 @@ function onLast() {
 
 <style module lang="scss">
 .wrapper {
-  @apply relative flex flex-wrap items-center justify-end;
+  @apply relative flex flex-wrap items-center justify-end gap-x-4 gap-y-0;
 
   .limit {
-    @apply flex items-center space-x-2 text-caption px-3;
+    @apply flex items-center space-x-2 text-caption;
 
     &__text {
-      @apply text-rui-text-secondary whitespace-nowrap py-4;
+      @apply text-rui-text-secondary whitespace-nowrap py-3;
     }
   }
 
   .ranges {
-    @apply flex items-center space-x-2 text-caption px-3;
+    @apply flex items-center space-x-2 text-caption pr-2;
 
     &__text {
-      @apply text-rui-text-secondary whitespace-nowrap py-4;
+      @apply text-rui-text-secondary whitespace-nowrap py-3;
     }
   }
 
@@ -224,7 +224,11 @@ function onLast() {
   }
 
   .navigation {
-    @apply flex items-center pl-3;
+    @apply flex items-center;
+  }
+
+  &-dense {
+    @apply gap-x-2;
   }
 }
 </style>
