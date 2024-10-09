@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue';
 import { defineConfig } from 'vitest/config';
 import AutoImport from 'unplugin-auto-import/vite';
 import fg from 'fast-glob';
+import consola from 'consola';
 
 const entryPoints = [
   'src/components/index.ts',
@@ -22,6 +23,41 @@ const entities = files.map((file) => {
 
 const entries = Object.fromEntries(entities);
 
+function manualChunks(identifier: string): string {
+  const relative = identifier.replace(__dirname, '');
+  const pathsAfterModule = relative.split('node_modules/');
+
+  if (pathsAfterModule.length > 1) {
+    return 'vendor';
+  }
+  else {
+    const pathWithoutSrc = pathsAfterModule[0].replace('/src/', '');
+    if (pathWithoutSrc.startsWith('icons')) {
+      return pathWithoutSrc.replace('.ts', '');
+    }
+    else if (pathWithoutSrc.startsWith('utils')) {
+      return 'utils/index';
+    }
+    else if (pathWithoutSrc.startsWith('composables')) {
+      return 'composables/index';
+    }
+    else if (pathWithoutSrc.startsWith('components') || pathWithoutSrc.includes('plugin-vue:export-helper')) {
+      return 'components/index';
+    }
+    else if (pathWithoutSrc.startsWith('types')) {
+      return 'types/index';
+    }
+    else if (pathWithoutSrc.endsWith('.ts')) {
+      return pathWithoutSrc.replace('.ts', '');
+    }
+    else {
+      consola.debug(pathWithoutSrc);
+    }
+
+    return 'index';
+  }
+}
+
 export default defineConfig({
   resolve: {
     alias: {
@@ -34,7 +70,10 @@ export default defineConfig({
     AutoImport({
       imports: ['vue', '@vueuse/core', { '@vueuse/shared': ['get', 'set'] }],
       dts: './auto-imports.d.ts',
-      dirs: ['src/composables/**', 'src/utils/**'],
+      dirs: [
+        'src/composables/**',
+        'src/utils/**',
+      ],
       vueTemplate: true,
     }),
   ],
@@ -47,6 +86,7 @@ export default defineConfig({
   },
   build: {
     outDir: './dist',
+    minify: true,
     lib: {
       entry: entries,
       fileName: (format, entryName) => `${entryName}.${format}.js`,
@@ -59,11 +99,13 @@ export default defineConfig({
         'tailwindcss/plugin',
         '@vueuse/core',
         '@vueuse/shared',
+        '@vueuse/math',
       ],
       output: {
         globals: {
           vue: 'vue',
         },
+        manualChunks,
       },
     },
   },
