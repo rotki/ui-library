@@ -25,7 +25,7 @@ const path: ComputedRef<string | undefined> = computed(() => {
     console.warn(`icon ${name} must be a valid RuiIcon`);
   }
   const iconName = `ri-${name}`;
-  const found = get(registeredIcons)[iconName];
+  const found = registeredIcons[iconName];
 
   if (!found) {
     console.error(`Icons "${name}" not found. Make sure that you have register the icon when installing the RuiPlugin`);
