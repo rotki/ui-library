@@ -5,6 +5,7 @@ import {
   TableSymbol,
   createTableDefaults,
 } from '@/composables/defaults/table';
+import { IconsSymbol, createIconDefaults } from '@/composables/icons';
 import type { App } from 'vue';
 import type { InitThemeOptions } from '@/types/theme';
 import '@/style.scss';
@@ -38,15 +39,17 @@ export function createRui(options: RuiOptions = {}) {
   const { theme } = options;
 
   const defaults = Object.freeze({
+    icons: createIconDefaults({
+      registeredIcons: options.theme?.icons,
+    }),
     table: createTableDefaults(options.defaults?.table),
   });
 
   const install = (app: App) => {
-    const { registerIcons } = useIcons();
-    registerIcons(theme?.icons || []);
     useRotkiTheme().init({ ...theme });
 
     app.provide(TableSymbol, defaults.table);
+    app.provide(IconsSymbol, defaults.icons);
   };
 
   return {

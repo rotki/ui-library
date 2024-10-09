@@ -1,11 +1,14 @@
 // setup.js file
 import { vi } from 'vitest';
 import { promiseTimeout } from '@vueuse/core';
+import { config } from '@vue/test-utils';
+import { IconsSymbol, createIconDefaults } from '../../src/composables/icons';
 import * as Icons from '../../src/icons';
-import { useIcons } from '../../src/composables';
 
-const { registerIcons } = useIcons();
-registerIcons(Object.values(Icons));
+// @ts-expect-error symbol cannot be used as an index.
+config.global.provide[IconsSymbol] = createIconDefaults({
+  registeredIcons: Object.values(Icons),
+});
 
 const ResizeObserverMock = vi.fn(() => ({
   observe: vi.fn(),
