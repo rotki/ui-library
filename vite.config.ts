@@ -71,7 +71,7 @@ export default defineConfig({
       imports: ['vue', '@vueuse/core', { '@vueuse/shared': ['get', 'set'] }],
       dts: './auto-imports.d.ts',
       dirs: [
-        'src/composables/**',
+        'src/composables/**/!(theme.ts|icons.ts|breakpoint.ts)',
         'src/utils/**',
       ],
       vueTemplate: true,
