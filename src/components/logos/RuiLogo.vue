@@ -4,7 +4,7 @@ import { isClient } from '@vueuse/shared';
 import { transformCase } from '@/utils/helpers';
 import fallback from '@/components/logos/logo.svg';
 
-interface ExternalLinks {
+export interface ExternalLinks {
   drawer?: string;
   app?: string;
   website?: string;
