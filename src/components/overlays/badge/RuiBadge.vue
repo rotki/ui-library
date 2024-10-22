@@ -104,6 +104,7 @@ const hasIconAndText = logicAnd(hasIcon, hasText);
 
 <style lang="scss" module>
 @use '@/styles/colors.scss' as c;
+@use 'sass:list';
 
 $borders: full, sm, md, lg;
 $sizes: sm, md, lg;
@@ -225,7 +226,7 @@ $sizes: sm, md, lg;
       @apply text-rui-text;
 
       @each $color in c.$context-colors {
-        @if index((warning, success, info), $color) {
+        @if list.index((warning, success, info), $color) {
           &.#{$color} {
             @apply text-rui-light-text;
           }

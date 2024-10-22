@@ -117,6 +117,7 @@ const spinnerSize = computed<number>(() => {
 
 <style lang="scss" module>
 @use '@/styles/colors.scss' as c;
+@use 'sass:list';
 
 :global(.dark) {
   .btn {
@@ -126,11 +127,11 @@ const spinnerSize = computed<number>(() => {
       &.#{$color} {
         @apply text-rui-text;
 
-        @if index((warning, success, info), $color) {
+        @if list.index((warning, success, info), $color) {
           @apply text-rui-light-text;
         }
 
-        @if index((primary, secondary), $color) {
+        @if list.index((primary, secondary), $color) {
           &.outlined,
           &.text {
             &.active {

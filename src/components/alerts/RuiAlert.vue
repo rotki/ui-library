@@ -129,6 +129,7 @@ const usedIcon = computed<RuiIcons | undefined>(() => {
 
 <style lang="scss" module>
 @use '@/styles/colors.scss' as c;
+@use 'sass:list';
 
 :global(.dark) {
   .alert {
@@ -153,7 +154,7 @@ const usedIcon = computed<RuiIcons | undefined>(() => {
         }
       }
 
-      @if index((warning, success, info), $color) {
+      @if list.index((warning, success, info), $color) {
         &.#{$color} {
           &.filled {
             .icon,
