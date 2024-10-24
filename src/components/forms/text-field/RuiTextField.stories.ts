@@ -39,11 +39,6 @@ const meta: Meta<Props> = {
     hideDetails: { control: 'boolean', table: { category: 'State' } },
     hint: { control: 'text' },
     label: { control: 'text' },
-    labelPosition: {
-      control: 'select',
-      options: ['outside'],
-      table: { category: 'State' },
-    },
     modelValue: { control: 'text' },
     placeholder: { control: 'text' },
     prependIcon: { control: 'text' },
@@ -90,15 +85,6 @@ export const Filled: Story = {
 
 export const Outlined: Story = {
   args: {
-    label: 'Label',
-    placeholder: 'Placeholder',
-    variant: 'outlined',
-  },
-};
-
-export const Primary: Story = {
-  args: {
-    color: 'primary',
     label: 'Label',
     placeholder: 'Placeholder',
     variant: 'outlined',
@@ -160,16 +146,6 @@ export const WithHint: Story = {
   },
 };
 
-export const HideDetails: Story = {
-  args: {
-    hideDetails: true,
-    hint: 'Hint (should be invisible)',
-    label: 'Label',
-    placeholder: 'Placeholder',
-    variant: 'outlined',
-  },
-};
-
 export const WithPrependIcon: Story = {
   args: {
     label: 'Label',
@@ -184,6 +160,16 @@ export const WithAppendIcon: Story = {
     appendIcon: 'heart-fill',
     label: 'Label',
     placeholder: 'Placeholder',
+    variant: 'outlined',
+  },
+};
+
+export const WithIconsAndLongText: Story = {
+  args: {
+    appendIcon: 'heart-fill',
+    label: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    placeholder: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    prependIcon: 'heart-fill',
     variant: 'outlined',
   },
 };
@@ -204,21 +190,23 @@ export const OutlinedWithVeryLongLabel: Story = {
   },
 };
 
-export const OutsideLabel: Story = {
+export const OutlinedWithVeryLongPlaceHolder: Story = {
   args: {
-    label: 'Outside Label',
-    labelPosition: 'outside',
-    placeholder: 'Placeholder',
+    placeholder:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     variant: 'outlined',
   },
 };
 
-export const OutsideLabelWithHint: Story = {
+export const WithAllFeatures: Story = {
   args: {
-    hint: 'This is a hint for the outside label',
-    label: 'Outside Label with Hint',
-    labelPosition: 'outside',
-    placeholder: 'Placeholder',
+    appendIcon: 'heart-fill',
+    clearable: true,
+    color: 'primary',
+    hint: 'This example shows multiple features together',
+    label: 'Complete Example',
+    modelValue: 'Can be deleted',
+    prependIcon: 'heart-fill',
     variant: 'outlined',
   },
 };
