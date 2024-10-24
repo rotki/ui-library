@@ -41,7 +41,7 @@ const meta: Meta<Props> = {
     label: { control: 'text' },
     labelPosition: {
       control: 'select',
-      options: ['floating', 'outside'],
+      options: ['outside'],
       table: { category: 'State' },
     },
     modelValue: { control: 'text' },
