@@ -89,7 +89,7 @@ whenever(
         <RuiTextField
           v-if="inputType === 'hex'"
           v-model="state.hex"
-          variant="outlined"
+          variant="default"
           class="flex-1 w-full [&_input]:uppercase"
           maxlength="6"
           color="primary"
@@ -112,7 +112,7 @@ whenever(
             v-for="(v, i) in state.rgb"
             :key="i"
             :model-value="v.toString()"
-            variant="outlined"
+            variant="default"
             class="[&_input]:text-center w-full"
             maxlength="3"
             color="primary"
