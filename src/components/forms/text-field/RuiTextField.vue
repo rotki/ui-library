@@ -11,7 +11,7 @@ export interface TextFieldProps {
   label?: string;
   placeholder?: string;
   disabled?: boolean;
-  variant?: 'filled';
+  variant?: 'default' | 'filled';
   color?: ContextColorsType;
   textColor?: ContextColorsType;
   dense?: boolean;

@@ -75,6 +75,13 @@ const meta: Meta<Props> = {
 
 type Story = StoryObj<Props>;
 
+export const Default: Story = {
+  args: {
+    label: 'Label',
+    placeholder: 'Enter text...',
+  },
+};
+
 export const EmailExample: Story = {
   args: {
     customAppend: true,
@@ -98,7 +105,7 @@ export const EmailExample: Story = {
       return { args, modelValue };
     },
     template: `
-      <div class="w-1/4">
+      <div class="w-1/3">
         <div class="flex gap-2 items-center">
           <RuiTextField 
             v-model="modelValue" 
@@ -134,92 +141,73 @@ export const EmailExample: Story = {
 
 export const Filled: Story = {
   args: {
-    label: 'Label',
-    placeholder: 'Placeholder',
+    label: 'Filled Variant',
+    placeholder: 'This is a filled variant',
     variant: 'filled',
-  },
-};
-
-export const WithCustomColor: Story = {
-  args: {
-    color: 'success',
-    label: 'Label',
-    placeholder: 'Placeholder',
   },
 };
 
 export const Dense: Story = {
   args: {
     dense: true,
-    label: 'Label',
-    placeholder: 'Placeholder',
+    label: 'Dense Field',
+    placeholder: 'Compact size',
   },
 };
 
 export const Disabled: Story = {
   args: {
     disabled: true,
-    label: 'Label',
-    placeholder: 'Placeholder',
+    label: 'Disabled Field',
+    placeholder: 'Cannot be edited',
   },
 };
 
 export const Readonly: Story = {
   args: {
-    label: 'Label',
-    modelValue: 'Readonly text',
-    placeholder: 'Placeholder',
+    label: 'Readonly Field',
+    modelValue: 'Cannot be modified',
     readonly: true,
   },
 };
 
 export const WithErrorMessage: Story = {
   args: {
-    errorMessages: ['With error messages'],
-    label: 'Label',
-    placeholder: 'Placeholder',
+    errorMessages: ['This field has an error'],
+    label: 'Error State',
+    placeholder: 'Type something...',
   },
 };
 
 export const WithSuccessMessage: Story = {
   args: {
-    label: 'Label',
-    placeholder: 'Placeholder',
-    successMessages: ['With success messages'],
+    label: 'Success State',
+    placeholder: 'Type something...',
+    successMessages: ['This field is valid'],
   },
 };
 
 export const WithHint: Story = {
   args: {
-    hint: 'With hint',
-    label: 'Label',
-    placeholder: 'Placeholder',
+    hint: 'Helper text appears here',
+    label: 'Field with Hint',
+    placeholder: 'Type something...',
   },
 };
 
 export const WithPrependIcon: Story = {
   args: {
-    label: 'Label',
-    placeholder: 'Placeholder',
-    prependIcon: 'heart-fill',
+    label: 'With Prepend Icon',
+    placeholder: 'Type something...',
+    prependIcon: 'user-line',
   },
 };
 
 export const WithAppendIcon: Story = {
   args: {
-    appendIcon: 'heart-fill',
-    label: 'Label',
-    placeholder: 'Placeholder',
-  },
-};
-
-export const WithIconsAndHint: Story = {
-  args: {
-    appendIcon: 'heart-fill',
-    hint: 'This is a hint text',
-    label: 'Label',
-    placeholder: 'Placeholder',
-    prependIcon: 'user-fill',
+    appendIcon: 'search-line',
+    label: 'With Append Icon',
+    placeholder: 'Search...',
   },
 };
 
@@ -231,19 +219,9 @@ export const Required: Story = {
   },
 };
 
-export const RequiredWithHint: Story = {
+export const NoLabel: Story = {
   args: {
-    hint: 'This is a required field with hint text',
-    label: 'Required Field',
-    placeholder: 'This field is required',
-    required: true,
-  },
-};
-
-export const NoLabelText: Story = {
-  args: {
-    placeholder: 'This doesn not have label text above',
-    required: false,
+    placeholder: 'No label text above',
   },
 };
 
