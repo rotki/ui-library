@@ -163,7 +163,7 @@ function clearIconClicked() {
         <div
           v-if="$slots.append || appendIcon || showClearIcon"
           ref="append"
-          class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center"
+          class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1"
           :class="$style.append"
         >
           <RuiButton
@@ -216,37 +216,21 @@ function clearIconClicked() {
   @apply mt-1 text-xs text-rui-text-secondary;
 }
 
-:global(.dark) {
-  .wrapper {
-    @apply bg-transparent;
-
-    .icon {
-      @apply text-white/[0.56];
-    }
-
-    .input {
-      @apply border-white/[0.23];
-    }
-
-    &.filled {
-      @apply bg-white/[0.06];
-    }
-
-    &.disabled {
-      .input {
-        @apply border-white/[0.23] border-dotted;
-      }
-    }
-  }
-}
-
 .wrapper {
   @apply relative w-full flex items-center rounded-md;
 
   .input {
     @apply leading-6 text-rui-text w-full bg-transparent py-2 px-3;
-    @apply outline-0 placeholder:text-rui-text;
-    @apply text-sm rounded-md border-[1.75px] border-rui-primary;
+    @apply outline-0 text-sm rounded-md border border-rui-text-disabled;
+    @apply transition-[border,outline] duration-200;
+
+    &::placeholder {
+      @apply text-rui-text-disabled font-light;
+    }
+
+    &:focus {
+      @apply outline outline-2 outline-rui-primary border-rui-primary;
+    }
 
     &.withPrepend {
       @apply pl-8;
@@ -257,8 +241,12 @@ function clearIconClicked() {
     }
   }
 
+  &:not(.disabled):hover .input {
+    @apply border-rui-primary;
+  }
+
   .icon {
-    @apply text-rui-text-secondary;
+    @apply text-rui-text-disabled;
 
     svg {
       @apply w-4 h-4;
@@ -270,18 +258,26 @@ function clearIconClicked() {
   }
 
   &.filled {
-    @apply bg-black/[0.06];
+    @apply bg-black bg-opacity-[0.06];
 
     .input {
-      @apply py-2 border-0;
+      @apply border-0;
+
+      &:focus {
+        @apply outline-offset-[-2px];
+      }
     }
   }
 
   &.disabled {
     .input {
       @apply text-rui-text-disabled cursor-not-allowed;
-      @apply border-rui-primary border-dotted;
-      @apply bg-black/[0.02];
+      @apply border-dotted;
+      @apply bg-black bg-opacity-[0.02];
+
+      &::placeholder {
+        @apply text-rui-text-disabled;
+      }
     }
 
     .icon {
@@ -297,8 +293,14 @@ function clearIconClicked() {
 
   @each $color in c.$context-colors {
     &.#{$color} {
-      .input {
-        @apply border-rui-#{$color};
+      &:not(.disabled) {
+        &:hover .input {
+          @apply border-rui-#{$color};
+        }
+
+        .input:focus {
+          @apply border-rui-#{$color} outline-rui-#{$color};
+        }
       }
     }
 
@@ -314,6 +316,10 @@ function clearIconClicked() {
       .input {
         @apply border-rui-#{$color};
 
+        &:focus {
+          @apply outline-rui-#{$color};
+        }
+
         ~ div .icon {
           @apply text-rui-#{$color};
         }
@@ -323,7 +329,45 @@ function clearIconClicked() {
 
   &.readonly {
     .input {
-      @apply bg-black/[0.05] cursor-default;
+      @apply bg-black bg-opacity-[0.05] cursor-default;
+    }
+  }
+}
+
+:global(.dark) {
+  .wrapper {
+    @apply bg-transparent;
+
+    .icon {
+      @apply text-white opacity-60;
+    }
+
+    .input {
+      @apply border-white border-opacity-25;
+
+      &::placeholder {
+        @apply text-rui-text-disabled font-light;
+      }
+    }
+
+    &.filled {
+      @apply bg-white bg-opacity-[0.06];
+    }
+
+    &:not(.disabled) {
+      &:hover .input {
+        @apply border-white border-opacity-100;
+      }
+
+      .input:focus {
+        @apply border-white outline outline-2 outline-white;
+      }
+    }
+
+    &.disabled {
+      .input {
+        @apply border-white border-opacity-25 border-dotted;
+      }
     }
   }
 }

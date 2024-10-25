@@ -1,8 +1,10 @@
 import { contextColors } from '@/consts/colors';
 import RuiTextField, { type TextFieldProps } from '@/components/forms/text-field/RuiTextField.vue';
+import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiIcon from '@/components/icons/RuiIcon.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-type Props = TextFieldProps & { modelValue: string };
+type Props = TextFieldProps & { modelValue: string; customAppend?: boolean };
 
 const render: StoryFn<Props> = args => ({
   components: { RuiTextField },
@@ -18,7 +20,11 @@ const render: StoryFn<Props> = args => ({
 
     return { args, modelValue };
   },
-  template: `<RuiTextField v-model="modelValue" v-bind="args" />`,
+  template: `<RuiTextField v-model="modelValue" v-bind="args">
+    <template v-if="args.customAppend" #append>
+      <slot name="append" />
+    </template>
+  </RuiTextField>`,
 });
 
 const meta: Meta<Props> = {
@@ -68,21 +74,60 @@ const meta: Meta<Props> = {
 
 type Story = StoryObj<Props>;
 
-export const Default: Story = {
-  args: {
-    label: 'Label',
-    placeholder: 'Placeholder',
-  },
-};
-
 export const EmailExample: Story = {
   args: {
-    appendIcon: 'heart-fill',
+    customAppend: true,
     hint: 'This is a hint text to help user.',
     label: 'Email *',
-    placeholder: 'Enter your email',
-    prependIcon: 'mail-line',
+    placeholder: 'lefteris@rotki.com',
   },
+  render: args => ({
+    components: { RuiButton, RuiIcon, RuiTextField },
+    setup() {
+      const modelValue = computed({
+        get() {
+          return args.modelValue;
+        },
+        set(val) {
+          args.modelValue = val;
+        },
+      });
+
+      return { args, modelValue };
+    },
+    template: `
+      <div class="w-1/4">
+        <div class="flex gap-2 items-center">
+          <RuiTextField 
+            v-model="modelValue" 
+            v-bind="args"
+            class="flex-1"
+          >
+            <template #prepend>
+              <RuiIcon name="mail-line" class="w-4 h-4 text-rui-text-secondary" />
+            </template>
+            <template #append>
+              <RuiButton
+                size="sm"
+                variant="text"
+                class="!p-1 !min-w-0"
+                aria-label="Help"
+              >
+                <RuiIcon name="question-line" class="w-4 h-4" />
+              </RuiButton>
+            </template>
+          </RuiTextField>
+          <RuiButton
+            size="sm"
+            color="primary"
+            disabled
+          >
+            Button CTA
+          </RuiButton>
+        </div>
+      </div>
+    `,
+  }),
 };
 
 export const Filled: Story = {
