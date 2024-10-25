@@ -51,7 +51,7 @@ const meta: Meta<Props> = {
     },
     variant: {
       control: 'select',
-      options: ['default', 'filled', 'outlined'],
+      options: ['default', 'filled'],
       table: { category: 'State' },
     },
   },
@@ -75,6 +75,16 @@ export const Default: Story = {
   },
 };
 
+export const EmailExample: Story = {
+  args: {
+    appendIcon: 'heart-fill',
+    hint: 'This is a hint text to help user.',
+    label: 'Email *',
+    placeholder: 'Enter your email',
+    prependIcon: 'mail-line',
+  },
+};
+
 export const Filled: Story = {
   args: {
     label: 'Label',
@@ -83,11 +93,11 @@ export const Filled: Story = {
   },
 };
 
-export const Outlined: Story = {
+export const WithCustomColor: Story = {
   args: {
+    color: 'success',
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 };
 
@@ -96,7 +106,6 @@ export const Dense: Story = {
     dense: true,
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 };
 
@@ -105,7 +114,6 @@ export const Disabled: Story = {
     disabled: true,
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 };
 
@@ -115,7 +123,6 @@ export const Readonly: Story = {
     modelValue: 'Readonly text',
     placeholder: 'Placeholder',
     readonly: true,
-    variant: 'outlined',
   },
 };
 
@@ -124,7 +131,6 @@ export const WithErrorMessage: Story = {
     errorMessages: ['With error messages'],
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 };
 
@@ -133,7 +139,6 @@ export const WithSuccessMessage: Story = {
     label: 'Label',
     placeholder: 'Placeholder',
     successMessages: ['With success messages'],
-    variant: 'outlined',
   },
 };
 
@@ -142,7 +147,6 @@ export const WithHint: Story = {
     hint: 'With hint',
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 };
 
@@ -151,7 +155,6 @@ export const WithPrependIcon: Story = {
     label: 'Label',
     placeholder: 'Placeholder',
     prependIcon: 'heart-fill',
-    variant: 'outlined',
   },
 };
 
@@ -160,54 +163,16 @@ export const WithAppendIcon: Story = {
     appendIcon: 'heart-fill',
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 };
 
-export const WithIconsAndLongText: Story = {
+export const WithIconsAndHint: Story = {
   args: {
     appendIcon: 'heart-fill',
-    label: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    placeholder: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    prependIcon: 'heart-fill',
-    variant: 'outlined',
-  },
-};
-
-export const OutlinedWithNoLabel: Story = {
-  args: {
+    hint: 'This is a hint text',
+    label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
-  },
-};
-
-export const OutlinedWithVeryLongLabel: Story = {
-  args: {
-    label:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    placeholder: 'Placeholder',
-    variant: 'outlined',
-  },
-};
-
-export const OutlinedWithVeryLongPlaceHolder: Story = {
-  args: {
-    placeholder:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    variant: 'outlined',
-  },
-};
-
-export const WithAllFeatures: Story = {
-  args: {
-    appendIcon: 'heart-fill',
-    clearable: true,
-    color: 'primary',
-    hint: 'This example shows multiple features together',
-    label: 'Complete Example',
-    modelValue: 'Can be deleted',
-    prependIcon: 'heart-fill',
-    variant: 'outlined',
+    prependIcon: 'user-fill',
   },
 };
 

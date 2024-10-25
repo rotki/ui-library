@@ -11,7 +11,7 @@ export interface TextFieldProps {
   label?: string;
   placeholder?: string;
   disabled?: boolean;
-  variant?: 'default' | 'filled' | 'outlined';
+  variant?: 'filled';
   color?: ContextColorsType;
   textColor?: ContextColorsType;
   dense?: boolean;
@@ -37,8 +37,8 @@ const props = withDefaults(defineProps<TextFieldProps>(), {
   label: '',
   placeholder: '',
   disabled: false,
-  variant: 'default',
-  color: undefined,
+  variant: undefined,
+  color: 'primary',
   textColor: undefined,
   dense: false,
   hint: '',
@@ -78,23 +78,6 @@ const append = ref<HTMLDivElement>();
 const innerWrapper = ref<HTMLDivElement>();
 const inputRef = ref();
 
-const prependWidth = ref('0px');
-const appendWidth = ref('0px');
-
-const { width } = useElementBounding(innerWrapper);
-
-useResizeObserver(prepend, (entries) => {
-  const [entry] = entries;
-  const { width, left } = entry.contentRect;
-  set(prependWidth, `${width + left}px`);
-});
-
-useResizeObserver(append, (entries) => {
-  const [entry] = entries;
-  const { width, right } = entry.contentRect;
-  set(appendWidth, `${width + right}px`);
-});
-
 const { hasError, hasSuccess, hasMessages } = useFormTextDetail(
   errorMessages,
   successMessages,
@@ -127,9 +110,9 @@ function clearIconClicked() {
     <div
       :class="[
         $style.wrapper,
-        $style[color ?? ''],
-        $style[variant ?? ''],
+        $style[color ?? 'primary'],
         {
+          [$style.filled]: variant === 'filled',
           [$style.dense]: dense,
           [$style.disabled]: disabled,
           [$style['with-error']]: hasError,
@@ -172,7 +155,6 @@ function clearIconClicked() {
           ]"
           :disabled="disabled"
           :readonly="readonly"
-          :wrapper-width="width"
           v-bind="getNonRootAttrs($attrs)"
           @input="input($event)"
           @blur="emit('blur', $event)"
@@ -181,7 +163,7 @@ function clearIconClicked() {
         <div
           v-if="$slots.append || appendIcon || showClearIcon"
           ref="append"
-          class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 z-10"
+          class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center"
           :class="$style.append"
         >
           <RuiButton
@@ -190,7 +172,7 @@ function clearIconClicked() {
             variant="text"
             type="button"
             icon
-            class="!p-2 clear-btn"
+            class="!p-1 clear-btn"
             color="error"
             tabindex="-1"
             @click.stop="clearIconClicked()"
@@ -227,11 +209,11 @@ function clearIconClicked() {
 @use '@/styles/colors.scss' as c;
 
 .label {
-  @apply block text-subtitle-1 font-[400] text-rui-text mb-1;
+  @apply block text-sm font-normal text-rui-text mb-1.5 leading-5;
 }
 
 .details {
-  @apply mt-1 text-caption text-rui-text-secondary;
+  @apply mt-1 text-xs text-rui-text-secondary;
 }
 
 :global(.dark) {
@@ -242,141 +224,81 @@ function clearIconClicked() {
       @apply text-white/[0.56];
     }
 
-    &.default {
-      .input {
-        @apply border-b-white/[0.42];
-
-        &:hover {
-          @apply border-b-white;
-        }
-
-        &:focus {
-          @apply border-b-2 border-white;
-        }
-      }
+    .input {
+      @apply border-white/[0.23];
     }
 
     &.filled {
       @apply bg-white/[0.06];
-
-      .input {
-        &:hover {
-          @apply bg-white/[0.09];
-        }
-
-        &:focus {
-          @apply bg-white/[0.13];
-        }
-      }
     }
 
-    &.outlined {
+    &.disabled {
       .input {
-        @apply border-white/[0.23];
-
-        &:hover {
-          @apply border-white;
-        }
-
-        &:focus {
-          @apply border-2 border-white;
-        }
+        @apply border-white/[0.23] border-dotted;
       }
     }
   }
 }
 
 .wrapper {
-  @apply relative w-full flex items-center rounded;
+  @apply relative w-full flex items-center rounded-md;
 
   .input {
     @apply leading-6 text-rui-text w-full bg-transparent py-2 px-3;
-    @apply outline-0 transition-colors placeholder:text-rui-text-secondary;
+    @apply outline-0 placeholder:text-rui-text;
+    @apply text-sm rounded-md border-[1.75px] border-rui-primary;
 
     &.withPrepend {
-      @apply pl-10;
+      @apply pl-8;
     }
 
     &.withAppend {
       @apply pr-10;
     }
-
-    &:disabled {
-      @apply text-rui-text-disabled cursor-not-allowed border-dotted;
-    }
   }
 
   .icon {
-    @apply text-black/[0.54];
+    @apply text-rui-text-secondary;
+
+    svg {
+      @apply w-4 h-4;
+    }
   }
 
-  &.default {
-    .input {
-      @apply border-b border-black/[0.42];
-
-      &:hover {
-        @apply border-b-black;
-      }
-
-      &:focus {
-        @apply border-b-2 border-black;
-      }
-    }
+  .prepend {
+    @apply left-2;
   }
 
   &.filled {
     @apply bg-black/[0.06];
 
     .input {
-      @apply py-4;
-
-      &:hover {
-        @apply bg-black/[0.09];
-      }
-
-      &:focus {
-        @apply bg-black/[0.13];
-      }
-
-      &:disabled {
-        @apply bg-black/[0.02];
-      }
+      @apply py-2 border-0;
     }
   }
 
-  &.outlined {
+  &.disabled {
     .input {
-      @apply border border-black/[0.23] rounded;
+      @apply text-rui-text-disabled cursor-not-allowed;
+      @apply border-rui-primary border-dotted;
+      @apply bg-black/[0.02];
+    }
 
-      &:hover {
-        @apply border-black;
-      }
-
-      &:focus {
-        @apply border-2 border-black;
-      }
+    .icon {
+      @apply opacity-50;
     }
   }
 
   &.dense {
     .input {
-      @apply py-1;
+      @apply py-1.5;
     }
   }
 
   @each $color in c.$context-colors {
     &.#{$color} {
-      &.default .input:focus {
-        @apply border-b-2 border-rui-#{$color};
-      }
-
-      &.outlined .input:focus {
-        @apply border-2 border-rui-#{$color};
-      }
-
-      &:not(.disabled) .prepend svg,
-      &:not(.disabled) .append svg {
-        @apply text-rui-#{$color};
+      .input {
+        @apply border-rui-#{$color};
       }
     }
 
@@ -389,24 +311,19 @@ function clearIconClicked() {
 
   @each $color in 'error', 'success' {
     &.with-#{$color} {
-      &.default .input {
-        @apply border-b border-rui-#{$color};
-      }
+      .input {
+        @apply border-rui-#{$color};
 
-      &.outlined .input {
-        @apply border border-rui-#{$color};
+        ~ div .icon {
+          @apply text-rui-#{$color};
+        }
       }
     }
   }
 
-  .input {
-    &:not(:placeholder-shown),
-    &:autofill,
-    &:-webkit-autofill,
-    &[data-has-value='true'] {
-      &[readonly] {
-        @apply bg-black/[0.05];
-      }
+  &.readonly {
+    .input {
+      @apply bg-black/[0.05] cursor-default;
     }
   }
 }
