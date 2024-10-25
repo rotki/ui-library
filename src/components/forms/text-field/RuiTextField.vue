@@ -24,6 +24,7 @@ export interface TextFieldProps {
   appendIcon?: RuiIcons;
   readonly?: boolean;
   clearable?: boolean;
+  required?: boolean;
 }
 
 defineOptions({
@@ -50,6 +51,7 @@ const props = withDefaults(defineProps<TextFieldProps>(), {
   appendIcon: undefined,
   readonly: false,
   clearable: false,
+  required: false,
 });
 
 const emit = defineEmits<{
@@ -64,6 +66,7 @@ const {
   clearable,
   disabled,
   readonly,
+  required,
   errorMessages,
   successMessages,
 } = toRefs(props);
@@ -106,6 +109,12 @@ function clearIconClicked() {
       :class="$style.label"
     >
       {{ label }}
+      <span
+        v-if="required"
+        class="text-rui-error"
+      >
+        *
+      </span>
     </label>
     <div
       :class="[
@@ -155,6 +164,7 @@ function clearIconClicked() {
           ]"
           :disabled="disabled"
           :readonly="readonly"
+          :required="required"
           v-bind="getNonRootAttrs($attrs)"
           @input="input($event)"
           @blur="emit('blur', $event)"
@@ -209,7 +219,7 @@ function clearIconClicked() {
 @use '@/styles/colors.scss' as c;
 
 .label {
-  @apply block text-sm font-normal text-rui-text mb-1.5 leading-5;
+  @apply block text-sm font-medium text-rui-text mb-1.5 leading-5;
 }
 
 .details {
@@ -220,8 +230,8 @@ function clearIconClicked() {
   @apply relative w-full flex items-center rounded-md;
 
   .input {
-    @apply leading-6 text-rui-text w-full bg-transparent py-2 px-3;
-    @apply outline-0 text-sm rounded-md border border-rui-text-disabled;
+    @apply leading-5 text-rui-text w-full bg-transparent py-2 px-3;
+    @apply outline-0 text-[13px] font-normal rounded-md border border-rui-text-disabled;
     @apply transition-[border,outline] duration-200;
 
     &::placeholder {
@@ -348,25 +358,37 @@ function clearIconClicked() {
       &::placeholder {
         @apply text-rui-text-disabled font-light;
       }
+
+      &:focus {
+        @apply border-rui-primary outline-rui-primary;
+      }
     }
 
     &.filled {
       @apply bg-white bg-opacity-[0.06];
     }
 
-    &:not(.disabled) {
-      &:hover .input {
-        @apply border-white border-opacity-100;
-      }
-
-      .input:focus {
-        @apply border-white outline outline-2 outline-white;
-      }
+    &:not(.disabled):hover .input {
+      @apply border-rui-primary;
     }
 
     &.disabled {
       .input {
         @apply border-white border-opacity-25 border-dotted;
+      }
+    }
+
+    @each $color in c.$context-colors {
+      &.#{$color} {
+        &:not(.disabled) {
+          &:hover .input {
+            @apply border-rui-#{$color};
+          }
+
+          .input:focus {
+            @apply border-rui-#{$color} outline-rui-#{$color};
+          }
+        }
       }
     }
   }

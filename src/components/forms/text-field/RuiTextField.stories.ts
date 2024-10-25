@@ -49,6 +49,7 @@ const meta: Meta<Props> = {
     placeholder: { control: 'text' },
     prependIcon: { control: 'text' },
     readonly: { control: 'boolean', table: { category: 'State' } },
+    required: { control: 'boolean', table: { category: 'State' } },
     successMessages: { control: 'object' },
     textColor: {
       control: 'select',
@@ -78,8 +79,9 @@ export const EmailExample: Story = {
   args: {
     customAppend: true,
     hint: 'This is a hint text to help user.',
-    label: 'Email *',
+    label: 'Email',
     placeholder: 'lefteris@rotki.com',
+    required: true,
   },
   render: args => ({
     components: { RuiButton, RuiIcon, RuiTextField },
@@ -218,6 +220,30 @@ export const WithIconsAndHint: Story = {
     label: 'Label',
     placeholder: 'Placeholder',
     prependIcon: 'user-fill',
+  },
+};
+
+export const Required: Story = {
+  args: {
+    label: 'Required Field',
+    placeholder: 'This field is required',
+    required: true,
+  },
+};
+
+export const RequiredWithHint: Story = {
+  args: {
+    hint: 'This is a required field with hint text',
+    label: 'Required Field',
+    placeholder: 'This field is required',
+    required: true,
+  },
+};
+
+export const NoLabelText: Story = {
+  args: {
+    placeholder: 'This doesn not have label text above',
+    required: false,
   },
 };
 
