@@ -70,7 +70,7 @@ export const Default: Story = {
   args: {
     label: 'Password',
     placeholder: 'Placeholder',
-    variant: 'outlined',
+    variant: 'default',
   },
 };
 
@@ -80,7 +80,7 @@ export const PrimaryText: Story = {
     label: 'Password',
     placeholder: 'Placeholder',
     textColor: 'primary',
-    variant: 'outlined',
+    variant: 'default',
   },
 };
 
@@ -90,7 +90,7 @@ export const SuccessText: Story = {
     label: 'Password',
     placeholder: 'Placeholder',
     textColor: 'success',
-    variant: 'outlined',
+    variant: 'default',
   },
 };
 
@@ -99,7 +99,7 @@ export const ErrorsMessage: Story = {
     errorMessages: ['Lorem ipsum dolor'],
     label: 'Password',
     placeholder: 'Placeholder',
-    variant: 'outlined',
+    variant: 'default',
   },
 };
 
@@ -108,7 +108,7 @@ export const SuccessMessage: Story = {
     label: 'Password',
     placeholder: 'Placeholder',
     successMessages: ['Lorem ipsum dolor'],
-    variant: 'outlined',
+    variant: 'default',
   },
 };
 
@@ -117,7 +117,7 @@ export const Hinted: Story = {
     hint: 'Lorem ipsum dolor',
     label: 'Password',
     placeholder: 'Placeholder',
-    variant: 'outlined',
+    variant: 'default',
   },
 };
 
