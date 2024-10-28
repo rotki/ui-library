@@ -38,7 +38,7 @@ const props = withDefaults(defineProps<TextFieldProps>(), {
   label: '',
   placeholder: '',
   disabled: false,
-  variant: undefined,
+  variant: 'default',
   color: 'primary',
   textColor: undefined,
   dense: false,
