@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { type ChipProps, RuiChip } from '@rotki/ui-library';
 import ComponentView from '@/components/ComponentView.vue';
+import ComponentGroup from '@/components/ComponentGroup.vue';
 
 const colors = ['grey', 'primary', 'secondary', 'error', 'warning', 'info', 'success'] as const;
 
@@ -63,48 +64,47 @@ onBeforeMount(() => {
       Chips
     </template>
 
-    <div class="grid gap-6 grid-cols-7">
-      <div
-        v-for="(chip, i) in chips"
-        :key="i"
-      >
+    <ComponentGroup
+      :items="chips"
+      class="grid gap-6 grid-cols-7"
+    >
+      <template #item="{ item, index }">
         <RuiChip
-          :data-cy="`chip-${i}`"
-          v-bind="chip"
-          @click:close="onRemove(i)"
+          :data-cy="`chip-${index}`"
+          v-bind="item"
+          @click:close="onRemove(index)"
         >
           Chip
         </RuiChip>
-        <div v-if="dismissed[i]">
-          {{ dismissed[i] }} times
+        <div v-if="dismissed[index]">
+          {{ dismissed[index] }} times
         </div>
-      </div>
-    </div>
-    <h2
-      class="text-h4 mb-6 mt-14"
+      </template>
+    </ComponentGroup>
+
+    <ComponentGroup
+      :items="chips"
       data-cy="chip"
+      class="grid gap-6 grid-cols-7"
     >
-      Chips with Prepend
-    </h2>
-    <div class="grid gap-6 grid-cols-7">
-      <div
-        v-for="(chip, i) in chips"
-        :key="i"
-      >
+      <template #title>
+        Chips with Prepend
+      </template>
+      <template #item="{ item, index }">
         <RuiChip
-          :data-cy="`pre-chip-${i}`"
-          v-bind="chip"
-          @click:close="onRemove(`pre-${i}`)"
+          :data-cy="`pre-chip-${index}`"
+          v-bind="item"
+          @click:close="onRemove(`pre-${index}`)"
         >
           <template #prepend>
             <span>OP</span>
           </template>
           Chip
         </RuiChip>
-        <div v-if="dismissed[`pre-${i}`]">
-          {{ dismissed[`pre-${i}`] }} times
+        <div v-if="dismissed[`pre-${index}`]">
+          {{ dismissed[`pre-${index}`] }} times
         </div>
-      </div>
-    </div>
+      </template>
+    </ComponentGroup>
   </ComponentView>
 </template>
