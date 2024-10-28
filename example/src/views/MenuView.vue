@@ -10,6 +10,7 @@ import {
 } from '@rotki/ui-library';
 import { objectOmit } from '@vueuse/shared';
 import { type SelectOption, createOptions } from '@/data/options';
+import ComponentView from '@/components/ComponentView.vue';
 
 const options = createOptions();
 
@@ -281,13 +282,11 @@ const menuSelectPrimitive = ref<RuiMenuSelectProps<string, string>[]>([
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="menus"
-    >
+  <ComponentView data-cy="menus">
+    <template #title>
       Menus
-    </h2>
+    </template>
+
     <div class="grid gap-6 grid-cols-4">
       <div
         v-for="(menu, i) in menus"
@@ -314,12 +313,14 @@ const menuSelectPrimitive = ref<RuiMenuSelectProps<string, string>[]>([
         </RuiMenu>
       </div>
     </div>
+
     <h4
       class="text-h6 mt-6"
       data-cy="select-menus"
     >
       Select Menus
     </h4>
+
     <div class="grid gap-6 grid-cols-4">
       <div
         v-for="(menu, i) in menuSelect"
@@ -333,12 +334,14 @@ const menuSelectPrimitive = ref<RuiMenuSelectProps<string, string>[]>([
         />
       </div>
     </div>
+
     <h4
       class="text-h6 mt-6"
       data-cy="select-menus-custom"
     >
       Select Menus: custom activator content
     </h4>
+
     <div class="grid gap-6 grid-cols-4">
       <div
         v-for="(menu, i) in menuSelectCustom"
@@ -371,12 +374,14 @@ const menuSelectPrimitive = ref<RuiMenuSelectProps<string, string>[]>([
         </RuiMenuSelect>
       </div>
     </div>
+
     <h4
       class="text-h6 mt-6"
       data-cy="select-menus-custom-inner"
     >
       Select Menus: custom activator inner content
     </h4>
+
     <div class="grid gap-6 grid-cols-2">
       <div
         v-for="(menu, i) in menuSelectCustom"
@@ -406,12 +411,14 @@ const menuSelectPrimitive = ref<RuiMenuSelectProps<string, string>[]>([
         </RuiMenuSelect>
       </div>
     </div>
+
     <h4
       class="text-h6 mt-6"
       data-cy="select-menus-custom-options"
     >
       Select Menus: custom options
     </h4>
+
     <div class="grid gap-6 grid-cols-4">
       <div
         v-for="(menu, i) in menuSelectCustom"
@@ -435,12 +442,14 @@ const menuSelectPrimitive = ref<RuiMenuSelectProps<string, string>[]>([
         </RuiMenuSelect>
       </div>
     </div>
+
     <h4
       class="text-h6 mt-6"
       data-cy="select-menus-custom-options"
     >
       Select Menus: primitive values
     </h4>
+
     <div class="grid gap-6 grid-cols-4">
       <div
         v-for="(menu, i) in menuSelectPrimitive"
@@ -463,12 +472,15 @@ const menuSelectPrimitive = ref<RuiMenuSelectProps<string, string>[]>([
           </template>
         </RuiMenuSelect>
       </div>
-    </div><h4
+    </div>
+
+    <h4
       class="text-h6 mt-6"
       data-cy="select-menus-custom-readonly"
     >
       Select Menus: readonly
     </h4>
+
     <div class="grid gap-6 grid-cols-4">
       <div
         v-for="(menu, i) in menuSelectPrimitive"
@@ -493,5 +505,5 @@ const menuSelectPrimitive = ref<RuiMenuSelectProps<string, string>[]>([
         </RuiMenuSelect>
       </div>
     </div>
-  </div>
+  </ComponentView>
 </template>

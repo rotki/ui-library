@@ -8,6 +8,7 @@ import {
   type RuiIcons,
 } from '@rotki/ui-library';
 import { objectOmit } from '@vueuse/shared';
+import ComponentView from '@/components/ComponentView.vue';
 
 interface ExtraProperties {
   clicks: number;
@@ -600,13 +601,11 @@ const multipleToggleButtons = ref<ButtonGroupData[]>([
 </script>
 
 <template>
-  <div data-cy="content">
-    <h2
-      class="text-h4 mb-6"
-      data-cy="buttons"
-    >
+  <ComponentView data-cy="buttons">
+    <template #title>
       Buttons
-    </h2>
+    </template>
+
     <div class="grid gap-4 grid-rows-2 grid-cols-6 justify-items-start mb-14">
       <RuiButton
         v-for="(button, i) in buttons"
@@ -738,5 +737,5 @@ const multipleToggleButtons = ref<ButtonGroupData[]>([
         </div>
       </div>
     </div>
-  </div>
+  </ComponentView>
 </template>

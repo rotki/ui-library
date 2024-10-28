@@ -6,6 +6,7 @@ import {
   RuiCard,
 } from '@rotki/ui-library/components';
 import { objectOmit } from '@vueuse/shared';
+import ComponentView from '@/components/ComponentView.vue';
 
 interface CardData {
   title: string;
@@ -493,13 +494,11 @@ const sections = ref<CardData[]>([
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="cards"
-    >
+  <ComponentView data-cy="cards">
+    <template #title>
       Cards
-    </h2>
+    </template>
+
     <div
       v-for="({ title, cards }, i) in sections"
       :key="title"
@@ -586,5 +585,5 @@ const sections = ref<CardData[]>([
         </div>
       </div>
     </div>
-  </div>
+  </ComponentView>
 </template>

@@ -4,6 +4,7 @@ import {
   RuiAccordion,
   RuiAccordions,
 } from '@rotki/ui-library';
+import ComponentView from '@/components/ComponentView.vue';
 
 const accordions = ref<(AccordionsProps & { label: string })[]>([
   {
@@ -20,13 +21,11 @@ const accordions = ref<(AccordionsProps & { label: string })[]>([
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="accordions"
-    >
+  <ComponentView data-cy="accordions">
+    <template #title>
       Accordions
-    </h2>
+    </template>
+
     <div
       class="grid gap-4 grid-cols-2 mb-14"
       data-cy="accordions-wrapper"
@@ -72,5 +71,5 @@ const accordions = ref<(AccordionsProps & { label: string })[]>([
         </div>
       </template>
     </div>
-  </div>
+  </ComponentView>
 </template>

@@ -6,6 +6,7 @@ import {
   type TooltipProps,
 } from '@rotki/ui-library/components';
 import { objectOmit } from '@vueuse/shared';
+import ComponentView from '@/components/ComponentView.vue';
 
 type TooltipData = TooltipProps & {
   buttonColor?: ButtonProps<undefined>['color'];
@@ -136,13 +137,11 @@ const tooltips = ref<(TooltipData)[]>([
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="tooltips"
-    >
+  <ComponentView data-cy="tooltips">
+    <template #title>
       Tooltips
-    </h2>
+    </template>
+
     <div class="grid gap-6 grid-cols-4">
       <div
         v-for="(tooltip, i) in tooltips"
@@ -191,5 +190,5 @@ const tooltips = ref<(TooltipData)[]>([
         {{ tooltip.text }}
       </RuiTooltip>
     </div>
-  </div>
+  </ComponentView>
 </template>

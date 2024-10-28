@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { type AlertProps, RuiAlert } from '@rotki/ui-library';
+import ComponentView from '@/components/ComponentView.vue';
 
 type AlertData = Omit<
   AlertProps & { clicks?: number; closed?: boolean },
@@ -88,13 +89,11 @@ const alerts = ref<AlertData[]>([
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="alerts"
-    >
+  <ComponentView data-cy="alerts">
+    <template #title>
       Alerts
-    </h2>
+    </template>
+
     <div class="grid gap-4 grid-rows-2 grid-cols-3">
       <RuiAlert
         v-for="(alert, i) in alerts"
@@ -109,5 +108,5 @@ const alerts = ref<AlertData[]>([
         @close="alert.closed = true"
       />
     </div>
-  </div>
+  </ComponentView>
 </template>

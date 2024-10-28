@@ -6,6 +6,7 @@ import {
   RuiCard,
   RuiDialog,
 } from '@rotki/ui-library';
+import ComponentView from '@/components/ComponentView.vue';
 
 interface ExtraProperties {
   label: string;
@@ -19,13 +20,11 @@ const dialogs = ref<DialogData[]>([
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="dialogs"
-    >
+  <ComponentView data-cy="dialogs">
+    <template #title>
       Dialogs
-    </h2>
+    </template>
+
     <div class="grid gap-4 grid-rows-2 grid-cols-6 justify-items-start mb-14">
       <RuiDialog
         v-for="(dialog, i) in dialogs"
@@ -73,5 +72,5 @@ const dialogs = ref<DialogData[]>([
         </template>
       </RuiDialog>
     </div>
-  </div>
+  </ComponentView>
 </template>

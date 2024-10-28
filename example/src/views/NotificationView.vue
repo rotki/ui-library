@@ -6,6 +6,7 @@ import {
   RuiTextField,
 } from '@rotki/ui-library';
 import { ref } from 'vue';
+import ComponentView from '@/components/ComponentView.vue';
 
 const visible = ref(false);
 const timeout = ref('0');
@@ -16,13 +17,11 @@ const options = ['light', 'dark'];
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="notification"
-    >
+  <ComponentView data-cy="notification">
+    <template #title>
       Notification
-    </h2>
+    </template>
+
     <div>
       <RuiButton
         data-cy="visibility-toggle"
@@ -55,10 +54,10 @@ const options = ['light', 'dark'];
     >
       <div
         class="m-4"
-        data-cy="content"
+        data-cy="notification-content"
       >
         This is a notification
       </div>
     </RuiNotification>
-  </div>
+  </ComponentView>
 </template>

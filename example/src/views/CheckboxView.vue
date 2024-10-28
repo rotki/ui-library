@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { type CheckboxProps, RuiCheckbox } from '@rotki/ui-library';
+import ComponentView from '@/components/ComponentView.vue';
 
 type CheckboxData = CheckboxProps & {
   value?: boolean;
@@ -107,13 +108,11 @@ const checkboxes = ref<CheckboxData[]>([
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="checkboxes"
-    >
+  <ComponentView data-cy="checkboxes">
+    <template #title>
       Checkboxes
-    </h2>
+    </template>
+
     <div class="grid gap-1 grid-rows-2 grid-cols-6">
       <RuiCheckbox
         v-for="(checkbox, i) in checkboxes"
@@ -125,5 +124,5 @@ const checkboxes = ref<CheckboxData[]>([
         <span class="capitalize"> {{ checkbox.color }} </span>
       </RuiCheckbox>
     </div>
-  </div>
+  </ComponentView>
 </template>

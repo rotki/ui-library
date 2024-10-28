@@ -12,6 +12,7 @@ import {
   RuiTextField,
 } from '@rotki/ui-library/components';
 import { objectOmit, useDebounceFn } from '@vueuse/shared';
+import ComponentView from '@/components/ComponentView.vue';
 
 interface _User {
   id: number;
@@ -873,13 +874,11 @@ function removeRow(table: Pick<DataTableProps<ExtendedUser, 'id'>, 'rows'>, row:
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="datatables"
-    >
+  <ComponentView data-cy="datatables">
+    <template #title>
       Data Tables
-    </h2>
+    </template>
+
     <template v-if="!isFetching">
       <div class="grid grid-cols-1 gap-12 mb-14">
         <div
@@ -1177,5 +1176,5 @@ function removeRow(table: Pick<DataTableProps<ExtendedUser, 'id'>, 'rows'>, row:
         </div>
       </div>
     </template>
-  </div>
+  </ComponentView>
 </template>

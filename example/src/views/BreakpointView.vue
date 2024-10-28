@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RuiChip, useBreakpoint } from '@rotki/ui-library';
+import ComponentView from '@/components/ComponentView.vue';
 
 const {
   name,
@@ -57,13 +58,11 @@ const groups = computed(() => [
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-2"
-      data-cy="breakpoint"
-    >
+  <ComponentView data-cy="breakpoint">
+    <template #title>
       Breakpoint
-    </h2>
+    </template>
+
     <h5 class="text-h5 mb-8 text-rui-text-secondary">
       Resize the browser window!
     </h5>
@@ -91,5 +90,5 @@ const groups = computed(() => [
         </div>
       </div>
     </div>
-  </div>
+  </ComponentView>
 </template>

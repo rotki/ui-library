@@ -8,9 +8,12 @@ describe('menu', () => {
   it('checks for and trigger menu', () => {
     cy.contains('h2[data-cy=menus]', 'Menus');
 
+    cy.get('[data-cy=content]').should('be.visible');
+    cy.get('div[data-cy=menu-0]').should('be.visible');
     cy.get('div[data-cy=menu-0]').as('defaultMenu');
 
     cy.get('@defaultMenu').find('[data-cy=activator]').as('activator');
+    cy.get('@activator').should('be.visible');
     cy.get('@activator').trigger('click');
     cy.get('body').find('div[role=menu]').should('be.visible');
     cy.get('@activator').trigger('click');

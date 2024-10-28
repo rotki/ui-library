@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { RuiTextArea, type TextAreaProps } from '@rotki/ui-library';
 import { objectOmit } from '@vueuse/shared';
+import ComponentView from '@/components/ComponentView.vue';
 import type { Slots } from '@/types';
 
 type TextAreaData = TextAreaProps & Slots & { modelValue: string };
@@ -224,13 +225,11 @@ const textAreas = ref<TextAreaData[]>([
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="text-fields"
-    >
+  <ComponentView data-cy="text-fields">
+    <template #title>
       Text Fields
-    </h2>
+    </template>
+
     <div class="grid gap-4 grid-cols-3">
       <RuiTextArea
         v-for="(field, i) in textAreas"
@@ -254,5 +253,5 @@ const textAreas = ref<TextAreaData[]>([
         </template>
       </RuiTextArea>
     </div>
-  </div>
+  </ComponentView>
 </template>

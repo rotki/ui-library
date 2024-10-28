@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { type NavigationDrawerProps, RuiButton, RuiNavigationDrawer } from '@rotki/ui-library';
+import ComponentView from '@/components/ComponentView.vue';
 
 interface ExtraProperties {
   label: string;
@@ -15,13 +16,11 @@ const navigationDrawers = ref<NavigationDrawerData[]>([
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="navigation-drawers"
-    >
+  <ComponentView data-cy="navigation-drawers">
+    <template #title>
       Navigation Drawers
-    </h2>
+    </template>
+
     <div class="grid gap-4 grid-cols-2">
       <div
         v-for="(navigationDrawer, i) in navigationDrawers"
@@ -49,5 +48,5 @@ const navigationDrawers = ref<NavigationDrawerData[]>([
         </RuiNavigationDrawer>
       </div>
     </div>
-  </div>
+  </ComponentView>
 </template>

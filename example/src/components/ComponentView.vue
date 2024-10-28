@@ -14,6 +14,9 @@ defineOptions({
     >
       <slot name="title" />
     </h2>
-    <slot />
+
+    <div data-cy="content">
+      <slot />
+    </div>
   </div>
 </template>

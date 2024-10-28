@@ -8,6 +8,7 @@ import {
   RuiTabs,
   type TabsProps,
 } from '@rotki/ui-library';
+import ComponentView from '@/components/ComponentView.vue';
 
 const tabs = ref<TabsProps[]>([
   {
@@ -68,13 +69,11 @@ const tabs = ref<TabsProps[]>([
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="tabs"
-    >
+  <ComponentView data-cy="tabs">
+    <template #title>
       Tabs
-    </h2>
+    </template>
+
     <div
       v-for="(data, i) in tabs"
       :key="i"
@@ -128,5 +127,5 @@ const tabs = ref<TabsProps[]>([
         </RuiTabItem>
       </RuiTabItems>
     </div>
-  </div>
+  </ComponentView>
 </template>

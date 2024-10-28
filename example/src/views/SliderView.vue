@@ -3,6 +3,7 @@ import {
   RuiSlider,
   type SliderProps,
 } from '@rotki/ui-library';
+import ComponentView from '@/components/ComponentView.vue';
 
 type SliderData = SliderProps &
   {
@@ -61,13 +62,11 @@ const textFields = ref<SliderData[]>([
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="sliders"
-    >
+  <ComponentView data-cy="sliders">
+    <template #title>
       Sliders
-    </h2>
+    </template>
+
     <div class="grid gap-4 grid-rows-2 grid-cols-2">
       <RuiSlider
         v-for="(field, i) in textFields"
@@ -77,5 +76,5 @@ const textFields = ref<SliderData[]>([
         v-bind="field"
       />
     </div>
-  </div>
+  </ComponentView>
 </template>

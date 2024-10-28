@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { RuiSwitch, type SwitchProps } from '@rotki/ui-library';
+import ComponentView from '@/components/ComponentView.vue';
 
 type SwitchData = SwitchProps & {
   value?: boolean;
@@ -93,13 +94,11 @@ const switches = ref<SwitchData[]>([
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="switches"
-    >
+  <ComponentView data-cy="switches">
+    <template #title>
       Switches
-    </h2>
+    </template>
+
     <div class="grid gap-3 grid-rows-2 grid-cols-6">
       <RuiSwitch
         v-for="(sw, i) in switches"
@@ -110,5 +109,5 @@ const switches = ref<SwitchData[]>([
         <span class="capitalize"> {{ sw.color }} </span>
       </RuiSwitch>
     </div>
-  </div>
+  </ComponentView>
 </template>

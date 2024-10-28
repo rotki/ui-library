@@ -8,6 +8,7 @@ import {
 import { objectOmit } from '@vueuse/shared';
 import { ref } from 'vue';
 import { type SelectOption, createOptions } from '@/data/options';
+import ComponentView from '@/components/ComponentView.vue';
 
 type RuiAutoCompleteProps<TValue = number, TItem = SelectOption> = AutoCompleteProps<TValue, TItem> & {
   modelValue: TValue extends Array<infer U> ? U[] : TValue | undefined;
@@ -286,13 +287,11 @@ function getDisplayText(options?: SelectOption | SelectOption[]): string {
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="auto-completes"
-    >
+  <ComponentView data-cy="auto-completes">
+    <template #title>
       Auto Completes
-    </h2>
+    </template>
+
     <div class="grid gap-6 grid-cols-2">
       <div
         v-for="(item, i) in autoComplete"
@@ -483,5 +482,5 @@ function getDisplayText(options?: SelectOption | SelectOption[]): string {
         </RuiAutoComplete>
       </div>
     </div>
-  </div>
+  </ComponentView>
 </template>

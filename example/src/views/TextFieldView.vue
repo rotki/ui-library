@@ -6,6 +6,7 @@ import {
   type TextFieldProps,
 } from '@rotki/ui-library';
 import { objectOmit } from '@vueuse/shared';
+import ComponentView from '@/components/ComponentView.vue';
 import type { Slots } from '@/types';
 
 type TextFieldData = TextFieldProps &
@@ -275,13 +276,11 @@ const revealableTextFields = ref<RevealableTextFieldData[]>([
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="text-fields"
-    >
+  <ComponentView data-cy="text-fields">
+    <template #title>
       Text Fields
-    </h2>
+    </template>
+
     <div class="grid gap-4 grid-rows-2 grid-cols-3">
       <RuiTextField
         v-for="(field, i) in textFields"
@@ -320,5 +319,5 @@ const revealableTextFields = ref<RevealableTextFieldData[]>([
         v-bind="objectOmit(field, ['modelValue', 'append', 'prepend'])"
       />
     </div>
-  </div>
+  </ComponentView>
 </template>

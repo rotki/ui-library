@@ -6,6 +6,7 @@ import {
   type StepperProps,
   StepperState,
 } from '@rotki/ui-library';
+import ComponentView from '@/components/ComponentView.vue';
 
 const steppers = ref<StepperProps[]>([
   {
@@ -346,13 +347,11 @@ const footerSteppers = ref<FooterStepperData[]>([
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="steppers"
-    >
+  <ComponentView data-cy="steppers">
+    <template #title>
       Steppers
-    </h2>
+    </template>
+
     <RuiStepper
       v-for="(stepper, i) in steppers"
       :key="i"
@@ -372,5 +371,5 @@ const footerSteppers = ref<FooterStepperData[]>([
       class="mb-6"
       v-bind="stepper"
     />
-  </div>
+  </ComponentView>
 </template>

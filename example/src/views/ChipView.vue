@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { type ChipProps, RuiChip } from '@rotki/ui-library';
+import ComponentView from '@/components/ComponentView.vue';
 
 const dismissed = ref<Record<string | number, number>>({});
 
@@ -1205,13 +1206,11 @@ function onRemove(identifier: number | string) {
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="chips"
-    >
+  <ComponentView data-cy="chips">
+    <template #title>
       Chips
-    </h2>
+    </template>
+
     <div class="grid gap-6 grid-cols-7">
       <div
         v-for="(chip, i) in chips"
@@ -1255,5 +1254,5 @@ function onRemove(identifier: number | string) {
         </div>
       </div>
     </div>
-  </div>
+  </ComponentView>
 </template>

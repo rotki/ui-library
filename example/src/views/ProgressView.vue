@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { type ProgressProps, RuiProgress } from '@rotki/ui-library';
+import ComponentView from '@/components/ComponentView.vue';
 
 const progress = ref<ProgressProps[]>([
   {
@@ -138,13 +139,11 @@ const progress = ref<ProgressProps[]>([
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="progress"
-    >
+  <ComponentView data-cy="progress">
+    <template #title>
       Progress
-    </h2>
+    </template>
+
     <div class="grid gap-4 grid-cols-3">
       <RuiProgress
         v-for="(item, i) in progress"
@@ -153,5 +152,5 @@ const progress = ref<ProgressProps[]>([
         v-bind="item"
       />
     </div>
-  </div>
+  </ComponentView>
 </template>

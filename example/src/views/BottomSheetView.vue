@@ -6,6 +6,7 @@ import {
   RuiButton,
   RuiCard,
 } from '@rotki/ui-library';
+import ComponentView from '@/components/ComponentView.vue';
 
 interface ExtraProperties {
   label: string;
@@ -19,13 +20,11 @@ const bottomSheets = ref<BottomSheetData[]>([
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="bottom-sheets"
-    >
+  <ComponentView data-cy="bottom-sheets">
+    <template #title>
       Bottom Sheets
-    </h2>
+    </template>
+
     <div class="grid gap-4 grid-rows-2 grid-cols-6 justify-items-start mb-14">
       <RuiBottomSheet
         v-for="(bottomSheet, i) in bottomSheets"
@@ -73,5 +72,5 @@ const bottomSheets = ref<BottomSheetData[]>([
         </template>
       </RuiBottomSheet>
     </div>
-  </div>
+  </ComponentView>
 </template>

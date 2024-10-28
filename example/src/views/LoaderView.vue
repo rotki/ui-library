@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { RuiSkeletonLoader, type SkeletonLoaderProps } from '@rotki/ui-library';
+import ComponentView from '@/components/ComponentView.vue';
 
 type SkeletonData = SkeletonLoaderProps & {
   class?: string;
@@ -41,13 +42,11 @@ const loaders = ref<(SkeletonData)[]>([
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="skeleton-loader"
-    >
+  <ComponentView data-cy="skeleton-loader">
+    <template #title>
       Skeleton Loader
-    </h2>
+    </template>
+
     <div class="grid gap-4 grid-cols-2 items-center justify-center">
       <div
         v-for="(item, i) in loaders"
@@ -59,5 +58,5 @@ const loaders = ref<(SkeletonData)[]>([
         <RuiSkeletonLoader v-bind="item" />
       </div>
     </div>
-  </div>
+  </ComponentView>
 </template>

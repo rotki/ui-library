@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { type RadioProps, RuiRadio, RuiRadioGroup } from '@rotki/ui-library';
+import ComponentView from '@/components/ComponentView.vue';
 
 type RadioData = RadioProps<string> & {
   label?: string;
@@ -256,13 +257,11 @@ const customTypeRadioGroup = ref<
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="radio-buttons"
-    >
+  <ComponentView data-cy="radio-buttons">
+    <template #title>
       Radio Buttons
-    </h2>
+    </template>
+
     <div
       class="grid gap-4 grid-cols-6 mb-14"
       data-cy="radio-wrapper"
@@ -324,5 +323,5 @@ const customTypeRadioGroup = ref<
         </RuiRadio>
       </RuiRadioGroup>
     </div>
-  </div>
+  </ComponentView>
 </template>

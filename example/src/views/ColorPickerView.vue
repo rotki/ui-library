@@ -1,6 +1,7 @@
 <script setup lang='ts'>
 import { ref } from 'vue';
 import { type ColorPickerProps, RuiCard, RuiColorPicker } from '@rotki/ui-library';
+import ComponentView from '@/components/ComponentView.vue';
 
 const colorPickers = ref<ColorPickerProps[]>([
   { modelValue: '' },
@@ -9,13 +10,11 @@ const colorPickers = ref<ColorPickerProps[]>([
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="color-pickers"
-    >
+  <ComponentView data-cy="color-pickers">
+    <template #title>
       Color Pickers
-    </h2>
+    </template>
+
     <div class="grid gap-4 md:grid-cols-2 items-center justify-center">
       <div
         v-for="(item, i) in colorPickers"
@@ -31,5 +30,5 @@ const colorPickers = ref<ColorPickerProps[]>([
         Selected value: {{ item.modelValue }}
       </div>
     </div>
-  </div>
+  </ComponentView>
 </template>

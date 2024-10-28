@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { type LogoProps, RuiIcon, type RuiIcons, RuiLogo } from '@rotki/ui-library';
+import ComponentView from '@/components/ComponentView.vue';
 
 const icons = ref<{ name: RuiIcons; size: number }[]>([
   { name: 'moon-line', size: 24 },
@@ -18,13 +19,11 @@ const logos = ref<(LogoProps & { name: string })[]>([
 </script>
 
 <template>
-  <div>
-    <h2
-      class="text-h4 mb-6"
-      data-cy="icons"
-    >
+  <ComponentView data-cy="icons">
+    <template #title>
       Icons
-    </h2>
+    </template>
+
     <div class="grid gap-4 grid-rows-2 grid-cols-6">
       <RuiIcon
         v-for="(icon, i) in icons"
@@ -32,12 +31,14 @@ const logos = ref<(LogoProps & { name: string })[]>([
         v-bind="icon"
       />
     </div>
+
     <h2
       class="text-h4 mb-6"
       data-cy="logos"
     >
       rotki Logo
     </h2>
+
     <div class="grid gap-4 grid-rows-2 grid-cols-3">
       <div
         v-for="(logo, i) in logos"
@@ -51,5 +52,5 @@ const logos = ref<(LogoProps & { name: string })[]>([
         </div>
       </div>
     </div>
-  </div>
+  </ComponentView>
 </template>
