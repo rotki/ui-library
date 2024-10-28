@@ -231,23 +231,32 @@ function clearIconClicked() {
 
   .input {
     @apply leading-5 text-rui-text w-full bg-transparent py-2 px-3;
-    @apply outline-0 text-[13px] font-normal rounded-md border border-rui-text-disabled;
-    @apply transition-[border,outline] duration-200;
-
+    @apply text-[13px] font-normal rounded-md;
+    @apply box-border;
+    @apply border border-rui-text-disabled;
+    @apply outline-none ring-0;
     &::placeholder {
       @apply text-rui-text-disabled font-light;
     }
 
     &:focus {
-      @apply outline outline-2 outline-rui-primary border-rui-primary;
+      @apply border-2 border-rui-primary;
+      @apply py-[7px] px-[11px];
+      @apply outline-none ring-0;
     }
 
     &.withPrepend {
       @apply pl-8;
+      &:focus {
+        @apply pl-[31px];
+      }
     }
 
     &.withAppend {
       @apply pr-10;
+      &:focus {
+        @apply pr-[39px];
+      }
     }
   }
 
@@ -274,7 +283,7 @@ function clearIconClicked() {
       @apply border-0;
 
       &:focus {
-        @apply outline-offset-[-2px];
+        @apply border-2 border-rui-primary;
       }
     }
   }
@@ -298,6 +307,9 @@ function clearIconClicked() {
   &.dense {
     .input {
       @apply py-1.5;
+      &:focus {
+        @apply py-[5px];
+      }
     }
   }
 
@@ -309,7 +321,7 @@ function clearIconClicked() {
         }
 
         .input:focus {
-          @apply border-rui-#{$color} outline-rui-#{$color};
+          @apply border-2 border-rui-#{$color};
         }
       }
     }
@@ -327,7 +339,7 @@ function clearIconClicked() {
         @apply border-rui-#{$color};
 
         &:focus {
-          @apply outline-rui-#{$color};
+          @apply border-2;
         }
 
         ~ div .icon {
@@ -360,7 +372,7 @@ function clearIconClicked() {
       }
 
       &:focus {
-        @apply border-rui-primary outline-rui-primary;
+        @apply border-2 border-rui-primary;
       }
     }
 
@@ -386,7 +398,7 @@ function clearIconClicked() {
           }
 
           .input:focus {
-            @apply border-rui-#{$color} outline-rui-#{$color};
+            @apply border-2 border-rui-#{$color};
           }
         }
       }
