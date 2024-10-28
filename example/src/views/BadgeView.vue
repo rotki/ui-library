@@ -12,6 +12,25 @@ const icon = 'star-fill';
 const placement = 'bottom';
 const colors = ['default', 'primary', 'secondary', 'error', 'warning', 'info', 'success'] as const;
 
+const attributes: Partial<BadgeProps>[] = [
+  {},
+  { placement },
+  { left: true },
+  { left: true, placement },
+  { icon },
+  { placement, icon },
+  { left: true, icon, offsetX: -20 },
+  { left: true, placement, icon, offsetX: -20 },
+  { icon, text: undefined },
+  { icon, text: undefined, placement },
+  { icon, text: undefined, left: true },
+  { icon, text: undefined, left: true, placement },
+  { dot: true },
+  { dot: true, placement },
+  { dot: true, left: true },
+  { dot: true, left: true, placement },
+];
+
 const badges = ref<BadgeProps[]>();
 
 function createBadge(color: typeof colors[number], options: Partial<BadgeProps> = {}): BadgeProps {
@@ -24,24 +43,13 @@ function createBadge(color: typeof colors[number], options: Partial<BadgeProps> 
 }
 
 function generateBadges(): BadgeProps[] {
-  return [
-    ...colors.map(color => createBadge(color)),
-    ...colors.map(color => createBadge(color, { placement })),
-    ...colors.map(color => createBadge(color, { left: true })),
-    ...colors.map(color => createBadge(color, { left: true, placement })),
-    ...colors.map(color => createBadge(color, { icon })),
-    ...colors.map(color => createBadge(color, { placement, icon })),
-    ...colors.map(color => createBadge(color, { left: true, icon, offsetX: -20 })),
-    ...colors.map(color => createBadge(color, { left: true, placement, icon, offsetX: -20 })),
-    ...colors.map(color => createBadge(color, { icon, text: undefined })),
-    ...colors.map(color => createBadge(color, { icon, text: undefined, placement })),
-    ...colors.map(color => createBadge(color, { icon, text: undefined, left: true })),
-    ...colors.map(color => createBadge(color, { icon, text: undefined, left: true, placement })),
-    ...colors.map(color => createBadge(color, { dot: true })),
-    ...colors.map(color => createBadge(color, { dot: true, placement })),
-    ...colors.map(color => createBadge(color, { dot: true, left: true })),
-    ...colors.map(color => createBadge(color, { dot: true, left: true, placement })),
-  ];
+  const badges: BadgeProps[] = [];
+  for (const attribute of attributes) {
+    for (const color of colors) {
+      badges.push(createBadge(color, attribute));
+    }
+  }
+  return badges;
 }
 
 onBeforeMount(() => {
