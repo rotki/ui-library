@@ -9,63 +9,35 @@ import {
   type TabsProps,
 } from '@rotki/ui-library';
 import ComponentView from '@/components/ComponentView.vue';
+import ComponentGroup from '@/components/ComponentGroup.vue';
 
-const tabs = ref<TabsProps[]>([
-  {
-    color: 'primary',
+const colors = ['primary', 'secondary', 'error', 'warning', 'info', 'success'] as const;
+const verticalAttributes = [false, true] as const;
+
+const tabs = ref<TabsProps[]>([]);
+
+function createTab(color: typeof colors[number], vertical: boolean = false): TabsProps {
+  return {
+    color,
+    vertical,
     modelValue: undefined,
-  },
-  {
-    color: 'secondary',
-    modelValue: undefined,
-  },
-  {
-    color: 'error',
-    modelValue: undefined,
-  },
-  {
-    color: 'warning',
-    modelValue: undefined,
-  },
-  {
-    color: 'info',
-    modelValue: '',
-  },
-  {
-    color: 'success',
-    modelValue: undefined,
-  },
-  {
-    color: 'primary',
-    vertical: true,
-    modelValue: undefined,
-  },
-  {
-    color: 'secondary',
-    vertical: true,
-    modelValue: undefined,
-  },
-  {
-    color: 'error',
-    vertical: true,
-    modelValue: undefined,
-  },
-  {
-    color: 'warning',
-    vertical: true,
-    modelValue: undefined,
-  },
-  {
-    color: 'info',
-    vertical: true,
-    modelValue: undefined,
-  },
-  {
-    color: 'success',
-    vertical: true,
-    modelValue: undefined,
-  },
-]);
+  };
+}
+
+function generateTabs(): TabsProps[] {
+  const tabs: TabsProps[] = [];
+  for (const color of colors) {
+    for (const vertical of verticalAttributes) {
+      tabs.push(createTab(color, vertical));
+    }
+  }
+
+  return tabs;
+}
+
+onBeforeMount(() => {
+  set(tabs, generateTabs());
+});
 </script>
 
 <template>
@@ -74,58 +46,59 @@ const tabs = ref<TabsProps[]>([
       Tabs
     </template>
 
-    <div
-      v-for="(data, i) in tabs"
-      :key="i"
-      class="flex mb-6 gap-x-6"
-      :class="data.vertical ? 'flex-row' : 'flex-col'"
-      :data-cy="`wrapper-${i}`"
+    <ComponentGroup
+      :items="tabs"
+      item-class="flex mb-6 gap-x-6"
+      :get-item-class="item => item.vertical ? 'flex-row' : 'flex-col'"
+      :get-item-data-cy="(_, i) => `wrapper-${i}`"
     >
-      <RuiTabs
-        v-bind="data"
-        v-model="data.modelValue"
-        data-cy="tabs"
-      >
-        <RuiTab>
-          <template #prepend>
-            <RuiIcon name="add-fill" />
-          </template>
-          Tab 1
-        </RuiTab>
-        <RuiTab disabled>
-          Tab 2
-        </RuiTab>
-        <RuiTab
-          v-for="n in 3"
-          :key="n"
+      <template #item="{ item }">
+        <RuiTabs
+          v-bind="item"
+          v-model="item.modelValue"
+          data-cy="tabs"
         >
-          Tab {{ n + 2 }}
-        </RuiTab>
-        <RuiTab
-          link
-          to="/steppers"
+          <RuiTab>
+            <template #prepend>
+              <RuiIcon name="add-fill" />
+            </template>
+            Tab 1
+          </RuiTab>
+          <RuiTab disabled>
+            Tab 2
+          </RuiTab>
+          <RuiTab
+            v-for="n in 3"
+            :key="n"
+          >
+            Tab {{ n + 2 }}
+          </RuiTab>
+          <RuiTab
+            link
+            to="/steppers"
+          >
+            Stepper View
+          </RuiTab>
+        </RuiTabs>
+        <RuiTabItems
+          v-model="item.modelValue"
+          data-cy="tab-items"
         >
-          Stepper View
-        </RuiTab>
-      </RuiTabs>
-      <RuiTabItems
-        v-model="data.modelValue"
-        data-cy="tab-items"
-      >
-        <RuiTabItem
-          v-for="n in 4"
-          :key="n"
-        >
-          <RuiCard>Tab {{ n }} Content</RuiCard>
-        </RuiTabItem>
-        <RuiTabItem>
-          <RuiCard>
-            Tab 5 Long Long Long Long Long Long Long Long Long Long Long Long
-            Long Long Long Long Long Long Long Long Long Long Long Long Long
-            Long Long Long Long Long Long Long Long Content
-          </RuiCard>
-        </RuiTabItem>
-      </RuiTabItems>
-    </div>
+          <RuiTabItem
+            v-for="n in 4"
+            :key="n"
+          >
+            <RuiCard>Tab {{ n }} Content</RuiCard>
+          </RuiTabItem>
+          <RuiTabItem>
+            <RuiCard>
+              Tab 5 Long Long Long Long Long Long Long Long Long Long Long Long
+              Long Long Long Long Long Long Long Long Long Long Long Long Long
+              Long Long Long Long Long Long Long Long Content
+            </RuiCard>
+          </RuiTabItem>
+        </RuiTabItems>
+      </template>
+    </ComponentGroup>
   </ComponentView>
 </template>
