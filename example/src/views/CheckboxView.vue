@@ -1,110 +1,44 @@
 <script lang="ts" setup>
 import { type CheckboxProps, RuiCheckbox } from '@rotki/ui-library';
 import ComponentView from '@/components/ComponentView.vue';
+import ComponentGroup from '@/components/ComponentGroup.vue';
 
 type CheckboxData = CheckboxProps & {
   value?: boolean;
 };
 
-const checkboxes = ref<CheckboxData[]>([
-  { value: false, color: 'primary' },
-  { value: false, color: 'secondary' },
-  { value: false, color: 'error' },
-  { value: false, color: 'warning' },
-  { value: false, color: 'info' },
-  { value: false, color: 'success' },
+const colors = ['primary', 'secondary', 'error', 'warning', 'info', 'success'] as const;
+const attributes: Partial<CheckboxData>[] = [
+  { value: false },
+  { value: true },
+  { indeterminate: true },
+  { value: false, size: 'sm' },
+  { value: false, size: 'lg' },
+  { value: false, disabled: true },
+  { value: true, disabled: true },
+  { value: false, hint: 'Checkbox hint' },
+  { value: false, errorMessages: ['Checkbox error message'] },
+  { value: false, successMessages: ['Checkbox success message'] },
+];
 
-  { value: true, color: 'primary' },
-  { value: true, color: 'secondary' },
-  { value: true, color: 'error' },
-  { value: true, color: 'warning' },
-  { value: true, color: 'info' },
-  { value: true, color: 'success' },
+const checkboxes = ref<CheckboxData[]>([]);
 
-  { indeterminate: true, color: 'primary' },
-  { indeterminate: true, color: 'secondary' },
-  { indeterminate: true, color: 'error' },
-  { indeterminate: true, color: 'warning' },
-  { indeterminate: true, color: 'info' },
-  { indeterminate: true, color: 'success' },
+function generateCheckboxes(): CheckboxData[] {
+  const checkboxes: CheckboxData[] = [];
+  for (const attrs of attributes) {
+    for (const color of colors) {
+      checkboxes.push({
+        ...attrs,
+        color,
+      });
+    }
+  }
+  return checkboxes;
+}
 
-  { value: false, color: 'primary', size: 'sm' },
-  { value: false, color: 'secondary', size: 'sm' },
-  { value: false, color: 'error', size: 'sm' },
-  { value: false, color: 'warning', size: 'sm' },
-  { value: false, color: 'info', size: 'sm' },
-  { value: false, color: 'success', size: 'sm' },
-
-  { value: false, color: 'primary', size: 'lg' },
-  { value: false, color: 'secondary', size: 'lg' },
-  { value: false, color: 'error', size: 'lg' },
-  { value: false, color: 'warning', size: 'lg' },
-  { value: false, color: 'info', size: 'lg' },
-  { value: false, color: 'success', size: 'lg' },
-
-  { value: false, color: 'primary', disabled: true },
-  { value: false, color: 'secondary', disabled: true },
-  { value: false, color: 'error', disabled: true },
-  { value: false, color: 'warning', disabled: true },
-  { value: false, color: 'info', disabled: true },
-  { value: false, color: 'success', disabled: true },
-
-  { value: true, color: 'primary', disabled: true },
-  { value: true, color: 'secondary', disabled: true },
-  { value: true, color: 'error', disabled: true },
-  { value: true, color: 'warning', disabled: true },
-  { value: true, color: 'info', disabled: true },
-  { value: true, color: 'success', disabled: true },
-
-  { value: false, color: 'primary', hint: 'Checkbox hint' },
-  { value: false, color: 'secondary', hint: 'Checkbox hint' },
-  { value: false, color: 'error', hint: 'Checkbox hint' },
-  { value: false, color: 'warning', hint: 'Checkbox hint' },
-  { value: false, color: 'info', hint: 'Checkbox hint' },
-  { value: false, color: 'success', hint: 'Checkbox hint' },
-
-  { value: false, color: 'primary', errorMessages: ['Checkbox error message'] },
-  {
-    value: false,
-    color: 'secondary',
-    errorMessages: 'Checkbox error message',
-  },
-  { value: false, color: 'error', errorMessages: ['Checkbox error message'] },
-  { value: false, color: 'warning', errorMessages: 'Checkbox error message' },
-  { value: false, color: 'info', errorMessages: ['Checkbox error message'] },
-  { value: false, color: 'success', errorMessages: 'Checkbox error message' },
-
-  {
-    value: false,
-    color: 'primary',
-    successMessages: ['Checkbox success message'],
-  },
-  {
-    value: false,
-    color: 'secondary',
-    successMessages: 'Checkbox success message',
-  },
-  {
-    value: false,
-    color: 'error',
-    successMessages: ['Checkbox success message'],
-  },
-  {
-    value: false,
-    color: 'warning',
-    successMessages: 'Checkbox success message',
-  },
-  {
-    value: false,
-    color: 'info',
-    successMessages: ['Checkbox success message'],
-  },
-  {
-    value: false,
-    color: 'success',
-    successMessages: 'Checkbox success message',
-  },
-]);
+onBeforeMount(() => {
+  set(checkboxes, generateCheckboxes());
+});
 </script>
 
 <template>
@@ -113,16 +47,21 @@ const checkboxes = ref<CheckboxData[]>([
       Checkboxes
     </template>
 
-    <div class="grid gap-1 grid-rows-2 grid-cols-6">
-      <RuiCheckbox
-        v-for="(checkbox, i) in checkboxes"
-        :key="i"
-        v-model="checkbox.value"
-        v-model:indeterminate="checkbox.indeterminate"
-        v-bind="checkbox"
-      >
-        <span class="capitalize"> {{ checkbox.color }} </span>
-      </RuiCheckbox>
-    </div>
+    <ComponentGroup
+      :items="checkboxes"
+      class="grid gap-1 grid-rows-2 grid-cols-6"
+    >
+      <template #item="{ item }">
+        <RuiCheckbox
+          v-model="item.value"
+          v-model:indeterminate="item.indeterminate"
+          v-bind="item"
+        >
+          <span class="capitalize"> {{ item.color }} </span>
+        </RuiCheckbox>
+      </template>
+    </ComponentGroup>
+
+    <div />
   </ComponentView>
 </template>
