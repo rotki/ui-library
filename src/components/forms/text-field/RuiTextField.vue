@@ -336,7 +336,7 @@ function clearIconClicked() {
   @each $color in 'error', 'success' {
     &.with-#{$color} {
       .input {
-        @apply border-rui-#{$color};
+        @apply border-rui-#{$color} #{!important};
 
         &:focus {
           @apply border-2;

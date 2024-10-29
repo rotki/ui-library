@@ -1041,8 +1041,6 @@ function removeRow(table: Pick<DataTableProps<ExtendedUser, 'id'>, 'rows'>, row:
               placeholder="search"
               label="search"
               class="w-1/2 lg:w-2/5"
-              variant="default"
-              color="primary"
               hide-details
             />
             <span v-if="table.modelValue">
@@ -1086,8 +1084,6 @@ function removeRow(table: Pick<DataTableProps<ExtendedUser, 'id'>, 'rows'>, row:
               placeholder="search"
               label="search"
               class="w-1/2 lg:w-2/5"
-              variant="default"
-              color="primary"
               hide-details
               @update:model-value="onSearch($event, i)"
             />

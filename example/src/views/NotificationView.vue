@@ -33,7 +33,6 @@ const options = ['light', 'dark'];
       <RuiTextField
         v-model="timeout"
         type="number"
-        variant="default"
         label="timeout"
         class="mt-4"
         data-cy="timeout"
