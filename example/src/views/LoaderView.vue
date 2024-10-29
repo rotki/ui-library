@@ -1,44 +1,37 @@
 <script lang="ts" setup>
 import { RuiSkeletonLoader, type SkeletonLoaderProps } from '@rotki/ui-library';
 import ComponentView from '@/components/ComponentView.vue';
+import ComponentGroup from '@/components/ComponentGroup.vue';
 
 type SkeletonData = SkeletonLoaderProps & {
   class?: string;
 };
 
-const loaders = ref<(SkeletonData)[]>([
-  {},
-  {
-    type: 'paragraph',
-  },
-  {
-    type: 'heading',
-  },
-  {
-    type: 'article',
-  },
-  {
-    type: 'button',
-  },
-  {
-    type: 'icon',
-  },
-  {
-    type: 'avatar',
-  },
-  {
-    type: 'thumbnail',
-  },
-  {
-    type: 'custom',
-    class: 'w-20 h-20',
-  },
-  {
-    type: 'custom',
-    class: 'w-20 h-20',
-    rounded: 'full',
-  },
-]);
+const types = [
+  'paragraph',
+  'heading',
+  'article',
+  'button',
+  'icon',
+  'avatar',
+  'thumbnail',
+] as const;
+
+const loaders = ref<(SkeletonData)[]>([]);
+
+function generateLoaders(): SkeletonData[] {
+  const customBase: SkeletonData = { type: 'custom', class: 'w-20 h-20' };
+  const loaders: SkeletonData[] = [{}];
+  for (const type of types) {
+    loaders.push({ type });
+  }
+  loaders.push(customBase, { ...customBase, rounded: 'full' });
+  return loaders;
+}
+
+onMounted(() => {
+  set(loaders, generateLoaders());
+});
 </script>
 
 <template>
@@ -47,16 +40,16 @@ const loaders = ref<(SkeletonData)[]>([
       Skeleton Loader
     </template>
 
-    <div class="grid gap-4 grid-cols-2 items-center justify-center">
-      <div
-        v-for="(item, i) in loaders"
-        :key="i"
-      >
+    <ComponentGroup
+      :items="loaders"
+      class="grid gap-4 grid-cols-2 items-center justify-center"
+    >
+      <template #item="{ item }">
         <p class="mb-2">
           {{ item.type ?? 'text' }}
         </p>
         <RuiSkeletonLoader v-bind="item" />
-      </div>
-    </div>
+      </template>
+    </ComponentGroup>
   </ComponentView>
 </template>
