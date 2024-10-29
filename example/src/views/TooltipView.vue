@@ -7,133 +7,78 @@ import {
 } from '@rotki/ui-library/components';
 import { objectOmit } from '@vueuse/shared';
 import ComponentView from '@/components/ComponentView.vue';
+import { capitalizeFirstLetter } from '@/utils';
+import ComponentGroup from '@/components/ComponentGroup.vue';
 
 type TooltipData = TooltipProps & {
   buttonColor?: ButtonProps<undefined>['color'];
   buttonText?: string;
 };
-const tooltips = ref<(TooltipData)[]>([
+
+interface TextGetter {
+  getText: (placement: string) => string;
+  getButtonText?: (placement: string) => string;
+}
+
+const colors = ['primary', 'secondary', 'error', 'info'] as const;
+const placements = ['bottom', 'top', 'left', 'right'] as const;
+const attributes: (Partial<TooltipData> & TextGetter)[] = [
   {
-    disabled: false,
-    hideArrow: true,
-    text: 'Bottom',
-    buttonColor: 'primary',
-    popper: { placement: 'bottom' },
+    getText: (placement: string) => capitalizeFirstLetter(placement),
   },
   {
-    disabled: false,
-    hideArrow: true,
-    text: 'Top',
-    buttonColor: 'secondary',
-    popper: { placement: 'top' },
-  },
-  {
-    disabled: false,
-    hideArrow: true,
-    text: 'Left',
-    buttonColor: 'error',
-    popper: { placement: 'left' },
-  },
-  {
-    disabled: false,
-    hideArrow: true,
-    text: 'Right',
-    buttonColor: 'info',
-    popper: { placement: 'right' },
-  },
-  {
-    disabled: false,
     hideArrow: false,
-    text: 'Bottom With arrow',
-    buttonColor: 'primary',
-    popper: { placement: 'bottom' },
+    getText: (placement: string) => `${capitalizeFirstLetter(placement)} With arrow`,
   },
   {
-    disabled: false,
-    hideArrow: false,
-    text: 'Top With arrow',
-    buttonColor: 'secondary',
-    popper: { placement: 'top' },
-  },
-  {
-    disabled: false,
-    hideArrow: false,
-    text: 'Left With arrow',
-    buttonColor: 'error',
-    popper: { placement: 'left' },
-  },
-  {
-    disabled: false,
-    hideArrow: false,
-    text: 'Right With arrow',
-    buttonColor: 'info',
-    popper: { placement: 'right' },
-  },
-  {
-    disabled: false,
-    hideArrow: false,
-    text: 'Lorem ipsum dolor sit amet consecteur '.repeat(6),
-    buttonText: 'Bottom With long content',
-    buttonColor: 'primary',
-    popper: { placement: 'bottom' },
-    tooltipClass: 'max-w-sm',
-  },
-  {
-    disabled: false,
-    hideArrow: false,
-    text: 'Lorem ipsum dolor sit amet consecteur '.repeat(6),
-    buttonText: 'Top With long content',
-    buttonColor: 'secondary',
-    popper: { placement: 'top' },
-    tooltipClass: 'max-w-sm',
-  },
-  {
-    disabled: false,
-    hideArrow: false,
-    text: 'Lorem ipsum dolor sit amet consecteur '.repeat(6),
-    buttonText: 'Left With long content',
-    buttonColor: 'error',
-    popper: { placement: 'left' },
-    tooltipClass: 'max-w-sm',
-  },
-  {
-    disabled: false,
-    hideArrow: false,
-    text: 'Lorem ipsum dolor sit amet consecteur '.repeat(6),
-    buttonText: 'Right With long content',
-    buttonColor: 'info',
-    popper: { placement: 'right' },
+    getText: (): string => 'Lorem ipsum dolor sit amet consecteur '.repeat(6),
+    getButtonText: (placement: string): string => `${capitalizeFirstLetter(placement)} With long content`,
     tooltipClass: 'max-w-sm',
   },
   {
     disabled: true,
-    hideArrow: false,
-    text: 'Tooltip disabled',
-    buttonColor: 'primary',
-    popper: { placement: 'bottom' },
+    getText: (): string => `Tooltip disabled`,
   },
-  {
-    disabled: true,
-    hideArrow: false,
-    text: 'Tooltip disabled',
-    buttonColor: 'secondary',
-    popper: { placement: 'top' },
-  },
-  {
-    disabled: true,
-    hideArrow: false,
-    text: 'Tooltip disabled',
-    buttonColor: 'error',
-    popper: { placement: 'left' },
-  },
-  {
-    disabled: true,
-    hideArrow: false,
-    text: 'Tooltip disabled',
-    buttonColor: 'info',
-    popper: { placement: 'right' },
-  },
-]);
+];
+
+const tooltips = ref<(TooltipData)[]>([]);
+
+function createToolip(
+  color: typeof colors[number],
+  placement: typeof placements[number],
+  options: Partial<TooltipData>,
+): TooltipData {
+  return {
+    disabled: false,
+    hideArrow: true,
+    ...options,
+    buttonColor: color,
+    popper: { placement },
+  };
+}
+
+function generateTooltips(): TooltipData[] {
+  const tooltips: TooltipData[] = [];
+
+  for (const attrs of attributes) {
+    const { getText, getButtonText } = attrs;
+
+    for (const [i, color] of colors.entries()) {
+      const placement = placements[i];
+      const options = {
+        ...objectOmit(attrs, ['getText', 'getButtonText']),
+        text: getText(placement),
+        buttonText: getButtonText?.(placement),
+      };
+      tooltips.push(createToolip(color, placement, options));
+    }
+  }
+  return tooltips;
+}
+
+onBeforeMount(() => {
+  set(tooltips, generateTooltips());
+});
 </script>
 
 <template>
@@ -142,53 +87,56 @@ const tooltips = ref<(TooltipData)[]>([
       Tooltips
     </template>
 
-    <div class="grid gap-6 grid-cols-4">
-      <div
-        v-for="(tooltip, i) in tooltips"
-        :key="i"
-        class="p-4"
-      >
+    <ComponentGroup
+      class="grid gap-6 grid-cols-4"
+      :items="tooltips"
+    >
+      <template #item="{ item, index }">
         <RuiTooltip
-          v-bind="objectOmit(tooltip, ['buttonColor'])"
-          :data-cy="`tooltip-${i}`"
+          v-bind="objectOmit(item, ['buttonColor'])"
+          :data-cy="`tooltip-${index}`"
         >
           <template #activator>
             <RuiButton
               id="activator"
-              :color="tooltip.buttonColor"
+              :color="item.buttonColor"
             >
-              {{ tooltip.buttonText ?? tooltip.text }}
+              {{ item.buttonText ?? item.text }}
             </RuiButton>
           </template>
-          {{ tooltip.text }}
+          {{ item.text }}
         </RuiTooltip>
-      </div>
-    </div>
-    <h6
-      class="text-h6 mt-14 mb-6"
+      </template>
+    </ComponentGroup>
+
+    <ComponentGroup
+      class="flex space-x-4"
+      :items="tooltips.slice(0, 4)"
       data-cy="tooltips"
     >
-      Full width content
-    </h6>
-    <div class="flex space-x-4">
-      <RuiTooltip
-        v-for="(tooltip, i) in tooltips.slice(0, 4)"
-        :key="i"
-        v-bind="objectOmit(tooltip, ['buttonColor'])"
-        class="w-full"
-        :data-cy="`tooltip-full-${i}`"
-      >
-        <template #activator>
-          <RuiButton
-            id="activator"
-            :color="tooltip.buttonColor"
-            class="w-full"
-          >
-            {{ tooltip.buttonText ?? tooltip.text }}
-          </RuiButton>
-        </template>
-        {{ tooltip.text }}
-      </RuiTooltip>
-    </div>
+      <template #title>
+        Full width content
+      </template>
+
+      <template #item="{ item, index }">
+        <RuiTooltip
+          :key="index"
+          v-bind="objectOmit(item, ['buttonColor'])"
+          class="w-full"
+          :data-cy="`tooltip-full-${index}`"
+        >
+          <template #activator>
+            <RuiButton
+              id="activator"
+              :color="item.buttonColor"
+              class="w-full"
+            >
+              {{ item.buttonText ?? item.text }}
+            </RuiButton>
+          </template>
+          {{ item.text }}
+        </RuiTooltip>
+      </template>
+    </ComponentGroup>
   </ComponentView>
 </template>
