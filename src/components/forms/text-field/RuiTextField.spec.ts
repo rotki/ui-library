@@ -50,11 +50,7 @@ describe('forms/TextField', () => {
         modelValue: '',
       },
     });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_default_/)]),
-    );
 
-    await wrapper.setProps({ color: 'primary' });
     expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_primary_/)]),
     );
@@ -81,8 +77,8 @@ describe('forms/TextField', () => {
         modelValue: '',
       },
     });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_default_/)]),
+    expect(wrapper.find('div[class*=wrapper]').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_filled_/)]),
     );
 
     await wrapper.setProps({ variant: 'filled' });
@@ -90,9 +86,9 @@ describe('forms/TextField', () => {
       expect.arrayContaining([expect.stringMatching(/_filled_/)]),
     );
 
-    await wrapper.setProps({ variant: 'outlined' });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_outlined_/)]),
+    await wrapper.setProps({ variant: undefined });
+    expect(wrapper.find('div[class*=wrapper]').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/_filled_/)]),
     );
   });
 

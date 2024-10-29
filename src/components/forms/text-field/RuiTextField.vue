@@ -11,7 +11,7 @@ export interface TextFieldProps {
   label?: string;
   placeholder?: string;
   disabled?: boolean;
-  variant?: 'default' | 'filled' | 'outlined';
+  variant?: 'default' | 'filled';
   color?: ContextColorsType;
   textColor?: ContextColorsType;
   dense?: boolean;
@@ -24,6 +24,7 @@ export interface TextFieldProps {
   appendIcon?: RuiIcons;
   readonly?: boolean;
   clearable?: boolean;
+  required?: boolean;
 }
 
 defineOptions({
@@ -38,7 +39,7 @@ const props = withDefaults(defineProps<TextFieldProps>(), {
   placeholder: '',
   disabled: false,
   variant: 'default',
-  color: undefined,
+  color: 'primary',
   textColor: undefined,
   dense: false,
   hint: '',
@@ -50,6 +51,7 @@ const props = withDefaults(defineProps<TextFieldProps>(), {
   appendIcon: undefined,
   readonly: false,
   clearable: false,
+  required: false,
 });
 
 const emit = defineEmits<{
@@ -64,6 +66,7 @@ const {
   clearable,
   disabled,
   readonly,
+  required,
   errorMessages,
   successMessages,
 } = toRefs(props);
@@ -73,35 +76,10 @@ function input(event: Event) {
   set(modelValue, value);
 }
 
-const labelWithQuote = computed(() => {
-  const labelVal = get(label);
-  if (!labelVal)
-    return '"\\200B"';
-
-  return `'  ${labelVal}  '`;
-});
-
 const prepend = ref<HTMLDivElement>();
 const append = ref<HTMLDivElement>();
 const innerWrapper = ref<HTMLDivElement>();
 const inputRef = ref();
-
-const prependWidth = ref('0px');
-const appendWidth = ref('0px');
-
-const { width } = useElementBounding(innerWrapper);
-
-useResizeObserver(prepend, (entries) => {
-  const [entry] = entries;
-  const { width, left } = entry.contentRect;
-  set(prependWidth, `${width + left}px`);
-});
-
-useResizeObserver(append, (entries) => {
-  const [entry] = entries;
-  const { width, right } = entry.contentRect;
-  set(appendWidth, `${width + right}px`);
-});
 
 const { hasError, hasSuccess, hasMessages } = useFormTextDetail(
   errorMessages,
@@ -126,15 +104,26 @@ function clearIconClicked() {
 
 <template>
   <div v-bind="getRootAttrs($attrs)">
+    <label
+      v-if="label"
+      :class="$style.label"
+    >
+      {{ label }}
+      <span
+        v-if="required"
+        class="text-rui-error"
+      >
+        *
+      </span>
+    </label>
     <div
       :class="[
         $style.wrapper,
-        $style[color ?? ''],
-        $style[variant ?? ''],
+        $style[color ?? 'primary'],
         {
+          [$style.filled]: variant === 'filled',
           [$style.dense]: dense,
           [$style.disabled]: disabled,
-          [$style['no-label']]: !label,
           [$style['with-error']]: hasError,
           [$style['with-success']]: hasSuccess && !hasError,
           [$style[`text_${textColor}`]]: textColor && !hasMessages,
@@ -142,92 +131,83 @@ function clearIconClicked() {
       ]"
     >
       <div
-        v-if="$slots.prepend || prependIcon"
-        ref="prepend"
-        class="flex items-center gap-1 shrink-0"
-        :class="$style.prepend"
-      >
-        <slot
-          v-if="$slots.prepend"
-          name="prepend"
-        />
-        <div
-          v-else-if="prependIcon"
-          :class="[$style.icon]"
-        >
-          <RuiIcon :name="prependIcon" />
-        </div>
-      </div>
-      <div
         ref="innerWrapper"
-        class="flex flex-1 overflow-hidden"
+        class="flex flex-1 overflow-hidden relative"
         @click="emit('focus-input', $event)"
       >
+        <div
+          v-if="$slots.prepend || prependIcon"
+          ref="prepend"
+          class="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1 z-10"
+          :class="$style.prepend"
+        >
+          <slot
+            v-if="$slots.prepend"
+            name="prepend"
+          />
+          <div
+            v-else-if="prependIcon"
+            :class="[$style.icon]"
+          >
+            <RuiIcon :name="prependIcon" />
+          </div>
+        </div>
         <Component
           :is="as"
           ref="inputRef"
           :value="modelValue"
-          :placeholder="placeholder || ' '"
-          :class="$style.input"
+          :placeholder="placeholder"
+          :class="[
+            $style.input,
+            { [$style.withPrepend]: $slots.prepend || prependIcon },
+            { [$style.withAppend]: $slots.append || appendIcon || showClearIcon },
+          ]"
           :disabled="disabled"
-          :dense="dense"
-          :variant="variant"
           :readonly="readonly"
-          :wrapper-width="width"
+          :required="required"
           v-bind="getNonRootAttrs($attrs)"
           @input="input($event)"
           @blur="emit('blur', $event)"
           @remove="emit('remove', $event)"
         />
-        <label :class="$style.label">
-          <span>
-            {{ label }}
-          </span>
-        </label>
-        <fieldset
-          v-if="variant === 'outlined'"
-          :class="$style.fieldset"
-        >
-          <legend :class="{ [$style.show]: label }" />
-        </fieldset>
-      </div>
-      <div
-        v-if="$slots.append || appendIcon || showClearIcon"
-        ref="append"
-        class="flex items-center gap-1 shrink-0"
-        :class="$style.append"
-      >
-        <RuiButton
-          v-if="showClearIcon"
-          :class="{ hidden: !focusedDebounced }"
-          variant="text"
-          type="button"
-          icon
-          class="!p-2 clear-btn"
-          color="error"
-          tabindex="-1"
-          @click.stop="clearIconClicked()"
-        >
-          <RuiIcon
-            name="close-line"
-            size="20"
-          />
-        </RuiButton>
-        <slot
-          v-if="$slots.append"
-          name="append"
-        />
         <div
-          v-else-if="appendIcon"
-          :class="[$style.icon]"
+          v-if="$slots.append || appendIcon || showClearIcon"
+          ref="append"
+          class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1"
+          :class="$style.append"
         >
-          <RuiIcon :name="appendIcon" />
+          <RuiButton
+            v-if="showClearIcon"
+            :class="{ hidden: !focusedDebounced }"
+            variant="text"
+            type="button"
+            icon
+            class="!p-1 clear-btn"
+            color="error"
+            tabindex="-1"
+            @click.stop="clearIconClicked()"
+          >
+            <RuiIcon
+              name="close-line"
+              size="20"
+            />
+          </RuiButton>
+          <slot
+            v-if="$slots.append"
+            name="append"
+          />
+          <div
+            v-else-if="appendIcon"
+            :class="[$style.icon]"
+          >
+            <RuiIcon :name="appendIcon" />
+          </div>
         </div>
       </div>
     </div>
     <RuiFormTextDetail
       v-if="!hideDetails"
-      class="pt-1 px-3"
+      :class="$style.details"
       :error-messages="errorMessages"
       :success-messages="successMessages"
       :hint="hint"
@@ -238,180 +218,116 @@ function clearIconClicked() {
 <style lang="scss" module>
 @use '@/styles/colors.scss' as c;
 
-:global(.dark) {
-  .wrapper {
-    @apply bg-transparent;
+.label {
+  @apply block text-sm font-medium text-rui-text mb-1.5 leading-5;
+}
 
-    .label {
-      @apply border-white/[0.42];
+.details {
+  @apply mt-1 text-xs text-rui-text-secondary;
+}
 
-      &:after {
-        @apply border-white;
+.wrapper {
+  @apply relative w-full flex items-center rounded-md;
+
+  .input {
+    @apply leading-5 text-rui-text w-full bg-transparent py-2 px-3;
+    @apply text-[13px] font-normal rounded-md;
+    @apply box-border;
+    @apply border border-rui-text-disabled;
+    @apply outline-none ring-0;
+    &::placeholder {
+      @apply text-rui-text-disabled font-light;
+    }
+
+    &:focus {
+      @apply border-2 border-rui-primary;
+      @apply py-[7px] px-[11px];
+      @apply outline-none ring-0;
+    }
+
+    &.withPrepend {
+      @apply pl-8;
+      &:focus {
+        @apply pl-[31px];
+      }
+    }
+
+    &.withAppend {
+      @apply pr-10;
+      &:focus {
+        @apply pr-[39px];
+      }
+    }
+  }
+
+  &:not(.disabled):hover .input {
+    @apply border-rui-primary;
+  }
+
+  .icon {
+    @apply text-rui-text-disabled;
+
+    svg {
+      @apply w-4 h-4;
+    }
+  }
+
+  .prepend {
+    @apply left-2;
+  }
+
+  &.filled {
+    @apply bg-black bg-opacity-[0.06];
+
+    .input {
+      @apply border-0;
+
+      &:focus {
+        @apply border-2 border-rui-primary;
+      }
+    }
+  }
+
+  &.disabled {
+    .input {
+      @apply text-rui-text-disabled cursor-not-allowed;
+      @apply border-dotted;
+      @apply bg-black bg-opacity-[0.02];
+
+      &::placeholder {
+        @apply text-rui-text-disabled;
       }
     }
 
     .icon {
-      @apply text-white/[0.56];
-    }
-
-    &:hover {
-      .label {
-        @apply border-white;
-      }
-    }
-
-    &.filled {
-      .input {
-        &:focus {
-          + .label {
-            @apply bg-white/[0.13];
-          }
-        }
-      }
-
-      .label {
-        @apply bg-white/[0.09];
-      }
-    }
-
-    &.outlined {
-      .fieldset {
-        @apply border-white/[0.23];
-      }
-
-      &:not(.disabled) {
-        .input {
-          &:hover,
-          &:focus {
-            ~ .fieldset {
-              @apply border-white;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-.wrapper {
-  @apply relative w-full flex items-center pt-3 rounded bg-white;
-
-  .input {
-    @apply leading-6 text-rui-text w-full bg-transparent py-1.5 pr-3 outline-0 outline-none transition-all placeholder:opacity-0 focus:placeholder:opacity-100;
-
-    &:focus {
-      @apply outline-0;
-      + .label {
-        @apply after:scale-x-100;
-      }
-    }
-
-    &:not(:placeholder-shown),
-    &:autofill,
-    &:-webkit-autofill,
-    &[data-has-value='true'],
-    &:focus {
-      + .label {
-        @apply text-xs leading-tight;
-        padding-left: var(--x-padding);
-        padding-right: var(--x-padding);
-      }
-    }
-
-    &:disabled {
-      @apply border-dotted;
-
-      &,
-      + .label {
-        @apply text-rui-text-disabled;
-      }
-
-      ~ .fieldset {
-        @apply border-dotted;
-      }
+      @apply opacity-50;
     }
   }
 
-  .label {
-    @apply left-0 text-base leading-[3.75] text-rui-text-secondary pointer-events-none absolute top-0 flex h-full w-full select-none transition-all duration-75 border-b border-black/[0.42];
-
-    --x-padding: 0px;
-    --prepend-width: v-bind(prependWidth);
-    --append-width: v-bind(appendWidth);
-
-    padding-left: calc(var(--x-padding) + var(--prepend-width, 0px));
-    padding-right: calc(var(--x-padding) + var(--append-width, 0px));
-
-    span {
-      @apply truncate transition-all duration-75;
-      content: v-bind(labelWithQuote);
-    }
-
-    &:after {
-      content: '';
-      @apply absolute bottom-0 left-0 block w-full scale-x-0 border-b-2 mb-[-1px] transition-transform duration-300 border-black;
-    }
-  }
-
-  &:hover {
-    .label {
-      @apply border-black;
-    }
-  }
-
-  .icon {
-    @apply text-black/[0.54];
-  }
-
-  .prepend {
-    &:not(:empty) {
-      @apply pr-2;
-    }
-  }
-
-  .append {
-    &:not(:empty) {
-      @apply pl-2;
+  &.dense {
+    .input {
+      @apply py-1.5;
+      &:focus {
+        @apply py-[5px];
+      }
     }
   }
 
   @each $color in c.$context-colors {
     &.#{$color} {
-      .input {
-        &:focus {
-          + .label {
-            @apply text-rui-#{$color};
-          }
+      &:not(.disabled) {
+        &:hover .input {
+          @apply border-rui-#{$color};
         }
-      }
 
-      .label {
-        @apply after:border-rui-#{$color};
-      }
-
-      &.outlined {
-        &:not(.disabled) {
-          .input {
-            &:focus {
-              ~ .fieldset {
-                @apply border-rui-#{$color};
-              }
-            }
-          }
+        .input:focus {
+          @apply border-2 border-rui-#{$color};
         }
       }
     }
 
-    &.text_#{$color},
-    &.with-#{$color} {
-      .prepend,
-      .append,
+    &.text_#{$color} {
       .input {
-        @apply text-rui-#{$color};
-      }
-
-      &:not(.disabled) .prepend svg,
-      &:not(.disabled) .append svg {
         @apply text-rui-#{$color};
       }
     }
@@ -421,196 +337,70 @@ function clearIconClicked() {
     &.with-#{$color} {
       .input {
         @apply border-rui-#{$color} #{!important};
-      }
-
-      .label {
-        @apply text-rui-#{$color} after:border-rui-#{$color} #{!important};
-      }
-
-      .fieldset {
-        @apply border-rui-#{$color} #{!important};
-      }
-    }
-  }
-
-  &.dense {
-    .input {
-      @apply py-1;
-    }
-
-    .label {
-      @apply leading-[3.5];
-    }
-  }
-
-  &.filled,
-  &.outlined {
-    @apply pt-0;
-
-    .prepend {
-      &:not(:empty) {
-        @apply pl-3 pr-0;
-      }
-    }
-
-    .append {
-      &:not(:empty) {
-        @apply pr-3 pl-0;
-      }
-    }
-
-    .input {
-      @apply px-3;
-    }
-
-    .label {
-      @apply leading-[3.5];
-      --x-padding: 0.75rem;
-    }
-  }
-
-  &.filled {
-    .input {
-      @apply py-4;
-
-      &:focus {
-        + .label {
-          @apply bg-black/[0.09];
-        }
-      }
-
-      &:not(:placeholder-shown),
-      &:autofill,
-      &:-webkit-autofill,
-      &[data-has-value='true'],
-      &:focus {
-        + .label {
-          @apply leading-[1.5] pl-4;
-
-          padding-left: calc(var(--x-padding));
-          padding-right: calc(var(--x-padding));
-        }
-      }
-    }
-
-    .label {
-      @apply rounded-t bg-black/[0.06];
-    }
-
-    &.dense {
-      .input {
-        @apply pt-5 pb-1;
-      }
-
-      .label {
-        @apply leading-[3];
-      }
-
-      &:not(:placeholder-shown),
-      &:autofill,
-      &:-webkit-autofill,
-      &[data-has-value='true'],
-      &:focus {
-        + .label {
-          @apply leading-[2.25];
-        }
-      }
-    }
-
-    &.no-label {
-      .input {
-        @apply py-4;
-      }
-
-      &.dense {
-        .input {
-          @apply py-3;
-        }
-      }
-    }
-  }
-
-  &.outlined {
-    .input {
-      @apply py-4 border-b-0;
-
-      &:not(:placeholder-shown),
-      &:autofill,
-      &:-webkit-autofill,
-      &[data-has-value='true'],
-      &:focus {
-        @apply border-t-transparent;
-
-        + .label {
-          @apply leading-[0] pl-4 -mt-3;
-
-          span {
-            @apply pt-3;
-          }
-        }
-
-        ~ .fieldset {
-          legend {
-            &.show {
-              @apply px-2;
-            }
-            &:after {
-              content: v-bind(labelWithQuote);
-            }
-          }
-        }
-      }
-    }
-
-    .fieldset {
-      @apply absolute w-full min-w-0 h-[calc(100%+0.5rem)] top-0 left-0 pointer-events-none rounded border border-black/[0.23] px-2 transition-all -mt-2;
-
-      legend {
-        @apply opacity-0 text-xs max-w-full truncate;
-
-        &:before {
-          content: ' ';
-        }
-
-        &:after {
-          @apply truncate max-w-full leading-[0];
-          content: '\200B';
-        }
-      }
-    }
-
-    &:not(.disabled) {
-      .input {
-        &:hover,
-        &:focus {
-          ~ .fieldset {
-            @apply border border-black;
-          }
-        }
 
         &:focus {
-          ~ .fieldset {
-            @apply border-2;
-          }
+          @apply border-2;
+        }
+
+        ~ div .icon {
+          @apply text-rui-#{$color};
         }
       }
     }
+  }
 
-    .label {
-      @apply border-0 border-transparent;
+  &.readonly {
+    .input {
+      @apply bg-black bg-opacity-[0.05] cursor-default;
+    }
+  }
+}
 
-      &:after {
-        content: none !important;
+:global(.dark) {
+  .wrapper {
+    @apply bg-transparent;
+
+    .icon {
+      @apply text-white opacity-60;
+    }
+
+    .input {
+      @apply border-white border-opacity-25;
+
+      &::placeholder {
+        @apply text-rui-text-disabled font-light;
+      }
+
+      &:focus {
+        @apply border-2 border-rui-primary;
       }
     }
 
-    &.dense {
-      .input {
-        @apply py-2;
-      }
+    &.filled {
+      @apply bg-white bg-opacity-[0.06];
+    }
 
-      .label {
-        @apply leading-[2.5];
+    &:not(.disabled):hover .input {
+      @apply border-rui-primary;
+    }
+
+    &.disabled {
+      .input {
+        @apply border-white border-opacity-25 border-dotted;
+      }
+    }
+
+    @each $color in c.$context-colors {
+      &.#{$color} {
+        &:not(.disabled) {
+          &:hover .input {
+            @apply border-rui-#{$color};
+          }
+
+          .input:focus {
+            @apply border-2 border-rui-#{$color};
+          }
+        }
       }
     }
   }

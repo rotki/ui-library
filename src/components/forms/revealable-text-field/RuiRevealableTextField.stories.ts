@@ -49,7 +49,7 @@ const meta: Meta<RuiRevealableTextFieldProps> = {
     },
     variant: {
       control: 'select',
-      options: ['default', 'filled', 'outlined'],
+      options: ['default', 'filled'],
       table: { category: 'State' },
     },
   },
@@ -70,7 +70,6 @@ export const Default: Story = {
   args: {
     label: 'Password',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 };
 
@@ -80,7 +79,6 @@ export const PrimaryText: Story = {
     label: 'Password',
     placeholder: 'Placeholder',
     textColor: 'primary',
-    variant: 'outlined',
   },
 };
 
@@ -90,7 +88,6 @@ export const SuccessText: Story = {
     label: 'Password',
     placeholder: 'Placeholder',
     textColor: 'success',
-    variant: 'outlined',
   },
 };
 
@@ -99,7 +96,6 @@ export const ErrorsMessage: Story = {
     errorMessages: ['Lorem ipsum dolor'],
     label: 'Password',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 };
 
@@ -108,7 +104,6 @@ export const SuccessMessage: Story = {
     label: 'Password',
     placeholder: 'Placeholder',
     successMessages: ['Lorem ipsum dolor'],
-    variant: 'outlined',
   },
 };
 
@@ -117,7 +112,6 @@ export const Hinted: Story = {
     hint: 'Lorem ipsum dolor',
     label: 'Password',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 };
 

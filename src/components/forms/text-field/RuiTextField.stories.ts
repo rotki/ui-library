@@ -1,8 +1,10 @@
 import { contextColors } from '@/consts/colors';
 import RuiTextField, { type TextFieldProps } from '@/components/forms/text-field/RuiTextField.vue';
+import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiIcon from '@/components/icons/RuiIcon.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-type Props = TextFieldProps & { modelValue: string };
+type Props = TextFieldProps & { modelValue: string; customAppend?: boolean };
 
 const render: StoryFn<Props> = args => ({
   components: { RuiTextField },
@@ -18,7 +20,11 @@ const render: StoryFn<Props> = args => ({
 
     return { args, modelValue };
   },
-  template: `<RuiTextField v-model="modelValue" v-bind="args" />`,
+  template: `<RuiTextField v-model="modelValue" v-bind="args">
+    <template v-if="args.customAppend" #append>
+      <slot name="append" />
+    </template>
+  </RuiTextField>`,
 });
 
 const meta: Meta<Props> = {
@@ -43,6 +49,7 @@ const meta: Meta<Props> = {
     placeholder: { control: 'text' },
     prependIcon: { control: 'text' },
     readonly: { control: 'boolean', table: { category: 'State' } },
+    required: { control: 'boolean', table: { category: 'State' } },
     successMessages: { control: 'object' },
     textColor: {
       control: 'select',
@@ -51,7 +58,7 @@ const meta: Meta<Props> = {
     },
     variant: {
       control: 'select',
-      options: ['default', 'filled', 'outlined'],
+      options: ['default', 'filled'],
       table: { category: 'State' },
     },
   },
@@ -71,131 +78,150 @@ type Story = StoryObj<Props>;
 export const Default: Story = {
   args: {
     label: 'Label',
-    placeholder: 'Placeholder',
+    placeholder: 'Enter text...',
   },
+};
+
+export const EmailExample: Story = {
+  args: {
+    customAppend: true,
+    hint: 'This is a hint text to help user.',
+    label: 'Email',
+    placeholder: 'lefteris@rotki.com',
+    required: true,
+  },
+  render: args => ({
+    components: { RuiButton, RuiIcon, RuiTextField },
+    setup() {
+      const modelValue = computed({
+        get() {
+          return args.modelValue;
+        },
+        set(val) {
+          args.modelValue = val;
+        },
+      });
+
+      return { args, modelValue };
+    },
+    template: `
+      <div class="w-1/3">
+        <div class="flex gap-2 items-center">
+          <RuiTextField 
+            v-model="modelValue" 
+            v-bind="args"
+            class="flex-1"
+          >
+            <template #prepend>
+              <RuiIcon name="mail-line" class="w-4 h-4 text-rui-text-secondary" />
+            </template>
+            <template #append>
+              <RuiButton
+                size="sm"
+                variant="text"
+                class="!p-1 !min-w-0"
+                aria-label="Help"
+              >
+                <RuiIcon name="question-line" class="w-4 h-4" />
+              </RuiButton>
+            </template>
+          </RuiTextField>
+          <RuiButton
+            size="sm"
+            color="primary"
+            disabled
+          >
+            Button CTA
+          </RuiButton>
+        </div>
+      </div>
+    `,
+  }),
 };
 
 export const Filled: Story = {
   args: {
-    label: 'Label',
-    placeholder: 'Placeholder',
+    label: 'Filled Variant',
+    placeholder: 'This is a filled variant',
     variant: 'filled',
-  },
-};
-
-export const Outlined: Story = {
-  args: {
-    label: 'Label',
-    placeholder: 'Placeholder',
-    variant: 'outlined',
-  },
-};
-
-export const Primary: Story = {
-  args: {
-    color: 'primary',
-    label: 'Label',
-    placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 };
 
 export const Dense: Story = {
   args: {
     dense: true,
-    label: 'Label',
-    placeholder: 'Placeholder',
-    variant: 'outlined',
+    label: 'Dense Field',
+    placeholder: 'Compact size',
   },
 };
 
 export const Disabled: Story = {
   args: {
     disabled: true,
-    label: 'Label',
-    placeholder: 'Placeholder',
-    variant: 'outlined',
+    label: 'Disabled Field',
+    placeholder: 'Cannot be edited',
   },
 };
 
 export const Readonly: Story = {
   args: {
-    label: 'Label',
-    modelValue: 'Readonly text',
-    placeholder: 'Placeholder',
+    label: 'Readonly Field',
+    modelValue: 'Cannot be modified',
     readonly: true,
-    variant: 'outlined',
   },
 };
 
 export const WithErrorMessage: Story = {
   args: {
-    errorMessages: ['With error messages'],
-    label: 'Label',
-    placeholder: 'Placeholder',
-    variant: 'outlined',
+    errorMessages: ['This field has an error'],
+    label: 'Error State',
+    placeholder: 'Type something...',
   },
 };
 
 export const WithSuccessMessage: Story = {
   args: {
-    label: 'Label',
-    placeholder: 'Placeholder',
-    successMessages: ['With success messages'],
-    variant: 'outlined',
+    label: 'Success State',
+    placeholder: 'Type something...',
+    successMessages: ['This field is valid'],
   },
 };
 
 export const WithHint: Story = {
   args: {
-    hint: 'With hint',
-    label: 'Label',
-    placeholder: 'Placeholder',
-    variant: 'outlined',
-  },
-};
-
-export const HideDetails: Story = {
-  args: {
-    hideDetails: true,
-    hint: 'Hint (should be invisible)',
-    label: 'Label',
-    placeholder: 'Placeholder',
-    variant: 'outlined',
+    hint: 'Helper text appears here',
+    label: 'Field with Hint',
+    placeholder: 'Type something...',
   },
 };
 
 export const WithPrependIcon: Story = {
   args: {
-    label: 'Label',
-    placeholder: 'Placeholder',
-    prependIcon: 'heart-fill',
-    variant: 'outlined',
+    label: 'With Prepend Icon',
+    placeholder: 'Type something...',
+    prependIcon: 'user-line',
   },
 };
 
 export const WithAppendIcon: Story = {
   args: {
-    appendIcon: 'heart-fill',
-    label: 'Label',
-    placeholder: 'Placeholder',
-    variant: 'outlined',
+    appendIcon: 'search-line',
+    label: 'With Append Icon',
+    placeholder: 'Search...',
   },
 };
 
-export const OutlinedWithNoLabel: Story = {
+export const Required: Story = {
   args: {
-    placeholder: 'Placeholder',
-    variant: 'outlined',
+    label: 'Required Field',
+    placeholder: 'This field is required',
+    required: true,
   },
 };
 
-export const OutlinedWithVeryLongLabel: Story = {
+export const NoLabel: Story = {
   args: {
-    label:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    placeholder: 'Placeholder',
-    variant: 'outlined',
+    placeholder: 'No label text above',
   },
 };
 
