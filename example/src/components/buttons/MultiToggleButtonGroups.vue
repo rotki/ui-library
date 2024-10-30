@@ -1,0 +1,58 @@
+<script setup lang='ts'>
+import { objectOmit } from '@vueuse/shared';
+import { RuiButton, RuiButtonGroup, RuiIcon } from '@rotki/ui-library';
+import ComponentGroup from '@/components/ComponentGroup.vue';
+import type { ButtonGroupData } from '@/utils/buttons';
+
+const attributes: Partial<ButtonGroupData>[] = [
+  { activeColor: 'warning', required: true },
+  { disabled: true, required: true },
+  { vertical: true },
+  { variant: 'outlined' },
+  { variant: 'text' },
+];
+
+const multipleToggleButtons = ref<ButtonGroupData[]>([]);
+
+onBeforeMount(() => {
+  set(multipleToggleButtons, generateButtonGroupData(attributes, ['center']));
+});
+</script>
+
+<template>
+  <ComponentGroup
+    :items="multipleToggleButtons"
+    data-cy="multiple-toggleable-button-groups"
+    class="grid gap-4 grid-rows-2 grid-cols-2 justify-items-start"
+  >
+    <template #title>
+      Multiple Toggleable Button Groups
+    </template>
+
+    <template #item="{ item: buttonGroup }">
+      <RuiButtonGroup
+        v-bind="objectOmit(buttonGroup, ['modelValue', 'count', 'rounded'])"
+        v-model="buttonGroup.modelValue"
+      >
+        <RuiButton model-value="left">
+          <RuiIcon name="align-left" />
+        </RuiButton>
+        <RuiButton model-value="center">
+          <RuiIcon name="align-center" />
+        </RuiButton>
+        <RuiButton model-value="right">
+          <RuiIcon name="align-right" />
+        </RuiButton>
+        <RuiButton model-value="justify">
+          <RuiIcon name="align-justify" />
+        </RuiButton>
+      </RuiButtonGroup>
+      <div
+        v-if="buttonGroup.required"
+        class="mt-2 text-rui-error"
+      >
+        required: *
+      </div>
+    </template>
+  </ComponentGroup>
+</template>
