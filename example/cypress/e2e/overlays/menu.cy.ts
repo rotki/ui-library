@@ -14,13 +14,17 @@ describe('menu', () => {
 
     cy.get('@defaultMenu').find('[data-cy=activator]').as('activator');
     cy.get('@activator').should('be.visible');
+    cy.get('@activator').trigger('mouseover');
     cy.get('@activator').trigger('click');
     cy.get('body').find('div[role=menu]').should('be.visible');
+    cy.get('@activator').trigger('mouseover');
     cy.get('@activator').trigger('click');
     cy.get('body').find('div[role=menu-content]').should('not.be.visible');
 
+    cy.get('@activator').trigger('mouseover');
     cy.get('@activator').trigger('click');
     cy.get('body').find('div[role=menu-content]').should('be.visible').as('menuContent');
+    cy.get('@menuContent').trigger('mouseover');
     cy.get('@menuContent').trigger('click');
     cy.get('body').find('div[role=menu-content]').should('be.visible');
     cy.get('@activator').type('{esc}');
