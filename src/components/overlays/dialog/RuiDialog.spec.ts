@@ -158,4 +158,39 @@ describe('dialog', () => {
 
     wrapper.unmount();
   });
+
+  it('click:outside and click:esc emitted', async () => {
+    const clickOutsideFunc = vi.fn();
+    const clickEscFunc = vi.fn();
+
+    const wrapper = createWrapper({
+      props: {
+        'onClick:esc': clickEscFunc,
+        'onClick:outside': clickOutsideFunc,
+      },
+    });
+
+    await nextTick();
+
+    // Open dialog by clicking activator
+    await wrapper.find('#trigger').trigger('click');
+    await vi.delay();
+
+    const dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+    expect(dialog).toBeTruthy();
+
+    // Click on the overlay should not close the dialog
+    const overlay = dialog.querySelector('div[class*=_overlay_]') as HTMLDivElement;
+
+    overlay.click();
+    await vi.delay();
+
+    expect(clickOutsideFunc).toHaveBeenCalledOnce();
+
+    // Press escape should not close the dialog
+    const event = new KeyboardEvent('keydown', { key: 'Escape' });
+    dialog.dispatchEvent(event);
+
+    expect(clickEscFunc).toHaveBeenCalledOnce();
+  });
 });

@@ -26,6 +26,8 @@ const props = withDefaults(defineProps<DialogProps>(), {
 const emit = defineEmits<{
   (e: 'update:model-value', value: boolean): void;
   (e: 'closed'): void;
+  (e: 'click:outside'): void;
+  (e: 'click:esc'): void;
 }>();
 
 const {
@@ -125,6 +127,20 @@ const contentTransition = computed(() => {
     leaveToClass: 'translate-y-full',
   };
 });
+
+function onEscClick() {
+  if (!props.persistent) {
+    close();
+  }
+  emit('click:esc');
+}
+
+function onClickOutside() {
+  if (!props.persistent) {
+    close();
+  }
+  emit('click:outside');
+}
 </script>
 
 <template>
@@ -141,7 +157,7 @@ const contentTransition = computed(() => {
         role="dialog"
         tabindex="0"
         v-bind="getNonRootAttrs($attrs)"
-        @keydown.esc.stop="!persistent && close()"
+        @keydown.esc.stop="onEscClick()"
       >
         <Transition
           enter-from-class="opacity-0"
@@ -154,7 +170,7 @@ const contentTransition = computed(() => {
           <div
             v-if="isOpen && internalValue"
             :class="$style.overlay"
-            @click.stop="!persistent && close()"
+            @click.stop="onClickOutside()"
           />
         </Transition>
         <Transition v-bind="contentTransition">
