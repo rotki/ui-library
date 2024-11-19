@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { lstat, readFile, readdir, writeFile } from 'node:fs/promises';
+import consola from 'consola';
 import fs from 'fs-extra';
 import { pascalCase } from 'scule';
 import { XMLParser } from 'fast-xml-parser';
@@ -57,18 +58,24 @@ async function getAllSvgDataFromPath(pathDir) {
     return res;
   }
   else if (type.isFile()) {
-    const name = PREFIX + path.basename(pathDir).replace('.svg', '');
-    const generatedName = pascalCase(name);
-    const svg = await readFile(pathDir, 'utf8');
-    const svgPath = getPathFromSvgString(svg);
+    try {
+      const name = PREFIX + path.basename(pathDir).replace('.svg', '');
+      const generatedName = pascalCase(name);
+      const svg = await readFile(pathDir, 'utf8');
+      const svgPath = getPathFromSvgString(svg);
 
-    return [
-      {
-        name,
-        generatedName,
-        svgPath,
-      },
-    ];
+      return [
+        {
+          name,
+          generatedName,
+          svgPath,
+        },
+      ];
+    }
+    catch (error) {
+      consola.warn(`Error while processing ${pathDir}`, error);
+      return [];
+    }
   }
 }
 
