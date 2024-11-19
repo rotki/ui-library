@@ -9,6 +9,7 @@ export interface Props {
   variant?: 'flat' | 'outlined';
   rounded?: 'sm' | 'md' | 'lg';
   noPadding?: boolean;
+  contentClass?: string;
 }
 
 defineOptions({
@@ -23,6 +24,7 @@ withDefaults(defineProps<Props>(), {
   variant: 'outlined',
   rounded: 'md',
   noPadding: false,
+  contentClass: '',
 });
 
 const slots = useSlots();
@@ -78,7 +80,7 @@ const hasHeadContent = computed<boolean>(() => !!slots.header || !!slots.subhead
     </slot>
     <div
       v-if="slots.default"
-      :class="$style.content"
+      :class="[$style.content, contentClass]"
     >
       <slot />
     </div>
