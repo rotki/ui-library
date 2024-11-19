@@ -12,6 +12,7 @@ const navigationDrawers = ref<NavigationDrawerData[]>([
   { modelValue: false, label: 'Left', temporary: true },
   { modelValue: false, label: 'Right', position: 'right', temporary: true },
   { modelValue: false, label: 'Persistent', temporary: false },
+  { modelValue: false, label: 'With Overlay', temporary: true, overlay: true },
 ]);
 </script>
 

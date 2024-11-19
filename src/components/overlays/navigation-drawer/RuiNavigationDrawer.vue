@@ -132,7 +132,7 @@ const activatorAttrs = computed(() => ({
 
 <style lang="scss" module>
 .overlay {
-  @apply absolute top-0 left-0 w-full h-full bg-black/[0.5] z-[10000];
+  @apply absolute top-0 left-0 w-full h-full backdrop-blur bg-rui-grey-500/[0.5] z-[10000];
 }
 
 .content {
@@ -170,6 +170,10 @@ const activatorAttrs = computed(() => ({
 }
 
 :global(.dark) {
+  .overlay {
+    @apply bg-black/[0.5];
+  }
+
   .content {
     @apply bg-[#363636];
   }

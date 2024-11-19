@@ -195,7 +195,7 @@ function onClickOutside() {
 }
 
 .overlay {
-  @apply absolute top-0 left-0 w-full h-full bg-black/[0.5];
+  @apply absolute top-0 left-0 w-full h-full backdrop-blur bg-rui-grey-500/[0.5];
 }
 
 .content {
@@ -203,6 +203,12 @@ function onClickOutside() {
 
   &.center {
     @apply top-1/2 -translate-y-1/2 bottom-auto;
+  }
+}
+
+:global(.dark) {
+  .overlay {
+    @apply bg-black/[0.5];
   }
 }
 </style>
