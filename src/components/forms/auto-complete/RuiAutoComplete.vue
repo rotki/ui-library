@@ -306,6 +306,7 @@ async function setValue(val: TItem, index?: number, skipRefocused = false): Prom
   else {
     await nextTick(() => {
       set(isOpen, false);
+      set(searchInputFocused, false);
     });
     if (get(shouldApplyValueAsSearch))
       updateInternalSearch(getText(val));
@@ -315,7 +316,7 @@ async function setValue(val: TItem, index?: number, skipRefocused = false): Prom
     set(value, [val]);
   }
 
-  if (!skipRefocused)
+  if (!skipRefocused && get(multiple))
     set(searchInputFocused, true);
 }
 
@@ -620,7 +621,7 @@ defineExpose({
                 </div>
               </RuiChip>
               <div
-                v-else-if="multiple || slots['selection.prepend'] || slots.selection"
+                v-else-if="(multiple || slots['selection.prepend'] || slots.selection) && (!searchInputFocused || multiple)"
                 class="flex"
               >
                 <slot
