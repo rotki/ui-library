@@ -195,7 +195,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
   .input {
     @apply appearance-none relative w-full h-full rounded-full bg-rui-grey-400 transition-all duration-75 ease-in-out cursor-pointer;
 
-    &:active {
+    &:active:not(:disabled) {
       + .toggle {
         &:before {
           @apply opacity-20;
