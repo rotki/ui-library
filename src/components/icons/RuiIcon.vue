@@ -19,12 +19,15 @@ const props = withDefaults(defineProps<Props>(), {
 
 const { registeredIcons } = useIcons();
 
+const isLucide = computed(() => props.name.startsWith('lu-'));
+
 const components: ComputedRef<[string, Record<string, string>][] | undefined> = computed(() => {
   const name = props.name;
   if (!isRuiIcon(name)) {
     console.warn(`icon ${name} must be a valid RuiIcon`);
   }
-  const iconName = `ri-${name}`;
+  const prefix = get(isLucide) ? '' : 'ri-';
+  const iconName = `${prefix}${name}`;
   const found = registeredIcons[iconName];
 
   if (!found) {
@@ -32,8 +35,6 @@ const components: ComputedRef<[string, Record<string, string>][] | undefined> = 
   }
   return found;
 });
-
-const isLucide = computed(() => props.name.startsWith('lu-'));
 </script>
 
 <template>
