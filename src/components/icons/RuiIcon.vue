@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const { registeredIcons } = useIcons();
 
-const path: ComputedRef<string | undefined> = computed(() => {
+const components: ComputedRef<[string, Record<string, string>][] | undefined> = computed(() => {
   const name = props.name;
   if (!isRuiIcon(name)) {
     console.warn(`icon ${name} must be a valid RuiIcon`);
@@ -32,6 +32,8 @@ const path: ComputedRef<string | undefined> = computed(() => {
   }
   return found;
 });
+
+const isLucide = computed(() => props.name.startsWith('lu-'));
 </script>
 
 <template>
@@ -42,9 +44,16 @@ const path: ComputedRef<string | undefined> = computed(() => {
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <path
-      :d="path"
-      fill="currentColor"
+    <component
+      :is="component[0]"
+      v-for="(component, index) in components"
+      :key="index"
+      v-bind="component[1]"
+      :fill="isLucide ? 'none' : 'currentColor'"
+      :stroke="isLucide ? 'currentColor' : 'none'"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     />
   </svg>
 </template>

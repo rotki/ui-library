@@ -27,7 +27,7 @@ const meta: Meta<Props> = {
     docs: {
       description: {
         component:
-          'All icons can be seen here: <a target="_blank" href="https://remixicon.com/">https://remixicon.com/</a>. Use it <b>without</b> prefix `ri-`',
+          'We provide icons from <a target="_blank" href="https://remixicon.com/">Remix icons</a> and <a target="_blank" href="https://lucide.dev/icons">Lucide icons</a>. For remix icons use it without prefix `ri-` (eg: arrow-down-circle-fill), while for lucide icon, you need to add prefix `lu-` (eg: lu-arrow-down).',
       },
     },
   },
@@ -67,6 +67,22 @@ export const SecondaryTiny: Story = {
     color: 'secondary',
     name: 'arrow-down-circle-fill',
     size: 14,
+  },
+};
+
+export const LucideIconPrimary: Story = {
+  args: {
+    color: 'primary',
+    name: 'lu-arrow-down',
+    size: 24,
+  },
+};
+
+export const LucideIconPrimaryLarge: Story = {
+  args: {
+    color: 'primary',
+    name: 'lu-arrow-down',
+    size: 48,
   },
 };
 
