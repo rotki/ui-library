@@ -5,7 +5,7 @@ import fs from 'fs-extra';
 import { pascalCase } from 'scule';
 import { XMLParser } from 'fast-xml-parser';
 
-const PREFIX = 'ri-';
+const REMIX_PREFIX = 'ri-';
 const LUCIDE_PREFIX = 'lu-';
 const TARGET = 'src/icons/';
 const CHUNK_SIZE = 500;
@@ -74,7 +74,7 @@ async function getAllSvgDataFromPath(pathDir) {
   }
 
   try {
-    const name = PREFIX + path.basename(pathDir).replace('.svg', '');
+    const name = REMIX_PREFIX + path.basename(pathDir).replace('.svg', '');
     const generatedName = pascalCase(name);
     const svg = await readFile(pathDir, 'utf8');
     const svgPath = getPathFromSvgString(svg);
@@ -110,7 +110,7 @@ async function getLucideSvgDataFromPath(pathDir) {
 
   try {
     const filePath = path.basename(pathDir).replace('.js', '');
-    const name = PREFIX + LUCIDE_PREFIX + filePath;
+    const name = LUCIDE_PREFIX + filePath;
     const generatedName = pascalCase(name);
     const iconModule = await import(`${pathDir}`);
     const components = iconModule.default[2];
