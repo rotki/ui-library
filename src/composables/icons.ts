@@ -73,7 +73,7 @@ export interface IconsOptions {
 }
 
 export interface UseIconsReturn {
-  registeredIcons: Readonly<Record<string, string>>;
+  registeredIcons: Readonly<Record<string, [string, Record<string, string>][]>>;
 }
 
 export const IconsSymbol: InjectionKey<UseIconsReturn> = Symbol.for('rui:icons');
@@ -86,7 +86,7 @@ export function createIconDefaults(options?: Partial<IconsOptions>): UseIconsRet
         [
           ...requiredIcons,
           ...iconsToAdd,
-        ].map(({ name, path }) => [name, path]),
+        ].map(({ components, name }) => [name, components]),
       ),
     },
   };

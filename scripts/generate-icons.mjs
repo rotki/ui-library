@@ -6,6 +6,7 @@ import { pascalCase } from 'scule';
 import { XMLParser } from 'fast-xml-parser';
 
 const PREFIX = 'ri-';
+const LUCIDE_PREFIX = 'lu-';
 const TARGET = 'src/icons/';
 const CHUNK_SIZE = 500;
 
@@ -15,6 +16,10 @@ function resolveRoot(...dir) {
 
 function resolveRemixIconDir() {
   return resolveRoot('node_modules', 'remixicon', 'icons');
+}
+
+function resolveLucideIconDir() {
+  return resolveRoot('node_modules', 'lucide', 'dist', 'esm', 'icons');
 }
 
 function resolveCustomIconDir() {
@@ -43,7 +48,17 @@ function getPathFromSvgString(svg) {
     ignoreAttributes: false,
   });
   const obj = parser.parse(svg);
-  return obj.svg.path['@_d'];
+
+  function findFirstPath(node) {
+    if (node.path)
+      return node.path;
+    if (node.g)
+      return findFirstPath(node.g);
+    return null;
+  }
+
+  const path = findFirstPath(obj.svg);
+  return path['@_d'];
 }
 
 async function getAllSvgDataFromPath(pathDir) {
@@ -57,25 +72,58 @@ async function getAllSvgDataFromPath(pathDir) {
     });
     return res;
   }
-  else if (type.isFile()) {
-    try {
-      const name = PREFIX + path.basename(pathDir).replace('.svg', '');
-      const generatedName = pascalCase(name);
-      const svg = await readFile(pathDir, 'utf8');
-      const svgPath = getPathFromSvgString(svg);
 
-      return [
-        {
-          name,
-          generatedName,
-          svgPath,
-        },
-      ];
-    }
-    catch (error) {
-      consola.warn(`Error while processing ${pathDir}`, error);
-      return [];
-    }
+  try {
+    const name = PREFIX + path.basename(pathDir).replace('.svg', '');
+    const generatedName = pascalCase(name);
+    const svg = await readFile(pathDir, 'utf8');
+    const svgPath = getPathFromSvgString(svg);
+
+    return [
+      {
+        name,
+        generatedName,
+        components: [
+          ['path', { d: svgPath }],
+        ],
+      },
+    ];
+  }
+  catch (error) {
+    consola.warn(`Error while processing ${pathDir}`, error);
+    return [];
+  }
+}
+
+async function getLucideSvgDataFromPath(pathDir) {
+  const type = await lstat(pathDir);
+  if (type.isDirectory()) {
+    const res = [];
+    const dirs = await readdir(pathDir);
+    await loop(dirs, async (child) => {
+      if (child.endsWith('.js')) {
+        res.push(...(await getLucideSvgDataFromPath(`${pathDir}/${child}`)));
+      }
+    });
+    return res;
+  }
+
+  try {
+    const filePath = path.basename(pathDir).replace('.js', '');
+    const name = PREFIX + LUCIDE_PREFIX + filePath;
+    const generatedName = pascalCase(name);
+    const iconModule = await import(`${pathDir}`);
+    const components = iconModule.default[2];
+
+    return [{
+      name,
+      generatedName,
+      components,
+    }];
+  }
+  catch (error) {
+    consola.warn(`Error while processing ${pathDir}`, error);
+    return [];
   }
 }
 
@@ -86,6 +134,8 @@ async function collectAllIconMetas() {
   await loop(dirs, async (dir) => {
     res.push(...(await getAllSvgDataFromPath(dir)));
   });
+
+  res.push(...(await getLucideSvgDataFromPath(resolveLucideIconDir())));
 
   return res;
 }
@@ -114,7 +164,7 @@ import { type GeneratedIcon } from '@/types/icons';\n
     await loop(chunk, (icon) => {
       chunkFileContent += `export const ${icon.generatedName}: GeneratedIcon = {
   name: '${icon.name}',
-  path: '${icon.svgPath}',
+  components: ${JSON.stringify(icon.components)},
 };\n`;
 
       names.push(icon.name);

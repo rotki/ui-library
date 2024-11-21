@@ -1,4 +1,4 @@
 export interface GeneratedIcon {
   name: string;
-  path: string;
+  components: [string, Record<string, string>][];
 }
