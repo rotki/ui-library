@@ -282,4 +282,30 @@ describe('autocomplete', () => {
       'custom value 2',
     ]]);
   });
+
+  it('hides selected value when search input focused in single select', async () => {
+    const wrapper = createWrapper<string, SelectOption>({
+      attachTo: document.body,
+      props: {
+        keyAttr: 'id',
+        modelValue: '4',
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    await nextTick();
+    const input = wrapper.find('input');
+    expect((input.element as HTMLInputElement).value).toBe('Indonesia');
+
+    await input.trigger('focus');
+    await nextTick();
+    expect((input.element as HTMLInputElement).value).toBe('Indonesia');
+    expect(wrapper.find('div.value div.flex').exists()).toBe(false);
+
+    await input.trigger('blur');
+    await nextTick();
+    await vi.delay(300);
+    expect((input.element as HTMLInputElement).value).toBe('Indonesia');
+  });
 });
