@@ -3,9 +3,9 @@ import { type LogoProps, RuiIcon, type RuiIcons, RuiLogo } from '@rotki/ui-libra
 import ComponentView from '@/components/ComponentView.vue';
 
 const icons = ref<{ name: RuiIcons; size: number }[]>([
-  { name: 'moon-line', size: 24 },
-  { name: 'sun-line', size: 24 },
-  { name: 'arrow-right-line', size: 24 },
+  { name: 'lu-moon', size: 24 },
+  { name: 'lu-soon', size: 24 },
+  { name: 'lu-arrow-right', size: 24 },
 ]);
 
 const logos = ref<(LogoProps & { name: string })[]>([

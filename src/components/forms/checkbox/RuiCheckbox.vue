@@ -123,17 +123,17 @@ watch(internalModelValue, (val) => {
       >
         <RuiIcon
           v-if="indeterminate"
-          name="checkbox-indeterminate-fill"
+          name="lu-checkbox-indeterminate-fill"
           :size="iconSize"
         />
         <RuiIcon
           v-else-if="modelValue"
-          name="checkbox-fill"
+          name="lu-checkbox-fill"
           :size="iconSize"
         />
         <RuiIcon
           v-else
-          name="checkbox-blank-line"
+          name="lu-checkbox-blank"
           :size="iconSize"
         />
       </span>

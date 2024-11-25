@@ -74,7 +74,8 @@ async function getAllSvgDataFromPath(pathDir) {
   }
 
   try {
-    const name = REMIX_PREFIX + path.basename(pathDir).replace('.svg', '');
+    const isLucide = path.basename(pathDir).startsWith('lu-');
+    const name = (!isLucide ? REMIX_PREFIX : '') + path.basename(pathDir).replace('.svg', '');
     const generatedName = pascalCase(name);
     const svg = await readFile(pathDir, 'utf8');
     const svgPath = getPathFromSvgString(svg);
@@ -95,6 +96,175 @@ async function getAllSvgDataFromPath(pathDir) {
   }
 }
 
+function convertToSinglePath(elements) {
+  // Convert each element to path commands
+  const pathCommands = elements.map(([type, attrs], index) => {
+    switch (type) {
+      case 'rect':
+        return rectToPath(attrs);
+      case 'circle':
+        return circleToPath(attrs);
+      case 'line':
+        return lineToPath(attrs);
+      case 'path':
+        return convertPath(attrs.d, index);
+      default:
+        return '';
+    }
+  });
+
+  // Combine all path commands
+  const combinedPath = pathCommands.join(' ');
+
+  return [['path', { d: combinedPath }]];
+}
+
+function convertPath(path, index) {
+  if (path.startsWith('M') || index === 0) {
+    return path;
+  }
+
+  const commands = path.match(/[a-z][^a-z]*/gi);
+  let currentX = 0;
+  let currentY = 0;
+  let controlX = 0; // Last control point for smooth curve commands
+  let controlY = 0;
+  let startX = 0;
+  let startY = 0;
+  let absolutePath = '';
+
+  commands.forEach((segment) => {
+    const command = segment[0];
+    const params = segment.slice(1).trim().match(/-?[\d.]+(?:e[+-]?\d+)?/g);
+    const numbers = params ? params.map(Number) : [];
+    let i = 0;
+
+    switch (command) {
+      case 'm': // Relative move
+        currentX += numbers[i++];
+        currentY += numbers[i++];
+        absolutePath += `M${currentX} ${currentY} `;
+        startX = currentX;
+        startY = currentY;
+        while (i < numbers.length) {
+          currentX += numbers[i++];
+          currentY += numbers[i++];
+          absolutePath += `L${currentX} ${currentY} `;
+        }
+        break;
+      case 'l': // Relative line
+        while (i < numbers.length) {
+          currentX += numbers[i++];
+          currentY += numbers[i++];
+          absolutePath += `L${currentX} ${currentY} `;
+        }
+        break;
+      case 'h': // Relative horizontal line
+        while (i < numbers.length) {
+          currentX += numbers[i++];
+          absolutePath += `L${currentX} ${currentY} `;
+        }
+        break;
+      case 'v': // Relative vertical line
+        while (i < numbers.length) {
+          currentY += numbers[i++];
+          absolutePath += `L${currentX} ${currentY} `;
+        }
+        break;
+      case 'c': // Relative cubic Bezier curve
+        while (i < numbers.length) {
+          const x1 = currentX + numbers[i++];
+          const y1 = currentY + numbers[i++];
+          controlX = currentX + numbers[i++];
+          controlY = currentY + numbers[i++];
+          currentX += numbers[i++];
+          currentY += numbers[i++];
+          absolutePath += `C${x1} ${y1}, ${controlX} ${controlY}, ${currentX} ${currentY} `;
+        }
+        break;
+      case 's': // Relative smooth cubic Bezier curve
+        while (i < numbers.length) {
+          const x1 = 2 * currentX - controlX;
+          const y1 = 2 * currentY - controlY;
+          controlX = currentX + numbers[i++];
+          controlY = currentY + numbers[i++];
+          currentX += numbers[i++];
+          currentY += numbers[i++];
+          absolutePath += `C${x1} ${y1}, ${controlX} ${controlY}, ${currentX} ${currentY} `;
+        }
+        break;
+      case 'a': // Relative arc
+        while (i < numbers.length) {
+          const rx = numbers[i++];
+          const ry = numbers[i++];
+          const xAxisRotation = numbers[i++];
+          const largeArcFlag = numbers[i++];
+          const sweepFlag = numbers[i++];
+          currentX += numbers[i++];
+          currentY += numbers[i++];
+          absolutePath += `A${rx} ${ry} ${xAxisRotation} ${largeArcFlag} ${sweepFlag} ${currentX} ${currentY} `;
+        }
+        break;
+      case 'M': // Absolute move
+      case 'L': // Absolute line
+      case 'H': // Absolute horizontal line
+      case 'V': // Absolute vertical line
+      case 'C': // Absolute cubic Bezier curve
+      case 'S': // Absolute smooth cubic Bezier curve
+      case 'A': // Absolute arc
+        // Directly use the segment without change
+        absolutePath += `${segment} `;
+        break;
+      case 'Z':
+      case 'z':
+        currentX = startX;
+        currentY = startY;
+        absolutePath += 'Z';
+        break;
+      default:
+        console.warn(`Command ${command} not specifically handled yet.`);
+        break;
+    }
+  });
+
+  return absolutePath.trim();
+}
+
+function rectToPath({ x = 0, y = 0, width, height, rx = 0, ry = rx }) {
+  if (rx === 0) {
+    // Simple rectangle without rounded corners
+    return `M${x},${y} h${width} v${height} h-${width} Z`;
+  }
+
+  // Rectangle with rounded corners
+  return `
+    M${Number(x) + Number(rx)},${y}
+    h${width - 2 * rx}
+    a${rx},${ry} 0 0 1 ${rx},${ry}
+    v${height - 2 * ry}
+    a${rx},${ry} 0 0 1 -${rx},${ry}
+    h-${width - 2 * rx}
+    a${rx},${ry} 0 0 1 -${rx},-${ry}
+    v-${height - 2 * ry}
+    a${rx},${ry} 0 0 1 ${rx},-${ry}
+    Z
+  `.trim().replace(/\s+/g, ' ');
+}
+
+function circleToPath({ cx = 0, cy = 0, r }) {
+  // Approximate circle using cubic bezier curves
+  return `
+    M${cx - r},${cy}
+    a${r},${r} 0 1,0 ${r * 2},0
+    a${r},${r} 0 1,0 -${r * 2},0
+    Z
+  `.trim().replace(/\s+/g, ' ');
+}
+
+function lineToPath({ x1 = 0, y1 = 0, x2 = 0, y2 = 0 }) {
+  return `M${x1} ${y1} L${x2} ${y2}`;
+}
+
 async function getLucideSvgDataFromPath(pathDir) {
   const type = await lstat(pathDir);
   if (type.isDirectory()) {
@@ -113,7 +283,7 @@ async function getLucideSvgDataFromPath(pathDir) {
     const name = LUCIDE_PREFIX + filePath;
     const generatedName = pascalCase(name);
     const iconModule = await import(`${pathDir}`);
-    const components = iconModule.default[2];
+    const components = convertToSinglePath(iconModule.default[2]);
 
     return [{
       name,

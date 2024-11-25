@@ -76,7 +76,7 @@ export const Default: Story = {
 
 export const PrimaryText: Story = {
   args: {
-    appendIcon: 'eye-line',
+    appendIcon: 'lu-eye',
     label: 'Password',
     placeholder: 'Placeholder',
     textColor: 'primary',
@@ -86,7 +86,7 @@ export const PrimaryText: Story = {
 
 export const SuccessText: Story = {
   args: {
-    appendIcon: 'eye-line',
+    appendIcon: 'lu-eye',
     label: 'Password',
     placeholder: 'Placeholder',
     textColor: 'success',

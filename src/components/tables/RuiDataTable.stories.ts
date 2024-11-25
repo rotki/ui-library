@@ -129,7 +129,7 @@ const render: StoryFn<Props> = args => ({
       >
         <template #item.action>
           <RuiButton icon variant="text" size="sm">
-            <Icon name="more-fill" color="primary" />
+            <Icon name="lu-ellipsis" color="primary" />
           </RuiButton>
         </template>
         <template v-if="args.expanded" #expanded-item>

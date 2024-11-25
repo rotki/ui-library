@@ -40,16 +40,16 @@ onBeforeMount(() => {
         v-model="buttonGroup.modelValue"
       >
         <RuiButton>
-          <RuiIcon name="align-left" />
+          <RuiIcon name="lu-align-left" />
         </RuiButton>
         <RuiButton>
-          <RuiIcon name="align-center" />
+          <RuiIcon name="lu-align-center" />
         </RuiButton>
         <RuiButton>
-          <RuiIcon name="align-right" />
+          <RuiIcon name="lu-align-right" />
         </RuiButton>
         <RuiButton>
-          <RuiIcon name="align-justify" />
+          <RuiIcon name="lu-align-justify" />
         </RuiButton>
       </RuiButtonGroup>
       <div

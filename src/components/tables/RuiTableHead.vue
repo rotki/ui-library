@@ -231,7 +231,7 @@ function getSortDirection(key: TableColumn<T>['key']) {
               >
                 <RuiIcon
                   :class="$style.sort__icon"
-                  name="arrow-down-line"
+                  name="lu-arrow-down"
                   size="18"
                 />
               </template>
@@ -240,7 +240,7 @@ function getSortDirection(key: TableColumn<T>['key']) {
                 <RuiIcon
                   v-if="column.align !== 'end'"
                   :class="$style.sort__icon"
-                  name="arrow-down-line"
+                  name="lu-arrow-down"
                   size="18"
                 />
               </template>

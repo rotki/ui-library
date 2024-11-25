@@ -129,38 +129,38 @@ const textAreas = ref<TextAreaData[]>([
   {
     modelValue: '',
     color: 'primary',
-    appendIcon: 'arrow-right-line',
+    appendIcon: 'lu-arrow-right',
   },
   {
     modelValue: '',
     color: 'primary',
     variant: 'filled',
-    appendIcon: 'arrow-right-line',
+    appendIcon: 'lu-arrow-right',
   },
   {
     modelValue: '',
     color: 'primary',
     variant: 'outlined',
-    appendIcon: 'arrow-right-line',
+    appendIcon: 'lu-arrow-right',
     textColor: 'primary',
   },
 
   {
     modelValue: '',
     color: 'primary',
-    prependIcon: 'arrow-right-line',
+    prependIcon: 'lu-arrow-right',
   },
   {
     modelValue: '',
     color: 'primary',
     variant: 'filled',
-    prependIcon: 'arrow-right-line',
+    prependIcon: 'lu-arrow-right',
   },
   {
     modelValue: '',
     color: 'primary',
     variant: 'outlined',
-    prependIcon: 'arrow-right-line',
+    prependIcon: 'lu-arrow-right',
     textColor: 'primary',
   },
 

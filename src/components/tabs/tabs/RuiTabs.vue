@@ -277,7 +277,7 @@ watch(internalModelValue, () => {
         :disabled="prevArrowDisabled"
         @click="onPrevSliderClick()"
       >
-        <RuiIcon :name="vertical ? 'arrow-up-s-line' : 'arrow-left-s-line'" />
+        <RuiIcon :name="vertical ? 'arrow-up-s-line' : 'lu-chevron-left'" />
       </RuiButton>
     </div>
     <div
@@ -317,7 +317,7 @@ watch(internalModelValue, () => {
         :disabled="nextArrowDisabled"
         @click="onNextSliderClick()"
       >
-        <RuiIcon :name="vertical ? 'arrow-down-s-line' : 'arrow-right-s-line'" />
+        <RuiIcon :name="vertical ? 'lu-chevron-down' : 'lu-chevron-right'" />
       </RuiButton>
     </div>
   </div>

@@ -76,14 +76,14 @@ function onClick(index: number) {
         >
           <RuiIcon
             :size="18"
-            name="arrow-left-s-line"
+            name="lu-chevron-left"
           />
         </template>
         <span v-if="!arrowButtons">Back</span>
         <RuiIcon
           v-else
           :size="24"
-          name="arrow-left-line"
+          name="lu-arrow-right"
         />
       </RuiButton>
       <span
@@ -122,7 +122,7 @@ function onClick(index: number) {
         <RuiIcon
           v-else
           :size="24"
-          name="arrow-right-line"
+          name="lu-arrow-right"
         />
         <template
           v-if="!arrowButtons"
@@ -130,7 +130,7 @@ function onClick(index: number) {
         >
           <RuiIcon
             :size="18"
-            name="arrow-right-s-line"
+            name="lu-chevron-right"
           />
         </template>
       </RuiButton>

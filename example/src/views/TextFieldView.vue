@@ -121,38 +121,38 @@ const textFields = ref<TextFieldData[]>([
   {
     modelValue: '',
     color: 'primary',
-    appendIcon: 'arrow-right-line',
+    appendIcon: 'lu-arrow-right',
   },
   {
     modelValue: '',
     color: 'primary',
     variant: 'filled',
-    appendIcon: 'arrow-right-line',
+    appendIcon: 'lu-arrow-right',
   },
   {
     modelValue: '',
     color: 'primary',
     variant: 'outlined',
-    appendIcon: 'arrow-right-line',
+    appendIcon: 'lu-arrow-right',
     textColor: 'primary',
   },
 
   {
     modelValue: '',
     color: 'primary',
-    prependIcon: 'arrow-right-line',
+    prependIcon: 'lu-arrow-right',
   },
   {
     modelValue: '',
     color: 'primary',
     variant: 'filled',
-    prependIcon: 'arrow-right-line',
+    prependIcon: 'lu-arrow-right',
   },
   {
     modelValue: '',
     color: 'primary',
     variant: 'outlined',
-    prependIcon: 'arrow-right-line',
+    prependIcon: 'lu-arrow-right',
     textColor: 'primary',
   },
 
@@ -258,7 +258,7 @@ const revealableTextFields = ref<RevealableTextFieldData[]>([
     variant: 'outlined',
     label: 'API Secret',
     textColor: 'success',
-    prependIcon: 'arrow-right-line',
+    prependIcon: 'lu-arrow-right',
     successMessages: ['lorem ipsum success message'],
     errorMessages: ['lorem ipsum error message'],
     hint: 'lorem ipsum hint',

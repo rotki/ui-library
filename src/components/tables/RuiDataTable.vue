@@ -1113,7 +1113,7 @@ onMounted(() => {
                         "
                       >
                         <RuiIcon
-                          name="file-copy-line"
+                          name="lu-copy"
                           size="16"
                         />
                       </RuiButton>
@@ -1130,7 +1130,7 @@ onMounted(() => {
                           @click="onUngroup()"
                         >
                           <RuiIcon
-                            name="delete-bin-line"
+                            name="lu-trash-2"
                             size="14"
                           />
                         </RuiButton>

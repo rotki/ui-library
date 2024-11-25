@@ -209,7 +209,7 @@ function clearIconClicked() {
           @click.stop="clearIconClicked()"
         >
           <RuiIcon
-            name="close-line"
+            name="lu-x"
             size="20"
           />
         </RuiButton>

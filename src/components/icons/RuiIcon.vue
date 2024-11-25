@@ -20,6 +20,7 @@ const props = withDefaults(defineProps<Props>(), {
 const { registeredIcons } = useIcons();
 
 const isLucide = computed(() => props.name.startsWith('lu-'));
+const isFill = computed(() => props.name.endsWith('-fill'));
 
 const components: ComputedRef<[string, Record<string, string>][] | undefined> = computed(() => {
   const name = props.name;
@@ -50,11 +51,13 @@ const components: ComputedRef<[string, Record<string, string>][] | undefined> = 
       v-for="(component, index) in components"
       :key="index"
       v-bind="component[1]"
-      :fill="isLucide ? 'none' : 'currentColor'"
-      :stroke="isLucide ? 'currentColor' : 'none'"
+      :fill="(isLucide && !isFill) ? 'none' : 'currentColor'"
+      :stroke="(isLucide && !isFill) ? 'currentColor' : 'none'"
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
+      fill-rule="evenodd"
+      clip-rule="evenodd"
     />
   </svg>
 </template>

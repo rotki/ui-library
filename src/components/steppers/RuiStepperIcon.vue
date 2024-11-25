@@ -22,23 +22,23 @@ withDefaults(defineProps<{
       v-else-if="state === StepperState.done"
       :class="$style.text"
       :size="20"
-      name="check-line"
+      name="lu-check"
     />
     <RuiIcon
       v-else-if="state === StepperState.success"
-      name="checkbox-circle-fill"
+      name="lu-circle-check"
     />
     <RuiIcon
       v-else-if="state === StepperState.error"
-      name="error-warning-fill"
+      name="lu-circle-alert"
     />
     <RuiIcon
       v-else-if="state === StepperState.warning"
-      name="alert-fill"
+      name="lu-triangle-alert"
     />
     <RuiIcon
       v-else-if="state === StepperState.info"
-      name="information-fill"
+      name="lu-info"
     />
   </span>
 </template>

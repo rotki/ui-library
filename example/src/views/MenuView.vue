@@ -365,7 +365,7 @@ const menuSelectPrimitive = ref<RuiMenuSelectProps<string, string>[]>([
                 <RuiIcon
                   class="transition"
                   :class="[{ 'rotate-180': open }]"
-                  name="arrow-drop-down-fill"
+                  name="lu-chevron-down"
                   size="32"
                 />
               </template>
@@ -435,7 +435,7 @@ const menuSelectPrimitive = ref<RuiMenuSelectProps<string, string>[]>([
             <RuiIcon
               v-if="active"
               class="transition"
-              name="check-line"
+              name="lu-check"
               size="24"
             />
           </template>
@@ -466,7 +466,7 @@ const menuSelectPrimitive = ref<RuiMenuSelectProps<string, string>[]>([
             <RuiIcon
               v-if="active"
               class="transition"
-              name="check-line"
+              name="lu-check"
               size="24"
             />
           </template>
@@ -498,7 +498,7 @@ const menuSelectPrimitive = ref<RuiMenuSelectProps<string, string>[]>([
             <RuiIcon
               v-if="active"
               class="transition"
-              name="check-line"
+              name="lu-check"
               size="24"
             />
           </template>

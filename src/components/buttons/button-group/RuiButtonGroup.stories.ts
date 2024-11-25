@@ -16,16 +16,16 @@ const render: StoryFn<Props> = args => ({
     <div v-if="'modelValue' in args">
       <RuiButtonGroup v-bind="args" v-model="args.modelValue">
         <RuiButton>
-          <RuiIcon name="align-left" />
+          <RuiIcon name="lu-align-left" />
         </RuiButton>
         <RuiButton>
-          <RuiIcon name="align-center" />
+          <RuiIcon name="lu-align-center" />
         </RuiButton>
         <RuiButton>
-          <RuiIcon name="align-right" />
+          <RuiIcon name="lu-align-right" />
         </RuiButton>
         <RuiButton>
-          <RuiIcon name="align-justify" />
+          <RuiIcon name="lu-align-justify" />
         </RuiButton>
       </RuiButtonGroup>
       <div v-if="args.required" class="mt-4 text-rui-error">required: *</div>

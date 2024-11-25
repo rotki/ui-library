@@ -44,10 +44,10 @@ const usedIcon = computed<RuiIcons | undefined>(() => {
   const iconMap: Record<ContextColorsType, RuiIcons | undefined> = {
     primary: undefined,
     secondary: undefined,
-    warning: 'alert-line',
-    info: 'information-line',
-    error: 'error-warning-line',
-    success: 'checkbox-circle-line',
+    warning: 'lu-triangle-alert',
+    info: 'lu-info',
+    error: 'lu-circle-alert',
+    success: 'lu-circle-check',
   };
 
   return iconMap[get(type)];
@@ -119,7 +119,7 @@ const usedIcon = computed<RuiIcons | undefined>(() => {
         @click="emit('close')"
       >
         <RuiIcon
-          name="close-fill"
+          name="lu-x"
           size="20"
         />
       </RuiButton>

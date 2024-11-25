@@ -59,7 +59,7 @@ const { height: innerHeight } = useElementSize(inner);
       <Icon
         class="text-rui-text-secondary"
         :class="$style.icon"
-        name="arrow-down-s-line"
+        name="lu-chevron-down"
       />
     </div>
     <div

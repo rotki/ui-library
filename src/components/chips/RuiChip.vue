@@ -32,7 +32,7 @@ const props = withDefaults(defineProps<Props>(), {
   closeable: false,
   disabled: false,
   variant: 'filled',
-  closeIcon: 'close-circle-line',
+  closeIcon: 'lu-circle-x',
   bgColor: undefined,
   textColor: undefined,
 });

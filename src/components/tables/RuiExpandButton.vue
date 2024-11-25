@@ -12,7 +12,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-withDefaults(defineProps<Props>(), { icon: 'arrow-down-s-line' });
+withDefaults(defineProps<Props>(), { icon: 'lu-chevron-down' });
 </script>
 
 <template>

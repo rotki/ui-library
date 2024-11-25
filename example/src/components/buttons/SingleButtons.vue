@@ -14,8 +14,8 @@ type ButtonData = ButtonProps & ExtraProperties;
 const attributes: Partial<ButtonData>[] = [
   {}, // Base button
   { variant: 'outlined' }, // Outlined button
-  { prepend: 'arrow-right-line' }, // Button with prepend icon
-  { append: 'arrow-right-line' }, // Button with append icon
+  { prepend: 'lu-arrow-right' }, // Button with prepend icon
+  { append: 'lu-arrow-right' }, // Button with append icon
   { variant: 'text' }, // Text variant button
   { disabled: true }, // Disabled button
   { disabled: false, rounded: true }, // Rounded button
@@ -26,9 +26,9 @@ const attributes: Partial<ButtonData>[] = [
   { disabled: true, rounded: true }, // Disabled rounded text variant
   { loading: true, rounded: true }, // Loading and rounded button
   { variant: 'fab' }, // FAB button
-  { variant: 'fab', icon: true, iconName: 'add-fill' },
-  { variant: 'text', icon: true, iconName: 'add-fill' },
-  { variant: 'outlined', icon: true, iconName: 'add-fill' },
+  { variant: 'fab', icon: true, iconName: 'lu-plus' },
+  { variant: 'text', icon: true, iconName: 'lu-plus' },
+  { variant: 'outlined', icon: true, iconName: 'lu-plus' },
 ];
 
 const buttons = ref<ButtonData[]>([]);
