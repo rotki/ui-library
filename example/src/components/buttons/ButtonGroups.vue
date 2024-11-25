@@ -41,7 +41,7 @@ onBeforeMount(() => {
           Increase
         </RuiButton>
         <RuiButton @click="buttonGroup.count++">
-          <RuiIcon name="add-fill" />
+          <RuiIcon name="lu-plus" />
         </RuiButton>
       </RuiButtonGroup>
       <div class="mt-2">

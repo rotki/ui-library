@@ -928,7 +928,7 @@ function removeRow(table: Pick<DataTableProps<ExtendedUser, 'id'>, 'rows'>, row:
                 @click="removeRow(table, row)"
               >
                 <RuiIcon
-                  name="delete-bin-line"
+                  name="lu-trash-2"
                   size="14"
                   color="error"
                 />
@@ -947,7 +947,7 @@ function removeRow(table: Pick<DataTableProps<ExtendedUser, 'id'>, 'rows'>, row:
                   create users
                   <template #append>
                     <RuiIcon
-                      name="add-fill"
+                      name="lu-plus"
                       color="primary"
                     />
                   </template>
@@ -988,7 +988,7 @@ function removeRow(table: Pick<DataTableProps<ExtendedUser, 'id'>, 'rows'>, row:
                 size="sm"
               >
                 <RuiIcon
-                  name="more-fill"
+                  name="lu-ellipsis"
                   color="primary"
                 />
               </RuiButton>
@@ -998,7 +998,7 @@ function removeRow(table: Pick<DataTableProps<ExtendedUser, 'id'>, 'rows'>, row:
               #item.expand="{ row }"
             >
               <RuiTableRowExpander
-                icon="arrow-down-circle-line"
+                icon="lu-circle-arrow-down"
                 :expanded="isExpanded(row, table.expanded)"
                 @click="toggleRow(row, table.expanded)"
               />
@@ -1062,7 +1062,7 @@ function removeRow(table: Pick<DataTableProps<ExtendedUser, 'id'>, 'rows'>, row:
                 size="sm"
               >
                 <RuiIcon
-                  name="more-fill"
+                  name="lu-ellipsis"
                   color="primary"
                 />
               </RuiButton>
@@ -1113,7 +1113,7 @@ function removeRow(table: Pick<DataTableProps<ExtendedUser, 'id'>, 'rows'>, row:
                 size="sm"
               >
                 <RuiIcon
-                  name="more-fill"
+                  name="lu-ellipsis"
                   color="primary"
                 />
               </RuiButton>
@@ -1136,7 +1136,7 @@ function removeRow(table: Pick<DataTableProps<ExtendedUser, 'id'>, 'rows'>, row:
                 size="sm"
               >
                 <RuiIcon
-                  name="more-fill"
+                  name="lu-ellipsis"
                   color="primary"
                 />
               </RuiButton>
@@ -1167,7 +1167,7 @@ function removeRow(table: Pick<DataTableProps<ExtendedUser, 'id'>, 'rows'>, row:
                 size="sm"
               >
                 <RuiIcon
-                  name="more-fill"
+                  name="lu-ellipsis"
                   color="primary"
                 />
               </RuiButton>

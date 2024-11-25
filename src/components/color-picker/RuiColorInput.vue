@@ -133,7 +133,7 @@ whenever(
       variant="text"
       @click="onInputTypeChange()"
     >
-      <RuiIcon name="expand-up-down-line" />
+      <RuiIcon name="lu-chevrons-up-down" />
     </RuiButton>
   </div>
 </template>

@@ -60,7 +60,7 @@ const hidden: Ref<boolean> = ref(true);
           <RuiIcon
             class="text-black/[.54] dark:text-white/[.56]"
             size="20"
-            :name="hidden ? 'eye-off-line' : 'eye-line'"
+            :name="hidden ? 'lu-eye-off' : 'lu-eye'"
           />
         </RuiButton>
 

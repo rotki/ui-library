@@ -338,8 +338,8 @@ function getDisplayText(options?: SelectOption | SelectOption[]): string {
                 <RuiIcon
                   class="transition"
                   :class="[{ 'rotate-180': open }]"
-                  name="arrow-drop-down-fill"
-                  size="32"
+                  name="lu-chevron-down"
+                  size="24"
                 />
               </template>
             </RuiButton>
@@ -378,8 +378,8 @@ function getDisplayText(options?: SelectOption | SelectOption[]): string {
                 <RuiIcon
                   class="transition"
                   :class="[{ 'rotate-180': open }]"
-                  name="arrow-drop-down-fill"
-                  size="32"
+                  name="lu-chevron-down"
+                  size="24"
                 />
               </template>
             </RuiButton>
@@ -411,7 +411,7 @@ function getDisplayText(options?: SelectOption | SelectOption[]): string {
             <RuiIcon
               v-if="active"
               class="transition"
-              name="check-line"
+              name="lu-check"
               size="24"
             />
           </template>
@@ -443,7 +443,7 @@ function getDisplayText(options?: SelectOption | SelectOption[]): string {
             <RuiIcon
               v-if="active"
               class="transition"
-              name="check-line"
+              name="lu-check"
               size="24"
             />
           </template>
@@ -475,7 +475,7 @@ function getDisplayText(options?: SelectOption | SelectOption[]): string {
             <RuiIcon
               v-if="active"
               class="transition"
-              name="check-line"
+              name="lu-check"
               size="24"
             />
           </template>

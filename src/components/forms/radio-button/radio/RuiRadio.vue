@@ -97,12 +97,12 @@ const { hasError, hasSuccess } = useFormTextDetail(
       >
         <RuiIcon
           v-if="selected"
-          name="radio-button-line"
+          name="lu-radio-button-fill"
           :size="iconSize"
         />
         <RuiIcon
           v-else
-          name="checkbox-blank-circle-line"
+          name="lu-checkbox-blank-circle"
           :size="iconSize"
         />
       </div>

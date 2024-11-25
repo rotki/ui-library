@@ -27,17 +27,17 @@ describe('forms/RevealableTextField', () => {
 
     expect(wrapper.find('input').attributes().type).toBe('password');
     expect(wrapper.find('rui-icon-stub').attributes().name).toBe(
-      'eye-off-line',
+      'lu-eye-off',
     );
 
     await wrapper.find('button').trigger('click');
     expect(wrapper.find('input').attributes().type).toBe('text');
-    expect(wrapper.find('rui-icon-stub').attributes().name).toBe('eye-line');
+    expect(wrapper.find('rui-icon-stub').attributes().name).toBe('lu-eye');
 
     await wrapper.find('button').trigger('click');
     expect(wrapper.find('input').attributes().type).toBe('password');
     expect(wrapper.find('rui-icon-stub').attributes().name).toBe(
-      'eye-off-line',
+      'lu-eye-off',
     );
   });
 });

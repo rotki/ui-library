@@ -10,9 +10,9 @@ interface Theme {
 }
 
 const themes: Theme[] = [
-  { name: 'Light', value: ThemeMode.light, icon: 'sun-line' },
-  { name: 'Dark', value: ThemeMode.dark, icon: 'moon-line' },
-  { name: 'System', value: ThemeMode.auto, icon: 'macbook-line' },
+  { name: 'Light', value: ThemeMode.light, icon: 'lu-soon' },
+  { name: 'Dark', value: ThemeMode.dark, icon: 'lu-moon' },
+  { name: 'System', value: ThemeMode.auto, icon: 'lu-monitor' },
 ];
 
 const onSwitchTheme = ({ value }: Theme) => switchThemeScheme(value);

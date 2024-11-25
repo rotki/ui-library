@@ -67,20 +67,20 @@ describe('forms/Alert', () => {
 
     await wrapper.setProps({ type: 'error' });
     expect(wrapper.find('rui-icon-stub').attributes('name')).toBe(
-      'error-warning-line',
+      'lu-circle-alert',
     );
 
     await wrapper.setProps({ type: 'warning' });
-    expect(wrapper.find('rui-icon-stub').attributes('name')).toBe('alert-line');
+    expect(wrapper.find('rui-icon-stub').attributes('name')).toBe('lu-triangle-alert');
 
     await wrapper.setProps({ type: 'info' });
     expect(wrapper.find('rui-icon-stub').attributes('name')).toBe(
-      'information-line',
+      'lu-info',
     );
 
     await wrapper.setProps({ type: 'success' });
     expect(wrapper.find('rui-icon-stub').attributes('name')).toBe(
-      'checkbox-circle-line',
+      'lu-circle-check',
     );
 
     await wrapper.setProps({ icon: 'line-fill' });

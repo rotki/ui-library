@@ -58,8 +58,8 @@ const value = computed({
     <span :class="$style.icon__wrapper">
       <RuiIcon
         :class="$style.icon"
-        name="arrow-drop-down-fill"
-        size="24"
+        name="lu-chevron-down"
+        size="16"
       />
     </span>
   </div>

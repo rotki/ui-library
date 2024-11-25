@@ -23,14 +23,14 @@ withDefaults(
     </span>
     <RuiIcon
       v-else-if="state === StepperState.active"
-      name="checkbox-blank-circle-fill"
+      name="lu-checkbox-blank-circle-fill"
       :size="20"
     />
     <RuiIcon
       v-else-if="state === StepperState.done"
       :class="$style.text"
       :size="20"
-      name="check-line"
+      name="lu-check"
     />
     <span
       v-else

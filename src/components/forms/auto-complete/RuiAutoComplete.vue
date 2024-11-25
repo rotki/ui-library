@@ -661,7 +661,7 @@ defineExpose({
           >
             <RuiIcon
               color="error"
-              name="close-line"
+              name="lu-x"
               size="18"
             />
           </span>
@@ -672,8 +672,8 @@ defineExpose({
           >
             <RuiIcon
               :class="[$style.icon, { 'rotate-180': open }]"
-              :size="dense ? 24 : 32"
-              name="arrow-drop-down-fill"
+              :size="dense ? 16 : 24"
+              name="lu-chevron-down"
             />
           </span>
 
@@ -869,7 +869,7 @@ defineExpose({
 
       &__wrapper {
         @apply flex items-center justify-end;
-        @apply absolute right-1 top-px bottom-0;
+        @apply absolute right-3 top-px bottom-0;
       }
     }
 

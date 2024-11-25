@@ -8,7 +8,7 @@ import ComponentView from '@/components/ComponentView.vue';
 
 const defaultModelValue = true;
 const defaultText = '1';
-const icon = 'star-fill';
+const icon = 'lu-star';
 const placement = 'bottom';
 const colors = ['default', 'primary', 'secondary', 'error', 'warning', 'info', 'success'] as const;
 

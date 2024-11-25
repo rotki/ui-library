@@ -52,12 +52,12 @@ describe('forms/RadioButton/Radio', () => {
       },
     });
     expect(wrapper.find('rui-icon-stub').attributes('name')).toBe(
-      'checkbox-blank-circle-line',
+      'lu-checkbox-blank-circle',
     );
 
     await wrapper.setProps({ modelValue: 'value' });
     expect(wrapper.find('rui-icon-stub').attributes('name')).toBe(
-      'radio-button-line',
+      'lu-radio-button-fill',
     );
   });
 

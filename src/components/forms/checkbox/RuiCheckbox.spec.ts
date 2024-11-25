@@ -41,13 +41,13 @@ describe('forms/Checkbox', () => {
   it('render icon correctly', async () => {
     const wrapper = createWrapper();
     expect(wrapper.find('rui-icon-stub').attributes('name')).toBe(
-      'checkbox-blank-line',
+      'lu-checkbox-blank',
     );
     await wrapper.setProps({ indeterminate: false, modelValue: true });
-    expect(wrapper.find('rui-icon-stub').attributes('name')).toBe('checkbox-fill');
+    expect(wrapper.find('rui-icon-stub').attributes('name')).toBe('lu-checkbox-fill');
     await wrapper.setProps({ indeterminate: true, modelValue: false });
     expect(wrapper.find('rui-icon-stub').attributes('name')).toBe(
-      'checkbox-indeterminate-fill',
+      'lu-checkbox-indeterminate-fill',
     );
   });
 

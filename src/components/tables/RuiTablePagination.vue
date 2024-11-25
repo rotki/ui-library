@@ -166,7 +166,7 @@ function onLast() {
         icon
         @click="onFirst()"
       >
-        <RuiIcon name="arrow-left-double-line" />
+        <RuiIcon name="lu-chevrons-left" />
       </RuiButton>
       <RuiButton
         :size="dense ? 'sm' : undefined"
@@ -175,7 +175,7 @@ function onLast() {
         icon
         @click="onPrev()"
       >
-        <RuiIcon name="arrow-left-s-line" />
+        <RuiIcon name="lu-chevron-left" />
       </RuiButton>
       <RuiButton
         :size="dense ? 'sm' : undefined"
@@ -184,7 +184,7 @@ function onLast() {
         icon
         @click="onNext()"
       >
-        <RuiIcon name="arrow-right-s-line" />
+        <RuiIcon name="lu-chevron-right" />
       </RuiButton>
       <RuiButton
         :size="dense ? 'sm' : undefined"
@@ -193,7 +193,7 @@ function onLast() {
         icon
         @click="onLast()"
       >
-        <RuiIcon name="arrow-right-double-line" />
+        <RuiIcon name="lu-chevrons-right" />
       </RuiButton>
     </div>
   </div>

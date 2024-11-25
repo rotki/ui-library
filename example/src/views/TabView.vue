@@ -60,7 +60,7 @@ onBeforeMount(() => {
         >
           <RuiTab>
             <template #prepend>
-              <RuiIcon name="add-fill" />
+              <RuiIcon name="lu-plus" />
             </template>
             Tab 1
           </RuiTab>

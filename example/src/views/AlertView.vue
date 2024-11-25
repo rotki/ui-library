@@ -22,7 +22,7 @@ function createAlert(type: typeof colors[number], options: Partial<AlertData>): 
   return {
     type,
     ...options,
-    ...(['primary', 'secondary'].includes(type) ? { icon: 'information-line' } : {}),
+    ...(['primary', 'secondary'].includes(type) ? { icon: 'lu-info' } : {}),
   };
 }
 
