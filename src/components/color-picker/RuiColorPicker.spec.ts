@@ -24,7 +24,7 @@ describe('colorPicker', () => {
     const wrapper = createWrapper();
 
     expect(wrapper.find('.rui-color-board').exists()).toBeTruthy();
-    expect(wrapper.find('.rui-color-display').exists()).toBeTruthy();
+    expect(wrapper.find('[data-cy="color-display"]').exists()).toBeTruthy();
     expect(wrapper.find('.rui-color-hue').exists()).toBeTruthy();
     expect(wrapper.find('.rui-color-input').exists()).toBeTruthy();
   });
@@ -41,7 +41,7 @@ describe('colorPicker', () => {
     expect(wrapper.find('.rui-color-board').attributes('style')).toBe('background-color: rgb(255, 0, 0);');
     expect(wrapper.find('.rui-color-board div[class*=_cursor_]').attributes('style')).toBe('top: 0%; left: 100%;');
 
-    expect(wrapper.find('.rui-color-display').attributes('style')).toBe('background: rgb(255, 0, 0);');
+    expect(wrapper.find('[data-cy="color-display"]').attributes('style')).toBe('background: rgb(255, 0, 0);');
 
     expect(wrapper.find('.rui-color-hue div[class*=_cursor_]').attributes('style')).toBe('left: calc(0% + 8px);');
 
@@ -65,7 +65,7 @@ describe('colorPicker', () => {
     expect(wrapper.find('.rui-color-board').attributes('style')).toBe('background-color: rgb(0, 255, 255);');
     expect(wrapper.find('.rui-color-board div[class*=_cursor_]').attributes('style')).toBe('top: 0%; left: 50%;');
 
-    expect(wrapper.find('.rui-color-display').attributes('style')).toBe('background: rgb(128, 255, 255);');
+    expect(wrapper.find('[data-cy="color-display"]').attributes('style')).toBe('background: rgb(128, 255, 255);');
 
     // middle position, then substract by (half thumb size / element width defined on the useElementBounding);
     const percentagePosition = roundTwoDecimal(50 - ((16 / 2) / 300 * 100));
@@ -83,7 +83,7 @@ describe('colorPicker', () => {
     expect((wrapper.find('input').element as HTMLInputElement).value).toBe('80ffff');
   });
 
-  it ('type on the input', async () => {
+  it('type on the input', async () => {
     const wrapper = createWrapper();
     await nextTick();
 
@@ -96,7 +96,7 @@ describe('colorPicker', () => {
     expect(wrapper.find('.rui-color-board').attributes('style')).toBe('background-color: rgb(255, 0, 0);');
     expect(wrapper.find('.rui-color-board div[class*=_cursor_]').attributes('style')).toBe('top: 0%; left: 100%;');
 
-    expect(wrapper.find('.rui-color-display').attributes('style')).toBe('background: rgb(255, 0, 0);');
+    expect(wrapper.find('[data-cy="color-display"]').attributes('style')).toBe('background: rgb(255, 0, 0);');
 
     expect(wrapper.find('.rui-color-hue div[class*=_cursor_]').attributes('style')).toBe('left: calc(0% + 8px);');
 
@@ -125,7 +125,7 @@ describe('colorPicker', () => {
     expect(wrapper.find('.rui-color-board').attributes('style')).toBe('background-color: rgb(0, 255, 255);');
     expect(wrapper.find('.rui-color-board div[class*=_cursor_]').attributes('style')).toBe('top: 0%; left: 50%;');
 
-    expect(wrapper.find('.rui-color-display').attributes('style')).toBe('background: rgb(128, 255, 255);');
+    expect(wrapper.find('[data-cy="color-display"]').attributes('style')).toBe('background: rgb(128, 255, 255);');
 
     // middle position, then substract by (half thumb size / element width defined on the useElementBounding);
     const percentagePosition = roundTwoDecimal(50 - ((16 / 2) / 300 * 100));
@@ -148,7 +148,7 @@ describe('colorPicker', () => {
 
     // Selected color: hsv(360, 100, 100) => rgb(255, 0, 0);
     expect(wrapper.find('.rui-color-board').attributes('style')).toBe('background-color: rgb(255, 0, 0);');
-    expect(wrapper.find('.rui-color-display').attributes('style')).toBe('background: rgb(255, 0, 0);');
+    expect(wrapper.find('[data-cy="color-display"]').attributes('style')).toBe('background: rgb(255, 0, 0);');
     expect((wrapper.find('input').element as HTMLInputElement).value).toBe('ff0000');
 
     // end position, then substract by (thumb size / element width defined on the useElementBounding);
@@ -162,7 +162,7 @@ describe('colorPicker', () => {
     await nextTick();
 
     // Selected color: hsv(360, 50, 50) => rgb(128, 64, 64);
-    expect(wrapper.find('.rui-color-display').attributes('style')).toBe('background: rgb(128, 64, 64);');
+    expect(wrapper.find('[data-cy="color-display"]').attributes('style')).toBe('background: rgb(128, 64, 64);');
     expect((wrapper.find('input').element as HTMLInputElement).value).toBe('804040');
     expect(wrapper.find('.rui-color-board div[class*=_cursor_]').attributes('style')).toBe('top: 50%; left: 50%;');
 

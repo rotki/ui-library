@@ -24,7 +24,8 @@ const { copy, copied } = useClipboard({ source: color });
   >
     <template #activator>
       <div
-        class="rui-color-display w-8 h-8 min-w-8 min-h-8 rounded-full cursor-pointer"
+        class="w-8 h-8 min-w-8 min-h-8 rounded-full cursor-pointer"
+        data-cy="color-display"
         :style="{ background: color }"
         @click="copy()"
       />
