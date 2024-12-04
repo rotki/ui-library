@@ -91,6 +91,7 @@ export default defineConfig({
       entry: entries,
       fileName: (format, entryName) => `${entryName}.${format}.js`,
       formats: ['es'],
+      cssFileName: 'style',
     },
     rollupOptions: {
       external: [
