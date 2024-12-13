@@ -653,18 +653,23 @@ defineExpose({
             />
           </div>
 
-          <span
+          <RuiButton
             v-if="clearable && valueSet && !disabled"
+            variant="text"
+            icon
+            size="sm"
+            color="error"
             class="group-hover:!visible"
-            :class="[$style.clear, anyFocused && '!visible']"
+            :class="[$style.clear, anyFocused && '!visible', {
+              'mr-2': !dense,
+            }]"
             @click.stop.prevent="clear()"
           >
             <RuiIcon
-              color="error"
               name="lu-x"
               size="18"
             />
-          </span>
+          </RuiButton>
 
           <span
             :class="$style.icon__wrapper"
