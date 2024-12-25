@@ -101,6 +101,8 @@ const menuWrapperRef = ref();
 
 const { focused: activatorFocusedWithin } = useFocusWithin(activator);
 const { focused: menuWrapperFocusedWithin } = useFocusWithin(menuWrapperRef);
+const { focused: searchInputFocused } = useFocus(textInput);
+
 const anyFocused = logicOr(activatorFocusedWithin, menuWrapperFocusedWithin);
 const debouncedAnyFocused = refDebounced(anyFocused, 100);
 const recentlyFocused = logicOr(debouncedAnyFocused, anyFocused);
@@ -115,8 +117,6 @@ const menuMinHeight = computed<number>(() => {
 const multiple = computed(() => Array.isArray(get(modelValue)));
 
 const shouldApplyValueAsSearch = computed(() => !(slots.selection || get(multiple) || props.chips));
-
-const { focused: searchInputFocused } = useFocus(textInput);
 
 const internalSearch = ref<string>('');
 const debouncedInternalSearch = refDebounced(internalSearch, 100);
@@ -306,7 +306,6 @@ async function setValue(val: TItem, index?: number, skipRefocused = false): Prom
   else {
     await nextTick(() => {
       set(isOpen, false);
-      set(searchInputFocused, false);
     });
     if (get(shouldApplyValueAsSearch))
       updateInternalSearch(getText(val));
@@ -316,7 +315,7 @@ async function setValue(val: TItem, index?: number, skipRefocused = false): Prom
     set(value, [val]);
   }
 
-  if (!skipRefocused && get(multiple))
+  if (!skipRefocused)
     set(searchInputFocused, true);
 }
 
@@ -621,7 +620,7 @@ defineExpose({
                 </div>
               </RuiChip>
               <div
-                v-else-if="(multiple || slots['selection.prepend'] || slots.selection) && (!searchInputFocused || multiple)"
+                v-else-if="multiple || ((!searchInputFocused) && (slots['selection.prepend'] || slots.selection))"
                 class="flex"
               >
                 <slot
@@ -658,6 +657,7 @@ defineExpose({
             variant="text"
             icon
             size="sm"
+            tabindex="-1"
             color="error"
             class="group-hover:!visible"
             :class="[$style.clear, anyFocused && '!visible', {
