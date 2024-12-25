@@ -49,16 +49,19 @@ function getPathFromSvgString(svg) {
   });
   const obj = parser.parse(svg);
 
-  function findFirstPath(node) {
-    if (node.path)
-      return node.path;
+  function findCombinedPath(node) {
+    if (node.path) {
+      if (Array.isArray(node.path)) {
+        return node.path.map(item => item['@_d']).join(' ');
+      }
+      return node.path['@_d'];
+    }
     if (node.g)
-      return findFirstPath(node.g);
+      return findCombinedPath(node.g);
     return null;
   }
 
-  const path = findFirstPath(obj.svg);
-  return path['@_d'];
+  return findCombinedPath(obj.svg);
 }
 
 async function getAllSvgDataFromPath(pathDir) {
@@ -104,11 +107,18 @@ function convertToSinglePath(elements) {
         return rectToPath(attrs);
       case 'circle':
         return circleToPath(attrs);
+      case 'ellipse':
+        return ellipseToPath(attrs);
       case 'line':
         return lineToPath(attrs);
+      case 'polyline':
+        return polylineToPath(attrs);
+      case 'polygon':
+        return polygonToPath(attrs);
       case 'path':
         return convertPath(attrs.d, index);
       default:
+        console.log(`tag ${type} is skipped`);
         return '';
     }
   });
@@ -127,15 +137,20 @@ function convertPath(path, index) {
   const commands = path.match(/[a-z][^a-z]*/gi);
   let currentX = 0;
   let currentY = 0;
-  let controlX = 0; // Last control point for smooth curve commands
+  let controlX = 0;
   let controlY = 0;
   let startX = 0;
   let startY = 0;
   let absolutePath = '';
 
+  // Utility to round numbers for precision consistency
+  function round(value, precision = 2) {
+    return Number(value.toFixed(precision));
+  }
+
   commands.forEach((segment) => {
     const command = segment[0];
-    const params = segment.slice(1).trim().match(/-?[\d.]+(?:e[+-]?\d+)?/g);
+    const params = segment.slice(1).trim().match(/-?\d*\.?\d+(?:e[+-]?\d+)?/gi); // Improved regex for numbers
     const numbers = params ? params.map(Number) : [];
     let i = 0;
 
@@ -143,32 +158,32 @@ function convertPath(path, index) {
       case 'm': // Relative move
         currentX += numbers[i++];
         currentY += numbers[i++];
-        absolutePath += `M${currentX} ${currentY} `;
+        absolutePath += `M${round(currentX)} ${round(currentY)} `;
         startX = currentX;
         startY = currentY;
         while (i < numbers.length) {
           currentX += numbers[i++];
           currentY += numbers[i++];
-          absolutePath += `L${currentX} ${currentY} `;
+          absolutePath += `L${round(currentX)} ${round(currentY)} `;
         }
         break;
       case 'l': // Relative line
         while (i < numbers.length) {
           currentX += numbers[i++];
           currentY += numbers[i++];
-          absolutePath += `L${currentX} ${currentY} `;
+          absolutePath += `L${round(currentX)} ${round(currentY)} `;
         }
         break;
       case 'h': // Relative horizontal line
         while (i < numbers.length) {
           currentX += numbers[i++];
-          absolutePath += `L${currentX} ${currentY} `;
+          absolutePath += `L${round(currentX)} ${round(currentY)} `;
         }
         break;
       case 'v': // Relative vertical line
         while (i < numbers.length) {
           currentY += numbers[i++];
-          absolutePath += `L${currentX} ${currentY} `;
+          absolutePath += `L${round(currentX)} ${round(currentY)} `;
         }
         break;
       case 'c': // Relative cubic Bezier curve
@@ -179,7 +194,7 @@ function convertPath(path, index) {
           controlY = currentY + numbers[i++];
           currentX += numbers[i++];
           currentY += numbers[i++];
-          absolutePath += `C${x1} ${y1}, ${controlX} ${controlY}, ${currentX} ${currentY} `;
+          absolutePath += `C${round(x1)} ${round(y1)}, ${round(controlX)} ${round(controlY)}, ${round(currentX)} ${round(currentY)} `;
         }
         break;
       case 's': // Relative smooth cubic Bezier curve
@@ -190,7 +205,7 @@ function convertPath(path, index) {
           controlY = currentY + numbers[i++];
           currentX += numbers[i++];
           currentY += numbers[i++];
-          absolutePath += `C${x1} ${y1}, ${controlX} ${controlY}, ${currentX} ${currentY} `;
+          absolutePath += `C${round(x1)} ${round(y1)}, ${round(controlX)} ${round(controlY)}, ${round(currentX)} ${round(currentY)} `;
         }
         break;
       case 'a': // Relative arc
@@ -202,18 +217,62 @@ function convertPath(path, index) {
           const sweepFlag = numbers[i++];
           currentX += numbers[i++];
           currentY += numbers[i++];
-          absolutePath += `A${rx} ${ry} ${xAxisRotation} ${largeArcFlag} ${sweepFlag} ${currentX} ${currentY} `;
+          absolutePath += `A${round(rx)} ${round(ry)} ${round(xAxisRotation)} ${largeArcFlag} ${sweepFlag} ${round(currentX)} ${round(currentY)} `;
         }
         break;
       case 'M': // Absolute move
+        currentX = numbers[i++];
+        currentY = numbers[i++];
+        absolutePath += `M${round(currentX)} ${round(currentY)} `;
+        startX = currentX;
+        startY = currentY;
+        while (i < numbers.length) {
+          currentX = numbers[i++];
+          currentY = numbers[i++];
+          absolutePath += `L${round(currentX)} ${round(currentY)} `;
+        }
+        break;
       case 'L': // Absolute line
+        while (i < numbers.length) {
+          currentX = numbers[i++];
+          currentY = numbers[i++];
+          absolutePath += `L${round(currentX)} ${round(currentY)} `;
+        }
+        break;
       case 'H': // Absolute horizontal line
+        while (i < numbers.length) {
+          currentX = numbers[i++];
+          absolutePath += `L${round(currentX)} ${round(currentY)} `;
+        }
+        break;
       case 'V': // Absolute vertical line
+        while (i < numbers.length) {
+          currentY = numbers[i++];
+          absolutePath += `L${round(currentX)} ${round(currentY)} `;
+        }
+        break;
       case 'C': // Absolute cubic Bezier curve
-      case 'S': // Absolute smooth cubic Bezier curve
+        while (i < numbers.length) {
+          const x1 = numbers[i++];
+          const y1 = numbers[i++];
+          const x2 = numbers[i++];
+          const y2 = numbers[i++];
+          currentX = numbers[i++];
+          currentY = numbers[i++];
+          absolutePath += `C${round(x1)} ${round(y1)}, ${round(x2)} ${round(y2)}, ${round(currentX)} ${round(currentY)} `;
+        }
+        break;
       case 'A': // Absolute arc
-        // Directly use the segment without change
-        absolutePath += `${segment} `;
+        while (i < numbers.length) {
+          const rx = numbers[i++];
+          const ry = numbers[i++];
+          const xAxisRotation = numbers[i++];
+          const largeArcFlag = numbers[i++];
+          const sweepFlag = numbers[i++];
+          currentX = numbers[i++];
+          currentY = numbers[i++];
+          absolutePath += `A${round(rx)} ${round(ry)} ${round(xAxisRotation)} ${largeArcFlag} ${sweepFlag} ${round(currentX)} ${round(currentY)} `;
+        }
         break;
       case 'Z':
       case 'z':
@@ -222,7 +281,7 @@ function convertPath(path, index) {
         absolutePath += 'Z';
         break;
       default:
-        console.warn(`Command ${command} not specifically handled yet.`);
+        console.warn(`Command ${command} is not handled.`);
         break;
     }
   });
@@ -261,8 +320,53 @@ function circleToPath({ cx = 0, cy = 0, r }) {
   `.trim().replace(/\s+/g, ' ');
 }
 
+function ellipseToPath({ cx = 0, cy = 0, rx = 0, ry = 0 }) {
+  // Similar to a circle but using different radii for x and y coordinates
+  return `
+    M${cx - rx},${cy}
+    a${rx},${ry} 0 1,0 ${rx * 2},0
+    a${rx},${ry} 0 1,0 -${rx * 2},0
+    Z
+  `.trim().replace(/\s+/g, ' ');
+}
+
 function lineToPath({ x1 = 0, y1 = 0, x2 = 0, y2 = 0 }) {
   return `M${x1} ${y1} L${x2} ${y2}`;
+}
+
+function polylineToPath({ points }) {
+  if (!points)
+    return '';
+
+  // Split points string into array of coordinates
+  const coordinates = points.trim().split(/\s+|,/).map(Number);
+
+  if (coordinates.length < 4)
+    return ''; // Need at least 2 points
+
+  // Start path at first point
+  let path = `M${coordinates[0]} ${coordinates[1]}`;
+
+  // Add line segments to remaining points
+  for (let i = 2; i < coordinates.length; i += 2) {
+    path += ` L${coordinates[i]} ${coordinates[i + 1]}`;
+  }
+
+  return path;
+}
+
+function polygonToPath({ points }) {
+  if (!points)
+    return '';
+
+  // Use polylineToPath to create the base path
+  const basePath = polylineToPath({ points });
+
+  if (!basePath)
+    return '';
+
+  // Close the path by adding 'Z' command
+  return `${basePath} Z`;
 }
 
 async function getLucideSvgDataFromPath(pathDir) {
