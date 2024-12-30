@@ -10,7 +10,7 @@ interface Theme {
 }
 
 const themes: Theme[] = [
-  { name: 'Light', value: ThemeMode.light, icon: 'lu-soon' },
+  { name: 'Light', value: ThemeMode.light, icon: 'lu-sun' },
   { name: 'Dark', value: ThemeMode.dark, icon: 'lu-moon' },
   { name: 'System', value: ThemeMode.auto, icon: 'lu-monitor' },
 ];

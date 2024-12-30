@@ -4,7 +4,7 @@ import ComponentView from '@/components/ComponentView.vue';
 
 const icons = ref<{ name: RuiIcons; size: number }[]>([
   { name: 'lu-moon', size: 24 },
-  { name: 'lu-soon', size: 24 },
+  { name: 'lu-sun', size: 24 },
   { name: 'lu-arrow-right', size: 24 },
 ]);
 
