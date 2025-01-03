@@ -315,7 +315,7 @@ async function setValue(val: TItem, index?: number, skipRefocused = false): Prom
     set(value, [val]);
   }
 
-  if (!skipRefocused)
+  if (!skipRefocused && get(multiple))
     set(searchInputFocused, true);
 }
 

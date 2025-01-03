@@ -177,6 +177,7 @@ describe('autocomplete', () => {
     (wrapper.find('input').element as HTMLInputElement).blur();
     await nextTick();
     await vi.delay(100);
+    expect(document.activeElement).toBe(document.body);
     expect((wrapper.find('input').element as HTMLInputElement).value).toBe('');
 
     // doesn't break when use chips
