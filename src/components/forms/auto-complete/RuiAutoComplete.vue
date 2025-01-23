@@ -102,10 +102,9 @@ const menuWrapperRef = ref();
 const { focused: activatorFocusedWithin } = useFocusWithin(activator);
 const { focused: menuWrapperFocusedWithin } = useFocusWithin(menuWrapperRef);
 const { focused: searchInputFocused } = useFocus(textInput);
+const { focused: activatorFocused } = useFocus(activator);
 
 const anyFocused = logicOr(activatorFocusedWithin, menuWrapperFocusedWithin);
-const debouncedAnyFocused = refDebounced(anyFocused, 100);
-const recentlyFocused = logicOr(debouncedAnyFocused, anyFocused);
 
 const renderedOptions = ref<ComponentPublicInstance[]>([]);
 
@@ -174,6 +173,8 @@ const value = computed<TItem[]>({
     const keyAttr = props.keyAttr;
     const multiple = Array.isArray(value);
 
+    const shouldUpdateInternalSearch = get(shouldApplyValueAsSearch) && !get(isOpen);
+
     if (keyAttr && props.returnObject) {
       const valueToArray = value ? (multiple ? value : [value]) : [];
       const filtered: TItem[] = [];
@@ -187,13 +188,13 @@ const value = computed<TItem[]>({
       });
 
       if (multiple || filtered.length === 0) {
-        if (get(shouldApplyValueAsSearch) && !get(recentlyFocused))
+        if (shouldUpdateInternalSearch)
           updateInternalSearch();
         return filtered;
       }
       else {
         const val = filtered[0];
-        if (get(shouldApplyValueAsSearch) && !get(recentlyFocused))
+        if (shouldUpdateInternalSearch)
           updateInternalSearch(getText(val));
 
         return [val];
@@ -211,7 +212,7 @@ const value = computed<TItem[]>({
           return filtered.push(textValueToProperValue(val, props.returnObject));
       });
 
-      if (get(shouldApplyValueAsSearch) && !get(recentlyFocused)) {
+      if (shouldUpdateInternalSearch) {
         if (filtered.length > 0)
           updateInternalSearch(getText(filtered[0]));
         else
@@ -292,7 +293,9 @@ async function setValue(val: TItem, index?: number, skipRefocused = false): Prom
   if (isDefined(index))
     set(highlightedIndex, index);
 
-  if (get(multiple)) {
+  const isMultiple = get(multiple);
+
+  if (isMultiple) {
     const newValue = [...get(value)];
     const indexInValue = itemIndexInValue(val);
     if (indexInValue === -1) {
@@ -304,9 +307,6 @@ async function setValue(val: TItem, index?: number, skipRefocused = false): Prom
     set(value, newValue);
   }
   else {
-    await nextTick(() => {
-      set(isOpen, false);
-    });
     if (get(shouldApplyValueAsSearch))
       updateInternalSearch(getText(val));
     else
@@ -315,13 +315,34 @@ async function setValue(val: TItem, index?: number, skipRefocused = false): Prom
     set(value, [val]);
   }
 
-  if (!skipRefocused && get(multiple))
+  if (!isMultiple) {
+    if (!skipRefocused) {
+      set(activatorFocused, true);
+      get(activator)?.focus();
+      await nextTick(() => {
+        set(isOpen, false);
+      });
+    }
+    else {
+      set(isOpen, false);
+    }
+  }
+  else if (!skipRefocused) {
     set(searchInputFocused, true);
+  }
 }
 
 async function setInputFocus(): Promise<void> {
   await nextTick(() => {
     set(searchInputFocused, true);
+  });
+}
+
+async function onActivatorFocused() {
+  await nextTick(() => {
+    if (!get(activatorFocused)) {
+      set(searchInputFocused, true);
+    }
   });
 }
 
@@ -332,7 +353,7 @@ function setValueFocus(index: number): void {
 }
 
 watch(value, () => {
-  set(focusedValueIndex, -1);
+  setValueFocus(-1);
 });
 
 watch(focusedValueIndex, async (index) => {
@@ -564,7 +585,7 @@ defineExpose({
           data-id="activator"
           :tabindex="disabled || readOnly ? -1 : 0"
           @click="setInputFocus()"
-          @focus="setInputFocus()"
+          @focus="onActivatorFocused()"
           @keydown.enter="onEnter($event)"
           @keydown.tab="onTab($event)"
           @keydown.left="moveSelectedValueHighlight($event, false)"

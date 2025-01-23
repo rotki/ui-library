@@ -112,6 +112,7 @@ describe('autocomplete', () => {
     await vi.delay();
     await nextTick();
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([selectedIndex.toString()]);
+    expect(document.activeElement?.classList.contains('group')).toBe(true);
 
     await wrapper.setProps({
       modelValue: selectedIndex.toString(),
@@ -154,6 +155,15 @@ describe('autocomplete', () => {
     expect(wrapper.emitted('update:modelValue')?.[1]).toEqual([newSelectedIndexToString]);
     expect((wrapper.find('input').element as HTMLInputElement).value).toBe('Greece');
 
+    await vi.delay();
+    expect(document.body.querySelector('div[role=menu]')).toBeFalsy();
+
+    expect((wrapper.find('input').element as HTMLInputElement).value).toBe('Greece');
+
+    // Open menu again
+    await wrapper.find('[data-id=activator]').trigger('click');
+    await vi.delay();
+
     // Delete option should also remove selected value with that option
     const newOptions = options.filter(item => item.id !== newSelectedIndexToString);
 
@@ -163,21 +173,15 @@ describe('autocomplete', () => {
     });
     await nextTick();
 
-    // Even if the options changed, the search value should not be touch as long as the focus still there, so the UX is not breaking
+    // Even if the options changed, the search value should not be touch as long as the menu is still opened, so the UX is not breaking
     expect((wrapper.find('input').element as HTMLInputElement).value).toBe('Greece');
 
-    // Still not supposed to change the search value
-    const menu = document.body.querySelector('div[role=menu]') as HTMLDivElement;
-    menu.focus();
-    await nextTick();
-    expect((wrapper.find('input').element as HTMLInputElement).value).toBe('Greece');
+    // Only after the menu is closed, the search value can be reset
+    await wrapper.find('[data-id=activator]').trigger('keydown.esc');
+    await vi.delay();
 
-    // Only after nothing is focused anymore, the search value can be reset
-    menu.blur();
-    (wrapper.find('input').element as HTMLInputElement).blur();
-    await nextTick();
-    await vi.delay(100);
-    expect(document.activeElement).toBe(document.body);
+    expect(document.body.querySelector('div[role=menu]')).toBeFalsy();
+
     expect((wrapper.find('input').element as HTMLInputElement).value).toBe('');
 
     // doesn't break when use chips
