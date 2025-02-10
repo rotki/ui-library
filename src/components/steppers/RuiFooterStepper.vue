@@ -83,7 +83,7 @@ function onClick(index: number) {
         <RuiIcon
           v-else
           :size="24"
-          name="lu-arrow-right"
+          name="lu-arrow-left"
         />
       </RuiButton>
       <span

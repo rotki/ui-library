@@ -277,7 +277,7 @@ watch(internalModelValue, () => {
         :disabled="prevArrowDisabled"
         @click="onPrevSliderClick()"
       >
-        <RuiIcon :name="vertical ? 'arrow-up-s-line' : 'lu-chevron-left'" />
+        <RuiIcon :name="vertical ? 'lu-chevron-up' : 'lu-chevron-left'" />
       </RuiButton>
     </div>
     <div
