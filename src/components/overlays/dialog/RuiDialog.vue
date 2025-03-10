@@ -37,8 +37,8 @@ const {
   bottomSheet,
 } = toRefs(props);
 
-const internalValue: Ref<boolean> = ref(false);
-const isOpen: Ref<boolean> = ref(false);
+const internalValue = ref<boolean>(false);
+const isOpen = ref<boolean>(false);
 
 watchImmediate(modelValue, (value) => {
   nextTick(() => {
@@ -88,7 +88,7 @@ const style = computed(() => ({
   maxWidth: transformPropsUnit(get(maxWidth)),
 }));
 
-const contentRef: Ref<HTMLDivElement | undefined> = ref(undefined);
+const contentRef = ref<HTMLDivElement>();
 
 watch(contentRef, (contentRef) => {
   if (contentRef) {

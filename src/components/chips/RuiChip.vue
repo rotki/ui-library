@@ -51,7 +51,7 @@ function click(e: any) {
   emit('click', e);
 }
 
-const style: ComputedRef<Partial<StyleValue>> = computed(() => {
+const style = computed<Partial<StyleValue>>(() => {
   const style: Partial<StyleValue> = {};
   const bg = get(bgColor);
   const text = get(textColor);

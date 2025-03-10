@@ -31,7 +31,7 @@ const props = withDefaults(defineProps<Props>(), {
   clearable: false,
 });
 
-const hidden: Ref<boolean> = ref(true);
+const hidden = ref<boolean>(true);
 </script>
 
 <template>

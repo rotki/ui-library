@@ -45,7 +45,7 @@ const { size, modelValue, indeterminate, errorMessages, successMessages } = toRe
 
 const el = ref<HTMLInputElement | null>(null);
 
-const internalModelValue = computed({
+const internalModelValue = computed<boolean>({
   get: () => get(modelValue),
   set: (checked: boolean) => {
     if (checked)
@@ -54,7 +54,7 @@ const internalModelValue = computed({
   },
 });
 
-const iconSize: ComputedRef<number> = computed(() => {
+const iconSize = computed<number>(() => {
   const sizeVal = get(size);
   if (sizeVal === 'lg')
     return 28;
