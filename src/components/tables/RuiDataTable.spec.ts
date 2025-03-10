@@ -394,6 +394,32 @@ describe('dataTable', () => {
     expect(wrapper.props().pagination?.page).toBe(1);
   });
 
+  it('multiple sort works', async () => {
+    const wrapper = createWrapper({
+      props: {
+        cols: columns,
+        modelValue: [],
+        outlined: true,
+        pagination: { limit: 10, page: 1, total: 50 },
+        rowAttr: 'id',
+        rows: data,
+        search: '',
+        sort: [
+          { column: 'title', direction: 'asc' },
+          { column: 'name', direction: 'desc' },
+        ],
+      },
+    });
+
+    const tbody = wrapper.find('tbody');
+
+    expect(tbody.find('tr:nth-child(1) > td:nth-child(3)').text()).toBe('Lindsay Walton 8');
+    expect(tbody.find('tr:nth-child(1) > td:nth-child(4)').text()).toBe('Back-end Developer');
+
+    expect(tbody.find('tr:nth-child(2) > td:nth-child(3)').text()).toBe('Lindsay Walton 6');
+    expect(tbody.find('tr:nth-child(2) > td:nth-child(4)').text()).toBe('Back-end Developer');
+  });
+
   describe('global settings', () => {
     it('should follow global settings', async () => {
       const itemsPerPage = ref(25);
