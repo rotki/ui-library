@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [main, develop, bugfixes]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions: { }
+
 jobs:
   analyze:
     name: analyze

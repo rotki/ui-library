@@ -5,9 +5,17 @@ on:
     tags:
       - 'v*'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions: { }
+
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -40,7 +48,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-          cache: pnpm
 
       - name: Install dependencies 👨🏻‍💻
         run: pnpm install --frozen-lockfile

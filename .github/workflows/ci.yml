@@ -18,9 +18,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
+permissions: { }
+
 jobs:
   commit-lint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@v4
@@ -53,6 +57,9 @@ jobs:
 
   ci:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@v4
