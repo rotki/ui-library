@@ -489,7 +489,7 @@ const sorted: ComputedRef<T[]> = computed(() => {
   if (!Array.isArray(sortBy))
     sort(sortBy);
   else
-    sortBy.forEach(sort);
+    [...sortBy].reverse().forEach(sort);
 
   return data;
 });
