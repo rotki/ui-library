@@ -1,7 +1,7 @@
 {
   "name": "@rotki/ui-library",
   "version": "1.12.1",
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@10.5.1",
   "description": "A vue design system and component library for rotki",
   "type": "module",
   "keywords": [
@@ -160,7 +160,7 @@
   },
   "engines": {
     "node": ">=20 <21",
-    "pnpm": ">=9 <10"
+    "pnpm": ">=10 <11"
   },
   "lint-staged": {
     "*.{js,cjs,ts,vue,yml,json,md}": "eslint"
