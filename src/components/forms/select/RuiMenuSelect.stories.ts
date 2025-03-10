@@ -1,6 +1,6 @@
-import RuiMenuSelect, { type Props } from '@/components/forms/select/RuiMenuSelect.vue';
-import { type SelectOption, options } from '@/__test__/options';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import { options, type SelectOption } from '@/__test__/options';
+import RuiMenuSelect, { type Props } from '@/components/forms/select/RuiMenuSelect.vue';
 
 type SelectProps<T extends SelectOption | string = SelectOption> = Props<string, T> & { modelValue: string | undefined };
 

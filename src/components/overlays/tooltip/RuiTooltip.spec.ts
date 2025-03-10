@@ -1,7 +1,7 @@
-import { describe, expect, it, vi } from 'vitest';
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { describe, expect, it, vi } from 'vitest';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiTooltip>) {
   return mount(RuiTooltip, {

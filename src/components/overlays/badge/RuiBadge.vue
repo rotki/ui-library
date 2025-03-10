@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { logicAnd, logicOr } from '@vueuse/math';
-import RuiIcon from '@/components/icons/RuiIcon.vue';
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
+import RuiIcon from '@/components/icons/RuiIcon.vue';
+import { logicAnd, logicOr } from '@vueuse/math';
 
 export interface Props {
   text?: string | null;

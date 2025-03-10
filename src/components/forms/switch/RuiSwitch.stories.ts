@@ -1,6 +1,6 @@
-import { contextColors } from '@/consts/colors';
-import RuiSwitch, { type Props } from '@/components/forms/switch/RuiSwitch.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import RuiSwitch, { type Props } from '@/components/forms/switch/RuiSwitch.vue';
+import { contextColors } from '@/consts/colors';
 
 type PropsAndLabel = Props & { label: string };
 

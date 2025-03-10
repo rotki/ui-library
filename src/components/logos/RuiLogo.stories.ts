@@ -1,5 +1,5 @@
-import RuiLogo, { type Props } from '@/components/logos/RuiLogo.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import RuiLogo, { type Props } from '@/components/logos/RuiLogo.vue';
 
 const render: StoryFn<Props> = args => ({
   components: { RuiLogo },

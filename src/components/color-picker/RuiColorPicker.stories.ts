@@ -1,6 +1,6 @@
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 import RuiCard from '@/components/cards/RuiCard.vue';
 import RuiColorPicker, { type Props } from '@/components/color-picker/RuiColorPicker.vue';
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 const render: StoryFn<Props> = args => ({
   components: { RuiCard, RuiColorPicker },

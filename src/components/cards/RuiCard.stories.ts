@@ -1,7 +1,7 @@
-import { objectOmit } from '@vueuse/shared';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 import RuiButton, { type Props as ButtonProps } from '@/components/buttons/button/RuiButton.vue';
 import RuiCard, { type Props as CardProps } from '@/components/cards/RuiCard.vue';
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import { objectOmit } from '@vueuse/shared';
 
 type Props = CardProps & {
   image?: string;

@@ -1,5 +1,5 @@
-import { logicOr } from '@vueuse/math';
 import type { MaybeRef } from '@vueuse/shared';
+import { logicOr } from '@vueuse/math';
 
 export function useFormTextDetail(errorMessages: MaybeRef<string | string[]>, successMessages: MaybeRef<string | string[]>) {
   const formattedErrorMessages = computed(() => {

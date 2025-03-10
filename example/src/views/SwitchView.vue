@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { RuiSwitch, type SwitchProps } from '@rotki/ui-library';
-import ComponentView from '@/components/ComponentView.vue';
 import ComponentGroup from '@/components/ComponentGroup.vue';
+import ComponentView from '@/components/ComponentView.vue';
+import { RuiSwitch, type SwitchProps } from '@rotki/ui-library';
 
 type SwitchData = SwitchProps & {
   value?: boolean;

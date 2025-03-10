@@ -1,6 +1,6 @@
-import { contextColors } from '@/consts/colors';
-import RuiProgress, { type Props } from '@/components/progress/RuiProgress.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import RuiProgress, { type Props } from '@/components/progress/RuiProgress.vue';
+import { contextColors } from '@/consts/colors';
 
 const render: StoryFn<Props> = args => ({
   components: { Progress: RuiProgress },

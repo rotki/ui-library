@@ -1,6 +1,6 @@
-import { DEFAULT_POPPER_OPTIONS } from '@/composables/popper';
-import RuiTooltip, { type Props } from '@/components/overlays/tooltip/RuiTooltip.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import RuiTooltip, { type Props } from '@/components/overlays/tooltip/RuiTooltip.vue';
+import { DEFAULT_POPPER_OPTIONS } from '@/composables/popper';
 
 const render: StoryFn<Props> = args => ({
   components: { RuiTooltip },

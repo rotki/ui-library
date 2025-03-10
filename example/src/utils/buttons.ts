@@ -1,4 +1,4 @@
-import { type ButtonGroupProps, type ContextColorsType, contextColors } from '@rotki/ui-library';
+import { type ButtonGroupProps, contextColors, type ContextColorsType } from '@rotki/ui-library';
 
 const gap = ['sm', 'md', 'lg'] as const;
 

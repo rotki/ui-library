@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
-import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import type { ContextColorsType } from '@/consts/colors';
+import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
+import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
 export interface Props {
   modelValue?: number;

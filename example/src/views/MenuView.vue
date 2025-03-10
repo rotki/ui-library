@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import ComponentView from '@/components/ComponentView.vue';
+import { createOptions, type SelectOption } from '@/data/options';
 import {
   type ButtonProps,
   type MenuProps,
@@ -9,8 +11,6 @@ import {
   RuiMenuSelect,
 } from '@rotki/ui-library';
 import { objectOmit } from '@vueuse/shared';
-import { type SelectOption, createOptions } from '@/data/options';
-import ComponentView from '@/components/ComponentView.vue';
 
 const options = createOptions();
 

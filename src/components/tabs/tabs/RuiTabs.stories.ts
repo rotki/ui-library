@@ -1,11 +1,11 @@
-import { contextColors } from '@/consts/colors';
-import RuiIcon from '@/components/icons/RuiIcon.vue';
-import RuiTab from '@/components/tabs/tab/RuiTab.vue';
-import RuiCard from '@/components/cards/RuiCard.vue';
-import RuiTabItems from '@/components/tabs/tab-items/RuiTabItems.vue';
-import RuiTabItem from '@/components/tabs/tab-item/RuiTabItem.vue';
-import RuiTabs, { type Props as TabsProps } from '@/components/tabs/tabs/RuiTabs.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import RuiCard from '@/components/cards/RuiCard.vue';
+import RuiIcon from '@/components/icons/RuiIcon.vue';
+import RuiTabItem from '@/components/tabs/tab-item/RuiTabItem.vue';
+import RuiTabItems from '@/components/tabs/tab-items/RuiTabItems.vue';
+import RuiTab from '@/components/tabs/tab/RuiTab.vue';
+import RuiTabs, { type Props as TabsProps } from '@/components/tabs/tabs/RuiTabs.vue';
+import { contextColors } from '@/consts/colors';
 
 type Props = TabsProps & { class?: string };
 

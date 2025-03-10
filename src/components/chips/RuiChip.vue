@@ -1,10 +1,10 @@
 <script lang="ts" setup>
+import type { ContextColorsType } from '@/consts/colors';
+import type { RuiIcons } from '@/icons';
+import type { StyleValue } from 'vue';
+import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { logicNot, logicOr } from '@vueuse/math';
 import { objectOmit } from '@vueuse/shared';
-import RuiIcon from '@/components/icons/RuiIcon.vue';
-import type { ContextColorsType } from '@/consts/colors';
-import type { StyleValue } from 'vue';
-import type { RuiIcons } from '@/icons';
 
 export interface Props {
   tile?: boolean;

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import ComponentView from '@/components/ComponentView.vue';
 import {
   type DataTableColumn,
   type DataTableOptions,
@@ -12,7 +13,6 @@ import {
   RuiTextField,
 } from '@rotki/ui-library/components';
 import { objectOmit, useDebounceFn } from '@vueuse/shared';
-import ComponentView from '@/components/ComponentView.vue';
 
 interface _User {
   id: number;

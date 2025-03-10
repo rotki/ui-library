@@ -1,6 +1,6 @@
+import RuiRevealableTextField from '@/components/forms/revealable-text-field/RuiRevealableTextField.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
-import RuiRevealableTextField from '@/components/forms/revealable-text-field/RuiRevealableTextField.vue';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiRevealableTextField>) {
   return mount(RuiRevealableTextField, { ...options, global: { stubs: ['rui-icon'] } });

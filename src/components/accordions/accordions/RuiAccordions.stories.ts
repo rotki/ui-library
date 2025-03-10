@@ -1,6 +1,6 @@
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 import RuiAccordion from '@/components/accordions/accordion/RuiAccordion.vue';
 import RuiAccordions, { type Props as AccordionsProps } from '@/components/accordions/accordions/RuiAccordions.vue';
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 const render: StoryFn<AccordionsProps> = args => ({
   components: { RuiAccordion, RuiAccordions },

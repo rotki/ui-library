@@ -1,12 +1,12 @@
 <script lang="ts" setup>
+import RuiProgress from '@/components/progress/RuiProgress.vue';
+import RuiStepperCustomIcon from '@/components/steppers/RuiStepperCustomIcon.vue';
+import RuiStepperIcon from '@/components/steppers/RuiStepperIcon.vue';
 import {
   StepperOrientation,
   StepperState,
   type StepperStep,
 } from '@/types/stepper';
-import RuiStepperIcon from '@/components/steppers/RuiStepperIcon.vue';
-import RuiStepperCustomIcon from '@/components/steppers/RuiStepperCustomIcon.vue';
-import RuiProgress from '@/components/progress/RuiProgress.vue';
 
 export interface Props {
   step?: number;

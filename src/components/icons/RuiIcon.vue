@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { type RuiIcons, isRuiIcon } from '@/icons';
 import type { ContextColorsType } from '@/consts/colors';
+import { isRuiIcon, type RuiIcons } from '@/icons';
 
 export interface Props {
   name: RuiIcons;

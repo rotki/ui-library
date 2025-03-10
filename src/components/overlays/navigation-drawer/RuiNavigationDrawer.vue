@@ -1,7 +1,7 @@
 <script setup lang='ts'>
-import { type Ref, ref } from 'vue';
-import { getRootAttrs } from '@/utils/helpers';
 import type { MaybeElement } from '@vueuse/core';
+import { getRootAttrs } from '@/utils/helpers';
+import { type Ref, ref } from 'vue';
 
 export interface NavigationDrawerProps {
   modelValue?: boolean;

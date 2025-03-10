@@ -1,8 +1,8 @@
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import RuiButtonGroup, { type Props as ButtonProps } from '@/components/buttons/button-group/RuiButtonGroup.vue';
+import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { contextColors } from '@/consts/colors';
-import RuiButton from '@/components/buttons/button/RuiButton.vue';
-import RuiButtonGroup, { type Props as ButtonProps } from '@/components/buttons/button-group/RuiButtonGroup.vue';
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 type Props = ButtonProps<string | number>;
 

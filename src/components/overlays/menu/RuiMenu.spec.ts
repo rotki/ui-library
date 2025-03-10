@@ -1,7 +1,7 @@
-import { describe, expect, it, vi } from 'vitest';
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { describe, expect, it, vi } from 'vitest';
 
 const text = 'This is menu';
 

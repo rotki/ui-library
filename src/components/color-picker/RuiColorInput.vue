@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import tinycolor from 'tinycolor2';
-import { clamp } from '@vueuse/shared';
-import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
-import RuiButton from '@/components/buttons/button/RuiButton.vue';
-import RuiIcon from '@/components/icons/RuiIcon.vue';
 import type { Color } from './utils';
+import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
+import RuiIcon from '@/components/icons/RuiIcon.vue';
+import { clamp } from '@vueuse/shared';
+import tinycolor from 'tinycolor2';
 
 defineOptions({
   name: 'RuiColorInput',

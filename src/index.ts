@@ -1,14 +1,20 @@
-import { useRotkiTheme } from '@/composables/theme';
-import { StepperState } from '@/types/stepper';
+import type { InitThemeOptions } from '@/types/theme';
+import type { App } from 'vue';
 import {
+  createTableDefaults,
   type TableOptions,
   TableSymbol,
-  createTableDefaults,
 } from '@/composables/defaults/table';
-import { IconsSymbol, createIconDefaults } from '@/composables/icons';
-import type { App } from 'vue';
-import type { InitThemeOptions } from '@/types/theme';
+import { createIconDefaults, IconsSymbol } from '@/composables/icons';
+import { useRotkiTheme } from '@/composables/theme';
+import { StepperState } from '@/types/stepper';
 import '@/style.scss';
+
+export * from '@/components';
+
+export * from '@/composables';
+
+export { contextColors, type ContextColorsType } from '@/consts/colors';
 
 export * from '@/icons';
 
@@ -19,12 +25,6 @@ export {
   type ThemeData,
   ThemeMode,
 } from '@/types/theme';
-
-export { type ContextColorsType, contextColors } from '@/consts/colors';
-
-export * from '@/composables';
-
-export * from '@/components';
 
 export { StepperState };
 

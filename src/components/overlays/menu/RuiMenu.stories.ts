@@ -1,7 +1,7 @@
-import { DEFAULT_POPPER_OPTIONS } from '@/composables/popper';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import { DEFAULT_POPPER_OPTIONS } from '@/composables/popper';
 
 const render: StoryFn<MenuProps> = args => ({
   components: { RuiButton, RuiMenu },

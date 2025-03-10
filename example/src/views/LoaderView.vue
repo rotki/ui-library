@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { RuiSkeletonLoader, type SkeletonLoaderProps } from '@rotki/ui-library';
-import ComponentView from '@/components/ComponentView.vue';
 import ComponentGroup from '@/components/ComponentGroup.vue';
+import ComponentView from '@/components/ComponentView.vue';
+import { RuiSkeletonLoader, type SkeletonLoaderProps } from '@rotki/ui-library';
 
 type SkeletonData = SkeletonLoaderProps & {
   class?: string;

@@ -1,7 +1,7 @@
-import { describe, expect, it, vi } from 'vitest';
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiDialog from '@/components/overlays/dialog/RuiDialog.vue';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { describe, expect, it, vi } from 'vitest';
 
 const text = 'This is content';
 

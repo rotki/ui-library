@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import RuiFooterStepper from '@/components/steppers/RuiFooterStepper.vue';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { describe, expect, it } from 'vitest';
 
 function createWrapper(options: ComponentMountingOptions<typeof RuiFooterStepper>) {
   return mount(RuiFooterStepper, options);

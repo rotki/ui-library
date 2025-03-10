@@ -1,6 +1,6 @@
+import type { Ref } from 'vue';
 import { breakpointsTailwind } from '@vueuse/core';
 import { camelCase } from 'scule';
-import type { Ref } from 'vue';
 
 export function useBreakpoint() {
   const { width } = useWindowSize();

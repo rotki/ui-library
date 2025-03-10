@@ -1,8 +1,9 @@
+import { config } from '@vue/test-utils';
+import { promiseTimeout } from '@vueuse/core';
+
 // setup.js file
 import { vi } from 'vitest';
-import { promiseTimeout } from '@vueuse/core';
-import { config } from '@vue/test-utils';
-import { IconsSymbol, createIconDefaults } from '../../src/composables/icons';
+import { createIconDefaults, IconsSymbol } from '../../src/composables/icons';
 import * as Icons from '../../src/icons';
 
 // @ts-expect-error symbol cannot be used as an index.

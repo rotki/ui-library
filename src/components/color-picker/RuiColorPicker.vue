@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 // Inspired by https://github.com/aesoper101/vue3-colorpicker/
 import RuiColorBoard from '@/components/color-picker/RuiColorBoard.vue';
+import RuiColorDisplay from '@/components/color-picker/RuiColorDisplay.vue';
 import RuiColorHue from '@/components/color-picker/RuiColorHue.vue';
 import RuiColorInput from '@/components/color-picker/RuiColorInput.vue';
-import RuiColorDisplay from '@/components/color-picker/RuiColorDisplay.vue';
 import { Color } from './utils';
 
 export interface Props {

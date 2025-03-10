@@ -1,6 +1,6 @@
-import { contextColors } from '@/consts/colors';
-import RuiTextArea, { type Props } from '@/components/forms/text-area/RuiTextArea.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import RuiTextArea, { type Props } from '@/components/forms/text-area/RuiTextArea.vue';
+import { contextColors } from '@/consts/colors';
 
 type RuiTextAreaProps = Props & { modelValue: string };
 const render: StoryFn<RuiTextAreaProps> = args => ({

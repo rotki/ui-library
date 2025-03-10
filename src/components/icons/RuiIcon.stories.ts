@@ -1,7 +1,7 @@
-import { RuiIcons } from '@/icons';
-import { contextColors } from '@/consts/colors';
-import RuiIcon, { type Props } from '@/components/icons/RuiIcon.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import RuiIcon, { type Props } from '@/components/icons/RuiIcon.vue';
+import { contextColors } from '@/consts/colors';
+import { RuiIcons } from '@/icons';
 
 const render: StoryFn<Props> = args => ({
   components: { RuiIcon },

@@ -1,7 +1,7 @@
+import RuiTabItem from '@/components/tabs/tab-item/RuiTabItem.vue';
+import RuiTabItems from '@/components/tabs/tab-items/RuiTabItems.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
-import RuiTabItems from '@/components/tabs/tab-items/RuiTabItems.vue';
-import RuiTabItem from '@/components/tabs/tab-item/RuiTabItem.vue';
 
 vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
   const now = Date.now();

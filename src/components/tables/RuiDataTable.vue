@@ -3,14 +3,14 @@
   setup
   generic="T extends object, IdType extends keyof T = keyof T"
 >
+import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
+import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import RuiExpandButton from '@/components/tables/RuiExpandButton.vue';
-import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
-import RuiButton from '@/components/buttons/button/RuiButton.vue';
-import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
-import RuiTablePagination, { type TablePaginationData } from '@/components/tables/RuiTablePagination.vue';
 import RuiTableHead, { type GroupData, type GroupKeys, type NoneSortableTableColumn, type SortColumn, type TableColumn, type TableRowKey, type TableRowKeyData, type TableSortData } from '@/components/tables/RuiTableHead.vue';
+import RuiTablePagination, { type TablePaginationData } from '@/components/tables/RuiTablePagination.vue';
 
 export interface TableOptions<T> {
   pagination?: TablePaginationData;
@@ -295,13 +295,13 @@ const isGrouped = computed(() => !!get(groupKey));
 const columns = computed<TableColumn<T>[]>(() => {
   const data
     = props.cols
-    ?? getKeys(props.rows[0] ?? {}).map(
-      key =>
+      ?? getKeys(props.rows[0] ?? {}).map(
+        key =>
         ({
           key,
           [props.columnAttr]: key.toString(),
         }) satisfies NoneSortableTableColumn<T>,
-    );
+      );
 
   const hasExpandColumn = data.some(row => row.key === 'expand');
 

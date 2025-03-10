@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import ComponentView from '@/components/ComponentView.vue';
 import {
   type FooterStepperProps,
   RuiFooterStepper,
@@ -6,7 +7,6 @@ import {
   type StepperProps,
   StepperState,
 } from '@rotki/ui-library';
-import ComponentView from '@/components/ComponentView.vue';
 
 const steppers = ref<StepperProps[]>([
   {

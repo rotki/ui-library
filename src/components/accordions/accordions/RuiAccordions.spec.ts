@@ -1,7 +1,7 @@
+import Accordion from '@/components/accordions/accordion/RuiAccordion.vue';
+import Accordions from '@/components/accordions/accordions/RuiAccordions.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
-import Accordions from '@/components/accordions/accordions/RuiAccordions.vue';
-import Accordion from '@/components/accordions/accordion/RuiAccordion.vue';
 
 function createWrapper(options?: ComponentMountingOptions<typeof Accordions>) {
   return mount(Accordions, {

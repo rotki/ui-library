@@ -1,5 +1,5 @@
-import { getStringValue, getText } from '@/utils/forms/auto-complete';
 import { defaultDisabledProp, defaultKeyProp } from '@/consts/forms/auto-complete';
+import { getStringValue, getText } from '@/utils/forms/auto-complete';
 
 export function useAutoCompleteProps<T extends object>(props: {
   keyProp?: Extract<keyof T, string>;

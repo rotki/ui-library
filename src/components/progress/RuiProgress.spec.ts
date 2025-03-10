@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { describe, expect, it } from 'vitest';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiProgress>) {
   return mount(RuiProgress, options);

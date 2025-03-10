@@ -1,7 +1,7 @@
-import { contextColors } from '@/consts/colors';
-import type { BasicColorSchema } from '@vueuse/core';
 import type { GeneratedIcon } from '@/types/icons';
+import type { BasicColorSchema } from '@vueuse/core';
 import type { ComputedRef, Ref } from 'vue';
+import { contextColors } from '@/consts/colors';
 
 export const ThemeMode = {
   auto: 'auto',

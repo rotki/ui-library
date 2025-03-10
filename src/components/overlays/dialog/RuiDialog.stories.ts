@@ -1,7 +1,7 @@
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCard from '@/components/cards/RuiCard.vue';
 import RuiDialog, { type DialogProps } from '@/components/overlays/dialog/RuiDialog.vue';
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 const render: StoryFn<DialogProps> = args => ({
   components: { RuiButton, RuiCard, RuiDialog },

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiMenuSelect from '@/components/forms/select/RuiMenuSelect.vue';
+import RuiIcon from '@/components/icons/RuiIcon.vue';
 
 export interface TablePaginationData {
   page: number;

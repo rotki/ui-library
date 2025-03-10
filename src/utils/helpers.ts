@@ -1,6 +1,6 @@
+import type { SetupContext } from 'vue';
 import { objectOmit, objectPick } from '@vueuse/shared';
 import { camelCase, snakeCase } from 'scule';
-import type { SetupContext } from 'vue';
 
 interface CurrencyOptions {
   currency?: string;

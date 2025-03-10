@@ -1,5 +1,5 @@
-import RuiDivider, { type Props } from '@/components/divider/RuiDivider.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import RuiDivider, { type Props } from '@/components/divider/RuiDivider.vue';
 
 const render: StoryFn<Props> = args => ({
   components: { RuiDivider },

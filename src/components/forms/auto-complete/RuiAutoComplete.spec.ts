@@ -1,8 +1,8 @@
-import { describe, expect, it, vi } from 'vitest';
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import RuiAutoComplete from '@/components/forms/auto-complete/RuiAutoComplete.vue';
+import { options, type SelectOption } from '@/__test__/options';
 import RuiChip from '@/components/chips/RuiChip.vue';
-import { type SelectOption, options } from '@/__test__/options';
+import RuiAutoComplete from '@/components/forms/auto-complete/RuiAutoComplete.vue';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { describe, expect, it, vi } from 'vitest';
 
 function createWrapper<
   TValue,

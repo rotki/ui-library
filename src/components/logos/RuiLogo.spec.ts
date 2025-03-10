@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import RuiLogo from '@/components/logos/RuiLogo.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { promiseTimeout } from '@vueuse/core';
-import RuiLogo from '@/components/logos/RuiLogo.vue';
+import { describe, expect, it } from 'vitest';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiLogo>) {
   return mount(RuiLogo, { ...options });

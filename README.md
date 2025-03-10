@@ -78,7 +78,7 @@ switchThemeScheme(ThemeMode.dark);
 You need to specify which icons you want to enable, when installing the RuiPlugin.
 
 ```typescript
-import { Ri4kFill, Ri4kLine, createRui } from '@rotki/ui-library';
+import { createRui, Ri4kFill, Ri4kLine } from '@rotki/ui-library';
 
 const RuiPlugin = createRui({
   theme: {

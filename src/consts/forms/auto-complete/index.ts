@@ -3,7 +3,7 @@ const defaultKeyProp = 'id';
 const defaultDisabledProp = 'disabled';
 
 export {
-  defaultKeyProp,
   defaultDisabledProp,
+  defaultKeyProp,
   defaultTextProp,
 };

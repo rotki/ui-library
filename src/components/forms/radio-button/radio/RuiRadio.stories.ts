@@ -1,6 +1,6 @@
-import { contextColors } from '@/consts/colors';
-import RuiRadio, { type RadioProps } from '@/components/forms/radio-button/radio/RuiRadio.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import RuiRadio, { type RadioProps } from '@/components/forms/radio-button/radio/RuiRadio.vue';
+import { contextColors } from '@/consts/colors';
 
 type PropsAndLabel = RadioProps<string> & { label: string; modelValue: string };
 

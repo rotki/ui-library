@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { type AlertProps, RuiAlert } from '@rotki/ui-library';
 import ComponentView from '@/components/ComponentView.vue';
+import { type AlertProps, RuiAlert } from '@rotki/ui-library';
 
 interface AlertData extends Omit<AlertProps, 'title' | 'description'> {
   clicks?: number;

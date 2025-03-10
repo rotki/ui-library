@@ -1,6 +1,6 @@
-import { contextColors } from '@/consts/colors';
-import RuiSlider, { type Props } from '@/components/forms/slider/RuiSlider.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import RuiSlider, { type Props } from '@/components/forms/slider/RuiSlider.vue';
+import { contextColors } from '@/consts/colors';
 
 const render: StoryFn<Props> = args => ({
   components: { RuiSlider },

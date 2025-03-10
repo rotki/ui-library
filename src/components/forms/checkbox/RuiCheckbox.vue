@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { objectPick } from '@vueuse/shared';
-import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
+import type { ContextColorsType } from '@/consts/colors';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
-import type { ContextColorsType } from '@/consts/colors';
+import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
+import { objectPick } from '@vueuse/shared';
 
 export interface Props {
   modelValue?: boolean;

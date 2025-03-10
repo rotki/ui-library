@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { describe, expect, it } from 'vitest';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiIcon>) {
   return mount(RuiIcon, options);

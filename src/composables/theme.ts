@@ -1,14 +1,14 @@
-import { type ComputedRef, type Ref, computed, ref } from 'vue';
-import { useColorMode } from '@vueuse/core';
 import {
   type ColorIntensity,
+  defaultTheme,
   type InitThemeOptions,
   type ThemeConfig,
   type ThemeContent,
   type ThemeData,
   ThemeMode,
-  defaultTheme,
 } from '@/types/theme';
+import { useColorMode } from '@vueuse/core';
+import { computed, type ComputedRef, type Ref, ref } from 'vue';
 
 const config: Ref<ThemeConfig> = ref({ ...defaultTheme });
 

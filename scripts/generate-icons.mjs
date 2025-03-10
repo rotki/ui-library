@@ -1,9 +1,9 @@
+import { lstat, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { lstat, readFile, readdir, writeFile } from 'node:fs/promises';
 import consola from 'consola';
+import { XMLParser } from 'fast-xml-parser';
 import fs from 'fs-extra';
 import { pascalCase } from 'scule';
-import { XMLParser } from 'fast-xml-parser';
 
 const REMIX_PREFIX = 'ri-';
 const LUCIDE_PREFIX = 'lu-';

@@ -1,6 +1,6 @@
-import { contextColors } from '@/consts/colors';
-import RuiRevealableTextField, { type Props } from '@/components/forms/revealable-text-field/RuiRevealableTextField.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import RuiRevealableTextField, { type Props } from '@/components/forms/revealable-text-field/RuiRevealableTextField.vue';
+import { contextColors } from '@/consts/colors';
 
 type RuiRevealableTextFieldProps = Props & { modelValue: string };
 const render: StoryFn<RuiRevealableTextFieldProps> = args => ({

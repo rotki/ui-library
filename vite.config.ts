@@ -1,9 +1,9 @@
 import { resolve } from 'node:path';
 import vue from '@vitejs/plugin-vue';
-import { defineConfig } from 'vitest/config';
-import AutoImport from 'unplugin-auto-import/vite';
-import fg from 'fast-glob';
 import consola from 'consola';
+import fg from 'fast-glob';
+import AutoImport from 'unplugin-auto-import/vite';
+import { defineConfig } from 'vitest/config';
 
 const entryPoints = [
   'src/components/index.ts',

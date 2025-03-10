@@ -1,5 +1,5 @@
-import type { InjectionKey, Ref } from 'vue';
 import type { MaybeRef } from '@vueuse/shared';
+import type { InjectionKey, Ref } from 'vue';
 
 export interface TableOptions {
   itemsPerPage: Ref<number>;

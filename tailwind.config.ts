@@ -1,12 +1,12 @@
+import type { Config } from 'tailwindcss';
 import process from 'node:process';
-import { typographyClasses } from './src/consts/typography';
-import themePlugin from './src/theme';
 import {
   baseColors,
   baseColorsIntensities,
   contextColors,
 } from './src/consts/colors';
-import type { Config } from 'tailwindcss';
+import { typographyClasses } from './src/consts/typography';
+import themePlugin from './src/theme';
 
 const isDevelopment = process.env.NODE_ENV === 'development' || process.env.STORYBOOK;
 

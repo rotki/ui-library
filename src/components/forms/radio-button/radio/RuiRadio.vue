@@ -1,8 +1,8 @@
 <script lang="ts" setup generic='TValue'>
-import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
+import type { ContextColorsType } from '@/consts/colors';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
-import type { ContextColorsType } from '@/consts/colors';
+import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
 export interface RadioProps<TValue> {
   value: TValue;

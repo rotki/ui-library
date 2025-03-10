@@ -1,17 +1,17 @@
-import { type Ref, onMounted, ref, watchEffect } from 'vue';
-import {
-  type VirtualElement,
-  defaultModifiers,
-  popperGenerator,
-} from '@popperjs/core/lib/popper-lite';
+import type { Instance, Placement, PositioningStrategy } from '@popperjs/core';
 import arrow from '@popperjs/core/lib/modifiers/arrow';
+import computeStyles from '@popperjs/core/lib/modifiers/computeStyles';
+import eventListeners from '@popperjs/core/lib/modifiers/eventListeners';
 import flip from '@popperjs/core/lib/modifiers/flip';
 import offset from '@popperjs/core/lib/modifiers/offset';
 import preventOverflow from '@popperjs/core/lib/modifiers/preventOverflow';
-import computeStyles from '@popperjs/core/lib/modifiers/computeStyles';
-import eventListeners from '@popperjs/core/lib/modifiers/eventListeners';
+import {
+  defaultModifiers,
+  popperGenerator,
+  type VirtualElement,
+} from '@popperjs/core/lib/popper-lite';
 import { type MaybeElement, unrefElement } from '@vueuse/core';
-import type { Instance, Placement, PositioningStrategy } from '@popperjs/core';
+import { onMounted, type Ref, ref, watchEffect } from 'vue';
 
 export interface PopperOptions {
   locked?: boolean;

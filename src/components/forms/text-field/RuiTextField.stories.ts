@@ -1,6 +1,6 @@
-import { contextColors } from '@/consts/colors';
-import RuiTextField, { type TextFieldProps } from '@/components/forms/text-field/RuiTextField.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import RuiTextField, { type TextFieldProps } from '@/components/forms/text-field/RuiTextField.vue';
+import { contextColors } from '@/consts/colors';
 
 type Props = TextFieldProps & { modelValue: string };
 

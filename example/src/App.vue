@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { RouterView } from 'vue-router';
-import AppNav from '@/components/AppNav.vue';
 import AppFooter from '@/components/AppFooter.vue';
-import AppSideNav from '@/components/AppSideNav.vue';
 import AppFootNav from '@/components/AppFootNav.vue';
+import AppNav from '@/components/AppNav.vue';
+import AppSideNav from '@/components/AppSideNav.vue';
+import { RouterView } from 'vue-router';
 
 const navigation = ref([
   {

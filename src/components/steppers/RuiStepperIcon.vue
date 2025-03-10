@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { StepperState } from '@/types/stepper';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
+import { StepperState } from '@/types/stepper';
 
 withDefaults(defineProps<{
   state?: StepperState;

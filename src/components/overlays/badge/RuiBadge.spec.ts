@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest';
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import RuiBadge from '@/components/overlays/badge/RuiBadge.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiBadge from '@/components/overlays/badge/RuiBadge.vue';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { describe, expect, it } from 'vitest';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiBadge>) {
   return mount(RuiBadge, {

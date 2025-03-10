@@ -1,6 +1,6 @@
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 import RuiChip, { type Props as ChipProps } from '@/components/chips/RuiChip.vue';
 import { contextColors } from '@/consts/colors';
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 type Props = ChipProps & { prepend: string; children: string };
 

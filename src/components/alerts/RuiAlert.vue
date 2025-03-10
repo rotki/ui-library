@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import RuiIcon from '@/components/icons/RuiIcon.vue';
-import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
+import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiIcon from '@/components/icons/RuiIcon.vue';
 
 export interface Props {
   title?: string;

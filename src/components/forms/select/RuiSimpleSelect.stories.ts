@@ -1,5 +1,5 @@
-import RuiSimpleSelect, { type Props } from '@/components/forms/select/RuiSimpleSelect.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import RuiSimpleSelect, { type Props } from '@/components/forms/select/RuiSimpleSelect.vue';
 
 const render: StoryFn<Props> = args => ({
   components: { RuiSimpleSelect },

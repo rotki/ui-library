@@ -1,4 +1,5 @@
 <script setup lang='ts'>
+import ComponentView from '@/components/ComponentView.vue';
 import {
   RuiButton,
   RuiMenuSelect,
@@ -6,7 +7,6 @@ import {
   RuiTextField,
 } from '@rotki/ui-library';
 import { ref } from 'vue';
-import ComponentView from '@/components/ComponentView.vue';
 
 const visible = ref(false);
 const timeout = ref('0');

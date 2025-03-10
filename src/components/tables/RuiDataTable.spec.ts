@@ -1,9 +1,9 @@
-import { describe, expect, it } from 'vitest';
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiDataTable from '@/components/tables/RuiDataTable.vue';
 import RuiTablePagination from '@/components/tables/RuiTablePagination.vue';
-import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { describe, expect, it } from 'vitest';
 
 interface User {
   id: number;

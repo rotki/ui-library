@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { type NavigationDrawerProps, RuiButton, RuiNavigationDrawer } from '@rotki/ui-library';
 import ComponentView from '@/components/ComponentView.vue';
+import { type NavigationDrawerProps, RuiButton, RuiNavigationDrawer } from '@rotki/ui-library';
+import { ref } from 'vue';
 
 interface ExtraProperties {
   label: string;

@@ -1,7 +1,7 @@
-import process from 'node:process';
+import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { execSync } from 'node:child_process';
+import process from 'node:process';
 import { pascalCase } from 'scule';
 
 const logger = console;

@@ -1,7 +1,7 @@
 <script lang="ts" setup generic="T extends object, K extends keyof T = keyof T">
-import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
+import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiBadge from '@/components/overlays/badge/RuiBadge.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 
@@ -76,14 +76,14 @@ export interface Props<T> {
   disableCheckAll?: boolean;
   noData?: boolean;
   colspan?: number;
-  columns: TableColumn<T>[];
+  columns?: TableColumn<T>[];
   capitalizeHeaders?: boolean;
   isAllSelected?: boolean;
   indeterminate?: boolean;
   dense?: boolean;
-  sortedMap: Partial<Record<TableRowKey<T>, SortColumn<T>>>;
+  sortedMap?: Partial<Record<TableRowKey<T>, SortColumn<T>>>;
   sortData?: TableSortData<T>;
-  columnAttr: keyof TableColumn<T>;
+  columnAttr?: keyof TableColumn<T>;
   dataId?: string;
 }
 

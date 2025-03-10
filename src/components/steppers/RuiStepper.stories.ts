@@ -1,6 +1,6 @@
-import { StepperOrientation, StepperState } from '@/types/stepper';
-import RuiStepper, { type Props } from '@/components/steppers/RuiStepper.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import RuiStepper, { type Props } from '@/components/steppers/RuiStepper.vue';
+import { StepperOrientation, StepperState } from '@/types/stepper';
 
 const render: StoryFn<Props> = args => ({
   components: { RuiStepper },

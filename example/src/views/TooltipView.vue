@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import ComponentGroup from '@/components/ComponentGroup.vue';
+import ComponentView from '@/components/ComponentView.vue';
+import { capitalizeFirstLetter } from '@/utils';
 import {
   type ButtonProps,
   RuiButton,
@@ -6,9 +9,6 @@ import {
   type TooltipProps,
 } from '@rotki/ui-library/components';
 import { objectOmit } from '@vueuse/shared';
-import ComponentView from '@/components/ComponentView.vue';
-import { capitalizeFirstLetter } from '@/utils';
-import ComponentGroup from '@/components/ComponentGroup.vue';
 
 type TooltipData = TooltipProps & {
   buttonColor?: ButtonProps<undefined>['color'];

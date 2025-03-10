@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { useRoute, useRouter } from 'vue-router';
-import { throttleFilter } from '@vueuse/shared';
-import { Fragment, type VNode, isVNode } from 'vue';
-import RuiButton from '@/components/buttons/button/RuiButton.vue';
-import RuiIcon from '@/components/icons/RuiIcon.vue';
 import type { Props as TabProps } from '@/components/tabs/tab/RuiTab.vue';
 import type { ContextColorsType } from '@/consts/colors';
+import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiIcon from '@/components/icons/RuiIcon.vue';
+import { throttleFilter } from '@vueuse/shared';
+import { Fragment, isVNode, type VNode } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 export interface Props {
   color?: ContextColorsType;

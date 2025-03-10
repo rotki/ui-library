@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import ComponentView from '@/components/ComponentView.vue';
 import ButtonGroups from '@/components/buttons/ButtonGroups.vue';
+import MultiToggleButtonGroups from '@/components/buttons/MultiToggleButtonGroups.vue';
 import SingleButtons from '@/components/buttons/SingleButtons.vue';
 import ToggleButtonGroups from '@/components/buttons/ToggleButtonGroups.vue';
-import MultiToggleButtonGroups from '@/components/buttons/MultiToggleButtonGroups.vue';
+import ComponentView from '@/components/ComponentView.vue';
 </script>
 
 <template>

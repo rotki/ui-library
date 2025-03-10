@@ -1,14 +1,14 @@
 <script lang="ts" setup generic='TValue, TItem'>
-import { logicAnd, logicOr } from '@vueuse/math';
+import type { KeyOfType } from '@/composables/dropdown-menu';
+import type { ComponentPublicInstance, ComputedRef } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
-import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiChip from '@/components/chips/RuiChip.vue';
+import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { getTextToken } from '@/utils/helpers';
 import { isEqual } from '@/utils/is-equal';
-import type { KeyOfType } from '@/composables/dropdown-menu';
-import type { ComponentPublicInstance, ComputedRef } from 'vue';
+import { logicAnd, logicOr } from '@vueuse/math';
 
 export type AutoCompleteModelValue<TValue> = TValue extends Array<infer U> ? U[] : TValue | undefined;
 

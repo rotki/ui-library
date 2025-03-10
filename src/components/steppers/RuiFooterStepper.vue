@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import RuiProgress from '@/components/progress/RuiProgress.vue';
-import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiIcon from '@/components/icons/RuiIcon.vue';
+import RuiProgress from '@/components/progress/RuiProgress.vue';
 
 export interface Props {
   pages: number;

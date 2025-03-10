@@ -1,5 +1,5 @@
-import theme from '@rotki/ui-library/theme';
 import type { Config } from 'tailwindcss';
+import theme from '@rotki/ui-library/theme';
 
 export default {
   mode: 'jit',

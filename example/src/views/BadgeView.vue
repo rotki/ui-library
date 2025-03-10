@@ -1,10 +1,10 @@
 <script lang="ts" setup>
+import ComponentView from '@/components/ComponentView.vue';
 import {
   type BadgeProps,
   RuiBadge,
   RuiButton,
 } from '@rotki/ui-library/components';
-import ComponentView from '@/components/ComponentView.vue';
 
 const defaultModelValue = true;
 const defaultText = '1';

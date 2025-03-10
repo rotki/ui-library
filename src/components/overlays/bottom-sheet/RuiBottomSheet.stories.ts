@@ -1,7 +1,7 @@
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCard from '@/components/cards/RuiCard.vue';
 import RuiBottomSheet, { type BottomSheetProps } from '@/components/overlays/bottom-sheet/RuiBottomSheet.vue';
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 const render: StoryFn<BottomSheetProps> = args => ({
   components: { RuiBottomSheet, RuiButton, RuiCard },

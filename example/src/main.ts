@@ -1,9 +1,9 @@
-import '@/assets/main.css';
-import '@rotki/ui-library/style.css';
-import '@fontsource/roboto/latin.css';
+import App from '@/App.vue';
+import { router } from '@/router';
+import { useDefaultsStore } from '@/stores/defaults';
 
-import { createPinia, storeToRefs } from 'pinia';
 import {
+  createRui,
   LuAlignCenter,
   LuAlignJustify,
   LuAlignLeft,
@@ -26,11 +26,11 @@ import {
   LuSun,
   LuTrash2,
   LuX,
-  createRui,
 } from '@rotki/ui-library';
-import App from '@/App.vue';
-import { router } from '@/router';
-import { useDefaultsStore } from '@/stores/defaults';
+import { createPinia, storeToRefs } from 'pinia';
+import '@/assets/main.css';
+import '@rotki/ui-library/style.css';
+import '@fontsource/roboto/latin.css';
 
 const app = createApp(App);
 

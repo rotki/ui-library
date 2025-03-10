@@ -1,3 +1,5 @@
+import type { GeneratedIcon } from '@/types/icons';
+import type { InjectionKey } from 'vue';
 import {
   LuArrowDown,
   LuArrowLeft,
@@ -12,10 +14,10 @@ import {
   LuChevronDown,
   LuChevronLeft,
   LuChevronRight,
-  LuChevronUp,
   LuChevronsLeft,
   LuChevronsRight,
   LuChevronsUpDown,
+  LuChevronUp,
   LuCircleAlert,
   LuCircleCheck,
   LuCircleX,
@@ -27,8 +29,6 @@ import {
   LuTriangleAlert,
   LuX,
 } from '@/icons';
-import type { GeneratedIcon } from '@/types/icons';
-import type { InjectionKey } from 'vue';
 
 const requiredIcons: GeneratedIcon[] = [
   LuChevronsUpDown,

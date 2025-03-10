@@ -1,7 +1,7 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it, vi } from 'vitest';
 import RuiColorPicker from '@/components/color-picker/RuiColorPicker.vue';
 import { roundTwoDecimal } from '@/components/color-picker/utils';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { describe, expect, it, vi } from 'vitest';
 
 window.HTMLDivElement.prototype.getBoundingClientRect = () => ({
   bottom: 0,

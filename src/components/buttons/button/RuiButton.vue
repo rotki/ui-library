@@ -1,6 +1,6 @@
 <script lang="ts" generic="T = undefined" setup>
-import RuiProgress from '@/components/progress/RuiProgress.vue';
 import type { ContextColorsType } from '@/consts/colors';
+import RuiProgress from '@/components/progress/RuiProgress.vue';
 
 export interface Props<T = undefined> {
   disabled?: boolean;

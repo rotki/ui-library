@@ -1,7 +1,7 @@
-import { describe, expect, it, vi } from 'vitest';
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import RuiMenuSelect from '@/components/forms/select/RuiMenuSelect.vue';
 import { options } from '@/__test__/options';
+import RuiMenuSelect from '@/components/forms/select/RuiMenuSelect.vue';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { describe, expect, it, vi } from 'vitest';
 
 vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
   const now = Date.now();

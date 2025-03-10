@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import RuiButton from '@/components/buttons/button/RuiButton.vue';
-import type { RouteLocationRaw } from 'vue-router';
 import type { ContextColorsType } from '@/consts/colors';
+import type { RouteLocationRaw } from 'vue-router';
+import RuiButton from '@/components/buttons/button/RuiButton.vue';
 
 export interface Props {
   color?: ContextColorsType;

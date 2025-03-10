@@ -1,6 +1,6 @@
-import { contextColors } from '@/consts/colors';
-import RuiCheckbox, { type Props } from '@/components/forms/checkbox/RuiCheckbox.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import RuiCheckbox, { type Props } from '@/components/forms/checkbox/RuiCheckbox.vue';
+import { contextColors } from '@/consts/colors';
 
 type PropsAndLabel = Props & { label: string };
 

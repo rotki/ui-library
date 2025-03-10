@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useSSRContext } from 'vue';
-import { isClient } from '@vueuse/shared';
-import { transformCase } from '@/utils/helpers';
 import fallback from '@/components/logos/logo.svg';
+import { transformCase } from '@/utils/helpers';
+import { isClient } from '@vueuse/shared';
+import { useSSRContext } from 'vue';
 
 export interface ExternalLinks {
   drawer?: string;

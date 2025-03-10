@@ -1,6 +1,6 @@
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiNavigationDrawer, { type NavigationDrawerProps } from '@/components/overlays/navigation-drawer/RuiNavigationDrawer.vue';
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
 const render: StoryFn<NavigationDrawerProps> = args => ({
   components: { RuiButton, RuiNavigationDrawer },

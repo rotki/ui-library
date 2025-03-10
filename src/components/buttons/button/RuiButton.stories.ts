@@ -1,6 +1,6 @@
-import { contextColors } from '@/consts/colors';
-import RuiButton, { type Props } from '@/components/buttons/button/RuiButton.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import RuiButton, { type Props } from '@/components/buttons/button/RuiButton.vue';
+import { contextColors } from '@/consts/colors';
 
 type PropsAndLabel = Props & {
   label: string;

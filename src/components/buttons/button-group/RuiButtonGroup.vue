@@ -1,6 +1,6 @@
 <script lang="ts" generic="T = undefined" setup>
-import { Fragment, isVNode } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
+import { Fragment, isVNode } from 'vue';
 
 export interface Props<T = undefined> {
   vertical?: boolean;

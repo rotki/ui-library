@@ -1,6 +1,6 @@
-import { type SelectOption, options } from '@/__test__/options';
-import RuiAutoComplete, { type AutoCompleteModelValue, type AutoCompleteProps } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import { options, type SelectOption } from '@/__test__/options';
+import RuiAutoComplete, { type AutoCompleteModelValue, type AutoCompleteProps } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
 
 type ComponentProps<TValue = string, TItem = SelectOption> = AutoCompleteProps<TValue, TItem> & {
   modelValue: AutoCompleteModelValue<TValue>;

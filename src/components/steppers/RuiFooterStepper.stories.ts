@@ -1,5 +1,5 @@
-import RuiFooterStepper, { type Props } from '@/components/steppers/RuiFooterStepper.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import RuiFooterStepper, { type Props } from '@/components/steppers/RuiFooterStepper.vue';
 
 const render: StoryFn<Props> = args => ({
   components: { RuiFooterStepper },

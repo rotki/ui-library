@@ -1,12 +1,12 @@
-import '../src/style.scss';
-import './preview.scss';
-import '@fontsource/roboto/latin.css';
-import { type Preview, setup } from '@storybook/vue3';
 import { useEffect, useGlobals } from '@storybook/preview-api';
+import { type Preview, setup } from '@storybook/vue3';
 import { ref } from 'vue';
 import { createRui } from '../src';
 import { useRotkiTheme } from '../src/composables/theme';
 import * as Icons from '../src/icons';
+import '../src/style.scss';
+import './preview.scss';
+import '@fontsource/roboto/latin.css';
 
 const RuiPlugin = createRui({
   theme: {

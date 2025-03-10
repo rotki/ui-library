@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import ComponentView from '@/components/ComponentView.vue';
 import {
   type BottomSheetProps,
   RuiBottomSheet,
   RuiButton,
   RuiCard,
 } from '@rotki/ui-library';
-import ComponentView from '@/components/ComponentView.vue';
+import { ref } from 'vue';
 
 interface ExtraProperties {
   label: string;

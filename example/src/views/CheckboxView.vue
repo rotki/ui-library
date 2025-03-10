@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { type CheckboxProps, RuiCheckbox } from '@rotki/ui-library';
-import ComponentView from '@/components/ComponentView.vue';
 import ComponentGroup from '@/components/ComponentGroup.vue';
+import ComponentView from '@/components/ComponentView.vue';
+import { type CheckboxProps, RuiCheckbox } from '@rotki/ui-library';
 
 type CheckboxData = CheckboxProps & {
   value?: boolean;
