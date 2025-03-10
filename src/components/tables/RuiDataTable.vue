@@ -1187,7 +1187,7 @@ onMounted(() => {
                 >
                   <slot
                     v-if="column.key === 'expand'"
-                    :name="`item.${column.key}`"
+                    :name="`item.${column.key.toString()}`"
                     :column="column"
                     :row="row"
                     :index="index"
@@ -1202,7 +1202,7 @@ onMounted(() => {
                     v-else
                     :column="column"
                     :index="index"
-                    :name="`item.${column.key}`"
+                    :name="`item.${column.key.toString()}`"
                     :row="row"
                   >
                     {{ cellValue(row, column.key) }}
