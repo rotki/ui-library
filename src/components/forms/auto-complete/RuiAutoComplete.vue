@@ -498,6 +498,12 @@ function onEnter(event: KeyboardEvent): void {
     set(isOpen, true);
     event.preventDefault();
   }
+  else {
+    const form = get(activator).closest('form');
+    if (form) {
+      form.dispatchEvent(new Event('submit'));
+    }
+  }
 }
 
 function onTab(event: KeyboardEvent): void {
