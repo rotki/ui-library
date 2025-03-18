@@ -313,4 +313,27 @@ describe('autocomplete', () => {
     await vi.delay(300);
     expect((input.element as HTMLInputElement).value).toBe('Indonesia');
   });
+
+  it('press enter on activator, trigger the form submit', async () => {
+    const form = document.createElement('form');
+    const submitFunc = vi.fn();
+    form.onsubmit = submitFunc;
+
+    const wrapper = createWrapper<string, SelectOption>({
+      attachTo: form,
+      props: {
+        keyAttr: 'id',
+        modelValue: '4',
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    await wrapper.find('div[data-id="activator"]').trigger('focus');
+
+    await nextTick();
+    await wrapper.find('[data-id=activator]').trigger('keydown.enter');
+
+    expect(submitFunc).toBeCalledTimes(1);
+  });
 });
