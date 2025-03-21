@@ -1,6 +1,6 @@
 {
   "name": "@rotki/ui-library",
-  "version": "1.12.2",
+  "version": "1.12.3",
   "packageManager": "pnpm@10.6.5",
   "description": "A vue design system and component library for rotki",
   "type": "module",
