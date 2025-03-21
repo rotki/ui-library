@@ -1,7 +1,7 @@
 {
   "name": "@rotki/ui-library",
   "version": "1.12.2",
-  "packageManager": "pnpm@10.5.2",
+  "packageManager": "pnpm@10.6.5",
   "description": "A vue design system and component library for rotki",
   "type": "module",
   "keywords": [
@@ -113,7 +113,7 @@
     "@storybook/test": "8.6.4",
     "@storybook/vue3": "8.6.4",
     "@storybook/vue3-vite": "8.6.4",
-    "@types/node": "20.17.24",
+    "@types/node": "22.13.11",
     "@types/tinycolor2": "1.4.6",
     "@vitejs/plugin-vue": "5.2.1",
     "@vitest/coverage-v8": "3.0.8",
@@ -159,7 +159,7 @@
     "vue-tsc": "2.2.8"
   },
   "engines": {
-    "node": ">=20 <21",
+    "node": ">=22 <23",
     "pnpm": ">=10 <11"
   },
   "lint-staged": {

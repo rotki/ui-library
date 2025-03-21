@@ -20,8 +20,8 @@
     "vue-router": "4.5.0"
   },
   "devDependencies": {
-    "@tsconfig/node20": "20.1.4",
-    "@types/node": "20.17.24",
+    "@tsconfig/node22": "22.0.0",
+    "@types/node": "22.13.11",
     "@vitejs/plugin-vue": "5.2.1",
     "@vue/tsconfig": "0.7.0",
     "autoprefixer": "10.4.21",
