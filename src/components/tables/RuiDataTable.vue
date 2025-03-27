@@ -11,6 +11,8 @@ import RuiProgress from '@/components/progress/RuiProgress.vue';
 import RuiExpandButton from '@/components/tables/RuiExpandButton.vue';
 import RuiTableHead, { type GroupData, type GroupKeys, type NoneSortableTableColumn, type SortColumn, type TableColumn, type TableRowKey, type TableRowKeyData, type TableSortData } from '@/components/tables/RuiTableHead.vue';
 import RuiTablePagination, { type TablePaginationData } from '@/components/tables/RuiTablePagination.vue';
+import noDataPlaceholder from '@/components/tables/table_no_data_placeholder.svg';
+import noDataPlaceholderDark from '@/components/tables/table_no_data_placeholder_dark.svg';
 
 export interface TableOptions<T> {
   pagination?: TablePaginationData;
@@ -175,7 +177,7 @@ const props = withDefaults(defineProps<Props<T, IdType>>(), {
   outlined: false,
   paginationModifiers: undefined,
   sortModifiers: undefined,
-  empty: () => ({ description: 'No item found' }),
+  empty: () => ({ label: 'No item found' }),
   rounded: 'md',
   hideDefaultHeader: false,
   hideDefaultFooter: false,
@@ -237,6 +239,8 @@ const slots = defineSlots<
 
 const { stickyHeader, collapsed, modelValue, disabledRows } = toRefs(props);
 const tableDefaults = useTable();
+
+const { isDark } = useRotkiTheme();
 
 const stickyHeaderOffset = computed(() => props.stickyOffset !== undefined ? props.stickyOffset : get(tableDefaults.stickyOffset));
 
@@ -1261,6 +1265,11 @@ onMounted(() => {
               >
                 <slot name="no-data">
                   <div :class="$style.empty">
+                    <img
+                      :src="isDark ? noDataPlaceholderDark : noDataPlaceholder"
+                      :alt="empty.label"
+                      class="h-32"
+                    />
                     <p
                       v-if="empty.label"
                       :class="$style.empty__label"
