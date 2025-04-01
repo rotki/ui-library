@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { DatePicker as VDatePicker } from 'v-calendar';
+// Source: V-Calendar https://github.com/nathanreyes/v-calendar
+import VDatePicker from './base/components/DatePicker/DatePicker.vue';
 import './RuiCalendar.scss';
 
 export interface CalendarProps {
@@ -29,8 +30,7 @@ const emit = defineEmits<{
   (event: 'update:pages', e: { title: string }[]): void;
 }>();
 
-const datePickerRef = useTemplateRef<InstanceType<typeof VDatePicker>>('datePickerRef');
-
+const datePickerRef = ref<InstanceType<typeof VDatePicker>>();
 const { isDark } = useRotkiTheme();
 
 function move(value: Date | number) {

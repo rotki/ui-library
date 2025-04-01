@@ -21,6 +21,7 @@ import {
   LuCircleAlert,
   LuCircleCheck,
   LuCircleX,
+  LuClock,
   LuEllipsis,
   LuEye,
   LuEyeOff,
@@ -58,6 +59,7 @@ const requiredIcons: GeneratedIcon[] = [
   LuCheckboxBlankCircle,
   LuCheckboxBlankCircleFill,
   LuRadioButtonFill,
+  LuClock,
 ];
 
 export interface IconsOptions {
