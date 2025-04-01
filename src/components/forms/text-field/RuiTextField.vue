@@ -16,7 +16,6 @@ export interface TextFieldProps {
   textColor?: ContextColorsType;
   dense?: boolean;
   hint?: string;
-  as?: string | object;
   errorMessages?: string | string[];
   successMessages?: string | string[];
   hideDetails?: boolean;
@@ -84,7 +83,7 @@ const labelWithQuote = computed(() => {
 const prepend = ref<HTMLDivElement>();
 const append = ref<HTMLDivElement>();
 const innerWrapper = ref<HTMLDivElement>();
-const inputRef = ref();
+const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
 
 const prependWidth = ref('0px');
 const appendWidth = ref('0px');
@@ -122,6 +121,14 @@ function clearIconClicked() {
   set(modelValue, '');
   emit('clear');
 }
+
+defineExpose({
+  setSelectionRange: (start: number, end: number) => {
+    get(inputRef)?.setSelectionRange(start, end);
+  },
+  focus: () => get(inputRef)?.focus(),
+  element: inputRef,
+});
 </script>
 
 <template>
@@ -163,8 +170,7 @@ function clearIconClicked() {
         class="flex flex-1 overflow-hidden"
         @click="emit('focus-input', $event)"
       >
-        <Component
-          :is="as"
+        <input
           ref="inputRef"
           :value="modelValue"
           :placeholder="placeholder || ' '"
