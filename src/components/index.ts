@@ -10,6 +10,7 @@ import RuiAccordions, { type Props as AccordionsProps } from '@/components/accor
 import RuiAlert, { type Props as AlertProps } from '@/components/alerts/RuiAlert.vue';
 import RuiButtonGroup, { type Props as ButtonGroupProps } from '@/components/buttons/button-group/RuiButtonGroup.vue';
 import RuiButton, { type Props as ButtonProps } from '@/components/buttons/button/RuiButton.vue';
+import RuiCalendar, { type CalendarProps } from '@/components/calendar/RuiCalendar.vue';
 import RuiCard, { type Props as CardProps } from '@/components/cards/RuiCard.vue';
 import RuiCardHeader, { type Props as CardHeaderProps } from '@/components/cards/RuiCardHeader.vue';
 import RuiChip, { type Props as ChipProps } from '@/components/chips/RuiChip.vue';
@@ -56,6 +57,7 @@ export {
   BottomSheetProps,
   ButtonGroupProps,
   ButtonProps,
+  CalendarProps,
   CardHeaderProps,
   CardProps,
   CheckboxProps,
@@ -89,6 +91,7 @@ export {
   RuiBottomSheet,
   RuiButton,
   RuiButtonGroup,
+  RuiCalendar,
   RuiCard,
   RuiCardHeader,
   RuiCheckbox,

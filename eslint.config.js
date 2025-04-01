@@ -27,4 +27,9 @@ export default rotki({
   rules: {
     'storybook/no-uninstalled-addons': 'off', // until storybook eslint official supports eslint 9
   },
+}, {
+  files: ['**/*.scss'],
+  rules: {
+    'max-lines': 'off',
+  },
 });
