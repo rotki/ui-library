@@ -63,11 +63,11 @@ describe('badge', () => {
 
     expect(wrapper.find('div[role=status]').exists()).toBeTruthy();
 
-    expect(wrapper.find('svg[class*=_remixicon_]').exists()).toBeFalsy();
+    expect(wrapper.find('svg[class*=_rui-icon_]').exists()).toBeFalsy();
 
     await wrapper.setProps({ icon: 'star-line' });
 
-    expect(wrapper.find('svg[class*=_remixicon_]').exists()).toBeTruthy();
+    expect(wrapper.find('svg[class*=_rui-icon_]').exists()).toBeTruthy();
 
     expect(wrapper.get('div[role=status]').classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_rounded__full_/)]),

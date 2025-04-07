@@ -5,17 +5,12 @@ import { XMLParser } from 'fast-xml-parser';
 import fs from 'fs-extra';
 import { pascalCase } from 'scule';
 
-const REMIX_PREFIX = 'ri-';
 const LUCIDE_PREFIX = 'lu-';
 const TARGET = 'src/icons/';
 const CHUNK_SIZE = 500;
 
 function resolveRoot(...dir) {
   return path.resolve(import.meta.dirname, '..', ...dir);
-}
-
-function resolveRemixIconDir() {
-  return resolveRoot('node_modules', 'remixicon', 'icons');
 }
 
 function resolveLucideIconDir() {
@@ -77,8 +72,7 @@ async function getAllSvgDataFromPath(pathDir) {
   }
 
   try {
-    const isLucide = path.basename(pathDir).startsWith('lu-');
-    const name = (!isLucide ? REMIX_PREFIX : '') + path.basename(pathDir).replace('.svg', '');
+    const name = path.basename(pathDir).replace('.svg', '');
     const generatedName = pascalCase(name);
     const svg = await readFile(pathDir, 'utf8');
     const svgPath = getPathFromSvgString(svg);
@@ -402,14 +396,13 @@ async function getLucideSvgDataFromPath(pathDir) {
 }
 
 async function collectAllIconMetas() {
-  const dirs = [resolveRemixIconDir(), resolveCustomIconDir()];
   const res = [];
 
-  await loop(dirs, async (dir) => {
-    res.push(...(await getAllSvgDataFromPath(dir)));
-  });
-
-  res.push(...(await getLucideSvgDataFromPath(resolveLucideIconDir())));
+  const [customIcons, lucideIcons] = await Promise.all([
+    getAllSvgDataFromPath(resolveCustomIconDir()),
+    getLucideSvgDataFromPath(resolveLucideIconDir()),
+  ]);
+  res.push(...customIcons, ...lucideIcons);
 
   return res;
 }
@@ -452,7 +445,7 @@ import { type GeneratedIcon } from '@/types/icons';\n
   });
 
   indexFileContent += `export const RuiIcons = [${names
-    .map(x => `"${x.replace('ri-', '')}"`)
+    .map(x => `"${x}"`)
     .join(',')}] as const;\n`;
 
   indexFileContent += `export type RuiIcons = string;\n`;

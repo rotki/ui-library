@@ -19,7 +19,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const { registeredIcons } = useIcons();
 
-const isLucide = computed(() => props.name.startsWith('lu-'));
 const isFill = computed(() => props.name.endsWith('-fill'));
 
 const components: ComputedRef<[string, Record<string, string>][] | undefined> = computed(() => {
@@ -27,9 +26,7 @@ const components: ComputedRef<[string, Record<string, string>][] | undefined> = 
   if (!isRuiIcon(name)) {
     console.warn(`icon ${name} must be a valid RuiIcon`);
   }
-  const prefix = get(isLucide) ? '' : 'ri-';
-  const iconName = `${prefix}${name}`;
-  const found = registeredIcons[iconName];
+  const found = registeredIcons[name];
 
   if (!found) {
     console.error(`Icons "${name}" not found. Make sure that you have register the icon when installing the RuiPlugin`);
@@ -40,7 +37,7 @@ const components: ComputedRef<[string, Record<string, string>][] | undefined> = 
 
 <template>
   <svg
-    :class="[$style.remixicon, $style[color ?? '']]"
+    :class="[$style['rui-icon'], $style[color ?? '']]"
     :height="size"
     :width="size"
     viewBox="0 0 24 24"
@@ -51,8 +48,8 @@ const components: ComputedRef<[string, Record<string, string>][] | undefined> = 
       v-for="(component, index) in components"
       :key="index"
       v-bind="component[1]"
-      :fill="(isLucide && !isFill) ? 'none' : 'currentColor'"
-      :stroke="(isLucide && !isFill) ? 'currentColor' : 'none'"
+      :fill="(!isFill) ? 'none' : 'currentColor'"
+      :stroke="(!isFill) ? 'currentColor' : 'none'"
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
@@ -65,7 +62,7 @@ const components: ComputedRef<[string, Record<string, string>][] | undefined> = 
 <style lang="scss" module>
 @use '@/styles/colors.scss' as c;
 
-.remixicon {
+.rui-icon {
   @each $color in c.$context-colors {
     &.#{$color} {
       @apply text-rui-#{$color};

@@ -140,9 +140,6 @@ importers:
       postcss:
         specifier: 8.5.3
         version: 8.5.3
-      remixicon:
-        specifier: 4.6.0
-        version: 4.6.0
       sass:
         specifier: 1.86.0
         version: 1.86.0
@@ -4023,9 +4020,6 @@ packages:
   regjsparser@0.12.0:
     resolution: {integrity: sha512-cnE+y8bz4NhMjISKbgeVJtqNbtf5QpjZP+Bslo+UqkIt9QPnX9q095eiRRASJG1/tz6dlNr6Z5NsBiWYokp6EQ==}
     hasBin: true
-
-  remixicon@4.6.0:
-    resolution: {integrity: sha512-bKM5odjqE1yzVxEZGJE7F79WHhNrJFIKHXR+GG+P1IWXn8AnJZhl8SbIRDJsNAvIqx4VPkNwjuHfc42tutMDpQ==}
 
   request-progress@3.0.0:
     resolution: {integrity: sha512-MnWzEHHaxHO2iWiQuHrUPBi/1WeBf5PkxQqNyNvLl9VAYSdXkP8tQ3pBSeCPD+yw0v0Aq1zosWLz0BdeXpWwZg==}
@@ -9075,8 +9069,6 @@ snapshots:
   regjsparser@0.12.0:
     dependencies:
       jsesc: 3.0.2
-
-  remixicon@4.6.0: {}
 
   request-progress@3.0.0:
     dependencies:

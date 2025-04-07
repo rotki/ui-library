@@ -15,7 +15,7 @@ describe('forms/Icon', () => {
       },
     });
     expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_remixicon_/)]),
+      expect.arrayContaining([expect.stringMatching(/_rui-icon_/)]),
     );
     expect(wrapper.classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_primary_/)]),

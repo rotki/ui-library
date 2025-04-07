@@ -14,14 +14,14 @@ describe('button', () => {
 
     // prefix button
     cy.get('[data-cy=content]')
-      .find('button > svg[class^=_remixicon_] + span')
+      .find('button > svg[class^=_rui-icon_] + span')
       .first()
       .parent('button')
       .as('prefixedButton');
 
     // suffix button
     cy.get('[data-cy=content]')
-      .find('button > span + svg[class^=_remixicon_]')
+      .find('button > span + svg[class^=_rui-icon_]')
       .first()
       .parent('button')
       .as('suffixedButton');
