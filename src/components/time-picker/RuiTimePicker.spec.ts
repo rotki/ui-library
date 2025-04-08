@@ -1,4 +1,4 @@
-import { TimeAccuracy } from '@/components/calendar/state';
+import { TimeAccuracy } from '@/consts/time-accuracy';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import RuiTimePicker from './RuiTimePicker.vue';
@@ -85,7 +85,7 @@ describe('components/RuiTimePicker', () => {
 
     const wrapper = mount(RuiTimePicker, {
       props: {
-        'accuracy': TimeAccuracy.MILLISECONDS,
+        'accuracy': TimeAccuracy.MILLISECOND,
         'modelValue': initialDate,
         'onUpdate:modelValue': (e: Date) => wrapper.setProps({ modelValue: e }),
       },

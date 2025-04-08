@@ -3,7 +3,6 @@ import {
   CalendarStateSymbol,
   type MonthYearSelection,
   type RuiCalendarState,
-  TimeAccuracy,
 } from '@/components/calendar/state';
 import { computed, provide, ref, watch } from 'vue';
 import RuiCalendarGrid from './RuiCalendarGrid.vue';
@@ -13,8 +12,6 @@ export interface CalendarProps {
   maxDate?: Date | number;
   minDate?: Date | number;
   allowEmpty?: boolean;
-  mode?: 'date' | 'datetime' | 'time';
-  timeAccuracy?: TimeAccuracy;
 }
 
 defineOptions({
@@ -28,8 +25,6 @@ const props = withDefaults(defineProps<CalendarProps>(), {
   maxDate: undefined,
   minDate: undefined,
   allowEmpty: false,
-  mode: 'date',
-  timeAccuracy: TimeAccuracy.SECONDS,
 });
 
 const emit = defineEmits<{
@@ -38,7 +33,6 @@ const emit = defineEmits<{
 
 const currentDate = ref(isDefined(model) ? new Date(get(model)) : new Date());
 const selectedDate = ref(isDefined(model) ? new Date(get(model)) : undefined);
-const selectedTime = ref(isDefined(model) ? new Date(get(model)) : undefined);
 const viewMonth = ref(get(currentDate).getMonth());
 const viewYear = ref(get(currentDate).getFullYear());
 
@@ -89,38 +83,25 @@ function selectMonth(selection: MonthYearSelection) {
   set(viewYear, selection.year);
 }
 
-watch(
-  [selectedDate, selectedTime],
-  ([date, time]) => {
-    if (!date && !props.allowEmpty)
-      return;
+watch([selectedDate], ([date]) => {
+  if (!date && !props.allowEmpty)
+    return;
 
-    if (date) {
-      if (props.mode === 'date') {
-        set(model, new Date(date));
-      }
-      else if ((props.mode === 'datetime' || props.mode === 'time') && time) {
-        const newDate = new Date(date);
-        newDate.setHours(time.getHours());
-        newDate.setMinutes(time.getMinutes());
-        newDate.setSeconds(time.getSeconds());
-        newDate.setMilliseconds(time.getMilliseconds());
-        set(model, newDate);
-      }
+  if (date) {
+    set(model, new Date(date));
 
-      if (get(viewMonth) !== date.getMonth()) {
-        set(viewMonth, date.getMonth());
-      }
-
-      if (get(viewYear) !== date.getFullYear()) {
-        set(viewYear, date.getFullYear());
-      }
+    if (get(viewMonth) !== date.getMonth()) {
+      set(viewMonth, date.getMonth());
     }
-    else {
-      set(model, undefined);
+
+    if (get(viewYear) !== date.getFullYear()) {
+      set(viewYear, date.getFullYear());
     }
-  },
-);
+  }
+  else {
+    set(model, undefined);
+  }
+});
 
 watch(model, (newValue) => {
   if (newValue === undefined) {
@@ -128,11 +109,12 @@ watch(model, (newValue) => {
     return;
   }
 
-  if (isDefined(selectedDate) && get(selectedDate).getTime() !== newValue.getTime()) {
+  const date = new Date(newValue);
+
+  if (isDefined(selectedDate) && get(selectedDate).getTime() !== date.getTime()) {
     set(selectedDate, new Date(newValue));
-    set(selectedTime, new Date(newValue));
-    set(viewMonth, newValue.getMonth());
-    set(viewYear, newValue.getFullYear());
+    set(viewMonth, date.getMonth());
+    set(viewYear, date.getFullYear());
   }
 });
 
@@ -156,7 +138,6 @@ defineExpose({
     />
 
     <RuiCalendarGrid
-      v-if="mode !== 'time'"
       v-model="selectedDate"
       :view-month="viewMonth"
       :view-year="viewYear"

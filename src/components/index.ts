@@ -15,7 +15,6 @@ import RuiCard, { type Props as CardProps } from '@/components/cards/RuiCard.vue
 import RuiCardHeader, { type Props as CardHeaderProps } from '@/components/cards/RuiCardHeader.vue';
 import RuiChip, { type Props as ChipProps } from '@/components/chips/RuiChip.vue';
 import RuiColorPicker, { type Props as ColorPickerProps } from '@/components/color-picker/RuiColorPicker.vue';
-import RuiTimePicker, { type RuiTimePickerProps } from '@/components/components/RuiTimePicker.vue';
 import RuiDivider, { type Props as DividerProps } from '@/components/divider/RuiDivider.vue';
 import RuiAutoComplete, { type AutoCompleteProps } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
 import RuiCheckbox, { type Props as CheckboxProps } from '@/components/forms/checkbox/RuiCheckbox.vue';
@@ -48,6 +47,7 @@ import RuiTabItem, { type Props as TabItemProps } from '@/components/tabs/tab-it
 import RuiTabItems, { type Props as TabItemsProps } from '@/components/tabs/tab-items/RuiTabItems.vue';
 import RuiTab, { type Props as TabProps } from '@/components/tabs/tab/RuiTab.vue';
 import RuiTabs, { type Props as TabsProps } from '@/components/tabs/tabs/RuiTabs.vue';
+import RuiTimePicker, { type RuiTimePickerProps } from '@/components/time-picker/RuiTimePicker.vue';
 
 export {
   AccordionProps,

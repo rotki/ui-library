@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TimeAccuracy } from '@/components/calendar/state';
+import { TimeAccuracy } from '@/consts/time-accuracy';
 import { computed, onMounted, ref, type StyleValue, watch } from 'vue';
 
 type TimePickerEditMode = 'hour' | 'minute' | 'second' | 'millisecond';
@@ -33,16 +33,16 @@ const intervals: Record<TimePickerEditMode, number> = {
 
 const selectedHour = ref<number>(get(modelValue).getHours());
 const selectedMinute = ref<number>(get(modelValue).getMinutes());
-const selectedSecond = ref<number>(props.accuracy > TimeAccuracy.SECONDS ? get(modelValue).getSeconds() : 0);
-const selectedMillisecond = ref<number>(props.accuracy === TimeAccuracy.MILLISECONDS ? get(modelValue).getMilliseconds() : 0);
+const selectedSecond = ref<number>(props.accuracy > TimeAccuracy.SECOND ? get(modelValue).getSeconds() : 0);
+const selectedMillisecond = ref<number>(props.accuracy === TimeAccuracy.MILLISECOND ? get(modelValue).getMilliseconds() : 0);
 const editMode = ref<TimePickerEditMode>('hour');
 const isDragging = ref<boolean>(false);
 const clockFace = useTemplateRef<InstanceType<typeof HTMLDivElement>>('clockFace');
 
 const { isDark } = useRotkiTheme();
 
-const showSecond = computed<boolean>(() => props.accuracy === TimeAccuracy.SECONDS || props.accuracy === TimeAccuracy.MILLISECONDS);
-const showMillisecond = computed<boolean>(() => props.accuracy === TimeAccuracy.MILLISECONDS);
+const showSecond = computed<boolean>(() => props.accuracy === TimeAccuracy.SECOND || props.accuracy === TimeAccuracy.MILLISECOND);
+const showMillisecond = computed<boolean>(() => props.accuracy === TimeAccuracy.MILLISECOND);
 
 const period = computed<'PM' | 'AM'>(() => get(selectedHour) >= TWELVE_HOURS ? 'PM' : 'AM');
 
@@ -314,16 +314,17 @@ function updateModelValue() {
 onMounted(() => {
   set(selectedHour, get(modelValue).getHours());
   set(selectedMinute, get(modelValue).getMinutes());
-  set(selectedSecond, props.accuracy > TimeAccuracy.SECONDS ? get(modelValue).getSeconds() : 0);
-  set(selectedMillisecond, props.accuracy === TimeAccuracy.MILLISECONDS ? get(modelValue).getMilliseconds() : 0);
+  set(selectedSecond, props.accuracy > TimeAccuracy.SECOND ? get(modelValue).getSeconds() : 0);
+  set(selectedMillisecond, props.accuracy === TimeAccuracy.MILLISECOND ? get(modelValue).getMilliseconds() : 0);
   set(editMode, 'hour');
 });
 
 watch(modelValue, (newValue) => {
-  set(selectedHour, newValue.getHours());
-  set(selectedMinute, newValue.getMinutes());
-  set(selectedSecond, newValue.getSeconds());
-  set(selectedMillisecond, newValue.getMilliseconds());
+  const date = new Date(newValue);
+  set(selectedHour, date.getHours());
+  set(selectedMinute, date.getMinutes());
+  set(selectedSecond, date.getSeconds());
+  set(selectedMillisecond, date.getMilliseconds());
 }, { deep: true });
 </script>
 

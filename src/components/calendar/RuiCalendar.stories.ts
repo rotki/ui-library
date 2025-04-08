@@ -1,43 +1,29 @@
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
-import RuiCalendar, { type CalendarProps } from '@/components/calendar/RuiCalendar.vue';
-import { TimeAccuracy } from '@/components/calendar/state';
+import RuiCalendar from '@/components/calendar/RuiCalendar.vue';
 
-type Props = CalendarProps & { modelValue?: Date | null };
-
-const render: StoryFn<Props> = args => ({
+const render: StoryFn<typeof RuiCalendar> = args => ({
   components: { RuiCalendar },
   setup() {
-    const modelValue = computed({
-      get() {
-        return args.modelValue;
-      },
-      set(val) {
-        args.modelValue = val;
-      },
-    });
-
-    return { args, modelValue };
+    return { args };
   },
   template: `
     <div class="flex gap-4">
-      <RuiCalendar v-model="modelValue" v-bind="args" />
-      <div class="text-rui-text">{{ modelValue }}</div>
+      <RuiCalendar v-model="args.modelValue" v-bind="args" />
+      <div class="text-rui-text">{{ args.modelValue ? new Date(args.modelValue).toISOString() : '-' }}</div>
     </div>
   `,
 });
 
-const meta: Meta<Props> = {
+const meta: Meta<typeof RuiCalendar> = {
   argTypes: {
-    allowEmpty: { control: 'boolean' },
-    maxDate: { control: 'date' },
-    minDate: { control: 'date' },
-    mode: {
-      control: 'select',
-      options: ['date', 'dateTime'],
+    'allowEmpty': { control: 'boolean' },
+    'maxDate': { control: 'date' },
+    'minDate': { control: 'date' },
+    'modelValue': {
+      control: 'date',
     },
-    timeAccuracy: {
-      control: 'select',
-      options: [TimeAccuracy.SECONDS, TimeAccuracy.MINUTE, TimeAccuracy.MILLISECONDS],
+    'onUpdate:modelValue': {
+      action: 'update:modelValue',
     },
   },
   component: RuiCalendar,
@@ -51,7 +37,7 @@ const meta: Meta<Props> = {
   title: 'Components/Calendar',
 };
 
-type Story = StoryObj<Props>;
+type Story = StoryObj<typeof RuiCalendar>;
 
 export const Default: Story = {
   args: {},
@@ -72,19 +58,6 @@ export const WithMinDate: Story = {
 export const WithMaxDate: Story = {
   args: {
     maxDate: new Date(2025, 3, 1),
-  },
-};
-
-export const ModeDateTime: Story = {
-  args: {
-    mode: 'datetime',
-  },
-};
-
-export const AccuracyMilliseconds: Story = {
-  args: {
-    mode: 'datetime',
-    timeAccuracy: TimeAccuracy.MILLISECONDS,
   },
 };
 

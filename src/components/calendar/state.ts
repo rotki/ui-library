@@ -17,12 +17,6 @@ export interface MonthYearSelection {
   year: number;
 }
 
-export enum TimeAccuracy {
-  MINUTE,
-  SECONDS,
-  MILLISECONDS,
-}
-
 export function getDaysOfWeek(locale: Intl.LocalesArgument = 'en-US', format: 'narrow' | 'short' = 'narrow'): string[] {
   const daysOfWeek: string[] = [];
   for (let i = 0; i < 7; i++) {
