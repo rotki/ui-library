@@ -2,18 +2,20 @@ import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
-import { pascalCase } from 'scule';
+import cac from 'cac';
+import consola from 'consola';
+import { kebabCase, pascalCase } from 'scule';
 
-const logger = console;
+const logger = consola;
 
 function createStory(directory: string, component: string) {
-  if (directory === null || component === null) {
-    logger.error('Usage: pnpm run new directory/path <ComponentName>');
+  if (component === null) {
+    logger.error('Usage: pnpm run new [directory] <ComponentName>');
     process.exit(1);
   }
 
   if (!/^(?:[A-Z][a-z]+)+$/.test(component)) {
-    logger.error('Usage: pnpm run new directory/path <ComponentName>');
+    logger.error('Usage: pnpm run new [directory] <ComponentName>');
     process.exit(1);
   }
 
@@ -56,10 +58,10 @@ describe('${directory}/${componentName}', () => {
 
   fs.writeFileSync(
     storyFile,
-    `import ${componentName}, { type ${componentName}Props } from './${componentName}.vue';
+    `import ${componentName} from './${componentName}.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
 
-const render: StoryFn<${componentName}Props> = args => ({
+const render: StoryFn<typeof ${componentName}> = args => ({
   components: { ${componentName} },
   setup() {
     return { args };
@@ -67,15 +69,15 @@ const render: StoryFn<${componentName}Props> = args => ({
   template: \`<${componentName} v-bind="args" />\`,
 });
 
-const meta: Meta<${componentName}Props> = {
+const meta: Meta<typeof ${componentName}> = {
   argTypes: {},
   component: ${componentName},
   render,
   tags: ['autodocs'],
-  title: '${directory.split(path.sep).map(x => pascalCase(x)).join('/')}/${componentName}',
+  title: 'Components/${directory.split(path.sep).map(x => pascalCase(x)).join('/')}/${componentName}',
 };
 
-type Story = StoryObj<${componentName}Props>;
+type Story = StoryObj<typeof ${componentName}>;
 
 export const Default: Story = {
   args: {},
@@ -104,17 +106,26 @@ withDefaults(defineProps<${componentName}Props>(), {
 `,
   );
 
-  execSync(`pnpm exec eslint ${componentTargetDir}`);
+  execSync(`pnpm exec eslint ${componentTargetDir} --fix`, { encoding: 'utf-8' });
 
   const editor = process.env.LAUNCH_EDITOR;
   if (editor) {
-    execSync(`${editor} "${testFile}"`);
-    execSync(`${editor} "${storyFile}"`);
-    execSync(`${editor} "${componentFile}"`);
+    execSync(`${editor} "${testFile}"`, { encoding: 'utf-8' });
+    execSync(`${editor} "${storyFile}"`, { encoding: 'utf-8' });
+    execSync(`${editor} "${componentFile}"`, { encoding: 'utf-8' });
   }
 }
 
-const directory = process.argv[2];
-const component = process.argv[3];
+const cli = cac('new-story');
 
-createStory(directory, component);
+cli.command('<component>', 'Create a new component story')
+  .option('-d, --directory <directory>', 'Directory to create the story in')
+  .action((component: string, options: { directory?: string }) => {
+    const componentDirectory = options?.directory || kebabCase(component)
+      .replace(/rui-?/, '');
+
+    createStory(componentDirectory, component);
+  });
+
+cli.help();
+cli.parse();
