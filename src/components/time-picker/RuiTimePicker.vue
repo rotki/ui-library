@@ -6,12 +6,14 @@ type TimePickerEditMode = 'hour' | 'minute' | 'second' | 'millisecond';
 
 export interface RuiTimePickerProps {
   accuracy?: TimeAccuracy;
+  borderless?: boolean;
 }
 
-const modelValue = defineModel<Date>({ required: true });
+const modelValue = defineModel<Date | undefined>({ required: true });
 
 const props = withDefaults(defineProps<RuiTimePickerProps>(), {
   accuracy: TimeAccuracy.MINUTE,
+  borderless: false,
 });
 
 const FULL_CIRCLE = 360;
@@ -31,15 +33,13 @@ const intervals: Record<TimePickerEditMode, number> = {
   millisecond: 100,
 };
 
-const selectedHour = ref<number>(get(modelValue).getHours());
-const selectedMinute = ref<number>(get(modelValue).getMinutes());
-const selectedSecond = ref<number>(props.accuracy > TimeAccuracy.SECOND ? get(modelValue).getSeconds() : 0);
-const selectedMillisecond = ref<number>(props.accuracy === TimeAccuracy.MILLISECOND ? get(modelValue).getMilliseconds() : 0);
+const selectedHour = ref<number>(getModelHours());
+const selectedMinute = ref<number>(getModelMinutes());
+const selectedSecond = ref<number>(getModelSeconds());
+const selectedMillisecond = ref<number>(getModelMilliseconds());
 const editMode = ref<TimePickerEditMode>('hour');
 const isDragging = ref<boolean>(false);
 const clockFace = useTemplateRef<InstanceType<typeof HTMLDivElement>>('clockFace');
-
-const { isDark } = useRotkiTheme();
 
 const showSecond = computed<boolean>(() => props.accuracy === TimeAccuracy.SECOND || props.accuracy === TimeAccuracy.MILLISECOND);
 const showMillisecond = computed<boolean>(() => props.accuracy === TimeAccuracy.MILLISECOND);
@@ -133,6 +133,27 @@ const clockNumbers = computed<number[]>(() => {
   }
   return numbers;
 });
+
+function getModelHours() {
+  return isDefined(modelValue) ? new Date(get(modelValue)).getHours() : 0;
+}
+
+function getModelMinutes() {
+  return isDefined(modelValue) ? new Date(get(modelValue)).getMinutes() : 0;
+}
+
+function getModelSeconds() {
+  const acceptedAccuracy: TimeAccuracy[] = [TimeAccuracy.SECOND, TimeAccuracy.MILLISECOND];
+  return acceptedAccuracy.includes(props.accuracy) && isDefined(modelValue)
+    ? new Date(get(modelValue)).getSeconds()
+    : 0;
+}
+
+function getModelMilliseconds() {
+  return props.accuracy === TimeAccuracy.MILLISECOND && isDefined(modelValue)
+    ? new Date(get(modelValue)).getMilliseconds()
+    : 0;
+}
 
 function generateNumbers(total: number, interval: number): number[] {
   const numbers: number[] = [];
@@ -303,7 +324,12 @@ function selectByClick(num: number) {
 }
 
 function updateModelValue() {
-  const date = new Date(get(modelValue));
+  const model = get(modelValue);
+  if (!model) {
+    return;
+  }
+
+  const date = new Date(model);
   date.setHours(get(selectedHour));
   date.setMinutes(get(selectedMinute));
   date.setSeconds(get(selectedSecond));
@@ -312,31 +338,30 @@ function updateModelValue() {
 }
 
 onMounted(() => {
-  set(selectedHour, get(modelValue).getHours());
-  set(selectedMinute, get(modelValue).getMinutes());
-  set(selectedSecond, props.accuracy > TimeAccuracy.SECOND ? get(modelValue).getSeconds() : 0);
-  set(selectedMillisecond, props.accuracy === TimeAccuracy.MILLISECOND ? get(modelValue).getMilliseconds() : 0);
+  set(selectedHour, getModelHours());
+  set(selectedMinute, getModelMinutes());
+  set(selectedSecond, getModelSeconds());
+  set(selectedMillisecond, getModelMilliseconds());
   set(editMode, 'hour');
 });
 
-watch(modelValue, (newValue) => {
-  const date = new Date(newValue);
-  set(selectedHour, date.getHours());
-  set(selectedMinute, date.getMinutes());
-  set(selectedSecond, date.getSeconds());
-  set(selectedMillisecond, date.getMilliseconds());
+watch(modelValue, () => {
+  set(selectedHour, getModelHours());
+  set(selectedMinute, getModelMinutes());
+  set(selectedSecond, getModelSeconds());
+  set(selectedMillisecond, getModelMilliseconds());
 }, { deep: true });
 </script>
 
 <template>
   <div
     :class="{
-      dark: isDark,
       [$style['rui-timepicker']]: true,
+      [$style.bordered]: !borderless,
     }"
   >
     <div :class="$style['rui-digital-display']">
-      <div class="flex justify-center items-center space-x-2">
+      <div class="flex justify-center items-center gap-1">
         <div
           :class="{
             [$style['rui-digit']]: true,
@@ -445,15 +470,15 @@ watch(modelValue, (newValue) => {
 
 <style lang="scss" module>
 .rui-timepicker {
-  @apply bg-white rounded-lg  overflow-hidden;
+  @apply bg-white overflow-hidden text-rui-text p-3;
 
-  &.dark {
-    @apply bg-rui-grey-900;
+  &.bordered {
+    @apply rounded-md shadow-sm border border-rui-grey-200;
   }
 }
 
 .rui-digital-display {
-  @apply mb-4 text-center;
+  @apply mb-2 text-center;
 }
 
 .rui-digit {
@@ -466,10 +491,6 @@ watch(modelValue, (newValue) => {
 
 .rui-clock-face {
   @apply relative rounded-full w-64 h-64 mx-auto border border-rui-grey-200;
-
-  &.dark {
-    @apply border-rui-grey-800;
-  }
 }
 
 .rui-center-dot {
@@ -489,6 +510,20 @@ watch(modelValue, (newValue) => {
 
   &.is-selected {
     @apply bg-rui-primary text-rui-dark-text dark:text-rui-light-text z-10 font-bold;
+  }
+}
+
+:global(.dark) {
+  .rui-timepicker {
+    @apply bg-rui-grey-900;
+
+    &.bordered {
+      @apply border-rui-grey-800;
+    }
+  }
+
+  .rui-clock-face {
+    @apply border-rui-grey-800;
   }
 }
 </style>

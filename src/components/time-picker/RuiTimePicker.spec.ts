@@ -25,7 +25,7 @@ describe('components/RuiTimePicker', () => {
       props: {
         'accuracy': TimeAccuracy.MINUTE,
         'modelValue': initialDate,
-        'onUpdate:modelValue': (e: Date) => wrapper.setProps({ modelValue: e }),
+        'onUpdate:modelValue': (e?: Date) => wrapper.setProps({ modelValue: e }),
       },
     });
 
@@ -63,7 +63,7 @@ describe('components/RuiTimePicker', () => {
       props: {
         'accuracy': TimeAccuracy.MINUTE,
         'modelValue': initialDate,
-        'onUpdate:modelValue': (e: Date) => wrapper.setProps({ modelValue: e }),
+        'onUpdate:modelValue': (e?: Date) => wrapper.setProps({ modelValue: e }),
       },
     });
 
@@ -87,7 +87,7 @@ describe('components/RuiTimePicker', () => {
       props: {
         'accuracy': TimeAccuracy.MILLISECOND,
         'modelValue': initialDate,
-        'onUpdate:modelValue': (e: Date) => wrapper.setProps({ modelValue: e }),
+        'onUpdate:modelValue': (e?: Date) => wrapper.setProps({ modelValue: e }),
       },
     });
 

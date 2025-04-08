@@ -12,6 +12,7 @@ export interface CalendarProps {
   maxDate?: Date | number;
   minDate?: Date | number;
   allowEmpty?: boolean;
+  borderless?: boolean;
 }
 
 defineOptions({
@@ -25,6 +26,7 @@ const props = withDefaults(defineProps<CalendarProps>(), {
   maxDate: undefined,
   minDate: undefined,
   allowEmpty: false,
+  borderless: false,
 });
 
 const emit = defineEmits<{
@@ -126,7 +128,7 @@ defineExpose({
 <template>
   <div
     class="rui-calendar"
-    :class="{ dark: isDark }"
+    :class="{ dark: isDark, bordered: !borderless }"
   >
     <RuiCalendarHeader
       :title="monthTitle"
@@ -147,10 +149,18 @@ defineExpose({
 
 <style lang="scss">
 .rui-calendar {
-  @apply w-[18.75rem] bg-white rounded-md shadow-sm overflow-hidden border border-rui-grey-200;
+  @apply w-[18.75rem] bg-white overflow-hidden;
+
+  &.bordered {
+    @apply rounded-md shadow-sm border border-rui-grey-200;
+  }
 
   &.dark {
-    @apply bg-rui-grey-900 border-rui-grey-800;
+    @apply bg-rui-grey-900;
+
+    &.bordered {
+      @apply border-rui-grey-800;
+    }
   }
 }
 </style>
