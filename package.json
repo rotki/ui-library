@@ -71,7 +71,7 @@
     "build:types": "vue-tsc -p tsconfig.build.json",
     "build:web-types": "tsx scripts/build-web-types.mjs",
     "generate-icons": "tsx scripts/generate-icons.mjs",
-    "resolve:alias": "tsc-alias --replacer ./scripts/tsc-alias-replacer.cjs -p tsconfig.build.json",
+    "resolve:alias": "tsc-alias --replacer ./scripts/tsc-alias-replacer.cjs -p tsconfig.build.json --dir dist",
     "dev": "vite",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
