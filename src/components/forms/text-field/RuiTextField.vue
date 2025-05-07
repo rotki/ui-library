@@ -83,7 +83,7 @@ const labelWithQuote = computed(() => {
 const prepend = ref<HTMLDivElement>();
 const append = ref<HTMLDivElement>();
 const innerWrapper = ref<HTMLDivElement>();
-const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
+const inputRef = ref<HTMLInputElement>();
 
 const prependWidth = ref('0px');
 const appendWidth = ref('0px');
