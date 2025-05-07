@@ -381,7 +381,7 @@ async function getLucideSvgDataFromPath(pathDir) {
     const name = LUCIDE_PREFIX + filePath;
     const generatedName = pascalCase(name);
     const iconModule = await import(`${pathDir}`);
-    const components = convertToSinglePath(iconModule.default[2]);
+    const components = convertToSinglePath(iconModule.default);
 
     return [{
       name,
