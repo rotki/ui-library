@@ -1399,7 +1399,7 @@ onMounted(() => {
           }
 
           .empty {
-            @apply flex flex-col gap-3 items-center justify-center flex-1 min-h-[4.4rem];
+            @apply flex flex-col gap-3 items-center justify-center flex-1 min-h-[4.4rem] my-4;
 
             &__label {
               @apply text-body-1 leading-none font-bold text-center text-current pb-0 mb-0;
