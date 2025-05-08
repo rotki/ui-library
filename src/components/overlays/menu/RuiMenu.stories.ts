@@ -42,6 +42,7 @@ const meta: Meta<MenuProps> = {
     menuClass: { control: 'text' },
     openDelay: { control: 'number' },
     openOnHover: { control: 'boolean' },
+    persistOnActivatorClick: { control: 'boolean' },
     popper: { control: 'object' },
   },
   component: RuiMenu,
@@ -63,6 +64,7 @@ export const Default: Story = {
 
 export const OpenOnHover: Story = {
   args: {
+    closeDelay: 200,
     openOnHover: true,
   },
 };

@@ -186,6 +186,7 @@ describe('menu', () => {
     it('hover without click', async () => {
       const wrapper = createWrapper({
         props: {
+          closeDelay: 200,
           openOnHover: true,
         },
       });
@@ -207,6 +208,10 @@ describe('menu', () => {
       await wrapper.find('#trigger').trigger('mouseleave');
 
       menu = document.body.querySelector('div[role=menu]');
+      const menuContent = document.body.querySelector('div[role=menu-content]');
+
+      // Trigger mouseover on the content to simulate hovering over the menu content
+      await menuContent?.dispatchEvent(new MouseEvent('mouseover'));
 
       expect(menu).toBeTruthy();
       expect(Array.from(menu?.classList ?? [])).toEqual(
@@ -218,6 +223,11 @@ describe('menu', () => {
       expect(document.body.innerHTML).toMatch(new RegExp(text));
 
       await vi.delay(2100);
+
+      expect(document.body.innerHTML).toMatch(new RegExp(text));
+
+      await menuContent?.dispatchEvent(new MouseEvent('mouseleave'));
+      await vi.delay(400);
 
       expect(document.body.innerHTML).not.toMatch(new RegExp(text));
     });

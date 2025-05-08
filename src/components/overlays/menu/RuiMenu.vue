@@ -117,7 +117,7 @@ onClickOutside(menu, () => {
     onLeave();
 }, { ignore: [activator] });
 
-const menuAttrs = computed(() => {
+const baseMenuAttrs = computed(() => {
   if (get(disabled))
     return {};
 
@@ -134,6 +134,13 @@ const menuAttrs = computed(() => {
     },
     onClick: checkClick,
   };
+});
+
+const menuAttrs = computed(() => {
+  if (get(disabled))
+    return {};
+
+  return { ...get(baseMenuAttrs), onClick: checkClick };
 });
 
 const { hasError, hasSuccess } = useFormTextDetail(
@@ -185,6 +192,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
             key="menu"
             :class="$style.base"
             role="menu-content"
+            v-bind="baseMenuAttrs"
           >
             <slot v-bind="{ width }" />
           </div>
