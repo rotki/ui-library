@@ -132,7 +132,6 @@ const baseMenuAttrs = computed(() => {
       if (openOnHoverVal && !clickVal)
         onClose();
     },
-    onClick: checkClick,
   };
 });
 

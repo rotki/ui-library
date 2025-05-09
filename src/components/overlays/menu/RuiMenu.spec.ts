@@ -226,6 +226,11 @@ describe('menu', () => {
 
       expect(document.body.innerHTML).toMatch(new RegExp(text));
 
+      await menuContent?.dispatchEvent(new MouseEvent('click'));
+      await vi.delay(400);
+
+      expect(document.body.innerHTML).toMatch(new RegExp(text));
+
       await menuContent?.dispatchEvent(new MouseEvent('mouseleave'));
       await vi.delay(400);
 
