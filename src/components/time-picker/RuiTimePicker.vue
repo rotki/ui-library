@@ -2,7 +2,7 @@
 import { TimeAccuracy } from '@/consts/time-accuracy';
 import { computed, onMounted, ref, type StyleValue, watch } from 'vue';
 
-type TimePickerEditMode = 'hour' | 'minute' | 'second' | 'millisecond';
+export type TimePickerSelection = 'hour' | 'minute' | 'second' | 'millisecond';
 
 export interface RuiTimePickerProps {
   accuracy?: TimeAccuracy;
@@ -10,6 +10,12 @@ export interface RuiTimePickerProps {
 }
 
 const modelValue = defineModel<Date | undefined>({ required: true });
+
+const selectedHour = defineModel<number | undefined>('hour');
+const selectedMinute = defineModel<number | undefined>('minute');
+const selectedSecond = defineModel<number | undefined>('second');
+const selectedMillisecond = defineModel<number | undefined>('millisecond');
+const editMode = defineModel<TimePickerSelection>('selection', { default: 'hour' });
 
 const props = withDefaults(defineProps<RuiTimePickerProps>(), {
   accuracy: TimeAccuracy.MINUTE,
@@ -19,39 +25,38 @@ const props = withDefaults(defineProps<RuiTimePickerProps>(), {
 const FULL_CIRCLE = 360;
 const TWELVE_HOURS = 12;
 
-const totalItemsPerMode: Record<TimePickerEditMode, number> = {
+const totalItemsPerMode: Record<TimePickerSelection, number> = {
   hour: 12,
   minute: 60,
   second: 60,
   millisecond: 1000,
 };
 
-const intervals: Record<TimePickerEditMode, number> = {
+const intervals: Record<TimePickerSelection, number> = {
   hour: 1,
   minute: 5,
   second: 5,
   millisecond: 100,
 };
 
-const selectedHour = ref<number>(getModelHours());
-const selectedMinute = ref<number>(getModelMinutes());
-const selectedSecond = ref<number>(getModelSeconds());
-const selectedMillisecond = ref<number>(getModelMilliseconds());
-const editMode = ref<TimePickerEditMode>('hour');
 const isDragging = ref<boolean>(false);
 const clockFace = useTemplateRef<InstanceType<typeof HTMLDivElement>>('clockFace');
 
 const showSecond = computed<boolean>(() => props.accuracy === TimeAccuracy.SECOND || props.accuracy === TimeAccuracy.MILLISECOND);
 const showMillisecond = computed<boolean>(() => props.accuracy === TimeAccuracy.MILLISECOND);
 
-const period = computed<'PM' | 'AM'>(() => get(selectedHour) >= TWELVE_HOURS ? 'PM' : 'AM');
+const period = computed<'PM' | 'AM'>(() => isDefined(selectedHour) && get(selectedHour) >= TWELVE_HOURS ? 'PM' : 'AM');
 
-const displayHour = computed<number>(() => {
-  const hour = get(selectedHour) % TWELVE_HOURS;
+const displayHour = computed<number | undefined>(() => {
+  if (!isDefined(selectedHour)) {
+    return undefined;
+  }
+  const hourValue = get(selectedHour);
+  const hour = hourValue % TWELVE_HOURS;
   return hour === 0 ? TWELVE_HOURS : hour;
 });
 
-const editedValue = computed<number>(() => {
+const editedValue = computed<number | undefined>(() => {
   const mode = get(editMode);
   if (mode === 'hour') {
     return get(displayHour);
@@ -69,7 +74,7 @@ const editedValue = computed<number>(() => {
 
 const displayClockHandCircle = computed<boolean>(() => {
   const mode = get(editMode);
-  if (mode === 'hour') {
+  if (mode === 'hour' || !isDefined(editedValue)) {
     return false;
   }
   else {
@@ -86,6 +91,9 @@ const dotStyle = computed<StyleValue>(() => ({
 }));
 
 const clockHandStyle = computed<StyleValue>(() => {
+  if (!isDefined(editedValue)) {
+    return {};
+  }
   const currentValue = get(editedValue);
   const totalItems = totalItemsPerMode[get(editMode)];
   const angle = (currentValue * (FULL_CIRCLE / totalItems));
@@ -101,6 +109,9 @@ const clockHandStyle = computed<StyleValue>(() => {
 });
 
 const clockHandCircleStyle = computed<StyleValue>(() => {
+  if (!isDefined(editedValue)) {
+    return {};
+  }
   const radius = '38%';
   const currentValue = get(editedValue);
   const totalItems = totalItemsPerMode[get(editMode)];
@@ -135,24 +146,24 @@ const clockNumbers = computed<number[]>(() => {
 });
 
 function getModelHours() {
-  return isDefined(modelValue) ? new Date(get(modelValue)).getHours() : 0;
+  return isDefined(modelValue) ? new Date(get(modelValue)).getHours() : undefined;
 }
 
 function getModelMinutes() {
-  return isDefined(modelValue) ? new Date(get(modelValue)).getMinutes() : 0;
+  return isDefined(modelValue) ? new Date(get(modelValue)).getMinutes() : undefined;
 }
 
 function getModelSeconds() {
   const acceptedAccuracy: TimeAccuracy[] = [TimeAccuracy.SECOND, TimeAccuracy.MILLISECOND];
   return acceptedAccuracy.includes(props.accuracy) && isDefined(modelValue)
     ? new Date(get(modelValue)).getSeconds()
-    : 0;
+    : undefined;
 }
 
 function getModelMilliseconds() {
   return props.accuracy === TimeAccuracy.MILLISECOND && isDefined(modelValue)
     ? new Date(get(modelValue)).getMilliseconds()
-    : 0;
+    : undefined;
 }
 
 function generateNumbers(total: number, interval: number): number[] {
@@ -163,8 +174,10 @@ function generateNumbers(total: number, interval: number): number[] {
   return numbers;
 }
 
-function formatValue(value: number, padding = 2): string {
-  return value.toString().padStart(padding, '0');
+function formatValue(value?: number, padding = 2): string {
+  return value !== undefined
+    ? value.toString().padStart(padding, '0')
+    : '-'.repeat(padding);
 }
 
 function numberStyle(num: number): StyleValue {
@@ -184,6 +197,9 @@ function numberStyle(num: number): StyleValue {
 }
 
 function isSelectedNumber(num: number): boolean {
+  if (!isDefined(editedValue)) {
+    return false;
+  }
   const mode = get(editMode);
   if (mode === 'hour') {
     return get(displayHour) === num;
@@ -196,6 +212,9 @@ function isSelectedNumber(num: number): boolean {
 }
 
 function toggleAmPm() {
+  if (!isDefined(selectedHour)) {
+    return;
+  }
   if (get(selectedHour) < TWELVE_HOURS) {
     set(selectedHour, get(selectedHour) + TWELVE_HOURS);
   }
@@ -324,17 +343,17 @@ function selectByClick(num: number) {
 }
 
 function updateModelValue() {
-  const model = get(modelValue);
-  if (!model) {
+  if (!(isDefined(selectedHour) && isDefined(selectedMinute))) {
     return;
   }
-
-  const date = new Date(model);
-  date.setHours(get(selectedHour));
-  date.setMinutes(get(selectedMinute));
-  date.setSeconds(get(selectedSecond));
-  date.setMilliseconds(get(selectedMillisecond));
-  set(modelValue, date);
+  nextTick(() => {
+    const date = isDefined(modelValue) ? new Date(get(modelValue)) : new Date();
+    date.setHours(get(selectedHour));
+    date.setMinutes(get(selectedMinute));
+    date.setSeconds(get(selectedSecond) ?? 0);
+    date.setMilliseconds(get(selectedMillisecond) ?? 0);
+    set(modelValue, date);
+  });
 }
 
 onMounted(() => {
