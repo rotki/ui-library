@@ -17,6 +17,7 @@ export interface Props {
   closeIcon?: RuiIcons;
   bgColor?: string;
   textColor?: string;
+  contentClass?: string;
 }
 
 defineOptions({
@@ -35,6 +36,7 @@ const props = withDefaults(defineProps<Props>(), {
   closeIcon: 'lu-circle-x',
   bgColor: undefined,
   textColor: undefined,
+  contentClass: '',
 });
 
 const emit = defineEmits<{
@@ -90,7 +92,7 @@ const style = computed<Partial<StyleValue>>(() => {
     >
       <slot name="prepend" />
     </div>
-    <span :class="$style.chip__label">
+    <span :class="[$style.chip__label, contentClass]">
       <slot />
     </span>
     <button

@@ -10,11 +10,16 @@ describe('chips/Chip', () => {
   it('renders properly', () => {
     const label = 'Chip';
     const wrapper = createWrapper({
+      props: {
+        contentClass: 'content-class',
+      },
       slots: {
         default: label,
       },
     });
     expect(wrapper.find('span[class*=_label]').text()).toContain(label);
+
+    expect(wrapper.find('span[class*=_label]').classes()).toContain('content-class');
   });
 
   it('shows close icon', async () => {
