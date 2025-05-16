@@ -8,6 +8,9 @@ import {
 import { createIconDefaults, IconsSymbol } from '@/composables/icons';
 import { useRotkiTheme } from '@/composables/theme';
 import { StepperState } from '@/types/stepper';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 import '@/style.scss';
 
 export * from '@/components';
@@ -50,6 +53,8 @@ export function createRui(options: RuiOptions = {}) {
 
     app.provide(TableSymbol, defaults.table);
     app.provide(IconsSymbol, defaults.icons);
+    dayjs.extend(utc);
+    dayjs.extend(timezone);
   };
 
   return {
