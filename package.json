@@ -103,6 +103,7 @@
     "@fontsource/roboto": "5.2.5",
     "@popperjs/core": "2.11.8",
     "@rotki/eslint-config": "4.1.0",
+    "@rotki/eslint-plugin": "1.0.0",
     "@storybook/addon-docs": "8.6.14",
     "@storybook/addon-essentials": "8.6.14",
     "@storybook/addon-interactions": "8.6.14",

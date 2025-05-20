@@ -12,6 +12,11 @@ export default rotki({
   cypress: {
     testDirectory: path.join('example', 'cypress'),
   },
+  rotki: {
+    overrides: {
+      '@rotki/consistent-ref-type-annotation': 'off',
+    },
+  },
 }, {
   files: ['src/**/*.@(ts|js)'],
   rules: {
