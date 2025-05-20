@@ -47,6 +47,7 @@ declare global {
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const effectScope: typeof import('vue')['effectScope']
   const extendRef: typeof import('@vueuse/core')['extendRef']
+  const fakeFetch: typeof import('./utils/table-utils')['fakeFetch']
   const generateButtonGroupData: typeof import('./utils/buttons')['generateButtonGroupData']
   const get: typeof import('@vueuse/shared')['get']
   const getActivePinia: typeof import('pinia')['getActivePinia']
@@ -57,6 +58,7 @@ declare global {
   const inject: typeof import('vue')['inject']
   const injectLocal: typeof import('@vueuse/core')['injectLocal']
   const isDefined: typeof import('@vueuse/core')['isDefined']
+  const isExpanded: typeof import('./utils/table-utils')['isExpanded']
   const isProxy: typeof import('vue')['isProxy']
   const isReactive: typeof import('vue')['isReactive']
   const isReadonly: typeof import('vue')['isReadonly']
@@ -109,6 +111,7 @@ declare global {
   const refDefault: typeof import('@vueuse/core')['refDefault']
   const refThrottled: typeof import('@vueuse/core')['refThrottled']
   const refWithControl: typeof import('@vueuse/core')['refWithControl']
+  const removeRow: typeof import('./utils/table-utils')['removeRow']
   const resolveComponent: typeof import('vue')['resolveComponent']
   const resolveRef: typeof import('@vueuse/core')['resolveRef']
   const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
@@ -129,6 +132,7 @@ declare global {
   const toRef: typeof import('vue')['toRef']
   const toRefs: typeof import('vue')['toRefs']
   const toValue: typeof import('vue')['toValue']
+  const toggleRow: typeof import('./utils/table-utils')['toggleRow']
   const triggerRef: typeof import('vue')['triggerRef']
   const tryOnBeforeMount: typeof import('@vueuse/core')['tryOnBeforeMount']
   const tryOnBeforeUnmount: typeof import('@vueuse/core')['tryOnBeforeUnmount']
@@ -384,6 +388,7 @@ declare module 'vue' {
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
+    readonly fakeFetch: UnwrapRef<typeof import('./utils/table-utils')['fakeFetch']>
     readonly generateButtonGroupData: UnwrapRef<typeof import('./utils/buttons')['generateButtonGroupData']>
     readonly get: UnwrapRef<typeof import('@vueuse/shared')['get']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
@@ -394,6 +399,7 @@ declare module 'vue' {
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly injectLocal: UnwrapRef<typeof import('@vueuse/core')['injectLocal']>
     readonly isDefined: UnwrapRef<typeof import('@vueuse/core')['isDefined']>
+    readonly isExpanded: UnwrapRef<typeof import('./utils/table-utils')['isExpanded']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
@@ -446,6 +452,7 @@ declare module 'vue' {
     readonly refDefault: UnwrapRef<typeof import('@vueuse/core')['refDefault']>
     readonly refThrottled: UnwrapRef<typeof import('@vueuse/core')['refThrottled']>
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
+    readonly removeRow: UnwrapRef<typeof import('./utils/table-utils')['removeRow']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
@@ -466,6 +473,7 @@ declare module 'vue' {
     readonly toRef: UnwrapRef<typeof import('vue')['toRef']>
     readonly toRefs: UnwrapRef<typeof import('vue')['toRefs']>
     readonly toValue: UnwrapRef<typeof import('vue')['toValue']>
+    readonly toggleRow: UnwrapRef<typeof import('./utils/table-utils')['toggleRow']>
     readonly triggerRef: UnwrapRef<typeof import('vue')['triggerRef']>
     readonly tryOnBeforeMount: UnwrapRef<typeof import('@vueuse/core')['tryOnBeforeMount']>
     readonly tryOnBeforeUnmount: UnwrapRef<typeof import('@vueuse/core')['tryOnBeforeUnmount']>
