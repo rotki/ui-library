@@ -5,6 +5,7 @@ A Vue component library and design system for rotki
 [![npm (scoped)](https://img.shields.io/npm/v/@rotki/ui-library?style=flat-square)](https://www.npmjs.com/package/@rotki/ui-library)
 [![ci](https://github.com/rotki/ui-library/actions/workflows/ci.yml/badge.svg)](https://github.com/rotki/ui-library/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/rotki/ui-library/graph/badge.svg?token=9PIS7KMFC7)](https://codecov.io/gh/rotki/ui-library)
+[![license](https://img.shields.io/github/license/rotki/ui-library)](https://github.com/rotki/ui-library/blob/main/LICENSE.md)
 
 ## Getting started
 
