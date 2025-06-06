@@ -10,7 +10,7 @@ const render: StoryFn<typeof RuiTimePicker> = args => ({
   template: `
     <div class='flex gap-4'>
       <RuiTimePicker v-bind="args" v-model='args.modelValue' />
-      <div class='text-rui-text'>{{ new Date(args.modelValue).toISOString() }}</div>
+      <div class='text-rui-text'>{{ args.modelValue !== undefined ? new Date(args.modelValue).toISOString(): '-' }}</div>
     </div>
   `,
 });
@@ -59,6 +59,12 @@ export const WithMillisecondsAccuracy: Story = {
   args: {
     accuracy: TimeAccuracy.MILLISECOND,
     modelValue: new Date(),
+  },
+};
+
+export const WithEmptyValue: Story = {
+  args: {
+    modelValue: undefined,
   },
 };
 
