@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiStepper, { type Props } from '@/components/steppers/RuiStepper.vue';
 import { StepperOrientation, StepperState } from '@/types/stepper';
 

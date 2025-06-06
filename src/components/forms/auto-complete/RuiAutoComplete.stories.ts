@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import { options, type SelectOption } from '@/__test__/options';
 import RuiAutoComplete, { type AutoCompleteModelValue, type AutoCompleteProps } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
 

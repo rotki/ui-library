@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiSkeletonLoader, { type Props as SkeletonProps } from '@/components/loaders/RuiSkeletonLoader.vue';
 
 type Props = SkeletonProps & {

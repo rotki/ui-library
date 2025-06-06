@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiNavigationDrawer, { type NavigationDrawerProps } from '@/components/overlays/navigation-drawer/RuiNavigationDrawer.vue';
 

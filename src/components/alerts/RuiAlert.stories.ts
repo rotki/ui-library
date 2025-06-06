@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiAlert, { type Props } from '@/components/alerts/RuiAlert.vue';
 import { contextColors } from '@/consts/colors';
 import { RuiIcons } from '@/icons';

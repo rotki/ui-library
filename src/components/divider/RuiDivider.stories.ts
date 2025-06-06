@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiDivider, { type Props } from '@/components/divider/RuiDivider.vue';
 
 const render: StoryFn<Props> = args => ({

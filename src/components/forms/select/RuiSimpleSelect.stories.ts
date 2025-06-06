@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiSimpleSelect, { type Props } from '@/components/forms/select/RuiSimpleSelect.vue';
 
 const render: StoryFn<Props> = args => ({

@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiCard from '@/components/cards/RuiCard.vue';
 import RuiColorPicker, { type Props } from '@/components/color-picker/RuiColorPicker.vue';
 

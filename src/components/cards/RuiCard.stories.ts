@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiButton, { type Props as ButtonProps } from '@/components/buttons/button/RuiButton.vue';
 import RuiCard, { type Props as CardProps } from '@/components/cards/RuiCard.vue';
 import { objectOmit } from '@vueuse/shared';

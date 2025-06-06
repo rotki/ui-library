@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiChip, { type Props as ChipProps } from '@/components/chips/RuiChip.vue';
 import { contextColors } from '@/consts/colors';
 

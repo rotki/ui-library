@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiCard from '@/components/cards/RuiCard.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiTabItem from '@/components/tabs/tab-item/RuiTabItem.vue';

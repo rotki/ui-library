@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiSwitch, { type Props } from '@/components/forms/switch/RuiSwitch.vue';
 import { contextColors } from '@/consts/colors';
 

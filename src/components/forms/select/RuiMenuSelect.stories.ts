@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import { options, type SelectOption } from '@/__test__/options';
 import RuiMenuSelect, { type Props } from '@/components/forms/select/RuiMenuSelect.vue';
 

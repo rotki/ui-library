@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiCalendar from '@/components/calendar/RuiCalendar.vue';
 
 const render: StoryFn<typeof RuiCalendar> = args => ({

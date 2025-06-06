@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiLogo, { type Props } from '@/components/logos/RuiLogo.vue';
 
 const render: StoryFn<Props> = args => ({

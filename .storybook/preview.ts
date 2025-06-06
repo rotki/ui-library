@@ -1,5 +1,5 @@
-import { useEffect, useGlobals } from '@storybook/preview-api';
-import { type Preview, setup } from '@storybook/vue3';
+import { type Preview, setup } from '@storybook/vue3-vite';
+import { useEffect, useGlobals } from 'storybook/preview-api';
 import { ref } from 'vue';
 import { createRui } from '../src';
 import { useRotkiTheme } from '../src/composables/theme';

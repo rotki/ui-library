@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiRadioGroup, { type Props } from '@/components/forms/radio-button/radio-group/RuiRadioGroup.vue';
 import RuiRadio from '@/components/forms/radio-button/radio/RuiRadio.vue';
 import { contextColors } from '@/consts/colors';

@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiCheckbox, { type Props } from '@/components/forms/checkbox/RuiCheckbox.vue';
 import { contextColors } from '@/consts/colors';
 

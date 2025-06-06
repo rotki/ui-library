@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiTooltip, { type Props } from '@/components/overlays/tooltip/RuiTooltip.vue';
 import { DEFAULT_POPPER_OPTIONS } from '@/composables/popper';
 

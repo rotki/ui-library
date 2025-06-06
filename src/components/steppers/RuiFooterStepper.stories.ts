@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiFooterStepper, { type Props } from '@/components/steppers/RuiFooterStepper.vue';
 
 const render: StoryFn<Props> = args => ({

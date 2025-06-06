@@ -59,7 +59,7 @@ describe('${directory}/${componentName}', () => {
   fs.writeFileSync(
     storyFile,
     `import ${componentName} from './${componentName}.vue';
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 
 const render: StoryFn<typeof ${componentName}> = args => ({
   components: { ${componentName} },

@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCard from '@/components/cards/RuiCard.vue';
 import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';

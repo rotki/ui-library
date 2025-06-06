@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiTextArea, { type Props } from '@/components/forms/text-area/RuiTextArea.vue';
 import { contextColors } from '@/consts/colors';
 

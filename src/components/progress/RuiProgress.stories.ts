@@ -1,4 +1,4 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
 import RuiProgress, { type Props } from '@/components/progress/RuiProgress.vue';
 import { contextColors } from '@/consts/colors';
 
