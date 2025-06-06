@@ -10,6 +10,11 @@
       "allowedVersions": "/^(22)\\./",
       "groupName": "Node.js",
       "matchPackageNames": ["@types/node", "node"]
+    },
+    {
+      "allowedVersions": "/^(3)\\./",
+      "groupName": "tailwindcss",
+      "matchPackageNames": ["tailwindcss"]
     }
   ]
 }
