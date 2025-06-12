@@ -40,7 +40,7 @@ function setNow(): void {
 </script>
 
 <template>
-  <div class="flex gap-2">
+  <div class="flex divide-x divide-rui-grey-200 dark:divide-rui-grey-800">
     <RuiCalendar
       v-model="selectedDate"
       borderless
@@ -58,7 +58,7 @@ function setNow(): void {
       borderless
     />
     <div>
-      <div class="flex gap-2">
+      <div class="flex gap-3 p-4 pl-3">
         <div class="flex flex-col justify-center items-center">
           <RuiButton
             variant="text"
@@ -77,7 +77,7 @@ function setNow(): void {
             v-model="selectedTimezone"
             hide-details
             label="Timezone"
-            class="!p-4 pb-0"
+            class="pt-0 pr-0"
             variant="outlined"
             :options="timezones"
           />
