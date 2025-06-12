@@ -6,6 +6,9 @@ export default mergeConfig(
   viteConfig,
   defineConfig({
     test: {
+      env: {
+        TZ: 'UTC',
+      },
       globals: true,
       environment: 'jsdom',
       exclude: [...configDefaults.exclude],

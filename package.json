@@ -92,6 +92,7 @@
   "peerDependencies": {
     "@vueuse/core": ">13.0.0",
     "@vueuse/shared": ">13.0.0",
+    "dayjs": ">=1.11.13 <12",
     "vue": ">=3.5.0"
   },
   "web-types": "dist/web-types.json",
