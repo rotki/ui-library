@@ -158,6 +158,11 @@ export const router = createRouter({
       component: () => import('@/views/CalendarView.vue'),
     },
     {
+      path: '/datetimepickers',
+      name: 'datetimepickers',
+      component: () => import('@/views/DateTimePickerView.vue'),
+    },
+    {
       path: '/timepickers',
       name: 'timepickers',
       component: () => import('@/views/TimePickerView.vue'),

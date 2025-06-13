@@ -36,6 +36,7 @@ const navigation = ref([
       { to: { name: 'navigation-drawers' }, title: 'Navigation Drawer' },
       { to: { name: 'notification' }, title: 'Notification' },
       { to: { name: 'calendars' }, title: 'Calendars' },
+      { to: { name: 'datetimepickers' }, title: 'Date Time Pickers' },
       { to: { name: 'timepickers' }, title: 'Time Pickers' },
     ],
   },
