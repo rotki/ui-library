@@ -15,6 +15,7 @@ import RuiCard, { type Props as CardProps } from '@/components/cards/RuiCard.vue
 import RuiCardHeader, { type Props as CardHeaderProps } from '@/components/cards/RuiCardHeader.vue';
 import RuiChip, { type Props as ChipProps } from '@/components/chips/RuiChip.vue';
 import RuiColorPicker, { type Props as ColorPickerProps } from '@/components/color-picker/RuiColorPicker.vue';
+import RuiDateTimePicker, { type RuiDateTimePickerProps } from '@/components/date-time-picker/RuiDateTimePicker.vue';
 import RuiDivider, { type Props as DividerProps } from '@/components/divider/RuiDivider.vue';
 import RuiAutoComplete, { type AutoCompleteProps } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
 import RuiCheckbox, { type Props as CheckboxProps } from '@/components/forms/checkbox/RuiCheckbox.vue';
@@ -99,6 +100,8 @@ export {
   RuiChip,
   RuiColorPicker,
   RuiDataTable,
+  RuiDateTimePicker,
+  RuiDateTimePickerProps,
   RuiDialog,
   RuiDivider,
   RuiFooterStepper,
