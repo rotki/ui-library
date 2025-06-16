@@ -101,6 +101,7 @@ export default defineConfig({
         '@vueuse/core',
         '@vueuse/shared',
         '@vueuse/math',
+        'dayjs',
       ],
       output: {
         globals: {
