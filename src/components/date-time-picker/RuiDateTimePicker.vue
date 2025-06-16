@@ -9,6 +9,8 @@ import { useKeyboardHandler } from '@/components/date-time-picker/use-keyboard-h
 import { guessTimezone, includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
+import { useRuiI8n } from '@/composables/use-rui-i18n';
+import { RUI_I18N_KEYS } from '@/i18n/keys';
 import { logicAnd, logicOr } from '@vueuse/math';
 import dayjs, { type Dayjs } from 'dayjs';
 
@@ -155,6 +157,8 @@ const {
   setValue,
   textInput,
 });
+
+const { t } = useRuiI8n();
 
 const anyFocused = logicOr(activatorFocusedWithin, menuWrapperFocusedWithin);
 
@@ -376,14 +380,17 @@ function isDateValid(date: Dayjs): boolean {
   set(internalErrorMessages, []);
 
   if (min && date.isBefore(min)) {
-    set(internalErrorMessages, [...get(internalErrorMessages), `Date cannot be before ${min.toLocaleDateString()}`]);
+    const errorMessage = t(RUI_I18N_KEYS.dateTimePicker.dateBeforeMin, {
+      date: min.toLocaleDateString(),
+    }, `Date cannot be before ${min.toLocaleDateString()}`);
+    set(internalErrorMessages, [...get(internalErrorMessages), errorMessage]);
     return false;
   }
 
   if (max && date.isAfter(max)) {
-    const errorMessage = props.maxDate === 'now'
-      ? 'The selected date cannot be in the future'
-      : `Date cannot be after ${max.toLocaleDateString()}`;
+    const nowError = t(RUI_I18N_KEYS.dateTimePicker.dateInFuture, 'The selected date cannot be in the future');
+    const maxError = t(RUI_I18N_KEYS.dateTimePicker.dateAfterMax, { date: max.toLocaleDateString() }, `Date cannot be after ${max.toLocaleDateString()}`);
+    const errorMessage = props.maxDate === 'now' ? nowError : maxError;
     set(internalErrorMessages, [...get(internalErrorMessages), errorMessage]);
     return false;
   }

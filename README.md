@@ -102,6 +102,68 @@ import { RuiIcon } from '@rotki/ui-library';
 </template>
 ```
 
+### Setting up internationalization (i18n)
+
+The UI library supports internationalization through the `createRuiI8nPlugin` function. This allows you to provide translations for UI components.
+
+#### Setting up the i18n plugin
+
+First, you need to set up your Vue i18n instance and then connect it to the UI library:
+
+```typescript
+import { createRui, createRuiI8nPlugin } from '@rotki/ui-library';
+import { createApp } from 'vue';
+import { createI18n } from 'vue-i18n';
+
+// Create your i18n instance
+const i18n = createI18n({
+  legacy: false, // You must set `false`, to use Composition API
+  locale: 'en',
+  messages: {
+    en: {
+      // Your app translations
+      // UI library translations (see below)
+      rui: {
+        date_time_picker: {
+          date_after_max: 'Date cannot be after {date}',
+          date_before_min: 'Date cannot be before {date}',
+          date_in_future: 'The selected date cannot be in the future',
+        },
+      },
+    },
+    // Other languages...
+  },
+});
+
+const app = createApp(App);
+
+// Create and use the Rotki UI plugin
+const RuiPlugin = createRui();
+app.use(RuiPlugin);
+
+// Create and use the Rotki UI i18n plugin
+const RuiI18nPlugin = createRuiI8nPlugin(i18n);
+app.use(RuiI18nPlugin);
+
+app.use(i18n);
+app.mount('#app');
+```
+
+#### Available translation keys
+
+The UI library uses the following translation keys:
+
+```typescript
+// These are defined in src/i18n/keys.ts
+export const RUI_I18N_KEYS = {
+  dateTimePicker: {
+    dateAfterMax: 'rui.date_time_picker.date_after_max',
+    dateBeforeMin: 'rui.date_time_picker.date_before_min',
+    dateInFuture: 'rui.date_time_picker.date_in_future',
+  },
+} as const;
+```
+
 ### Use @rotki/ui-library tailwindcss theme
 
 You can extend @rotki/ui-library tailwind theme configuration by adding these to your tailwind config. It will provide you the classes for the colors, typography, and shadow.
