@@ -77,6 +77,7 @@ const baseFormats: Record<DateFormat, string> = {
 
 const isOpen = ref<boolean>(false);
 const cursorPosition = ref<number>(0);
+const internalErrorMessages = ref<string[]>([]);
 
 const selectedYear = ref<number>();
 const selectedMonth = ref<number>();
@@ -89,6 +90,7 @@ const selectedMillisecond = ref<number>();
 const selectedTimezone = ref<string | undefined>(guessTimezone());
 
 const currentValue = ref<number>();
+const now = ref(dayjs.tz(undefined, guessTimezone()));
 
 const textInput = ref<HTMLInputElement>();
 const activator = ref();
@@ -117,7 +119,7 @@ const maxAllowedDate = computed<Date | undefined>(() => {
     return undefined;
   }
   if (props.maxDate === 'now') {
-    return new Date();
+    return get(now).toDate();
   }
   return new Date(props.maxDate);
 });
@@ -262,6 +264,21 @@ const timeSelection = computed<TimePickerSelection>({
 
 const float = logicAnd(logicOr(isOpen, valueSet, searchInputFocused), isOutlined);
 
+const combinedErrorMessages = computed<string[]>(() => {
+  let propErrors: string[];
+  if (props.errorMessages) {
+    propErrors = Array.isArray(props.errorMessages)
+      ? props.errorMessages
+      : [props.errorMessages];
+  }
+  else {
+    propErrors = Array.isArray(props.errorMessages)
+      ? props.errorMessages
+      : [];
+  }
+  return [...propErrors, ...get(internalErrorMessages)];
+});
+
 function getDisplayValue(digit: Ref<number | undefined>, padding: number): string | undefined {
   return isDefined(digit)
     ? get(digit).toString().padStart(padding, '0')
@@ -275,6 +292,8 @@ async function setInputFocus(): Promise<void> {
 }
 
 function clear(segmentType?: string): void {
+  set(internalErrorMessages, []);
+
   if (!segmentType) {
     set(selectedYear, undefined);
     set(selectedMonth, undefined);
@@ -333,7 +352,10 @@ function getDateTime(): Dayjs {
 }
 
 function setNow(): void {
+  set(internalErrorMessages, []);
+
   const date = dayjs();
+  set(now, date);
   set(selectedYear, date.year());
   set(selectedMonth, date.month() + 1);
   set(selectedDay, date.date());
@@ -345,6 +367,28 @@ function setNow(): void {
   nextTick(() => {
     updateModelValue();
   });
+}
+
+function isDateValid(date: Dayjs): boolean {
+  const min = get(minAllowedDate);
+  const max = get(maxAllowedDate);
+
+  set(internalErrorMessages, []);
+
+  if (min && date.isBefore(min)) {
+    set(internalErrorMessages, [...get(internalErrorMessages), `Date cannot be before ${min.toLocaleDateString()}`]);
+    return false;
+  }
+
+  if (max && date.isAfter(max)) {
+    const errorMessage = props.maxDate === 'now'
+      ? 'The selected date cannot be in the future'
+      : `Date cannot be after ${max.toLocaleDateString()}`;
+    set(internalErrorMessages, [...get(internalErrorMessages), errorMessage]);
+    return false;
+  }
+
+  return true;
 }
 
 function emitUpdate(updatedModel: Dayjs) {
@@ -369,10 +413,6 @@ function updateModelValue(): void {
     const date = get(selectedDate);
     const time = get(selectedTime);
 
-    if (date.getFullYear() < get(minAllowedDate).getFullYear()) {
-      return;
-    }
-
     const updatedModel = dayjs.tz(isDefined(modelValue) ? get(modelValue) : undefined, get(selectedTimezone))
       .year(date.getFullYear())
       .month(date.getMonth())
@@ -381,6 +421,10 @@ function updateModelValue(): void {
       .minute(time.getMinutes())
       .second(includeSeconds(props.accuracy) ? time.getSeconds() : 0)
       .millisecond(includeMilliseconds(props.accuracy) ? time.getMilliseconds() : 0);
+
+    if (!isDateValid(updatedModel)) {
+      return;
+    }
 
     emitUpdate(updatedModel);
   }
@@ -396,6 +440,8 @@ const { ignoreUpdates } = watchIgnorable([selectedDate, selectedTime], ([selecte
   if (newSelectedDate.isSame(oldSelectedDate) && newSelectedTime.isSame(oldSelectedTime)) {
     return;
   }
+
+  set(now, dayjs());
   updateModelValue();
 });
 
@@ -404,17 +450,21 @@ function updateInternalModel(value: ModelValueType<typeof props.type>) {
     const updatedValue = props.type === 'epoch' && typeof value === 'number'
       ? value * 1000
       : value;
-    update(dayjs.tz(updatedValue, get(selectedTimezone)), props.accuracy);
+    const date = dayjs.tz(updatedValue, get(selectedTimezone));
+    isDateValid(date);
+    update(date, props.accuracy);
   });
 }
 
 watch(selectedTimezone, (newTimezone: string | undefined) => {
   if (newTimezone && isDefined(selectedDate) && isDefined(selectedTime)) {
+    set(now, dayjs());
     updateModelValue();
   }
 });
 
 watch(modelValue, (value) => {
+  set(now, dayjs());
   if (value === undefined) {
     clear();
   }
@@ -441,7 +491,7 @@ onMounted(() => {
     :hint="hint"
     :disabled="disabled"
     :success-messages="successMessages"
-    :error-messages="errorMessages"
+    :error-messages="combinedErrorMessages"
     :close-on-content-click="false"
     :show-details="!hideDetails"
     :popper="{
