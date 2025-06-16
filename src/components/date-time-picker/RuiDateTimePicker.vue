@@ -90,6 +90,7 @@ const selectedMillisecond = ref<number>();
 const selectedTimezone = ref<string | undefined>(guessTimezone());
 
 const currentValue = ref<number>();
+const now = ref(dayjs.tz(undefined, guessTimezone()));
 
 const textInput = ref<HTMLInputElement>();
 const activator = ref();
@@ -118,7 +119,7 @@ const maxAllowedDate = computed<Date | undefined>(() => {
     return undefined;
   }
   if (props.maxDate === 'now') {
-    return new Date();
+    return get(now).toDate();
   }
   return new Date(props.maxDate);
 });
@@ -354,6 +355,7 @@ function setNow(): void {
   set(internalErrorMessages, []);
 
   const date = dayjs();
+  set(now, date);
   set(selectedYear, date.year());
   set(selectedMonth, date.month() + 1);
   set(selectedDay, date.date());
@@ -438,6 +440,8 @@ const { ignoreUpdates } = watchIgnorable([selectedDate, selectedTime], ([selecte
   if (newSelectedDate.isSame(oldSelectedDate) && newSelectedTime.isSame(oldSelectedTime)) {
     return;
   }
+
+  set(now, dayjs());
   updateModelValue();
 });
 
@@ -454,11 +458,13 @@ function updateInternalModel(value: ModelValueType<typeof props.type>) {
 
 watch(selectedTimezone, (newTimezone: string | undefined) => {
   if (newTimezone && isDefined(selectedDate) && isDefined(selectedTime)) {
+    set(now, dayjs());
     updateModelValue();
   }
 });
 
 watch(modelValue, (value) => {
+  set(now, dayjs());
   if (value === undefined) {
     clear();
   }

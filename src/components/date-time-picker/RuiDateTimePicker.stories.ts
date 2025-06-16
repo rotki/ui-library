@@ -79,4 +79,13 @@ export const Optional: Story = {
   },
 };
 
+export const WithMaxNow: Story = {
+  args: {
+    accuracy: TimeAccuracy.SECOND,
+    maxDate: 'now',
+    modelValue: new Date(),
+    variant: 'outlined',
+  },
+};
+
 export default meta;
