@@ -352,6 +352,28 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(vm.maxDate).toEqual(maxDate);
   });
 
+  it('handles "now" as maxDate correctly', async () => {
+    const wrapper = createWrapper({
+      props: {
+        maxDate: 'now',
+        modelValue: new Date(2023, 0, 25),
+      },
+    });
+
+    await vi.runOnlyPendingTimersAsync();
+
+    const vm = wrapper.vm as any;
+    expect(vm.maxAllowedDate instanceof Date).toBeTruthy();
+
+    // Since we're using fake timers, the "now" date should be the fixed date
+    const expectedDate = new Date(fixedDate);
+    expect(vm.maxAllowedDate.getFullYear()).toBe(expectedDate.getFullYear());
+    expect(vm.maxAllowedDate.getMonth()).toBe(expectedDate.getMonth());
+    expect(vm.maxAllowedDate.getDate()).toBe(expectedDate.getDate());
+    expect(vm.maxAllowedDate.getHours()).toBe(expectedDate.getHours());
+    expect(vm.maxAllowedDate.getMinutes()).toBe(expectedDate.getMinutes());
+  });
+
   it('clears the value when clear button is clicked', async () => {
     const wrapper = createWrapper({
       props: {

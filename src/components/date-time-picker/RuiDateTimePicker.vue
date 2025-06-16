@@ -24,7 +24,7 @@ type ModelValueType<T extends DateTimeModelType> =
 
 export interface RuiDateTimePickerProps {
   minDate?: Date | number;
-  maxDate?: Date | number;
+  maxDate?: Date | number | 'now';
   format?: DateFormat;
   type?: DateTimeModelType;
   accuracy?: TimeAccuracy;
@@ -111,6 +111,16 @@ const { setValue, update, getCurrent } = useInputHandler({
 const minAllowedDate = computed<Date>(() => props.minDate === undefined
   ? new Date(1970, 0, 1)
   : new Date(props.minDate));
+
+const maxAllowedDate = computed<Date | undefined>(() => {
+  if (props.maxDate === undefined) {
+    return undefined;
+  }
+  if (props.maxDate === 'now') {
+    return new Date();
+  }
+  return new Date(props.maxDate);
+});
 
 const dateFormat = computed<string>(() => {
   const dateFormat = props.format;
@@ -555,7 +565,7 @@ onMounted(() => {
         v-model:time-selection="timeSelection"
         v-model:selected-timezone="selectedTimezone"
         :accuracy="accuracy"
-        :max-date="maxDate"
+        :max-date="maxAllowedDate"
         :min-date="minAllowedDate"
         @set-now="setNow()"
       >
