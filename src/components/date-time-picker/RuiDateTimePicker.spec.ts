@@ -352,6 +352,51 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(vm.maxDate).toEqual(maxDate);
   });
 
+  it('shows error message when date is below minAllowedDate', async () => {
+    const minDate = new Date(2023, 0, 10);
+    const belowMinDate = new Date(2023, 0, 5); // Date before minDate
+
+    const wrapper = createWrapper({
+      props: {
+        minDate,
+        modelValue: belowMinDate,
+      },
+    });
+
+    await vi.runOnlyPendingTimersAsync();
+
+    expect(wrapper.find('.details').text()).toContain(`Date cannot be before ${minDate.toLocaleDateString()}`);
+  });
+
+  it('shows error message when date is above maxAllowedDate', async () => {
+    const maxDate = new Date(2023, 0, 20);
+    const aboveMaxDate = new Date(2023, 0, 25);
+
+    const wrapper = createWrapper({
+      props: {
+        maxDate,
+        modelValue: aboveMaxDate,
+      },
+    });
+
+    await vi.runOnlyPendingTimersAsync();
+    expect(wrapper.find('.details').text()).toContain(`Date cannot be after ${maxDate.toLocaleDateString()}`);
+  });
+
+  it('should show an error when now is used as mas an the date is in the future', async () => {
+    const aboveMaxDate = new Date(2023, 0, 25);
+
+    const wrapper = createWrapper({
+      props: {
+        maxDate: 'now',
+        modelValue: aboveMaxDate,
+      },
+    });
+
+    await vi.runOnlyPendingTimersAsync();
+    expect(wrapper.find('.details').text()).toContain('The selected date cannot be in the future');
+  });
+
   it('handles "now" as maxDate correctly', async () => {
     const wrapper = createWrapper({
       props: {
