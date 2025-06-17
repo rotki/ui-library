@@ -4,6 +4,7 @@ import { useDefaultsStore } from '@/stores/defaults';
 
 import {
   createRui,
+  createRuiI8nPlugin,
   LuAlignCenter,
   LuAlignJustify,
   LuAlignLeft,
@@ -28,9 +29,27 @@ import {
   LuX,
 } from '@rotki/ui-library';
 import { createPinia, storeToRefs } from 'pinia';
+import { createI18n } from 'vue-i18n';
 import '@/assets/main.css';
 import '@rotki/ui-library/style.css';
 import '@fontsource/roboto/latin.css';
+
+// Create i18n instance
+const i18n = createI18n({
+  locale: 'en',
+  messages: {
+    en: {
+      // UI library translations
+      rui: {
+        date_time_picker: {
+          date_after_max: 'Date cannot be after {date}',
+          date_before_min: 'Date cannot be before {date}',
+          date_in_future: 'The selected date cannot be in the future',
+        },
+      },
+    },
+  },
+});
 
 const app = createApp(App);
 
@@ -74,7 +93,12 @@ const RuiPlugin = createRui({
   },
 });
 
+// Create and use the Rotki UI i18n plugin
+const RuiI18nPlugin = createRuiI8nPlugin(i18n);
+
 app.use(router);
 app.use(RuiPlugin);
+app.use(RuiI18nPlugin);
+app.use(i18n);
 
 app.mount('#app');
