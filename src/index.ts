@@ -10,6 +10,7 @@ import { useRotkiTheme } from '@/composables/theme';
 import { RUI_I18N_INJECTION_KEY } from '@/composables/use-rui-i18n';
 import { StepperState } from '@/types/stepper';
 import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import '@/style.scss';
@@ -58,6 +59,7 @@ export function createRui(options: RuiOptions = {}) {
     app.provide(IconsSymbol, defaults.icons);
     dayjs.extend(utc);
     dayjs.extend(timezone);
+    dayjs.extend(customParseFormat);
   };
 
   return {

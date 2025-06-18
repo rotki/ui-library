@@ -1,6 +1,8 @@
-import type { Dayjs } from 'dayjs';
+import type { TimeAccuracy } from '@/consts/time-accuracy';
 import type { Ref } from 'vue';
 import { type DateTimeSegmentType, isDateTimeSegmentType } from '@/components/date-time-picker/types';
+import { includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
+import dayjs, { type Dayjs } from 'dayjs';
 
 interface Segment {
   start: number;
@@ -18,10 +20,12 @@ interface KeyboardHandlerOptions {
   getDateTime: () => Dayjs;
   disabled: boolean;
   readonly: boolean;
+  accuracy: TimeAccuracy;
 }
 
 export function useKeyboardHandler(options: KeyboardHandlerOptions) {
   const {
+    accuracy,
     currentValue,
     cursorPosition,
     dateFormat,
@@ -300,13 +304,74 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     }
   }
 
+  function parseAndSetDateValues(pastedText: string) {
+    try {
+      const parsedDate = dayjs(pastedText, get(dateFormat));
+
+      if (!parsedDate.isValid()) {
+        return;
+      }
+
+      const date = parsedDate.toDate();
+      setValue('YYYY', date.getFullYear());
+      setValue('MM', date.getMonth() + 1);
+      setValue('DD', date.getDate());
+      setValue('HH', date.getHours());
+      setValue('mm', date.getMinutes());
+      if (includeSeconds(accuracy)) {
+        setValue('ss', date.getSeconds());
+      }
+      if (includeMilliseconds(accuracy)) {
+        setValue('SSS', date.getMilliseconds());
+      }
+    }
+    catch {
+      // Invalid format, ignore paste
+    }
+  }
+
+  function handlePaste(event: ClipboardEvent): void {
+    if (disabled || readonly)
+      return;
+
+    if (!(event.target instanceof HTMLInputElement)) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const pastedText = event.clipboardData?.getData('text');
+    if (!pastedText) {
+      return;
+    }
+    parseAndSetDateValues(pastedText);
+  }
+
+  function handleInput(event: Event): void {
+    if (disabled || readonly)
+      return;
+
+    if (!(event.target instanceof HTMLInputElement)) {
+      return;
+    }
+
+    const inputText = event.target.value;
+    if (!inputText) {
+      return;
+    }
+
+    parseAndSetDateValues(inputText);
+  }
+
   return {
     clear,
     getCurrentSegment,
     handleClick,
     handleFocus,
+    handleInput,
     handleInputSelection,
     handleKeyDown,
+    handlePaste,
     setSegment,
   };
 }

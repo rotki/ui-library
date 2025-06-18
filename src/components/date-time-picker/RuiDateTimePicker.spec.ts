@@ -1,13 +1,16 @@
 import { TransitionGroupStub } from '@/__test__/transition-group-stub';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
+
 import { describe, expect, it, vi } from 'vitest';
 import RuiDateTimePicker from './RuiDateTimePicker.vue';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(customParseFormat);
 
 vi.mock('@/components/date-time-picker/utils', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/components/date-time-picker/utils')>();
@@ -680,5 +683,31 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     const lastEmittedValue = modelValue?.at(-1)?.[0];
     assert(lastEmittedValue && lastEmittedValue instanceof Date);
     expect(dayjs(lastEmittedValue).isSame(dayjs('2000-12-12 10:05')), 'the emitted date was not the expected').toBeTruthy();
+  });
+
+  it('should update the model when setting a date using setValue', async () => {
+    const wrapper = createWrapper({
+      props: {
+        modelValue: new Date(2022, 0, 1), // Start with January 1, 2022
+        type: 'date',
+      },
+    });
+    await vi.runOnlyPendingTimersAsync();
+
+    const date = dayjs('2011-05-04 10:22');
+
+    const vm = wrapper.vm as any;
+    const dateFormat = vm.dateFormat;
+
+    await wrapper.find('input').setValue(date.format(dateFormat));
+    await vi.runOnlyPendingTimersAsync();
+
+    const modelValue = wrapper.emitted('update:modelValue');
+    expect(modelValue).toBeTruthy();
+
+    const lastEmittedValue = modelValue?.at(-1)?.[0];
+    assert(lastEmittedValue instanceof Date);
+
+    expect(dayjs(lastEmittedValue).isSame(date)).toBeTruthy();
   });
 });

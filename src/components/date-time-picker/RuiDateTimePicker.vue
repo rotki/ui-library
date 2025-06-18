@@ -156,8 +156,10 @@ const {
   getCurrentSegment,
   handleClick,
   handleFocus,
+  handleInput,
   handleInputSelection,
   handleKeyDown,
+  handlePaste,
   setSegment,
 } = useKeyboardHandler({
   currentValue,
@@ -169,6 +171,7 @@ const {
   dateFormat,
   setValue,
   textInput,
+  accuracy: props.accuracy,
 });
 
 const { t } = useRuiI8n();
@@ -582,6 +585,8 @@ onMounted(() => {
             @select="handleInputSelection($event)"
             @click="handleClick($event)"
             @keydown="handleKeyDown($event)"
+            @paste="handlePaste($event)"
+            @input="handleInput($event)"
           />
         </div>
 
