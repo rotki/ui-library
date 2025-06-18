@@ -15,7 +15,7 @@ export interface RuiI18nProvider {
 }
 
 export function useRuiI8n(): I18nProvider {
-  const i18nProvider = inject<RuiI18nProvider>(RUI_I18N_INJECTION_KEY);
+  const i18nProvider = inject<RuiI18nProvider | undefined>(RUI_I18N_INJECTION_KEY, undefined);
 
   const translate = (key: string, params?: Record<string, any>): string | undefined => {
     if (i18nProvider?.te(key)) {
