@@ -419,6 +419,86 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(vm.maxAllowedDate.getMinutes()).toBe(expectedDate.getMinutes());
   });
 
+  it('respects min date constraint with epoch type', async () => {
+    const testDate = new Date(2023, 0, 10);
+    const minDateEpoch = Math.floor(testDate.getTime() / 1000);
+
+    const wrapper = createWrapper({
+      props: {
+        minDate: minDateEpoch,
+        modelValue: new Date(2023, 0, 5), // Date before minDate
+        type: 'epoch',
+      },
+    });
+
+    await vi.runOnlyPendingTimersAsync();
+
+    const vm = wrapper.vm as any;
+    const minAllowedDate = vm.minAllowedDate;
+    expect(minAllowedDate instanceof Date).toBeTruthy();
+    expect(minAllowedDate.getFullYear()).toBe(testDate.getFullYear());
+    expect(minAllowedDate.getMonth()).toBe(testDate.getMonth());
+    expect(minAllowedDate.getDate()).toBe(testDate.getDate());
+  });
+
+  it('respects max date constraint with epoch type', async () => {
+    const testDate = new Date(2023, 0, 20);
+    const maxDateEpoch = Math.floor(testDate.getTime() / 1000);
+
+    const wrapper = createWrapper({
+      props: {
+        maxDate: maxDateEpoch,
+        modelValue: new Date(2023, 0, 25), // Date after maxDate
+        type: 'epoch',
+      },
+    });
+
+    await vi.runOnlyPendingTimersAsync();
+
+    const vm = wrapper.vm as any;
+    const maxAllowedDate = vm.maxAllowedDate;
+    expect(maxAllowedDate instanceof Date).toBeTruthy();
+    expect(maxAllowedDate.getFullYear()).toBe(testDate.getFullYear());
+    expect(maxAllowedDate.getMonth()).toBe(testDate.getMonth());
+    expect(maxAllowedDate.getDate()).toBe(testDate.getDate());
+  });
+
+  it('shows error message when date is below minAllowedDate with epoch type', async () => {
+    const testDate = new Date(2023, 0, 10);
+    const minDateEpoch = Math.floor(testDate.getTime() / 1000);
+    const belowMinDate = new Date(2023, 0, 5); // Date before minDate
+
+    const wrapper = createWrapper({
+      props: {
+        minDate: minDateEpoch,
+        modelValue: belowMinDate,
+        type: 'epoch',
+      },
+    });
+
+    await vi.runOnlyPendingTimersAsync();
+
+    expect(wrapper.find('.details').text()).toContain(`Date cannot be before ${testDate.toLocaleDateString()}`);
+  });
+
+  it('shows error message when date is above maxAllowedDate with epoch type', async () => {
+    const testDate = new Date(2023, 0, 20);
+    const maxDateEpoch = Math.floor(testDate.getTime() / 1000);
+    const aboveMaxDate = new Date(2023, 0, 25); // Date after maxDate
+
+    const wrapper = createWrapper({
+      props: {
+        maxDate: maxDateEpoch,
+        modelValue: aboveMaxDate,
+        type: 'epoch',
+      },
+    });
+
+    await vi.runOnlyPendingTimersAsync();
+
+    expect(wrapper.find('.details').text()).toContain(`Date cannot be after ${testDate.toLocaleDateString()}`);
+  });
+
   it('clears the value when clear button is clicked', async () => {
     const wrapper = createWrapper({
       props: {
