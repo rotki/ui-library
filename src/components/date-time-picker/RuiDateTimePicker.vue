@@ -77,6 +77,8 @@ const baseFormats: Record<DateFormat, string> = {
   'year-first': 'YYYY/MM/DD hh:mm',
 };
 
+const MILLISECONDS = 1000;
+
 const isOpen = ref<boolean>(false);
 const cursorPosition = ref<number>(0);
 const internalErrorMessages = ref<string[]>([]);
@@ -112,9 +114,17 @@ const { setValue, update, getCurrent } = useInputHandler({
   SSS: selectedMillisecond,
 }, currentValue);
 
-const minAllowedDate = computed<Date>(() => props.minDate === undefined
-  ? new Date(1970, 0, 1)
-  : new Date(props.minDate));
+const minAllowedDate = computed<Date>(() => {
+  if (props.minDate === undefined) {
+    return new Date(1970, 0, 1);
+  }
+
+  if (props.type === 'epoch' && typeof props.minDate === 'number') {
+    return new Date(props.minDate * MILLISECONDS);
+  }
+
+  return new Date(props.minDate);
+});
 
 const maxAllowedDate = computed<Date | undefined>(() => {
   if (props.maxDate === undefined) {
@@ -122,6 +132,9 @@ const maxAllowedDate = computed<Date | undefined>(() => {
   }
   if (props.maxDate === 'now') {
     return get(now).toDate();
+  }
+  if (props.type === 'epoch' && typeof props.maxDate === 'number') {
+    return new Date(props.maxDate * MILLISECONDS);
   }
   return new Date(props.maxDate);
 });
@@ -402,7 +415,7 @@ function emitUpdate(updatedModel: Dayjs) {
   const typeMap = {
     'date': () => updatedModel.toDate(),
     'epoch-ms': () => updatedModel.valueOf(),
-    'epoch': () => updatedModel.valueOf() / 1000,
+    'epoch': () => updatedModel.valueOf() / MILLISECONDS,
   } as const;
 
   set(modelValue, typeMap[props.type]());
@@ -455,7 +468,7 @@ const { ignoreUpdates } = watchIgnorable([selectedDate, selectedTime], ([selecte
 function updateInternalModel(value: ModelValueType<typeof props.type>) {
   ignoreUpdates(() => {
     const updatedValue = props.type === 'epoch' && typeof value === 'number'
-      ? value * 1000
+      ? value * MILLISECONDS
       : value;
     const date = dayjs.tz(updatedValue, get(selectedTimezone));
     isDateValid(date);
