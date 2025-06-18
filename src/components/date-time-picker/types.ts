@@ -4,7 +4,7 @@ export const DATE_TIME_SEGMENT_TYPES = [
   'DD',
   'MM',
   'YYYY',
-  'hh',
+  'HH',
   'mm',
   'ss',
   'SSS',

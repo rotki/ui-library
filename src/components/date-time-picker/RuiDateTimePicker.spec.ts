@@ -61,7 +61,7 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(wrapper.find('[class*="_label_"]').text()).toBe('Pick a date');
 
     const input = wrapper.find('input');
-    expect(input.attributes('placeholder')).toBe('DD/MM/YYYY hh:mm');
+    expect(input.attributes('placeholder')).toBe('DD/MM/YYYY HH:mm');
   });
 
   it('renders with custom label', async () => {
@@ -165,7 +165,7 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     });
 
     const input = wrapper.find('input');
-    expect(input.attributes('placeholder')).toBe('MM/DD/YYYY hh:mm');
+    expect(input.attributes('placeholder')).toBe('MM/DD/YYYY HH:mm');
   });
 
   it('uses year-first format correctly', () => {
@@ -177,7 +177,7 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     });
 
     const input = wrapper.find('input');
-    expect(input.attributes('placeholder')).toBe('YYYY/MM/DD hh:mm');
+    expect(input.attributes('placeholder')).toBe('YYYY/MM/DD HH:mm');
   });
 
   it('uses second accuracy correctly', () => {
@@ -189,7 +189,7 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     });
 
     const input = wrapper.find('input');
-    expect(input.attributes('placeholder')).toBe('DD/MM/YYYY hh:mm:ss');
+    expect(input.attributes('placeholder')).toBe('DD/MM/YYYY HH:mm:ss');
   });
 
   it('uses millisecond accuracy correctly', () => {
@@ -201,7 +201,7 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     });
 
     const input = wrapper.find('input');
-    expect(input.attributes('placeholder')).toBe('DD/MM/YYYY hh:mm:ss.SSS');
+    expect(input.attributes('placeholder')).toBe('DD/MM/YYYY HH:mm:ss.SSS');
   });
 
   it('initializes with current date when allowEmpty is false', async () => {

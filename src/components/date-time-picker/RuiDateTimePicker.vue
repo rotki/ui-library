@@ -72,9 +72,9 @@ defineSlots<{
 }>();
 
 const baseFormats: Record<DateFormat, string> = {
-  'day-first': 'DD/MM/YYYY hh:mm',
-  'month-first': 'MM/DD/YYYY hh:mm',
-  'year-first': 'YYYY/MM/DD hh:mm',
+  'day-first': 'DD/MM/YYYY HH:mm',
+  'month-first': 'MM/DD/YYYY HH:mm',
+  'year-first': 'YYYY/MM/DD HH:mm',
 };
 
 const MILLISECONDS = 1000;
@@ -108,7 +108,7 @@ const { setValue, update, getCurrent } = useInputHandler({
   DD: selectedDay,
   MM: selectedMonth,
   YYYY: selectedYear,
-  hh: selectedHour,
+  HH: selectedHour,
   mm: selectedMinute,
   ss: selectedSecond,
   SSS: selectedMillisecond,
@@ -143,10 +143,10 @@ const dateFormat = computed<string>(() => {
   const dateFormat = props.format;
   const format = baseFormats[dateFormat];
   if (props.accuracy === 'second') {
-    return format.replace('hh:mm', 'hh:mm:ss');
+    return format.replace('HH:mm', 'HH:mm:ss');
   }
   else if (props.accuracy === 'millisecond') {
-    return format.replace('hh:mm', 'hh:mm:ss.SSS');
+    return format.replace('HH:mm', 'HH:mm:ss.SSS');
   }
   return format;
 });
@@ -233,7 +233,7 @@ const formattedDisplay = computed<string>(() => {
     { pattern: 'YYYY', value: getDisplayValue(selectedYear, 4) },
     { pattern: 'MM', value: getDisplayValue(selectedMonth, 2) },
     { pattern: 'DD', value: getDisplayValue(selectedDay, 2) },
-    { pattern: 'hh', value: getDisplayValue(selectedHour, 2) },
+    { pattern: 'HH', value: getDisplayValue(selectedHour, 2) },
     { pattern: 'mm', value: getDisplayValue(selectedMinute, 2) },
     { pattern: 'ss', value: getDisplayValue(selectedSecond, 2) },
     { pattern: 'SSS', value: getDisplayValue(selectedMillisecond, 3) },
@@ -264,7 +264,7 @@ const timeSelection = computed<TimePickerSelection>({
     return 'hour';
   },
   set(value: TimePickerSelection) {
-    let segmentType: DateTimeSegmentType = 'hh';
+    let segmentType: DateTimeSegmentType = 'HH';
     if (value === 'minute') {
       segmentType = 'mm';
     }

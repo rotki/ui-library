@@ -113,7 +113,7 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
 
     const segmentMethods = {
       DD: 'date',
-      hh: 'hour',
+      HH: 'hour',
       MM: 'month',
       mm: 'minute',
       ss: 'second',
@@ -176,7 +176,7 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
 
     const segmentConfig: Record<DateTimeSegmentType, { maxValue: number }> = {
       DD: { maxValue: 31 },
-      hh: { maxValue: 23 },
+      HH: { maxValue: 23 },
       MM: { maxValue: 12 },
       mm: { maxValue: 59 },
       ss: { maxValue: 59 },

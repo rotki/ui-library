@@ -23,7 +23,7 @@ export function useInputHandler(data: SegmentData, currentValue: Ref<number | un
     onlySet('YYYY', date.year());
     onlySet('MM', date.month() + 1);
     onlySet('DD', date.date());
-    onlySet('hh', date.hour());
+    onlySet('HH', date.hour());
     onlySet('mm', date.minute());
     onlySet('ss', includeSeconds(accuracy) ? date.second() : undefined);
     onlySet('SSS', includeMilliseconds(accuracy) ? date.millisecond() : undefined);
