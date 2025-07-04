@@ -10,6 +10,8 @@ defineOptions({
   inheritAttrs: false,
 });
 
+const isMenuOpen = defineModel<boolean>('menu-open', { required: true });
+
 const props = defineProps<{
   title: string;
   viewMonth: number;
@@ -22,7 +24,6 @@ const emit = defineEmits<{
   'select-month': [MonthYearSelection];
 }>();
 
-const isMenuOpen = ref(false);
 const anchorEl = ref<HTMLElement>();
 
 const calendarState = inject<RuiCalendarState>(CalendarStateSymbol) as RuiCalendarState;
@@ -65,7 +66,7 @@ function handleDateSelection(selection: MonthYearSelection) {
       icon
       :disabled="!canGoToPrev"
       variant="text"
-      @click="emit('prev-month')"
+      @click.stop="emit('prev-month')"
     >
       <RuiIcon
         name="lu-chevron-left"
@@ -75,7 +76,7 @@ function handleDateSelection(selection: MonthYearSelection) {
 
     <h3
       class="header-title"
-      @click="handleTitleClick($event)"
+      @click.stop="handleTitleClick($event)"
     >
       {{ title }}
       <RuiIcon
@@ -99,7 +100,7 @@ function handleDateSelection(selection: MonthYearSelection) {
       variant="text"
       icon
       :disabled="!canGoToNext"
-      @click="emit('next-month')"
+      @click.stop="emit('next-month')"
     >
       <RuiIcon
         name="lu-chevron-right"

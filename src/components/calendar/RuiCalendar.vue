@@ -21,6 +21,7 @@ defineOptions({
 });
 
 const model = defineModel<Date | undefined>({ required: false });
+const isMenuOpen = defineModel<boolean>('menu-open', { required: false, default: false });
 
 const props = withDefaults(defineProps<CalendarProps>(), {
   maxDate: undefined,
@@ -131,6 +132,7 @@ defineExpose({
     :class="{ dark: isDark, bordered: !borderless }"
   >
     <RuiCalendarHeader
+      v-model:menu-open="isMenuOpen"
       :title="monthTitle"
       :view-month="viewMonth"
       :view-year="viewYear"

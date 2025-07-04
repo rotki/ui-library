@@ -99,6 +99,7 @@ const now = ref(dayjs.tz(undefined, guessTimezone()));
 const textInput = ref<HTMLInputElement>();
 const activator = ref();
 const menuWrapperRef = ref();
+const calendarMenuOpen = ref<boolean>(false);
 
 const { focused: activatorFocusedWithin } = useFocusWithin(activator);
 const { focused: menuWrapperFocusedWithin } = useFocusWithin(menuWrapperRef);
@@ -517,6 +518,7 @@ onMounted(() => {
     :error-messages="combinedErrorMessages"
     :close-on-content-click="false"
     :show-details="!hideDetails"
+    :persistent="calendarMenuOpen"
     :popper="{
       placement: 'bottom-start',
     }"
@@ -639,6 +641,7 @@ onMounted(() => {
         v-model:selected-millisecond="selectedMillisecond"
         v-model:time-selection="timeSelection"
         v-model:selected-timezone="selectedTimezone"
+        v-model:calendar-menu-open="calendarMenuOpen"
         :accuracy="accuracy"
         :max-date="maxAllowedDate"
         :min-date="minAllowedDate"

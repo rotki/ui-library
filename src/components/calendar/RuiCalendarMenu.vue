@@ -139,7 +139,7 @@ function handlePrev() {
           icon
           :disabled="!canGoToPrev"
           variant="text"
-          @click="handlePrev()"
+          @click.stop="handlePrev()"
         >
           <RuiIcon
             name="lu-chevron-left"
@@ -149,7 +149,7 @@ function handlePrev() {
 
         <div
           class="flex-1 text-center cursor-pointer"
-          @click="toggleSelection()"
+          @click.stop="toggleSelection()"
         >
           {{ title }}
         </div>
@@ -160,7 +160,7 @@ function handlePrev() {
           icon
           :disabled="!canGoToNext"
           variant="text"
-          @click="handleNext()"
+          @click.stop="handleNext()"
         >
           <RuiIcon
             name="lu-chevron-right"
@@ -180,7 +180,7 @@ function handlePrev() {
           :active="index === viewMonth"
           :color="index === viewMonth ? 'primary' : undefined"
           :disabled="!isDateInRange(index, viewYear)"
-          @click="selectMonth(index)"
+          @click.stop="selectMonth(index)"
         >
           {{ month.substring(0, 3) }}
         </RuiButton>
@@ -197,7 +197,7 @@ function handlePrev() {
           :active="year === viewYear"
           :color="year === viewYear ? 'primary' : undefined"
           :disabled="!isDateInRange(viewMonth, year)"
-          @click="selectYear(year)"
+          @click.stop="selectYear(year)"
         >
           {{ year }}
         </RuiButton>
