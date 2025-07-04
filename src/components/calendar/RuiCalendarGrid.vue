@@ -146,7 +146,7 @@ function getKey(date: Date): string {
           'is-disabled': !isDateInRange(date),
           [getKey(date)]: true,
         }"
-        @click="selectDate(date)"
+        @click.stop="selectDate(date)"
       >
         {{ date.getDate() }}
       </RuiButton>

@@ -19,6 +19,7 @@ const selectedSecond = defineModel<number | undefined>('selectedSecond', { requi
 const selectedMillisecond = defineModel<number | undefined>('selectedMillisecond', { required: true });
 const timeSelection = defineModel<TimePickerSelection>('timeSelection', { required: true });
 const selectedTimezone = defineModel<string | undefined>('selectedTimezone', { required: true });
+const calendarMenuOpen = defineModel<boolean>('calendarMenuOpen', { required: true });
 
 defineProps<{
   accuracy: TimeAccuracy;
@@ -43,6 +44,7 @@ function setNow(): void {
   <div class="flex divide-x divide-rui-grey-200 dark:divide-rui-grey-800">
     <RuiCalendar
       v-model="selectedDate"
+      v-model:menu-open="calendarMenuOpen"
       borderless
       :max-date="maxDate"
       :min-date="minDate"
