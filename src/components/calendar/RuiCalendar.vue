@@ -4,6 +4,8 @@ import {
   type MonthYearSelection,
   type RuiCalendarState,
 } from '@/components/calendar/state';
+import { useRotkiTheme } from '@/composables/theme';
+import { get, isDefined, set } from '@vueuse/core';
 import { computed, provide, ref, watch } from 'vue';
 import RuiCalendarGrid from './RuiCalendarGrid.vue';
 import RuiCalendarHeader from './RuiCalendarHeader.vue';

@@ -8,6 +8,11 @@ describe('calendar', () => {
   it('checks for rendered calendar', () => {
     cy.contains('h2[data-cy=calendars]', 'Calendar');
 
-    cy.get('.rui-id-2023-01-02.is-selected').should('be.exist');
+    cy.get('[data-id="2023-01-02"]').should('have.class', 'bg-rui-primary');
+    cy.get('[data-id="2023-01-02"]').should('have.class', 'text-white');
+    cy.get('[data-id="2023-01-01"]').should('not.have.class', 'bg-rui-primary');
+    cy.get('[data-id="2023-01-01"]').should('not.have.class', 'text-white');
+    cy.get('[data-id="2023-01-03"]').should('not.have.class', 'bg-rui-primary');
+    cy.get('[data-id="2023-01-03"]').should('not.have.class', 'text-white');
   });
 });

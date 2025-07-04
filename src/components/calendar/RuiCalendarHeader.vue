@@ -2,6 +2,7 @@
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import { CalendarStateSymbol, type MonthYearSelection, type RuiCalendarState } from '@/components/calendar/state';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
+import { get, isDefined, set } from '@vueuse/core';
 import { computed, inject, ref } from 'vue';
 import RuiCalendarMenu from './RuiCalendarMenu.vue';
 
