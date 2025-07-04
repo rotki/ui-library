@@ -3,13 +3,20 @@ import RuiCalendar from '@/components/calendar/RuiCalendar.vue';
 
 const render: StoryFn<typeof RuiCalendar> = args => ({
   components: { RuiCalendar },
+  name: 'RuiCalendarStory',
   setup() {
-    return { args };
+    const iso = computed<string>(() => {
+      if (args.modelValue) {
+        return new Date(args.modelValue).toISOString();
+      }
+      return '-';
+    });
+    return { args, iso };
   },
   template: `
     <div class="flex gap-4">
       <RuiCalendar v-model="args.modelValue" v-bind="args" />
-      <div class="text-rui-text">{{ args.modelValue ? new Date(args.modelValue).toISOString() : '-' }}</div>
+      <div class="text-rui-text">{{ iso }}</div>
     </div>
   `,
 });

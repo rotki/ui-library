@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import { CalendarStateSymbol, getDaysOfWeek, type RuiCalendarState } from '@/components/calendar/state';
-import { computed, inject } from 'vue';
+import { get, isDefined, set } from '@vueuse/core';
+import { inject, ref, watch } from 'vue';
 
 defineOptions({
   name: 'RuiCalendarGrid',
@@ -17,105 +17,131 @@ const props = defineProps<{
 
 const calendarState = inject<RuiCalendarState>(CalendarStateSymbol) as RuiCalendarState;
 
-const daysOfWeek = getDaysOfWeek();
+// Helper functions to reduce duplication
+function createDateKey(date: Date): string {
+  return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+}
 
-const calendarDays = computed(() => {
+// Pre-calculated constants
+const daysOfWeek = getDaysOfWeek();
+const today = new Date();
+const todayKey = createDateKey(today);
+
+// Pre-calculated arrays for performance - using refs for better control
+const calendarDays = ref<Array<{
+  date: Date;
+  isCurrentMonth: boolean;
+  isInRange: boolean;
+  isSelected: boolean;
+  isToday: boolean;
+  key: string;
+  dayNumber: number;
+}>>([]);
+
+function createDayData(date: Date, isCurrentMonth: boolean, modelValue: Date | null | undefined, maxDateValue: Date | null, minDateValue: Date | null) {
+  const key = createDateKey(date);
+  return {
+    date,
+    isCurrentMonth,
+    isInRange: isDateInRangeCheck(date, maxDateValue, minDateValue),
+    isSelected: modelValue ? isDateSelectedCheck(date, modelValue) : false,
+    isToday: key === todayKey,
+    key,
+    dayNumber: date.getDate(),
+  };
+}
+
+// Pre-calculation functions using VueUse get/set
+function calculateCalendarDays() {
   const firstDayOfMonth = new Date(props.viewYear, props.viewMonth, 1);
   const lastDayOfMonth = new Date(props.viewYear, props.viewMonth + 1, 0);
   const daysInMonth = lastDayOfMonth.getDate();
   const startingDayOfWeek = firstDayOfMonth.getDay();
 
-  const prevMonthDays = [];
+  const { maxDate, minDate } = calendarState;
+  const modelValue = get(model);
+  const maxDateValue = isDefined(maxDate) ? get(maxDate) : null;
+  const minDateValue = isDefined(minDate) ? get(minDate) : null;
+
+  const result = [];
+
+  // Previous month days
   if (startingDayOfWeek > 0) {
     const prevMonthLastDay = new Date(props.viewYear, props.viewMonth, 0).getDate();
     for (let i = startingDayOfWeek - 1; i >= 0; i--) {
-      prevMonthDays.push({
-        date: new Date(props.viewYear, props.viewMonth - 1, prevMonthLastDay - i),
-        isCurrentMonth: false,
-      });
+      const date = new Date(props.viewYear, props.viewMonth - 1, prevMonthLastDay - i, 12, 0, 0, 0);
+      result.push(createDayData(date, false, modelValue, maxDateValue, minDateValue));
     }
   }
 
-  const currentMonthDays = [];
+  // Current month days
   for (let i = 1; i <= daysInMonth; i++) {
-    currentMonthDays.push({
-      date: new Date(props.viewYear, props.viewMonth, i),
-      isCurrentMonth: true,
-    });
+    const date = new Date(props.viewYear, props.viewMonth, i, 12, 0, 0, 0);
+    result.push(createDayData(date, true, modelValue, maxDateValue, minDateValue));
   }
 
-  const nextMonthDays = [];
-  const totalDaysSoFar = prevMonthDays.length + currentMonthDays.length;
+  // Next month days
+  const totalDaysSoFar = result.length;
   const daysToAdd = 42 - totalDaysSoFar;
   for (let i = 1; i <= daysToAdd; i++) {
-    nextMonthDays.push({
-      date: new Date(props.viewYear, props.viewMonth + 1, i),
-      isCurrentMonth: false,
-    });
+    const date = new Date(props.viewYear, props.viewMonth + 1, i, 12, 0, 0, 0);
+    result.push(createDayData(date, false, modelValue, maxDateValue, minDateValue));
   }
 
-  return [...prevMonthDays, ...currentMonthDays, ...nextMonthDays];
-});
+  set(calendarDays, result);
+}
 
-function isDateInRange(date: Date): boolean {
-  const { maxDate, minDate } = calendarState;
-
-  if (isDefined(maxDate) && date > get(maxDate))
+function isDateInRangeCheck(date: Date, maxDateValue: Date | null, minDateValue: Date | null): boolean {
+  if (maxDateValue && date > maxDateValue)
     return false;
-  if (isDefined(minDate) && date < get(minDate))
+  if (minDateValue && date < minDateValue)
     return false;
-
   return true;
 }
 
-function isDateSelected(date: Date): boolean {
-  if (!isDefined(model))
-    return false;
-
-  const modelValue = get(model);
-
+function isDateSelectedCheck(date: Date, modelValue: Date): boolean {
   return date.getFullYear() === modelValue.getFullYear()
     && date.getMonth() === modelValue.getMonth()
     && date.getDate() === modelValue.getDate();
 }
 
-function selectDate(date: Date) {
-  if (!isDateInRange(date))
+// Initial calculation
+calculateCalendarDays();
+
+// Watchers for recalculation only when needed
+watch([() => props.viewMonth, () => props.viewYear], () => {
+  calculateCalendarDays();
+});
+
+watch(model, () => {
+  calculateCalendarDays();
+});
+
+watch([() => calendarState.maxDate, () => calendarState.minDate], () => {
+  calculateCalendarDays();
+}, { deep: true });
+
+function selectDate(dayData: { date: Date; isInRange: boolean; isSelected: boolean }) {
+  if (!dayData.isInRange)
     return;
 
   let updateModel: Date | undefined;
 
-  if (isDateSelected(date) && calendarState.allowEmpty) {
+  if (dayData.isSelected && calendarState.allowEmpty) {
     updateModel = undefined;
   }
+  else if (isDefined(model)) {
+    const modelValue = get(model);
+    const newDate = new Date(dayData.date);
+    newDate.setHours(modelValue.getHours());
+    newDate.setMinutes(modelValue.getMinutes());
+    newDate.setSeconds(modelValue.getSeconds());
+    updateModel = newDate;
+  }
   else {
-    if (isDefined(model)) {
-      const modelValue = get(model);
-      const newDate = new Date(date);
-      newDate.setHours(modelValue.getHours());
-      newDate.setMinutes(modelValue.getMinutes());
-      newDate.setSeconds(modelValue.getSeconds());
-      updateModel = newDate;
-    }
-    else {
-      updateModel = new Date(date);
-    }
+    updateModel = new Date(dayData.date);
   }
   set(model, updateModel);
-}
-
-function isToday(date: Date): boolean {
-  const today = new Date();
-  return date.getDate() === today.getDate()
-    && date.getMonth() === today.getMonth()
-    && date.getFullYear() === today.getFullYear();
-}
-
-function getKey(date: Date): string {
-  const fullYear = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  return `rui-id-${fullYear}-${month}-${day}`;
 }
 </script>
 
@@ -132,24 +158,26 @@ function getKey(date: Date): string {
     </div>
 
     <div class="calendar-days">
-      <RuiButton
-        v-for="{ date, isCurrentMonth } in calendarDays"
-        :key="`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`"
+      <button
+        v-for="dayData in get(calendarDays)"
+        :key="dayData.key"
         type="button"
-        variant="text"
-        class="day-cell !font-normal"
-        :disabled="!isDateInRange(date)"
-        :class="{
-          'not-current-month': !isCurrentMonth,
-          'is-selected': isDateSelected(date),
-          'is-today': isToday(date),
-          'is-disabled': !isDateInRange(date),
-          [getKey(date)]: true,
-        }"
-        @click.stop="selectDate(date)"
+        :data-id="dayData.key"
+        class="h-9 w-full flex items-center justify-center text-sm rounded-full mx-auto max-w-[2.25rem] transition-colors duration-150 ease-in-out border-none outline-none cursor-pointer focus:ring-2 focus:ring-rui-primary focus:ring-opacity-50"
+        :class="[
+          {
+            'bg-rui-primary text-white hover:bg-rui-primary/90 dark:hover:bg-rui-primary/90': dayData.isSelected,
+            'text-gray-400 dark:text-gray-600': !dayData.isCurrentMonth && !dayData.isSelected,
+            'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700': dayData.isCurrentMonth && !dayData.isSelected && dayData.isInRange,
+            'opacity-50 cursor-not-allowed hover:bg-transparent': !dayData.isInRange,
+            'today-indicator': dayData.isToday && !dayData.isSelected,
+          },
+        ]"
+        :disabled="!dayData.isInRange"
+        @click.stop="selectDate(dayData)"
       >
-        {{ date.getDate() }}
-      </RuiButton>
+        {{ dayData.dayNumber }}
+      </button>
     </div>
   </div>
 </template>
@@ -171,29 +199,12 @@ function getKey(date: Date): string {
   @apply grid grid-cols-7 gap-0.5;
 }
 
-.day-cell {
-  @apply h-9 w-full flex items-center justify-center text-sm rounded-full mx-auto max-w-[2.25rem];
-  @apply text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700;
+.today-indicator {
+  @apply relative;
 
-  &.not-current-month {
-    @apply text-gray-400 dark:text-gray-600;
-  }
-
-  &.is-selected {
-    @apply bg-rui-primary text-white hover:bg-rui-primary/90 dark:hover:bg-rui-primary/90;
-  }
-
-  &.is-today:not(.is-selected) {
-    @apply relative;
-
-    &:after {
-      content: '';
-      @apply absolute size-1 rounded-full bottom-1 left-1/2 transform -translate-x-1/2 bg-rui-primary;
-    }
-  }
-
-  &.is-disabled {
-    @apply opacity-50 cursor-not-allowed hover:bg-transparent;
+  &:after {
+    content: '';
+    @apply absolute size-1 rounded-full bottom-1 left-1/2 transform -translate-x-1/2 bg-rui-primary;
   }
 }
 </style>
