@@ -35,6 +35,8 @@ export {
 
 export { StepperState };
 
+export { createBlockie } from '@/utils/blockie';
+
 export interface RuiOptions {
   theme?: InitThemeOptions;
   defaults?: {
