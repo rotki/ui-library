@@ -147,7 +147,25 @@ const filteredOptions = computed<TItem[]>(() => {
     return keywords.some(keyword => getTextToken(keyword).includes(getTextToken(search)));
   });
 
-  return options.filter(item => usedFilter(item, search));
+  const filteredOptions = options.filter(item => usedFilter(item, search));
+  if (!props.customValue || !search) {
+    return filteredOptions;
+  }
+
+  const isCustomValueIncluded = filteredOptions.find((item) => {
+    if (!item) {
+      return false;
+    }
+
+    const val = textAttr ? item[textAttr] : item.toString();
+    return val === search;
+  });
+
+  if (isCustomValueIncluded) {
+    return filteredOptions;
+  }
+
+  return [textValueToProperValue(search, props.returnObject), ...filteredOptions];
 });
 
 function onUpdateModelValue(value: AutoCompleteModelValue<TValue>) {
@@ -829,14 +847,16 @@ defineExpose({
     &.outlined {
       @apply border-none hover:border-none;
 
-      &.opened,
-      &:focus,
-      &:focus-within {
-        @apply border-rui-primary;
+      &:not(.disabled) {
+        &.opened,
+        &:focus,
+        &:focus-within {
+          @apply border-rui-primary;
 
-        ~ .fieldset {
-          @apply border-rui-primary #{!important};
-          @apply border-2 #{!important};
+          ~ .fieldset {
+            @apply border-rui-primary #{!important};
+            @apply border-2 #{!important};
+          }
         }
       }
 
@@ -918,19 +938,21 @@ defineExpose({
         }
       }
 
-      &.opened,
-      &.opened.with-value,
-      &:focus,
-      &:focus.with-value,
-      &:focus-within,
-      &:focus-within.with-value {
-        .label {
-          @apply text-rui-primary;
-        }
+      &:not(.disabled) {
+        &.opened,
+        &.opened.with-value,
+        &:focus,
+        &:focus.with-value,
+        &:focus-within,
+        &:focus-within.with-value {
+          .label {
+            @apply text-rui-primary;
+          }
 
-        ~ .fieldset {
-          @apply border-rui-primary;
-          @apply border-2 #{!important};
+          ~ .fieldset {
+            @apply border-rui-primary;
+            @apply border-2 #{!important};
+          }
         }
       }
     }

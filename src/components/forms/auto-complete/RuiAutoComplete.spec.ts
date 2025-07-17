@@ -2,7 +2,7 @@ import { options, type SelectOption } from '@/__test__/options';
 import RuiChip from '@/components/chips/RuiChip.vue';
 import RuiAutoComplete from '@/components/forms/auto-complete/RuiAutoComplete.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 function createWrapper<
   TValue,
@@ -23,6 +23,10 @@ vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
   const now = Date.now();
   cb(now);
   return now;
+});
+
+afterEach(() => {
+  document.body.innerHTML = '';
 });
 
 describe('autocomplete', () => {
@@ -260,6 +264,7 @@ describe('autocomplete', () => {
 
   it('custom value', async () => {
     const wrapper = createWrapper<string[], SelectOption>({
+      attachTo: document.body,
       props: {
         autoSelectFirst: true,
         chips: true,
@@ -276,15 +281,55 @@ describe('autocomplete', () => {
     expect(chips).toHaveLength(1);
     expect(chips[0].text()).toBe('custom value');
 
-    await wrapper.find('input').setValue('custom value 2');
+    await wrapper.find('input').setValue('German');
     await nextTick();
     await vi.delay();
+
+    // The menu is teleported to document.body, so we need to query it there
+    expect(document.body.querySelector('div[role=menu]')).toBeTruthy();
+
+    // Find all buttons in the menu that is specific to this test
+    // We need to be more specific to avoid catching buttons from other tests
+    const menuButtons = Array.from(document.body.querySelectorAll('div[role=menu] button'));
+
+    // Filter only the buttons from the current menu (should contain our search terms)
+    const relevantButtons = menuButtons.filter(btn =>
+      btn.innerHTML.includes('German') || btn.innerHTML.includes('Germany'),
+    );
+
+    expect(relevantButtons.length).toBe(2);
+
+    let firstButton = relevantButtons[0];
+    expect(firstButton.innerHTML).toContain('German');
+
+    const secondButton = relevantButtons[1];
+    expect(secondButton.innerHTML).toContain('Germany');
+
+    await wrapper.find('input').setValue('Germany');
+    await nextTick();
+    await vi.delay();
+
+    // Re-query buttons after value change
+    const updatedMenuButtons = Array.from(document.body.querySelectorAll('div[role=menu] button'));
+    const updatedRelevantButtons = updatedMenuButtons.filter(btn =>
+      btn.innerHTML.includes('Germany'),
+    );
+
+    expect(updatedRelevantButtons.length).toBe(1);
+
+    firstButton = updatedRelevantButtons[0];
+    expect(firstButton.innerHTML).toContain('Germany');
+
+    await wrapper.find('input').setValue('German');
+    await nextTick();
+    await vi.delay();
+
     await wrapper.find('[data-id=activator]').trigger('keydown.enter');
     await nextTick();
 
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([[
       'custom value',
-      'custom value 2',
+      'German',
     ]]);
   });
 
