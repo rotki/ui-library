@@ -269,6 +269,7 @@ describe('autocomplete', () => {
         autoSelectFirst: true,
         chips: true,
         customValue: true,
+        hideCustomValueOption: true,
         keyAttr: 'id',
         modelValue: ['custom value'],
         options,
@@ -290,16 +291,29 @@ describe('autocomplete', () => {
 
     // Find all buttons in the menu that is specific to this test
     // We need to be more specific to avoid catching buttons from other tests
-    const menuButtons = Array.from(document.body.querySelectorAll('div[role=menu] button'));
+    let menuButtons = Array.from(document.body.querySelectorAll('div[role=menu] button'));
 
     // Filter only the buttons from the current menu (should contain our search terms)
-    const relevantButtons = menuButtons.filter(btn =>
+    let relevantButtons = menuButtons.filter(btn =>
+      btn.innerHTML.includes('German') || btn.innerHTML.includes('Germany'),
+    );
+
+    expect(relevantButtons.length).toBe(1);
+
+    let firstButton = relevantButtons[0];
+    expect(firstButton.innerHTML).toContain('Germany');
+
+    await wrapper.setProps({ hideCustomValueOption: false });
+    await nextTick();
+
+    menuButtons = Array.from(document.body.querySelectorAll('div[role=menu] button'));
+    relevantButtons = menuButtons.filter(btn =>
       btn.innerHTML.includes('German') || btn.innerHTML.includes('Germany'),
     );
 
     expect(relevantButtons.length).toBe(2);
 
-    let firstButton = relevantButtons[0];
+    firstButton = relevantButtons[0];
     expect(firstButton.innerHTML).toContain('German');
 
     const secondButton = relevantButtons[1];
