@@ -44,6 +44,7 @@ export interface AutoCompleteProps<TValue, TItem> {
   placeholder?: string;
   returnObject?: boolean;
   customValue?: boolean;
+  hideCustomValueOption?: boolean;
 }
 
 defineOptions({
@@ -83,6 +84,7 @@ const props = withDefaults(defineProps<AutoCompleteProps<TValue, TItem>>(), {
   placeholder: '',
   returnObject: false,
   customValue: false,
+  hideCustomValueOption: false,
 });
 
 const slots = useSlots();
@@ -148,7 +150,7 @@ const filteredOptions = computed<TItem[]>(() => {
   });
 
   const filteredOptions = options.filter(item => usedFilter(item, search));
-  if (!props.customValue || !search) {
+  if (!props.customValue || props.hideCustomValueOption || !search) {
     return filteredOptions;
   }
 
