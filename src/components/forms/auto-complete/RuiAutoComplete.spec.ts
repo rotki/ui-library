@@ -269,7 +269,7 @@ describe('autocomplete', () => {
         autoSelectFirst: true,
         chips: true,
         customValue: true,
-        hideCustomValueOption: true,
+        hideCustomValue: true,
         keyAttr: 'id',
         modelValue: ['custom value'],
         options,
@@ -303,7 +303,7 @@ describe('autocomplete', () => {
     let firstButton = relevantButtons[0];
     expect(firstButton.innerHTML).toContain('Germany');
 
-    await wrapper.setProps({ hideCustomValueOption: false });
+    await wrapper.setProps({ hideCustomValue: false });
     await nextTick();
 
     menuButtons = Array.from(document.body.querySelectorAll('div[role=menu] button'));

@@ -38,3 +38,5 @@ export function useAutoCompleteProps<T extends object>(props: {
     isItemDisabled,
   };
 }
+
+export * from './search';
