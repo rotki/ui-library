@@ -6,7 +6,7 @@ import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { type KeyOfType, useDropdownMenu, useDropdownOptionProperty } from '@/composables/dropdown-menu';
-import { useAutoCompleteKeyboardNavigation, useAutoCompleteSearch, useAutoCompleteValue } from '@/composables/forms/auto-complete';
+import { useAutoCompleteFocus, useAutoCompleteKeyboardNavigation, useAutoCompleteSearch, useAutoCompleteValue } from '@/composables/forms/auto-complete';
 import { getTextToken } from '@/utils/helpers';
 import { isEqual } from '@/utils/is-equal';
 import { syncRef } from '@vueuse/core';
@@ -107,8 +107,6 @@ const { focused: activatorFocusedWithin } = useFocusWithin(activator);
 const { focused: menuWrapperFocusedWithin } = useFocusWithin(menuWrapperRef);
 const { focused: searchInputFocused } = useFocus(textInput);
 const { focused: activatorFocused } = useFocus(activator);
-
-const anyFocused = logicOr(activatorFocusedWithin, menuWrapperFocusedWithin);
 
 const renderedOptions = ref<ComponentPublicInstance[]>([]);
 
@@ -216,6 +214,34 @@ const {
   },
 );
 
+const {
+  anyFocused: focusAnyFocused,
+  inputClass: focusInputClass,
+  onActivatorFocused: focusOnActivatorFocused,
+  onInputFocused: focusOnInputFocused,
+  setInputFocus: focusSetInputFocus,
+} = useAutoCompleteFocus<TItem>(
+  {
+    customValue: toRef(props, 'customValue'),
+    disabled,
+    shouldApplyValueAsSearch,
+  },
+  {
+    activatorFocused,
+    activatorFocusedWithin,
+    filteredOptions,
+    focusedValueIndex,
+    internalSearch,
+    isOpen,
+    justOpened,
+    menuWrapperFocusedWithin,
+    searchInputFocused,
+    setSearchAsValue,
+    textInput,
+    updateInternalSearch,
+  },
+);
+
 const valueSet = computed<boolean>(() => get(value).length > 0);
 
 const labelWithQuote = computed<string>(() => {
@@ -296,28 +322,6 @@ async function setValue(val: TItem, index?: number, skipRefocused = false): Prom
   }
 }
 
-async function setInputFocus(): Promise<void> {
-  await nextTick(() => {
-    set(searchInputFocused, true);
-  });
-}
-
-async function onActivatorFocused() {
-  await nextTick(() => {
-    if (!get(activatorFocused)) {
-      set(searchInputFocused, true);
-    }
-  });
-}
-
-const inputClass = computed<string>(() => {
-  if ((!get(anyFocused) || get(disabled)) && !get(shouldApplyValueAsSearch))
-    return 'w-0 h-0';
-  if (get(internalSearch))
-    return 'flex-1 min-w-[4rem]';
-  return 'flex-1 min-w-0';
-});
-
 function setSearchAsValue() {
   const searchToBeValue = get(internalSearch);
   if (!searchToBeValue)
@@ -325,31 +329,6 @@ function setSearchAsValue() {
 
   const newValue: TItem = textValueToProperValue(searchToBeValue);
   setValue(newValue, undefined, true);
-}
-
-// Close menu if the activator is not focused anymore
-// Using debounced to avoid the menu closing momentarily while focus switches.
-watchDebounced(anyFocused, (focused) => {
-  if (!focused) {
-    set(isOpen, false);
-    if (props.customValue && get(filteredOptions).length === 0 && get(internalSearch))
-      setSearchAsValue();
-
-    if (!get(shouldApplyValueAsSearch))
-      updateInternalSearch();
-  }
-}, {
-  debounce: 200,
-  maxWait: 400,
-});
-
-function onInputFocused() {
-  set(focusedValueIndex, -1);
-  if (get(shouldApplyValueAsSearch))
-    get(textInput)?.select();
-
-  if (!get(isOpen))
-    set(justOpened, true);
 }
 
 function clear(): void {
@@ -395,7 +374,7 @@ function arrowClicked(event: any): void {
 }
 
 defineExpose({
-  focus: setInputFocus,
+  focus: focusSetInputFocus,
   setSelectionRange,
 });
 </script>
@@ -452,8 +431,8 @@ defineExpose({
           "
           data-id="activator"
           :tabindex="disabled || readOnly ? -1 : 0"
-          @click="setInputFocus()"
-          @focus="onActivatorFocused()"
+          @click="focusSetInputFocus()"
+          @focus="focusOnActivatorFocused()"
           @keydown.enter="onEnter($event)"
           @keydown.tab="onTab($event)"
           @keydown.left="moveSelectedValueHighlight($event, false)"
@@ -534,10 +513,10 @@ defineExpose({
               class="bg-transparent outline-none"
               type="text"
               :placeholder="placeholder"
-              :class="inputClass"
+              :class="focusInputClass"
               @keydown.delete="onInputDeletePressed()"
               @input="updateSearchInput($event)"
-              @focus="onInputFocused()"
+              @focus="focusOnInputFocused()"
             />
           </div>
 
@@ -549,7 +528,7 @@ defineExpose({
             tabindex="-1"
             color="error"
             class="group-hover:!visible"
-            :class="[$style.clear, anyFocused && '!visible', {
+            :class="[$style.clear, focusAnyFocused && '!visible', {
               'mr-2': !dense,
             }]"
             @click.stop.prevent="clear()"
