@@ -534,7 +534,7 @@ defineExpose({
               :placeholder="placeholder"
               :class="focusInputClass"
               @keydown.delete="onInputDeletePressed()"
-              @input="updateSearchInput($event)"
+              @input.stop="updateSearchInput($event)"
               @focus="focusOnInputFocused()"
             />
           </div>
