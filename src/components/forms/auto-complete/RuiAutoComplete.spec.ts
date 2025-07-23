@@ -118,6 +118,7 @@ describe('autocomplete', () => {
     const buttonToSelect = document.body.querySelector(`button:nth-child(${selectedIndex})`) as HTMLButtonElement;
     buttonToSelect?.click();
     await vi.advanceTimersToNextTimerAsync();
+    expect(wrapper.emitted()).toHaveProperty('update:modelValue');
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([selectedIndex.toString()]);
     expect(document.activeElement?.classList.contains('group')).toBe(true);
 
@@ -126,13 +127,11 @@ describe('autocomplete', () => {
     });
 
     await vi.advanceTimersToNextTimerAsync();
-    // Menu container might still be present, but buttons should be gone
-    expect(document.body.querySelector('div[role=menu] button')).toBeFalsy();
+    expect(document.body.querySelector('div[role=menu]')).toBeFalsy();
 
-    // Shouldn't open menu select because the value has been set
     await wrapper.find('[data-id=activator]').trigger('keydown.enter');
     await vi.advanceTimersToNextTimerAsync();
-    expect(document.body.querySelector('div[role=menu] button')).toBeFalsy();
+    expect(document.body.querySelector('div[role=menu]')).toBeFalsy();
 
     // Open Menu Select
     await wrapper.find('[data-id=activator]').trigger('click');
@@ -162,6 +161,7 @@ describe('autocomplete', () => {
     await vi.advanceTimersToNextTimerAsync();
 
     const newSelectedIndexToString = newSelectedIndex.toString();
+    expect(wrapper.emitted()).toHaveProperty('update:modelValue');
     expect(wrapper.emitted('update:modelValue')?.[1]).toEqual([newSelectedIndexToString]);
     expect((wrapper.find('input').element as HTMLInputElement).value).toBe('Greece');
     expect(document.body.querySelector('div[role=menu] button')).toBeFalsy();
@@ -233,6 +233,8 @@ describe('autocomplete', () => {
     expect(input.classList).toContain('h-0');
 
     let newValue = ['7', '8', '6'];
+    expect(wrapper.emitted()).toHaveProperty('update:modelValue');
+    expect(wrapper.emitted()).not.toHaveProperty('input');
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([newValue]);
 
     await wrapper.setProps({
@@ -251,6 +253,7 @@ describe('autocomplete', () => {
     await vi.advanceTimersToNextTimerAsync();
 
     newValue = ['8', '6'];
+    expect(wrapper.emitted()).toHaveProperty('update:modelValue');
     expect(wrapper.emitted('update:modelValue')?.[1]).toEqual([newValue]);
 
     await wrapper.setProps({
@@ -264,6 +267,7 @@ describe('autocomplete', () => {
     await vi.advanceTimersToNextTimerAsync();
 
     newValue = ['6'];
+    expect(wrapper.emitted()).toHaveProperty('update:modelValue');
     expect(wrapper.emitted('update:modelValue')?.[2]).toEqual([newValue]);
   });
 
@@ -343,6 +347,7 @@ describe('autocomplete', () => {
     await wrapper.find('[data-id=activator]').trigger('keydown.enter');
     await vi.advanceTimersToNextTimerAsync();
 
+    expect(wrapper.emitted()).toHaveProperty('update:modelValue');
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([[
       'custom value',
       'German',
