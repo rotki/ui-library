@@ -251,10 +251,20 @@ const labelWithQuote = computed<string>(() => {
   return `'  ${props.label}  '`;
 });
 
-const menuMinHeight = computed<number>(() => {
+const menuMinHeight = ref<number>(0);
+
+// Update menu min height only when rendered data changes
+watch(renderedData, async () => {
+  await nextTick();
   const renderedOptionsData = get(renderedOptions).slice(0, Math.min(5, get(renderedData).length));
-  return renderedOptionsData.reduce((currentValue, item) => currentValue + item.$el.offsetHeight, 0);
-});
+  let height = 0;
+  for (const item of renderedOptionsData) {
+    if (item.$el) {
+      height += item.$el.offsetHeight;
+    }
+  }
+  set(menuMinHeight, height);
+}, { immediate: true });
 
 const outlined = computed<boolean>(() => props.variant === 'outlined');
 
@@ -272,11 +282,15 @@ const virtualContainerProps = computed(() => ({
   ref: containerProps.ref as any,
 }));
 
+const updateSearchInputDebounced = useDebounceFn((value: string) => {
+  updateInternalSearch(value);
+  set(justOpened, false);
+}, 50);
+
 function updateSearchInput(event: any) {
   const value = event.target.value;
   set(isOpen, true);
-  updateInternalSearch(value);
-  set(justOpened, false);
+  updateSearchInputDebounced(value);
 }
 
 async function setValue(val: TItem, index?: number, skipRefocused = false): Promise<void> {
@@ -359,8 +373,13 @@ function setSelectionRange(start: number, end: number): void {
   get(textInput)?.setSelectionRange?.(start, end);
 }
 
+// Optimize options watcher with shallow comparison first
 watch(options, (curr, old) => {
-  if (isEqual(curr, old) || props.customValue)
+  if (curr === old || props.customValue)
+    return;
+
+  // Only do deep comparison if reference changed
+  if (isEqual(curr, old))
     return;
 
   setSelected(get(value));

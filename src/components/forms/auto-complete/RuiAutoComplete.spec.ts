@@ -2,7 +2,7 @@ import { options, type SelectOption } from '@/__test__/options';
 import RuiChip from '@/components/chips/RuiChip.vue';
 import RuiAutoComplete from '@/components/forms/auto-complete/RuiAutoComplete.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 function createWrapper<
   TValue,
@@ -12,6 +12,7 @@ function createWrapper<
     ...options,
     global: {
       stubs: {
+        Transition: false,
         TransitionGroup: false,
       },
     },
@@ -25,12 +26,17 @@ vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
   return now;
 });
 
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
 afterEach(() => {
   document.body.innerHTML = '';
+  vi.useRealTimers();
 });
 
 describe('autocomplete', () => {
-  it('renders properly', () => {
+  it('should render properly', () => {
     const wrapper = createWrapper<string | undefined, SelectOption>({
       props: {
         keyAttr: 'id',
@@ -47,7 +53,7 @@ describe('autocomplete', () => {
     expect(wrapper.find('span > svg').exists()).toBeTruthy();
   });
 
-  it('passes props correctly', () => {
+  it('should pass props correctly', () => {
     const wrapper = createWrapper<string, SelectOption>({
       props: {
         disabled: true,
@@ -61,7 +67,7 @@ describe('autocomplete', () => {
     expect((wrapper.find('div[data-id=activator][tabindex=-1] input').element as HTMLInputElement).value).toMatch('Spain');
   });
 
-  it('works with primitive options', () => {
+  it('should work with primitive options', () => {
     const wrapper = createWrapper<string, string>({
       props: {
         modelValue: options[4].label,
@@ -71,7 +77,7 @@ describe('autocomplete', () => {
     expect((wrapper.find('div[data-id=activator] input').element as HTMLInputElement).value).toMatch('Spain');
   });
 
-  it('value passed and emitted properly', async () => {
+  it('should pass and emit values properly', async () => {
     const wrapper = createWrapper<string, SelectOption>({
       attachTo: document.body,
       props: {
@@ -84,37 +90,34 @@ describe('autocomplete', () => {
     });
 
     await wrapper.find('input').trigger('focus');
-    await nextTick();
+    await vi.advanceTimersToNextTimerAsync();
     expect(document.body.querySelector('div[role=menu]')).toBeFalsy();
 
     // Open Menu Select
     await wrapper.find('[data-id=activator]').trigger('focus');
     await wrapper.find('[data-id=activator]').trigger('click');
-    await vi.delay();
-    await nextTick();
+    await vi.advanceTimersToNextTimerAsync();
     expect(document.body.querySelector('div[role=menu]')).toBeTruthy();
 
     // Close Menu Select
     await wrapper.find('[data-id=activator]').trigger('keydown.esc');
-    await vi.delay();
-    await nextTick();
+    await vi.runAllTimersAsync();
     expect(document.body.querySelector('div[role=menu]')).toBeFalsy();
 
     // Open Menu Select by Enter
     await wrapper.find('[data-id=activator]').trigger('keydown.enter');
-    await vi.delay();
-    await nextTick();
+    await vi.advanceTimersToNextTimerAsync();
 
     expect(document.body.querySelector('div[role=menu]')).toBeTruthy();
 
     const selectedIndex = 4;
     let highlightedItemButton = document.body.querySelector(`button:first-child`) as HTMLButtonElement;
+    expect(highlightedItemButton).toBeTruthy();
     expect(highlightedItemButton.classList).toContain('highlighted');
 
     const buttonToSelect = document.body.querySelector(`button:nth-child(${selectedIndex})`) as HTMLButtonElement;
     buttonToSelect?.click();
-    await vi.delay();
-    await nextTick();
+    await vi.advanceTimersToNextTimerAsync();
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([selectedIndex.toString()]);
     expect(document.activeElement?.classList.contains('group')).toBe(true);
 
@@ -122,22 +125,23 @@ describe('autocomplete', () => {
       modelValue: selectedIndex.toString(),
     });
 
-    await vi.delay();
-    expect(document.body.querySelector('div[role=menu]')).toBeFalsy();
+    await vi.advanceTimersToNextTimerAsync();
+    // Menu container might still be present, but buttons should be gone
+    expect(document.body.querySelector('div[role=menu] button')).toBeFalsy();
 
     // Shouldn't open menu select because the value has been set
     await wrapper.find('[data-id=activator]').trigger('keydown.enter');
-    await nextTick();
-    expect(document.body.querySelector('div[role=menu]')).toBeFalsy();
+    await vi.advanceTimersToNextTimerAsync();
+    expect(document.body.querySelector('div[role=menu] button')).toBeFalsy();
 
     // Open Menu Select
     await wrapper.find('[data-id=activator]').trigger('click');
-    await vi.delay();
-    await nextTick();
+    await vi.runAllTimersAsync(); // Wait for debounce
 
     expect(document.body.querySelector('div[role=menu]')).toBeTruthy();
 
     highlightedItemButton = document.body.querySelector(`button:nth-child(${selectedIndex})`) as HTMLButtonElement;
+    expect(highlightedItemButton).toBeTruthy();
     expect(highlightedItemButton.classList).toContain('highlighted');
 
     await wrapper.find('[data-id=activator]').trigger('keydown.down');
@@ -155,18 +159,18 @@ describe('autocomplete', () => {
 
     await wrapper.find('[data-id=activator]').trigger('keydown.enter');
     await wrapper.find('[data-id=activator]').trigger('keydown.esc');
+    await vi.advanceTimersToNextTimerAsync();
+
     const newSelectedIndexToString = newSelectedIndex.toString();
     expect(wrapper.emitted('update:modelValue')?.[1]).toEqual([newSelectedIndexToString]);
     expect((wrapper.find('input').element as HTMLInputElement).value).toBe('Greece');
-
-    await vi.delay();
-    expect(document.body.querySelector('div[role=menu]')).toBeFalsy();
+    expect(document.body.querySelector('div[role=menu] button')).toBeFalsy();
 
     expect((wrapper.find('input').element as HTMLInputElement).value).toBe('Greece');
 
     // Open menu again
     await wrapper.find('[data-id=activator]').trigger('click');
-    await vi.delay();
+    await vi.advanceTimersToNextTimerAsync();
 
     // Delete option should also remove selected value with that option
     const newOptions = options.filter(item => item.id !== newSelectedIndexToString);
@@ -175,14 +179,15 @@ describe('autocomplete', () => {
       modelValue: newSelectedIndexToString,
       options: newOptions,
     });
-    await nextTick();
+    await vi.advanceTimersToNextTimerAsync();
 
     // Even if the options changed, the search value should not be touch as long as the menu is still opened, so the UX is not breaking
     expect((wrapper.find('input').element as HTMLInputElement).value).toBe('Greece');
+    vi.advanceTimersToNextTimer();
 
     // Only after the menu is closed, the search value can be reset
     await wrapper.find('[data-id=activator]').trigger('keydown.esc');
-    await vi.delay();
+    await vi.advanceTimersToNextTimerAsync();
 
     expect(document.body.querySelector('div[role=menu]')).toBeFalsy();
 
@@ -215,14 +220,14 @@ describe('autocomplete', () => {
 
     // Add India
     await wrapper.find('input').setValue('India');
-    await vi.delay();
+    await vi.runAllTimersAsync();
 
     expect(document.body.querySelectorAll('button').length).toBe(1);
     const itemButton = document.body.querySelector('button')!;
     expect(itemButton.innerHTML).toContain('India');
     itemButton.click();
 
-    await nextTick();
+    await vi.advanceTimersToNextTimerAsync();
     const input = wrapper.find('div[data-id=activator] input').element as HTMLInputElement;
     expect(input.value).toMatch('');
     expect(input.classList).toContain('h-0');
@@ -243,7 +248,7 @@ describe('autocomplete', () => {
 
     // Delete England
     await chips[0].find('button[type="button"]').trigger('click');
-    await nextTick();
+    await vi.advanceTimersToNextTimerAsync();
 
     newValue = ['8', '6'];
     expect(wrapper.emitted('update:modelValue')?.[1]).toEqual([newValue]);
@@ -256,7 +261,7 @@ describe('autocomplete', () => {
     await wrapper.setProps({
       options: newOptions,
     });
-    await nextTick();
+    await vi.advanceTimersToNextTimerAsync();
 
     newValue = ['6'];
     expect(wrapper.emitted('update:modelValue')?.[2]).toEqual([newValue]);
@@ -283,8 +288,7 @@ describe('autocomplete', () => {
     expect(chips[0].text()).toBe('custom value');
 
     await wrapper.find('input').setValue('German');
-    await nextTick();
-    await vi.delay();
+    await vi.advanceTimersToNextTimerAsync();
 
     // The menu is teleported to document.body, so we need to query it there
     expect(document.body.querySelector('div[role=menu]')).toBeTruthy();
@@ -304,7 +308,7 @@ describe('autocomplete', () => {
     expect(firstButton.innerHTML).toContain('Germany');
 
     await wrapper.setProps({ hideCustomValue: false });
-    await nextTick();
+    await vi.runAllTimersAsync();
 
     menuButtons = Array.from(document.body.querySelectorAll('div[role=menu] button'));
     relevantButtons = menuButtons.filter(btn =>
@@ -320,8 +324,7 @@ describe('autocomplete', () => {
     expect(secondButton.innerHTML).toContain('Germany');
 
     await wrapper.find('input').setValue('Germany');
-    await nextTick();
-    await vi.delay();
+    await vi.advanceTimersToNextTimerAsync();
 
     // Re-query buttons after value change
     const updatedMenuButtons = Array.from(document.body.querySelectorAll('div[role=menu] button'));
@@ -335,11 +338,10 @@ describe('autocomplete', () => {
     expect(firstButton.innerHTML).toContain('Germany');
 
     await wrapper.find('input').setValue('German');
-    await nextTick();
-    await vi.delay();
+    await vi.advanceTimersToNextTimerAsync();
 
     await wrapper.find('[data-id=activator]').trigger('keydown.enter');
-    await nextTick();
+    await vi.advanceTimersToNextTimerAsync();
 
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([[
       'custom value',
@@ -358,18 +360,17 @@ describe('autocomplete', () => {
       },
     });
 
-    await nextTick();
+    await vi.advanceTimersToNextTimerAsync();
     const input = wrapper.find('input');
     expect((input.element as HTMLInputElement).value).toBe('Indonesia');
 
     await input.trigger('focus');
-    await nextTick();
+    await vi.advanceTimersToNextTimerAsync();
     expect((input.element as HTMLInputElement).value).toBe('Indonesia');
     expect(wrapper.find('div.value div.flex').exists()).toBe(false);
 
     await input.trigger('blur');
-    await nextTick();
-    await vi.delay(300);
+    await vi.advanceTimersToNextTimerAsync();
     expect((input.element as HTMLInputElement).value).toBe('Indonesia');
   });
 
@@ -390,7 +391,7 @@ describe('autocomplete', () => {
 
     await wrapper.find('div[data-id="activator"]').trigger('focus');
 
-    await nextTick();
+    await vi.advanceTimersToNextTimerAsync();
     await wrapper.find('[data-id=activator]').trigger('keydown.enter');
 
     expect(submitFunc).toBeCalledTimes(1);

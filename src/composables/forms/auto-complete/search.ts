@@ -1,5 +1,6 @@
 import type { MaybeRef, Ref } from 'vue';
 import { getTextToken } from '@/utils/helpers';
+import { get, set } from '@vueuse/shared';
 
 export interface UseAutoCompleteSearchOptions<TItem> {
   keyAttr?: MaybeRef<keyof TItem | undefined>;
@@ -26,8 +27,19 @@ export function useAutoCompleteSearch<TItem>(
   opts: UseAutoCompleteSearchOptions<TItem>,
 ): UseAutoCompleteSearchReturn<TItem> {
   const internalSearch = ref<string>('');
-  const debouncedInternalSearch = refDebounced(internalSearch, 100);
+  const debouncedInternalSearch = refDebounced(internalSearch, 50);
   const justOpened = ref<boolean>(false);
+
+  // Memoize token computation to avoid repeated string processing
+  const tokenCache = new Map<string, string>();
+  const getCachedTextToken = (text: string): string => {
+    if (tokenCache.has(text)) {
+      return tokenCache.get(text)!;
+    }
+    const token = getTextToken(text);
+    tokenCache.set(text, token);
+    return token;
+  };
 
   const filteredOptions = computed<TItem[]>(() => {
     const search = get(debouncedInternalSearch);
@@ -41,16 +53,19 @@ export function useAutoCompleteSearch<TItem>(
     const textAttr = get(opts.textAttr);
     const filter = get(opts.filter);
 
-    const usedFilter = filter || ((item, search) => {
+    // Cache the search token once
+    const searchToken = getCachedTextToken(search);
+
+    const usedFilter = filter || ((item) => {
       if (!item)
         return false;
 
-      const keywords: string[] = [keyAttr ? getTextToken((item as any)[keyAttr]) : item.toString()];
+      const keywords: string[] = [keyAttr ? getCachedTextToken((item as any)[keyAttr]) : item.toString()];
 
       if (textAttr && typeof item === 'object')
-        keywords.push(getTextToken((item as any)[textAttr]));
+        keywords.push(getCachedTextToken((item as any)[textAttr]));
 
-      return keywords.some(keyword => getTextToken(keyword).includes(getTextToken(search)));
+      return keywords.some(keyword => getCachedTextToken(keyword).includes(searchToken));
     });
 
     const filtered = optionsValue.filter(item => usedFilter(item, search));
@@ -61,7 +76,8 @@ export function useAutoCompleteSearch<TItem>(
       return filtered;
     }
 
-    const isCustomValueIncluded = filtered.find((item) => {
+    // Use a more efficient check for custom value inclusion
+    const isCustomValueIncluded = filtered.some((item) => {
       if (!item) {
         return false;
       }
@@ -104,6 +120,11 @@ export function useAutoCompleteSearch<TItem>(
   watch(searchModel, (search) => {
     set(internalSearch, search);
   }, { immediate: true });
+
+  // Clear token cache when component unmounts to prevent memory leaks
+  onUnmounted(() => {
+    tokenCache.clear();
+  });
 
   return {
     debouncedInternalSearch,
