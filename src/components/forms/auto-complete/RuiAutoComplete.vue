@@ -6,6 +6,7 @@ import RuiChip from '@/components/chips/RuiChip.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
+import { useAutoCompleteSearch } from '@/composables/forms/auto-complete';
 import { getTextToken } from '@/utils/helpers';
 import { isEqual } from '@/utils/is-equal';
 import { logicAnd, logicOr } from '@vueuse/math';
@@ -44,7 +45,7 @@ export interface AutoCompleteProps<TValue, TItem> {
   placeholder?: string;
   returnObject?: boolean;
   customValue?: boolean;
-  hideCustomValueOption?: boolean;
+  hideCustomValue?: boolean;
 }
 
 defineOptions({
@@ -54,7 +55,7 @@ defineOptions({
 
 const modelValue = defineModel<AutoCompleteModelValue<TValue>>({ required: true });
 
-const searchInputModel = defineModel<string>('searchInput');
+const searchInputModel = defineModel<string>('searchInput', { default: '' });
 
 const props = withDefaults(defineProps<AutoCompleteProps<TValue, TItem>>(), {
   options: () => [],
@@ -84,7 +85,7 @@ const props = withDefaults(defineProps<AutoCompleteProps<TValue, TItem>>(), {
   placeholder: '',
   returnObject: false,
   customValue: false,
-  hideCustomValueOption: false,
+  hideCustomValue: false,
 });
 
 const slots = useSlots();
@@ -119,56 +120,26 @@ const multiple = computed(() => Array.isArray(get(modelValue)));
 
 const shouldApplyValueAsSearch = computed(() => !(slots.selection || get(multiple) || props.chips));
 
-const internalSearch = ref<string>('');
-const debouncedInternalSearch = refDebounced(internalSearch, 100);
+const {
+  internalSearch,
+  filteredOptions,
+  justOpened,
+  updateInternalSearch,
+  textValueToProperValue,
+} = useAutoCompleteSearch<TItem>(
+  options,
+  searchInputModel,
+  {
+    keyAttr: toRef(props, 'keyAttr'),
+    textAttr: toRef(props, 'textAttr'),
+    noFilter: toRef(props, 'noFilter'),
+    filter: toRef(props, 'filter'),
+    customValue: toRef(props, 'customValue'),
+    hideCustomValue: toRef(props, 'hideCustomValue'),
+    returnObject: toRef(props, 'returnObject'),
+  },
 
-watch(searchInputModel, (search) => {
-  set(internalSearch, search);
-}, { immediate: true });
-
-const justOpened = ref(false);
-
-const filteredOptions = computed<TItem[]>(() => {
-  const search = get(debouncedInternalSearch);
-  const options = props.options;
-  if (props.noFilter || !search || get(justOpened))
-    return options;
-
-  const keyAttr = props.keyAttr;
-  const textAttr = props.textAttr;
-
-  const usedFilter = props.filter || ((item, search) => {
-    if (!item)
-      return false;
-
-    const keywords: string[] = [keyAttr ? getTextToken(item[keyAttr]) : item.toString()];
-
-    if (textAttr && typeof item === 'object')
-      keywords.push(getTextToken(item[textAttr]));
-
-    return keywords.some(keyword => getTextToken(keyword).includes(getTextToken(search)));
-  });
-
-  const filteredOptions = options.filter(item => usedFilter(item, search));
-  if (!props.customValue || props.hideCustomValueOption || !search) {
-    return filteredOptions;
-  }
-
-  const isCustomValueIncluded = filteredOptions.find((item) => {
-    if (!item) {
-      return false;
-    }
-
-    const val = textAttr ? item[textAttr] : item.toString();
-    return val === search;
-  });
-
-  if (isCustomValueIncluded) {
-    return filteredOptions;
-  }
-
-  return [textValueToProperValue(search, props.returnObject), ...filteredOptions];
-});
+);
 
 function onUpdateModelValue(value: AutoCompleteModelValue<TValue>) {
   set(modelValue, value);
@@ -297,11 +268,6 @@ const virtualContainerProps = computed(() => ({
   ref: containerProps.ref as any,
 }));
 
-function updateInternalSearch(value: string = '') {
-  set(searchInputModel, value);
-  set(internalSearch, value);
-}
-
 function updateSearchInput(event: any) {
   const value = event.target.value;
   set(isOpen, true);
@@ -419,22 +385,6 @@ const inputClass = computed<string>(() => {
     return 'flex-1 min-w-[4rem]';
   return 'flex-1 min-w-0';
 });
-
-function textValueToProperValue(val: any, returnObject: boolean = false): TItem {
-  const keyAttr = props.keyAttr;
-  const textAttr = props.textAttr;
-  if (!keyAttr || returnObject)
-    return val;
-
-  return {
-    [keyAttr]: val,
-    ...(
-      textAttr
-        ? { [textAttr]: val }
-        : {}
-    ),
-  } as TItem;
-}
 
 function setSearchAsValue() {
   const searchToBeValue = get(internalSearch);
