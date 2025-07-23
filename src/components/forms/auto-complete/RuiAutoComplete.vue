@@ -6,7 +6,7 @@ import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { type KeyOfType, useDropdownMenu, useDropdownOptionProperty } from '@/composables/dropdown-menu';
-import { useAutoCompleteSearch, useAutoCompleteValue } from '@/composables/forms/auto-complete';
+import { useAutoCompleteKeyboardNavigation, useAutoCompleteSearch, useAutoCompleteValue } from '@/composables/forms/auto-complete';
 import { getTextToken } from '@/utils/helpers';
 import { isEqual } from '@/utils/is-equal';
 import { syncRef } from '@vueuse/core';
@@ -189,6 +189,33 @@ const {
 // Sync the isOpen states
 syncRef(isOpen, tempIsOpen);
 
+const {
+  focusedValueIndex,
+  moveSelectedValueHighlight,
+  onEnter,
+  onInputDeletePressed,
+  onTab,
+  setValueFocus,
+} = useAutoCompleteKeyboardNavigation<TItem>(
+  {
+    customValue: toRef(props, 'customValue'),
+    multiple,
+  },
+  {
+    activator,
+    applyHighlighted,
+    clear,
+    filteredOptions,
+    highlightedIndex,
+    internalSearch,
+    isOpen,
+    options,
+    searchInputFocused,
+    setSearchAsValue,
+    value,
+  },
+);
+
 const valueSet = computed<boolean>(() => get(value).length > 0);
 
 const labelWithQuote = computed<string>(() => {
@@ -283,52 +310,6 @@ async function onActivatorFocused() {
   });
 }
 
-const focusedValueIndex = ref<number>(-1);
-
-function setValueFocus(index: number): void {
-  set(focusedValueIndex, index);
-}
-
-watch(value, () => {
-  setValueFocus(-1);
-});
-
-watch(focusedValueIndex, async (index) => {
-  if (index === -1 || !get(multiple))
-    return;
-
-  await nextTick(() => {
-    const activeChip = get(activator).querySelector(`[data-index="${index}"]`);
-    activeChip?.focus();
-  });
-});
-
-function moveSelectedValueHighlight(event: KeyboardEvent, next: boolean): void {
-  if (!get(multiple) || get(internalSearch).length > 0)
-    return;
-
-  event.preventDefault();
-  const total = get(value).length;
-
-  let current = get(focusedValueIndex);
-
-  if (current === -1) {
-    set(focusedValueIndex, next ? 0 : total - 1);
-    return;
-  }
-
-  const move = next ? 1 : -1;
-  current += move;
-
-  if (current < 0 || current >= total) {
-    set(focusedValueIndex, -1);
-    set(searchInputFocused, true);
-  }
-  else {
-    set(focusedValueIndex, current);
-  }
-}
-
 const inputClass = computed<string>(() => {
   if ((!get(anyFocused) || get(disabled)) && !get(shouldApplyValueAsSearch))
     return 'w-0 h-0';
@@ -376,16 +357,6 @@ function clear(): void {
   set(modelValue, (Array.isArray(get(modelValue)) ? [] : undefined) as AutoCompleteModelValue<TValue>);
 }
 
-function onInputDeletePressed(): void {
-  const total = get(value).length;
-  if (!get(internalSearch) && total > 0) {
-    if (get(multiple))
-      set(focusedValueIndex, total - 1);
-    else
-      clear();
-  }
-}
-
 function chipAttrs(item: TItem, index: number) {
   return {
     'data-index': index,
@@ -402,36 +373,6 @@ function chipAttrs(item: TItem, index: number) {
       setValue(item);
     },
   };
-}
-
-function onEnter(event: KeyboardEvent): void {
-  if (get(filteredOptions).length > 0 && get(highlightedIndex) > -1 && get(isOpen)) {
-    applyHighlighted();
-    event.preventDefault();
-  }
-  else if (get(options).length > 0 && props.customValue) {
-    setSearchAsValue();
-    if (!get(multiple))
-      set(isOpen, false);
-    event.preventDefault();
-  }
-  else if (!get(isOpen) && get(value).length === 0) {
-    set(isOpen, true);
-    event.preventDefault();
-  }
-  else {
-    const form = get(activator).closest('form');
-    if (form) {
-      form.dispatchEvent(new Event('submit'));
-    }
-  }
-}
-
-function onTab(event: KeyboardEvent): void {
-  if (get(isOpen) && get(filteredOptions).length > 0 && get(highlightedIndex) > -1 && !get(multiple)) {
-    applyHighlighted();
-    event.preventDefault();
-  }
 }
 
 function setSelectionRange(start: number, end: number): void {

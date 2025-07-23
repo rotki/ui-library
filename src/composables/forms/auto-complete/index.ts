@@ -39,6 +39,8 @@ export function useAutoCompleteProps<T extends object>(props: {
   };
 }
 
+export * from './keyboard-navigation';
+
 export * from './search';
 
 export * from './value';
