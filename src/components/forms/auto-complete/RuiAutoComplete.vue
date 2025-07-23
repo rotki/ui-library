@@ -1,14 +1,15 @@
 <script lang="ts" setup generic='TValue, TItem'>
-import type { KeyOfType } from '@/composables/dropdown-menu';
 import type { ComponentPublicInstance, ComputedRef } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiChip from '@/components/chips/RuiChip.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
-import { useAutoCompleteSearch } from '@/composables/forms/auto-complete';
+import { type KeyOfType, useDropdownMenu, useDropdownOptionProperty } from '@/composables/dropdown-menu';
+import { useAutoCompleteSearch, useAutoCompleteValue } from '@/composables/forms/auto-complete';
 import { getTextToken } from '@/utils/helpers';
 import { isEqual } from '@/utils/is-equal';
+import { syncRef } from '@vueuse/core';
 import { logicAnd, logicOr } from '@vueuse/math';
 
 export type AutoCompleteModelValue<TValue> = TValue extends Array<infer U> ? U[] : TValue | undefined;
@@ -111,15 +112,6 @@ const anyFocused = logicOr(activatorFocusedWithin, menuWrapperFocusedWithin);
 
 const renderedOptions = ref<ComponentPublicInstance[]>([]);
 
-const menuMinHeight = computed<number>(() => {
-  const renderedOptionsData = get(renderedOptions).slice(0, Math.min(5, get(renderedData).length));
-  return renderedOptionsData.reduce((currentValue, item) => currentValue + item.$el.offsetHeight, 0);
-});
-
-const multiple = computed(() => Array.isArray(get(modelValue)));
-
-const shouldApplyValueAsSearch = computed(() => !(slots.selection || get(multiple) || props.chips));
-
 const {
   internalSearch,
   filteredOptions,
@@ -138,94 +130,36 @@ const {
     hideCustomValue: toRef(props, 'hideCustomValue'),
     returnObject: toRef(props, 'returnObject'),
   },
-
 );
 
-function onUpdateModelValue(value: AutoCompleteModelValue<TValue>) {
-  set(modelValue, value);
-}
+// Calculate multiple from modelValue directly to avoid circular dependency
+const multiple = computed<boolean>(() => Array.isArray(get(modelValue)));
 
-function setSelected(selected: TItem[]): void {
-  const keyAttr = props.keyAttr;
-  const selection = keyAttr && !props.returnObject ? selected.map(item => item[keyAttr]) : selected;
+const shouldApplyValueAsSearch = computed<boolean>(() => !(slots.selection || get(multiple) || props.chips));
 
-  if (get(multiple))
-    return onUpdateModelValue(selection as AutoCompleteModelValue<TValue>);
+// Create a temporary isOpen ref that we'll sync with useDropdownMenu's isOpen
+const tempIsOpen = ref<boolean>(false);
 
-  if (selection.length === 0)
-    return onUpdateModelValue(undefined as AutoCompleteModelValue<TValue>);
-
-  return onUpdateModelValue(selection[0] as AutoCompleteModelValue<TValue>);
-}
-
-const value = computed<TItem[]>({
-  get: () => {
-    const value = get(modelValue);
-    const keyAttr = props.keyAttr;
-    const multiple = Array.isArray(value);
-
-    const shouldUpdateInternalSearch = get(shouldApplyValueAsSearch) && !get(isOpen);
-
-    if (keyAttr && props.returnObject) {
-      const valueToArray = value ? (multiple ? value : [value]) : [];
-      const filtered: TItem[] = [];
-      valueToArray.forEach((val) => {
-        const inOptions = props.options.find(item => getIdentifier(item) === getIdentifier(val));
-
-        if (inOptions)
-          return filtered.push(inOptions);
-        if (props.customValue)
-          return filtered.push(textValueToProperValue(val, props.returnObject));
-      });
-
-      if (multiple || filtered.length === 0) {
-        if (shouldUpdateInternalSearch)
-          updateInternalSearch();
-        return filtered;
-      }
-      else {
-        const val = filtered[0];
-        if (shouldUpdateInternalSearch)
-          updateInternalSearch(getText(val));
-
-        return [val];
-      }
-    }
-    else {
-      const valueToArray = value ? (multiple ? value : [value]) : [];
-      const filtered: TItem[] = [];
-      valueToArray.forEach((val) => {
-        const inOptions = props.options.find(item => getIdentifier(item) === val);
-
-        if (inOptions)
-          return filtered.push(inOptions);
-        if (props.customValue)
-          return filtered.push(textValueToProperValue(val, props.returnObject));
-      });
-
-      if (shouldUpdateInternalSearch) {
-        if (filtered.length > 0)
-          updateInternalSearch(getText(filtered[0]));
-        else
-          updateInternalSearch();
-      }
-
-      return filtered;
-    }
+const {
+  value,
+  setSelected,
+} = useAutoCompleteValue<AutoCompleteModelValue<TValue>, TItem>(
+  modelValue,
+  options,
+  {
+    keyAttr: toRef(props, 'keyAttr'),
+    returnObject: toRef(props, 'returnObject'),
+    customValue: toRef(props, 'customValue'),
   },
-  set: (selected: TItem[]): void => {
-    setSelected(selected);
+  {
+    getIdentifier,
+    getText,
+    textValueToProperValue,
+    shouldApplyValueAsSearch,
+    isOpen: tempIsOpen,
+    updateInternalSearch,
   },
-});
-
-const valueSet = computed<boolean>(() => get(value).length > 0);
-
-const labelWithQuote = computed<string>(() => {
-  if (!props.label)
-    return '"\\200B"';
-
-  return `'  ${props.label}  '`;
-});
+);
 
 const {
   containerProps,
@@ -250,6 +184,23 @@ const {
   setValue,
   autoSelectFirst: props.autoSelectFirst,
   hideSelected: props.hideSelected,
+});
+
+// Sync the isOpen states
+syncRef(isOpen, tempIsOpen);
+
+const valueSet = computed<boolean>(() => get(value).length > 0);
+
+const labelWithQuote = computed<string>(() => {
+  if (!props.label)
+    return '"\\200B"';
+
+  return `'  ${props.label}  '`;
+});
+
+const menuMinHeight = computed<number>(() => {
+  const renderedOptionsData = get(renderedOptions).slice(0, Math.min(5, get(renderedData).length));
+  return renderedOptionsData.reduce((currentValue, item) => currentValue + item.$el.offsetHeight, 0);
 });
 
 const outlined = computed<boolean>(() => props.variant === 'outlined');

@@ -40,3 +40,5 @@ export function useAutoCompleteProps<T extends object>(props: {
 }
 
 export * from './search';
+
+export * from './value';
