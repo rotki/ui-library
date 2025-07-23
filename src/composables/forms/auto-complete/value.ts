@@ -1,4 +1,5 @@
 import type { ComputedRef, MaybeRef, Ref } from 'vue';
+import { get, set } from '@vueuse/shared';
 
 export interface UseAutoCompleteValueOptions<TItem> {
   keyAttr?: MaybeRef<keyof TItem | undefined>;
@@ -28,6 +29,16 @@ export function useAutoCompleteValue<TValue, TItem>(
 ): UseAutoCompleteValueReturn<TItem> {
   const multiple = computed<boolean>(() => Array.isArray(get(modelValue)));
 
+  // Create maps for O(1) lookup performance
+  const optionsMap = computed<Map<any, TItem>>(() => {
+    const map = new Map<any, TItem>();
+    const optionsData = get(options);
+    for (const item of optionsData) {
+      map.set(deps.getIdentifier(item), item);
+    }
+    return map;
+  });
+
   function convertModelValueToArray(modelValueData: TValue | undefined): any[] {
     if (!modelValueData)
       return [];
@@ -36,58 +47,65 @@ export function useAutoCompleteValue<TValue, TItem>(
 
   function filterValuesByOptions(
     valueArray: any[],
-    optionsData: TItem[],
+    optionsMapData: Map<any, TItem>,
     customValue: boolean,
     returnObject: boolean,
   ): TItem[] {
     const filtered: TItem[] = [];
+    filtered.length = valueArray.length; // Pre-allocate array size
+    let index = 0;
 
-    valueArray.forEach((val) => {
-      const inOptions = optionsData.find(item => deps.getIdentifier(item) === deps.getIdentifier(val));
+    for (const val of valueArray) {
+      const identifier = deps.getIdentifier(val);
+      const inOptions = optionsMapData.get(identifier);
 
       if (inOptions) {
-        filtered.push(inOptions);
+        filtered[index++] = inOptions;
       }
       else if (customValue) {
-        filtered.push(deps.textValueToProperValue(val, returnObject));
+        filtered[index++] = deps.textValueToProperValue(val, returnObject);
       }
-    });
+    }
 
+    filtered.length = index; // Trim to actual size
     return filtered;
   }
 
   function filterValuesByIdentifier(
     valueArray: any[],
-    optionsData: TItem[],
+    optionsMapData: Map<any, TItem>,
     customValue: boolean,
     returnObject: boolean,
   ): TItem[] {
     const filtered: TItem[] = [];
+    filtered.length = valueArray.length; // Pre-allocate array size
+    let index = 0;
 
-    valueArray.forEach((val) => {
-      const inOptions = optionsData.find(item => deps.getIdentifier(item) === val);
+    for (const val of valueArray) {
+      const inOptions = optionsMapData.get(val);
 
       if (inOptions) {
-        filtered.push(inOptions);
+        filtered[index++] = inOptions;
       }
       else if (customValue) {
-        filtered.push(deps.textValueToProperValue(val, returnObject));
+        filtered[index++] = deps.textValueToProperValue(val, returnObject);
       }
-    });
+    }
 
+    filtered.length = index; // Trim to actual size
     return filtered;
   }
 
   function processReturnObjectValue(
     modelValueData: TValue | undefined,
-    optionsData: TItem[],
+    optionsMapData: Map<any, TItem>,
     returnObject: boolean,
     customValue: boolean,
     shouldUpdateInternalSearch: boolean,
   ): TItem[] {
     const multipleValue = Array.isArray(modelValueData);
     const valueArray = convertModelValueToArray(modelValueData);
-    const filtered = filterValuesByOptions(valueArray, optionsData, customValue, returnObject);
+    const filtered = filterValuesByOptions(valueArray, optionsMapData, customValue, returnObject);
 
     if (multipleValue || filtered.length === 0) {
       if (shouldUpdateInternalSearch)
@@ -103,13 +121,13 @@ export function useAutoCompleteValue<TValue, TItem>(
 
   function processStandardValue(
     modelValueData: TValue | undefined,
-    optionsData: TItem[],
+    optionsMapData: Map<any, TItem>,
     returnObject: boolean,
     customValue: boolean,
     shouldUpdateInternalSearch: boolean,
   ): TItem[] {
     const valueArray = convertModelValueToArray(modelValueData);
-    const filtered = filterValuesByIdentifier(valueArray, optionsData, customValue, returnObject);
+    const filtered = filterValuesByIdentifier(valueArray, optionsMapData, customValue, returnObject);
 
     if (shouldUpdateInternalSearch) {
       if (filtered.length > 0) {
@@ -147,13 +165,13 @@ export function useAutoCompleteValue<TValue, TItem>(
       const keyAttr = get(opts.keyAttr);
       const returnObject = get(opts.returnObject) ?? false;
       const customValue = get(opts.customValue) ?? false;
-      const optionsData = get(options);
+      const optionsMapData = get(optionsMap);
       const shouldUpdateInternalSearch = get(deps.shouldApplyValueAsSearch) && !get(deps.isOpen);
 
       if (keyAttr && returnObject) {
         return processReturnObjectValue(
           modelValueData,
-          optionsData,
+          optionsMapData,
           returnObject,
           customValue,
           shouldUpdateInternalSearch,
@@ -162,7 +180,7 @@ export function useAutoCompleteValue<TValue, TItem>(
 
       return processStandardValue(
         modelValueData,
-        optionsData,
+        optionsMapData,
         returnObject,
         customValue,
         shouldUpdateInternalSearch,

@@ -1,4 +1,5 @@
 import type { MaybeRef, Ref } from 'vue';
+import { get, set } from '@vueuse/shared';
 
 export interface UseAutoCompleteKeyboardNavigationOptions {
   multiple: MaybeRef<boolean>;
@@ -33,6 +34,7 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
   deps: UseAutoCompleteKeyboardNavigationDeps<TItem>,
 ): UseAutoCompleteKeyboardNavigationReturn {
   const focusedValueIndex = ref<number>(-1);
+  const chipElementsCache = ref<Map<number, HTMLElement>>(new Map());
 
   function setValueFocus(index: number): void {
     set(focusedValueIndex, index);
@@ -71,16 +73,42 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
     const filteredOptions = get(deps.filteredOptions);
     const highlightedIndex = get(deps.highlightedIndex);
     const isOpen = get(deps.isOpen);
-    const optionsData = get(deps.options);
     const customValue = get(options.customValue);
     const multiple = get(options.multiple);
     const value = get(deps.value);
+    const internalSearch = get(deps.internalSearch);
+
+    // Check if we should use custom value
+    if (customValue && internalSearch && isOpen) {
+      // Check if any option exactly matches the search term
+      let hasExactMatch = false;
+
+      if (highlightedIndex > -1 && highlightedIndex < filteredOptions.length) {
+        const highlightedOption = filteredOptions[highlightedIndex];
+        if (typeof highlightedOption === 'string') {
+          hasExactMatch = highlightedOption === internalSearch;
+        }
+        else if (highlightedOption && typeof highlightedOption === 'object') {
+          const label = (highlightedOption as any).label || (highlightedOption as any).value || '';
+          hasExactMatch = label === internalSearch;
+        }
+      }
+
+      // If no exact match with highlighted option, use custom value
+      if (!hasExactMatch) {
+        deps.setSearchAsValue();
+        if (!multiple)
+          set(deps.isOpen, false);
+        event.preventDefault();
+        return;
+      }
+    }
 
     if (filteredOptions.length > 0 && highlightedIndex > -1 && isOpen) {
       deps.applyHighlighted();
       event.preventDefault();
     }
-    else if (optionsData.length > 0 && customValue) {
+    else if (filteredOptions.length === 0 && customValue && internalSearch) {
       deps.setSearchAsValue();
       if (!multiple)
         set(deps.isOpen, false);
@@ -125,9 +153,10 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
     }
   }
 
-  // Watch value changes to reset focused index
+  // Watch value changes to reset focused index and clear cache
   watch(deps.value, () => {
     setValueFocus(-1);
+    get(chipElementsCache).clear();
   });
 
   // Watch focused value index to handle chip focus
@@ -137,8 +166,18 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
       return;
 
     await nextTick(() => {
-      const activator = get(deps.activator);
-      const activeChip = activator?.querySelector(`[data-index="${index}"]`);
+      const cache = get(chipElementsCache);
+      let activeChip = cache.get(index);
+
+      if (!activeChip) {
+        const activator = get(deps.activator);
+        const element = activator?.querySelector(`[data-index="${index}"]`) as HTMLElement | null;
+        if (element) {
+          activeChip = element;
+          cache.set(index, element);
+        }
+      }
+
       if (activeChip && 'focus' in activeChip && typeof activeChip.focus === 'function')
         activeChip.focus();
     });
