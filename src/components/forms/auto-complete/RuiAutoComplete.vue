@@ -689,7 +689,7 @@ defineExpose({
     &.outlined {
       @apply border-none hover:border-none;
 
-      &:not(.disabled) {
+      &:not(.disabled):not(.with-error):not(.with-success) {
         &.opened,
         &:focus,
         &:focus-within {
