@@ -282,15 +282,11 @@ const virtualContainerProps = computed(() => ({
   ref: containerProps.ref as any,
 }));
 
-const updateSearchInputDebounced = useDebounceFn((value: string) => {
-  updateInternalSearch(value);
-  set(justOpened, false);
-}, 50);
-
 function updateSearchInput(event: any) {
   const value = event.target.value;
   set(isOpen, true);
-  updateSearchInputDebounced(value);
+  updateInternalSearch(value);
+  set(justOpened, false);
 }
 
 async function setValue(val: TItem, index?: number, skipRefocused = false): Promise<void> {
