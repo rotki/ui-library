@@ -324,6 +324,7 @@ function clear(segmentType?: string): void {
     set(selectedSecond, undefined);
     set(selectedMillisecond, undefined);
     set(currentValue, undefined);
+    set(modelValue, undefined);
     return;
   }
 
@@ -604,7 +605,7 @@ onMounted(() => {
           :class="[$style.clear, anyFocused && '!visible', {
             'mr-2': !dense,
           }]"
-          @click.stop.prevent="clearSegment()"
+          @click.stop.prevent="clear()"
         >
           <RuiIcon
             name="lu-x"

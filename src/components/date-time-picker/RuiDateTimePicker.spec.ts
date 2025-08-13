@@ -511,10 +511,19 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     });
 
     await vi.runOnlyPendingTimersAsync();
-    await wrapper.find('input').trigger('focus');
 
-    wrapper.vm.$emit('update:modelValue', undefined);
+    // Verify initial value is set
+    const input = wrapper.find('input');
+    expect(input.element.value).toBeTruthy();
 
+    // Find and click the clear button
+    const clearButton = wrapper.find('[data-id="clear-button"]');
+    expect(clearButton.exists()).toBe(true);
+    await clearButton.trigger('click');
+
+    await vi.runOnlyPendingTimersAsync();
+
+    // Check that the model value was emitted as undefined
     const modelValue = wrapper.emitted('update:modelValue');
     expect(modelValue).toBeTruthy();
     expect(modelValue?.[0][0]).toBeUndefined();
