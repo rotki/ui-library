@@ -1,6 +1,7 @@
 import { createPopper, type Instance, type Placement, type PositioningStrategy, type VirtualElement } from '@popperjs/core';
 import { type MaybeElement, unrefElement } from '@vueuse/core';
 import { onMounted, type Ref, ref, watchEffect } from 'vue';
+import { useTimeoutManager } from './timeout-manager';
 
 export interface PopperOptions {
   locked?: boolean;
@@ -39,7 +40,7 @@ interface UsePopperReturn {
   popper: Ref<MaybeElement>;
   popperEnter: Ref<boolean>;
   reference: Ref<MaybeElement>;
-  updatePopper: () => void;
+  updatePopper: () => Promise<void>;
 }
 
 export function usePopper(
@@ -49,43 +50,37 @@ export function usePopper(
   closeDelay: Ref<number> = ref(0),
   virtualReference?: Ref<Element | VirtualElement>,
 ): UsePopperReturn {
-  const reference: Ref<MaybeElement | null> = ref(null);
-  const popper: Ref<MaybeElement | null> = ref(null);
-  const instance: Ref<Instance | null> = ref(null);
-  const open: Ref<boolean> = ref(false);
-  const openTimeout: Ref<NodeJS.Timeout | undefined> = ref();
-  const closeTimeout: Ref<NodeJS.Timeout | undefined> = ref();
-  const popperEnter: Ref<boolean> = ref(false);
-  const leavePending = ref(false);
+  const reference = ref<MaybeElement | null>(null);
+  const popper = ref<MaybeElement | null>(null);
+  const instance = ref<Instance | null>(null);
+  const open = ref<boolean>(false);
+  const popperEnter = ref<boolean>(false);
+  const leavePending = ref<boolean>(false);
+
+  const openTimeoutManager = useTimeoutManager();
+  const closeTimeoutManager = useTimeoutManager();
 
   const onPopperLeave = () => {
     set(popperEnter, false);
   };
 
-  const updatePopper = () => {
-    // todo: see making things async/await has any side-effects
-    get(instance)?.update();
+  const updatePopper = async (): Promise<void> => {
+    await get(instance)?.update();
   };
 
   const onOpen = (immediate = false) => {
     if (get(disabled))
       return;
 
-    if (get(closeTimeout)) {
-      clearTimeout(get(closeTimeout));
-      set(closeTimeout, undefined);
-    }
+    closeTimeoutManager.clear();
 
     set(leavePending, false);
-    if (!get(openTimeout)) {
+    if (!openTimeoutManager.isActive()) {
       set(popperEnter, true);
 
-      const timeout = setTimeout(() => {
+      openTimeoutManager.create(() => {
         set(open, true);
-        set(openTimeout, undefined);
       }, immediate ? 0 : get(openDelay));
-
-      set(openTimeout, timeout);
     }
   };
 
@@ -93,21 +88,15 @@ export function usePopper(
     if (get(disabled))
       return;
 
-    if (get(openTimeout)) {
-      clearTimeout(get(openTimeout));
-      set(openTimeout, undefined);
-    }
+    openTimeoutManager.clear();
 
-    if (!get(closeTimeout)) {
-      const timeout = setTimeout(() => {
+    if (!closeTimeoutManager.isActive()) {
+      closeTimeoutManager.create(() => {
         if (!get(open))
           onPopperLeave();
 
         set(open, false);
-        set(closeTimeout, undefined);
       }, immediate ? 0 : get(closeDelay));
-
-      set(closeTimeout, timeout);
     }
   };
 
@@ -176,21 +165,27 @@ export function usePopper(
     };
   });
 
-  function initializePopper(onInvalidate: (cleanupFn: () => void) => void) {
-    if (!get(popper))
-      return;
-
-    if (!get(reference) && !get(virtualReference))
-      return;
+  function getValidElements(): { popperEl: HTMLElement; referenceEl: Element | VirtualElement } | null {
+    if (!get(popper) || (!get(reference) && !get(virtualReference))) {
+      return null;
+    }
 
     const popperEl = unrefElement(popper);
     const referenceEl = get(virtualReference) || unrefElement(reference);
 
-    if (!(popperEl instanceof HTMLElement))
+    if (!(popperEl instanceof HTMLElement) || !referenceEl) {
+      return null;
+    }
+
+    return { popperEl, referenceEl };
+  }
+
+  function initializePopper(onInvalidate: (cleanupFn: () => void) => void) {
+    const elements = getValidElements();
+    if (!elements)
       return;
 
-    if (!referenceEl)
-      return;
+    const { popperEl, referenceEl } = elements;
 
     const value = createPopper(referenceEl, popperEl, get(popperConfig));
 
@@ -199,9 +194,8 @@ export function usePopper(
   }
 
   useResizeObserver([reference, popper], async () => {
-    const instanceVal = get(instance);
-    if (get(open) && instanceVal)
-      await instanceVal.update();
+    if (isDefined(instance))
+      await get(instance).update();
   });
 
   onMounted(() => {
