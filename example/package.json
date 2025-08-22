@@ -1,6 +1,6 @@
 {
   "name": "example",
-  "version": "2.6.3",
+  "version": "2.6.4",
   "private": true,
   "scripts": {
     "dev": "vite --open",
