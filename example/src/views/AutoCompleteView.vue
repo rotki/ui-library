@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import ComponentView from '@/components/ComponentView.vue';
-import { createOptions, type SelectOption } from '@/data/options';
 import {
   type AutoCompleteProps,
   RuiAutoComplete,
@@ -9,6 +7,8 @@ import {
 } from '@rotki/ui-library/components';
 import { objectOmit } from '@vueuse/shared';
 import { ref } from 'vue';
+import ComponentView from '@/components/ComponentView.vue';
+import { createOptions, type SelectOption } from '@/data/options';
 
 type RuiAutoCompleteProps<TValue = number, TItem = SelectOption> = AutoCompleteProps<TValue, TItem> & {
   modelValue: TValue extends Array<infer U> ? U[] : TValue | undefined;

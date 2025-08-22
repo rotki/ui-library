@@ -1,11 +1,11 @@
-import { TransitionGroupStub } from '@/__test__/transition-group-stub';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
-
 import { describe, expect, it, vi } from 'vitest';
+
+import { TransitionGroupStub } from '@/__test__/transition-group-stub';
 import RuiDateTimePicker from './RuiDateTimePicker.vue';
 
 dayjs.extend(utc);

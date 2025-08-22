@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import ComponentView from '@/components/ComponentView.vue';
 import { useFetch } from '@vueuse/core';
 import { computed, onBeforeMount } from 'vue';
+import ComponentView from '@/components/ComponentView.vue';
 import ApiTables from '../components/tables/ApiTables.vue';
 import BasicTables from '../components/tables/BasicTables.vue';
 import EmptyTables from '../components/tables/EmptyTables.vue';

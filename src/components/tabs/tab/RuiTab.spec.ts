@@ -1,10 +1,10 @@
-import RuiTab from '@/components/tabs/tab/RuiTab.vue';
 import {
   type ComponentMountingOptions,
   mount,
   RouterLinkStub,
 } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import RuiTab from '@/components/tabs/tab/RuiTab.vue';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiTab>) {
   return mount(RuiTab, {

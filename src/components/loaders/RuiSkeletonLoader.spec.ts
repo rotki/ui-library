@@ -1,6 +1,6 @@
-import RuiSkeletonLoader from '@/components/loaders/RuiSkeletonLoader.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import RuiSkeletonLoader from '@/components/loaders/RuiSkeletonLoader.vue';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiSkeletonLoader>) {
   return mount(RuiSkeletonLoader, options);

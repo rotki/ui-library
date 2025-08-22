@@ -87,6 +87,7 @@ export default defineConfig({
   build: {
     outDir: './dist',
     minify: true,
+    sourcemap: 'inline',
     lib: {
       entry: entries,
       fileName: (format, entryName) => `${entryName}.${format}.js`,

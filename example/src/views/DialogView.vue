@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import ComponentView from '@/components/ComponentView.vue';
 import {
   type DialogProps,
   RuiButton,
@@ -7,6 +6,7 @@ import {
   RuiDialog,
 } from '@rotki/ui-library';
 import { ref } from 'vue';
+import ComponentView from '@/components/ComponentView.vue';
 
 interface ExtraProperties {
   label: string;

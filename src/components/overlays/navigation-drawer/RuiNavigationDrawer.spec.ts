@@ -1,7 +1,7 @@
-import RuiButton from '@/components/buttons/button/RuiButton.vue';
-import RuiNavigationDrawer from '@/components/overlays/navigation-drawer/RuiNavigationDrawer.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
+import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiNavigationDrawer from '@/components/overlays/navigation-drawer/RuiNavigationDrawer.vue';
 
 const text = 'Navigation Drawer Content';
 

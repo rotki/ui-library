@@ -1,6 +1,6 @@
-import RuiRadioGroup from '@/components/forms/radio-button/radio-group/RuiRadioGroup.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import RuiRadioGroup from '@/components/forms/radio-button/radio-group/RuiRadioGroup.vue';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiRadioGroup<string>>) {
   const opts: ComponentMountingOptions<typeof RuiRadioGroup<string>> = {

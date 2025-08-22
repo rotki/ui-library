@@ -1,4 +1,4 @@
-/* eslint-disable import/max-dependencies */
+/* eslint-disable @rotki/max-dependencies */
 import type {
   TableColumn as DataTableColumn,
   GroupKeys as DataTableGroupKeys,

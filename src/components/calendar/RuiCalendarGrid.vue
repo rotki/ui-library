@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { CalendarStateSymbol, getDaysOfWeek, type RuiCalendarState } from '@/components/calendar/state';
 import { get, isDefined, set } from '@vueuse/core';
 import { inject, ref, watch } from 'vue';
+import { CalendarStateSymbol, getDaysOfWeek, type RuiCalendarState } from '@/components/calendar/state';
 
 defineOptions({
   name: 'RuiCalendarGrid',

@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import ComponentView from '@/components/ComponentView.vue';
 import {
   RuiSlider,
   type SliderProps,
 } from '@rotki/ui-library';
+import ComponentView from '@/components/ComponentView.vue';
 
 type SliderData = SliderProps &
   {

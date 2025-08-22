@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { get, isDefined, set } from '@vueuse/core';
+import { ref, watch } from 'vue';
 import {
   CalendarStateSymbol,
   getShortMonthNames,
@@ -7,8 +9,6 @@ import {
 } from '@/components/calendar/state';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
-import { get, isDefined, set } from '@vueuse/core';
-import { ref, watch } from 'vue';
 import RuiButton from '../buttons/button/RuiButton.vue';
 
 defineOptions({

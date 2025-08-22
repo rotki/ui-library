@@ -1,8 +1,8 @@
 <script setup lang='ts'>
-import ComponentGroup from '@/components/ComponentGroup.vue';
-import { type ButtonGroupData, generateButtonGroupData } from '@/utils/buttons';
 import { RuiButton, RuiButtonGroup, RuiIcon } from '@rotki/ui-library';
 import { objectOmit } from '@vueuse/shared';
+import ComponentGroup from '@/components/ComponentGroup.vue';
+import { type ButtonGroupData, generateButtonGroupData } from '@/utils/buttons';
 
 const attributes: Partial<ButtonGroupData>[] = [
   {},

@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
+import { logicAnd, logicNot } from '@vueuse/math';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
-import { logicAnd, logicNot } from '@vueuse/math';
 
 export interface TextFieldProps {
   label?: string;

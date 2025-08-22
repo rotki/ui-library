@@ -11,6 +11,7 @@ export default mergeConfig(
       },
       globals: true,
       environment: 'jsdom',
+      setupFiles: ['./tests/setup-files/setup.ts'],
       exclude: [...configDefaults.exclude],
       reporters: ['default', 'html', 'json'],
       outputFile: 'tests/html/index.html',

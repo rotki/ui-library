@@ -1,6 +1,6 @@
-import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import RuiButton from '@/components/buttons/button/RuiButton.vue';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiButton>) {
   return mount(RuiButton, options);

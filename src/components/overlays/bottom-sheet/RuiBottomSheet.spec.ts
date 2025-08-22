@@ -1,7 +1,7 @@
-import RuiButton from '@/components/buttons/button/RuiButton.vue';
-import RuiBottomSheet from '@/components/overlays/bottom-sheet/RuiBottomSheet.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
+import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiBottomSheet from '@/components/overlays/bottom-sheet/RuiBottomSheet.vue';
 
 const text = 'This is content';
 

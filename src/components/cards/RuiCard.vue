@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import RuiCardHeader from '@/components/cards/RuiCardHeader.vue';
 import { computed } from 'vue';
+import RuiCardHeader from '@/components/cards/RuiCardHeader.vue';
 
 export interface Props {
   dense?: boolean;

@@ -1,6 +1,6 @@
-import RuiSimpleSelect from '@/components/forms/select/RuiSimpleSelect.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import RuiSimpleSelect from '@/components/forms/select/RuiSimpleSelect.vue';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiSimpleSelect>) {
   return mount(RuiSimpleSelect, options);

@@ -1,5 +1,9 @@
-import type { InitThemeOptions } from '@/types/theme';
 import type { App } from 'vue';
+import type { InitThemeOptions } from '@/types/theme';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 import {
   createTableDefaults,
   type TableOptions,
@@ -9,10 +13,6 @@ import { createIconDefaults, IconsSymbol } from '@/composables/icons';
 import { useRotkiTheme } from '@/composables/theme';
 import { RUI_I18N_INJECTION_KEY } from '@/composables/use-rui-i18n';
 import { StepperState } from '@/types/stepper';
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
 import '@/style.scss';
 
 export * from '@/components';

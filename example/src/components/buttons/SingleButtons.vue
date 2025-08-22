@@ -1,6 +1,6 @@
 <script lang='ts' setup>
-import ComponentGroup from '@/components/ComponentGroup.vue';
 import { type ButtonProps, contextColors, type ContextColorsType, RuiButton, RuiIcon, type RuiIcons } from '@rotki/ui-library';
+import ComponentGroup from '@/components/ComponentGroup.vue';
 
 interface ExtraProperties {
   clicks: number;

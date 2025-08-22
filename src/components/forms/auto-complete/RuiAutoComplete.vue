@@ -1,5 +1,7 @@
 <script lang="ts" setup generic='TValue, TItem'>
 import type { ComponentPublicInstance, ComputedRef } from 'vue';
+import { syncRef } from '@vueuse/core';
+import { logicAnd, logicOr } from '@vueuse/math';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiChip from '@/components/chips/RuiChip.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
@@ -9,8 +11,6 @@ import { type KeyOfType, useDropdownMenu, useDropdownOptionProperty } from '@/co
 import { useAutoCompleteFocus, useAutoCompleteKeyboardNavigation, useAutoCompleteSearch, useAutoCompleteValue } from '@/composables/forms/auto-complete';
 import { getTextToken } from '@/utils/helpers';
 import { isEqual } from '@/utils/is-equal';
-import { syncRef } from '@vueuse/core';
-import { logicAnd, logicOr } from '@vueuse/math';
 
 export type AutoCompleteModelValue<TValue> = TValue extends Array<infer U> ? U[] : TValue | undefined;
 

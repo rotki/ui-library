@@ -1,11 +1,11 @@
-import RuiTab from '@/components/tabs/tab/RuiTab.vue';
-import RuiTabs from '@/components/tabs/tabs/RuiTabs.vue';
 import {
   type ComponentMountingOptions,
   mount,
   RouterLinkStub,
 } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
+import RuiTab from '@/components/tabs/tab/RuiTab.vue';
+import RuiTabs from '@/components/tabs/tabs/RuiTabs.vue';
 
 vi.mock('vue-router', () => ({
   useRoute: vi.fn().mockImplementation(() => ref()),

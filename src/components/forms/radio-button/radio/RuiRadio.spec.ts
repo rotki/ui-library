@@ -1,6 +1,6 @@
-import RuiRadio from '@/components/forms/radio-button/radio/RuiRadio.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import RuiRadio from '@/components/forms/radio-button/radio/RuiRadio.vue';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiRadio>) {
   return mount(RuiRadio, { ...options, global: { stubs: ['rui-icon'] } });

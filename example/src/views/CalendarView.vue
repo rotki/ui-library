@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Slots } from '@/types';
-import ComponentView from '@/components/ComponentView.vue';
 import { type CalendarProps, RuiCalendar } from '@rotki/ui-library';
 import { objectOmit } from '@vueuse/shared';
+import ComponentView from '@/components/ComponentView.vue';
 
 type CalendarData = CalendarProps & Slots & { modelValue: Date };
 

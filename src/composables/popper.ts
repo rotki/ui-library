@@ -1,15 +1,4 @@
-import type { Instance, Placement, PositioningStrategy } from '@popperjs/core';
-import arrow from '@popperjs/core/lib/modifiers/arrow';
-import computeStyles from '@popperjs/core/lib/modifiers/computeStyles';
-import eventListeners from '@popperjs/core/lib/modifiers/eventListeners';
-import flip from '@popperjs/core/lib/modifiers/flip';
-import offset from '@popperjs/core/lib/modifiers/offset';
-import preventOverflow from '@popperjs/core/lib/modifiers/preventOverflow';
-import {
-  defaultModifiers,
-  popperGenerator,
-  type VirtualElement,
-} from '@popperjs/core/lib/popper-lite';
+import { createPopper, type Instance, type Placement, type PositioningStrategy, type VirtualElement } from '@popperjs/core';
 import { type MaybeElement, unrefElement } from '@vueuse/core';
 import { onMounted, type Ref, ref, watchEffect } from 'vue';
 
@@ -39,19 +28,27 @@ export const DEFAULT_POPPER_OPTIONS: PopperOptions = {
   strategy: 'absolute',
 };
 
-export const createPopper = popperGenerator({
-  defaultModifiers: [
-    ...defaultModifiers,
-    arrow,
-    offset,
-    flip,
-    preventOverflow,
-    computeStyles,
-    eventListeners,
-  ],
-});
+interface UsePopperReturn {
+  instance: Ref<Instance | null>;
+  leavePending: Ref<boolean>;
+  onClose: (immediate?: boolean) => void;
+  onLeavePending: () => void;
+  onOpen: (immediate?: boolean) => void;
+  onPopperLeave: () => void;
+  open: Ref<boolean, boolean>;
+  popper: Ref<MaybeElement>;
+  popperEnter: Ref<boolean>;
+  reference: Ref<MaybeElement>;
+  updatePopper: () => void;
+}
 
-export function usePopper(options: Ref<PopperOptions>, disabled: Ref<boolean> = ref(false), openDelay: Ref<number> = ref(0), closeDelay: Ref<number> = ref(0), virtualReference?: Ref<Element | VirtualElement>) {
+export function usePopper(
+  options: Ref<PopperOptions>,
+  disabled: Ref<boolean> = ref(false),
+  openDelay: Ref<number> = ref(0),
+  closeDelay: Ref<number> = ref(0),
+  virtualReference?: Ref<Element | VirtualElement>,
+): UsePopperReturn {
   const reference: Ref<MaybeElement | null> = ref(null);
   const popper: Ref<MaybeElement | null> = ref(null);
   const instance: Ref<Instance | null> = ref(null);
@@ -118,89 +115,99 @@ export function usePopper(options: Ref<PopperOptions>, disabled: Ref<boolean> = 
     set(leavePending, true);
   };
 
-  onMounted(() => {
-    watchEffect((onInvalidate) => {
-      if (!get(popper))
-        return;
+  const modifiers = computed(() => {
+    const {
+      adaptive = DEFAULT_POPPER_OPTIONS.adaptive,
+      gpuAcceleration = DEFAULT_POPPER_OPTIONS.gpuAcceleration,
+      locked = DEFAULT_POPPER_OPTIONS.locked,
+      offsetDistance = DEFAULT_POPPER_OPTIONS.offsetDistance,
+      offsetSkid = DEFAULT_POPPER_OPTIONS.offsetSkid,
+      overflowPadding = DEFAULT_POPPER_OPTIONS.overflowPadding,
+      resize = DEFAULT_POPPER_OPTIONS.resize,
+      scroll = DEFAULT_POPPER_OPTIONS.scroll,
+    } = get(options);
 
-      if (!get(reference) && !get(virtualReference))
-        return;
-
-      const popperEl = unrefElement(popper);
-      const referenceEl = get(virtualReference) || unrefElement(reference);
-
-      if (!(popperEl instanceof HTMLElement))
-        return;
-
-      if (!referenceEl)
-        return;
-
-      const {
-        adaptive = DEFAULT_POPPER_OPTIONS.adaptive,
-        gpuAcceleration = DEFAULT_POPPER_OPTIONS.gpuAcceleration,
-        locked = DEFAULT_POPPER_OPTIONS.locked,
-        offsetDistance = DEFAULT_POPPER_OPTIONS.offsetDistance,
-        offsetSkid = DEFAULT_POPPER_OPTIONS.offsetSkid,
-        overflowPadding = DEFAULT_POPPER_OPTIONS.overflowPadding,
-        placement = DEFAULT_POPPER_OPTIONS.placement,
-        resize = DEFAULT_POPPER_OPTIONS.resize,
-        scroll = DEFAULT_POPPER_OPTIONS.scroll,
-        strategy = DEFAULT_POPPER_OPTIONS.strategy,
-      } = get(options);
-
-      const value = createPopper(referenceEl, popperEl, {
-        modifiers: [
-          {
-            enabled: !locked,
-            name: 'flip',
-          },
-          {
-            name: 'preventOverflow',
-            options: {
-              padding: overflowPadding,
-            },
-          },
-          {
-            name: 'offset',
-            options: {
-              offset: [offsetSkid, offsetDistance],
-            },
-          },
-          {
-            name: 'computeStyles',
-            options: {
-              adaptive,
-              gpuAcceleration,
-            },
-          },
-          {
-            name: 'eventListeners',
-            options: {
-              resize,
-              scroll,
-            },
-          },
-          {
-            name: 'arrow',
-            options: {
-              padding: 4,
-            },
-          },
-        ],
-        placement,
-        strategy,
-      });
-
-      set(instance, value);
-
-      onInvalidate(value.destroy);
-    });
+    return [{
+      enabled: false,
+      name: 'hide',
+    }, {
+      enabled: !locked,
+      name: 'flip',
+    }, {
+      name: 'preventOverflow',
+      options: {
+        padding: overflowPadding,
+      },
+    }, {
+      name: 'offset',
+      options: {
+        offset: [offsetSkid, offsetDistance],
+      },
+    }, {
+      name: 'computeStyles',
+      options: {
+        adaptive,
+        gpuAcceleration,
+      },
+    }, {
+      name: 'eventListeners',
+      options: {
+        resize,
+        scroll,
+      },
+    }, {
+      name: 'arrow',
+      options: {
+        padding: 4,
+      },
+    }];
   });
+
+  const popperConfig = computed(() => {
+    const {
+      placement = DEFAULT_POPPER_OPTIONS.placement,
+      strategy = DEFAULT_POPPER_OPTIONS.strategy,
+    } = get(options);
+
+    return {
+      modifiers: get(modifiers),
+      placement,
+      strategy,
+    };
+  });
+
+  function initializePopper(onInvalidate: (cleanupFn: () => void) => void) {
+    if (!get(popper))
+      return;
+
+    if (!get(reference) && !get(virtualReference))
+      return;
+
+    const popperEl = unrefElement(popper);
+    const referenceEl = get(virtualReference) || unrefElement(reference);
+
+    if (!(popperEl instanceof HTMLElement))
+      return;
+
+    if (!referenceEl)
+      return;
+
+    const value = createPopper(referenceEl, popperEl, get(popperConfig));
+
+    set(instance, value);
+    onInvalidate(value.destroy);
+  }
 
   useResizeObserver([reference, popper], async () => {
     const instanceVal = get(instance);
     if (get(open) && instanceVal)
       await instanceVal.update();
+  });
+
+  onMounted(() => {
+    watchEffect((onInvalidate) => {
+      initializePopper(onInvalidate);
+    });
   });
 
   return {

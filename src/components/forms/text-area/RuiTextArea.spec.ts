@@ -1,6 +1,6 @@
-import RuiTextArea from '@/components/forms/text-area/RuiTextArea.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import RuiTextArea from '@/components/forms/text-area/RuiTextArea.vue';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiTextArea>) {
   const opts: ComponentMountingOptions<typeof RuiTextArea> = {

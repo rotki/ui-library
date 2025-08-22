@@ -1,8 +1,8 @@
 <script setup lang='ts'>
 import type { ButtonGroupData } from '@/utils/buttons';
-import ComponentGroup from '@/components/ComponentGroup.vue';
 import { RuiButton, RuiButtonGroup, RuiIcon } from '@rotki/ui-library';
 import { objectOmit } from '@vueuse/shared';
+import ComponentGroup from '@/components/ComponentGroup.vue';
 
 const attributes: Partial<ButtonGroupData>[] = [
   { activeColor: 'warning', required: true },

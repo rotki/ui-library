@@ -1,11 +1,11 @@
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { describe, expect, it } from 'vitest';
 import RuiStepper from '@/components/steppers/RuiStepper.vue';
 import {
   StepperOrientation,
   StepperState,
   type StepperStep,
 } from '@/types/stepper';
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
 
 function createWrapper(options: ComponentMountingOptions<typeof RuiStepper>) {
   return mount(RuiStepper, options);

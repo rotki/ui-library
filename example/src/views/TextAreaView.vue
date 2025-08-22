@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { Slots } from '@/types';
-import ComponentView from '@/components/ComponentView.vue';
 import { RuiTextArea, type TextAreaProps } from '@rotki/ui-library';
 import { objectOmit } from '@vueuse/shared';
+import ComponentView from '@/components/ComponentView.vue';
 
 type TextAreaData = TextAreaProps & Slots & { modelValue: string };
 

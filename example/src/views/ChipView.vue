@@ -1,7 +1,7 @@
 <script lang="ts" setup>
+import { type ChipProps, RuiChip } from '@rotki/ui-library';
 import ComponentGroup from '@/components/ComponentGroup.vue';
 import ComponentView from '@/components/ComponentView.vue';
-import { type ChipProps, RuiChip } from '@rotki/ui-library';
 
 const colors = ['grey', 'primary', 'secondary', 'error', 'warning', 'info', 'success'] as const;
 

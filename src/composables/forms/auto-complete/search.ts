@@ -1,6 +1,6 @@
 import type { MaybeRef, Ref } from 'vue';
-import { getTextToken } from '@/utils/helpers';
 import { get, set } from '@vueuse/shared';
+import { getTextToken } from '@/utils/helpers';
 
 export interface UseAutoCompleteSearchOptions<TItem> {
   keyAttr?: MaybeRef<keyof TItem | undefined>;

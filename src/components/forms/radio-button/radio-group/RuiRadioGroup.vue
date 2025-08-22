@@ -1,8 +1,8 @@
 <script lang="ts" setup generic='TValue'>
 import type { ContextColorsType } from '@/consts/colors';
-import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { objectPick } from '@vueuse/shared';
 import { Fragment, isVNode } from 'vue';
+import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 
 export interface Props {
   inline?: boolean;

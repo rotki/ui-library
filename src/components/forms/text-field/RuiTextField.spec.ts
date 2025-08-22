@@ -1,6 +1,6 @@
-import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiTextField>) {
   return mount(RuiTextField, { ...options, global: { stubs: ['rui-icon'] } });

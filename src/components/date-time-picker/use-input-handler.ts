@@ -1,7 +1,7 @@
-import type { DateTimeSegmentType, SegmentData } from '@/components/date-time-picker/types';
-import type { TimeAccuracy } from '@/consts/time-accuracy';
 import type { Dayjs } from 'dayjs';
 import type { Ref } from 'vue';
+import type { DateTimeSegmentType, SegmentData } from '@/components/date-time-picker/types';
+import type { TimeAccuracy } from '@/consts/time-accuracy';
 import { includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
 
 export function useInputHandler(data: SegmentData, currentValue: Ref<number | undefined>) {

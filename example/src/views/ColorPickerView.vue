@@ -1,7 +1,7 @@
 <script setup lang='ts'>
-import ComponentView from '@/components/ComponentView.vue';
 import { type ColorPickerProps, RuiCard, RuiColorPicker } from '@rotki/ui-library';
 import { ref } from 'vue';
+import ComponentView from '@/components/ComponentView.vue';
 
 const colorPickers = ref<ColorPickerProps[]>([
   { modelValue: '' },

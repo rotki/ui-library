@@ -1,6 +1,6 @@
-import RuiLogo from '@/components/logos/RuiLogo.vue';
 import { type ComponentMountingOptions, renderToString } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import RuiLogo from '@/components/logos/RuiLogo.vue';
 
 function createWrapper(options?: Omit<ComponentMountingOptions<typeof RuiLogo>, 'attachTo'>) {
   return renderToString(RuiLogo, { ...options });

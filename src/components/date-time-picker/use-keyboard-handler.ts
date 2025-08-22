@@ -1,8 +1,8 @@
-import type { TimeAccuracy } from '@/consts/time-accuracy';
 import type { Ref } from 'vue';
+import type { TimeAccuracy } from '@/consts/time-accuracy';
+import dayjs, { type Dayjs } from 'dayjs';
 import { type DateTimeSegmentType, isDateTimeSegmentType } from '@/components/date-time-picker/types';
 import { includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
-import dayjs, { type Dayjs } from 'dayjs';
 
 interface Segment {
   start: number;

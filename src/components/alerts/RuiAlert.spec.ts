@@ -1,6 +1,6 @@
-import RuiAlert from '@/components/alerts/RuiAlert.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import RuiAlert from '@/components/alerts/RuiAlert.vue';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiAlert>) {
   return mount(RuiAlert, { ...options, global: { stubs: ['rui-icon'] } });

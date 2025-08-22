@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 import type { ExtendedUser, NormalizedUser } from '@/data/tables';
-import { columns, fixedColumns, sampleData } from '@/data/table-configs';
-import { fakeFetch } from '@/utils/table-utils';
 import {
   type DataTableOptions,
   type DataTableProps,
@@ -12,6 +10,8 @@ import {
 } from '@rotki/ui-library/components';
 import { objectOmit, useDebounceFn } from '@vueuse/shared';
 import { ref } from 'vue';
+import { columns, fixedColumns, sampleData } from '@/data/table-configs';
+import { fakeFetch } from '@/utils/table-utils';
 
 const props = defineProps<{
   users: NormalizedUser[];

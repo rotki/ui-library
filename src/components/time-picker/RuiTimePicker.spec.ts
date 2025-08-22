@@ -1,6 +1,6 @@
-import { TimeAccuracy } from '@/consts/time-accuracy';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import { TimeAccuracy } from '@/consts/time-accuracy';
 import RuiTimePicker from './RuiTimePicker.vue';
 
 function createWrapper(options: ComponentMountingOptions<typeof RuiTimePicker>) {

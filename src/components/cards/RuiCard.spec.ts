@@ -1,7 +1,7 @@
-import RuiButton from '@/components/buttons/button/RuiButton.vue';
-import RuiCard from '@/components/cards/RuiCard.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiCard from '@/components/cards/RuiCard.vue';
 
 function createWrapper(options: ComponentMountingOptions<typeof RuiCard>) {
   return mount(RuiCard, { ...options, global: { stubs: { 'rui-button': RuiButton } } });

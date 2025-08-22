@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 import type { ExtendedUser } from '@/data/tables';
-import { fixedColumns, fixedRows } from '@/data/table-configs';
-import { removeRow } from '@/utils/table-utils';
 import {
   type DataTableProps,
   RuiButton,
@@ -10,6 +8,8 @@ import {
 } from '@rotki/ui-library/components';
 import { objectOmit } from '@vueuse/shared';
 import { ref } from 'vue';
+import { fixedColumns, fixedRows } from '@/data/table-configs';
+import { removeRow } from '@/utils/table-utils';
 
 const emptyTables = ref<{
   title: string;

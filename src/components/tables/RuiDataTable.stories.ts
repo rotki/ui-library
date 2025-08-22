@@ -1,12 +1,12 @@
 /* eslint-disable max-lines */
-import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
+import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
+import { objectOmit } from '@vueuse/shared';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCard from '@/components/cards/RuiCard.vue';
 import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiDataTable, { type Props as TableProps } from '@/components/tables/RuiDataTable.vue';
-import { objectOmit } from '@vueuse/shared';
 
 interface User {
   id: number;

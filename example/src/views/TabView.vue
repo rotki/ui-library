@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import ComponentGroup from '@/components/ComponentGroup.vue';
-import ComponentView from '@/components/ComponentView.vue';
 import {
   RuiCard,
   RuiIcon,
@@ -10,6 +8,8 @@ import {
   RuiTabs,
   type TabsProps,
 } from '@rotki/ui-library';
+import ComponentGroup from '@/components/ComponentGroup.vue';
+import ComponentView from '@/components/ComponentView.vue';
 
 const colors = ['primary', 'secondary', 'error', 'warning', 'info', 'success'] as const;
 const verticalAttributes = [false, true] as const;

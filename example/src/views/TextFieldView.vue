@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { Slots } from '@/types';
-import ComponentView from '@/components/ComponentView.vue';
 import {
   type RevealableTextFieldProps,
   RuiRevealableTextField,
@@ -8,6 +7,7 @@ import {
   type TextFieldProps,
 } from '@rotki/ui-library';
 import { objectOmit } from '@vueuse/shared';
+import ComponentView from '@/components/ComponentView.vue';
 
 type TextFieldData = TextFieldProps &
   Slots & {

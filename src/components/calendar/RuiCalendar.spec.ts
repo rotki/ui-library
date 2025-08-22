@@ -1,7 +1,7 @@
-import RuiCalendar from '@/components/calendar/RuiCalendar.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
+import RuiCalendar from '@/components/calendar/RuiCalendar.vue';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiCalendar>) {
   return mount(RuiCalendar, {

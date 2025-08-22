@@ -10,9 +10,9 @@ export async function fakeFetch(
   api?: boolean,
   data: ExtendedUser[] = [],
 ): Promise<{
-    data: ExtendedUser[];
-    total: number;
-  }> {
+  data: ExtendedUser[];
+  total: number;
+}> {
   await new Promise((resolve) => {
     setTimeout(resolve, 1500);
   });

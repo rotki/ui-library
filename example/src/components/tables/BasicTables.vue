@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { ExtendedUser } from '@/data/tables';
-import { columns, fixedColumns, fixedRows } from '@/data/table-configs';
 import {
   type DataTableProps,
   RuiButton,
@@ -10,6 +9,7 @@ import {
 } from '@rotki/ui-library/components';
 import { objectOmit } from '@vueuse/shared';
 import { ref } from 'vue';
+import { columns, fixedColumns, fixedRows } from '@/data/table-configs';
 
 const datatables = ref<{
   title: string;

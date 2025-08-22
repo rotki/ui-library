@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { TimeAccuracy } from '@/consts/time-accuracy';
 import { computed, onMounted, ref, type StyleValue, watch } from 'vue';
+import { TimeAccuracy } from '@/consts/time-accuracy';
 
 export type TimePickerSelection = 'hour' | 'minute' | 'second' | 'millisecond';
 

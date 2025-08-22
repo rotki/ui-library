@@ -1,5 +1,5 @@
-import type { GeneratedIcon } from '@/types/icons';
 import type { InjectionKey } from 'vue';
+import type { GeneratedIcon } from '@/types/icons';
 import {
   LuArrowDown,
   LuArrowLeft,

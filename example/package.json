@@ -16,22 +16,22 @@
     "@rotki/ui-library": "workspace:*",
     "pinia": "3.0.3",
     "tailwindcss": "3.4.17",
-    "vue": "3.5.16",
-    "vue-i18n": "11.1.5",
+    "vue": "3.5.19",
+    "vue-i18n": "11.1.11",
     "vue-router": "4.5.1"
   },
   "devDependencies": {
     "@tsconfig/node22": "22.0.2",
-    "@types/node": "22.15.30",
-    "@vitejs/plugin-vue": "5.2.4",
+    "@types/node": "22.17.2",
+    "@vitejs/plugin-vue": "6.0.1",
     "@vue/tsconfig": "0.7.0",
     "autoprefixer": "10.4.21",
-    "cypress": "14.4.1",
-    "postcss": "8.5.4",
-    "start-server-and-test": "2.0.12",
-    "typescript": "5.8.3",
-    "unplugin-auto-import": "19.3.0",
-    "vite": "6.3.5",
-    "vue-tsc": "2.2.10"
+    "cypress": "15.0.0",
+    "postcss": "8.5.6",
+    "start-server-and-test": "2.0.13",
+    "typescript": "5.9.2",
+    "unplugin-auto-import": "20.0.0",
+    "vite": "7.1.3",
+    "vue-tsc": "3.0.6"
   }
 }

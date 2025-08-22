@@ -1,6 +1,6 @@
-import type { GeneratedIcon } from '@/types/icons';
 import type { BasicColorSchema } from '@vueuse/core';
 import type { ComputedRef, Ref } from 'vue';
+import type { GeneratedIcon } from '@/types/icons';
 import { contextColors } from '@/consts/colors';
 
 export const ThemeMode = {

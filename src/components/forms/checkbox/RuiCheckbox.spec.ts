@@ -1,6 +1,6 @@
-import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiCheckbox>) {
   return mount(RuiCheckbox, { ...options, global: { stubs: ['rui-icon'] } });

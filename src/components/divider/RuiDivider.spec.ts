@@ -1,6 +1,6 @@
-import RuiDivider from '@/components/divider/RuiDivider.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import RuiDivider from '@/components/divider/RuiDivider.vue';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiDivider>) {
   return mount(RuiDivider, { ...options, stubs: { RuiIcon: true } });

@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import ComponentView from '@/components/ComponentView.vue';
 import {
   type AccordionsProps,
   RuiAccordion,
   RuiAccordions,
 } from '@rotki/ui-library';
+import ComponentView from '@/components/ComponentView.vue';
 
 const accordions = ref<(AccordionsProps & { label: string })[]>([
   {

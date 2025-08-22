@@ -1,6 +1,6 @@
-import RuiNotification from '@/components/overlays/notification/RuiNotification.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
+import RuiNotification from '@/components/overlays/notification/RuiNotification.vue';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiNotification>) {
   return mount(RuiNotification, {

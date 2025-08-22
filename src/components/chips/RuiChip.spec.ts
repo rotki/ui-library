@@ -1,6 +1,6 @@
-import RuiChip from '@/components/chips/RuiChip.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import RuiChip from '@/components/chips/RuiChip.vue';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiChip>) {
   return mount(RuiChip, { ...options, global: { stubs: ['rui-icon'] } });

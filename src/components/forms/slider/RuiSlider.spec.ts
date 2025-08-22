@@ -1,6 +1,6 @@
-import RuiSlider from '@/components/forms/slider/RuiSlider.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import RuiSlider from '@/components/forms/slider/RuiSlider.vue';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiSlider>) {
   return mount(RuiSlider, { ...options });

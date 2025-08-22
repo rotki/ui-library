@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import ComponentView from '@/components/ComponentView.vue';
 import {
   type ButtonProps,
   type CardProps,
@@ -7,6 +6,7 @@ import {
   RuiCard,
 } from '@rotki/ui-library/components';
 import { objectOmit } from '@vueuse/shared';
+import ComponentView from '@/components/ComponentView.vue';
 
 interface CardData {
   title: string;
