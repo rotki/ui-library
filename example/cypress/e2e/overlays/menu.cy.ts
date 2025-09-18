@@ -24,8 +24,7 @@ describe('menu', () => {
     cy.get('@menuContent').trigger('mouseover');
     cy.get('@menuContent').trigger('click');
     cy.get('body').find('div[role=menu-content]').should('exist');
-    cy.get('@activator').type('{esc}');
-    cy.get('body').trigger('click');
+    cy.get('@menuContent').type('{esc}');
     cy.get('body').find('div[role=menu-content]').should('not.exist');
   });
 
@@ -50,9 +49,9 @@ describe('menu', () => {
     cy.get('body').find('div[role=menu-content]').should('exist');
 
     cy.get('@activator').trigger('mouseleave');
-    cy.get('body').find('div[role=menu-content]').should('exist');
+    cy.get('body').find('div[role=menu-content]').should('exist').as('menuContent');
 
-    cy.get('@activator').type('{esc}');
+    cy.get('@menuContent').type('{esc}');
     cy.get('body').trigger('click');
     cy.get('body').find('div[role=menu-content]').should('not.exist');
   });
