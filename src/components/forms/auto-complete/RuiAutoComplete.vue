@@ -398,6 +398,7 @@ defineExpose({
   <RuiMenu
     v-model="isOpen"
     :class="$style.wrapper"
+    disable-auto-focus
     v-bind="{
       ...getRootAttrs($attrs),
       placement: 'bottom-start',

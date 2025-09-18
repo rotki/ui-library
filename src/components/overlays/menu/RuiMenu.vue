@@ -20,6 +20,7 @@ export interface MenuProps {
   showDetails?: boolean;
   dense?: boolean;
   persistent?: boolean;
+  disableAutoFocus?: boolean;
 }
 
 defineOptions({
@@ -42,6 +43,7 @@ const props = withDefaults(defineProps<MenuProps>(), {
   errorMessages: () => [],
   successMessages: () => [],
   persistent: false,
+  disableAutoFocus: false,
 });
 
 const emit = defineEmits<{
@@ -60,6 +62,7 @@ const {
   errorMessages,
   successMessages,
   persistent,
+  disableAutoFocus,
 } = toRefs(props);
 
 const {
@@ -78,6 +81,23 @@ const {
 const { width } = useElementSize(activator);
 
 const click = ref<boolean>(false);
+const menuContent = ref<HTMLElement>();
+
+const FOCUSABLE_ELEMENTS_SELECTOR = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+function focusMenu() {
+  if (get(disableAutoFocus))
+    return;
+
+  nextTick(() => {
+    const content = get(menuContent);
+    if (!content)
+      return;
+
+    // Focus on the menu container itself
+    content.focus();
+  });
+}
 
 function onLeave(event?: KeyboardEvent) {
   if (!get(open))
@@ -85,6 +105,21 @@ function onLeave(event?: KeyboardEvent) {
   onClose();
   set(click, false);
   event?.stopPropagation();
+
+  // Return focus to activator when menu closes
+  if (!get(disableAutoFocus)) {
+    nextTick(() => {
+      const activatorEl = get(activator);
+      if (activatorEl && 'querySelector' in activatorEl) {
+        const focusableEl = (activatorEl as HTMLElement).querySelector<HTMLElement>(
+          FOCUSABLE_ELEMENTS_SELECTOR,
+        );
+        if (focusableEl) {
+          focusableEl.focus();
+        }
+      }
+    });
+  }
 }
 
 function checkClick() {
@@ -110,6 +145,9 @@ watch(modelValue, (value) => {
 
 watch(open, (open) => {
   emit('update:model-value', open);
+  if (open) {
+    focusMenu();
+  }
 });
 
 onClickOutside(menu, () => {
@@ -149,7 +187,10 @@ const { hasError, hasSuccess } = useFormTextDetail(
 </script>
 
 <template>
-  <div @keydown.esc.stop="onLeave()">
+  <div
+    @keydown.esc.stop="onLeave()"
+    @keydown.tab="!disableAutoFocus && open ? undefined : null"
+  >
     <div
       ref="activator"
       :class="[$style.wrapper, wrapperClass, { 'w-full': fullWidth }]"
@@ -174,6 +215,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
         ]"
         role="menu"
         @click="closeOnContentClick ? onLeave() : undefined"
+        @keydown.esc.stop="onLeave()"
       >
         <TransitionGroup
           enter-active-class="transition ease-out duration-200"
@@ -188,9 +230,11 @@ const { hasError, hasSuccess } = useFormTextDetail(
         >
           <div
             v-if="open"
+            ref="menuContent"
             key="menu"
-            :class="$style.base"
             role="menu-content"
+            :class="$style.base"
+            tabindex="-1"
             v-bind="baseMenuAttrs"
           >
             <slot v-bind="{ width }" />
@@ -228,6 +272,10 @@ const { hasError, hasSuccess } = useFormTextDetail(
   .base {
     @apply rounded overflow-hidden shadow-8;
     @apply bg-white text-rui-text;
+
+    &:focus {
+      @apply outline-none;
+    }
   }
 }
 
