@@ -53,6 +53,8 @@ defineExpose({
     :data-tooltip-disabled="disabled"
     @mouseover="onOpen()"
     @mouseleave="onClose()"
+    @focusin="onOpen()"
+    @focusout="onClose()"
   >
     <slot
       name="activator"
