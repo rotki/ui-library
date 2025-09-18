@@ -80,6 +80,12 @@ export const Primary: Story = {
   },
 };
 
+export const SmallGap: Story = {
+  args: {
+    gap: 'sm',
+  },
+};
+
 export const Outlined: Story = {
   args: {
     variant: 'outlined',

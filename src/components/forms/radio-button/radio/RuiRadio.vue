@@ -125,6 +125,16 @@ const { hasError, hasSuccess } = useFormTextDetail(
 <style lang="scss" module>
 @use '@/styles/colors.scss' as c;
 
+:global(.dark) {
+  .wrapper {
+    .radio {
+      &:before {
+        @apply bg-white;
+      }
+    }
+  }
+}
+
 .wrapper {
   @apply relative flex items-start cursor-pointer -ml-[9px];
 
@@ -150,7 +160,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
     &:focus {
       + .radio {
         &:before {
-          @apply opacity-5;
+          @apply opacity-15;
         }
       }
     }

@@ -15,6 +15,7 @@ export interface Props<T = undefined> {
   tag?: 'button' | 'a';
   type?: 'button' | 'submit';
   modelValue?: T;
+  noOutline?: boolean;
 }
 
 defineOptions({
@@ -35,6 +36,7 @@ const props = withDefaults(defineProps<Props<T>>(), {
   tag: 'button',
   type: 'button',
   modelValue: undefined,
+  noOutline: false,
 });
 
 const emit = defineEmits<{
@@ -83,6 +85,7 @@ const spinnerSize = computed<number>(() => {
         [$style.icon]: icon,
         [$style.active]: active,
         [$style.text]: variant === 'list',
+        [$style.flat]: noOutline,
       },
     ]"
     :disabled="disabled || loading"
@@ -125,7 +128,7 @@ const spinnerSize = computed<number>(() => {
 
     @each $color in c.$context-colors {
       &.#{$color} {
-        @apply text-rui-text;
+        @apply text-rui-text ring-rui-#{$color}/60;
 
         @if list.index((warning, success, info), $color) {
           @apply text-rui-light-text;
@@ -143,7 +146,7 @@ const spinnerSize = computed<number>(() => {
     }
 
     &.grey {
-      @apply bg-rui-grey-300 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-light-text;
+      @apply bg-rui-grey-300 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-light-text ring-rui-grey-600;
 
       &.active {
         @apply bg-rui-grey-50;
@@ -164,10 +167,14 @@ const spinnerSize = computed<number>(() => {
 .btn {
   @apply text-sm leading-[1.5rem] font-medium outline outline-1 outline-transparent outline-offset-[-1px] flex items-center justify-center gap-x-2 relative;
   @apply px-4 py-1.5 rounded transition-all;
-  @apply disabled:bg-black/[.12] disabled:text-rui-text-disabled disabled:active:text-rui-text-disabled #{!important};
+  @apply disabled:bg-black/[.12] disabled:text-rui-text-disabled disabled:active:text-rui-text-disabled focus:ring-2 #{!important};
 
   .label {
     @apply inline-block text-nowrap;
+  }
+
+  &.flat {
+    @apply focus:ring-0 #{!important};
   }
 
   &._rounded {
@@ -184,7 +191,7 @@ const spinnerSize = computed<number>(() => {
 
   @each $color in c.$context-colors {
     &.#{$color} {
-      @apply bg-rui-#{$color} hover:bg-rui-#{$color}-darker active:bg-rui-#{$color}-darker/90 text-rui-dark-text;
+      @apply bg-rui-#{$color} hover:bg-rui-#{$color}-darker active:bg-rui-#{$color}-darker/90 text-rui-dark-text ring-rui-#{$color}/40;
 
       &.active {
         @apply bg-rui-#{$color}-darker;
@@ -206,7 +213,7 @@ const spinnerSize = computed<number>(() => {
   }
 
   &.grey {
-    @apply bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-text;
+    @apply bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-text ring-rui-grey-400;
 
     &.active {
       @apply bg-rui-grey-50;

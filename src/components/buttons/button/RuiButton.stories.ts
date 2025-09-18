@@ -30,6 +30,7 @@ const meta: Meta<PropsAndLabel> = {
     icon: { control: 'boolean', table: { category: 'Shape' } },
     label: { control: 'text' },
     loading: { control: 'boolean', table: { category: 'State' } },
+    noOutline: { control: 'boolean' },
     rounded: { control: 'boolean', table: { category: 'Shape' } },
     size: { control: 'select', options: ['medium', 'sm', 'lg'] },
     type: { control: 'select', options: ['button', 'submit'] },
@@ -55,6 +56,13 @@ type Story = StoryObj<PropsAndLabel>;
 export const Default: Story = {
   args: {
     label: 'Default',
+  },
+};
+
+export const NoOutline: Story = {
+  args: {
+    label: 'No focus outline',
+    noOutline: true,
   },
 };
 

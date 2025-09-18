@@ -128,6 +128,7 @@ const variantClass = computed(() =>
       variantClass,
       {
         [css.wrapper__vertical]: vertical,
+        [css.wrapper__horizontal]: !vertical,
         [css.separated]: !!gap,
         [css[`separated__${gap}`]]: !!gap,
       },
@@ -150,14 +151,42 @@ const variantClass = computed(() =>
 @use '@/styles/colors.scss' as c;
 
 .wrapper {
-  @apply inline-flex rounded overflow-hidden divide-x divide-rui-grey-400;
+  @apply inline-flex rounded divide-x divide-rui-grey-400;
   @apply outline outline-1 outline-transparent outline-offset-[-1px];
+
+  &:not(.separated) {
+    .button {
+      @apply rounded-none;
+    }
+  }
 
   &__vertical {
     @apply inline-flex flex-col items-start divide-x-0 divide-y;
 
     .button {
       @apply w-full;
+    }
+
+    &:not(.separated) .button {
+      &:first-child {
+        @apply rounded-t;
+      }
+
+      &:last-child {
+        @apply rounded-b;
+      }
+    }
+  }
+
+  &__horizontal {
+    &:not(.separated) .button {
+      &:first-child {
+        @apply rounded-l;
+      }
+
+      &:last-child {
+        @apply rounded-r;
+      }
     }
   }
 
@@ -180,12 +209,12 @@ const variantClass = computed(() =>
     }
   }
 
-  &:not(.separated) .button {
-    @apply rounded-none;
-  }
-
   .button {
     @apply border-0 outline-0;
+
+    &:focus {
+      @apply z-[1];
+    }
   }
 
   @each $color in c.$context-colors {
