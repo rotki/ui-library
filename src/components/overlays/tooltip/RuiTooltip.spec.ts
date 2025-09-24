@@ -1,5 +1,5 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { type ComponentMountingOptions, flushPromises, mount } from '@vue/test-utils';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
 
@@ -19,6 +19,18 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiTooltip>) {
 describe('tooltip', () => {
   const text = 'Tooltip content';
 
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.runOnlyPendingTimers();
+    vi.useRealTimers();
+    // Clean up any tooltips that might be left in DOM
+    const tooltips = document.querySelectorAll('[role="tooltip"]');
+    tooltips.forEach(tooltip => tooltip.remove());
+  });
+
   it('renders properly', async () => {
     const wrapper = createWrapper({
       props: {
@@ -27,7 +39,6 @@ describe('tooltip', () => {
     });
 
     await wrapper.trigger('mouseover');
-    await vi.delay();
 
     const tooltip = document.body.querySelector('div[role=tooltip]');
 
@@ -63,7 +74,6 @@ describe('tooltip', () => {
     });
 
     await wrapper.trigger('mouseover');
-    await vi.delay();
 
     let tooltip = document.body.querySelector('div[role=tooltip]');
 
@@ -75,7 +85,6 @@ describe('tooltip', () => {
     await wrapper.setProps({ disabled: false });
 
     await wrapper.trigger('mouseover');
-    await vi.delay();
 
     tooltip = document.body.querySelector('div[role=tooltip]');
 
@@ -100,7 +109,6 @@ describe('tooltip', () => {
     });
 
     await wrapper.trigger('mouseover');
-    await vi.delay();
 
     const tooltip = document.body.querySelector('div[role=tooltip]');
 
@@ -114,17 +122,21 @@ describe('tooltip', () => {
     expect(tooltip?.querySelector('span[data-popper-arrow]')).toBeTruthy();
 
     // Tooltip shouldn't appear if the mouseleave happens before the timer ends.
-    await vi.delay(100);
+    vi.advanceTimersByTime(100);
+    await flushPromises();
     await wrapper.trigger('mouseleave');
-    await vi.delay(500);
+    vi.advanceTimersByTime(500);
+    await flushPromises();
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
 
     await wrapper.trigger('mouseover');
-    await vi.delay(100);
+    vi.advanceTimersByTime(100);
+    await flushPromises();
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
 
     await wrapper.trigger('mouseover');
-    await vi.delay(350);
+    vi.advanceTimersByTime(350);
+    await flushPromises();
     expect(document.body.innerHTML).toMatch(new RegExp(text));
 
     wrapper.unmount();
@@ -140,7 +152,8 @@ describe('tooltip', () => {
     });
 
     await wrapper.trigger('mouseover');
-    await vi.delay();
+    vi.advanceTimersByTime(1);
+    await flushPromises();
 
     let tooltip = document.body.querySelector('div[role=tooltip]');
 
@@ -167,7 +180,8 @@ describe('tooltip', () => {
     expect(tooltip?.querySelector('span[data-popper-arrow]')).toBeTruthy();
     expect(document.body.innerHTML).toMatch(new RegExp(text));
 
-    await vi.delay(600);
+    vi.advanceTimersByTime(600);
+    await flushPromises();
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
 
     wrapper.unmount();
@@ -185,7 +199,8 @@ describe('tooltip', () => {
 
     // Focus on the activator button
     await wrapper.trigger('focusin');
-    await vi.delay();
+    vi.advanceTimersByTime(1);
+    await flushPromises();
 
     const tooltip = document.body.querySelector('div[role=tooltip]');
     expect(tooltip).toBeTruthy();
@@ -196,7 +211,8 @@ describe('tooltip', () => {
 
     // Blur should close the tooltip
     await wrapper.trigger('focusout');
-    await vi.delay(600); // Wait for closeDelay
+    vi.advanceTimersByTime(600);
+    await flushPromises(); // Wait for closeDelay
 
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
 
@@ -214,18 +230,22 @@ describe('tooltip', () => {
 
     // Focus and wait for openDelay
     await wrapper.trigger('focusin');
-    await vi.delay(100);
+    vi.advanceTimersByTime(100);
+    await flushPromises();
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
 
-    await vi.delay(350);
+    vi.advanceTimersByTime(350);
+    await flushPromises();
     expect(document.body.innerHTML).toMatch(new RegExp(text));
 
     // Blur and check closeDelay
     await wrapper.trigger('focusout');
-    await vi.delay(100);
+    vi.advanceTimersByTime(100);
+    await flushPromises();
     expect(document.body.innerHTML).toMatch(new RegExp(text)); // Still visible
 
-    await vi.delay(500);
+    vi.advanceTimersByTime(500);
+    await flushPromises();
     expect(document.body.innerHTML).not.toMatch(new RegExp(text)); // Now hidden
 
     wrapper.unmount();
@@ -243,7 +263,8 @@ describe('tooltip', () => {
     // Trigger both mouseover and focus
     await wrapper.trigger('mouseover');
     await wrapper.trigger('focusin');
-    await vi.delay(100);
+    vi.advanceTimersByTime(100);
+    await flushPromises();
 
     let tooltip = document.body.querySelector('div[role=tooltip]');
     expect(tooltip).toBeTruthy();
@@ -251,7 +272,8 @@ describe('tooltip', () => {
 
     // Mouse leaves but focus remains - tooltip should stay
     await wrapper.trigger('mouseleave');
-    await vi.delay(100); // Small delay to ensure event is processed
+    vi.advanceTimersByTime(100);
+    await flushPromises(); // Small delay to ensure event is processed
 
     tooltip = document.body.querySelector('div[role=tooltip]');
     expect(tooltip).toBeTruthy();
@@ -259,7 +281,8 @@ describe('tooltip', () => {
 
     // Now blur - tooltip should close after closeDelay
     await wrapper.trigger('focusout');
-    await vi.delay(600);
+    vi.advanceTimersByTime(600);
+    await flushPromises();
 
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
 
