@@ -30,7 +30,7 @@ export const DEFAULT_POPPER_OPTIONS: PopperOptions = {
 };
 
 interface UsePopperReturn {
-  instance: Ref<Instance | null>;
+  instance: Ref<Instance | undefined>;
   leavePending: Ref<boolean>;
   onClose: (immediate?: boolean) => void;
   onLeavePending: () => void;
@@ -39,7 +39,7 @@ interface UsePopperReturn {
   open: Ref<boolean, boolean>;
   popper: Ref<MaybeElement>;
   popperEnter: Ref<boolean>;
-  reference: Ref<MaybeElement>;
+  reference: Ref<HTMLElement | undefined>;
   updatePopper: () => Promise<void>;
 }
 
@@ -50,9 +50,9 @@ export function usePopper(
   closeDelay: Ref<number> = ref(0),
   virtualReference?: Ref<Element | VirtualElement>,
 ): UsePopperReturn {
-  const reference = ref<MaybeElement | null>(null);
-  const popper = ref<MaybeElement | null>(null);
-  const instance = ref<Instance | null>(null);
+  const reference = ref<HTMLElement | undefined>(undefined);
+  const popper = ref<MaybeElement | undefined>(undefined);
+  const instance = ref<Instance | undefined>(undefined);
   const open = ref<boolean>(false);
   const popperEnter = ref<boolean>(false);
   const leavePending = ref<boolean>(false);
