@@ -71,6 +71,16 @@ const adaptiveTextColorsCombination = {
 
 const themePlugin = plugin(
   ({ addUtilities, addVariant, matchUtilities }) => {
+    // Border utilities
+    addUtilities({
+      '.border-default': {
+        'border-color': 'rgb(var(--rui-grey-200))',
+      },
+      '.dark .border-default': {
+        'border-color': 'rgb(var(--rui-grey-800))',
+      },
+    });
+
     // Typography
     addUtilities({
       '.text-body-1': {
