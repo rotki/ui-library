@@ -110,8 +110,8 @@ function onLeave(event?: KeyboardEvent) {
   if (!get(disableAutoFocus)) {
     nextTick(() => {
       const activatorEl = get(activator);
-      if (activatorEl && 'querySelector' in activatorEl) {
-        const focusableEl = (activatorEl as HTMLElement).querySelector<HTMLElement>(
+      if (activatorEl) {
+        const focusableEl = activatorEl.querySelector<HTMLElement>(
           FOCUSABLE_ELEMENTS_SELECTOR,
         );
         if (focusableEl) {
