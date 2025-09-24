@@ -347,12 +347,24 @@ const tickSizeInPx = computed(() => `${get(tickSize)}px`);
           }
         }
 
+        &:focus {
+          ~ .slider {
+            .slider {
+              &__thumb {
+                &:before {
+                  @apply scale-100 opacity-15;
+                }
+              }
+            }
+          }
+        }
+
         &:active {
           ~ .slider {
             .slider {
               &__thumb {
                 &:before {
-                  @apply scale-100 opacity-20;
+                  @apply scale-100 opacity-30;
                 }
 
                 &_label {
