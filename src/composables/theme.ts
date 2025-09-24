@@ -19,6 +19,15 @@ const config: Ref<ThemeConfig> = ref({ ...defaultTheme });
 export const useRotkiTheme = createSharedComposable<() => ThemeContent>(() => {
   const { state, store } = useColorMode<ThemeMode>();
 
+  const { state: attributeState } = useColorMode<ThemeMode>({
+    attribute: 'data-theme',
+  });
+
+  // Keep attributeState in sync with state
+  watch(state, (newState) => {
+    set(attributeState, newState);
+  });
+
   /**
    * whether the current theme is controlled by system or user
    * @type {ComputedRef<boolean>}

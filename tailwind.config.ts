@@ -20,7 +20,7 @@ const safeListedColorVariants = [
 
 export default {
   mode: 'jit',
-  darkMode: ['class', ':global(.dark)'],
+  darkMode: ['class', '[data-theme="dark"]'],
   content: [
     './src/**/*.vue',
     ...(!isDevelopment

@@ -15,7 +15,7 @@ export interface Props<T = undefined> {
   tag?: 'button' | 'a';
   type?: 'button' | 'submit';
   modelValue?: T;
-  noOutline?: boolean;
+  hideFocusIndicator?: boolean;
 }
 
 defineOptions({
@@ -36,7 +36,7 @@ const props = withDefaults(defineProps<Props<T>>(), {
   tag: 'button',
   type: 'button',
   modelValue: undefined,
-  noOutline: false,
+  hideFocusIndicator: false,
 });
 
 const emit = defineEmits<{
@@ -85,7 +85,7 @@ const spinnerSize = computed<number>(() => {
         [$style.icon]: icon,
         [$style.active]: active,
         [$style.text]: variant === 'list',
-        [$style.flat]: noOutline,
+        [$style.flat]: hideFocusIndicator,
       },
     ]"
     :disabled="disabled || loading"
@@ -122,52 +122,10 @@ const spinnerSize = computed<number>(() => {
 @use '@/styles/colors.scss' as c;
 @use 'sass:list';
 
-:global(.dark) {
-  .btn {
-    @apply disabled:bg-white/[.12] #{!important};
-
-    @each $color in c.$context-colors {
-      &.#{$color} {
-        @apply text-rui-text ring-rui-#{$color}/60;
-
-        @if list.index((warning, success, info), $color) {
-          @apply text-rui-light-text;
-        }
-
-        @if list.index((primary, secondary), $color) {
-          &.outlined,
-          &.text {
-            &.active {
-              @apply bg-rui-#{$color}-darker/60 text-rui-#{$color}-lighter;
-            }
-          }
-        }
-      }
-    }
-
-    &.grey {
-      @apply bg-rui-grey-300 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-light-text ring-rui-grey-600;
-
-      &.active {
-        @apply bg-rui-grey-50;
-      }
-
-      &.outlined,
-      &.text {
-        @apply active:bg-white/10 hover:bg-white/[.04] text-rui-text;
-
-        &.active {
-          @apply bg-white/30;
-        }
-      }
-    }
-  }
-}
-
 .btn {
   @apply text-sm leading-[1.5rem] font-medium outline outline-1 outline-transparent outline-offset-[-1px] flex items-center justify-center gap-x-2 relative;
   @apply px-4 py-1.5 rounded transition-all;
-  @apply disabled:bg-black/[.12] disabled:text-rui-text-disabled disabled:active:text-rui-text-disabled focus:ring-2 #{!important};
+  @apply disabled:bg-black/[.12] dark:disabled:bg-white/[.12] disabled:text-rui-text-disabled disabled:active:text-rui-text-disabled focus:ring-2 #{!important};
 
   .label {
     @apply inline-block text-nowrap;
@@ -191,7 +149,7 @@ const spinnerSize = computed<number>(() => {
 
   @each $color in c.$context-colors {
     &.#{$color} {
-      @apply bg-rui-#{$color} hover:bg-rui-#{$color}-darker active:bg-rui-#{$color}-darker/90 text-rui-dark-text ring-rui-#{$color}/40;
+      @apply bg-rui-#{$color} hover:bg-rui-#{$color}-darker active:bg-rui-#{$color}-darker/90 text-rui-dark-text ring-rui-#{$color}/40 dark:text-rui-text dark:ring-rui-#{$color}/60;
 
       &.active {
         @apply bg-rui-#{$color}-darker;
@@ -209,11 +167,25 @@ const spinnerSize = computed<number>(() => {
       &.outlined {
         @apply outline-rui-#{$color}/[0.5];
       }
+
+      @if list.index((warning, success, info), $color) {
+        @apply dark:text-rui-light-text;
+      }
+
+      @if list.index((primary, secondary), $color) {
+        &.outlined,
+        &.text {
+          &.active {
+            @apply dark:bg-rui-#{$color}-darker/60 dark:text-rui-#{$color}-lighter;
+          }
+        }
+      }
     }
   }
 
   &.grey {
     @apply bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-text ring-rui-grey-400;
+    @apply dark:bg-rui-grey-300 dark:text-rui-light-text dark:ring-rui-grey-600;
 
     &.active {
       @apply bg-rui-grey-50;
@@ -222,9 +194,10 @@ const spinnerSize = computed<number>(() => {
     &.outlined,
     &.text {
       @apply bg-transparent hover:bg-black/[.04] active:bg-black/10;
+      @apply dark:active:bg-white/10 dark:hover:bg-white/[.04] dark:text-rui-text;
 
       &.active {
-        @apply bg-black/10;
+        @apply bg-black/10 dark:bg-white/30;
       }
     }
 
