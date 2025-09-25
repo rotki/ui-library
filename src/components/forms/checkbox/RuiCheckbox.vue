@@ -182,7 +182,7 @@ watch(internalModelValue, (val) => {
     &:focus {
       + .checkbox {
         &:before {
-          @apply opacity-5;
+          @apply opacity-15;
         }
       }
     }
@@ -194,7 +194,7 @@ watch(internalModelValue, (val) => {
     &:before {
       content: '';
       @apply absolute top-1/2 left-1/2 block h-[42px] w-[42px] -translate-y-1/2 -translate-x-1/2 rounded-full opacity-0 transition-opacity;
-      @apply bg-black;
+      @apply bg-black dark:bg-white;
     }
 
     &.with-error {
