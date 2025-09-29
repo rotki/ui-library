@@ -151,4 +151,27 @@ describe('tabs/Tab', () => {
     expect(elem.attributes().target).toMatch('_blank');
     expect(elem.attributes().href).toBeDefined();
   });
+
+  it('sets tabindex to -1 for all tab variations', async () => {
+    // Test disabled tab
+    let wrapper = createWrapper({
+      props: {
+        disabled: true,
+      },
+    });
+    expect(wrapper.find('button').attributes('tabindex')).toBe('-1');
+
+    // Test regular button tab
+    wrapper = createWrapper();
+    expect(wrapper.find('button').attributes('tabindex')).toBe('-1');
+
+    // Test link tab
+    wrapper = createWrapper({
+      props: {
+        link: true,
+        to: '/tabs',
+      },
+    });
+    expect(wrapper.find('a').attributes('tabindex')).toBe('-1');
+  });
 });

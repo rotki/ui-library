@@ -27,6 +27,7 @@ const meta: Meta<PropsAndLabel> = {
     color: { control: 'select', options: contextColors },
     disabled: { control: 'boolean', table: { category: 'State' } },
     elevation: { control: 'number', table: { category: 'Shape' } },
+    hideFocusIndicator: { control: 'boolean' },
     icon: { control: 'boolean', table: { category: 'Shape' } },
     label: { control: 'text' },
     loading: { control: 'boolean', table: { category: 'State' } },
@@ -55,6 +56,13 @@ type Story = StoryObj<PropsAndLabel>;
 export const Default: Story = {
   args: {
     label: 'Default',
+  },
+};
+
+export const HideFocusIndicator: Story = {
+  args: {
+    hideFocusIndicator: true,
+    label: 'No focus outline',
   },
 };
 

@@ -82,6 +82,7 @@ function click() {
     variant="text"
     disabled
     :class="tabClass"
+    tabindex="-1"
     role="tab"
     v-bind="$attrs"
   >
@@ -101,6 +102,7 @@ function click() {
     :color="active ? color : undefined"
     role="tab"
     v-bind="$attrs"
+    tabindex="-1"
     variant="text"
     @click="click()"
   >
@@ -135,7 +137,9 @@ function click() {
       :href="isSelf ? undefined : href"
       :target="target"
       role="tab"
+      no-outline
       tag="a"
+      tabindex="-1"
       v-bind="$attrs"
       variant="text"
       @click="
@@ -159,7 +163,7 @@ function click() {
 <style lang="scss" module>
 .tab {
   @apply h-full min-w-[90px] max-w-[360px] flex items-center rounded-none cursor-pointer relative whitespace-nowrap shrink-0;
-  @apply px-4 #{!important};
+  @apply px-4;
 
   &--vertical {
     @apply h-[2.625rem] w-full max-w-none;
