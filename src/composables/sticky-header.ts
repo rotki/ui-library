@@ -1,4 +1,5 @@
 import type { MaybeRef } from 'vue';
+import { assert } from '@/utils/assert';
 
 /**
  * Setup sticky table header
@@ -38,7 +39,9 @@ export function useStickyTableHeader(sticky: MaybeRef<boolean> = ref(false), off
 
       clonedColumns?.forEach((th: HTMLElement, i: number) => {
         useResizeObserver(th, (entries) => {
-          const cellRect = entries[0].target.getBoundingClientRect();
+          const entry = entries[0];
+          assert(entry);
+          const cellRect = entry.target.getBoundingClientRect();
           const column = columns?.item(i);
           if (column)
             column.style.width = `${cellRect.width}px`;

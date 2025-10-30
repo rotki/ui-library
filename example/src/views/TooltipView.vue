@@ -65,6 +65,8 @@ function generateTooltips(): TooltipData[] {
 
     for (const [i, color] of colors.entries()) {
       const placement = placements[i];
+      if (!placement)
+        continue;
       const options = {
         ...objectOmit(attrs, ['getText', 'getButtonText']),
         text: getText(placement),

@@ -186,7 +186,7 @@ export class Color {
     return this.blueValue;
   }
 
-  get rgb() {
+  get rgb(): [number, number, number] {
     return [this.red, this.green, this.blue];
   }
 }

@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiDataTable from '@/components/tables/RuiDataTable.vue';
 import RuiTablePagination from '@/components/tables/RuiTablePagination.vue';
+import { assert } from '@/utils/assert';
 
 interface User {
   id: number;
@@ -456,7 +457,9 @@ describe('dataTable', () => {
         );
       });
 
-      const select = paginationInstances[0].findComponent({ name: 'RuiMenuSelect' });
+      const firstPagination = paginationInstances[0];
+      assert(firstPagination);
+      const select = firstPagination.findComponent({ name: 'RuiMenuSelect' });
       select.vm.$emit('update:modelValue', 10);
 
       await nextTick();
@@ -497,25 +500,30 @@ describe('dataTable', () => {
       const paginate = wrapper.findAllComponents(RuiTablePagination);
       expect(paginate).toHaveLength(4);
 
-      expect(paginate[0].vm.modelValue).toMatchObject(
+      const paginate0 = paginate[0];
+      const paginate2 = paginate[2];
+      assert(paginate0);
+      assert(paginate2);
+
+      expect(paginate0.vm.modelValue).toMatchObject(
         expect.objectContaining({ limit: 25 }),
       );
-      expect(paginate[2].vm.modelValue).toMatchObject(
+      expect(paginate2.vm.modelValue).toMatchObject(
         expect.objectContaining({ limit: 10 }),
       );
 
-      const globalSelect = paginate[0].findComponent({ name: 'RuiMenuSelect' });
-      const localSelect = paginate[2].findComponent({ name: 'RuiMenuSelect' });
+      const globalSelect = paginate0.findComponent({ name: 'RuiMenuSelect' });
+      const localSelect = paginate2.findComponent({ name: 'RuiMenuSelect' });
       globalSelect.vm.$emit('update:modelValue', 10);
       localSelect.vm.$emit('update:modelValue', 25);
 
       await nextTick();
 
-      expect(paginate[0].vm.modelValue).toMatchObject(
+      expect(paginate0.vm.modelValue).toMatchObject(
         expect.objectContaining({ limit: 10 }),
       );
 
-      expect(paginate[2].vm.modelValue).toMatchObject(
+      expect(paginate2.vm.modelValue).toMatchObject(
         expect.objectContaining({ limit: 25 }),
       );
 
@@ -548,26 +556,31 @@ describe('dataTable', () => {
       const paginate = wrapper.findAllComponents(RuiTablePagination);
       expect(paginate).toHaveLength(4);
 
-      expect(paginate[0].vm.modelValue).toMatchObject(
+      const paginate0 = paginate[0];
+      const paginate2 = paginate[2];
+      assert(paginate0);
+      assert(paginate2);
+
+      expect(paginate0.vm.modelValue).toMatchObject(
         expect.objectContaining({ limit: 10 }),
       );
 
-      expect(paginate[2].vm.modelValue).toMatchObject(
+      expect(paginate2.vm.modelValue).toMatchObject(
         expect.objectContaining({ limit: 25 }),
       );
 
-      const globalSelect = paginate[0].findComponent({ name: 'RuiMenuSelect' });
-      const localSelect = paginate[2].findComponent({ name: 'RuiMenuSelect' });
+      const globalSelect = paginate0.findComponent({ name: 'RuiMenuSelect' });
+      const localSelect = paginate2.findComponent({ name: 'RuiMenuSelect' });
       globalSelect.vm.$emit('update:modelValue', 25);
       localSelect.vm.$emit('update:modelValue', 10);
 
       await nextTick();
 
-      expect(paginate[0].vm.modelValue).toMatchObject(
+      expect(paginate0.vm.modelValue).toMatchObject(
         expect.objectContaining({ limit: 25 }),
       );
 
-      expect(paginate[2].vm.modelValue).toMatchObject(
+      expect(paginate2.vm.modelValue).toMatchObject(
         expect.objectContaining({ limit: 10 }),
       );
 
@@ -616,7 +629,11 @@ describe('dataTable', () => {
     expect(navButtons.filter(b => b.attributes('disabled') === '')).toHaveLength(2);
     expect(navButtons.filter(b => b.attributes('disabled') === undefined)).toHaveLength(2);
 
-    const [limits, ranges] = paginator.findAllComponents({ name: 'RuiMenuSelect' });
+    const menuSelects = paginator.findAllComponents({ name: 'RuiMenuSelect' });
+    const limits = menuSelects[0];
+    const ranges = menuSelects[1];
+    assert(limits);
+    assert(ranges);
     expect(limits.exists()).toBeTruthy();
     expect(ranges.exists()).toBeTruthy();
 

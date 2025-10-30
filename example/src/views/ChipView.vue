@@ -48,7 +48,9 @@ function onRemove(identifier: number | string) {
   if (!(identifier in status))
     status[identifier] = 0;
 
-  status[identifier]++;
+  const count = status[identifier];
+  if (count !== undefined)
+    status[identifier] = count + 1;
 
   set(dismissed, status);
 }

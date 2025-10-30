@@ -5,6 +5,7 @@ import { logicAnd, logicNot } from '@vueuse/math';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
+import { assert } from '@/utils/assert';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
 export interface TextFieldProps {
@@ -92,12 +93,14 @@ const { width } = useElementBounding(innerWrapper);
 
 useResizeObserver(prepend, (entries) => {
   const [entry] = entries;
+  assert(entry);
   const { width, left } = entry.contentRect;
   set(prependWidth, `${width + left}px`);
 });
 
 useResizeObserver(append, (entries) => {
   const [entry] = entries;
+  assert(entry);
   const { width, right } = entry.contentRect;
   set(appendWidth, `${width + right}px`);
 });
@@ -142,9 +145,9 @@ defineExpose({
           [$style.dense]: dense,
           [$style.disabled]: disabled,
           [$style['no-label']]: !label,
-          [$style['with-error']]: hasError,
-          [$style['with-success']]: hasSuccess && !hasError,
-          [$style[`text_${textColor}`]]: textColor && !hasMessages,
+          [$style['with-error'] ?? '']: hasError,
+          [$style['with-success'] ?? '']: hasSuccess && !hasError,
+          [$style[`text_${textColor}`] ?? '']: textColor && !hasMessages,
         },
       ]"
     >

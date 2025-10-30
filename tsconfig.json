@@ -1,26 +1,22 @@
 {
+  "extends": [
+    "@vue/tsconfig/tsconfig.dom.json",
+    "@vue/tsconfig/tsconfig.lib.json"
+  ],
   "compilerOptions": {
-    "target": "es2020",
-    "jsx": "preserve",
-    "lib": ["esnext", "dom"],
+    "lib": ["ESNext", "DOM"],
     "experimentalDecorators": true,
     "baseUrl": ".",
-    "module": "esnext",
-    "moduleResolution": "node",
     "paths": {
       "@/*": ["src/*"],
       "~/*": ["./*"]
     },
-    "resolveJsonModule": true,
     "types": ["node", "vue", "vite/client"],
     "allowJs": false,
-    "strict": true,
     "strictNullChecks": true,
     "noUnusedLocals": true,
     "sourceMap": true,
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "skipLibCheck": true
   },

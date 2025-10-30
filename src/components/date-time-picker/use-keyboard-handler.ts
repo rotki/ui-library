@@ -3,6 +3,7 @@ import type { TimeAccuracy } from '@/consts/time-accuracy';
 import dayjs, { type Dayjs } from 'dayjs';
 import { type DateTimeSegmentType, isDateTimeSegmentType } from '@/components/date-time-picker/types';
 import { includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
+import { assert } from '@/utils/assert';
 
 interface Segment {
   start: number;
@@ -153,6 +154,7 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
       nextSegmentIndex = currentSegmentIndex + 1;
       if (nextSegmentIndex < positions.length) {
         const nextSegment = positions[nextSegmentIndex];
+        assert(nextSegment);
         setCursorPosition(nextSegment);
       }
     }
@@ -160,6 +162,7 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
       nextSegmentIndex = currentSegmentIndex - 1;
       if (nextSegmentIndex >= 0) {
         const nextSegment = positions[nextSegmentIndex];
+        assert(nextSegment);
         setCursorPosition(nextSegment);
       }
     }

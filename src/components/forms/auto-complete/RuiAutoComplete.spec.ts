@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { options, type SelectOption } from '@/__test__/options';
 import RuiChip from '@/components/chips/RuiChip.vue';
 import RuiAutoComplete from '@/components/forms/auto-complete/RuiAutoComplete.vue';
+import { assert } from '@/utils/assert';
 
 function createWrapper<
   TValue,
@@ -54,11 +55,13 @@ describe('autocomplete', () => {
   });
 
   it('should pass props correctly', () => {
+    const option4 = options[4];
+    assert(option4);
     const wrapper = createWrapper<string, SelectOption>({
       props: {
         disabled: true,
         keyAttr: 'id',
-        modelValue: options[4].id,
+        modelValue: option4.id,
         options,
         textAttr: 'label',
       },
@@ -68,9 +71,11 @@ describe('autocomplete', () => {
   });
 
   it('should work with primitive options', () => {
+    const option4 = options[4];
+    assert(option4);
     const wrapper = createWrapper<string, string>({
       props: {
-        modelValue: options[4].label,
+        modelValue: option4.label,
         options: options.map(item => item.label),
       },
     });
@@ -309,6 +314,7 @@ describe('autocomplete', () => {
     expect(relevantButtons.length).toBe(1);
 
     let firstButton = relevantButtons[0];
+    assert(firstButton);
     expect(firstButton.innerHTML).toContain('Germany');
 
     await wrapper.setProps({ hideCustomValue: false });
@@ -322,9 +328,11 @@ describe('autocomplete', () => {
     expect(relevantButtons.length).toBe(2);
 
     firstButton = relevantButtons[0];
+    assert(firstButton);
     expect(firstButton.innerHTML).toContain('German');
 
     const secondButton = relevantButtons[1];
+    assert(secondButton);
     expect(secondButton.innerHTML).toContain('Germany');
 
     await wrapper.find('input').setValue('Germany');
@@ -339,6 +347,7 @@ describe('autocomplete', () => {
     expect(updatedRelevantButtons.length).toBe(1);
 
     firstButton = updatedRelevantButtons[0];
+    assert(firstButton);
     expect(firstButton.innerHTML).toContain('Germany');
 
     await wrapper.find('input').setValue('German');

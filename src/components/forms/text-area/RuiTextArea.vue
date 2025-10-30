@@ -5,6 +5,7 @@ import { logicAnd, logicNot } from '@vueuse/math';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
+import { assert } from '@/utils/assert';
 
 export interface Props {
   label?: string;
@@ -110,12 +111,14 @@ const appendWidth = ref('0px');
 
 useResizeObserver(prepend, (entries) => {
   const [entry] = entries;
+  assert(entry);
   const { width, left } = entry.contentRect;
   set(prependWidth, `${width + left + 24}px`);
 });
 
 useResizeObserver(append, (entries) => {
   const [entry] = entries;
+  assert(entry);
   const { width, right } = entry.contentRect;
   set(appendWidth, `${width + right + 24}px`);
 });
@@ -179,9 +182,9 @@ onMounted(computeFieldHeight);
           [css.dense]: dense,
           [css.disabled]: disabled,
           [css['no-label']]: !label,
-          [css['with-error']]: hasError,
-          [css['with-success']]: hasSuccess && !hasError,
-          [css[`text_${textColor}`]]: textColor && !hasMessages,
+          [css['with-error'] ?? '']: hasError,
+          [css['with-success'] ?? '']: hasSuccess && !hasError,
+          [css[`text_${textColor}`] ?? '']: textColor && !hasMessages,
         },
       ]"
     >

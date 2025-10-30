@@ -3,6 +3,7 @@ import type { ContextColorsType } from '@/consts/colors';
 import { objectPick } from '@vueuse/shared';
 import { Fragment, isVNode } from 'vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
+import { assert } from '@/utils/assert';
 
 export interface Props {
   inline?: boolean;
@@ -47,9 +48,14 @@ const children = computed(() => {
 
   // When using dynamic content with v-for the slot content is a single fragment
   // containing the children components.
-  return slotContent.length === 1 && slotContent[0].type === Fragment
-    ? Array.isArray(slotContent[0].children) ? slotContent[0].children.filter(isVNode) : []
-    : slotContent;
+  if (slotContent.length === 1) {
+    const firstChild = slotContent[0];
+    assert(firstChild);
+    if (firstChild.type === Fragment) {
+      return Array.isArray(firstChild.children) ? firstChild.children.filter(isVNode) : [];
+    }
+  }
+  return slotContent;
 });
 </script>
 
@@ -61,7 +67,7 @@ const children = computed(() => {
     >
       {{ label }}
     </div>
-    <div :class="[$style.wrapper, { [$style.wrapper__inline]: inline }]">
+    <div :class="[$style.wrapper, { [$style.wrapper__inline ?? '']: inline }]">
       <Component
         :is="child"
         v-for="(child, i) in children"

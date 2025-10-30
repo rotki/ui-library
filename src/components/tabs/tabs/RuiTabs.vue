@@ -265,10 +265,10 @@ watch(internalModelValue, () => {
 </script>
 
 <template>
-  <div :class="[$style.tabs, { [$style['tabs--vertical']]: vertical }]">
+  <div :class="[$style.tabs, { [$style['tabs--vertical'] ?? '']: vertical }]">
     <div
       v-if="showArrows"
-      :class="[$style.arrow, { [$style['arrow--vertical']]: vertical }]"
+      :class="[$style.arrow, { [$style['arrow--vertical'] ?? '']: vertical }]"
     >
       <RuiButton
         class="w-full h-full !rounded-none"
@@ -285,8 +285,8 @@ watch(internalModelValue, () => {
       class="no-scrollbar"
       :class="[
         $style['tabs-bar'],
-        { [$style['tabs-bar--vertical']]: vertical },
-        { [$style['tabs-bar--grow']]: grow },
+        { [$style['tabs-bar--vertical'] ?? '']: vertical },
+        { [$style['tabs-bar--grow'] ?? '']: grow },
       ]"
     >
       <div
@@ -294,8 +294,8 @@ watch(internalModelValue, () => {
         role="tablist"
         :class="[
           $style['tabs-wrapper'],
-          { [$style['tabs-wrapper--vertical']]: vertical },
-          { [$style['tabs-wrapper--grow']]: grow },
+          { [$style['tabs-wrapper--vertical'] ?? '']: vertical },
+          { [$style['tabs-wrapper--grow'] ?? '']: grow },
         ]"
       >
         <Component
@@ -308,7 +308,7 @@ watch(internalModelValue, () => {
     </div>
     <div
       v-if="showArrows"
-      :class="[$style.arrow, { [$style['arrow--vertical']]: vertical }]"
+      :class="[$style.arrow, { [$style['arrow--vertical'] ?? '']: vertical }]"
     >
       <RuiButton
         class="w-full h-full !rounded-none"

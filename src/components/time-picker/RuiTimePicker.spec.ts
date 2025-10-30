@@ -1,6 +1,7 @@
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import { TimeAccuracy } from '@/consts/time-accuracy';
+import { assert } from '@/utils/assert';
 import RuiTimePicker from './RuiTimePicker.vue';
 
 function createWrapper(options: ComponentMountingOptions<typeof RuiTimePicker>) {
@@ -42,7 +43,9 @@ describe('components/RuiTimePicker', () => {
     expect(emittedEvents).toBeTruthy();
     expect(emittedEvents?.length).toBe(2);
 
-    const finalEmittedDate = emittedEvents?.[1][0] as Date;
+    const emittedEvent1 = emittedEvents?.[1];
+    assert(emittedEvent1);
+    const finalEmittedDate = emittedEvent1[0] as Date;
 
     const expectedHour = initialDate.getHours() >= 12 ? 15 : 3;
 
@@ -74,7 +77,9 @@ describe('components/RuiTimePicker', () => {
     expect(amPmToggle.text()).toBe('PM');
 
     const emittedEvents = wrapper.emitted('update:modelValue');
-    const updatedDate = emittedEvents?.[0][0] as Date;
+    const emittedEvent0 = emittedEvents?.[0];
+    assert(emittedEvent0);
+    const updatedDate = emittedEvent0[0] as Date;
 
     expect(updatedDate.getHours()).toBe(22);
     expect(updatedDate.getMinutes()).toBe(30);
@@ -108,7 +113,9 @@ describe('components/RuiTimePicker', () => {
     expect(emittedEvents).toBeTruthy();
     expect(emittedEvents?.length).toBe(4);
 
-    const finalEmittedDate = emittedEvents?.[3][0] as Date;
+    const emittedEvent3 = emittedEvents?.[3];
+    assert(emittedEvent3);
+    const finalEmittedDate = emittedEvent3[0] as Date;
 
     const expectedHour = initialDate.getHours() >= 12 ? 19 : 7;
 

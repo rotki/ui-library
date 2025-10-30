@@ -24,7 +24,7 @@
     "@tsconfig/node22": "22.0.2",
     "@types/node": "22.18.13",
     "@vitejs/plugin-vue": "6.0.1",
-    "@vue/tsconfig": "0.7.0",
+    "@vue/tsconfig": "0.8.1",
     "autoprefixer": "10.4.21",
     "cypress": "15.5.0",
     "postcss": "8.5.6",

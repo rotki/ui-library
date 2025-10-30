@@ -142,6 +142,8 @@ const selection = ref<number[]>([]);
 
 async function fetchData(index: number, options?: DataTableOptions<ExtendedUser>, search?: string) {
   const row = apiDatatables.value[index];
+  if (!row)
+    return;
   row.table.loading = true;
 
   if (options?.pagination)
@@ -159,7 +161,10 @@ async function fetchData(index: number, options?: DataTableOptions<ExtendedUser>
 }
 
 const onSearch = useDebounceFn(async (query: string, index: number) => {
-  const { table } = apiDatatables.value[index];
+  const row = apiDatatables.value[index];
+  if (!row)
+    return;
+  const { table } = row;
 
   await fetchData(
     index,

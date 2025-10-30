@@ -67,8 +67,8 @@ importers:
         specifier: 2.4.6
         version: 2.4.6
       '@vue/tsconfig':
-        specifier: 0.7.0
-        version: 0.7.0(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
+        specifier: 0.8.1
+        version: 0.8.1(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
       '@vueuse/core':
         specifier: 14.0.0
         version: 14.0.0(vue@3.5.22(typescript@5.9.3))
@@ -218,8 +218,8 @@ importers:
         specifier: 6.0.1
         version: 6.0.1(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.2)(terser@5.37.0)(tsx@4.20.6)(yaml@2.8.1))(vue@3.5.22(typescript@5.9.3))
       '@vue/tsconfig':
-        specifier: 0.7.0
-        version: 0.7.0(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
+        specifier: 0.8.1
+        version: 0.8.1(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
       autoprefixer:
         specifier: 10.4.21
         version: 10.4.21(postcss@8.5.6)
@@ -1528,8 +1528,8 @@ packages:
   '@vue/test-utils@2.4.6':
     resolution: {integrity: sha512-FMxEjOpYNYiFe0GkaHsnJPXFHxQ6m4t8vI/ElPGpMWxZKpmRvQ33OIrvRXemy6yha03RxhOlQuy+gZMC3CQSow==}
 
-  '@vue/tsconfig@0.7.0':
-    resolution: {integrity: sha512-ku2uNz5MaZ9IerPPUyOHzyjhXoX2kVJaVf7hL315DC17vS6IiZRmmCPfggNbU16QTvM80+uYYy3eYJB59WCtvg==}
+  '@vue/tsconfig@0.8.1':
+    resolution: {integrity: sha512-aK7feIWPXFSUhsCP9PFqPyFOcz4ENkb8hZ2pneL6m2UjCkccvaOhC/5KCKluuBufvp2KzkbdA2W2pk20vLzu3g==}
     peerDependencies:
       typescript: 5.x
       vue: ^3.4.0
@@ -5626,7 +5626,7 @@ snapshots:
   '@jridgewell/source-map@0.3.6':
     dependencies:
       '@jridgewell/gen-mapping': 0.3.13
-      '@jridgewell/trace-mapping': 0.3.30
+      '@jridgewell/trace-mapping': 0.3.31
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
 
@@ -6446,7 +6446,7 @@ snapshots:
       js-beautify: 1.15.1
       vue-component-type-helpers: 2.2.12
 
-  '@vue/tsconfig@0.7.0(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))':
+  '@vue/tsconfig@0.8.1(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))':
     optionalDependencies:
       typescript: 5.9.3
       vue: 3.5.22(typescript@5.9.3)
@@ -9591,7 +9591,7 @@ snapshots:
 
   terser-webpack-plugin@5.3.11(esbuild@0.25.1)(webpack@5.97.1(esbuild@0.25.1)):
     dependencies:
-      '@jridgewell/trace-mapping': 0.3.30
+      '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
       schema-utils: 4.3.0
       serialize-javascript: 6.0.2

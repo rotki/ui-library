@@ -13,6 +13,7 @@ import RuiTableHead, { type GroupData, type GroupKeys, type NoneSortableTableCol
 import RuiTablePagination, { type TablePaginationData } from '@/components/tables/RuiTablePagination.vue';
 import noDataPlaceholder from '@/components/tables/table_no_data_placeholder.svg';
 import noDataPlaceholderDark from '@/components/tables/table_no_data_placeholder_dark.svg';
+import { assert } from '@/utils/assert';
 
 export interface TableOptions<T> {
   pagination?: TablePaginationData;
@@ -303,7 +304,7 @@ const columns = computed<TableColumn<T>[]>(() => {
         key =>
         ({
           key,
-          [props.columnAttr]: key.toString(),
+          [props.columnAttr]: String(key),
         }) satisfies NoneSortableTableColumn<T>,
       );
 
@@ -564,7 +565,9 @@ const filtered = computed<GroupedTableRow<T>[]>(() => {
     const nearestGroup = preGroups.at(-1);
     if (data.length > 0) {
       // if our first item is not a group, push in the nearest group
-      if (isRow(data[0]) && nearestGroup)
+      const firstItem = data[0];
+      assert(firstItem);
+      if (isRow(firstItem) && nearestGroup)
         data.unshift(nearestGroup);
       const lastItem = data.at(-1);
       // if our last item is a group, remove it
@@ -686,7 +689,9 @@ function getGroupRows(groupVal: string) {
   if (!get(isGrouped))
     return [];
 
-  return get(mappedGroups)[groupVal].filter(isRow);
+  const groupRows = get(mappedGroups)[groupVal];
+  assert(groupRows);
+  return groupRows.filter(isRow);
 }
 
 function compareGroupsFn(a: T, b: Partial<T>) {
@@ -781,6 +786,7 @@ function onSort({
 
     const index = getSortIndex(key);
     const sortByCol = sortBy[index];
+    assert(sortByCol);
 
     if (sortByCol.direction === newDirection)
       sortBy.splice(index, 1);
@@ -889,6 +895,7 @@ function onCheckboxClick(event: any, value: T[typeof props.rowAttr], index: numb
           lastIndex = index;
         const tableData = get(filtered);
         const lastSelectedData = tableData[lastIndex];
+        assert(lastSelectedData);
 
         if (isRow(lastSelectedData)) {
           const id = get(rowIdentifier);
@@ -903,6 +910,7 @@ function onCheckboxClick(event: any, value: T[typeof props.rowAttr], index: numb
 
             for (let i = from; i <= to; i++) {
               const currSelectedData = tableData[i];
+              assert(currSelectedData);
               if (isRow(currSelectedData) && !isDisabledRow(currSelectedData[id]))
                 onSelect(valueToApply, currSelectedData[id]);
             }
@@ -1072,7 +1080,7 @@ onMounted(() => {
             />
           </template>
         </RuiTableHead>
-        <tbody :class="[$style.tbody, { [$style['tbody--striped']]: striped }]">
+        <tbody :class="[$style.tbody, { [$style['tbody--striped'] ?? '']: striped }]">
           <slot
             v-if="slots['body.prepend']"
             :colspan="colspan"
@@ -1155,7 +1163,7 @@ onMounted(() => {
                 :key="`row-${index}`"
                 :class="[
                   $style.tr,
-                  { [$style.tr__selected]: isSelected(row[rowIdentifier]) },
+                  { [$style.tr__selected ?? '']: isSelected(row[rowIdentifier]) },
                   typeof itemClass === 'string' ? itemClass : itemClass(row),
                 ]"
               >

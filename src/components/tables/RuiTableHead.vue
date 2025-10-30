@@ -206,8 +206,8 @@ function getSortDirection(key: TableColumn<T>['key']) {
               :class="[
                 $style.sort__button,
                 {
-                  [$style.sort__active]: isSortedBy(column.key),
-                  [$style[`sort__${getSortDirection(column.key)}`]]: isSortedBy(
+                  [$style.sort__active ?? '']: isSortedBy(column.key),
+                  [$style[`sort__${getSortDirection(column.key)}`] ?? '']: isSortedBy(
                     column.key,
                   ),
                 },

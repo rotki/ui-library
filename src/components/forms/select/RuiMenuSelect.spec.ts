@@ -2,6 +2,7 @@ import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { options } from '@/__test__/options';
 import RuiMenuSelect from '@/components/forms/select/RuiMenuSelect.vue';
+import { assert } from '@/utils/assert';
 
 vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
   const now = Date.now();
@@ -41,11 +42,13 @@ describe('menu select', () => {
   });
 
   it('passes props correctly', () => {
+    const option4 = options[4];
+    assert(option4);
     const wrapper = createWrapper({
       props: {
         disabled: true,
         keyAttr: 'id',
-        modelValue: options[4].id,
+        modelValue: option4.id,
         options,
         textAttr: 'label',
       },
@@ -55,9 +58,11 @@ describe('menu select', () => {
   });
 
   it('works with primitive options', () => {
+    const option4 = options[4];
+    assert(option4);
     const wrapper = createWrapper({
       props: {
-        modelValue: options[4].label,
+        modelValue: option4.label,
         options: options.map(item => item.label),
       },
     });

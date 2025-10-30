@@ -50,7 +50,7 @@ import RuiTab, { type Props as TabProps } from '@/components/tabs/tab/RuiTab.vue
 import RuiTabs, { type Props as TabsProps } from '@/components/tabs/tabs/RuiTabs.vue';
 import RuiTimePicker, { type RuiTimePickerProps } from '@/components/time-picker/RuiTimePicker.vue';
 
-export {
+export type {
   AccordionProps,
   AccordionsProps,
   AlertProps,
@@ -85,6 +85,25 @@ export {
   RadioGroupProps,
   RadioProps,
   RevealableTextFieldProps,
+  RuiDateTimePickerProps,
+  RuiTimePickerProps,
+  SimpleSelectProps,
+  SkeletonLoaderProps,
+  SliderProps,
+  StepperProps,
+  SwitchProps,
+  TabItemProps,
+  TabItemsProps,
+  TablePaginationData,
+  TablePaginationProps,
+  TabProps,
+  TabsProps,
+  TextAreaProps,
+  TextFieldProps,
+  TooltipProps,
+};
+
+export {
   RuiAccordion,
   RuiAccordions,
   RuiAlert,
@@ -101,7 +120,6 @@ export {
   RuiColorPicker,
   RuiDataTable,
   RuiDateTimePicker,
-  RuiDateTimePickerProps,
   RuiDialog,
   RuiDivider,
   RuiFooterStepper,
@@ -129,20 +147,5 @@ export {
   RuiTextArea,
   RuiTextField,
   RuiTimePicker,
-  RuiTimePickerProps,
   RuiTooltip,
-  SimpleSelectProps,
-  SkeletonLoaderProps,
-  SliderProps,
-  StepperProps,
-  SwitchProps,
-  TabItemProps,
-  TabItemsProps,
-  TablePaginationData,
-  TablePaginationProps,
-  TabProps,
-  TabsProps,
-  TextAreaProps,
-  TextFieldProps,
-  TooltipProps,
 };

@@ -64,10 +64,10 @@ const tabClass = computed(() => [
   css[`tab--${get(align)}`],
   css[`tab-indicator--${get(indicatorPosition)}`],
   {
-    [css['tab--grow']]: get(grow),
+    [css['tab--grow'] ?? '']: get(grow),
     [`${css['tab--active']} active-tab ${get(activeClass)}`]: get(active),
-    [css['tab--disabled']]: get(disabled),
-    [css['tab--vertical']]: get(vertical),
+    [css['tab--disabled'] ?? '']: get(disabled),
+    [css['tab--vertical'] ?? '']: get(vertical),
   },
 ]);
 

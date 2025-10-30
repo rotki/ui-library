@@ -2,6 +2,7 @@ import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import Accordion from '@/components/accordions/accordion/RuiAccordion.vue';
 import Accordions from '@/components/accordions/accordions/RuiAccordions.vue';
+import { assert } from '@/utils/assert';
 
 function createWrapper(options?: ComponentMountingOptions<typeof Accordions>) {
   return mount(Accordions, {
@@ -59,7 +60,9 @@ describe('accordions/Accordions', () => {
     expect(get(modelValue)).toBe(undefined);
 
     // Click first accordion
-    await wrapper.findAll('.accordion__header')[0].trigger('click');
+    const firstAccordionHeader = wrapper.findAll('.accordion__header')[0];
+    assert(firstAccordionHeader);
+    await firstAccordionHeader.trigger('click');
     await nextTick();
     expect(get(modelValue)).toBe(0);
 
@@ -67,7 +70,9 @@ describe('accordions/Accordions', () => {
     expect(wrapper.find('.accordion__content').text()).contains('Accordion 1 Content');
 
     // Click second accordion
-    await wrapper.findAll('.accordion__header')[1].trigger('click');
+    const secondAccordionHeader = wrapper.findAll('.accordion__header')[1];
+    assert(secondAccordionHeader);
+    await secondAccordionHeader.trigger('click');
     await nextTick();
     expect(get(modelValue)).toBe(1);
 
@@ -75,7 +80,7 @@ describe('accordions/Accordions', () => {
     expect(wrapper.find('.accordion__content').text()).contains('Accordion 2 Content');
 
     // Click second accordion, it should be closed now
-    await wrapper.findAll('.accordion__header')[1].trigger('click');
+    await secondAccordionHeader.trigger('click');
     await nextTick();
     expect(get(modelValue)).toBe(-1);
 
@@ -98,7 +103,9 @@ describe('accordions/Accordions', () => {
     expect(get(modelValue)).toBe(undefined);
 
     // Click first accordion
-    await wrapper.findAll('.accordion__header')[0].trigger('click');
+    const firstAccordionHeader = wrapper.findAll('.accordion__header')[0];
+    assert(firstAccordionHeader);
+    await firstAccordionHeader.trigger('click');
     await nextTick();
     expect(get(modelValue)).toStrictEqual([0]);
 
@@ -106,14 +113,16 @@ describe('accordions/Accordions', () => {
     expect(wrapper.find('.accordion__content').text()).contains('Accordion 1 Content');
 
     // Click second accordion, both should be opened
-    await wrapper.findAll('.accordion__header')[1].trigger('click');
+    const secondAccordionHeader = wrapper.findAll('.accordion__header')[1];
+    assert(secondAccordionHeader);
+    await secondAccordionHeader.trigger('click');
     await nextTick();
     expect(get(modelValue)).toStrictEqual([0, 1]);
 
     expect(wrapper.findAll('.accordion__content')).toHaveLength(2);
 
     // Click second accordion, only close this accordion
-    await wrapper.findAll('.accordion__header')[1].trigger('click');
+    await secondAccordionHeader.trigger('click');
     await nextTick();
     expect(get(modelValue)).toStrictEqual([0]);
 

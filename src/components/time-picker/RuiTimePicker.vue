@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, type StyleValue, watch } from 'vue';
 import { TimeAccuracy } from '@/consts/time-accuracy';
+import { assert } from '@/utils/assert';
 
 export type TimePickerSelection = 'hour' | 'minute' | 'second' | 'millisecond';
 
@@ -240,8 +241,10 @@ function startDrag(event: MouseEvent | TouchEvent) {
     let clientX, clientY;
 
     if ('touches' in moveEvent) {
-      clientX = moveEvent.touches[0].clientX;
-      clientY = moveEvent.touches[0].clientY;
+      const touch = moveEvent.touches[0];
+      assert(touch);
+      clientX = touch.clientX;
+      clientY = touch.clientY;
     }
     else {
       clientX = moveEvent.clientX;

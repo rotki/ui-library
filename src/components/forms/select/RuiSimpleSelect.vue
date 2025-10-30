@@ -42,7 +42,7 @@ const value = computed({
       :class="[
         $style.select,
         $style[variant ?? 'default'],
-        { [$style.disabled]: disabled },
+        { [$style.disabled ?? '']: disabled },
       ]"
       :name="name"
       :disabled="disabled"

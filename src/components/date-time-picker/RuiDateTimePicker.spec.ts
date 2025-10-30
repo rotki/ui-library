@@ -6,6 +6,7 @@ import utc from 'dayjs/plugin/utc';
 import { describe, expect, it, vi } from 'vitest';
 
 import { TransitionGroupStub } from '@/__test__/transition-group-stub';
+import { assert } from '@/utils/assert';
 import RuiDateTimePicker from './RuiDateTimePicker.vue';
 
 dayjs.extend(utc);
@@ -526,7 +527,9 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     // Check that the model value was emitted as undefined
     const modelValue = wrapper.emitted('update:modelValue');
     expect(modelValue).toBeTruthy();
-    expect(modelValue?.[0][0]).toBeUndefined();
+    const emittedFirst = modelValue?.[0];
+    assert(emittedFirst);
+    expect(emittedFirst[0]).toBeUndefined();
   });
 
   it('sets current date and time when "Now" button is clicked', async () => {

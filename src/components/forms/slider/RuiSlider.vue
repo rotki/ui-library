@@ -65,7 +65,7 @@ const vModel = computed({
   },
 });
 
-const ticksData = computed(() => {
+const ticksData = computed<[number, number]>(() => {
   const minVal = get(min);
   const stepVal = get(step);
   const range = get(max) - minVal;
@@ -100,13 +100,13 @@ const tickSizeInPx = computed(() => `${get(tickSize)}px`);
       :class="[
         $style.wrapper,
         {
-          [$style.disabled]: disabled,
-          [$style.vertical]: vertical,
-          [$style[color]]: color,
-          [$style['hide-track']]: hideTrack,
-          [$style['big-tick']]: tickSize > 4,
-          [$style['with-error']]: hasError,
-          [$style['with-success']]: hasSuccess && !hasError,
+          [$style.disabled ?? '']: disabled,
+          [$style.vertical ?? '']: vertical,
+          [$style[color] ?? '']: color,
+          [$style['hide-track'] ?? '']: hideTrack,
+          [$style['big-tick'] ?? '']: tickSize > 4,
+          [$style['with-error'] ?? '']: hasError,
+          [$style['with-success'] ?? '']: hasSuccess && !hasError,
         },
       ]"
     >

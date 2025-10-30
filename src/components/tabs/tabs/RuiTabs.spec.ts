@@ -6,6 +6,7 @@ import {
 import { describe, expect, it, vi } from 'vitest';
 import RuiTab from '@/components/tabs/tab/RuiTab.vue';
 import RuiTabs from '@/components/tabs/tabs/RuiTabs.vue';
+import { assert } from '@/utils/assert';
 
 vi.mock('vue-router', () => ({
   useRoute: vi.fn().mockImplementation(() => ref()),
@@ -41,7 +42,9 @@ describe('tabs/Tabs', () => {
     const buttons = wrapper.findAll('div[class*=_tabs-wrapper] > button');
 
     expect(buttons).toHaveLength(4);
-    expect(buttons[0].classes()).toEqual(
+    const button0 = buttons[0];
+    assert(button0);
+    expect(button0.classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/active-tab/)]),
     );
   });
@@ -150,21 +153,29 @@ describe('tabs/Tabs', () => {
     let buttons = wrapper.findAll('div[class*=_tabs-wrapper] > button');
 
     expect(buttons).toHaveLength(4);
-    expect(buttons[0].classes()).toEqual(
+    const button0 = buttons[0];
+    assert(button0);
+    expect(button0.classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/active-tab/)]),
     );
 
-    await buttons[1].trigger('click');
+    const button1 = buttons[1];
+    assert(button1);
+    await button1.trigger('click');
     await nextTick();
     expect(get(modelValue)).toBe(1);
 
     buttons = wrapper.findAll('div[class*=_tabs-wrapper] > button');
-    await buttons[2].trigger('click');
+    const button2 = buttons[2];
+    assert(button2);
+    await button2.trigger('click');
     await nextTick();
     expect(get(modelValue)).toBe(2);
 
     buttons = wrapper.findAll('div[class*=_tabs-wrapper] > button');
-    await buttons[3].trigger('click');
+    const button3 = buttons[3];
+    assert(button3);
+    await button3.trigger('click');
     await nextTick();
     expect(get(modelValue)).toBe(3);
   });
@@ -177,7 +188,9 @@ describe('tabs/Tabs', () => {
     const buttons = wrapper.findAll('div[class*=_tabs-wrapper] > button');
 
     expect(buttons).toHaveLength(4);
-    expect(buttons[0].classes()).toEqual(
+    const button0 = buttons[0];
+    assert(button0);
+    expect(button0.classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/active-tab/)]),
     );
   });

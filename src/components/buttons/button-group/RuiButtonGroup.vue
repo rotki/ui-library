@@ -127,10 +127,10 @@ const variantClass = computed(() =>
       colorClass,
       variantClass,
       {
-        [css.wrapper__vertical]: vertical,
-        [css.wrapper__horizontal]: !vertical,
-        [css.separated]: !!gap,
-        [css[`separated__${gap}`]]: !!gap,
+        [css.wrapper__vertical ?? '']: vertical,
+        [css.wrapper__horizontal ?? '']: !vertical,
+        [css.separated ?? '']: !!gap,
+        [css[`separated__${gap}`] ?? '']: !!gap,
       },
     ]"
     v-bind="$attrs"

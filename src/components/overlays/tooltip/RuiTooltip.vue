@@ -100,7 +100,7 @@ defineExpose({
           </div>
           <span
             v-if="!hideArrow"
-            :class="[$style.arrow, { [$style.arrow__open]: open }]"
+            :class="[$style.arrow, { [$style.arrow__open ?? '']: open }]"
             data-popper-arrow
           />
         </TransitionGroup>

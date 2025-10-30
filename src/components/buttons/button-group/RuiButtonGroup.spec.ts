@@ -2,6 +2,7 @@ import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import RuiButtonGroup from '@/components/buttons/button-group/RuiButtonGroup.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import { assert } from '@/utils/assert';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiButtonGroup>) {
   return mount(RuiButtonGroup, {
@@ -111,78 +112,84 @@ describe('button/ButtonGroup', () => {
     });
 
     const buttons = wrapper.findAll('button');
+    const button0 = buttons[0];
+    const button1 = buttons[1];
+    const button2 = buttons[2];
+    assert(button0);
+    assert(button1);
+    assert(button2);
 
     // only first button active
-    expect(buttons[0].classes()).toEqual(
+    expect(button0.classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[1].classes()).not.toEqual(
+    expect(button1.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[2].classes()).not.toEqual(
+    expect(button2.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
 
     // on click, second button should take active state
-    await buttons[1].trigger('click');
+    await button1.trigger('click');
     expect(wrapper.props('modelValue')).toEqual(1);
 
-    expect(buttons[0].classes()).not.toEqual(
+    expect(button0.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[1].classes()).toEqual(
+    expect(button1.classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[2].classes()).not.toEqual(
+    expect(button2.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
 
     // on click, third button should take active state
-    await buttons[2].trigger('click');
+    await button2.trigger('click');
     expect(wrapper.props('modelValue')).toEqual(2);
     const clickEvent = wrapper.emitted('click');
     expect(clickEvent).toHaveLength(2);
 
-    expect(buttons[0].classes()).not.toEqual(
+    expect(button0.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[1].classes()).not.toEqual(
+    expect(button1.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[2].classes()).toEqual(
+    expect(button2.classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
 
     // on click, active button should lose state
-    await buttons[2].trigger('click');
-    expect(buttons[0].classes()).not.toEqual(
+    await button2.trigger('click');
+    expect(button0.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[1].classes()).not.toEqual(
+    expect(button1.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[2].classes()).not.toEqual(
+    expect(button2.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
     expect(wrapper.props('modelValue')).toBeUndefined();
 
     // set as required
     await wrapper.setProps({ required: true });
-    await buttons[2].trigger('click');
-    expect(buttons[0].classes()).not.toEqual(
+    await button2.trigger('click');
+    expect(button0.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[1].classes()).not.toEqual(
+    expect(button1.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[2].classes()).toEqual(
+    expect(button2.classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
     expect(wrapper.props('modelValue')).toEqual(2);
 
     // required so, can't deselect the active item
-    await buttons[2].trigger('click');
-    expect(buttons[2].classes()).toEqual(
+    await button2.trigger('click');
+    expect(button2.classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
     expect(wrapper.props('modelValue')).toEqual(2);
@@ -197,79 +204,85 @@ describe('button/ButtonGroup', () => {
     });
 
     const buttons = wrapper.findAll('button');
+    const button0 = buttons[0];
+    const button1 = buttons[1];
+    const button2 = buttons[2];
+    assert(button0);
+    assert(button1);
+    assert(button2);
 
-    expect(buttons[0].classes()).toEqual(
+    expect(button0.classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[1].classes()).not.toEqual(
+    expect(button1.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[2].classes()).not.toEqual(
+    expect(button2.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
 
     // on click, second button should also be active
-    await buttons[1].trigger('click');
+    await button1.trigger('click');
     expect(wrapper.props('modelValue')).toEqual([0, 1]);
 
-    expect(buttons[0].classes()).toEqual(
+    expect(button0.classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[1].classes()).toEqual(
+    expect(button1.classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[2].classes()).not.toEqual(
+    expect(button2.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
 
     // on click, third button should also be active
-    await buttons[2].trigger('click');
+    await button2.trigger('click');
     expect(wrapper.props('modelValue')).toEqual([0, 1, 2]);
     const clickEvent = wrapper.emitted('click');
     expect(clickEvent).toHaveLength(2);
 
-    expect(buttons[0].classes()).toEqual(
+    expect(button0.classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[1].classes()).toEqual(
+    expect(button1.classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[2].classes()).toEqual(
+    expect(button2.classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
 
-    await buttons[0].trigger('click');
-    await buttons[1].trigger('click');
-    await buttons[2].trigger('click');
+    await button0.trigger('click');
+    await button1.trigger('click');
+    await button2.trigger('click');
 
-    expect(buttons[0].classes()).not.toEqual(
+    expect(button0.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[1].classes()).not.toEqual(
+    expect(button1.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[2].classes()).not.toEqual(
+    expect(button2.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
     expect(wrapper.props('modelValue')).toEqual([]);
 
     // set required
     await wrapper.setProps({ required: true });
-    await buttons[2].trigger('click');
-    expect(buttons[0].classes()).not.toEqual(
+    await button2.trigger('click');
+    expect(button0.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[1].classes()).not.toEqual(
+    expect(button1.classes()).not.toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
-    expect(buttons[2].classes()).toEqual(
+    expect(button2.classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
     expect(wrapper.props('modelValue')).toEqual([2]);
 
     // required so, can't deselect the active only item
-    await buttons[2].trigger('click');
-    expect(buttons[2].classes()).toEqual(
+    await button2.trigger('click');
+    expect(button2.classes()).toEqual(
       expect.arrayContaining([expect.stringMatching(/_active_/)]),
     );
     expect(wrapper.props('modelValue')).toEqual([2]);
@@ -312,15 +325,21 @@ describe('button/ButtonGroup', () => {
     });
 
     const buttons = wrapper.findAll('button');
+    const button0 = buttons[0];
+    const button1 = buttons[1];
+    const button2 = buttons[2];
+    assert(button0);
+    assert(button1);
+    assert(button2);
 
-    expect(buttons[0].attributes('disabled')).toBeUndefined();
-    expect(buttons[1].attributes('disabled')).toBeUndefined();
-    expect(buttons[2].attributes('disabled')).toBeUndefined();
+    expect(button0.attributes('disabled')).toBeUndefined();
+    expect(button1.attributes('disabled')).toBeUndefined();
+    expect(button2.attributes('disabled')).toBeUndefined();
 
     await wrapper.setProps({ disabled: true });
 
-    expect(buttons[0].attributes('disabled')).toBeDefined();
-    expect(buttons[1].attributes('disabled')).toBeDefined();
-    expect(buttons[2].attributes('disabled')).toBeDefined();
+    expect(button0.attributes('disabled')).toBeDefined();
+    expect(button1.attributes('disabled')).toBeDefined();
+    expect(button2.attributes('disabled')).toBeDefined();
   });
 });

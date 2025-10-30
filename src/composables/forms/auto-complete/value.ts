@@ -1,5 +1,6 @@
 import type { ComputedRef, MaybeRef, Ref } from 'vue';
 import { get, set } from '@vueuse/shared';
+import { assert } from '@/utils/assert';
 
 export interface UseAutoCompleteValueOptions<TItem> {
   keyAttr?: MaybeRef<keyof TItem | undefined>;
@@ -114,6 +115,7 @@ export function useAutoCompleteValue<TValue, TItem>(
     }
 
     const val = filtered[0];
+    assert(val);
     if (shouldUpdateInternalSearch)
       deps.updateInternalSearch(deps.getText(val));
     return [val];
@@ -131,7 +133,9 @@ export function useAutoCompleteValue<TValue, TItem>(
 
     if (shouldUpdateInternalSearch) {
       if (filtered.length > 0) {
-        deps.updateInternalSearch(deps.getText(filtered[0]));
+        const firstItem = filtered[0];
+        assert(firstItem);
+        deps.updateInternalSearch(deps.getText(firstItem));
       }
       else {
         deps.updateInternalSearch();

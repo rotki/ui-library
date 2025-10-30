@@ -2,6 +2,7 @@ import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import RuiCalendar from '@/components/calendar/RuiCalendar.vue';
+import { assert } from '@/utils/assert';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiCalendar>) {
   return mount(RuiCalendar, {
@@ -85,8 +86,11 @@ describe('calendar/RuiCalendar', () => {
 
       await dayButton.trigger('click');
 
-      expect(wrapper.emitted('update:modelValue')).toBeTruthy();
-      const emittedValue = wrapper.emitted('update:modelValue')![0][0] as Date;
+      const emitted = wrapper.emitted('update:modelValue');
+      expect(emitted).toBeTruthy();
+      const emittedFirst = emitted![0];
+      assert(emittedFirst);
+      const emittedValue = emittedFirst[0] as Date;
       expect(emittedValue.getDate()).toBe(10);
       expect(emittedValue.getMonth()).toBe(0);
       expect(emittedValue.getFullYear()).toBe(2023);
@@ -121,8 +125,11 @@ describe('calendar/RuiCalendar', () => {
       const selectedButton = wrapper.find('button[class*="bg-rui-primary"]');
       await selectedButton.trigger('click');
 
-      expect(wrapper.emitted('update:modelValue')).toBeTruthy();
-      const emittedValue = wrapper.emitted('update:modelValue')![0][0];
+      const emitted = wrapper.emitted('update:modelValue');
+      expect(emitted).toBeTruthy();
+      const emittedFirst = emitted![0];
+      assert(emittedFirst);
+      const emittedValue = emittedFirst[0];
       expect(emittedValue).toBeUndefined();
     });
 
@@ -196,7 +203,9 @@ describe('calendar/RuiCalendar', () => {
 
       const pagesEmission = wrapper.emitted('update:pages');
       expect(pagesEmission).toBeTruthy();
-      expect(pagesEmission![0][0]).toEqual([{ title: 'February 2023' }]);
+      const pagesFirst = pagesEmission![0];
+      assert(pagesFirst);
+      expect(pagesFirst[0]).toEqual([{ title: 'February 2023' }]);
     });
   });
 
@@ -207,8 +216,11 @@ describe('calendar/RuiCalendar', () => {
       const titleElement = wrapper.find('.header-title');
       await titleElement.trigger('click');
 
-      expect(wrapper.emitted('update:menu-open')).toBeTruthy();
-      const menuOpenValue = wrapper.emitted('update:menu-open')![0][0];
+      const emitted = wrapper.emitted('update:menu-open');
+      expect(emitted).toBeTruthy();
+      const emittedFirst = emitted![0];
+      assert(emittedFirst);
+      const menuOpenValue = emittedFirst[0];
       expect(menuOpenValue).toBe(true);
     });
 
@@ -368,7 +380,9 @@ describe('calendar/RuiCalendar', () => {
       const prevMonthDays = wrapper.findAll('button[class*="text-gray-400"]:not([disabled])');
 
       if (prevMonthDays.length > 0) {
-        await prevMonthDays[0].trigger('click');
+        const firstPrevMonthDay = prevMonthDays[0];
+        assert(firstPrevMonthDay);
+        await firstPrevMonthDay.trigger('click');
         expect(wrapper.emitted('update:modelValue')).toBeTruthy();
       }
     });
@@ -423,8 +437,11 @@ describe('calendar/RuiCalendar', () => {
       const calendarHeader = wrapper.findComponent({ name: 'RuiCalendarHeader' });
       await calendarHeader.vm.$emit('update:menu-open', true);
 
-      expect(wrapper.emitted('update:menu-open')).toBeTruthy();
-      expect(wrapper.emitted('update:menu-open')![0][0]).toBe(true);
+      const emitted = wrapper.emitted('update:menu-open');
+      expect(emitted).toBeTruthy();
+      const emittedFirst = emitted![0];
+      assert(emittedFirst);
+      expect(emittedFirst[0]).toBe(true);
     });
   });
 
@@ -510,7 +527,11 @@ describe('calendar/RuiCalendar', () => {
       if (targetButton) {
         await targetButton.trigger('click');
 
-        const emittedValue = wrapper.emitted('update:modelValue')![0][0] as Date;
+        const emitted = wrapper.emitted('update:modelValue');
+        assert(emitted);
+        const emittedFirst = emitted[0];
+        assert(emittedFirst);
+        const emittedValue = emittedFirst[0] as Date;
         expect(emittedValue.getHours()).toBe(14);
         expect(emittedValue.getMinutes()).toBe(30);
         expect(emittedValue.getSeconds()).toBe(45);

@@ -125,7 +125,7 @@ function onLast() {
 </script>
 
 <template>
-  <div :class="[$style.wrapper, { [$style['wrapper-dense']]: dense }]">
+  <div :class="[$style.wrapper, { [$style['wrapper-dense'] ?? '']: dense }]">
     <div :class="$style.limit">
       <span :class="$style.limit__text">Rows per page:</span>
       <RuiMenuSelect

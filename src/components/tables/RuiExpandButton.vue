@@ -20,7 +20,7 @@ withDefaults(defineProps<Props>(), { icon: 'lu-chevron-down' });
     :class="[
       $style.tr__expander_button,
       {
-        [$style.tr__expander_button_open]: expanded,
+        [$style.tr__expander_button_open ?? '']: expanded,
       },
     ]"
     icon

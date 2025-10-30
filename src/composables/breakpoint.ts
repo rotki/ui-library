@@ -1,6 +1,7 @@
 import type { Ref } from 'vue';
 import { breakpointsTailwind } from '@vueuse/core';
 import { camelCase } from 'scule';
+import { assert } from '@/utils/assert';
 
 export function useBreakpoint() {
   const { width } = useWindowSize();
@@ -19,12 +20,14 @@ export function useBreakpoint() {
   const list = getKeys(breakpointList);
 
   const rawSizes: [Breakpoint, Ref<boolean>][] = list.map(
-    (breakpoint, index) => [
-      breakpoint,
-      index < list.length - 1
-        ? breakpoints.between(breakpoint, list[index + 1])
-        : breakpoints[breakpoint],
-    ],
+    (breakpoint, index) => {
+      if (index < list.length - 1) {
+        const nextBreakpoint = list[index + 1];
+        assert(nextBreakpoint);
+        return [breakpoint, breakpoints.between(breakpoint, nextBreakpoint)];
+      }
+      return [breakpoint, breakpoints[breakpoint]];
+    },
   );
 
   const sizes = rawSizes.map(([breakpoint, value]) => [
