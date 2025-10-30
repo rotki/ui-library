@@ -65,7 +65,7 @@ describe('badge', () => {
 
     expect(wrapper.find('svg[class*=_rui-icon_]').exists()).toBeFalsy();
 
-    await wrapper.setProps({ icon: 'star-line' });
+    await wrapper.setProps({ icon: 'lu-star' });
 
     expect(wrapper.find('svg[class*=_rui-icon_]').exists()).toBeTruthy();
 

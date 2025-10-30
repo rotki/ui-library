@@ -11,7 +11,7 @@ describe('forms/Icon', () => {
     const wrapper = createWrapper({
       props: {
         color: 'primary',
-        name: 'arrow-down-circle-fill',
+        name: 'lu-circle-arrow-down',
       },
     });
     expect(wrapper.classes()).toEqual(
@@ -25,7 +25,7 @@ describe('forms/Icon', () => {
   it('passes props correctly', async () => {
     const wrapper = createWrapper({
       props: {
-        name: 'arrow-down-circle-fill',
+        name: 'lu-circle-arrow-down',
         size: 32,
       },
     });
