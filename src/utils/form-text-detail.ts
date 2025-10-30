@@ -1,4 +1,4 @@
-import type { MaybeRef } from '@vueuse/shared';
+import type { MaybeRef } from 'vue';
 import { logicOr } from '@vueuse/math';
 
 export function useFormTextDetail(errorMessages: MaybeRef<string | string[]>, successMessages: MaybeRef<string | string[]>) {

@@ -1,4 +1,4 @@
-import type { MaybeRef } from '@vueuse/shared';
+import type { MaybeRef } from 'vue';
 
 /**
  * Setup sticky table header
