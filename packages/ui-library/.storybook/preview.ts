@@ -1,25 +1,10 @@
 import { type Preview, setup } from '@storybook/vue3-vite';
 import { useEffect, useGlobals } from 'storybook/preview-api';
-import { ref } from 'vue';
-import { createRui } from '../src';
-import { useRotkiTheme } from '../src/composables/theme';
-import * as Icons from '../src/icons';
-import '../src/style.scss';
+import { useRotkiTheme } from '@/composables/theme';
+import { RuiPlugin } from './rui';
+import '@/style.scss';
 import './preview.scss';
 import '@fontsource/roboto/latin.css';
-
-const RuiPlugin = createRui({
-  theme: {
-    icons: Object.values(Icons),
-  },
-  defaults: {
-    table: {
-      itemsPerPage: ref(10),
-      globalItemsPerPage: false,
-      limits: [5, 10, 15, 25, 50, 100, 200],
-    },
-  },
-});
 
 setup((app) => {
   app.use(RuiPlugin);

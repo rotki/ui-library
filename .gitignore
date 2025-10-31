@@ -146,10 +146,10 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-auto-imports.d.ts
+**/auto-imports.d.ts
 
 .DS_Store
 storybook-static
 
-src/icons
-tests/html
+packages/ui-library/src/icons
+packages/ui-library/tests/html

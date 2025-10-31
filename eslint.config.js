@@ -18,12 +18,7 @@ export default rotki({
     },
   },
 }, {
-  files: ['src/**/*.@(ts|js)'],
-  rules: {
-    'perfectionist/sort-objects': 'error',
-  },
-}, {
-  files: ['src/**/*.stories.ts', '**/vue-shim.d.ts', '.storybook/**/*.ts'],
+  files: ['**/*.stories.ts', '**/vue-shim.d.ts', '**/.storybook/**/*.ts'],
   rules: {
     'import/no-default-export': 'off',
   },

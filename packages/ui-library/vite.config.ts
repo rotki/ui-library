@@ -69,7 +69,7 @@ export default defineConfig({
     vue(),
     AutoImport({
       imports: ['vue', '@vueuse/core', { '@vueuse/shared': ['get', 'set'] }],
-      dts: './auto-imports.d.ts',
+      dts: 'src/auto-imports.d.ts',
       dirs: [
         'src/composables/**/!(theme.ts|icons.ts|breakpoint.ts)',
         'src/utils/**',
@@ -77,13 +77,6 @@ export default defineConfig({
       vueTemplate: true,
     }),
   ],
-  css: {
-    preprocessorOptions: {
-      scss: {
-        api: 'modern',
-      },
-    },
-  },
   build: {
     outDir: './dist',
     minify: true,

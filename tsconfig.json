@@ -1,29 +1,14 @@
 {
-  "extends": [
-    "@vue/tsconfig/tsconfig.dom.json",
-    "@vue/tsconfig/tsconfig.lib.json"
-  ],
-  "compilerOptions": {
-    "lib": ["ESNext", "DOM"],
-    "experimentalDecorators": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"],
-      "~/*": ["./*"]
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
     },
-    "types": ["node", "vue", "vite/client"],
-    "allowJs": false,
-    "strictNullChecks": true,
-    "noUnusedLocals": true,
-    "sourceMap": true,
-    "allowSyntheticDefaultImports": true,
-    "isolatedModules": true,
-    "skipLibCheck": true
-  },
-  "include": [
-    "src/**/*",
-    "*.d.ts",
-    "auto-imports.d.ts"
+    {
+      "path": "./packages/ui-library"
+    },
+    {
+      "path": "./apps/example"
+    }
   ],
-  "exclude": ["node_modules", "dist"]
+  "files": []
 }

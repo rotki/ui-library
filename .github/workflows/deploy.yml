@@ -41,7 +41,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: storybook-static/
+          path: packages/ui-library/storybook-static/
 
   deploy:
     needs: build

@@ -100,20 +100,17 @@ jobs:
         run: pnpm run coverage
 
       - name: Typecheck
-        run: pnpm run typecheck
-
-      - name: Typecheck example
-        run: pnpm run --filter example typecheck
+        run: pnpm run -r typecheck
 
       - name: Install cypress binary
-        working-directory: example
+        working-directory: apps/example
         run: pnpm exec cypress install
 
       - name: Run cypress tests
         uses: cypress-io/github-action@v6
         with:
           install: false
-          working-directory: example
+          working-directory: apps/example
           build: pnpm run build:app
           command: pnpm exec cypress run --e2e
           start: pnpm run preview --host
@@ -126,7 +123,7 @@ jobs:
         if: failure()
         with:
           name: cypress-screenshots
-          path: example/cypress/screenshots
+          path: apps/example/cypress/screenshots
           retention-days: 7
 
       - name: Upload videos
@@ -134,7 +131,7 @@ jobs:
         if: failure()
         with:
           name: cypress-videos
-          path: example/cypress/videos
+          path: apps/example/cypress/videos
           retention-days: 7
 
       - name: Upload coverage
