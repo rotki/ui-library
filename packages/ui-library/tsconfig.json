@@ -4,10 +4,10 @@
       "path": "./tsconfig.node.json"
     },
     {
-      "path": "./packages/ui-library"
+      "path": "./tsconfig.lib.json"
     },
     {
-      "path": "./apps/example"
+      "path": "./tsconfig.vitest.json"
     }
   ],
   "files": []
