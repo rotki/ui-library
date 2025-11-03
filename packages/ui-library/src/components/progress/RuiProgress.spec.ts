@@ -1,81 +1,64 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
+import { afterEach, describe, it } from 'vitest';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
+import { expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiProgress>) {
+function createWrapper(
+  options?: ComponentMountingOptions<typeof RuiProgress>,
+): VueWrapper<InstanceType<typeof RuiProgress>> {
   return mount(RuiProgress, options);
 }
 
-describe('progress', () => {
-  it('renders properly', () => {
-    const wrapper = createWrapper({
+describe('components/progress/RuiProgress.vue', () => {
+  let wrapper: VueWrapper<InstanceType<typeof RuiProgress>>;
+
+  afterEach(() => {
+    wrapper?.unmount();
+  });
+
+  it('should render properly', () => {
+    wrapper = createWrapper({
       props: {
         value: 50,
       },
     });
-    expect(wrapper.get('div[role=progressbar]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_progress_/)]),
-    );
-    expect(wrapper.get('div[role=progressbar]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_inherit_/)]),
-    );
-    expect(wrapper.get('div[role=progressbar]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_determinate_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_progress_/);
+    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_inherit_/);
+    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_determinate_/);
   });
 
-  it('passes props correctly', async () => {
-    const wrapper = createWrapper({
+  it('should pass props correctly', async () => {
+    wrapper = createWrapper({
       props: {
         color: 'secondary',
         value: 50,
         variant: 'indeterminate',
       },
     });
-    expect(wrapper.get('div[role=progressbar]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_secondary_/)]),
-    );
-    expect(wrapper.get('div[role=progressbar]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_indeterminate_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_secondary_/);
+    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_indeterminate_/);
     await wrapper.setProps({ color: 'primary' });
-    expect(wrapper.get('div[role=progressbar]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_primary_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_primary_/);
     await wrapper.setProps({ color: 'inherit' });
-    expect(wrapper.get('div[role=progressbar]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_inherit_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_inherit_/);
     await wrapper.setProps({ circular: true });
-    expect(wrapper.get('div[role=progressbar]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_circular_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_circular_/);
   });
 
-  it('passes color props', async () => {
-    const wrapper = createWrapper({});
-    expect(wrapper.find('div[role=progressbar]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_inherit_/)]),
-    );
+  it('should pass color props', async () => {
+    wrapper = createWrapper({});
+    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_inherit_/);
 
     await wrapper.setProps({ color: 'primary' });
-    expect(wrapper.find('div[role=progressbar]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_primary_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_primary_/);
 
     await wrapper.setProps({ color: 'secondary' });
-    expect(wrapper.find('div[role=progressbar]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_secondary_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_secondary_/);
 
     await wrapper.setProps({ color: 'error' });
-    expect(wrapper.find('div[role=progressbar]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_error_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_error_/);
 
     await wrapper.setProps({ color: 'success' });
-    expect(wrapper.find('div[role=progressbar]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_success_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_success_/);
   });
 });

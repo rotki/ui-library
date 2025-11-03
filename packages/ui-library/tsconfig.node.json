@@ -3,7 +3,6 @@
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
-    "module": "ESNext",
     "types": ["node"]
   },
   "include": [
@@ -12,6 +11,9 @@
     ".storybook/**/*",
     "scripts/**/*",
     "tailwind.config.*",
-    "postcss.config.*"
+    "postcss.config.*",
+    "src/consts/colors.ts",
+    "src/consts/typography.ts",
+    "src/theme/index.ts"
   ]
 }

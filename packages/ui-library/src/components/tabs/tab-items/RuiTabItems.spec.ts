@@ -1,5 +1,5 @@
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import RuiTabItem from '@/components/tabs/tab-item/RuiTabItem.vue';
 import RuiTabItems from '@/components/tabs/tab-items/RuiTabItems.vue';
 
@@ -9,7 +9,9 @@ vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
   return now;
 });
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiTabItems>) {
+function createWrapper(
+  options?: ComponentMountingOptions<typeof RuiTabItems>,
+) {
   return mount(RuiTabItems, {
     ...options,
     global: {
@@ -29,9 +31,15 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiTabItems>) {
   });
 }
 
-describe('tabs/TabItems', () => {
-  it('renders properly', async () => {
-    const wrapper = createWrapper({
+describe('components/tabs/tab-items/RuiTabItems.vue', () => {
+  let wrapper: ReturnType<typeof createWrapper>;
+
+  afterEach(() => {
+    wrapper?.unmount();
+  });
+
+  it('should render properly', async () => {
+    wrapper = createWrapper({
       props: {
         modelValue: 0,
       },

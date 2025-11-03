@@ -1,10 +1,11 @@
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiDataTable from '@/components/tables/RuiDataTable.vue';
 import RuiTablePagination from '@/components/tables/RuiTablePagination.vue';
 import { assert } from '@/utils/assert';
+import { expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
 interface User {
   id: number;
@@ -13,7 +14,9 @@ interface User {
   email: string;
 }
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiDataTable<User>>) {
+function createWrapper(
+  options?: ComponentMountingOptions<typeof RuiDataTable<User>>,
+) {
   return mount(RuiDataTable<User>, {
     ...options,
     global: {
@@ -26,7 +29,9 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiDataTable<Us
   });
 }
 
-describe('dataTable', () => {
+describe('components/tables/RuiDataTable.vue', () => {
+  let wrapper: ReturnType<typeof createWrapper>;
+
   const data: User[] = [
     ...[...new Array(50)].map((_, index) => ({
       email: `lindsay.walton${index}@example.com`,
@@ -36,35 +41,33 @@ describe('dataTable', () => {
     })),
   ];
 
-  const columns: TableColumn<User>[] = [
-    {
-      key: 'id',
-      label: 'ID',
-    },
-    {
-      align: 'end',
-      key: 'name',
-      label: 'Full name',
-      sortable: true,
-    },
-    {
-      align: 'start',
-      key: 'title',
-      label: 'Job position',
-      sortable: true,
-    },
-    {
-      key: 'email',
-      label: 'Email address',
-      sortable: true,
-    },
-    {
-      key: 'action',
-    },
-  ];
+  const columns: TableColumn<User>[] = [{
+    key: 'id',
+    label: 'ID',
+  }, {
+    align: 'end',
+    key: 'name',
+    label: 'Full name',
+    sortable: true,
+  }, {
+    align: 'start',
+    key: 'title',
+    label: 'Job position',
+    sortable: true,
+  }, {
+    key: 'email',
+    label: 'Email address',
+    sortable: true,
+  }, {
+    key: 'action',
+  }];
 
-  it('renders properly', () => {
-    const wrapper = createWrapper({
+  afterEach(() => {
+    wrapper.unmount();
+  });
+
+  it('should render properly', () => {
+    wrapper = createWrapper({
       props: {
         cols: columns,
         rowAttr: 'id',
@@ -72,15 +75,13 @@ describe('dataTable', () => {
       },
     });
 
-    expect(wrapper.get('table').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_table_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'table', /_table_/);
     expect(wrapper.find('table thead').exists()).toBeTruthy();
     expect(wrapper.find('table tbody').exists()).toBeTruthy();
   });
 
-  it('passes props correctly', async () => {
-    const wrapper = createWrapper({
+  it('should pass props correctly', async () => {
+    wrapper = createWrapper({
       props: {
         'cols': columns,
         'dense': true,
@@ -100,74 +101,29 @@ describe('dataTable', () => {
         },
       },
     });
-    expect(
-      wrapper.find('table thead th[class*=_checkbox_]').exists(),
-    ).toBeTruthy();
-    expect(
-      wrapper.find('table tbody td[class*=_checkbox_]').exists(),
-    ).toBeTruthy();
-    expect(
-      wrapper.find('table tbody td[class*=_align__start_]').exists(),
-    ).toBeTruthy();
-    expect(
-      wrapper.find('table tbody td[class*=_align__start_]').exists(),
-    ).toBeTruthy();
+    expect(wrapper.find('table thead th[class*=_checkbox_]').exists()).toBeTruthy();
+    expect(wrapper.find('table tbody td[class*=_checkbox_]').exists()).toBeTruthy();
+    expect(wrapper.find('table tbody td[class*=_align__start_]').exists()).toBeTruthy();
+    expect(wrapper.find('table tbody td[class*=_align__start_]').exists()).toBeTruthy();
     expect(wrapper.find('div div[class*=_limit_]').exists()).toBeTruthy();
     expect(wrapper.find('div div[class*=_limit_]').exists()).toBeTruthy();
     expect(wrapper.find('div div[class*=_navigation_]').exists()).toBeTruthy();
-    expect(
-      wrapper.find('div div[class*=_navigation_] button[disabled]').exists(),
-    ).toBeTruthy();
+    expect(wrapper.find('div div[class*=_navigation_] button[disabled]').exists()).toBeTruthy();
 
-    expect(
-      wrapper
-        .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
-        .exists(),
-    ).toBeTruthy();
+    expect(wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button]').exists()).toBeTruthy();
+    expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeFalsy();
 
-    expect(
-      wrapper
-        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
-        .exists(),
-    ).toBeFalsy();
+    await wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button]').trigger('click');
 
-    await wrapper
-      .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
-      .trigger('click');
-
-    expect(
-      wrapper
-        .find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]')
-        .exists(),
-    ).toBeTruthy();
-
-    expect(
-      wrapper
-        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
-        .exists(),
-    ).toBeTruthy();
-
-    expect(
-      wrapper
-        .find('div[data-cy=table-pagination] div[class*=limit]')
-        .exists(),
-    ).toBeTruthy();
-
-    expect(
-      wrapper
-        .find('div[data-cy=table-pagination] div[class*=ranges]')
-        .exists(),
-    ).toBeTruthy();
-
-    expect(
-      wrapper
-        .find('div[data-cy=table-pagination] div[class*=navigation]')
-        .exists(),
-    ).toBeTruthy();
+    expect(wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]').exists()).toBeTruthy();
+    expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeTruthy();
+    expect(wrapper.find('div[data-cy=table-pagination] div[class*=limit]').exists()).toBeTruthy();
+    expect(wrapper.find('div[data-cy=table-pagination] div[class*=ranges]').exists()).toBeTruthy();
+    expect(wrapper.find('div[data-cy=table-pagination] div[class*=navigation]').exists()).toBeTruthy();
   });
 
-  it('multiple expand toggles correctly', async () => {
-    const wrapper = createWrapper({
+  it('should multiple expand toggles correctly', async () => {
+    wrapper = createWrapper({
       props: {
         'cols': columns,
         'expanded': [],
@@ -184,52 +140,23 @@ describe('dataTable', () => {
     });
 
     expect(wrapper.props().expanded).toHaveLength(0);
+    expect(wrapper.find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]').exists()).toBeFalsy();
 
-    expect(
-      wrapper
-        .find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]')
-        .exists(),
-    ).toBeFalsy();
-
-    await wrapper
-      .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
-      .trigger('click');
+    await wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button]').trigger('click');
 
     expect(wrapper.props().expanded).toHaveLength(1);
+    expect(wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]').exists()).toBeTruthy();
+    expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeTruthy();
 
-    expect(
-      wrapper
-        .find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]')
-        .exists(),
-    ).toBeTruthy();
-
-    expect(
-      wrapper
-        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
-        .exists(),
-    ).toBeTruthy();
-
-    await wrapper
-      .find('tbody tr:nth-child(3) button[class*=_tr__expander_button]')
-      .trigger('click');
+    await wrapper.find('tbody tr:nth-child(3) button[class*=_tr__expander_button]').trigger('click');
 
     expect(wrapper.props().expanded).toHaveLength(2);
-
-    expect(
-      wrapper
-        .find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]')
-        .exists(),
-    ).toBeTruthy();
-
-    expect(
-      wrapper
-        .find('tbody tr:nth-child(4) div[data-cy=expanded-content]')
-        .exists(),
-    ).toBeTruthy();
+    expect(wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]').exists()).toBeTruthy();
+    expect(wrapper.find('tbody tr:nth-child(4) div[data-cy=expanded-content]').exists()).toBeTruthy();
   });
 
-  it('selection toggles correctly', async () => {
-    const wrapper = createWrapper({
+  it('should selection toggles correctly', async () => {
+    wrapper = createWrapper({
       props: {
         'cols': columns,
         'modelValue': [],
@@ -240,33 +167,15 @@ describe('dataTable', () => {
     });
 
     expect(wrapper.props().modelValue).toHaveLength(0);
+    expect(wrapper.find('thead tr [data-cy=table-toggle-check-all] input').exists()).toBeTruthy();
 
-    expect(
-      wrapper
-        .find('thead tr [data-cy=table-toggle-check-all] input')
-        .exists(),
-    ).toBeTruthy();
-
-    await wrapper
-      .find('thead tr [data-cy=table-toggle-check-all] input')
-      .setValue(true);
+    await wrapper.find('thead tr [data-cy=table-toggle-check-all] input').setValue(true);
 
     expect(wrapper.props().modelValue).toHaveLength(10);
+    expect(wrapper.find('tr [data-cy*=table-toggle-check-] span[class*=checkbox][class*=checked]').exists()).toBeTruthy();
+    expect(wrapper.findAll('tr [data-cy*=table-toggle-check-] span[class*=checkbox][class*=checked]')).toHaveLength(11);
 
-    expect(
-      wrapper
-        .find('tr [data-cy*=table-toggle-check-] span[class*=checkbox][class*=checked]')
-        .exists(),
-    ).toBeTruthy();
-
-    expect(
-      wrapper
-        .findAll('tr [data-cy*=table-toggle-check-] span[class*=checkbox][class*=checked]'),
-    ).toHaveLength(11);
-
-    await wrapper
-      .find('thead tr [data-cy=table-toggle-check-all] input')
-      .setValue(false);
+    await wrapper.find('thead tr [data-cy=table-toggle-check-all] input').setValue(false);
 
     expect(wrapper.props().modelValue).toHaveLength(0);
 
@@ -275,8 +184,8 @@ describe('dataTable', () => {
     expect(wrapper.props().modelValue).toHaveLength(1);
   });
 
-  it('single expand toggles correctly', async () => {
-    const wrapper = createWrapper({
+  it('should single expand toggles correctly', async () => {
+    wrapper = createWrapper({
       props: {
         'cols': columns,
         'expanded': [],
@@ -294,74 +203,32 @@ describe('dataTable', () => {
     });
 
     expect(wrapper.props().expanded).toHaveLength(0);
+    expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeFalsy();
 
-    expect(
-      wrapper
-        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
-        .exists(),
-    ).toBeFalsy();
-
-    await wrapper
-      .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
-      .trigger('click');
+    await wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button]').trigger('click');
 
     expect(wrapper.props().expanded).toHaveLength(1);
+    expect(wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]').exists()).toBeTruthy();
+    expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeTruthy();
 
-    expect(
-      wrapper
-        .find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]')
-        .exists(),
-    ).toBeTruthy();
-
-    expect(
-      wrapper
-        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
-        .exists(),
-    ).toBeTruthy();
-
-    await wrapper
-      .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
-      .trigger('click');
+    await wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button]').trigger('click');
 
     expect(wrapper.props().expanded).toHaveLength(0);
+    expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeFalsy();
 
-    expect(
-      wrapper
-        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
-        .exists(),
-    ).toBeFalsy();
+    await wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button]').trigger('click');
 
-    await wrapper
-      .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
-      .trigger('click');
+    expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeTruthy();
 
-    expect(
-      wrapper
-        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
-        .exists(),
-    ).toBeTruthy();
-
-    await wrapper
-      .find('tbody tr:nth-child(3) button[class*=_tr__expander_button]')
-      .trigger('click');
+    await wrapper.find('tbody tr:nth-child(3) button[class*=_tr__expander_button]').trigger('click');
 
     expect(wrapper.props().expanded).toHaveLength(1);
-
-    expect(
-      wrapper
-        .find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]')
-        .exists(),
-    ).toBeFalsy();
-
-    expect(
-      wrapper
-        .find('tbody tr:nth-child(4) div[data-cy=expanded-content]')
-        .exists(),
-    ).toBeFalsy();
+    expect(wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]').exists()).toBeFalsy();
+    expect(wrapper.find('tbody tr:nth-child(4) div[data-cy=expanded-content]').exists()).toBeFalsy();
   });
 
-  it('sticky header behaves as expected', async () => {
-    const wrapper = createWrapper({
+  it('should sticky header behaves as expected', async () => {
+    wrapper = createWrapper({
       props: {
         cols: columns,
         modelValue: [],
@@ -379,8 +246,8 @@ describe('dataTable', () => {
     expect(wrapper.find('thead[data-id=head-clone]').exists()).toBeFalsy();
   });
 
-  it('reset page number when search value is updated', async () => {
-    const wrapper = createWrapper({
+  it('should reset page number when search value is updated', async () => {
+    wrapper = createWrapper({
       props: {
         'cols': columns,
         'onUpdate:pagination': (pagination: any) => wrapper.setProps({ pagination }),
@@ -395,8 +262,8 @@ describe('dataTable', () => {
     expect(wrapper.props().pagination?.page).toBe(1);
   });
 
-  it('multiple sort works', async () => {
-    const wrapper = createWrapper({
+  it('should multiple sort works', async () => {
+    wrapper = createWrapper({
       props: {
         cols: columns,
         modelValue: [],
@@ -426,8 +293,7 @@ describe('dataTable', () => {
       const itemsPerPage = ref(25);
       const stickyOffset = ref(64);
       const wrapperComponent = {
-        template:
-          '<div><RuiDataTable :rows=\'[]\' row-attr=\'id\'/><RuiDataTable :rows=\'[]\' row-attr=\'id\'/></div>',
+        template: '<div><RuiDataTable :rows=\'[]\' row-attr=\'id\'/><RuiDataTable :rows=\'[]\' row-attr=\'id\'/></div>',
       };
 
       const wrapper = mount(wrapperComponent, {
@@ -452,9 +318,7 @@ describe('dataTable', () => {
       expect(paginationInstances).toHaveLength(4);
 
       paginationInstances.forEach((instance) => {
-        expect(instance.vm.modelValue).toMatchObject(
-          expect.objectContaining({ limit: 25 }),
-        );
+        expect(instance.vm.modelValue).toMatchObject(expect.objectContaining({ limit: 25 }));
       });
 
       const firstPagination = paginationInstances[0];
@@ -465,9 +329,7 @@ describe('dataTable', () => {
       await nextTick();
 
       paginationInstances.forEach((instance) => {
-        expect(instance.vm.modelValue).toMatchObject(
-          expect.objectContaining({ limit: 10 }),
-        );
+        expect(instance.vm.modelValue).toMatchObject(expect.objectContaining({ limit: 10 }));
       });
 
       expect(get(itemsPerPage)).toBe(10);
@@ -505,12 +367,8 @@ describe('dataTable', () => {
       assert(paginate0);
       assert(paginate2);
 
-      expect(paginate0.vm.modelValue).toMatchObject(
-        expect.objectContaining({ limit: 25 }),
-      );
-      expect(paginate2.vm.modelValue).toMatchObject(
-        expect.objectContaining({ limit: 10 }),
-      );
+      expect(paginate0.vm.modelValue).toMatchObject(expect.objectContaining({ limit: 25 }));
+      expect(paginate2.vm.modelValue).toMatchObject(expect.objectContaining({ limit: 10 }));
 
       const globalSelect = paginate0.findComponent({ name: 'RuiMenuSelect' });
       const localSelect = paginate2.findComponent({ name: 'RuiMenuSelect' });
@@ -519,13 +377,8 @@ describe('dataTable', () => {
 
       await nextTick();
 
-      expect(paginate0.vm.modelValue).toMatchObject(
-        expect.objectContaining({ limit: 10 }),
-      );
-
-      expect(paginate2.vm.modelValue).toMatchObject(
-        expect.objectContaining({ limit: 25 }),
-      );
+      expect(paginate0.vm.modelValue).toMatchObject(expect.objectContaining({ limit: 10 }));
+      expect(paginate2.vm.modelValue).toMatchObject(expect.objectContaining({ limit: 25 }));
 
       expect(get(itemsPerPage)).toBe(10);
     });
@@ -561,13 +414,8 @@ describe('dataTable', () => {
       assert(paginate0);
       assert(paginate2);
 
-      expect(paginate0.vm.modelValue).toMatchObject(
-        expect.objectContaining({ limit: 10 }),
-      );
-
-      expect(paginate2.vm.modelValue).toMatchObject(
-        expect.objectContaining({ limit: 25 }),
-      );
+      expect(paginate0.vm.modelValue).toMatchObject(expect.objectContaining({ limit: 10 }));
+      expect(paginate2.vm.modelValue).toMatchObject(expect.objectContaining({ limit: 25 }));
 
       const globalSelect = paginate0.findComponent({ name: 'RuiMenuSelect' });
       const localSelect = paginate2.findComponent({ name: 'RuiMenuSelect' });
@@ -576,20 +424,15 @@ describe('dataTable', () => {
 
       await nextTick();
 
-      expect(paginate0.vm.modelValue).toMatchObject(
-        expect.objectContaining({ limit: 25 }),
-      );
-
-      expect(paginate2.vm.modelValue).toMatchObject(
-        expect.objectContaining({ limit: 10 }),
-      );
+      expect(paginate0.vm.modelValue).toMatchObject(expect.objectContaining({ limit: 25 }));
+      expect(paginate2.vm.modelValue).toMatchObject(expect.objectContaining({ limit: 10 }));
 
       expect(get(itemsPerPage)).toBe(10);
     });
   });
 
-  it('pagination limit and range works as expected', async () => {
-    const wrapper = createWrapper({
+  it('should pagination limit and range works as expected', async () => {
+    wrapper = createWrapper({
       props: {
         'cols': columns,
         'onUpdate:pagination': (e: any) => wrapper.setProps({ pagination: e }),
@@ -604,24 +447,9 @@ describe('dataTable', () => {
 
     const paginator = wrapper.findComponent(RuiTablePagination);
     expect(paginator.exists()).toBeTruthy();
-
-    expect(
-      paginator
-        .find('div[data-cy=table-pagination] div[class*=limit]')
-        .exists(),
-    ).toBeTruthy();
-
-    expect(
-      paginator
-        .find('div[data-cy=table-pagination] div[class*=ranges]')
-        .exists(),
-    ).toBeTruthy();
-
-    expect(
-      paginator
-        .find('div[data-cy=table-pagination] div[class*=navigation]')
-        .exists(),
-    ).toBeTruthy();
+    expect(paginator.find('div[data-cy=table-pagination] div[class*=limit]').exists()).toBeTruthy();
+    expect(paginator.find('div[data-cy=table-pagination] div[class*=ranges]').exists()).toBeTruthy();
+    expect(paginator.find('div[data-cy=table-pagination] div[class*=navigation]').exists()).toBeTruthy();
 
     const navButtons = paginator.findAllComponents(RuiButton);
     expect(navButtons.length).toBe(4);
@@ -668,8 +496,8 @@ describe('dataTable', () => {
     expect(ranges.find('input[type=hidden]').element).toHaveProperty('value', '1');
   });
 
-  it('hideDefaultHeader', () => {
-    const wrapper = createWrapper({
+  it('should hideDefaultHeader', () => {
+    wrapper = createWrapper({
       props: {
         cols: columns,
         hideDefaultHeader: true,
@@ -684,8 +512,8 @@ describe('dataTable', () => {
     expect(wrapper.find('div > [data-cy="table-pagination"]:last-child').exists()).toBeTruthy();
   });
 
-  it('hideDefaultFooter', () => {
-    const wrapper = createWrapper({
+  it('should hideDefaultFooter', () => {
+    wrapper = createWrapper({
       props: {
         cols: columns,
         hideDefaultFooter: true,

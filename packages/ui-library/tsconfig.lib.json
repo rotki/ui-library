@@ -16,14 +16,12 @@
   },
   "include": [
     "env.d.ts",
-    "vue-shim.d.ts",
     "src/**/*",
     "src/**/*.vue"
   ],
   "exclude": [
     "src/**/*.spec.ts",
     "src/**/*.stories.ts",
-    "vitest-globals.d.ts",
     "src/**/__tests__/**/*"
   ]
 }

@@ -153,3 +153,4 @@ storybook-static
 
 packages/ui-library/src/icons
 packages/ui-library/tests/html
+packages/ui-library/tests/json

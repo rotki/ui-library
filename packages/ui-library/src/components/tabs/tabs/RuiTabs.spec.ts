@@ -1,12 +1,14 @@
-import {
-  type ComponentMountingOptions,
-  mount,
-  RouterLinkStub,
-} from '@vue/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { type ComponentMountingOptions, mount, RouterLinkStub } from '@vue/test-utils';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import RuiTab from '@/components/tabs/tab/RuiTab.vue';
 import RuiTabs from '@/components/tabs/tabs/RuiTabs.vue';
-import { assert } from '@/utils/assert';
+import {
+  assertExists,
+  expectNotToHaveClass,
+  expectToHaveClass,
+  expectWrapperNotToHaveClass,
+  expectWrapperToHaveClass,
+} from '~/tests/helpers/dom-helpers';
 
 vi.mock('vue-router', () => ({
   useRoute: vi.fn().mockImplementation(() => ref()),
@@ -15,7 +17,10 @@ vi.mock('vue-router', () => ({
   })),
 }));
 
-function createWrapper(options: ComponentMountingOptions<typeof RuiTabs> = {}, customTabValue: boolean = false) {
+function createWrapper(
+  options: ComponentMountingOptions<typeof RuiTabs> = {},
+  customTabValue: boolean = false,
+) {
   return mount(RuiTabs, {
     ...options,
     global: {
@@ -26,16 +31,25 @@ function createWrapper(options: ComponentMountingOptions<typeof RuiTabs> = {}, c
     },
     slots: {
       default: [...new Array(4).keys()].map(item => (
-        { template: customTabValue
-          ? `<RuiTab value="tab-${item}"><div>Tab ${item}</div></RuiTab>`
-          : `<RuiTab><div>Tab ${item}</div></RuiTab>` })),
+        {
+          template: customTabValue
+            ? `<RuiTab value="tab-${item}"><div>Tab ${item}</div></RuiTab>`
+            : `<RuiTab><div>Tab ${item}</div></RuiTab>`,
+        }
+      )),
     },
   });
 }
 
-describe('tabs/Tabs', () => {
-  it('renders properly', async () => {
-    const wrapper = createWrapper();
+describe('components/tabs/tabs/RuiTabs.vue', () => {
+  let wrapper: ReturnType<typeof createWrapper>;
+
+  afterEach(() => {
+    wrapper?.unmount();
+  });
+
+  it('should render properly', async () => {
+    wrapper = createWrapper();
 
     await nextTick();
 
@@ -43,57 +57,39 @@ describe('tabs/Tabs', () => {
 
     expect(buttons).toHaveLength(4);
     const button0 = buttons[0];
-    assert(button0);
-    expect(button0.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/active-tab/)]),
-    );
+    assertExists(button0);
+    expectToHaveClass(button0.element, /active-tab/);
   });
 
-  it('pass vertical props', async () => {
-    const wrapper = createWrapper();
+  it('should pass vertical props', async () => {
+    wrapper = createWrapper();
 
-    expect(wrapper.classes()).not.toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tabs--vertical_/)]),
-    );
+    expectNotToHaveClass(wrapper.element, /_tabs--vertical_/);
 
     await wrapper.setProps({
       vertical: true,
     });
     await nextTick();
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tabs--vertical_/)]),
-    );
+    expectToHaveClass(wrapper.element, /_tabs--vertical_/);
 
-    expect(
-      wrapper.find('div[class*=_tabs-wrapper] > button').classes(),
-    ).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tab--vertical_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[class*=_tabs-wrapper] > button', /_tab--vertical_/);
   });
 
-  it('pass grow props', async () => {
-    const wrapper = createWrapper();
+  it('should pass grow props', async () => {
+    wrapper = createWrapper();
 
-    expect(wrapper.find('div[class*=tabs-bar]').classes()).not.toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tabs-bar--grow/)]),
-    );
+    expectWrapperNotToHaveClass(wrapper, 'div[class*=tabs-bar]', /_tabs-bar--grow/);
 
     await wrapper.setProps({
       grow: true,
     });
-    expect(wrapper.find('div[class*=tabs-bar]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tabs-bar--grow/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[class*=tabs-bar]', /_tabs-bar--grow/);
 
-    expect(
-      wrapper.find('div[class*=_tabs-wrapper] > button').classes(),
-    ).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tab--grow/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[class*=_tabs-wrapper] > button', /_tab--grow/);
   });
 
-  it('pass disabled props', async () => {
-    const wrapper = createWrapper();
+  it('should pass disabled props', async () => {
+    wrapper = createWrapper();
 
     expect(wrapper.find('button').attributes('disabled')).toBeUndefined();
 
@@ -104,45 +100,33 @@ describe('tabs/Tabs', () => {
     expect(wrapper.find('button').attributes('disabled')).toBeDefined();
   });
 
-  it('pass align props', async () => {
-    const wrapper = createWrapper();
+  it('should pass align props', async () => {
+    wrapper = createWrapper();
 
-    expect(wrapper.find('button').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tab--center_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'button', /_tab--center_/);
 
     await wrapper.setProps({ align: 'start' });
-    expect(wrapper.find('button').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tab--start_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'button', /_tab--start_/);
 
     await wrapper.setProps({ align: 'end' });
-    expect(wrapper.find('button').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tab--end_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'button', /_tab--end_/);
   });
 
-  it('passes indicatorPosition props', async () => {
-    const wrapper = createWrapper({});
+  it('should pass indicatorPosition props', async () => {
+    wrapper = createWrapper({});
 
-    expect(wrapper.find('button').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tab-indicator--end_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'button', /_tab-indicator--end_/);
 
     await wrapper.setProps({ indicatorPosition: 'start' });
-    expect(wrapper.find('button').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tab-indicator--start_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'button', /_tab-indicator--start_/);
 
     await wrapper.setProps({ indicatorPosition: 'end' });
-    expect(wrapper.find('button').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tab-indicator--end_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'button', /_tab-indicator--end_/);
   });
 
-  it('click tab change the modelValue', async () => {
+  it('should change modelValue when tab is clicked', async () => {
     const modelValue = ref();
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         'modelValue': get(modelValue),
         'onUpdate:modelValue': (e: any) => set(modelValue, e),
@@ -154,34 +138,32 @@ describe('tabs/Tabs', () => {
 
     expect(buttons).toHaveLength(4);
     const button0 = buttons[0];
-    assert(button0);
-    expect(button0.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/active-tab/)]),
-    );
+    assertExists(button0);
+    expectToHaveClass(button0.element, /active-tab/);
 
     const button1 = buttons[1];
-    assert(button1);
+    assertExists(button1);
     await button1.trigger('click');
     await nextTick();
     expect(get(modelValue)).toBe(1);
 
     buttons = wrapper.findAll('div[class*=_tabs-wrapper] > button');
     const button2 = buttons[2];
-    assert(button2);
+    assertExists(button2);
     await button2.trigger('click');
     await nextTick();
     expect(get(modelValue)).toBe(2);
 
     buttons = wrapper.findAll('div[class*=_tabs-wrapper] > button');
     const button3 = buttons[3];
-    assert(button3);
+    assertExists(button3);
     await button3.trigger('click');
     await nextTick();
     expect(get(modelValue)).toBe(3);
   });
 
-  it ('works with custom tab value', async () => {
-    const wrapper = createWrapper({}, true);
+  it('works with custom tab value', async () => {
+    wrapper = createWrapper({}, true);
 
     await nextTick();
 
@@ -189,9 +171,7 @@ describe('tabs/Tabs', () => {
 
     expect(buttons).toHaveLength(4);
     const button0 = buttons[0];
-    assert(button0);
-    expect(button0.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/active-tab/)]),
-    );
+    assertExists(button0);
+    expectToHaveClass(button0.element, /active-tab/);
   });
 });

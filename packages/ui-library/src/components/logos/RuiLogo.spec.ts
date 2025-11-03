@@ -1,28 +1,32 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiLogo from '@/components/logos/RuiLogo.vue';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiLogo>) {
+function createWrapper(options?: ComponentMountingOptions<typeof RuiLogo>): VueWrapper<InstanceType<typeof RuiLogo>> {
   return mount(RuiLogo, { ...options });
 }
 
-describe('forms/Logo', () => {
+describe('components/logos/RuiLogo.vue', () => {
+  let wrapper: VueWrapper<InstanceType<typeof RuiLogo>>;
+
   beforeEach(() => {
     vi.useFakeTimers();
   });
 
   afterEach(() => {
+    wrapper?.unmount();
+
     vi.useRealTimers();
     vi.clearAllMocks();
   });
 
-  it('renders properly', () => {
-    const wrapper = createWrapper();
+  it('should render properly', () => {
+    wrapper = createWrapper();
     expect(wrapper.find('div').find('img').exists()).toBeTruthy();
   });
 
-  it('passes text props', async () => {
-    const wrapper = createWrapper();
+  it('should pass text props', async () => {
+    wrapper = createWrapper();
     expect(wrapper.find('div').text()).toBe('');
     await wrapper.setProps({ text: true });
     expect(wrapper.find('div').text()).toBe('rotki');
@@ -30,8 +34,8 @@ describe('forms/Logo', () => {
     expect(wrapper.find('div').text()).toBe('');
   });
 
-  it('passes logo props', async () => {
-    const wrapper = createWrapper();
+  it('should pass logo props', async () => {
+    wrapper = createWrapper();
     expect(wrapper.find('div').text()).toBe('');
     await wrapper.setProps({ logo: 'website' });
     await vi.advanceTimersToNextTimerAsync();

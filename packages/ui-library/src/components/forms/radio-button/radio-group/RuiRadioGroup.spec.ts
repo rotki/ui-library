@@ -1,9 +1,12 @@
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import RuiRadioGroup from '@/components/forms/radio-button/radio-group/RuiRadioGroup.vue';
+import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiRadioGroup<string>>) {
-  const opts: ComponentMountingOptions<typeof RuiRadioGroup<string>> = {
+function createWrapper(
+  options?: ComponentMountingOptions<typeof RuiRadioGroup>,
+) {
+  const opts: ComponentMountingOptions<typeof RuiRadioGroup> = {
     ...options,
     global: {
       stubs: ['icon'],
@@ -13,44 +16,43 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiRadioGroup<s
   return mount(RuiRadioGroup, opts);
 }
 
-describe('forms/RadioButton/RadioGroup', () => {
-  it('passes inline props', async () => {
-    const wrapper = createWrapper();
-    expect(wrapper.find('div[class*=wrapper]').classes()).not.toEqual(
-      expect.arrayContaining([expect.stringMatching(/inline/)]),
-    );
-    await wrapper.setProps({ inline: true });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/inline/)]),
-    );
+describe('components/forms/radio-button/radio-group/RuiRadioGroup.vue', () => {
+  let wrapper: ReturnType<typeof createWrapper>;
+
+  afterEach(() => {
+    wrapper?.unmount();
   });
 
-  it('passes hint props', async () => {
-    const wrapper = createWrapper();
+  it('should pass inline props', async () => {
+    wrapper = createWrapper();
+    expectWrapperNotToHaveClass(wrapper, 'div[class*=wrapper]', /inline/);
+
+    await wrapper.setProps({ inline: true });
+    expectWrapperToHaveClass(wrapper, 'div[class*=wrapper]', /inline/);
+  });
+
+  it('should pass hint props', async () => {
+    wrapper = createWrapper();
     expect(wrapper.find('.details > div').exists()).toBeFalsy();
 
     const hint = 'RadioGroup Hints';
     await wrapper.setProps({ hint });
-    expect(wrapper.find('.details > div').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/text-rui-text-secondary/)]),
-    );
+    expectWrapperToHaveClass(wrapper, '.details > div', /text-rui-text-secondary/);
     expect(wrapper.find('.details > div').text()).toBe(hint);
   });
 
-  it('passes hint errorMessages', async () => {
-    const wrapper = createWrapper();
+  it('should pass hint errorMessages', async () => {
+    wrapper = createWrapper();
     expect(wrapper.find('.details > div').exists()).toBeFalsy();
 
     const errorMessage = 'RadioGroup Error Message';
     await wrapper.setProps({ errorMessages: [errorMessage] });
-    expect(wrapper.find('.details > div').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/text-rui-error/)]),
-    );
+    expectWrapperToHaveClass(wrapper, '.details > div', /text-rui-error/);
     expect(wrapper.find('.details > div').text()).toBe(errorMessage);
   });
 
-  it('passes hideDetails', () => {
-    const wrapper = createWrapper({
+  it('should pass hideDetails', () => {
+    wrapper = createWrapper({
       props: {
         hideDetails: true,
         hint: 'This hint should not be rendered',

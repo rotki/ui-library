@@ -1,41 +1,43 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
+import { afterEach, describe, expect, it } from 'vitest';
 import RuiSkeletonLoader from '@/components/loaders/RuiSkeletonLoader.vue';
+import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiSkeletonLoader>) {
+function createWrapper(
+  options?: ComponentMountingOptions<typeof RuiSkeletonLoader>,
+): VueWrapper<InstanceType<typeof RuiSkeletonLoader>> {
   return mount(RuiSkeletonLoader, options);
 }
 
-describe('skeleton', () => {
-  it('renders properly', () => {
-    const wrapper = createWrapper();
-    expect(wrapper.get('div[role=alert]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_skeleton_/)]),
-    );
-    expect(wrapper.get('div[role=alert]').classes()).not.toEqual(
-      expect.arrayContaining([expect.stringMatching(/_rounded_/)]),
-    );
+describe('components/loaders/RuiSkeletonLoader.vue', () => {
+  let wrapper: VueWrapper<InstanceType<typeof RuiSkeletonLoader>>;
+
+  afterEach(() => {
+    wrapper?.unmount();
   });
 
-  it('passes props correctly', async () => {
-    const wrapper = createWrapper({
+  it('should render properly', () => {
+    wrapper = createWrapper();
+    expectWrapperToHaveClass(wrapper, 'div[role=alert]', /_skeleton_/);
+    expectWrapperNotToHaveClass(wrapper, 'div[role=alert]', /_rounded_/);
+  });
+
+  it('should pass props correctly', async () => {
+    wrapper = createWrapper({
       props: {
         rounded: 'full',
         type: 'text',
       },
     });
-    expect(wrapper.get('div[role=alert]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_skeleton_text_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[role=alert]', /_skeleton_text_/);
     expect(wrapper.get('div[role=alert]').classes()).toContain('rounded-full');
+
     await wrapper.setProps({ type: 'paragraph' });
-    expect(wrapper.get('div[role=alert]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_skeleton_text_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[role=alert]', /_skeleton_text_/);
+
     await wrapper.setProps({ type: 'heading' });
-    expect(wrapper.get('div[role=alert]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_skeleton_heading_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[role=alert]', /_skeleton_heading_/);
+
     await wrapper.setProps({ rounded: 'none' });
     expect(wrapper.get('div[role=alert]').classes()).toContain('rounded-none');
   });

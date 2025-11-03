@@ -1,10 +1,7 @@
-import {
-  type ComponentMountingOptions,
-  mount,
-  RouterLinkStub,
-} from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { type ComponentMountingOptions, mount, RouterLinkStub } from '@vue/test-utils';
+import { afterEach, describe, expect, it } from 'vitest';
 import RuiTab from '@/components/tabs/tab/RuiTab.vue';
+import { expectToHaveClass, expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiTab>) {
   return mount(RuiTab, {
@@ -18,25 +15,29 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiTab>) {
   });
 }
 
-describe('tabs/Tab', () => {
-  it('renders properly', () => {
+describe('components/tabs/tab/RuiTab.vue', () => {
+  let wrapper: ReturnType<typeof createWrapper>;
+
+  afterEach(() => {
+    wrapper?.unmount();
+  });
+
+  it('should render properly', () => {
     const label = 'Tab 1';
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       slots: {
         default: () => label,
         prepend: 'prepend',
       },
     });
     const elem = wrapper.find('button');
-    expect(elem.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_text_/)]),
-    );
+    expectToHaveClass(elem.element, /_text_/);
     expect(elem.text()).toContain('prepend');
     expect(elem.find('span').text()).toContain(label);
   });
 
-  it('passes disabled props', async () => {
-    const wrapper = createWrapper();
+  it('should pass disabled props', async () => {
+    wrapper = createWrapper();
     expect(wrapper.find('button').attributes('disabled')).toBeUndefined();
     await wrapper.setProps({ disabled: true });
     expect(wrapper.find('button').attributes('disabled')).toBeDefined();
@@ -46,88 +47,62 @@ describe('tabs/Tab', () => {
     expect(wrapper.find('button').attributes('disabled')).toBeUndefined();
   });
 
-  it('passes color props', async () => {
-    const wrapper = createWrapper({
+  it('should pass color props', async () => {
+    wrapper = createWrapper({
       props: {
         color: 'primary',
       },
     });
-    expect(wrapper.find('button').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_grey_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'button', /_grey_/);
 
     await wrapper.setProps({ active: true });
-    expect(wrapper.find('button').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_primary_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'button', /_primary_/);
 
     await wrapper.setProps({ color: 'secondary' });
-    expect(wrapper.find('button').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_secondary_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'button', /_secondary_/);
 
     await wrapper.setProps({ color: 'error' });
-    expect(wrapper.find('button').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_error_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'button', /_error_/);
 
     await wrapper.setProps({ color: 'success' });
-    expect(wrapper.find('button').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_success_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'button', /_success_/);
   });
 
-  it('passes grow props', async () => {
-    const wrapper = createWrapper({});
+  it('should pass grow props', async () => {
+    wrapper = createWrapper({});
 
-    expect(wrapper.find('button').classes()).not.toEqual(
-      expect.arrayContaining([expect.stringMatching(/--grow_/)]),
-    );
+    expectWrapperNotToHaveClass(wrapper, 'button', /--grow_/);
 
     await wrapper.setProps({ grow: true });
-    expect(wrapper.find('button').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/--grow_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'button', /--grow_/);
   });
 
-  it('passes align props', async () => {
-    const wrapper = createWrapper({});
+  it('should pass align props', async () => {
+    wrapper = createWrapper({});
 
-    expect(wrapper.find('button').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tab--center_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'button', /_tab--center_/);
 
     await wrapper.setProps({ align: 'start' });
-    expect(wrapper.find('button').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tab--start_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'button', /_tab--start_/);
 
     await wrapper.setProps({ align: 'end' });
-    expect(wrapper.find('button').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tab--end_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'button', /_tab--end_/);
   });
 
-  it('passes indicatorPosition props', async () => {
-    const wrapper = createWrapper({});
+  it('should pass indicatorPosition props', async () => {
+    wrapper = createWrapper({});
 
-    expect(wrapper.find('button').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tab-indicator--end_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'button', /_tab-indicator--end_/);
 
     await wrapper.setProps({ indicatorPosition: 'start' });
-    expect(wrapper.find('button').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tab-indicator--start_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'button', /_tab-indicator--start_/);
 
     await wrapper.setProps({ indicatorPosition: 'end' });
-    expect(wrapper.find('button').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tab-indicator--end_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'button', /_tab-indicator--end_/);
   });
 
-  it('tab as link', async () => {
-    const wrapper = createWrapper({
+  it('should tab as link', async () => {
+    wrapper = createWrapper({
       props: {
         exact: true,
         exactPath: true,
@@ -137,9 +112,7 @@ describe('tabs/Tab', () => {
     });
 
     let elem = wrapper.find('a');
-    expect(elem.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tab_/)]),
-    );
+    expectToHaveClass(elem.element, /_tab_/);
     expect(elem.attributes().target).toMatch('_self');
     expect(elem.attributes().href).toBeUndefined();
 
@@ -152,7 +125,7 @@ describe('tabs/Tab', () => {
     expect(elem.attributes().href).toBeDefined();
   });
 
-  it('sets tabindex to -1 for all tab variations', async () => {
+  it('should set tabindex to -1 for all tab variations', async () => {
     // Test disabled tab
     let wrapper = createWrapper({
       props: {

@@ -4,9 +4,9 @@ import {
   baseColors,
   baseColorsIntensities,
   contextColors,
-} from './src/consts/colors';
-import { typographyClasses } from './src/consts/typography';
-import themePlugin from './src/theme';
+} from './src/consts/colors.js';
+import { typographyClasses } from './src/consts/typography.js';
+import themePlugin from './src/theme/index.js';
 
 const isDevelopment = process.env.NODE_ENV === 'development' || process.env.STORYBOOK;
 
@@ -36,7 +36,7 @@ export default {
     ...(isDevelopment
       ? [
           // Typography
-          ...typographyClasses.map(item => item.className),
+          ...typographyClasses.map(({ className }) => className),
           // Colors
           {
             pattern: new RegExp(

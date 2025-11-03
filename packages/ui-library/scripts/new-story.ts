@@ -2,7 +2,7 @@ import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
-import cac from 'cac';
+import { cac } from 'cac';
 import consola from 'consola';
 import { kebabCase, pascalCase } from 'scule';
 
@@ -38,17 +38,23 @@ function createStory(directory: string, component: string) {
 
   fs.writeFileSync(
     testFile,
-    `import { describe, expect, it } from 'vitest';
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+    `import { afterEach, describe, expect, it } from 'vitest';
+import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import ${componentName} from './${componentName}.vue';
 
-function createWrapper(options: ComponentMountingOptions<typeof ${componentName}>) {
+function createWrapper(options: ComponentMountingOptions<typeof ${componentName}>): VueWrapper<InstanceType<typeof ${componentName}>> {
   return mount(${componentName}, { ...options });
 }
 
 describe('${directory}/${componentName}', () => {
+  let wrapper: VueWrapper<InstanceType<typeof ${componentName}>>;
+
+  afterEach(() => {
+    wrapper?.unmount();
+  });
+
   it('renders properly', () => {
-    const wrapper = createWrapper({});
+    wrapper = createWrapper({});
 
     expect(wrapper.exists()).toBeTruthy();
   });

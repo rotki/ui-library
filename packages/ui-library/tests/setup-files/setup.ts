@@ -1,15 +1,17 @@
+import type { GeneratedIcon } from '@/types/icons';
 import { config } from '@vue/test-utils';
-import { promiseTimeout } from '@vueuse/core';
-
-// setup.js file
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
-import { createIconDefaults, IconsSymbol } from '../../src/composables/icons';
-import * as Icons from '../../src/icons';
+import { createIconDefaults, IconsSymbol } from '@/composables/icons';
+import * as Icons from '@/icons';
 import { server } from '../mocks/server';
+
+function isGeneratedIcon(value: unknown): value is GeneratedIcon {
+  return typeof value === 'object' && value !== null && 'name' in value && 'components' in value;
+}
 
 // @ts-expect-error symbol cannot be used as an index.
 config.global.provide[IconsSymbol] = createIconDefaults({
-  registeredIcons: Object.values(Icons),
+  registeredIcons: Object.values(Icons).filter(isGeneratedIcon),
 });
 
 class ResizeObserverMock {
@@ -19,10 +21,6 @@ class ResizeObserverMock {
 }
 
 vi.stubGlobal('ResizeObserver', ResizeObserverMock);
-
-const delay = (ms: number = 200) => promiseTimeout(ms);
-
-vi.delay = delay;
 
 // Start MSW server before all tests
 beforeAll(() => server.listen());

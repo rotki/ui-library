@@ -1,10 +1,12 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import Accordion from '@/components/accordions/accordion/RuiAccordion.vue';
 import Accordions from '@/components/accordions/accordions/RuiAccordions.vue';
 import { assert } from '@/utils/assert';
 
-function createWrapper(options?: ComponentMountingOptions<typeof Accordions>) {
+function createWrapper(
+  options?: ComponentMountingOptions<typeof Accordions>,
+): VueWrapper<InstanceType<typeof Accordions>> {
   return mount(Accordions, {
     ...options,
     global: {
@@ -14,27 +16,37 @@ function createWrapper(options?: ComponentMountingOptions<typeof Accordions>) {
     },
     slots: {
       default: [
-        { template: `
+        {
+          template: `
           <Accordion>
             <template #header>Accordion 1 Header</template>
             Accordion 1 Content
           </Accordion>
-        ` },
-        { template: `
+        `,
+        },
+        {
+          template: `
           <Accordion>
             <template #header>Accordion 2 Header</template>
             Accordion 2 Content
           </Accordion>
-        ` },
+        `,
+        },
       ],
     },
   });
 }
 
-describe('accordions/Accordions', () => {
-  it('renders properly', () => {
+describe('components/accordions/accordions/RuiAccordions.vue', () => {
+  let wrapper: VueWrapper<InstanceType<typeof Accordions>>;
+
+  afterEach(() => {
+    wrapper?.unmount();
+  });
+
+  it('should render properly', () => {
     const modelValue = ref();
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         'modelValue': get(modelValue),
         'onUpdate:modelValue': (e: any) => set(modelValue, e),
@@ -45,9 +57,9 @@ describe('accordions/Accordions', () => {
     expect(accordions).toHaveLength(2);
   });
 
-  it('works with multiple=`false`', async () => {
+  it('should work with multiple=`false`', async () => {
     const modelValue = ref();
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         'modelValue': get(modelValue),
         'onUpdate:modelValue': (e: any) => set(modelValue, e),
@@ -87,9 +99,9 @@ describe('accordions/Accordions', () => {
     expect(wrapper.findAll('.accordion__content')).toHaveLength(0);
   });
 
-  it('works with multiple=`true`', async () => {
+  it('should work with multiple=`true`', async () => {
     const modelValue = ref();
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         'modelValue': get(modelValue),
         'multiple': true,

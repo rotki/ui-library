@@ -2,12 +2,12 @@ import { type ComponentMountingOptions, renderToString } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import RuiLogo from '@/components/logos/RuiLogo.vue';
 
-function createWrapper(options?: Omit<ComponentMountingOptions<typeof RuiLogo>, 'attachTo'>) {
+function createWrapper(options?: Omit<ComponentMountingOptions<typeof RuiLogo>, 'attachTo'>): Promise<string> {
   return renderToString(RuiLogo, { ...options });
 }
 
-describe('forms/Logo.ssr', () => {
-  it('renders properly', async () => {
+describe('components/logos/RuiLogo.vue', () => {
+  it('should render properly', async () => {
     const content = await createWrapper();
     expect(content.includes('img')).toBeTruthy();
     expect(content.includes('logo.svg')).toBeTruthy();
@@ -16,7 +16,7 @@ describe('forms/Logo.ssr', () => {
     expect(content.includes('>rotki<')).toBeFalsy();
   });
 
-  it('renders properly with text prop defined', async () => {
+  it('should render properly with text prop defined', async () => {
     const content = await createWrapper({
       props: {
         text: true,
@@ -26,7 +26,7 @@ describe('forms/Logo.ssr', () => {
     expect(content.includes('>rotki<')).toBeTruthy();
   });
 
-  it('renders properly with logo prop defined', async () => {
+  it('should render properly with logo prop defined', async () => {
     const content = await createWrapper({
       props: {
         logo: 'website',

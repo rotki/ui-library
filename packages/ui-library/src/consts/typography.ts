@@ -11,4 +11,6 @@ export const typographyClasses = [
   { className: 'text-h4', name: 'H4' },
   { className: 'text-h5', name: 'H5' },
   { className: 'text-h6', name: 'H6' },
-];
+] as const;
+
+export type TypographyClass = (typeof typographyClasses)[number];

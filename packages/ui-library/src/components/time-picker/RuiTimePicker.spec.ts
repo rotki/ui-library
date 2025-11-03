@@ -1,16 +1,24 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
+import { afterEach, describe, expect, it } from 'vitest';
 import { TimeAccuracy } from '@/consts/time-accuracy';
 import { assert } from '@/utils/assert';
 import RuiTimePicker from './RuiTimePicker.vue';
 
-function createWrapper(options: ComponentMountingOptions<typeof RuiTimePicker>) {
+function createWrapper(
+  options: ComponentMountingOptions<typeof RuiTimePicker>,
+): VueWrapper<InstanceType<typeof RuiTimePicker>> {
   return mount(RuiTimePicker, { ...options });
 }
 
-describe('components/RuiTimePicker', () => {
+describe('components/time-picker/RuiTimePicker.vue', () => {
+  let wrapper: VueWrapper<InstanceType<typeof RuiTimePicker>>;
+
+  afterEach(() => {
+    wrapper?.unmount();
+  });
+
   it('should render properly', () => {
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         modelValue: new Date(),
       },

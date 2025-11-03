@@ -1,14 +1,20 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
+import { afterEach, describe, expect, it } from 'vitest';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiIcon>) {
+function createWrapper(options?: ComponentMountingOptions<typeof RuiIcon>): VueWrapper<InstanceType<typeof RuiIcon>> {
   return mount(RuiIcon, options);
 }
 
-describe('forms/Icon', () => {
-  it('renders properly', () => {
-    const wrapper = createWrapper({
+describe('components/icons/RuiIcon.vue', () => {
+  let wrapper: VueWrapper<InstanceType<typeof RuiIcon>>;
+
+  afterEach(() => {
+    wrapper?.unmount();
+  });
+
+  it('should render properly', () => {
+    wrapper = createWrapper({
       props: {
         color: 'primary',
         name: 'lu-circle-arrow-down',
@@ -22,8 +28,8 @@ describe('forms/Icon', () => {
     );
   });
 
-  it('passes props correctly', async () => {
-    const wrapper = createWrapper({
+  it('should pass props correctly', async () => {
+    wrapper = createWrapper({
       props: {
         name: 'lu-circle-arrow-down',
         size: 32,

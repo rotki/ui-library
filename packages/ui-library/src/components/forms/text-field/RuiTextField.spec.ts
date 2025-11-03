@@ -1,15 +1,24 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
+import { afterEach, describe, expect, it } from 'vitest';
 import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
+import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiTextField>) {
+function createWrapper(
+  options?: ComponentMountingOptions<typeof RuiTextField>,
+): VueWrapper<InstanceType<typeof RuiTextField>> {
   return mount(RuiTextField, { ...options, global: { stubs: ['rui-icon'] } });
 }
 
-describe('forms/TextField', () => {
-  it('renders properly', () => {
+describe('components/forms/text-field/RuiTextField.vue', () => {
+  let wrapper: VueWrapper<InstanceType<typeof RuiTextField>>;
+
+  afterEach(() => {
+    wrapper?.unmount();
+  });
+
+  it('should render properly', () => {
     const label = 'Text Field Label';
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         label,
         modelValue: '',
@@ -18,8 +27,8 @@ describe('forms/TextField', () => {
     expect(wrapper.find('label').text()).toContain(label);
   });
 
-  it('passes disabled props', async () => {
-    const wrapper = createWrapper({
+  it('should pass disabled props', async () => {
+    wrapper = createWrapper({
       props: {
         modelValue: '',
       },
@@ -31,8 +40,8 @@ describe('forms/TextField', () => {
     expect(wrapper.find('input').attributes('disabled')).toBeUndefined();
   });
 
-  it('passes readonly props', async () => {
-    const wrapper = createWrapper({
+  it('should pass readonly props', async () => {
+    wrapper = createWrapper({
       props: {
         modelValue: '',
       },
@@ -44,81 +53,59 @@ describe('forms/TextField', () => {
     expect(wrapper.find('input').attributes('readonly')).toBeUndefined();
   });
 
-  it('passes color props', async () => {
-    const wrapper = createWrapper({
+  it('should pass color props', async () => {
+    wrapper = createWrapper({
       props: {
         modelValue: '',
       },
     });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_default_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[class*=wrapper]', /_default_/);
 
     await wrapper.setProps({ color: 'primary' });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_primary_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[class*=wrapper]', /_primary_/);
 
     await wrapper.setProps({ color: 'secondary' });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_secondary_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[class*=wrapper]', /_secondary_/);
 
     await wrapper.setProps({ color: 'error' });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_error_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[class*=wrapper]', /_error_/);
 
     await wrapper.setProps({ color: 'success' });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_success_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[class*=wrapper]', /_success_/);
   });
 
-  it('passes variant props', async () => {
-    const wrapper = createWrapper({
+  it('should pass variant props', async () => {
+    wrapper = createWrapper({
       props: {
         modelValue: '',
       },
     });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_default_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[class*=wrapper]', /_default_/);
 
     await wrapper.setProps({ variant: 'filled' });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_filled_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[class*=wrapper]', /_filled_/);
 
     await wrapper.setProps({ variant: 'outlined' });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_outlined_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[class*=wrapper]', /_outlined_/);
   });
 
-  it('passes dense props', async () => {
-    const wrapper = createWrapper({
+  it('should pass dense props', async () => {
+    wrapper = createWrapper({
       props: {
         modelValue: '',
       },
     });
-    expect(wrapper.find('div[class*=wrapper]').classes()).not.toEqual(
-      expect.arrayContaining([expect.stringMatching(/_dense_/)]),
-    );
+    expectWrapperNotToHaveClass(wrapper, 'div[class*=wrapper]', /_dense_/);
 
     await wrapper.setProps({ dense: true });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_dense_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'div[class*=wrapper]', /_dense_/);
 
     await wrapper.setProps({ dense: false });
-    expect(wrapper.find('div[class*=wrapper]').classes()).not.toEqual(
-      expect.arrayContaining([expect.stringMatching(/_dense_/)]),
-    );
+    expectWrapperNotToHaveClass(wrapper, 'div[class*=wrapper]', /_dense_/);
   });
 
-  it('passes hint props', async () => {
-    const wrapper = createWrapper({
+  it('should pass hint props', async () => {
+    wrapper = createWrapper({
       props: {
         modelValue: '',
       },
@@ -127,14 +114,12 @@ describe('forms/TextField', () => {
 
     const hint = 'Text Fields Hints';
     await wrapper.setProps({ hint });
-    expect(wrapper.find('.details div').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/text-rui-text-secondary/)]),
-    );
+    expectWrapperToHaveClass(wrapper, '.details div', /text-rui-text-secondary/);
     expect(wrapper.find('.details div').text()).toBe(hint);
   });
 
-  it('passes hint errorMessages', async () => {
-    const wrapper = createWrapper({
+  it('should pass hint errorMessages', async () => {
+    wrapper = createWrapper({
       props: {
         modelValue: '',
       },
@@ -143,14 +128,12 @@ describe('forms/TextField', () => {
 
     const errorMessage = 'Text Fields Error Message';
     await wrapper.setProps({ errorMessages: [errorMessage] });
-    expect(wrapper.find('.details div').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/text-rui-error/)]),
-    );
+    expectWrapperToHaveClass(wrapper, '.details div', /text-rui-error/);
     expect(wrapper.find('.details div').text()).toBe(errorMessage);
   });
 
-  it('passes hint successMessages', async () => {
-    const wrapper = createWrapper({
+  it('should pass hint successMessages', async () => {
+    wrapper = createWrapper({
       props: {
         modelValue: '',
       },
@@ -159,14 +142,12 @@ describe('forms/TextField', () => {
 
     const successMessage = 'Text Fields Error Message';
     await wrapper.setProps({ successMessages: [successMessage] });
-    expect(wrapper.find('.details div').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/text-rui-success/)]),
-    );
+    expectWrapperToHaveClass(wrapper, '.details div', /text-rui-success/);
     expect(wrapper.find('.details div').text()).toBe(successMessage);
   });
 
-  it('passes hideDetails', () => {
-    const wrapper = createWrapper({
+  it('should pass hideDetails', () => {
+    wrapper = createWrapper({
       props: {
         hideDetails: true,
         hint: 'This hint should not be rendered',
@@ -176,38 +157,34 @@ describe('forms/TextField', () => {
     expect(wrapper.find('.details div').exists()).toBeFalsy();
   });
 
-  it('passes prependIcon', () => {
+  it('should pass prependIcon', () => {
     const icon = 'heart-fill';
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         modelValue: '',
         prependIcon: icon,
       },
     });
 
-    expect(
-      wrapper.find('div[class*=prepend] rui-icon-stub').attributes('name'),
-    ).toBe(icon);
+    expect(wrapper.find('div[class*=prepend] rui-icon-stub').attributes('name')).toBe(icon);
   });
 
-  it('passes appendIcon', () => {
+  it('should pass appendIcon', () => {
     const icon = 'heart-fill';
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         appendIcon: icon,
         modelValue: '',
       },
     });
 
-    expect(
-      wrapper.find('div[class*=append] rui-icon-stub').attributes('name'),
-    ).toBe(icon);
+    expect(wrapper.find('div[class*=append] rui-icon-stub').attributes('name')).toBe(icon);
   });
 
-  it('passes prepend slot', () => {
+  it('should pass prepend slot', () => {
     const prepend = 'Prepend text';
 
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         modelValue: '',
       },
@@ -219,10 +196,10 @@ describe('forms/TextField', () => {
     expect(wrapper.find('div[class*=prepend]').text()).toBe(prepend);
   });
 
-  it('passes append slot', () => {
+  it('should pass append slot', () => {
     const append = 'Append text';
 
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         modelValue: '',
       },
@@ -234,9 +211,9 @@ describe('forms/TextField', () => {
     expect(wrapper.find('div[class*=append]').text()).toBe(append);
   });
 
-  it('clearable', async () => {
+  it('should clearable', async () => {
     const text = 'test text';
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         clearable: true,
         modelValue: text,

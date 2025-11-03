@@ -1,29 +1,34 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
+import { afterEach, describe, expect, it } from 'vitest';
 import RuiFooterStepper from '@/components/steppers/RuiFooterStepper.vue';
+import { expectToHaveClass } from '~/tests/helpers/dom-helpers';
 
-function createWrapper(options: ComponentMountingOptions<typeof RuiFooterStepper>) {
+function createWrapper(
+  options: ComponentMountingOptions<typeof RuiFooterStepper>,
+): VueWrapper<InstanceType<typeof RuiFooterStepper>> {
   return mount(RuiFooterStepper, options);
 }
 
-describe('footerStepper', () => {
-  it('renders properly', () => {
-    const wrapper = createWrapper({
+describe('components/steppers/RuiFooterStepper.vue', () => {
+  let wrapper: VueWrapper<InstanceType<typeof RuiFooterStepper>>;
+
+  afterEach(() => {
+    wrapper?.unmount();
+  });
+
+  it('should render properly', () => {
+    wrapper = createWrapper({
       props: {
         modelValue: 1,
         pages: 5,
       },
     });
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_footer-stepper_/)]),
-    );
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_numeric_/)]),
-    );
+    expectToHaveClass(wrapper.element, /_footer-stepper_/);
+    expectToHaveClass(wrapper.element, /_numeric_/);
   });
 
-  it('passes props correctly', async () => {
-    const wrapper = createWrapper({
+  it('should pass props correctly', async () => {
+    wrapper = createWrapper({
       props: {
         modelValue: 1,
         pages: 5,
@@ -32,16 +37,12 @@ describe('footerStepper', () => {
     });
 
     await wrapper.setProps({ variant: 'progress' });
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_progress_/)]),
-    );
+    expectToHaveClass(wrapper.element, /_progress_/);
 
     const next = wrapper.find('button ~ button span[class*=_label] span');
     expect(next.exists()).toBeTruthy();
 
     await wrapper.setProps({ variant: 'pill' });
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_pill_/)]),
-    );
+    expectToHaveClass(wrapper.element, /_pill_/);
   });
 });

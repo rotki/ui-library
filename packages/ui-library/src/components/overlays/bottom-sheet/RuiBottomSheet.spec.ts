@@ -1,11 +1,14 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiBottomSheet from '@/components/overlays/bottom-sheet/RuiBottomSheet.vue';
+import { assertExists, cleanupElements, queryByRole } from '~/tests/helpers/dom-helpers';
 
 const text = 'This is content';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiBottomSheet>) {
+function createWrapper(
+  options?: ComponentMountingOptions<typeof RuiBottomSheet>,
+): VueWrapper<InstanceType<typeof RuiBottomSheet>> {
   return mount(RuiBottomSheet, {
     ...options,
     global: {
@@ -26,48 +29,62 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiBottomSheet>
   });
 }
 
-describe('bottom-sheet', () => {
-  it('renders properly', async () => {
-    const wrapper = createWrapper();
-    await nextTick();
-    let bottomSheet = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+describe('components/overlays/bottom-sheet/RuiBottomSheet.vue', () => {
+  let wrapper: VueWrapper<InstanceType<typeof RuiBottomSheet>>;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    wrapper?.unmount();
+
+    cleanupElements('*', document.body);
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
+  it('should render properly', async () => {
+    wrapper = createWrapper();
+    await vi.runAllTimersAsync();
+    let bottomSheet = queryByRole<HTMLDivElement>('dialog');
 
     expect(bottomSheet).toBeFalsy();
 
     // Open bottom sheet by clicking activator
     await wrapper.find('#trigger').trigger('click');
-    await vi.delay();
+    await vi.runAllTimersAsync();
 
-    bottomSheet = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+    bottomSheet = queryByRole<HTMLDivElement>('dialog');
 
-    expect(bottomSheet).toBeTruthy();
+    assertExists(bottomSheet);
     expect(bottomSheet.querySelector('div[class*=_content_]')).toBeTruthy();
     expect(bottomSheet.querySelector('div[class*=_center_]')).toBeFalsy();
 
     // Click the button that call close function
-    const closeButton = bottomSheet.querySelector('#close') as HTMLButtonElement;
+    const closeButton = bottomSheet.querySelector<HTMLButtonElement>('#close');
+    assertExists(closeButton);
     closeButton.click();
 
-    await vi.delay();
-    bottomSheet = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+    await vi.runAllTimersAsync();
+    bottomSheet = queryByRole<HTMLDivElement>('dialog');
 
     expect(bottomSheet).toBeFalsy();
-    wrapper.unmount();
   });
 
   it('should pass width and maxWidth props', async () => {
-    const wrapper = createWrapper();
-    await nextTick();
+    wrapper = createWrapper();
+    await vi.runAllTimersAsync();
 
     // Open bottom sheet by clicking activator
     await wrapper.find('#trigger').trigger('click');
-    await vi.delay();
+    await vi.runAllTimersAsync();
 
-    const bottomSheet = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
-    expect(bottomSheet).toBeTruthy();
+    const bottomSheet = queryByRole<HTMLDivElement>('dialog');
+    assertExists(bottomSheet);
 
-    const contentWrapper = bottomSheet.querySelector('div[class*=_content_]') as HTMLDivElement;
-    expect(contentWrapper).toBeTruthy();
+    const contentWrapper = bottomSheet.querySelector<HTMLDivElement>('div[class*=_content_]');
+    assertExists(contentWrapper);
 
     expect(contentWrapper.style.width).toBe('98%');
     expect(contentWrapper.style.maxWidth).toBeFalsy();
@@ -79,84 +96,80 @@ describe('bottom-sheet', () => {
 
     expect(contentWrapper.style.width).toBe('500px');
     expect(contentWrapper.style.maxWidth).toBe('100%');
-
-    wrapper.unmount();
   });
 
-  it('bottom sheet works with `persistent=false`', async () => {
-    const wrapper = createWrapper();
-    await nextTick();
+  it('should bottom sheet works with `persistent=false`', async () => {
+    wrapper = createWrapper();
+    await vi.runAllTimersAsync();
 
     // Open bottom sheet by clicking activator
     await wrapper.find('#trigger').trigger('click');
-    await vi.delay();
+    await vi.runAllTimersAsync();
 
-    let bottomSheet = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
-    expect(bottomSheet).toBeTruthy();
+    let bottomSheet = queryByRole<HTMLDivElement>('dialog');
+    assertExists(bottomSheet);
 
     // Click on the overlay should close the bottom sheet
-    const overlay = bottomSheet.querySelector('div[class*=_overlay_]') as HTMLDivElement;
+    const overlay = bottomSheet.querySelector<HTMLDivElement>('div[class*=_overlay_]');
+    assertExists(overlay);
     overlay.click();
 
-    await vi.delay();
-    bottomSheet = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+    await vi.runAllTimersAsync();
+    bottomSheet = queryByRole<HTMLDivElement>('dialog');
 
     expect(bottomSheet).toBeFalsy();
 
-    await vi.delay();
+    await vi.runAllTimersAsync();
 
     // Open bottom sheet by clicking activator
     await wrapper.find('#trigger').trigger('click');
-    await vi.delay();
+    await vi.runAllTimersAsync();
 
-    bottomSheet = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
-    expect(bottomSheet).toBeTruthy();
+    bottomSheet = queryByRole<HTMLDivElement>('dialog');
+    assertExists(bottomSheet);
 
     // Press escape should also close the bottom sheet
     const event = new KeyboardEvent('keydown', { key: 'Escape' });
     bottomSheet.dispatchEvent(event);
 
-    await vi.delay();
-    bottomSheet = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+    await vi.runAllTimersAsync();
+    bottomSheet = queryByRole<HTMLDivElement>('dialog');
 
     expect(bottomSheet).toBeFalsy();
-
-    wrapper.unmount();
   });
 
-  it('bottom sheet works with `persistent=true`', async () => {
-    const wrapper = createWrapper({
+  it('should bottom sheet works with `persistent=true`', async () => {
+    wrapper = createWrapper({
       props: {
         persistent: true,
       },
     });
-    await nextTick();
+    await vi.runAllTimersAsync();
 
     // Open bottom sheet by clicking activator
     await wrapper.find('#trigger').trigger('click');
-    await vi.delay();
+    await vi.runAllTimersAsync();
 
-    let bottomSheet = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
-    expect(bottomSheet).toBeTruthy();
+    let bottomSheet = queryByRole<HTMLDivElement>('dialog');
+    assertExists(bottomSheet);
 
     // Click on the overlay should not close the bottom sheet
-    const overlay = bottomSheet.querySelector('div[class*=_overlay_]') as HTMLDivElement;
+    const overlay = bottomSheet.querySelector<HTMLDivElement>('div[class*=_overlay_]');
+    assertExists(overlay);
     overlay.click();
 
-    await vi.delay();
-    bottomSheet = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+    await vi.runAllTimersAsync();
+    bottomSheet = queryByRole<HTMLDivElement>('dialog');
 
-    expect(bottomSheet).toBeTruthy();
+    assertExists(bottomSheet);
 
     // Press escape should not close the bottom sheet
     const event = new KeyboardEvent('keydown', { key: 'Escape' });
     bottomSheet.dispatchEvent(event);
 
-    await vi.delay();
-    bottomSheet = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+    await vi.runAllTimersAsync();
+    bottomSheet = queryByRole<HTMLDivElement>('dialog');
 
-    expect(bottomSheet).toBeTruthy();
-
-    wrapper.unmount();
+    assertExists(bottomSheet);
   });
 });

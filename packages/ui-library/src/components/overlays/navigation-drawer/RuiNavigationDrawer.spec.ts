@@ -1,11 +1,14 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiNavigationDrawer from '@/components/overlays/navigation-drawer/RuiNavigationDrawer.vue';
+import { assertExists, cleanupElements, queryBody } from '~/tests/helpers/dom-helpers';
 
 const text = 'Navigation Drawer Content';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiNavigationDrawer>) {
+function createWrapper(
+  options?: ComponentMountingOptions<typeof RuiNavigationDrawer>,
+): VueWrapper<InstanceType<typeof RuiNavigationDrawer>> {
   return mount(RuiNavigationDrawer, {
     ...options,
     global: {
@@ -26,42 +29,55 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiNavigationDr
   });
 }
 
-describe('navigation drawer', () => {
-  it('renders properly', async () => {
-    const wrapper = createWrapper();
-    await nextTick();
-    let drawer = document.body.querySelector('aside[class*=_visible_]') as HTMLDivElement;
+describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => {
+  let wrapper: VueWrapper<InstanceType<typeof RuiNavigationDrawer>>;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    wrapper?.unmount();
+
+    cleanupElements('*', document.body);
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+  it('should render properly', async () => {
+    wrapper = createWrapper();
+    await vi.runAllTimersAsync();
+    let drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
 
     expect(drawer).toBeFalsy();
 
     // Open drawer by clicking activator
     await wrapper.find('#trigger').trigger('click');
 
-    drawer = document.body.querySelector('aside[class*=_visible_]') as HTMLDivElement;
+    drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
 
-    expect(drawer).toBeTruthy();
+    assertExists(drawer);
 
     // Click the button that call close function
-    const closeButton = drawer.querySelector('#close') as HTMLButtonElement;
+    const closeButton = drawer.querySelector<HTMLButtonElement>('#close');
+    assertExists(closeButton);
     closeButton.click();
 
-    await nextTick();
+    await vi.runAllTimersAsync();
 
-    drawer = document.body.querySelector('aside[class*=_visible_]') as HTMLDivElement;
+    drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
 
     expect(drawer).toBeFalsy();
-    wrapper.unmount();
   });
 
   it('should pass width and position props', async () => {
-    const wrapper = createWrapper();
-    await nextTick();
+    wrapper = createWrapper();
+    await vi.runAllTimersAsync();
 
     // Open dialog by clicking activator
     await wrapper.find('#trigger').trigger('click');
 
-    let drawer = document.body.querySelector('aside[class*=_visible_]') as HTMLDivElement;
-    expect(drawer).toBeTruthy();
+    let drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
+    assertExists(drawer);
 
     expect(drawer.style.width).toBe('360px');
 
@@ -70,57 +86,51 @@ describe('navigation drawer', () => {
       width: '500',
     });
 
-    drawer = document.body.querySelector('aside[class*=_visible_][class*=_right_]') as HTMLDivElement;
+    drawer = queryBody<HTMLDivElement>('aside[class*=_visible_][class*=_right_]');
 
-    expect(drawer).toBeTruthy();
+    assertExists(drawer);
     expect(drawer.style.width).toBe('500px');
-
-    wrapper.unmount();
   });
 
-  it('dialog works with `temporary=false`', async () => {
-    const wrapper = createWrapper();
-    await nextTick();
+  it('should dialog works with `temporary=false`', async () => {
+    wrapper = createWrapper();
+    await vi.runAllTimersAsync();
 
     // Open dialog by clicking activator
     await wrapper.find('#trigger').trigger('click');
 
-    let drawer = document.body.querySelector('aside[class*=_visible_]') as HTMLDivElement;
+    let drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
     expect(drawer).toBeTruthy();
 
     // Click outside should not close the drawer
     document.body.click();
-    await vi.delay();
+    await vi.runAllTimersAsync();
 
-    drawer = document.body.querySelector('aside[class*=_visible_]') as HTMLDivElement;
+    drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
 
     expect(drawer).toBeTruthy();
-
-    wrapper.unmount();
   });
 
-  it('dialog works with `temporary=true`', async () => {
-    const wrapper = createWrapper({
+  it('should dialog works with `temporary=true`', async () => {
+    wrapper = createWrapper({
       props: {
         temporary: true,
       },
     });
-    await nextTick();
+    await vi.runAllTimersAsync();
 
     // Open dialog by clicking activator
     await wrapper.find('#trigger').trigger('click');
 
-    let drawer = document.body.querySelector('aside[class*=_visible_]') as HTMLDivElement;
+    let drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
     expect(drawer).toBeTruthy();
 
     // Click outside should not close the drawer
     document.body.click();
-    await vi.delay();
+    await vi.runAllTimersAsync();
 
-    drawer = document.body.querySelector('aside[class*=_visible_]') as HTMLDivElement;
+    drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
 
     expect(drawer).toBeFalsy();
-
-    wrapper.unmount();
   });
 });

@@ -1,11 +1,14 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiDialog from '@/components/overlays/dialog/RuiDialog.vue';
+import { assertExists, cleanupElements, queryByRole } from '~/tests/helpers/dom-helpers';
 
 const text = 'This is content';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiDialog>) {
+function createWrapper(
+  options?: ComponentMountingOptions<typeof RuiDialog>,
+): VueWrapper<InstanceType<typeof RuiDialog>> {
   return mount(RuiDialog, {
     ...options,
     global: {
@@ -16,7 +19,7 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiDialog>) {
       default: `
         <div>
           ${text}
-          
+
           <RuiButton id="close" @click="close()" />
         </div>
       `,
@@ -24,48 +27,62 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiDialog>) {
   });
 }
 
-describe('dialog', () => {
-  it('renders properly', async () => {
-    const wrapper = createWrapper();
-    await nextTick();
-    let dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+describe('components/overlays/dialog/RuiDialog.vue', () => {
+  let wrapper: VueWrapper<InstanceType<typeof RuiDialog>>;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    wrapper?.unmount();
+
+    cleanupElements('*', document.body);
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
+  it('should render properly', async () => {
+    wrapper = createWrapper();
+    await vi.runAllTimersAsync();
+    let dialog = queryByRole<HTMLDivElement>('dialog');
 
     expect(dialog).toBeFalsy();
 
     // Open dialog by clicking activator
     await wrapper.find('#trigger').trigger('click');
-    await vi.delay();
+    await vi.runAllTimersAsync();
 
-    dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+    dialog = queryByRole<HTMLDivElement>('dialog');
 
-    expect(dialog).toBeTruthy();
+    assertExists(dialog);
     expect(dialog.querySelector('div[class*=_content_]')).toBeTruthy();
     expect(dialog.querySelector('div[class*=_center_]')).toBeTruthy();
 
     // Click the button that call close function
-    const closeButton = dialog.querySelector('#close') as HTMLButtonElement;
+    const closeButton = dialog.querySelector<HTMLButtonElement>('#close');
+    assertExists(closeButton);
     closeButton.click();
 
-    await vi.delay();
-    dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+    await vi.runAllTimersAsync();
+    dialog = queryByRole<HTMLDivElement>('dialog');
 
     expect(dialog).toBeFalsy();
-    wrapper.unmount();
   });
 
   it('should pass width and maxWidth props', async () => {
-    const wrapper = createWrapper();
-    await nextTick();
+    wrapper = createWrapper();
+    await vi.runAllTimersAsync();
 
     // Open dialog by clicking activator
     await wrapper.find('#trigger').trigger('click');
-    await vi.delay();
+    await vi.runAllTimersAsync();
 
-    const dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
-    expect(dialog).toBeTruthy();
+    const dialog = queryByRole<HTMLDivElement>('dialog');
+    assertExists(dialog);
 
-    const contentWrapper = dialog.querySelector('div[class*=_content_]') as HTMLDivElement;
-    expect(contentWrapper).toBeTruthy();
+    const contentWrapper = dialog.querySelector<HTMLDivElement>('div[class*=_content_]');
+    assertExists(contentWrapper);
 
     expect(contentWrapper.style.width).toBe('98%');
     expect(contentWrapper.style.maxWidth).toBeFalsy();
@@ -77,113 +94,110 @@ describe('dialog', () => {
 
     expect(contentWrapper.style.width).toBe('500px');
     expect(contentWrapper.style.maxWidth).toBe('100%');
-
-    wrapper.unmount();
   });
 
-  it('dialog works with `persistent=false`', async () => {
-    const wrapper = createWrapper();
-    await nextTick();
+  it('should dialog works with `persistent=false`', async () => {
+    wrapper = createWrapper();
+    await vi.runAllTimersAsync();
 
     // Open dialog by clicking activator
     await wrapper.find('#trigger').trigger('click');
-    await nextTick();
-    await vi.delay();
+    await vi.runAllTimersAsync();
+    await vi.runAllTimersAsync();
 
-    let dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
-    expect(dialog).toBeTruthy();
+    let dialog = queryByRole<HTMLDivElement>('dialog');
+    assertExists(dialog);
 
     // Click on the overlay should close the dialog
-    const overlay = dialog.querySelector('div[class*=_overlay_]') as HTMLDivElement;
+    const overlay = dialog.querySelector<HTMLDivElement>('div[class*=_overlay_]');
+    assertExists(overlay);
     overlay.click();
 
-    await vi.delay();
-    dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+    await vi.runAllTimersAsync();
+    dialog = queryByRole<HTMLDivElement>('dialog');
 
     expect(dialog).toBeFalsy();
 
-    await vi.delay();
+    await vi.runAllTimersAsync();
 
     // Open dialog by clicking activator
     await wrapper.find('#trigger').trigger('click');
-    await vi.delay();
+    await vi.runAllTimersAsync();
 
-    dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
-    expect(dialog).toBeTruthy();
+    dialog = queryByRole<HTMLDivElement>('dialog');
+    assertExists(dialog);
 
     // Press escape should also close the dialog
     const event = new KeyboardEvent('keydown', { key: 'Escape' });
     dialog.dispatchEvent(event);
 
-    await vi.delay();
-    dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+    await vi.runAllTimersAsync();
+    dialog = queryByRole<HTMLDivElement>('dialog');
 
     expect(dialog).toBeFalsy();
-
-    wrapper.unmount();
   });
 
-  it('dialog works with `persistent=true`', async () => {
-    const wrapper = createWrapper({
+  it('should dialog works with `persistent=true`', async () => {
+    wrapper = createWrapper({
       props: {
         persistent: true,
       },
     });
-    await nextTick();
+    await vi.runAllTimersAsync();
 
     // Open dialog by clicking activator
     await wrapper.find('#trigger').trigger('click');
-    await vi.delay();
+    await vi.runAllTimersAsync();
 
-    let dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
-    expect(dialog).toBeTruthy();
+    let dialog = queryByRole<HTMLDivElement>('dialog');
+    assertExists(dialog);
 
     // Click on the overlay should not close the dialog
-    const overlay = dialog.querySelector('div[class*=_overlay_]') as HTMLDivElement;
+    const overlay = dialog.querySelector<HTMLDivElement>('div[class*=_overlay_]');
+    assertExists(overlay);
     overlay.click();
 
-    await vi.delay();
-    dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+    await vi.runAllTimersAsync();
+    dialog = queryByRole<HTMLDivElement>('dialog');
 
-    expect(dialog).toBeTruthy();
+    assertExists(dialog);
 
     // Press escape should not close the dialog
     const event = new KeyboardEvent('keydown', { key: 'Escape' });
     dialog.dispatchEvent(event);
 
-    await vi.delay();
-    dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
+    await vi.runAllTimersAsync();
+    dialog = queryByRole<HTMLDivElement>('dialog');
 
-    expect(dialog).toBeTruthy();
-
-    wrapper.unmount();
+    assertExists(dialog);
   });
 
-  it('click:outside and click:esc emitted', async () => {
+  it('should click:outside and click:esc emitted', async () => {
     const clickOutsideFunc = vi.fn();
     const clickEscFunc = vi.fn();
 
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         'onClick:esc': clickEscFunc,
         'onClick:outside': clickOutsideFunc,
       },
     });
 
-    await nextTick();
+    await vi.runAllTimersAsync();
 
     // Open dialog by clicking activator
     await wrapper.find('#trigger').trigger('click');
-    await vi.delay();
+    await vi.runAllTimersAsync();
 
-    const dialog = document.body.querySelector('div[role=dialog]') as HTMLDivElement;
-    expect(dialog).toBeTruthy();
+    const dialog = queryByRole<HTMLDivElement>('dialog');
+    assertExists(dialog);
 
     // Click on the overlay should not close the dialog
-    const overlay = dialog.querySelector('div[class*=_overlay_]') as HTMLDivElement;
+    const overlay = dialog.querySelector<HTMLDivElement>('div[class*=_overlay_]');
+    assertExists(overlay);
 
     overlay.click();
-    await vi.delay();
+    await vi.runAllTimersAsync();
 
     expect(clickOutsideFunc).toHaveBeenCalledOnce();
 

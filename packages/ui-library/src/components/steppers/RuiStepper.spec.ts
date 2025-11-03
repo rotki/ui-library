@@ -1,44 +1,43 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
+import { afterEach, describe, it } from 'vitest';
 import RuiStepper from '@/components/steppers/RuiStepper.vue';
-import {
-  StepperOrientation,
-  StepperState,
-  type StepperStep,
-} from '@/types/stepper';
+import { StepperOrientation, StepperState, type StepperStep } from '@/types/stepper';
+import { expectToHaveClass } from '~/tests/helpers/dom-helpers';
 
-function createWrapper(options: ComponentMountingOptions<typeof RuiStepper>) {
+function createWrapper(
+  options: ComponentMountingOptions<typeof RuiStepper>,
+): VueWrapper<InstanceType<typeof RuiStepper>> {
   return mount(RuiStepper, options);
 }
 
-describe('components/Stepper', () => {
+describe('components/steppers/RuiStepper.vue', () => {
+  let wrapper: VueWrapper<InstanceType<typeof RuiStepper>>;
+
+  afterEach(() => {
+    wrapper?.unmount();
+  });
+
   const steps: StepperStep[] = [
     { description: 'lorem ipsum', state: StepperState.done, title: 'Step' },
     { description: 'lorem ipsum', state: StepperState.active, title: 'Step' },
     { description: 'lorem ipsum', state: StepperState.inactive, title: 'Step' },
   ];
 
-  it('renders properly', () => {
-    const wrapper = createWrapper({ props: { steps } });
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_stepper_/)]),
-    );
+  it('should render properly', () => {
+    wrapper = createWrapper({ props: { steps } });
+    expectToHaveClass(wrapper.element, /_stepper_/);
   });
 
-  it('passes props correctly', async () => {
-    const wrapper = createWrapper({
+  it('should pass props correctly', async () => {
+    wrapper = createWrapper({
       props: { steps },
     });
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_horizontal_/)]),
-    );
+    expectToHaveClass(wrapper.element, /_horizontal_/);
+
     await wrapper.setProps({ orientation: StepperOrientation.vertical });
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_vertical_/)]),
-    );
+    expectToHaveClass(wrapper.element, /_vertical_/);
+
     await wrapper.setProps({ iconTop: true });
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_icon-top_/)]),
-    );
+    expectToHaveClass(wrapper.element, /_icon-top_/);
   });
 });

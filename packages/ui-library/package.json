@@ -80,7 +80,7 @@
     "test:ci": "vitest run",
     "coverage": "vitest run --coverage",
     "coverage:preview": "npx vite preview --open --outDir tests/coverage",
-    "typecheck": "vue-tsc --noEmit",
+    "typecheck": "vue-tsc --noEmit && vue-tsc --noEmit -p tsconfig.vitest.json",
     "new": "tsx scripts/new-story.ts"
   },
   "peerDependencies": {
@@ -104,6 +104,7 @@
     "@storybook/addon-themes": "10.0.2",
     "@storybook/vue3-vite": "10.0.2",
     "@tsconfig/node22": "22.0.2",
+    "@types/jsdom": "^27.0.0",
     "@types/node": "22.18.13",
     "@types/tinycolor2": "1.4.6",
     "@vitejs/plugin-vue": "6.0.1",

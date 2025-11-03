@@ -1,6 +1,7 @@
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import RuiTabItem from '@/components/tabs/tab-item/RuiTabItem.vue';
+import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
 vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
   const now = Date.now();
@@ -8,7 +9,9 @@ vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
   return now;
 });
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiTabItem>) {
+function createWrapper(
+  options?: ComponentMountingOptions<typeof RuiTabItem>,
+) {
   return mount(RuiTabItem, {
     ...options,
     global: {
@@ -23,40 +26,40 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiTabItem>) {
   });
 }
 
-describe('tabs/TabItem', () => {
-  it('do not render if not active', () => {
-    const wrapper = createWrapper();
+describe('components/tabs/tab-item/RuiTabItem.vue', () => {
+  let wrapper: ReturnType<typeof createWrapper>;
+
+  afterEach(() => {
+    wrapper?.unmount();
+  });
+
+  it('should not render if not active', () => {
+    wrapper = createWrapper();
 
     expect(wrapper.find('div').find('div').exists()).toBeFalsy();
   });
 
-  it('render if it\'s active', async () => {
-    const wrapper = createWrapper({
+  it('should render if it\'s active', async () => {
+    wrapper = createWrapper({
       props: {
         active: true,
       },
     });
 
     expect(wrapper.find('div').find('div').exists()).toBeTruthy();
-    expect(wrapper.find('div').find('div').classes()).not.toEqual(
-      expect.arrayContaining([expect.stringMatching(/hidden/)]),
-    );
+    expectWrapperNotToHaveClass(wrapper, ':scope > div', /hidden/);
 
     await wrapper.setProps({
       eager: true,
     });
     expect(wrapper.find('div').find('div').exists()).toBeTruthy();
-    expect(wrapper.find('div').find('div').classes()).not.toEqual(
-      expect.arrayContaining([expect.stringMatching(/hidden/)]),
-    );
+    expectWrapperNotToHaveClass(wrapper, ':scope > div', /hidden/);
 
     await wrapper.setProps({
       active: false,
     });
 
     expect(wrapper.find('div').find('div').exists()).toBeTruthy();
-    expect(wrapper.find('div').find('div').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/hidden/)]),
-    );
+    expectWrapperToHaveClass(wrapper, ':scope > div', /hidden/);
   });
 });

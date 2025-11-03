@@ -1,32 +1,29 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
+import { afterEach, describe, expect, it } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCard from '@/components/cards/RuiCard.vue';
+import { expectNotToHaveClass, expectToHaveClass } from '~/tests/helpers/dom-helpers';
 
-function createWrapper(options: ComponentMountingOptions<typeof RuiCard>) {
+function createWrapper(options: ComponentMountingOptions<typeof RuiCard>): VueWrapper<InstanceType<typeof RuiCard>> {
   return mount(RuiCard, { ...options, global: { stubs: { 'rui-button': RuiButton } } });
 }
 
-describe('card', () => {
-  it('renders properly', () => {
-    const wrapper = createWrapper({});
+describe('components/cards/RuiCard.vue', () => {
+  let wrapper: VueWrapper<InstanceType<typeof RuiCard>>;
+
+  afterEach(() => {
+    wrapper?.unmount();
+  });
+
+  it('should render properly', () => {
+    wrapper = createWrapper({});
 
     expect(wrapper.exists()).toBeTruthy();
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_card_/)]),
-    );
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_outlined_/)]),
-    );
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching('shadow-0')]),
-    );
-    expect(wrapper.classes()).not.toEqual(
-      expect.arrayContaining([expect.stringMatching(/_dense_/)]),
-    );
-    expect(wrapper.classes()).not.toEqual(
-      expect.arrayContaining([expect.stringMatching(/_divide_/)]),
-    );
+    expectToHaveClass(wrapper.element, /_card_/);
+    expectToHaveClass(wrapper.element, /_outlined_/);
+    expectToHaveClass(wrapper.element, /shadow-0/);
+    expectNotToHaveClass(wrapper.element, /_dense_/);
+    expectNotToHaveClass(wrapper.element, /_divide_/);
 
     expect(wrapper.find('div[class*=_image_').exists()).toBeFalsy();
     expect(wrapper.find('h5[class*=_prepend_').exists()).toBeFalsy();
@@ -36,8 +33,8 @@ describe('card', () => {
     expect(wrapper.find('div[class*=_footer_').exists()).toBeFalsy();
   });
 
-  it('reacts to props changes', async () => {
-    const wrapper = createWrapper({
+  it('should react to props changes', async () => {
+    wrapper = createWrapper({
       props: {
         dense: false,
         divide: false,
@@ -70,23 +67,11 @@ describe('card', () => {
       variant: 'flat',
     });
 
-    expect(wrapper.classes()).not.toEqual(
-      expect.arrayContaining([expect.stringMatching(/_outlined_/)]),
-    );
-    expect(wrapper.classes()).not.toEqual(
-      expect.arrayContaining([expect.stringMatching('shadow-0')]),
-    );
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_card_/)]),
-    );
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching('shadow-2')]),
-    );
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_dense_/)]),
-    );
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_divide_/)]),
-    );
+    expectNotToHaveClass(wrapper.element, /_outlined_/);
+    expectNotToHaveClass(wrapper.element, /shadow-0/);
+    expectToHaveClass(wrapper.element, /_card_/);
+    expectToHaveClass(wrapper.element, /shadow-2/);
+    expectToHaveClass(wrapper.element, /_dense_/);
+    expectToHaveClass(wrapper.element, /_divide_/);
   });
 });

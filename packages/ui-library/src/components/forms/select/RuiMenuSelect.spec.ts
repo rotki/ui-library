@@ -1,8 +1,9 @@
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { options } from '@/__test__/options';
 import RuiMenuSelect from '@/components/forms/select/RuiMenuSelect.vue';
 import { assert } from '@/utils/assert';
+import { cleanupElements, expectWrapperToHaveClass, queryByRole, queryMenuButton } from '~/tests/helpers/dom-helpers';
 
 vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
   const now = Date.now();
@@ -10,7 +11,9 @@ vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
   return now;
 });
 
-function createWrapper<TItem>(options?: ComponentMountingOptions<typeof RuiMenuSelect<string | undefined, TItem>>) {
+function createWrapper<TItem>(
+  options?: ComponentMountingOptions<typeof RuiMenuSelect<string | undefined, TItem>>,
+) {
   const opts: ComponentMountingOptions<typeof RuiMenuSelect<string | undefined, TItem>> = {
     ...options,
     global: {
@@ -23,9 +26,23 @@ function createWrapper<TItem>(options?: ComponentMountingOptions<typeof RuiMenuS
   return mount(RuiMenuSelect, opts);
 }
 
-describe('menu select', () => {
-  it('renders properly', () => {
-    const wrapper = createWrapper({
+describe('components/forms/select/RuiMenuSelect.vue', () => {
+  let wrapper: ReturnType<typeof createWrapper<any>>;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    wrapper?.unmount();
+
+    cleanupElements('*', document.body);
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
+  it('should render properly', () => {
+    wrapper = createWrapper({
       props: {
         keyAttr: 'id',
         modelValue: undefined,
@@ -34,17 +51,15 @@ describe('menu select', () => {
       },
     });
 
-    expect(wrapper.get('button[data-id="activator"]').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_activator_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, 'button[data-id="activator"]', /_activator_/);
     expect(wrapper.find('button[data-id="activator"] span[class*=label]').exists()).toBeTruthy();
     expect(wrapper.find('span > svg').exists()).toBeTruthy();
   });
 
-  it('passes props correctly', () => {
+  it('should pass props correctly', () => {
     const option4 = options[4];
     assert(option4);
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         disabled: true,
         keyAttr: 'id',
@@ -57,20 +72,21 @@ describe('menu select', () => {
     expect(wrapper.find('button[aria-disabled]').text()).toMatch('Spain');
   });
 
-  it('works with primitive options', () => {
+  it('should work with primitive options', () => {
     const option4 = options[4];
     assert(option4);
-    const wrapper = createWrapper({
+    const countryLabels = options.map(item => item.label);
+    wrapper = createWrapper({
       props: {
         modelValue: option4.label,
-        options: options.map(item => item.label),
+        options: countryLabels,
       },
     });
     expect(wrapper.find('button[data-id=activator]').text()).toMatch('Spain');
   });
 
-  it('value passed and emitted properly', async () => {
-    const wrapper = createWrapper({
+  it('should value passed and emitted properly', async () => {
+    wrapper = createWrapper({
       props: {
         autoSelectFirst: true,
         keyAttr: 'id',
@@ -82,37 +98,40 @@ describe('menu select', () => {
 
     // Open Menu Select
     await wrapper.find('[data-id=activator]').trigger('click');
-    await vi.delay();
-    await nextTick();
+    await vi.runAllTimersAsync();
+    await vi.runAllTimersAsync();
 
-    expect(document.body.querySelector('div[role=menu]')).toBeTruthy();
+    expect(queryByRole('menu')).toBeTruthy();
 
     const selectedIndex = 4;
-    let highlightedItemButton = document.body.querySelector(`button:first-child`) as HTMLButtonElement;
+    let highlightedItemButton = queryMenuButton(1);
+    assert(highlightedItemButton);
     expect(highlightedItemButton.classList).toContain('highlighted');
 
-    const buttonToSelect = document.body.querySelector(`button:nth-child(${selectedIndex})`) as HTMLButtonElement;
+    const buttonToSelect = queryMenuButton(selectedIndex);
     buttonToSelect?.click();
     expect(wrapper.emitted('update:modelValue')).toEqual([[selectedIndex.toString()]]);
 
-    await vi.delay();
-    expect(document.body.querySelector('div[role=menu]')).toBeFalsy();
+    await vi.runAllTimersAsync();
+    expect(queryByRole('menu')).toBeFalsy();
 
     // Open Menu Select
     await wrapper.find('[data-id=activator]').trigger('click');
-    await vi.delay();
-    await nextTick();
+    await vi.runAllTimersAsync();
+    await vi.runAllTimersAsync();
 
-    expect(document.body.querySelector('div[role=menu]')).toBeTruthy();
+    expect(queryByRole('menu')).toBeTruthy();
 
-    await nextTick();
+    await vi.runAllTimersAsync();
 
-    highlightedItemButton = document.body.querySelector(`button:nth-child(${selectedIndex})`) as HTMLButtonElement;
+    highlightedItemButton = queryMenuButton(selectedIndex);
+    assert(highlightedItemButton);
     expect(highlightedItemButton.classList).toContain('highlighted');
 
     await wrapper.find('[data-id=activator]').trigger('keydown.down');
 
-    highlightedItemButton = document.body.querySelector(`button:nth-child(${selectedIndex + 1})`) as HTMLButtonElement;
+    highlightedItemButton = queryMenuButton(selectedIndex + 1);
+    assert(highlightedItemButton);
     expect(highlightedItemButton.classList).toContain('highlighted');
 
     await wrapper.find('[data-id=activator]').trigger('keydown.up');
@@ -120,7 +139,8 @@ describe('menu select', () => {
 
     const newSelectedIndex = selectedIndex - 1;
 
-    highlightedItemButton = document.body.querySelector(`button:nth-child(${newSelectedIndex})`) as HTMLButtonElement;
+    highlightedItemButton = queryMenuButton(newSelectedIndex);
+    assert(highlightedItemButton);
     expect(highlightedItemButton.classList).toContain('highlighted');
 
     highlightedItemButton?.click();

@@ -1,9 +1,9 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { TransitionGroupStub } from '@/__test__/transition-group-stub';
 import { assert } from '@/utils/assert';
@@ -21,7 +21,9 @@ vi.mock('@/components/date-time-picker/utils', async (importOriginal) => {
   };
 });
 
-function createWrapper(options: ComponentMountingOptions<typeof RuiDateTimePicker>) {
+function createWrapper(
+  options: ComponentMountingOptions<typeof RuiDateTimePicker>,
+): VueWrapper<InstanceType<typeof RuiDateTimePicker>> {
   return mount(RuiDateTimePicker, {
     global: {
       stubs: {
@@ -35,13 +37,19 @@ function createWrapper(options: ComponentMountingOptions<typeof RuiDateTimePicke
   });
 }
 
-describe('date-time-picker/RuiDateTimePicker', () => {
+describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
+  let wrapper: VueWrapper<InstanceType<typeof RuiDateTimePicker>>;
+
   const fixedDate = new Date(2023, 0, 15, 10, 30, 45, 500);
   vi.useFakeTimers();
   vi.setSystemTime(fixedDate);
 
-  it('renders properly', () => {
-    const wrapper = createWrapper({
+  afterEach(() => {
+    wrapper?.unmount();
+  });
+
+  it('should render properly', () => {
+    wrapper = createWrapper({
       props: {
         modelValue: new Date(),
         type: 'date',
@@ -52,8 +60,8 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(wrapper.find('input').exists()).toBeTruthy();
   });
 
-  it('renders the default label', async () => {
-    const wrapper = createWrapper({
+  it('should render the default label', async () => {
+    wrapper = createWrapper({
       props: {
         modelValue: new Date(),
         type: 'date',
@@ -68,9 +76,9 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(input.attributes('placeholder')).toBe('DD/MM/YYYY HH:mm');
   });
 
-  it('renders with custom label', async () => {
+  it('should render with custom label', async () => {
     const customLabel = 'Custom Date Label';
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         label: customLabel,
         modelValue: new Date(),
@@ -82,8 +90,8 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(wrapper.find('[class*="_label_"]').text()).toBe(customLabel);
   });
 
-  it('applies disabled state correctly', () => {
-    const wrapper = createWrapper({
+  it('should apply disabled state correctly', () => {
+    wrapper = createWrapper({
       props: {
         disabled: true,
         modelValue: new Date(),
@@ -97,8 +105,8 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(input.attributes('disabled')).toBeDefined();
   });
 
-  it('applies readonly state correctly', () => {
-    const wrapper = createWrapper({
+  it('should apply readonly state correctly', () => {
+    wrapper = createWrapper({
       props: {
         modelValue: new Date(),
         readonly: true,
@@ -112,8 +120,8 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(input.attributes('readonly')).toBeDefined();
   });
 
-  it('applies dense state correctly', () => {
-    const wrapper = createWrapper({
+  it('should apply dense state correctly', () => {
+    wrapper = createWrapper({
       props: {
         dense: true,
         modelValue: new Date(),
@@ -125,8 +133,8 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(icon.attributes('width')).toBe('16');
   });
 
-  it('applies outlined variant correctly', () => {
-    const wrapper = createWrapper({
+  it('should apply outlined variant correctly', () => {
+    wrapper = createWrapper({
       props: {
         modelValue: new Date(),
         variant: 'outlined',
@@ -136,9 +144,9 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(wrapper.find('[class*="_outlined_"]').exists()).toBeTruthy();
   });
 
-  it('shows error messages correctly', () => {
+  it('should show error messages correctly', () => {
     const errorMessage = 'This is an error message';
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         errorMessages: errorMessage,
         modelValue: new Date(),
@@ -148,9 +156,9 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(wrapper.text()).toContain(errorMessage);
   });
 
-  it('shows success messages correctly', () => {
+  it('should show success messages correctly', () => {
     const successMessage = 'This is a success message';
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         modelValue: new Date(),
         successMessages: successMessage,
@@ -160,8 +168,8 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(wrapper.text()).toContain(successMessage);
   });
 
-  it('uses month-first format correctly', () => {
-    const wrapper = createWrapper({
+  it('should use month-first format correctly', () => {
+    wrapper = createWrapper({
       props: {
         format: 'month-first',
         modelValue: new Date(),
@@ -172,8 +180,8 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(input.attributes('placeholder')).toBe('MM/DD/YYYY HH:mm');
   });
 
-  it('uses year-first format correctly', () => {
-    const wrapper = createWrapper({
+  it('should use year-first format correctly', () => {
+    wrapper = createWrapper({
       props: {
         format: 'year-first',
         modelValue: new Date(),
@@ -184,8 +192,8 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(input.attributes('placeholder')).toBe('YYYY/MM/DD HH:mm');
   });
 
-  it('uses second accuracy correctly', () => {
-    const wrapper = createWrapper({
+  it('should use second accuracy correctly', () => {
+    wrapper = createWrapper({
       props: {
         accuracy: 'second',
         modelValue: new Date(),
@@ -196,8 +204,8 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(input.attributes('placeholder')).toBe('DD/MM/YYYY HH:mm:ss');
   });
 
-  it('uses millisecond accuracy correctly', () => {
-    const wrapper = createWrapper({
+  it('should use millisecond accuracy correctly', () => {
+    wrapper = createWrapper({
       props: {
         accuracy: 'millisecond',
         modelValue: new Date(),
@@ -208,8 +216,8 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(input.attributes('placeholder')).toBe('DD/MM/YYYY HH:mm:ss.SSS');
   });
 
-  it('initializes with current date when allowEmpty is false', async () => {
-    const wrapper = createWrapper({
+  it('should initialize with current date when allowEmpty is false', async () => {
+    wrapper = createWrapper({
       props: {
         allowEmpty: false,
         modelValue: new Date(),
@@ -225,8 +233,8 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(input.element.value).not.toBe('');
   });
 
-  it('initializes empty when allowEmpty is true', () => {
-    const wrapper = createWrapper({
+  it('should initialize empty when allowEmpty is true', () => {
+    wrapper = createWrapper({
       props: {
         allowEmpty: true,
         modelValue: undefined,
@@ -237,10 +245,10 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(modelValue).toBeFalsy();
   });
 
-  it('handles date model value type correctly', async () => {
+  it('should handle date model value type correctly', async () => {
     const testDate = new Date(2023, 5, 15, 14, 30);
 
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         modelValue: testDate,
         type: 'date',
@@ -254,11 +262,11 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(input.element.value).toContain('14:30');
   });
 
-  it('handles epoch-ms model value type correctly', async () => {
+  it('should handle epoch-ms model value type correctly', async () => {
     const testDate = new Date(2023, 5, 15, 14, 30);
     const epochMs = testDate.getTime();
 
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         modelValue: epochMs,
         type: 'epoch-ms',
@@ -284,11 +292,11 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(lastEmittedValue).toBe(target.valueOf());
   });
 
-  it('handles epoch model value type correctly', async () => {
+  it('should handle epoch model value type correctly', async () => {
     const testDate = new Date(2023, 5, 15, 14, 30);
     const epoch = Math.floor(testDate.getTime() / 1000);
 
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         modelValue: epoch,
         type: 'epoch',
@@ -314,10 +322,10 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(lastEmittedValue).toBe(target.valueOf() / 1000);
   });
 
-  it('respects min date constraint', async () => {
+  it('should respect min date constraint', async () => {
     const minDate = new Date(2023, 0, 10);
 
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         minDate,
         modelValue: new Date(2023, 0, 5), // Date before minDate
@@ -335,10 +343,10 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(vm.minDate).toEqual(minDate);
   });
 
-  it('respects max date constraint', async () => {
+  it('should respect max date constraint', async () => {
     const maxDate = new Date(2023, 0, 20);
 
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         maxDate,
         modelValue: new Date(2023, 0, 25), // Date after maxDate
@@ -356,11 +364,11 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(vm.maxDate).toEqual(maxDate);
   });
 
-  it('shows error message when date is below minAllowedDate', async () => {
+  it('should show error message when date is below minAllowedDate', async () => {
     const minDate = new Date(2023, 0, 10);
     const belowMinDate = new Date(2023, 0, 5); // Date before minDate
 
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         minDate,
         modelValue: belowMinDate,
@@ -372,11 +380,11 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(wrapper.find('.details').text()).toContain(`Date cannot be before ${minDate.toLocaleDateString()}`);
   });
 
-  it('shows error message when date is above maxAllowedDate', async () => {
+  it('should show error message when date is above maxAllowedDate', async () => {
     const maxDate = new Date(2023, 0, 20);
     const aboveMaxDate = new Date(2023, 0, 25);
 
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         maxDate,
         modelValue: aboveMaxDate,
@@ -390,7 +398,7 @@ describe('date-time-picker/RuiDateTimePicker', () => {
   it('should show an error when now is used as mas an the date is in the future', async () => {
     const aboveMaxDate = new Date(2023, 0, 25);
 
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         maxDate: 'now',
         modelValue: aboveMaxDate,
@@ -401,8 +409,8 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(wrapper.find('.details').text()).toContain('The selected date cannot be in the future');
   });
 
-  it('handles "now" as maxDate correctly', async () => {
-    const wrapper = createWrapper({
+  it('should handle "now" as maxDate correctly', async () => {
+    wrapper = createWrapper({
       props: {
         maxDate: 'now',
         modelValue: new Date(2023, 0, 25),
@@ -423,11 +431,11 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(vm.maxAllowedDate.getMinutes()).toBe(expectedDate.getMinutes());
   });
 
-  it('respects min date constraint with epoch type', async () => {
+  it('should respect min date constraint with epoch type', async () => {
     const testDate = new Date(2023, 0, 10);
     const minDateEpoch = Math.floor(testDate.getTime() / 1000);
 
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         minDate: minDateEpoch,
         modelValue: new Date(2023, 0, 5), // Date before minDate
@@ -445,11 +453,11 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(minAllowedDate.getDate()).toBe(testDate.getDate());
   });
 
-  it('respects max date constraint with epoch type', async () => {
+  it('should respect max date constraint with epoch type', async () => {
     const testDate = new Date(2023, 0, 20);
     const maxDateEpoch = Math.floor(testDate.getTime() / 1000);
 
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         maxDate: maxDateEpoch,
         modelValue: new Date(2023, 0, 25), // Date after maxDate
@@ -467,12 +475,12 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(maxAllowedDate.getDate()).toBe(testDate.getDate());
   });
 
-  it('shows error message when date is below minAllowedDate with epoch type', async () => {
+  it('should show error message when date is below minAllowedDate with epoch type', async () => {
     const testDate = new Date(2023, 0, 10);
     const minDateEpoch = Math.floor(testDate.getTime() / 1000);
     const belowMinDate = new Date(2023, 0, 5); // Date before minDate
 
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         minDate: minDateEpoch,
         modelValue: belowMinDate,
@@ -485,12 +493,12 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(wrapper.find('.details').text()).toContain(`Date cannot be before ${testDate.toLocaleDateString()}`);
   });
 
-  it('shows error message when date is above maxAllowedDate with epoch type', async () => {
+  it('should show error message when date is above maxAllowedDate with epoch type', async () => {
     const testDate = new Date(2023, 0, 20);
     const maxDateEpoch = Math.floor(testDate.getTime() / 1000);
     const aboveMaxDate = new Date(2023, 0, 25); // Date after maxDate
 
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         maxDate: maxDateEpoch,
         modelValue: aboveMaxDate,
@@ -503,8 +511,8 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(wrapper.find('.details').text()).toContain(`Date cannot be after ${testDate.toLocaleDateString()}`);
   });
 
-  it('clears the value when clear button is clicked', async () => {
-    const wrapper = createWrapper({
+  it('should clear the value when clear button is clicked', async () => {
+    wrapper = createWrapper({
       props: {
         allowEmpty: true,
         modelValue: new Date(2023, 0, 15),
@@ -532,8 +540,8 @@ describe('date-time-picker/RuiDateTimePicker', () => {
     expect(emittedFirst[0]).toBeUndefined();
   });
 
-  it('sets current date and time when "Now" button is clicked', async () => {
-    const wrapper = createWrapper({
+  it('should set current date and time when "now" button is clicked', async () => {
+    wrapper = createWrapper({
       props: {
         modelValue: new Date(2022, 0, 1), // Old date
         type: 'date',
@@ -558,7 +566,7 @@ describe('date-time-picker/RuiDateTimePicker', () => {
 
   it('should update the date if the user updates using the keyboard arrows', async () => {
     const date = dayjs('2022-01-01 09:09');
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         modelValue: date.toDate(),
         type: 'date',
@@ -589,12 +597,13 @@ describe('date-time-picker/RuiDateTimePicker', () => {
 
     const lastEmittedValue = modelValue?.at(-1)?.[0];
     assert(lastEmittedValue && lastEmittedValue instanceof Date);
-    expect(dayjs(lastEmittedValue).isSame(dayjs('2021-03-03 10:08')), 'the emitted date was not the expected').toBeTruthy();
+    expect(dayjs(lastEmittedValue).isSame(dayjs('2021-03-03 10:08')), 'the emitted date was not the expected')
+      .toBeTruthy();
   });
 
   it('should clear the field on delete and allow the user to type a new date', async () => {
     const date = dayjs('2022-01-01 09:09');
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         modelValue: date.toDate(),
         type: 'date',
@@ -625,12 +634,13 @@ describe('date-time-picker/RuiDateTimePicker', () => {
 
     const lastEmittedValue = modelValue?.at(-1)?.[0];
     assert(lastEmittedValue && lastEmittedValue instanceof Date);
-    expect(dayjs(lastEmittedValue).isSame(dayjs('2025-01-01 09:09')), 'the emitted date was not the expected').toBeTruthy();
+    expect(dayjs(lastEmittedValue).isSame(dayjs('2025-01-01 09:09')), 'the emitted date was not the expected')
+      .toBeTruthy();
   });
 
   it('should remove the last field on backspace and allow the user fill', async () => {
     const date = dayjs('2022-01-01 09:09');
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         modelValue: date.toDate(),
         type: 'date',
@@ -658,12 +668,13 @@ describe('date-time-picker/RuiDateTimePicker', () => {
 
     const lastEmittedValue = modelValue?.at(-1)?.[0];
     assert(lastEmittedValue && lastEmittedValue instanceof Date);
-    expect(dayjs(lastEmittedValue).isSame(dayjs('2025-01-01 09:09')), 'the emitted date was not the expected').toBeTruthy();
+    expect(dayjs(lastEmittedValue).isSame(dayjs('2025-01-01 09:09')), 'the emitted date was not the expected')
+      .toBeTruthy();
   });
 
   it('should be able to type a full date following the pattern', async () => {
     const date = dayjs('2022-01-01 09:09');
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         modelValue: date.toDate(),
         type: 'date',
@@ -694,11 +705,12 @@ describe('date-time-picker/RuiDateTimePicker', () => {
 
     const lastEmittedValue = modelValue?.at(-1)?.[0];
     assert(lastEmittedValue && lastEmittedValue instanceof Date);
-    expect(dayjs(lastEmittedValue).isSame(dayjs('2000-12-12 10:05')), 'the emitted date was not the expected').toBeTruthy();
+    expect(dayjs(lastEmittedValue).isSame(dayjs('2000-12-12 10:05')), 'the emitted date was not the expected')
+      .toBeTruthy();
   });
 
   it('should update the model when setting a date using setValue', async () => {
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         modelValue: new Date(2022, 0, 1), // Start with January 1, 2022
         type: 'date',

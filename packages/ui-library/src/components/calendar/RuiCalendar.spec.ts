@@ -1,10 +1,12 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import RuiCalendar from '@/components/calendar/RuiCalendar.vue';
 import { assert } from '@/utils/assert';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiCalendar>) {
+function createWrapper(
+  options?: ComponentMountingOptions<typeof RuiCalendar>,
+): VueWrapper<InstanceType<typeof RuiCalendar>> {
   return mount(RuiCalendar, {
     global: {
       stubs: {
@@ -17,7 +19,9 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiCalendar>) {
   });
 }
 
-describe('calendar/RuiCalendar', () => {
+describe('components/calendar/RuiCalendar.vue', () => {
+  let wrapper: VueWrapper<InstanceType<typeof RuiCalendar>>;
+
   const testDate = new Date(2023, 0, 15); // January 15, 2023
   let originalDate: typeof Date;
 
@@ -28,6 +32,8 @@ describe('calendar/RuiCalendar', () => {
   });
 
   afterEach(() => {
+    wrapper?.unmount();
+
     vi.useRealTimers();
     // eslint-disable-next-line no-restricted-globals
     global.Date = originalDate;
@@ -35,7 +41,7 @@ describe('calendar/RuiCalendar', () => {
 
   describe('component Rendering', () => {
     it('should render properly with default props', () => {
-      const wrapper = createWrapper();
+      wrapper = createWrapper();
 
       expect(wrapper.find('.rui-calendar').exists()).toBeTruthy();
       expect(wrapper.find('.rui-calendar').classes()).toContain('bordered');
@@ -43,7 +49,7 @@ describe('calendar/RuiCalendar', () => {
     });
 
     it('should render borderless when prop is set', () => {
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           borderless: true,
         },
@@ -54,7 +60,7 @@ describe('calendar/RuiCalendar', () => {
 
     it('should render with initial model value', () => {
       const selectedDate = new Date(2023, 0, 20); // January 20, 2023
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           modelValue: selectedDate,
         },
@@ -64,7 +70,7 @@ describe('calendar/RuiCalendar', () => {
     });
 
     it('should render correct month title', () => {
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           modelValue: testDate,
         },
@@ -76,7 +82,7 @@ describe('calendar/RuiCalendar', () => {
 
   describe('date Selection', () => {
     it('should select a date when clicked', async () => {
-      const wrapper = createWrapper();
+      wrapper = createWrapper();
       const targetDate = new Date(2023, 0, 10);
 
       // Find the button for January 10, 2023
@@ -100,7 +106,7 @@ describe('calendar/RuiCalendar', () => {
       const initialDate = new Date(2023, 0, 10);
       const newDate = new Date(2023, 0, 20);
 
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           modelValue: initialDate,
         },
@@ -115,7 +121,7 @@ describe('calendar/RuiCalendar', () => {
 
     it('should clear selection when allowEmpty is true and selected date is clicked', async () => {
       const selectedDate = new Date(2023, 0, 15);
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           allowEmpty: true,
           modelValue: selectedDate,
@@ -135,7 +141,7 @@ describe('calendar/RuiCalendar', () => {
 
     it('should not clear selection when allowEmpty is false', async () => {
       const selectedDate = new Date(2023, 0, 15);
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           allowEmpty: false,
           modelValue: selectedDate,
@@ -154,7 +160,7 @@ describe('calendar/RuiCalendar', () => {
 
   describe('navigation', () => {
     it('should navigate to previous month', async () => {
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           modelValue: new Date(2023, 1, 15), // February 15, 2023
         },
@@ -168,7 +174,7 @@ describe('calendar/RuiCalendar', () => {
     });
 
     it('should navigate to next month', async () => {
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           modelValue: new Date(2023, 0, 15), // January 15, 2023
         },
@@ -182,7 +188,7 @@ describe('calendar/RuiCalendar', () => {
     });
 
     it('should handle year boundaries correctly', async () => {
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           modelValue: new Date(2023, 11, 15), // December 15, 2023
         },
@@ -196,7 +202,7 @@ describe('calendar/RuiCalendar', () => {
     });
 
     it('should emit update:pages event when navigating', async () => {
-      const wrapper = createWrapper();
+      wrapper = createWrapper();
 
       const nextButton = wrapper.findAll('button[class*="nav-button"]')[1];
       await nextButton?.trigger('click');
@@ -211,7 +217,7 @@ describe('calendar/RuiCalendar', () => {
 
   describe('month/Year Selection Menu', () => {
     it('should open month/year selection menu when title is clicked', async () => {
-      const wrapper = createWrapper();
+      wrapper = createWrapper();
 
       const titleElement = wrapper.find('.header-title');
       await titleElement.trigger('click');
@@ -225,7 +231,7 @@ describe('calendar/RuiCalendar', () => {
     });
 
     it('should handle month selection from menu', async () => {
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           modelValue: new Date(2023, 0, 15), // January 15, 2023
         },
@@ -241,7 +247,7 @@ describe('calendar/RuiCalendar', () => {
 
     it('should allow returning to max date year when navigating years', async () => {
       const maxDate = new Date(2025, 11, 31); // December 31, 2025
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           maxDate,
           modelValue: new Date(2023, 0, 15), // January 15, 2023
@@ -268,7 +274,7 @@ describe('calendar/RuiCalendar', () => {
   describe('date Constraints', () => {
     it('should disable dates before minDate', () => {
       const minDate = new Date(2023, 0, 10);
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           minDate,
         },
@@ -281,7 +287,7 @@ describe('calendar/RuiCalendar', () => {
 
     it('should disable dates after maxDate', () => {
       const maxDate = new Date(2023, 0, 20);
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           maxDate,
         },
@@ -296,7 +302,7 @@ describe('calendar/RuiCalendar', () => {
     it('should allow selection within date range', async () => {
       const minDate = new Date(2023, 0, 10);
       const maxDate = new Date(2023, 0, 20);
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           maxDate,
           minDate,
@@ -305,9 +311,7 @@ describe('calendar/RuiCalendar', () => {
 
       // Try to select a date within range
       const dayButtons = wrapper.findAll('button[type="button"]');
-      const targetButton = dayButtons.find(button =>
-        button.text() === '15' && !button.attributes('disabled'),
-      );
+      const targetButton = dayButtons.find(button => button.text() === '15' && !button.attributes('disabled'));
 
       if (targetButton) {
         await targetButton.trigger('click');
@@ -319,7 +323,7 @@ describe('calendar/RuiCalendar', () => {
       const minTimestamp = new Date(2023, 0, 10).getTime();
       const maxTimestamp = new Date(2023, 0, 20).getTime();
 
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           maxDate: maxTimestamp,
           minDate: minTimestamp,
@@ -335,7 +339,7 @@ describe('calendar/RuiCalendar', () => {
 
   describe('today Indicator', () => {
     it('should show today indicator on current date', () => {
-      const wrapper = createWrapper();
+      wrapper = createWrapper();
 
       // Look for today's date with special styling
       const todayButton = wrapper.find('button[class*="today-indicator"]');
@@ -343,7 +347,7 @@ describe('calendar/RuiCalendar', () => {
     });
 
     it('should not show today indicator when today is selected', () => {
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           modelValue: testDate, // Today's date
         },
@@ -361,7 +365,7 @@ describe('calendar/RuiCalendar', () => {
 
   describe('previous/Next Month Days', () => {
     it('should show grayed out days from previous and next months', () => {
-      const wrapper = createWrapper();
+      wrapper = createWrapper();
 
       // Look for days that are not in current month (should be grayed out)
       const grayedDays = wrapper.findAll('button[class*="text-gray-400"]');
@@ -369,7 +373,7 @@ describe('calendar/RuiCalendar', () => {
     });
 
     it('should allow selection of previous/next month days when in range', async () => {
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           maxDate: new Date(2023, 1, 5), // February 5, 2023
           minDate: new Date(2022, 11, 25), // December 25, 2022
@@ -390,7 +394,7 @@ describe('calendar/RuiCalendar', () => {
 
   describe('exposed Methods', () => {
     it('should expose move method for programmatic navigation', async () => {
-      const wrapper = createWrapper();
+      wrapper = createWrapper();
       const component = wrapper.vm;
 
       // Test that move method exists and can be called
@@ -405,7 +409,7 @@ describe('calendar/RuiCalendar', () => {
     });
 
     it('should handle move method with timestamp', async () => {
-      const wrapper = createWrapper();
+      wrapper = createWrapper();
       const component = wrapper.vm;
 
       const targetTimestamp = new Date(2023, 7, 10).getTime(); // August 10, 2023
@@ -418,7 +422,7 @@ describe('calendar/RuiCalendar', () => {
 
   describe('menu State Management', () => {
     it('should manage menu-open model correctly', async () => {
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           menuOpen: false,
         },
@@ -432,7 +436,7 @@ describe('calendar/RuiCalendar', () => {
     });
 
     it('should emit menu-open updates', async () => {
-      const wrapper = createWrapper();
+      wrapper = createWrapper();
 
       const calendarHeader = wrapper.findComponent({ name: 'RuiCalendarHeader' });
       await calendarHeader.vm.$emit('update:menu-open', true);
@@ -447,7 +451,7 @@ describe('calendar/RuiCalendar', () => {
 
   describe('view Synchronization', () => {
     it('should update view when model value changes to different month', async () => {
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           modelValue: new Date(2023, 0, 15), // January 15, 2023
         },
@@ -465,7 +469,7 @@ describe('calendar/RuiCalendar', () => {
     });
 
     it('should maintain view when clearing selection', async () => {
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           allowEmpty: true,
           modelValue: new Date(2023, 3, 15), // April 15, 2023
@@ -485,7 +489,7 @@ describe('calendar/RuiCalendar', () => {
 
   describe('edge Cases', () => {
     it('should handle undefined initial model value', () => {
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           modelValue: undefined,
         },
@@ -497,7 +501,7 @@ describe('calendar/RuiCalendar', () => {
     });
 
     it('should handle rapid navigation clicks', async () => {
-      const wrapper = createWrapper();
+      wrapper = createWrapper();
 
       const nextButton = wrapper.findAll('button[class*="nav-button"]')[1];
 
@@ -512,7 +516,7 @@ describe('calendar/RuiCalendar', () => {
 
     it('should preserve time when selecting dates', async () => {
       const initialDate = new Date(2023, 0, 15, 14, 30, 45); // January 15, 2023 2:30:45 PM
-      const wrapper = createWrapper({
+      wrapper = createWrapper({
         props: {
           modelValue: initialDate,
         },
@@ -520,9 +524,7 @@ describe('calendar/RuiCalendar', () => {
 
       // Select a different date
       const dayButtons = wrapper.findAll('button[type="button"]');
-      const targetButton = dayButtons.find(button =>
-        button.text() === '20' && !button.attributes('disabled'),
-      );
+      const targetButton = dayButtons.find(button => button.text() === '20' && !button.attributes('disabled'));
 
       if (targetButton) {
         await targetButton.trigger('click');

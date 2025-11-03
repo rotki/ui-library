@@ -3,15 +3,17 @@
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.vitest.tsbuildinfo",
-    "lib": [],
-    "types": ["node", "jsdom", "vitest/globals"]
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "types": ["node", "jsdom", "vitest/globals"],
+    "skipLibCheck": true
   },
   "include": [
     "env.d.ts",
-    "vue-shim.d.ts",
-    "vitest-globals.d.ts",
     "src/**/*",
     "src/**/*.vue",
     "tests/**/*"
+  ],
+  "exclude": [
+    "src/**/*.stories.ts"
   ]
 }

@@ -1,14 +1,16 @@
 import type { Ref } from 'vue';
 
-export type KeyOfType<T, V> = V extends object
-  ? keyof T
-  : keyof {
-    [P in keyof T as T[P] extends V
-      ? P
-      : V extends T[P]
+export type KeyOfType<T, V> = T extends string | number | boolean | symbol | null | undefined
+  ? never
+  : V extends object
+    ? keyof T
+    : keyof {
+      [P in keyof T as T[P] extends V
         ? P
-        : never]: any
-  };
+        : V extends T[P]
+          ? P
+          : never]: any
+    };
 
 export interface DropdownItemAttr<TValue, TItem> {
   keyAttr?: KeyOfType<TItem, TValue extends Array<infer U> ? U : TValue>;

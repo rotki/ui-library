@@ -1,9 +1,13 @@
-import { type ComponentMountingOptions, flushPromises, mount } from '@vue/test-utils';
+import { type ComponentMountingOptions, flushPromises, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
+import { cleanupElements, expectToHaveClass, queryBody, queryByRole } from '~/tests/helpers/dom-helpers';
+import { CLASS_PATTERNS, DATA_ATTRIBUTE_SELECTORS } from '~/tests/helpers/selectors';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiTooltip>) {
+function createWrapper(
+  options?: ComponentMountingOptions<typeof RuiTooltip>,
+): VueWrapper<InstanceType<typeof RuiTooltip>> {
   return mount(RuiTooltip, {
     ...options,
     global: {
@@ -16,7 +20,9 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiTooltip>) {
   });
 }
 
-describe('tooltip', () => {
+describe('components/overlays/tooltip/RuiTooltip.vue', () => {
+  let wrapper: VueWrapper<InstanceType<typeof RuiTooltip>>;
+
   const text = 'Tooltip content';
 
   beforeEach(() => {
@@ -24,15 +30,16 @@ describe('tooltip', () => {
   });
 
   afterEach(() => {
+    wrapper?.unmount();
+
+    cleanupElements('[role="tooltip"]');
     vi.runOnlyPendingTimers();
+    vi.restoreAllMocks();
     vi.useRealTimers();
-    // Clean up any tooltips that might be left in DOM
-    const tooltips = document.querySelectorAll('[role="tooltip"]');
-    tooltips.forEach(tooltip => tooltip.remove());
   });
 
-  it('renders properly', async () => {
-    const wrapper = createWrapper({
+  it('should render properly', async () => {
+    wrapper = createWrapper({
       props: {
         text,
       },
@@ -40,33 +47,27 @@ describe('tooltip', () => {
 
     await wrapper.trigger('mouseover');
 
-    const tooltip = document.body.querySelector('div[role=tooltip]');
+    const tooltip = queryByRole<HTMLDivElement>('tooltip');
 
     expect(tooltip).toBeTruthy();
-    expect(Array.from(tooltip?.classList ?? [])).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tooltip_/)]),
-    );
-    expect(
-      document.body.querySelector('div[data-popper-placement=bottom]'),
-    ).toBeTruthy();
-    expect(tooltip?.querySelector('span[data-popper-arrow]')).toBeTruthy();
-    wrapper.unmount();
+    expectToHaveClass(tooltip, CLASS_PATTERNS.TOOLTIP);
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
+    expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.POPPER_ARROW)).toBeTruthy();
   });
 
-  it('passes props correctly', () => {
-    const wrapper = createWrapper({
+  it('should pass props correctly', () => {
+    wrapper = createWrapper({
       props: {
         disabled: true,
         text,
       },
     });
     expect(wrapper.get('#activator')).toBeTruthy();
-    expect(document.body.querySelector('div[role=tooltip]')).toBeFalsy();
-    wrapper.unmount();
+    expect(queryByRole('tooltip')).toBeFalsy();
   });
 
-  it('disabled does not trigger tooltip', async () => {
-    const wrapper = createWrapper({
+  it('should not trigger tooltip when disabled', async () => {
+    wrapper = createWrapper({
       props: {
         disabled: true,
         text,
@@ -75,32 +76,25 @@ describe('tooltip', () => {
 
     await wrapper.trigger('mouseover');
 
-    let tooltip = document.body.querySelector('div[role=tooltip]');
+    let tooltip = queryByRole<HTMLDivElement>('tooltip');
 
     expect(tooltip).toBeFalsy();
-    expect(
-      document.body.querySelector('div[data-popper-placement=bottom]'),
-    ).toBeFalsy();
-    expect(tooltip?.querySelector('span[data-popper-arrow]')).toBeFalsy();
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeFalsy();
+    expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.POPPER_ARROW)).toBeFalsy();
     await wrapper.setProps({ disabled: false });
 
     await wrapper.trigger('mouseover');
 
-    tooltip = document.body.querySelector('div[role=tooltip]');
+    tooltip = queryByRole<HTMLDivElement>('tooltip');
 
     expect(tooltip).toBeTruthy();
-    expect(Array.from(tooltip?.classList ?? [])).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tooltip_/)]),
-    );
-    expect(
-      document.body.querySelector('div[data-popper-placement=bottom]'),
-    ).toBeTruthy();
-    expect(tooltip?.querySelector('span[data-popper-arrow]')).toBeTruthy();
-    wrapper.unmount();
+    expectToHaveClass(tooltip, CLASS_PATTERNS.TOOLTIP);
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
+    expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.POPPER_ARROW)).toBeTruthy();
   });
 
-  it('tooltip only appears after `openDelay` timeout', async () => {
-    const wrapper = createWrapper({
+  it('should tooltip only appears after `openDelay` timeout', async () => {
+    wrapper = createWrapper({
       props: {
         closeDelay: 50000,
         openDelay: 400,
@@ -110,16 +104,12 @@ describe('tooltip', () => {
 
     await wrapper.trigger('mouseover');
 
-    const tooltip = document.body.querySelector('div[role=tooltip]');
+    const tooltip = queryByRole<HTMLDivElement>('tooltip');
 
     expect(tooltip).toBeTruthy();
-    expect(Array.from(tooltip?.classList ?? [])).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tooltip_/)]),
-    );
-    expect(
-      document.body.querySelector('div[data-popper-placement=bottom]'),
-    ).toBeTruthy();
-    expect(tooltip?.querySelector('span[data-popper-arrow]')).toBeTruthy();
+    expectToHaveClass(tooltip, CLASS_PATTERNS.TOOLTIP);
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
+    expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.POPPER_ARROW)).toBeTruthy();
 
     // Tooltip shouldn't appear if the mouseleave happens before the timer ends.
     vi.advanceTimersByTime(100);
@@ -138,13 +128,11 @@ describe('tooltip', () => {
     vi.advanceTimersByTime(350);
     await flushPromises();
     expect(document.body.innerHTML).toMatch(new RegExp(text));
-
-    wrapper.unmount();
   });
 
-  it('tooltip disappears after `closeDelay` timeout', async () => {
-    expect(document.body.querySelector('div[role=tooltip]')).toBeFalsy();
-    const wrapper = createWrapper({
+  it('should tooltip disappears after `closeDelay` timeout', async () => {
+    expect(queryByRole('tooltip')).toBeFalsy();
+    wrapper = createWrapper({
       props: {
         closeDelay: 500,
         text,
@@ -155,58 +143,46 @@ describe('tooltip', () => {
     vi.advanceTimersByTime(1);
     await flushPromises();
 
-    let tooltip = document.body.querySelector('div[role=tooltip]');
+    let tooltip = queryByRole<HTMLDivElement>('tooltip');
 
     expect(tooltip).toBeTruthy();
-    expect(Array.from(tooltip?.classList ?? [])).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tooltip_/)]),
-    );
-    expect(
-      document.body.querySelector('div[data-popper-placement=bottom]'),
-    ).toBeTruthy();
-    expect(tooltip?.querySelector('span[data-popper-arrow]')).toBeTruthy();
+    expectToHaveClass(tooltip, CLASS_PATTERNS.TOOLTIP);
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
+    expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.POPPER_ARROW)).toBeTruthy();
 
     await wrapper.trigger('mouseleave');
 
-    tooltip = document.body.querySelector('div[role=tooltip]');
+    tooltip = queryByRole<HTMLDivElement>('tooltip');
 
     expect(tooltip).toBeTruthy();
-    expect(Array.from(tooltip?.classList ?? [])).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tooltip_/)]),
-    );
-    expect(
-      document.body.querySelector('div[data-popper-placement=bottom]'),
-    ).toBeTruthy();
-    expect(tooltip?.querySelector('span[data-popper-arrow]')).toBeTruthy();
+    expectToHaveClass(tooltip, CLASS_PATTERNS.TOOLTIP);
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
+    expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.POPPER_ARROW)).toBeTruthy();
     expect(document.body.innerHTML).toMatch(new RegExp(text));
 
     vi.advanceTimersByTime(600);
     await flushPromises();
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
-
-    wrapper.unmount();
   });
 
-  it('tooltip appears on focus and disappears on blur', async () => {
-    const wrapper = createWrapper({
+  it('should tooltip appears on focus and disappears on blur', async () => {
+    wrapper = createWrapper({
       props: {
         text,
       },
     });
 
     // Initially no tooltip
-    expect(document.body.querySelector('div[role=tooltip]')).toBeFalsy();
+    expect(queryByRole('tooltip')).toBeFalsy();
 
     // Focus on the activator button
     await wrapper.trigger('focusin');
     vi.advanceTimersByTime(1);
     await flushPromises();
 
-    const tooltip = document.body.querySelector('div[role=tooltip]');
+    const tooltip = queryByRole<HTMLDivElement>('tooltip');
     expect(tooltip).toBeTruthy();
-    expect(Array.from(tooltip?.classList ?? [])).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_tooltip_/)]),
-    );
+    expectToHaveClass(tooltip, CLASS_PATTERNS.TOOLTIP);
     expect(document.body.innerHTML).toMatch(new RegExp(text));
 
     // Blur should close the tooltip
@@ -215,12 +191,10 @@ describe('tooltip', () => {
     await flushPromises(); // Wait for closeDelay
 
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
-
-    wrapper.unmount();
   });
 
-  it('tooltip respects openDelay and closeDelay for focus events', async () => {
-    const wrapper = createWrapper({
+  it('should tooltip respects openDelay and closeDelay for focus events', async () => {
+    wrapper = createWrapper({
       props: {
         closeDelay: 500,
         openDelay: 400,
@@ -247,12 +221,10 @@ describe('tooltip', () => {
     vi.advanceTimersByTime(500);
     await flushPromises();
     expect(document.body.innerHTML).not.toMatch(new RegExp(text)); // Now hidden
-
-    wrapper.unmount();
   });
 
-  it('tooltip stays open when triggered by both hover and focus', async () => {
-    const wrapper = createWrapper({
+  it('should keep tooltip open when triggered by both hover and focus', async () => {
+    wrapper = createWrapper({
       props: {
         closeDelay: 500,
         openDelay: 0,
@@ -266,7 +238,7 @@ describe('tooltip', () => {
     vi.advanceTimersByTime(100);
     await flushPromises();
 
-    let tooltip = document.body.querySelector('div[role=tooltip]');
+    let tooltip = queryByRole<HTMLDivElement>('tooltip');
     expect(tooltip).toBeTruthy();
     expect(document.body.innerHTML).toMatch(new RegExp(text));
 
@@ -275,7 +247,7 @@ describe('tooltip', () => {
     vi.advanceTimersByTime(100);
     await flushPromises(); // Small delay to ensure event is processed
 
-    tooltip = document.body.querySelector('div[role=tooltip]');
+    tooltip = queryByRole<HTMLDivElement>('tooltip');
     expect(tooltip).toBeTruthy();
     expect(document.body.innerHTML).toMatch(new RegExp(text));
 
@@ -285,7 +257,5 @@ describe('tooltip', () => {
     await flushPromises();
 
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
-
-    wrapper.unmount();
   });
 });

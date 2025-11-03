@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createBlockie } from './blockie';
+import { createBlockie } from '@/utils/blockie';
 
-describe('utils/blockie', () => {
+describe('utils/blockie.ts', () => {
   const mockCanvas = {
     getContext: vi.fn(),
     height: 0,
@@ -25,7 +25,7 @@ describe('utils/blockie', () => {
     vi.restoreAllMocks();
   });
 
-  it('creates a blockie with default options', () => {
+  it('should create a blockie with default options', () => {
     const result = createBlockie({});
 
     expect(document.createElement).toHaveBeenCalledWith('canvas');
@@ -34,7 +34,7 @@ describe('utils/blockie', () => {
     expect(result).toBe('data:image/jpeg;base64,test');
   });
 
-  it('uses provided seed for consistent generation', () => {
+  it('should use provided seed for consistent generation', () => {
     const options = { seed: 'test-seed' };
     createBlockie(options);
 
@@ -43,7 +43,7 @@ describe('utils/blockie', () => {
     expect(mockContext.fillRect).toHaveBeenCalled();
   });
 
-  it('applies custom size and scale', () => {
+  it('should apply custom size and scale', () => {
     const options = { scale: 5, size: 10 };
     createBlockie(options);
 
@@ -51,7 +51,7 @@ describe('utils/blockie', () => {
     expect(mockCanvas.height).toBe(50);
   });
 
-  it('uses custom colors when provided', () => {
+  it('should use custom colors when provided', () => {
     const options = {
       bgcolor: '#0000FF',
       color: '#FF0000',
@@ -63,7 +63,7 @@ describe('utils/blockie', () => {
     expect(mockContext.fillRect).toHaveBeenCalled();
   });
 
-  it('generates random seed when not provided', () => {
+  it('should generate random seed when not provided', () => {
     const spy = vi.spyOn(Math, 'random').mockReturnValue(0.5);
 
     createBlockie({});
@@ -72,7 +72,7 @@ describe('utils/blockie', () => {
     spy.mockRestore();
   });
 
-  it('creates mirrored pattern', () => {
+  it('should create mirrored pattern', () => {
     const options = { seed: 'test', size: 4 };
     createBlockie(options);
 
@@ -81,7 +81,7 @@ describe('utils/blockie', () => {
     expect(fillRectCalls.length).toBeGreaterThan(0);
   });
 
-  it('handles canvas context not available', () => {
+  it('should handle canvas context not available', () => {
     mockCanvas.getContext.mockReturnValue(null);
 
     const result = createBlockie({ seed: 'test' });
@@ -90,7 +90,7 @@ describe('utils/blockie', () => {
     expect(mockContext.fillRect).not.toHaveBeenCalled();
   });
 
-  it('generates consistent colors for same seed', () => {
+  it('should generate consistent colors for same seed', () => {
     const seed = 'consistent-seed';
     const fillStyleValues: string[] = [];
 
@@ -119,7 +119,7 @@ describe('utils/blockie', () => {
     });
   });
 
-  it('respects spot color setting of -1 to disable spots', () => {
+  it('should respect spot color setting of -1 to disable spots', () => {
     const options = { seed: 'test', spotColor: '-1' };
     createBlockie(options);
 

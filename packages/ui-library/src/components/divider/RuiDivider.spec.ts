@@ -1,38 +1,37 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
+import { afterEach, describe, expect, it } from 'vitest';
 import RuiDivider from '@/components/divider/RuiDivider.vue';
+import { expectNotToHaveClass, expectToHaveClass } from '~/tests/helpers/dom-helpers';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiDivider>) {
+function createWrapper(
+  options?: ComponentMountingOptions<typeof RuiDivider>,
+): VueWrapper<InstanceType<typeof RuiDivider>> {
   return mount(RuiDivider, { ...options, stubs: { RuiIcon: true } });
 }
 
-describe('divider', () => {
-  it('renders properly', () => {
-    const wrapper = createWrapper();
+describe('components/divider/RuiDivider.vue', () => {
+  let wrapper: VueWrapper<InstanceType<typeof RuiDivider>>;
+
+  afterEach(() => {
+    wrapper?.unmount();
+  });
+
+  it('should render properly', () => {
+    wrapper = createWrapper();
     expect(wrapper.find('div')).toBeTruthy();
   });
 
-  it('passes vertical props', async () => {
-    const wrapper = createWrapper();
-    expect(wrapper.get('div').classes()).not.toEqual(
-      expect.arrayContaining([expect.stringMatching(/border-l/)]),
-    );
-    expect(wrapper.get('div').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/border-t/)]),
-    );
+  it('should pass vertical props', async () => {
+    wrapper = createWrapper();
+    expectNotToHaveClass(wrapper.element, /border-l/);
+    expectToHaveClass(wrapper.element, /border-t/);
+
     await wrapper.setProps({ vertical: true });
-    expect(wrapper.get('div').classes()).not.toEqual(
-      expect.arrayContaining([expect.stringMatching(/border-t/)]),
-    );
-    expect(wrapper.get('div').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/border-l/)]),
-    );
+    expectNotToHaveClass(wrapper.element, /border-t/);
+    expectToHaveClass(wrapper.element, /border-l/);
+
     await wrapper.setProps({ vertical: false });
-    expect(wrapper.get('div').classes()).not.toEqual(
-      expect.arrayContaining([expect.stringMatching(/border-l/)]),
-    );
-    expect(wrapper.get('div').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/border-t/)]),
-    );
+    expectNotToHaveClass(wrapper.element, /border-l/);
+    expectToHaveClass(wrapper.element, /border-t/);
   });
 });

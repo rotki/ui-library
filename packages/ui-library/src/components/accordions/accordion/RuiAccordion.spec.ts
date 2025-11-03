@@ -1,8 +1,11 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import RuiAccordion from '@/components/accordions/accordion/RuiAccordion.vue';
+import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiAccordion>) {
+function createWrapper(
+  options?: ComponentMountingOptions<typeof RuiAccordion>,
+): VueWrapper<InstanceType<typeof RuiAccordion>> {
   return mount(RuiAccordion, {
     ...options,
     slots: {
@@ -12,9 +15,15 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiAccordion>) 
   });
 }
 
-describe('accordions/Accordion', () => {
-  it('renders properly', () => {
-    const wrapper = createWrapper({
+describe('components/accordions/accordion/RuiAccordion.vue', () => {
+  let wrapper: VueWrapper<InstanceType<typeof RuiAccordion>>;
+
+  afterEach(() => {
+    wrapper?.unmount();
+  });
+
+  it('should render properly', () => {
+    wrapper = createWrapper({
       props: {
         open: true,
       },
@@ -24,8 +33,8 @@ describe('accordions/Accordion', () => {
     expect(wrapper.find('.accordion__content').text()).toContain('Accordion content');
   });
 
-  it('pass `open` and `eager` props', async () => {
-    const wrapper = createWrapper();
+  it('should pass `open` and `eager` props', async () => {
+    wrapper = createWrapper();
 
     expect(wrapper.find('.accordion__content').exists()).toBeFalsy();
 
@@ -34,9 +43,7 @@ describe('accordions/Accordion', () => {
     });
 
     expect(wrapper.find('.accordion__content').exists()).toBeTruthy();
-    expect(wrapper.find('.accordion').classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_open_/)]),
-    );
+    expectWrapperToHaveClass(wrapper, '.accordion', /_open_/);
 
     await wrapper.setProps({
       eager: true,
@@ -44,13 +51,11 @@ describe('accordions/Accordion', () => {
     });
 
     expect(wrapper.find('.accordion__content').exists()).toBeTruthy();
-    expect(wrapper.find('.accordion').classes()).not.toEqual(
-      expect.arrayContaining([expect.stringMatching(/_open_/)]),
-    );
+    expectWrapperNotToHaveClass(wrapper, '.accordion', /_open_/);
   });
 
-  it('pass `headerClass` and `contentClass` props', async () => {
-    const wrapper = createWrapper({
+  it('should pass `headerClass` and `contentClass` props', async () => {
+    wrapper = createWrapper({
       props: {
         open: true,
       },

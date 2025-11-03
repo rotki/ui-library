@@ -1,8 +1,11 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import RuiNotification from '@/components/overlays/notification/RuiNotification.vue';
+import { assertExists, cleanupElements, queryBody } from '~/tests/helpers/dom-helpers';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiNotification>) {
+function createWrapper(
+  options?: ComponentMountingOptions<typeof RuiNotification>,
+): VueWrapper<InstanceType<typeof RuiNotification>> {
   return mount(RuiNotification, {
     ...options,
     slots: {
@@ -14,9 +17,18 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiNotification
   });
 }
 
-describe('notification', () => {
-  it('renders properly', async () => {
-    const wrapper = createWrapper({
+describe('components/overlays/notification/RuiNotification.vue', () => {
+  let wrapper: VueWrapper<InstanceType<typeof RuiNotification>>;
+
+  afterEach(() => {
+    wrapper?.unmount();
+    cleanupElements('*', document.body);
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
+  it('should render properly', async () => {
+    wrapper = createWrapper({
       props: {
         modelValue: true,
         timeout: 0,
@@ -24,13 +36,12 @@ describe('notification', () => {
     });
 
     await nextTick();
-    const notification = document.body.querySelector('#content') as HTMLDivElement;
+    const notification = queryBody<HTMLDivElement>('#content');
     expect(notification).toBeTruthy();
-    wrapper.unmount();
   });
 
-  it('does not render if value is false', async () => {
-    const wrapper = createWrapper({
+  it('should not render if value is false', async () => {
+    wrapper = createWrapper({
       props: {
         modelValue: false,
         timeout: 0,
@@ -38,13 +49,12 @@ describe('notification', () => {
     });
 
     await nextTick();
-    const notification = document.body.querySelector('#content') as HTMLDivElement;
+    const notification = queryBody<HTMLDivElement>('#content');
     expect(notification).toBeFalsy();
-    wrapper.unmount();
   });
 
-  it('closes on click', async () => {
-    const wrapper = createWrapper({
+  it('should close on click', async () => {
+    wrapper = createWrapper({
       props: {
         modelValue: true,
         timeout: 0,
@@ -52,16 +62,15 @@ describe('notification', () => {
     });
 
     await nextTick();
-    const notification = document.body.querySelector('#content') as HTMLDivElement;
-    expect(notification).toBeTruthy();
+    const notification = queryBody<HTMLDivElement>('#content');
+    assertExists(notification);
     notification.click();
     await nextTick();
     expect(wrapper.emitted()).toHaveProperty('update:model-value', [[false]]);
-    wrapper.unmount();
   });
 
-  it('does not close on click if timeout is negative', async () => {
-    const wrapper = createWrapper({
+  it('should not close on click if timeout is negative', async () => {
+    wrapper = createWrapper({
       props: {
         modelValue: true,
         timeout: -1,
@@ -69,17 +78,16 @@ describe('notification', () => {
     });
 
     await nextTick();
-    const notification = document.body.querySelector('#content') as HTMLDivElement;
-    expect(notification).toBeTruthy();
+    const notification = queryBody<HTMLDivElement>('#content');
+    assertExists(notification);
     notification.click();
     await nextTick();
     expect(wrapper.emitted()).toEqual({});
-    wrapper.unmount();
   });
 
-  it('closes automatically after timeout', async () => {
+  it('should close automatically after timeout', async () => {
     vi.useFakeTimers();
-    const wrapper = createWrapper({
+    wrapper = createWrapper({
       props: {
         modelValue: true,
         timeout: 5000,
@@ -88,12 +96,10 @@ describe('notification', () => {
 
     await nextTick();
     vi.advanceTimersByTime(3000);
-    const notification = document.body.querySelector('#content') as HTMLDivElement;
+    const notification = queryBody<HTMLDivElement>('#content');
     expect(notification).toBeTruthy();
     expect(wrapper.emitted()).toEqual({});
     vi.advanceTimersByTime(2000);
     expect(wrapper.emitted()).toHaveProperty('update:model-value', [[false]]);
-    wrapper.unmount();
-    vi.useRealTimers();
   });
 });
