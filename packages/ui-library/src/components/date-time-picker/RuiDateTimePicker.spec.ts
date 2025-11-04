@@ -734,4 +734,96 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
 
     expect(dayjs(lastEmittedValue).isSame(date)).toBeTruthy();
   });
+
+  it('should allow typing leading zero for month (e.g., 08 for August)', async () => {
+    const date = dayjs('2022-01-01 09:09');
+    wrapper = createWrapper({
+      props: {
+        modelValue: date.toDate(),
+        type: 'date',
+      },
+    });
+    await vi.runOnlyPendingTimersAsync();
+
+    const inputField = wrapper.find('input');
+    await inputField.trigger('focus');
+    await vi.runOnlyPendingTimersAsync();
+
+    // Move to month field (skip day field)
+    await inputField.trigger('keydown.ArrowRight');
+    await vi.runOnlyPendingTimersAsync();
+
+    // Type "0" then "8" for August
+    await inputField.trigger('keydown', { code: 'Digit0', key: '0' });
+    await vi.runOnlyPendingTimersAsync();
+    await inputField.trigger('keydown', { code: 'Digit8', key: '8' });
+    await vi.runOnlyPendingTimersAsync();
+
+    const modelValue = wrapper.emitted('update:modelValue');
+    expect(modelValue).toBeTruthy();
+
+    const lastEmittedValue = modelValue?.at(-1)?.[0];
+    assert(lastEmittedValue && lastEmittedValue instanceof Date);
+
+    // Should be August (month 8)
+    expect(dayjs(lastEmittedValue).month()).toBe(7); // JavaScript months are 0-indexed (7 = August)
+    expect(dayjs(lastEmittedValue).format('YYYY-MM-DD')).toBe('2022-08-01');
+  });
+
+  it('should reject typing 0 alone for month', async () => {
+    const date = dayjs('2022-05-15 09:09');
+    wrapper = createWrapper({
+      props: {
+        modelValue: date.toDate(),
+        type: 'date',
+      },
+    });
+    await vi.runOnlyPendingTimersAsync();
+
+    const inputField = wrapper.find('input');
+    await inputField.trigger('focus');
+    await vi.runOnlyPendingTimersAsync();
+
+    // Move to month field (skip day field)
+    await inputField.trigger('keydown.ArrowRight');
+    await vi.runOnlyPendingTimersAsync();
+
+    // Clear the month field first
+    await inputField.trigger('keydown.Delete');
+    await vi.runOnlyPendingTimersAsync();
+
+    // Check emissions before typing "0"
+    let modelValue = wrapper.emitted('update:modelValue');
+    const emissionsBeforeZero = modelValue?.length ?? 0;
+
+    // Type "0" for month - should be rejected (minValue = 1)
+    // Before the fix: typing "0" would set month to 0 (December of previous year) and auto-advance
+    await inputField.trigger('keydown', { code: 'Digit0', key: '0' });
+    await vi.runOnlyPendingTimersAsync();
+
+    // Verify that typing "0" did NOT emit any model update
+    modelValue = wrapper.emitted('update:modelValue');
+    const emissionsAfterZero = modelValue?.length ?? 0;
+    expect(emissionsAfterZero).toBe(emissionsBeforeZero);
+
+    // Type "9" - since "0" was rejected and didn't set any value,
+    // this should set month to 9 (September) directly, not "09"
+    await inputField.trigger('keydown', { code: 'Digit9', key: '9' });
+    await vi.runOnlyPendingTimersAsync();
+
+    // Now there should be exactly one more emission from typing "9"
+    modelValue = wrapper.emitted('update:modelValue');
+    assert(modelValue);
+    expect(modelValue.length).toBe(emissionsAfterZero + 1);
+
+    const lastEmittedValue = modelValue.at(-1)?.[0];
+    assert(lastEmittedValue instanceof Date);
+
+    const emittedDate = dayjs(lastEmittedValue);
+
+    // Should be September (month index 8), not December (11) which would result from month 0
+    expect(emittedDate.month()).toBe(8); // September (0-indexed)
+    expect(emittedDate.year()).toBe(2022);
+    expect(emittedDate.date()).toBe(15);
+  });
 });
