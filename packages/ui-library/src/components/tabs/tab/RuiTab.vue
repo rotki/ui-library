@@ -82,6 +82,7 @@ function click() {
     variant="text"
     disabled
     :class="tabClass"
+    hide-focus-indicator
     tabindex="-1"
     role="tab"
     v-bind="$attrs"
@@ -103,6 +104,7 @@ function click() {
     role="tab"
     v-bind="$attrs"
     tabindex="-1"
+    hide-focus-indicator
     variant="text"
     @click="click()"
   >
@@ -139,6 +141,7 @@ function click() {
       role="tab"
       no-outline
       tag="a"
+      hide-focus-indicator
       tabindex="-1"
       v-bind="$attrs"
       variant="text"
