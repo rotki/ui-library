@@ -262,6 +262,28 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(wrapper.props().pagination?.page).toBe(1);
   });
 
+  it('should auto-adjust page when current page exceeds max pages due to total decrease', async () => {
+    wrapper = createWrapper({
+      props: {
+        'cols': columns,
+        'onUpdate:pagination': (pagination: any) => wrapper.setProps({ pagination }),
+        'pagination': { limit: 10, page: 6, total: 51 },
+        'rowAttr': 'id',
+        'rows': data,
+        'search': '',
+      },
+    });
+
+    // Initial state: page 6 with total 51 is valid (shows 1 item on page 6)
+    expect(wrapper.props().pagination?.page).toBe(6);
+
+    // Update total to 50, which makes page 6 invalid (max pages would be 5)
+    await wrapper.setProps({ pagination: { limit: 10, page: 6, total: 50 } });
+
+    // Page should automatically adjust to 5 (last valid page)
+    expect(wrapper.props().pagination?.page).toBe(5);
+  });
+
   it('should multiple sort works', async () => {
     wrapper = createWrapper({
       props: {
