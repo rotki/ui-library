@@ -181,14 +181,14 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     if (isNaN(number))
       return;
 
-    const segmentConfig: Record<DateTimeSegmentType, { maxValue: number }> = {
-      DD: { maxValue: 31 },
-      HH: { maxValue: 23 },
-      MM: { maxValue: 12 },
-      mm: { maxValue: 59 },
-      ss: { maxValue: 59 },
-      SSS: { maxValue: 999 },
-      YYYY: { maxValue: 9999 },
+    const segmentConfig: Record<DateTimeSegmentType, { maxValue: number; minValue?: number }> = {
+      DD: { maxValue: 31, minValue: 1 },
+      HH: { maxValue: 23, minValue: 0 },
+      MM: { maxValue: 12, minValue: 1 },
+      mm: { maxValue: 59, minValue: 0 },
+      ss: { maxValue: 59, minValue: 0 },
+      SSS: { maxValue: 999, minValue: 0 },
+      YYYY: { maxValue: 9999, minValue: 1 },
     };
 
     const segmentType = currentSegment.type;
@@ -200,15 +200,15 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
       const nextCombinedValue = parseInt(`${value}${digit}0`);
 
       const maxLength = segmentType.length;
-      const adjustedCombinedValue = segmentType === 'MM' ? combinedValue - 1 : combinedValue;
+      const minValue = config.minValue ?? 0;
 
-      if (adjustedCombinedValue <= config.maxValue) {
+      if (combinedValue >= minValue && combinedValue <= config.maxValue) {
         setValue(segmentType, combinedValue);
         setCursorPosition(currentSegment);
       }
 
       const willExceedMax = nextCombinedValue > config.maxValue;
-      const reachedMaxLength = adjustedCombinedValue.toString().length >= maxLength;
+      const reachedMaxLength = combinedValue.toString().length >= maxLength;
 
       if (willExceedMax || reachedMaxLength) {
         navigateSegments('ArrowRight');
