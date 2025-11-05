@@ -20,6 +20,7 @@ export interface DropdownItemAttr<TValue, TItem> {
 export interface DropdownOptions<TValue, TItem> {
   options: Ref<TItem[]>;
   dense?: Ref<boolean>;
+  disabled?: Ref<boolean>;
   value: Ref<TItem | TItem[] | undefined>;
   menuRef: Ref<HTMLElement>;
   keyAttr?: KeyOfType<TItem, TValue extends Array<infer U> ? U : TValue>;
@@ -68,6 +69,7 @@ export function useDropdownMenu<TValue, TItem>({
   autoFocus,
   autoSelectFirst,
   dense,
+  disabled = ref(false),
   hideSelected,
   itemHeight = 48,
   keyAttr,
@@ -213,7 +215,9 @@ export function useDropdownMenu<TValue, TItem>({
     });
   }
 
-  watch(isOpen, updateOpen);
+  watch([isOpen, disabled], async ([open, _]) => {
+    await updateOpen(open);
+  });
 
   watch(highlightedIndex, async (curr, prev) => {
     if (curr !== prev)
