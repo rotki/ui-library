@@ -987,6 +987,22 @@ watch(sorted, (items) => {
   setInternalTotal(items);
 });
 
+/**
+ * Automatically adjust page when current page exceeds maximum available pages
+ * This can happen when total data decreases while user is on a higher page
+ */
+watch(paginationData, (pagination) => {
+  const { total, limit, page } = pagination;
+  const maxPages = Math.ceil(total / limit);
+
+  if (maxPages > 0 && page > maxPages) {
+    set(paginationData, {
+      ...pagination,
+      page: maxPages,
+    });
+  }
+});
+
 onMounted(() => {
   setInternalTotal(get(sorted));
 
