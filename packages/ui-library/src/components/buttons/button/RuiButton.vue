@@ -125,14 +125,14 @@ const spinnerSize = computed<number>(() => {
 .btn {
   @apply text-sm leading-[1.5rem] font-medium outline outline-1 outline-transparent outline-offset-[-1px] flex items-center justify-center gap-x-2 relative;
   @apply px-4 py-1.5 rounded transition-all;
-  @apply disabled:bg-black/[.12] dark:disabled:bg-white/[.12] disabled:text-rui-text-disabled disabled:active:text-rui-text-disabled focus:ring-2 #{!important};
+  @apply disabled:bg-black/[.12] dark:disabled:bg-white/[.12] disabled:text-rui-text-disabled disabled:active:text-rui-text-disabled focus-visible:ring-2 #{!important};
 
   .label {
     @apply inline-block text-nowrap;
   }
 
   &.flat {
-    @apply focus:ring-0 #{!important};
+    @apply focus-visible:ring-0 #{!important};
   }
 
   &._rounded {
