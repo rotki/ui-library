@@ -61,7 +61,7 @@ const props = withDefaults(defineProps<Props<TValue, TItem>>(), {
   noDataText: 'No data available',
 });
 
-const { dense, options } = toRefs(props);
+const { dense, options, disabled } = toRefs(props);
 
 const menuRef = ref();
 const activator = ref();
@@ -110,6 +110,7 @@ const {
   dense,
   value,
   menuRef,
+  disabled,
   autoSelectFirst: props.autoSelectFirst,
 });
 
