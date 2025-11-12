@@ -166,7 +166,7 @@ function click() {
 <style lang="scss" module>
 .tab {
   @apply h-full min-w-[90px] max-w-[360px] flex items-center rounded-none cursor-pointer relative whitespace-nowrap shrink-0;
-  @apply px-4;
+  @apply px-4 #{!important};
 
   &--vertical {
     @apply h-[2.625rem] w-full max-w-none;
