@@ -74,18 +74,16 @@ function setNow(): void {
             />
           </RuiButton>
         </div>
-        <div class="flex flex-col">
-          <RuiAutoComplete
-            v-model="selectedTimezone"
-            hide-details
-            label="Timezone"
-            class="pt-0 pr-0"
-            variant="outlined"
-            :options="timezones"
-          />
-          <slot />
-        </div>
+        <RuiAutoComplete
+          v-model="selectedTimezone"
+          hide-details
+          label="Timezone"
+          class="pt-0 pr-0"
+          variant="outlined"
+          :options="timezones"
+        />
       </div>
+      <slot />
     </div>
   </div>
 </template>
