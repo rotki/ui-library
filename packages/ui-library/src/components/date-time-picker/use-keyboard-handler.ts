@@ -281,18 +281,24 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     }
   }
 
-  function handleClick(event: MouseEvent): void {
-    if (disabled || readonly)
-      return;
+  function getClickPosition(event: MouseEvent, input: HTMLInputElement, useCaretPosition: boolean): number {
+    const fallback = input.selectionStart ?? 0;
+    if (!useCaretPosition)
+      return fallback;
+    const caretPos = document.caretPositionFromPoint?.(event.clientX, event.clientY);
+    if (caretPos)
+      return caretPos.offset;
+    return document.caretRangeFromPoint?.(event.clientX, event.clientY)?.startOffset ?? fallback;
+  }
 
-    const eventTarget = event.target;
-    if (!(eventTarget instanceof HTMLInputElement)) {
+  function handleClick(event: MouseEvent): void {
+    if (disabled || readonly || !(event.target instanceof HTMLInputElement))
       return;
+    const currentSegment = getCurrentSegment(getClickPosition(event, event.target, true));
+    if (currentSegment) {
+      set(cursorPosition, currentSegment.end);
+      event.target.setSelectionRange(currentSegment.start, currentSegment.end);
     }
-    const position = eventTarget.selectionStart ?? 0;
-    const currentSegment = getCurrentSegment(position);
-    if (currentSegment)
-      setCursorPosition(currentSegment);
   }
 
   function handleInputSelection(event: Event): void {
@@ -301,10 +307,13 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
   }
 
   function handleFocus(): void {
+    // Only select first segment if no text is currently selected in the input
+    const input = get(textInput);
+    if (input && input.selectionStart !== input.selectionEnd)
+      return;
     const firstSegment = get(segmentPositions)[0];
-    if (firstSegment) {
+    if (firstSegment)
       setCursorPosition(firstSegment);
-    }
   }
 
   function parseAndSetDateValues(pastedText: string) {

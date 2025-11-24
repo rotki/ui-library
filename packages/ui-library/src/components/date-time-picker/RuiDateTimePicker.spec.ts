@@ -826,4 +826,35 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     expect(emittedDate.year()).toBe(2022);
     expect(emittedDate.date()).toBe(15);
   });
+
+  it('should select segment when clicking on it', async () => {
+    const date = dayjs('2023-06-15 14:30');
+    wrapper = createWrapper({
+      props: {
+        modelValue: date.toDate(),
+        type: 'date',
+        format: 'day-first',
+      },
+    });
+    await vi.runOnlyPendingTimersAsync();
+
+    const inputField = wrapper.find('input');
+    const inputElement = inputField.element as HTMLInputElement;
+
+    // Focus the input first
+    await inputField.trigger('focus');
+    await vi.runOnlyPendingTimersAsync();
+
+    // Simulate clicking on the month segment by setting selectionStart to position 4
+    // Position 4 is in the "MM" segment for "15/06/2023 14:30" format (DD/MM/YYYY HH:mm)
+    inputElement.selectionStart = 4;
+    inputElement.selectionEnd = 4;
+
+    await inputField.trigger('click');
+    await vi.runOnlyPendingTimersAsync();
+
+    // Check that the month segment is selected (positions 3-5 for "MM" in "DD/MM/YYYY HH:mm")
+    expect(inputElement.selectionStart).toBe(3);
+    expect(inputElement.selectionEnd).toBe(5);
+  });
 });

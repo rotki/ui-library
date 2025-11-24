@@ -177,6 +177,15 @@ const {
 
 const { t } = useRuiI8n();
 
+function handleInputClick(event: MouseEvent): void {
+  // Open menu if not already open
+  if (!get(isOpen)) {
+    set(isOpen, true);
+  }
+  // Handle segment selection
+  handleClick(event);
+}
+
 const anyFocused = logicOr(activatorFocusedWithin, menuWrapperFocusedWithin);
 
 const selectedDate = computed<Date | undefined>({
@@ -586,7 +595,7 @@ onMounted(() => {
             :readonly="readonly"
             @focus="handleFocus()"
             @select="handleInputSelection($event)"
-            @click="handleClick($event)"
+            @click.stop="handleInputClick($event)"
             @keydown="handleKeyDown($event)"
             @paste="handlePaste($event)"
             @input="handleInput($event)"
