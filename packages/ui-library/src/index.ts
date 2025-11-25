@@ -1,9 +1,9 @@
 import type { App } from 'vue';
 import type { InitThemeOptions } from '@/types/theme';
 import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
+import customParseFormat from 'dayjs/plugin/customParseFormat.js';
+import timezone from 'dayjs/plugin/timezone.js';
+import utc from 'dayjs/plugin/utc.js';
 import {
   createTableDefaults,
   type TableOptions,
