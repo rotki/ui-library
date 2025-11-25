@@ -1,62 +1,7 @@
 import { resolve } from 'node:path';
 import vue from '@vitejs/plugin-vue';
-import consola from 'consola';
-import fg from 'fast-glob';
 import AutoImport from 'unplugin-auto-import/vite';
 import { defineConfig } from 'vitest/config';
-
-const entryPoints = [
-  'src/components/index.ts',
-  'src/composables/index.ts',
-  'src/icons/*',
-  'src/theme/index.ts',
-  'src/index.ts',
-];
-
-const files = fg.sync(entryPoints, { absolute: true });
-
-const entities = files.map((file) => {
-  const [key] = file.match(/(?<=src\/).*$/) || [''];
-  const keyWithoutExt = key.replace(/\.[^.]*$/, '');
-  return [keyWithoutExt, file];
-});
-
-const entries = Object.fromEntries(entities);
-
-function manualChunks(identifier: string): string {
-  const relative = identifier.replace(__dirname, '');
-  const pathsAfterModule = relative.split('node_modules/');
-
-  if (pathsAfterModule.length > 1) {
-    return 'vendor';
-  }
-  else {
-    const pathWithoutSrc = pathsAfterModule[0].replace('/src/', '');
-    if (pathWithoutSrc.startsWith('icons')) {
-      return pathWithoutSrc.replace('.ts', '');
-    }
-    else if (pathWithoutSrc.startsWith('utils')) {
-      return 'utils/index';
-    }
-    else if (pathWithoutSrc.startsWith('composables')) {
-      return 'composables/index';
-    }
-    else if (pathWithoutSrc.startsWith('components') || pathWithoutSrc.includes('plugin-vue:export-helper')) {
-      return 'components/index';
-    }
-    else if (pathWithoutSrc.startsWith('types')) {
-      return 'types/index';
-    }
-    else if (pathWithoutSrc.endsWith('.ts')) {
-      return pathWithoutSrc.replace('.ts', '');
-    }
-    else {
-      consola.debug(pathWithoutSrc);
-    }
-
-    return 'index';
-  }
-}
 
 export default defineConfig({
   resolve: {
@@ -79,29 +24,51 @@ export default defineConfig({
   ],
   build: {
     outDir: './dist',
-    minify: true,
-    sourcemap: 'inline',
+    minify: false,
+    sourcemap: true,
     lib: {
-      entry: entries,
-      fileName: (format, entryName) => `${entryName}.${format}.js`,
+      entry: {
+        'index': resolve(__dirname, 'src/index.ts'),
+        'components/index': resolve(__dirname, 'src/components/index.ts'),
+        'composables/index': resolve(__dirname, 'src/composables/index.ts'),
+        'theme/index': resolve(__dirname, 'src/theme/index.ts'),
+      },
       formats: ['es'],
       cssFileName: 'style',
     },
     rollupOptions: {
-      external: [
-        'vue',
-        'vue-router',
-        'tailwindcss/plugin',
-        '@vueuse/core',
-        '@vueuse/shared',
-        '@vueuse/math',
-        'dayjs',
-      ],
+      external: (id: string) => {
+        // Externalize all peer dependencies and their subpaths
+        const peerDeps = [
+          'vue',
+          'vue-router',
+          '@vueuse/core',
+          '@vueuse/shared',
+          '@vueuse/math',
+          'dayjs',
+        ];
+
+        // Externalize regular dependencies (installed with the library but not bundled)
+        const dependencies = [
+          '@popperjs/core',
+          'scule',
+          'tinycolor2',
+        ];
+
+        // Externalize build-time only dependencies
+        const buildOnlyDeps = [
+          'tailwindcss',
+        ];
+
+        const allExternal = [...peerDeps, ...dependencies, ...buildOnlyDeps];
+
+        // Check if the import matches any external dependency (including subpaths like dayjs/plugin/utc)
+        return allExternal.some(dep => id === dep || id.startsWith(`${dep}/`));
+      },
       output: {
-        globals: {
-          vue: 'vue',
-        },
-        manualChunks,
+        preserveModules: true,
+        preserveModulesRoot: 'src',
+        entryFileNames: '[name].js',
       },
     },
   },
