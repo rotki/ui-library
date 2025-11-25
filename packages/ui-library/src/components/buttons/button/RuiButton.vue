@@ -169,7 +169,9 @@ const spinnerSize = computed<number>(() => {
       }
 
       @if list.index((warning, success, info), $color) {
-        @apply dark:text-rui-light-text;
+        &.default {
+          @apply dark:text-rui-light-text;
+        }
       }
 
       @if list.index((primary, secondary), $color) {
