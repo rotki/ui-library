@@ -28,6 +28,7 @@
     "test:ci": "pnpm --filter @rotki/ui-library test:ci",
     "test:e2e": "pnpm --filter example test:e2e",
     "test:e2e:dev": "pnpm --filter example test:e2e:dev",
+    "test:e2e:ui": "pnpm --filter example test:e2e:ui",
     "test:all": "pnpm test:run && pnpm test:e2e",
     "coverage": "pnpm --filter @rotki/ui-library coverage",
     "coverage:preview": "pnpm --filter @rotki/ui-library coverage:preview",

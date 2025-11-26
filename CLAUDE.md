@@ -84,9 +84,96 @@ Each component typically includes:
 ### Testing Strategy
 
 - **Unit Tests**: Vitest with Vue Test Utils for component testing
-- **E2E Tests**: Cypress tests run against the example application
+- **E2E Tests**: Playwright tests run against the example application
 - **Coverage**: Comprehensive test coverage tracking with v8
 - **Storybook**: Visual testing and component documentation
+
+### E2E Testing with Playwright
+
+E2E tests are located in `apps/example/e2e/` and run against the example application.
+
+**Prerequisites:**
+
+E2E tests require Chromium. You have two options:
+
+1. **Install Playwright browsers** (downloads Chromium managed by Playwright):
+
+   ```bash
+   npx playwright install chromium
+   ```
+
+2. **Use system Chromium** (recommended for Arch Linux and other distros):
+
+   ```bash
+   # Install chromium via your package manager, e.g.:
+   # Arch: pacman -S chromium
+   # Ubuntu/Debian: apt install chromium-browser
+
+   # Then set the environment variable:
+   export PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/chromium
+   ```
+
+**Running Tests:**
+
+- `pnpm run test:e2e` - Build and run tests against production build (CI mode)
+- `pnpm run test:e2e:dev` - Run against dev server (local development)
+- `pnpm run test:e2e:ui` - Run with Playwright UI (debugging)
+
+**Using System Chromium:**
+
+```bash
+# One-time run
+PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/chromium pnpm test:e2e:dev
+
+# Or export in your shell profile (~/.bashrc, ~/.zshrc, etc.)
+export PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/chromium
+pnpm test:e2e:dev
+```
+
+**Test File Organization:**
+
+```
+apps/example/e2e/
+├── forms/           # Form component tests (autocomplete, checkbox, etc.)
+├── overlays/        # Overlay component tests (dialog, menu, tooltip, etc.)
+├── button.spec.ts   # General component tests at root level
+├── card.spec.ts
+└── ...
+```
+
+**Writing E2E Tests:**
+
+```typescript
+import { expect, test } from '@playwright/test';
+
+test.describe('component name', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/route');
+  });
+
+  test.afterEach(async ({ page }) => {
+    // Clean up any open overlays (menus, dialogs, tooltips)
+    await page.keyboard.press('Escape');
+  });
+
+  test('should do something', async ({ page }) => {
+    await expect(page.locator('[data-cy=element]')).toBeVisible();
+  });
+});
+```
+
+**Locator Best Practices (in order of preference):**
+
+1. `[data-cy=...]` - Test-specific attributes (preferred)
+2. `[role=...]` - ARIA roles for accessibility testing
+3. `[data-id=...]` - Component-specific identifiers
+4. `[class*=_component_]` - CSS module classes (last resort for internal state)
+
+**Avoid:**
+
+- Hardcoded class names like `.rui-hour-06` (use data attributes instead)
+- Complex CSS selectors that are brittle to refactoring
+- Text content matching for non-visible text
 
 ### Development Tools
 

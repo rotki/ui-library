@@ -103,7 +103,7 @@ By following these guidelines, you will help ensure that our project remains mai
 All changes must be accompanied by appropriate unit and integration tests. This ensures that new features work as expected and that bugs are fixed without introducing regressions.
 
 - **Unit Tests**: We use **Vitest** for unit testing. Unit tests should cover individual functions or components to ensure they work as intended in isolation.
-- **Integration Tests**: We use **Cypress** for integration testing. Integration tests should verify that different parts of the application work together as expected.
+- **E2E Tests**: We use **Playwright** for end-to-end testing. E2E tests should verify that different parts of the application work together as expected.
 
 Before submitting a pull request, please ensure:
 
@@ -112,6 +112,81 @@ Before submitting a pull request, please ensure:
 - All tests pass successfully.
 
 This helps maintain the overall health and stability of the codebase.
+
+### Running Tests
+
+```sh
+# Unit tests
+pnpm run test           # Run with Vitest UI
+pnpm run test:run       # Run without UI
+pnpm run coverage       # Run with coverage report
+
+# E2E tests
+pnpm run test:e2e       # Build and run against production build (CI mode)
+pnpm run test:e2e:dev   # Run against dev server (local development)
+pnpm run test:e2e:ui    # Run with Playwright UI (debugging)
+```
+
+### E2E Test Prerequisites
+
+E2E tests require Chromium. You have two options:
+
+1. **Install Playwright browsers** (downloads Chromium managed by Playwright):
+
+   ```sh
+   npx playwright install chromium
+   ```
+
+2. **Use system Chromium** (recommended for Arch Linux and other distros):
+
+   ```sh
+   # Install chromium via your package manager, e.g.:
+   # Arch: pacman -S chromium
+   # Ubuntu/Debian: apt install chromium-browser
+
+   # Then set the environment variable:
+   export PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/chromium
+   ```
+
+   You can add the export to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.) for persistence.
+
+### Writing E2E Tests
+
+E2E tests are located in `apps/example/e2e/` and organized by component category:
+
+- `forms/` - Form component tests (autocomplete, checkbox, radio, etc.)
+- `overlays/` - Overlay component tests (dialog, menu, tooltip, etc.)
+- Root level - General component tests (button, card, tabs, etc.)
+
+**Test file naming**: Use `{component-name}.spec.ts` format.
+
+**Test structure**:
+
+```typescript
+import { expect, test } from '@playwright/test';
+
+test.describe('component name', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/route');
+  });
+
+  test.afterEach(async ({ page }) => {
+    // Clean up open overlays to prevent test pollution
+    await page.keyboard.press('Escape');
+  });
+
+  test('should do something', async ({ page }) => {
+    await expect(page.locator('[data-cy=element]')).toBeVisible();
+  });
+});
+```
+
+**Locator strategy** (in order of preference):
+
+1. `[data-cy=...]` - Test-specific data attributes (preferred)
+2. `[role=...]` - ARIA roles for accessibility
+3. `[data-id=...]` - Component identifiers
+4. `[class*=_name_]` - CSS module classes (last resort)
 
 ## Linting
 
