@@ -1,4 +1,3 @@
-import path from 'node:path';
 import rotki from '@rotki/eslint-config';
 
 export default rotki({
@@ -9,9 +8,6 @@ export default rotki({
   storybook: true,
   test: true,
   regexp: true,
-  cypress: {
-    testDirectory: path.join('example', 'cypress'),
-  },
   rotki: {
     overrides: {
       '@rotki/consistent-ref-type-annotation': 'off',
