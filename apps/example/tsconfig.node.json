@@ -4,12 +4,12 @@
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
     "module": "ESNext",
+    "moduleResolution": "bundler",
     "types": ["node"]
   },
   "include": [
     "vite.config.*",
     "vitest.config.*",
-    "cypress.config.*",
     "playwright.config.*"
   ]
 }

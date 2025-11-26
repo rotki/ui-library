@@ -1,0 +1,15 @@
+services:
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.57.0
+    working_dir: /app
+    volumes:
+      - ../..:/app
+      - playwright_cache:/app/node_modules
+    environment:
+      - CI=true
+      - HOME=/tmp
+    command: sh -c "npm install -g npm@11 && npm install -g corepack@latest && corepack enable && cd /app && pnpm install --frozen-lockfile && pnpm --filter example exec playwright test"
+    network_mode: host
+
+volumes:
+  playwright_cache:

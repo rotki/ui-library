@@ -75,15 +75,6 @@ jobs:
           cache: pnpm
           node-version-file: .nvmrc
 
-      - name: Setup cypress cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/Cypress
-          key: ${{ runner.os }}-cypress-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-cypress-cache-
-
       - name: Install dependencies 👨🏻‍💻
         run: pnpm install --frozen-lockfile
 
@@ -102,36 +93,22 @@ jobs:
       - name: Typecheck
         run: pnpm run -r typecheck
 
-      - name: Install cypress binary
+      - name: Install Playwright Browsers
         working-directory: apps/example
-        run: pnpm exec cypress install
+        run: pnpm exec playwright install --with-deps chromium
 
-      - name: Run cypress tests
-        uses: cypress-io/github-action@v6
-        with:
-          install: false
-          working-directory: apps/example
-          build: pnpm run build:app
-          command: pnpm exec cypress run --e2e
-          start: pnpm run preview --host
-          browser: chrome
-          wait-on: http://127.0.0.1:4173
-          config: video=true
+      - name: Run Playwright tests
+        working-directory: apps/example
+        run: pnpm run test:e2e
 
-      - name: Upload screenshots
+      - name: Upload Playwright Report
         uses: actions/upload-artifact@v5
         if: failure()
         with:
-          name: cypress-screenshots
-          path: apps/example/cypress/screenshots
-          retention-days: 7
-
-      - name: Upload videos
-        uses: actions/upload-artifact@v5
-        if: failure()
-        with:
-          name: cypress-videos
-          path: apps/example/cypress/videos
+          name: playwright-report
+          path: |
+            apps/example/playwright-report/
+            apps/example/test-results/
           retention-days: 7
 
       - name: Upload coverage
