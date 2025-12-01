@@ -76,18 +76,97 @@ switchThemeScheme(ThemeMode.dark);
 
 ### Using the icons
 
-You need to specify which icons you want to enable, when installing the RuiPlugin.
+Icons must be registered when installing the RuiPlugin. There are two approaches:
+
+#### Option 1: Auto-detection with Vite Plugin (Recommended)
+
+The library provides a Vite plugin that automatically detects icon usage in your source files:
 
 ```typescript
-import { createRui, Ri4kFill, Ri4kLine } from '@rotki/ui-library';
+// vite.config.ts
+import { ruiIconsPlugin } from '@rotki/ui-library/vite-plugin';
+import vue from '@vitejs/plugin-vue';
+import { defineConfig } from 'vite';
+
+// eslint-disable-next-line import/no-default-export
+export default defineConfig({
+  plugins: [
+    vue(),
+    ruiIconsPlugin({
+      // Optional: icons that are used dynamically and can't be statically detected
+      include: ['lu-dynamic-icon'],
+      // Optional: fail build on invalid icon names
+      strict: false,
+      // Optional: enable debug logging
+      debug: false,
+    }),
+  ],
+});
+```
+
+Then import and use the detected icons:
+
+```typescript
+// main.ts
+import { createRui } from '@rotki/ui-library';
+import icons from 'virtual:rotki-icons';
+
+const RuiPlugin = createRui({
+  theme: { icons },
+});
+app.use(RuiPlugin);
+```
+
+Add type support for the virtual module in your `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "types": ["@rotki/ui-library/vite-plugin/client"]
+  }
+}
+```
+
+**Handling Dynamic Icons:**
+
+The plugin can only detect icons that are statically analyzable. For dynamic icon names (e.g., computed from variables), you must manually include them:
+
+```vue
+<!-- These CAN be auto-detected: -->
+<RuiIcon name="lu-star" />
+
+<RuiIcon :name="'lu-check'" />
+
+<!-- These CANNOT be auto-detected (use `include` option): -->
+<RuiIcon :name="iconName" />              <!-- Variable reference -->
+
+<RuiIcon :name="`lu-${direction}`" />     <!-- Template literal with variable -->
+```
+
+```typescript
+// These CAN be auto-detected:
+const icon = 'lu-arrow-down';
+
+// These CANNOT be auto-detected (use `include` option):
+const icons = props.items.map(i => i.icon); // Dynamic mapping
+```
+
+#### Option 2: Manual Registration
+
+You can manually import and register specific icons:
+
+```typescript
+import { createRui, LuArrowDown, LuCheck, LuStar } from '@rotki/ui-library';
 
 const RuiPlugin = createRui({
   theme: {
-    icons: [Ri4kFill, Ri4kLine],
+    icons: [LuStar, LuCheck, LuArrowDown],
   },
 });
 app.use(RuiPlugin);
 ```
+
+#### Using Icons in Templates
 
 ```vue
 <script lang="ts" setup>
@@ -96,8 +175,8 @@ import { RuiIcon } from '@rotki/ui-library';
 
 <template>
   <div>
-    <RuiIcon name="4k-fill" />
-    <RuiIcon name="4k-line" />
+    <RuiIcon name="lu-star" />
+    <RuiIcon name="lu-check" />
   </div>
 </template>
 ```

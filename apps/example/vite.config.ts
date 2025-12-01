@@ -1,4 +1,5 @@
 import { fileURLToPath, URL } from 'node:url';
+import { ruiIconsPlugin } from '@rotki/ui-library/vite-plugin';
 import vue from '@vitejs/plugin-vue';
 import AutoImport from 'unplugin-auto-import/vite';
 import { defineConfig } from 'vite';
@@ -7,6 +8,9 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   plugins: [
     vue(),
+    ruiIconsPlugin({
+      debug: true,
+    }),
     AutoImport({
       include: [
         /\.[jt]sx?$/, // .ts, .tsx, .js, .jsx

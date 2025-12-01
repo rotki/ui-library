@@ -32,6 +32,7 @@ export default defineConfig({
         'components/index': resolve(__dirname, 'src/components/index.ts'),
         'composables/index': resolve(__dirname, 'src/composables/index.ts'),
         'theme/index': resolve(__dirname, 'src/theme/index.ts'),
+        'vite-plugin/index': resolve(__dirname, 'src/vite-plugin/index.ts'),
       },
       formats: ['es'],
       cssFileName: 'style',
@@ -60,7 +61,18 @@ export default defineConfig({
           'tailwindcss',
         ];
 
-        const allExternal = [...peerDeps, ...dependencies, ...buildOnlyDeps];
+        // Externalize Node.js built-ins (for vite-plugin)
+        const nodeBuiltins = [
+          'node:fs',
+          'node:path',
+          'node:url',
+          'fs',
+          'path',
+          'fast-glob',
+          'vite',
+        ];
+
+        const allExternal = [...peerDeps, ...dependencies, ...buildOnlyDeps, ...nodeBuiltins];
 
         // Check if the import matches any external dependency (including subpaths like dayjs/plugin/utc)
         return allExternal.some(dep => id === dep || id.startsWith(`${dep}/`));
