@@ -154,3 +154,10 @@ storybook-static
 packages/ui-library/src/icons
 packages/ui-library/tests/html
 packages/ui-library/tests/json
+
+apps/example/dist
+apps/example/playwright-report
+apps/example/test-results
+
+# Cache from when running playwright in docker
+.pnpm-store
