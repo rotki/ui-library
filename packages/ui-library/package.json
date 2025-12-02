@@ -48,6 +48,14 @@
     },
     "./style.css": {
       "default": "./dist/style.css"
+    },
+    "./vite-plugin": {
+      "types": "./dist/vite-plugin/index.d.ts",
+      "import": "./dist/vite-plugin/index.js",
+      "default": "./dist/vite-plugin/index.js"
+    },
+    "./vite-plugin/client": {
+      "types": "./dist/vite-plugin/client.d.ts"
     }
   },
   "typesVersions": {
@@ -60,12 +68,18 @@
       ],
       "components": [
         "./dist/components/index.d.ts"
+      ],
+      "vite-plugin": [
+        "./dist/vite-plugin/index.d.ts"
+      ],
+      "vite-plugin/client": [
+        "./dist/vite-plugin/client.d.ts"
       ]
     }
   },
   "scripts": {
     "build:prod": "tsx scripts/dist-build.mjs",
-    "build": "pnpm run generate-icons && vite build && cp ../../README.md dist/",
+    "build": "pnpm run generate-icons && vite build && cp ../../README.md dist/ && cp src/vite-plugin/client.d.ts dist/vite-plugin/",
     "build:storybook": "STORYBOOK=true storybook build",
     "build:tailwind": "tailwindcss -o dist/style.css --minify",
     "build:types": "vue-tsc -p tsconfig.build.json",

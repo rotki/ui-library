@@ -7,6 +7,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    "types": ["@rotki/ui-library/vite-plugin/client"],
     "verbatimModuleSyntax": false
   },
   "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
