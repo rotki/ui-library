@@ -813,7 +813,12 @@ function mustSelect(rowKey: T[IdType]): boolean {
  * @param {boolean} checked checkbox state
  */
 function onToggleAll(checked: boolean) {
-  const selectedRows = get(selectedData) ?? [];
+  const selectedRows = get(selectedData);
+
+  if (!isDefined(selectedRows)) {
+    return;
+  }
+
   if (!props.multiPageSelect) {
     if (checked)
       set(selectedData, get(visibleIdentifiers).filter(isSelectable));
