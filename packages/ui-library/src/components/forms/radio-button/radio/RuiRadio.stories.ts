@@ -36,6 +36,7 @@ const meta: Meta<PropsAndLabel> = {
     hint: { control: 'text' },
     label: { control: 'text' },
     modelValue: { control: 'text' },
+    required: { control: 'boolean', table: { category: 'State' } },
     size: { control: 'select', options: ['medium', 'sm', 'lg'] },
     value: { control: 'text' },
   },
@@ -116,6 +117,14 @@ export const HideDetails: Story = {
     hideDetails: true,
     hint: 'Hint (should be invisible)',
     label: 'Label',
+    value: 'test',
+  },
+};
+
+export const Required: Story = {
+  args: {
+    label: 'Required Radio',
+    required: true,
     value: 'test',
   },
 };

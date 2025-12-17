@@ -227,4 +227,26 @@ describe('components/forms/text-area/RuiTextArea.vue', () => {
     await wrapper.setProps({ disabled: false, readonly: true });
     expect(wrapper.find('.clear-btn').exists()).toBeFalsy();
   });
+
+  it('should show required asterisk when required prop is true', async () => {
+    const label = 'Text Area Label';
+    wrapper = createWrapper({
+      props: {
+        label,
+        modelValue: '',
+      },
+    });
+
+    // Required asterisk should not be present by default
+    expect(wrapper.find('label').text()).not.toContain('﹡');
+
+    // Set required to true
+    await wrapper.setProps({ required: true });
+    expect(wrapper.find('label').text()).toContain('﹡');
+    expect(wrapper.find('label .text-rui-error').exists()).toBeTruthy();
+
+    // Set required back to false
+    await wrapper.setProps({ required: false });
+    expect(wrapper.find('label').text()).not.toContain('﹡');
+  });
 });

@@ -45,6 +45,7 @@ const meta: Meta<PropsAndLabel> = {
     indeterminate: { control: 'boolean' },
     label: { control: 'text' },
     modelValue: { control: 'boolean' },
+    required: { control: 'boolean', table: { category: 'State' } },
     size: { control: 'select', options: ['medium', 'sm', 'lg'] },
     successMessages: { control: 'object' },
   },
@@ -130,6 +131,13 @@ export const HideDetails: Story = {
     hideDetails: true,
     hint: 'Hint (should be invisible)',
     label: 'Label',
+  },
+};
+
+export const Required: Story = {
+  args: {
+    label: 'Required Checkbox',
+    required: true,
   },
 };
 

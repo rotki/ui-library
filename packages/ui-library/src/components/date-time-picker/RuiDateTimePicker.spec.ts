@@ -857,4 +857,29 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     expect(inputElement.selectionStart).toBe(3);
     expect(inputElement.selectionEnd).toBe(5);
   });
+
+  it('should show required asterisk when required prop is true', async () => {
+    const customLabel = 'Custom Date Label';
+    wrapper = createWrapper({
+      props: {
+        label: customLabel,
+        modelValue: new Date(),
+        variant: 'outlined',
+      },
+    });
+
+    await vi.runOnlyPendingTimersAsync();
+
+    // Required asterisk should not be present by default
+    expect(wrapper.find('[class*="_label_"]').text()).not.toContain('﹡');
+
+    // Set required to true
+    await wrapper.setProps({ required: true });
+    expect(wrapper.find('[class*="_label_"]').text()).toContain('﹡');
+    expect(wrapper.find('[class*="_label_"] .text-rui-error').exists()).toBeTruthy();
+
+    // Set required back to false
+    await wrapper.setProps({ required: false });
+    expect(wrapper.find('[class*="_label_"]').text()).not.toContain('﹡');
+  });
 });

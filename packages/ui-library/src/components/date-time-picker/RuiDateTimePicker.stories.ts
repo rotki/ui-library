@@ -47,6 +47,10 @@ const meta: Meta<typeof RuiDateTimePicker> = {
     modelValue: {
       control: 'date',
     },
+    required: {
+      control: 'boolean',
+      table: { category: 'State' },
+    },
   },
   component: RuiDateTimePicker,
   render,
@@ -84,6 +88,14 @@ export const WithMaxNow: Story = {
     accuracy: TimeAccuracy.SECOND,
     maxDate: 'now',
     modelValue: new Date(),
+    variant: 'outlined',
+  },
+};
+
+export const Required: Story = {
+  args: {
+    modelValue: new Date(),
+    required: true,
     variant: 'outlined',
   },
 };

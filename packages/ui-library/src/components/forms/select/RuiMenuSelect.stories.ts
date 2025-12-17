@@ -34,6 +34,7 @@ const meta: Meta<SelectProps> = {
     disabled: { control: 'boolean' },
     modelValue: { control: 'text' },
     options: { control: 'object' },
+    required: { control: 'boolean', table: { category: 'State' } },
     variant: {
       control: 'select',
       options: ['default', 'outlined', 'filled'],
@@ -111,6 +112,16 @@ export const OutlinedDisabledDense: Story = {
     disabled: true,
     keyAttr: 'id',
     modelValue: undefined,
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+};
+
+export const Required: Story = {
+  args: {
+    keyAttr: 'id',
+    modelValue: undefined,
+    required: true,
     textAttr: 'label',
     variant: 'outlined',
   },

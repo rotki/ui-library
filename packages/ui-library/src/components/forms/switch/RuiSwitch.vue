@@ -13,6 +13,7 @@ export interface Props {
   errorMessages?: string | string[];
   successMessages?: string | string[];
   hideDetails?: boolean;
+  required?: boolean;
 }
 
 defineOptions({
@@ -30,6 +31,7 @@ const props = withDefaults(defineProps<Props>(), {
   errorMessages: () => [],
   successMessages: () => [],
   hideDetails: false,
+  required: false,
 });
 
 const emit = defineEmits<{
@@ -83,6 +85,12 @@ const { hasError, hasSuccess } = useFormTextDetail(
         class="text-body-1"
       >
         <slot>{{ label }}</slot>
+        <span
+          v-if="required"
+          class="text-rui-error"
+        >
+          ﹡
+        </span>
       </span>
     </label>
     <RuiFormTextDetail

@@ -149,4 +149,29 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
     expect(updates).toHaveLength(2);
     expect(updates[1]).toEqual([newSelectedIndex.toString()]);
   });
+
+  it('should show required asterisk when required prop is true', async () => {
+    wrapper = createWrapper({
+      props: {
+        keyAttr: 'id',
+        label: 'Select',
+        modelValue: undefined,
+        options,
+        textAttr: 'label',
+        variant: 'outlined',
+      },
+    });
+
+    // Required asterisk should not be present by default
+    expect(wrapper.find('button[data-id="activator"]').text()).not.toContain('﹡');
+
+    // Set required to true
+    await wrapper.setProps({ required: true });
+    expect(wrapper.find('button[data-id="activator"]').text()).toContain('﹡');
+    expect(wrapper.find('button[data-id="activator"] .text-rui-error').exists()).toBeTruthy();
+
+    // Set required back to false
+    await wrapper.setProps({ required: false });
+    expect(wrapper.find('button[data-id="activator"]').text()).not.toContain('﹡');
+  });
 });

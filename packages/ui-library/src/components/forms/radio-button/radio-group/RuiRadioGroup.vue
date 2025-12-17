@@ -15,6 +15,7 @@ export interface Props {
   disabled?: boolean;
   color?: ContextColorsType;
   size?: 'sm' | 'lg';
+  required?: boolean;
 }
 
 defineOptions({
@@ -24,7 +25,7 @@ defineOptions({
 
 const modelValue = defineModel<TValue>({ required: false });
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   inline: false,
   label: '',
   hint: '',
@@ -34,6 +35,7 @@ withDefaults(defineProps<Props>(), {
   disabled: false,
   color: undefined,
   size: undefined,
+  required: false,
 });
 
 const radioGroupName = ref('');
@@ -62,10 +64,16 @@ const children = computed(() => {
 <template>
   <div v-bind="$attrs">
     <div
-      v-if="label"
+      v-if="props.label"
       class="text-rui-text-secondary text-body-1"
     >
-      {{ label }}
+      {{ props.label }}
+      <span
+        v-if="props.required"
+        class="text-rui-error"
+      >
+        ﹡
+      </span>
     </div>
     <div :class="[$style.wrapper, { [$style.wrapper__inline ?? '']: inline }]">
       <Component

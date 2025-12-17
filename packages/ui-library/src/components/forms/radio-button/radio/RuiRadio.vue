@@ -14,6 +14,7 @@ export interface RadioProps<TValue> {
   errorMessages?: string | string[];
   successMessages?: string | string[];
   hideDetails?: boolean;
+  required?: boolean;
 }
 
 defineOptions({
@@ -32,6 +33,7 @@ const props = withDefaults(defineProps<RadioProps<TValue>>(), {
   errorMessages: () => [],
   successMessages: () => [],
   hideDetails: false,
+  required: false,
 });
 
 const { value, successMessages, errorMessages }
@@ -111,6 +113,12 @@ const { hasError, hasSuccess } = useFormTextDetail(
         class="text-body-1"
       >
         <slot>{{ label }}</slot>
+        <span
+          v-if="required"
+          class="text-rui-error"
+        >
+          ﹡
+        </span>
       </div>
     </label>
     <RuiFormTextDetail

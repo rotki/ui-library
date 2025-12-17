@@ -38,6 +38,7 @@ const meta: Meta<Props> = {
     max: { control: 'number' },
     min: { control: 'number' },
     modelValue: { control: 'number' },
+    required: { control: 'boolean', table: { category: 'State' } },
     showThumbLabel: { control: 'boolean', table: { category: 'State' } },
     showTicks: { control: 'boolean', table: { category: 'State' } },
     step: { control: 'number' },
@@ -155,6 +156,14 @@ export const WithSuccessMessage: Story = {
     label: 'Label',
     modelValue: 0,
     successMessages: ['With success messages'],
+  },
+};
+
+export const Required: Story = {
+  args: {
+    label: 'Required Slider',
+    modelValue: 0,
+    required: true,
   },
 };
 

@@ -29,6 +29,7 @@ const props = withDefaults(defineProps<Props>(), {
   appendIcon: undefined,
   readonly: false,
   clearable: false,
+  required: false,
 });
 
 const hidden = ref<boolean>(true);
