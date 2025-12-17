@@ -36,6 +36,7 @@ const meta: Meta<PropsAndLabel> = {
     hint: { control: 'text' },
     label: { control: 'text' },
     modelValue: { control: 'boolean' },
+    required: { control: 'boolean', table: { category: 'State' } },
     size: { control: 'select', options: ['medium', 'sm'] },
     successMessages: { control: 'object' },
   },
@@ -110,6 +111,13 @@ export const HideDetails: Story = {
     hideDetails: true,
     hint: 'Hint (should be invisible)',
     label: 'Label',
+  },
+};
+
+export const Required: Story = {
+  args: {
+    label: 'Required Switch',
+    required: true,
   },
 };
 

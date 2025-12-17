@@ -122,4 +122,26 @@ describe('components/forms/radio-button/radio/RuiRadio.vue', () => {
     });
     expect(wrapper.find('.details > div').exists()).toBeFalsy();
   });
+
+  it('should show required asterisk when required prop is true', async () => {
+    const label = 'Radio Label';
+    wrapper = createWrapper({
+      props: {
+        label,
+        value: 'value',
+      },
+    });
+
+    // Required asterisk should not be present by default
+    expect(wrapper.text()).not.toContain('﹡');
+
+    // Set required to true
+    await wrapper.setProps({ required: true });
+    expect(wrapper.text()).toContain('﹡');
+    expect(wrapper.find('.text-rui-error').exists()).toBeTruthy();
+
+    // Set required back to false
+    await wrapper.setProps({ required: false });
+    expect(wrapper.text()).not.toContain('﹡');
+  });
 });

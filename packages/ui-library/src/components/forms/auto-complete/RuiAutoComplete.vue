@@ -47,6 +47,7 @@ export interface AutoCompleteProps<TValue, TItem> {
   returnObject?: boolean;
   customValue?: boolean;
   hideCustomValue?: boolean;
+  required?: boolean;
 }
 
 defineOptions({
@@ -87,6 +88,7 @@ const props = withDefaults(defineProps<AutoCompleteProps<TValue, TItem>>(), {
   returnObject: false,
   customValue: false,
   hideCustomValue: false,
+  required: false,
 });
 
 const slots = useSlots();
@@ -248,7 +250,8 @@ const labelWithQuote = computed<string>(() => {
   if (!props.label)
     return '"\\200B"';
 
-  return `'  ${props.label}  '`;
+  const asterisk = props.required ? '﹡' : '';
+  return `'  ${props.label}${asterisk}  '`;
 });
 
 const menuMinHeight = ref<number>(0);
@@ -472,6 +475,12 @@ defineExpose({
             >
               {{ label }}
             </slot>
+            <span
+              v-if="required"
+              class="text-rui-error"
+            >
+              ﹡
+            </span>
           </span>
           <div :class="$style.value">
             <template

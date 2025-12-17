@@ -45,6 +45,7 @@ const meta: Meta<RuiTextAreaProps> = {
     placeholder: { control: 'text' },
     prependIcon: { control: 'text' },
     readonly: { control: 'boolean' },
+    required: { control: 'boolean', table: { category: 'State' } },
     rowHeight: { control: 'number', default: 1.5 },
     successMessages: { control: 'object' },
     textColor: {
@@ -192,6 +193,15 @@ export const Clearable: Story = {
     label: 'Label',
     modelValue: 'Clearable text',
     placeholder: 'Placeholder',
+    variant: 'outlined',
+  },
+};
+
+export const Required: Story = {
+  args: {
+    label: 'Label',
+    placeholder: 'Placeholder',
+    required: true,
     variant: 'outlined',
   },
 };

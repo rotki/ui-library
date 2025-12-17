@@ -24,6 +24,7 @@ export interface TextFieldProps {
   appendIcon?: RuiIcons;
   readonly?: boolean;
   clearable?: boolean;
+  required?: boolean;
 }
 
 defineOptions({
@@ -50,6 +51,7 @@ const props = withDefaults(defineProps<TextFieldProps>(), {
   appendIcon: undefined,
   readonly: false,
   clearable: false,
+  required: false,
 });
 
 const emit = defineEmits<{
@@ -66,6 +68,7 @@ const {
   readonly,
   errorMessages,
   successMessages,
+  required,
 } = toRefs(props);
 
 function input(event: Event) {
@@ -73,12 +76,13 @@ function input(event: Event) {
   set(modelValue, value);
 }
 
-const labelWithQuote = computed(() => {
+const labelWithQuote = computed<string>(() => {
   const labelVal = get(label);
   if (!labelVal)
     return '"\\200B"';
 
-  return `'  ${labelVal}  '`;
+  const asterisk = get(required) ? '﹡' : '';
+  return `'  ${labelVal}${asterisk}  '`;
 });
 
 const prepend = ref<HTMLDivElement>();
@@ -191,6 +195,12 @@ defineExpose({
         <label :class="$style.label">
           <span>
             {{ label }}
+            <span
+              v-if="required"
+              class="text-rui-error"
+            >
+              ﹡
+            </span>
           </span>
         </label>
         <fieldset

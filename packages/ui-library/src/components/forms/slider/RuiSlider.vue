@@ -22,6 +22,7 @@ export interface Props {
   hideDetails?: boolean;
   sliderClass?: string;
   tickClass?: string;
+  required?: boolean;
 }
 
 defineOptions({
@@ -48,6 +49,7 @@ const props = withDefaults(defineProps<Props>(), {
   hideDetails: false,
   sliderClass: '',
   tickClass: '',
+  required: false,
 });
 
 const emit = defineEmits<{
@@ -116,6 +118,12 @@ const tickSizeInPx = computed(() => `${get(tickSize)}px`);
         class="text-body-1"
       >
         {{ label }}
+        <span
+          v-if="required"
+          class="text-rui-error"
+        >
+          ﹡
+        </span>
       </div>
       <div
         ref="outer"

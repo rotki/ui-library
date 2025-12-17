@@ -28,6 +28,7 @@ export interface Props {
   maxRows?: number | string;
   rowHeight?: number | string;
   autoGrow?: boolean;
+  required?: boolean;
 }
 
 defineOptions({
@@ -58,6 +59,7 @@ const props = withDefaults(defineProps<Props>(), {
   rowHeight: 1.5, // in rems
   maxRows: undefined,
   autoGrow: false,
+  required: false,
 });
 
 const emit = defineEmits<{
@@ -76,6 +78,7 @@ const {
   rowHeight,
   errorMessages,
   successMessages,
+  required,
 } = toRefs(props);
 
 const prepend = ref<HTMLDivElement>();
@@ -85,12 +88,13 @@ const textareaSizer = ref<HTMLTextAreaElement>();
 
 const css = useCssModule();
 
-const labelWithQuote = computed(() => {
+const labelWithQuote = computed<string>(() => {
   const labelVal = get(label);
   if (!labelVal)
     return '"\\200B"';
 
-  return `'  ${get(label)}  '`;
+  const asterisk = get(required) ? '﹡' : '';
+  return `'  ${labelVal}${asterisk}  '`;
 });
 
 const fieldStyles = computed(() => {
@@ -228,6 +232,12 @@ onMounted(computeFieldHeight);
         />
         <label :class="css.label">
           {{ label }}
+          <span
+            v-if="required"
+            class="text-rui-error"
+          >
+            ﹡
+          </span>
         </label>
         <fieldset
           v-if="variant === 'outlined'"

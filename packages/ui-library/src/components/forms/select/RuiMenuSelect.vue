@@ -30,6 +30,7 @@ export interface Props<TValue, TItem> {
   autoSelectFirst?: boolean;
   hideNoData?: boolean;
   noDataText?: string;
+  required?: boolean;
 }
 
 defineOptions({
@@ -59,6 +60,7 @@ const props = withDefaults(defineProps<Props<TValue, TItem>>(), {
   autoSelectFirst: false,
   hideNoData: false,
   noDataText: 'No data available',
+  required: false,
 });
 
 const { dense, options, disabled } = toRefs(props);
@@ -82,11 +84,12 @@ const value = computed<TItem | undefined>({
   },
 });
 
-const labelWithQuote = computed(() => {
+const labelWithQuote = computed<string>(() => {
   if (!props.label)
     return '"\\200B"';
 
-  return `'  ${props.label}  '`;
+  const asterisk = props.required ? '﹡' : '';
+  return `'  ${props.label}${asterisk}  '`;
 });
 
 const {
@@ -203,6 +206,12 @@ function clear() {
             >
               {{ label }}
             </slot>
+            <span
+              v-if="required"
+              class="text-rui-error"
+            >
+              ﹡
+            </span>
           </span>
           <span
             v-if="value"

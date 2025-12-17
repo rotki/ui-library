@@ -36,6 +36,7 @@ const meta: Meta<ComponentProps> = {
     disabled: { control: 'boolean' },
     modelValue: { control: 'object' },
     options: { control: 'object' },
+    required: { control: 'boolean', table: { category: 'State' } },
     variant: {
       control: 'select',
       defaultValue: 'default',
@@ -145,6 +146,16 @@ export const CustomValue: Story = {
     dense: false,
     keyAttr: 'id',
     modelValue: undefined,
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+};
+
+export const Required: Story = {
+  args: {
+    keyAttr: 'id',
+    modelValue: undefined,
+    required: true,
     textAttr: 'label',
     variant: 'outlined',
   },

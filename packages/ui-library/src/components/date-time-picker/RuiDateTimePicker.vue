@@ -40,6 +40,7 @@ export interface RuiDateTimePickerProps {
   errorMessages?: string | string[];
   successMessages?: string | string[];
   hideDetails?: boolean;
+  required?: boolean;
 }
 
 defineOptions({
@@ -65,6 +66,7 @@ const props = withDefaults(defineProps<RuiDateTimePickerProps>(), {
   accuracy: 'minute',
   errorMessages: () => [],
   successMessages: () => [],
+  required: false,
 });
 
 defineSlots<{
@@ -234,7 +236,8 @@ const labelWithQuote = computed<string>(() => {
   if (!props.label)
     return '"\\200B"';
 
-  return `'  ${props.label}  '`;
+  const asterisk = props.required ? '﹡' : '';
+  return `'  ${props.label}${asterisk}  '`;
 });
 
 const isOutlined = computed<boolean>(() => props.variant === 'outlined');
@@ -574,6 +577,12 @@ onMounted(() => {
           ]"
         >
           {{ label }}
+          <span
+            v-if="props.required"
+            class="text-rui-error"
+          >
+            ﹡
+          </span>
         </span>
 
         <span :class="[$style.icon__wrapper, $style.icon__prepend]">

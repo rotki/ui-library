@@ -41,6 +41,7 @@ const meta: Meta<RuiRevealableTextFieldProps> = {
     modelValue: { control: 'text' },
     placeholder: { control: 'text' },
     prependIcon: { control: 'text' },
+    required: { control: 'boolean', table: { category: 'State' } },
     successMessages: { control: 'object' },
     textColor: {
       control: 'select',
@@ -117,6 +118,15 @@ export const Hinted: Story = {
     hint: 'Lorem ipsum dolor',
     label: 'Password',
     placeholder: 'Placeholder',
+    variant: 'outlined',
+  },
+};
+
+export const Required: Story = {
+  args: {
+    label: 'Password',
+    placeholder: 'Placeholder',
+    required: true,
     variant: 'outlined',
   },
 };

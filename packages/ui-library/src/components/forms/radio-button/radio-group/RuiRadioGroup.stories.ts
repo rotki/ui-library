@@ -35,7 +35,9 @@ const meta: Meta<RuiRadioGroupProps> = {
     hideDetails: { control: 'boolean' },
     hint: { control: 'text' },
     inline: { control: 'boolean' },
+    label: { control: 'text' },
     modelValue: { control: 'text' },
+    required: { control: 'boolean', table: { category: 'State' } },
     size: { control: 'select', options: ['medium', 'sm', 'lg'] },
     successMessages: { control: 'object' },
   },
@@ -73,6 +75,13 @@ export const HideDetails: Story = {
   args: {
     hideDetails: true,
     hint: 'Hint (should be invisible)',
+  },
+};
+
+export const Required: Story = {
+  args: {
+    label: 'Required Group',
+    required: true,
   },
 };
 

@@ -419,4 +419,29 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
 
     expect(submitFunc).toBeCalledTimes(1);
   });
+
+  it('should show required asterisk when required prop is true', async () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      props: {
+        keyAttr: 'id',
+        label: 'Select',
+        modelValue: undefined,
+        options,
+        textAttr: 'label',
+        variant: 'outlined',
+      },
+    });
+
+    // Required asterisk should not be present by default
+    expect(wrapper.find('div[data-id="activator"]').text()).not.toContain('﹡');
+
+    // Set required to true
+    await wrapper.setProps({ required: true });
+    expect(wrapper.find('div[data-id="activator"]').text()).toContain('﹡');
+    expect(wrapper.find('div[data-id="activator"] .text-rui-error').exists()).toBeTruthy();
+
+    // Set required back to false
+    await wrapper.setProps({ required: false });
+    expect(wrapper.find('div[data-id="activator"]').text()).not.toContain('﹡');
+  });
 });
