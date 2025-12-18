@@ -65,6 +65,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
           [$style['with-success']]: hasSuccess && !hasError,
         },
       ]"
+      :data-error="hasError ? '' : undefined"
     >
       <div :class="$style.inner">
         <input
@@ -72,6 +73,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
           type="checkbox"
           :class="$style.input"
           :disabled="disabled"
+          :aria-invalid="hasError"
           v-bind="getNonRootAttrs($attrs)"
           @input="input($event)"
         />

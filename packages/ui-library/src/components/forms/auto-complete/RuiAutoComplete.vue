@@ -449,6 +449,7 @@ defineExpose({
             ...(readOnly ? {} : attrs) }
           "
           data-id="activator"
+          :data-error="hasError ? '' : undefined"
           :tabindex="disabled || readOnly ? -1 : 0"
           @click="focusSetInputFocus()"
           @focus="focusOnActivatorFocused()"
@@ -539,6 +540,7 @@ defineExpose({
               type="text"
               :placeholder="placeholder"
               :class="focusInputClass"
+              :aria-invalid="hasError"
               @keydown.delete="onInputDeletePressed()"
               @input.stop="updateSearchInput($event)"
               @focus="focusOnInputFocused()"

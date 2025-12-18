@@ -154,6 +154,7 @@ defineExpose({
           [$style[`text_${textColor}`] ?? '']: textColor && !hasMessages,
         },
       ]"
+      :data-error="hasError ? '' : undefined"
     >
       <div
         v-if="$slots.prepend || prependIcon"
@@ -187,6 +188,7 @@ defineExpose({
           :variant="variant"
           :readonly="readonly"
           :wrapper-width="width"
+          :aria-invalid="hasError"
           v-bind="getNonRootAttrs($attrs)"
           @input="input($event)"
           @blur="emit('blur', $event)"

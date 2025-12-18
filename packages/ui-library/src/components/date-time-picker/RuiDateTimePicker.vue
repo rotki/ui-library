@@ -563,6 +563,7 @@ onMounted(() => {
           ...(props.readonly ? {} : attrs) }
         "
         data-id="activator"
+        :data-error="hasError ? '' : undefined"
         :tabindex="disabled || props.readonly ? -1 : 0"
         @click="setInputFocus()"
       >
@@ -602,6 +603,7 @@ onMounted(() => {
             type="text"
             :placeholder="dateFormat"
             :readonly="readonly"
+            :aria-invalid="hasError"
             @focus="handleFocus()"
             @select="handleInputSelection($event)"
             @click.stop="handleInputClick($event)"

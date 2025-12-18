@@ -187,6 +187,8 @@ function clear() {
           ]"
           v-bind="{ ...getNonRootAttrs($attrs), ...(readOnly ? {} : attrs) }"
           data-id="activator"
+          :data-error="hasError ? '' : undefined"
+          :aria-invalid="hasError"
           @keydown.up.prevent="moveHighlight(true)"
           @keydown.down.prevent="moveHighlight(false)"
         >

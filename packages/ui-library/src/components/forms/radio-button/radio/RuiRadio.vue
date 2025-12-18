@@ -72,14 +72,17 @@ const { hasError, hasSuccess } = useFormTextDetail(
         $style[size ?? ''],
         {
           [$style.disabled]: disabled,
+          [$style['with-error']]: hasError,
         },
       ]"
+      :data-error="hasError ? '' : undefined"
     >
       <input
         :checked="selected"
         type="radio"
         :class="$style.input"
         :disabled="disabled"
+        :aria-invalid="hasError"
         v-bind="getNonRootAttrs($attrs)"
         :value="value"
         @input="input($event)"

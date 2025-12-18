@@ -111,6 +111,7 @@ const tickSizeInPx = computed(() => `${get(tickSize)}px`);
           [$style['with-success'] ?? '']: hasSuccess && !hasError,
         },
       ]"
+      :data-error="hasError ? '' : undefined"
     >
       <div
         v-if="label"
@@ -138,6 +139,7 @@ const tickSizeInPx = computed(() => `${get(tickSize)}px`);
             :min="min"
             :step="step"
             :disabled="disabled"
+            :aria-invalid="hasError"
             v-bind="getNonRootAttrs($attrs)"
           />
           <div :class="$style.slider">

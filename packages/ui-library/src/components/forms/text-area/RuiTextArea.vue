@@ -191,6 +191,7 @@ onMounted(computeFieldHeight);
           [css[`text_${textColor}`] ?? '']: textColor && !hasMessages,
         },
       ]"
+      :data-error="hasError ? '' : undefined"
     >
       <div
         v-if="$slots.prepend || prependIcon"
@@ -228,6 +229,7 @@ onMounted(computeFieldHeight);
           :style="fieldStyles"
           :disabled="disabled"
           :readonly="readonly"
+          :aria-invalid="hasError"
           v-bind="getNonRootAttrs($attrs)"
         />
         <label :class="css.label">

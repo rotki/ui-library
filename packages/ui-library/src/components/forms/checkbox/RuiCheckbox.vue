@@ -98,9 +98,11 @@ watch(internalModelValue, (val) => {
         $style[size ?? ''],
         {
           [$style.disabled]: disabled,
+          [$style['with-error']]: hasError,
         },
       ]"
       v-bind="objectPick($attrs, ['onClick'])"
+      :data-error="hasError ? '' : undefined"
     >
       <input
         ref="el"
@@ -108,6 +110,7 @@ watch(internalModelValue, (val) => {
         type="checkbox"
         :class="$style.input"
         :disabled="disabled"
+        :aria-invalid="hasError"
         v-bind="getNonRootAttrs($attrs, ['onInput', 'onClick'])"
       />
       <span
