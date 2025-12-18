@@ -180,7 +180,8 @@ function selectYear(year: number) {
 function handleNext() {
   if (get(viewMode) === 'months') {
     const nextYear = props.viewYear + 1;
-    selectYear(nextYear);
+    // Emit directly - navigation is already constrained by canGoToNext
+    emit('select', { month: props.viewMonth, year: nextYear });
   }
   else {
     const lastYearInRange = get(startYear) + 11;
@@ -191,7 +192,8 @@ function handleNext() {
 function handlePrev() {
   if (get(viewMode) === 'months') {
     const previousYear = props.viewYear - 1;
-    selectYear(previousYear);
+    // Emit directly - navigation is already constrained by canGoToPrev
+    emit('select', { month: props.viewMonth, year: previousYear });
   }
   else {
     const firstYearInRange = get(startYear);

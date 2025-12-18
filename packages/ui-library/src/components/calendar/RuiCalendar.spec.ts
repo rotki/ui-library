@@ -359,6 +359,72 @@ describe('components/calendar/RuiCalendar.vue', () => {
       await nextTick();
       expect(wrapper.text()).toContain('January 2025');
     });
+
+    it('should navigate years backward beyond initial year range', async () => {
+      wrapper = createWrapper({
+        props: {
+          modelValue: new Date(2023, 0, 15), // January 15, 2023
+        },
+      });
+
+      // Open the month/year selection menu
+      const titleElement = wrapper.find('.header-title');
+      await titleElement.trigger('click');
+      await nextTick();
+
+      const calendarMenu = wrapper.findComponent({ name: 'RuiCalendarMenu' });
+      expect(calendarMenu.exists()).toBeTruthy();
+
+      // Navigate backward multiple years (beyond the initial 12-year range)
+      // Initial year range would be around 2017-2028, so going to 2010 tests beyond that
+      for (let year = 2022; year >= 2010; year--) {
+        await calendarMenu.vm.$emit('select', { month: 0, year });
+        await nextTick();
+      }
+
+      // Verify we can reach 2010
+      expect(wrapper.text()).toContain('January 2010');
+
+      const emitted = wrapper.emitted('update:modelValue');
+      expect(emitted).toBeTruthy();
+      const lastEmission = emitted!.at(-1);
+      assert(lastEmission);
+      const emittedValue = lastEmission[0] as Date;
+      expect(emittedValue.getFullYear()).toBe(2010);
+    });
+
+    it('should navigate years forward beyond initial year range', async () => {
+      wrapper = createWrapper({
+        props: {
+          modelValue: new Date(2023, 0, 15), // January 15, 2023
+        },
+      });
+
+      // Open the month/year selection menu
+      const titleElement = wrapper.find('.header-title');
+      await titleElement.trigger('click');
+      await nextTick();
+
+      const calendarMenu = wrapper.findComponent({ name: 'RuiCalendarMenu' });
+      expect(calendarMenu.exists()).toBeTruthy();
+
+      // Navigate forward multiple years (beyond the initial 12-year range)
+      // Initial year range would be around 2017-2028, so going to 2035 tests beyond that
+      for (let year = 2024; year <= 2035; year++) {
+        await calendarMenu.vm.$emit('select', { month: 0, year });
+        await nextTick();
+      }
+
+      // Verify we can reach 2035
+      expect(wrapper.text()).toContain('January 2035');
+
+      const emitted = wrapper.emitted('update:modelValue');
+      expect(emitted).toBeTruthy();
+      const lastEmission = emitted!.at(-1);
+      assert(lastEmission);
+      const emittedValue = lastEmission[0] as Date;
+      expect(emittedValue.getFullYear()).toBe(2035);
+    });
   });
 
   describe('date Constraints', () => {
