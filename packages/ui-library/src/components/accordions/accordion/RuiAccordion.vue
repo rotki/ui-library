@@ -14,7 +14,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-withDefaults(defineProps<AccordionProps>(), {
+const props = withDefaults(defineProps<AccordionProps>(), {
   open: false,
   eager: false,
   headerGrow: false,
@@ -23,30 +23,48 @@ withDefaults(defineProps<AccordionProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'click'): void;
+  click: [];
 }>();
 
-function click() {
+const triggerId = useId();
+const contentId = useId();
+
+const inner = ref<HTMLDivElement>();
+const { height: innerHeight } = useElementSize(inner);
+
+const contentHeight = computed<string>(() => (props.open ? `${get(innerHeight)}px` : '0px'));
+
+function toggle(): void {
   emit('click');
 }
 
-const inner = ref<HTMLDivElement>();
-
-const { height: innerHeight } = useElementSize(inner);
+function onKeydown(event: KeyboardEvent): void {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    toggle();
+  }
+}
 </script>
 
 <template>
   <div
-    class="accordion"
-    :class="[$style.accordion, { [$style.open]: open }]"
+    class="flex flex-col items-start"
+    :data-state="open ? 'open' : 'closed'"
+    data-accordion
     v-bind="$attrs"
   >
     <div
       v-if="$slots.header"
-      class="accordion__header flex gap-2 items-center"
+      :id="triggerId"
+      class="flex gap-2 items-center cursor-pointer outline-none focus-visible:bg-rui-primary/10 rounded"
       :class="[headerClass, { 'w-full': headerGrow }]"
       role="button"
-      @click="click()"
+      tabindex="0"
+      :aria-expanded="open"
+      :aria-controls="contentId"
+      data-accordion-trigger
+      @click="toggle()"
+      @keydown="onKeydown($event)"
     >
       <div
         :class="{ grow: headerGrow }"
@@ -57,49 +75,24 @@ const { height: innerHeight } = useElementSize(inner);
         />
       </div>
       <Icon
-        class="text-rui-text-secondary"
-        :class="$style.icon"
+        class="text-rui-text-secondary transition-transform"
+        :class="{ '-rotate-180': open }"
         name="lu-chevron-down"
       />
     </div>
     <div
       v-if="open || eager"
-      :class="[contentClass, $style.accordion__content]"
-      class="accordion__content"
+      :id="contentId"
+      class="grow transition-all overflow-hidden w-full"
+      :class="contentClass"
+      :style="{ height: contentHeight }"
+      role="region"
+      :aria-labelledby="triggerId"
+      data-accordion-content
     >
-      <div
-        ref="inner"
-      >
-        <slot
-          name="default"
-        />
+      <div ref="inner">
+        <slot name="default" />
       </div>
     </div>
   </div>
 </template>
-
-<style lang="scss" module>
-.accordion {
-  @apply flex flex-col items-start;
-
-  &.open {
-    .accordion {
-      &__content {
-        height: calc(v-bind(innerHeight) * 1px);
-      }
-    }
-
-    .icon {
-      @apply transform -rotate-180;
-    }
-  }
-
-  &__content {
-    @apply grow transition-all overflow-hidden h-0 w-full;
-  }
-
-  .icon {
-    @apply transition-all;
-  }
-}
-</style>

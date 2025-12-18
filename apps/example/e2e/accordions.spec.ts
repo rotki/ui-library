@@ -13,10 +13,10 @@ test.describe('accordions', () => {
 
     await expect(accordions.locator('> *')).toHaveCount(2);
 
-    await accordions.locator('div:first-child .accordion__header').click();
+    await accordions.locator('div:first-child [data-accordion-trigger]').click();
     await expect(accordions).toContainText('Accordion 1 Content');
 
-    await accordions.locator('div:nth-child(2) .accordion__header').click();
+    await accordions.locator('div:nth-child(2) [data-accordion-trigger]').click();
     await expect(accordions).not.toContainText('Accordion 1 Content');
     await expect(accordions).toContainText('Accordion 2 Content');
   });
@@ -27,15 +27,15 @@ test.describe('accordions', () => {
 
     await expect(accordions.locator('> *')).toHaveCount(2);
 
-    await accordions.locator('div:first-child .accordion__header').click();
+    await accordions.locator('div:first-child [data-accordion-trigger]').click();
     await expect(accordions).toContainText('Accordion 1 Content');
     await expect(accordions).not.toContainText('Accordion 2 Content');
 
-    await accordions.locator('div:nth-child(2) .accordion__header').click();
+    await accordions.locator('div:nth-child(2) [data-accordion-trigger]').click();
     await expect(accordions).toContainText('Accordion 1 Content');
     await expect(accordions).toContainText('Accordion 2 Content');
 
-    await accordions.locator('div:first-child .accordion__header').click();
+    await accordions.locator('div:first-child [data-accordion-trigger]').click();
     await expect(accordions).not.toContainText('Accordion 1 Content');
     await expect(accordions).toContainText('Accordion 2 Content');
   });

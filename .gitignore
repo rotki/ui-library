@@ -161,3 +161,4 @@ apps/example/test-results
 
 # Cache from when running playwright in docker
 .pnpm-store
+.planning
