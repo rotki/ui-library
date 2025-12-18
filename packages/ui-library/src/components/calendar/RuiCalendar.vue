@@ -86,6 +86,22 @@ function move(date: Date | number) {
 function selectMonth(selection: MonthYearSelection) {
   set(viewMonth, selection.month);
   set(viewYear, selection.year);
+
+  // If there's a selected date, update it with the new year/month
+  if (isDefined(selectedDate)) {
+    const current = get(selectedDate);
+    const currentDay = current.getDate();
+    // Handle day overflow (e.g., Jan 31 -> Feb 28) by checking BEFORE setting month
+    const daysInNewMonth = new Date(selection.year, selection.month + 1, 0).getDate();
+    const adjustedDay = Math.min(currentDay, daysInNewMonth);
+
+    const newDate = new Date(current);
+    newDate.setFullYear(selection.year);
+    newDate.setDate(1); // Set to 1st to avoid overflow when changing month
+    newDate.setMonth(selection.month);
+    newDate.setDate(adjustedDay);
+    set(selectedDate, newDate);
+  }
 }
 
 watch([selectedDate], ([date]) => {

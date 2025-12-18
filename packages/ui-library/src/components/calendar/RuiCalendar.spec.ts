@@ -245,6 +245,96 @@ describe('components/calendar/RuiCalendar.vue', () => {
       expect(wrapper.text()).toContain('June 2023');
     });
 
+    it('should update modelValue immediately when year is selected from menu', async () => {
+      wrapper = createWrapper({
+        props: {
+          modelValue: new Date(2023, 0, 15), // January 15, 2023
+        },
+      });
+
+      // Simulate year selection from menu (changing year to 2025)
+      const calendarHeader = wrapper.findComponent({ name: 'RuiCalendarHeader' });
+      await calendarHeader.vm.$emit('select-month', { month: 0, year: 2025 }); // January 2025
+
+      await nextTick();
+
+      const emitted = wrapper.emitted('update:modelValue');
+      expect(emitted).toBeTruthy();
+      const lastEmission = emitted!.at(-1);
+      assert(lastEmission);
+      const emittedValue = lastEmission[0] as Date;
+      expect(emittedValue.getFullYear()).toBe(2025);
+      expect(emittedValue.getMonth()).toBe(0); // January
+      expect(emittedValue.getDate()).toBe(15); // Day preserved
+    });
+
+    it('should update modelValue immediately when month is selected from menu', async () => {
+      wrapper = createWrapper({
+        props: {
+          modelValue: new Date(2023, 0, 15), // January 15, 2023
+        },
+      });
+
+      // Simulate month selection from menu (changing month to June)
+      const calendarHeader = wrapper.findComponent({ name: 'RuiCalendarHeader' });
+      await calendarHeader.vm.$emit('select-month', { month: 5, year: 2023 }); // June 2023
+
+      await nextTick();
+
+      const emitted = wrapper.emitted('update:modelValue');
+      expect(emitted).toBeTruthy();
+      const lastEmission = emitted!.at(-1);
+      assert(lastEmission);
+      const emittedValue = lastEmission[0] as Date;
+      expect(emittedValue.getFullYear()).toBe(2023);
+      expect(emittedValue.getMonth()).toBe(5); // June
+      expect(emittedValue.getDate()).toBe(15); // Day preserved
+    });
+
+    it('should handle day overflow when month has fewer days', async () => {
+      wrapper = createWrapper({
+        props: {
+          modelValue: new Date(2023, 0, 31), // January 31, 2023
+        },
+      });
+
+      // Simulate month selection to February (which has only 28 days in 2023)
+      const calendarHeader = wrapper.findComponent({ name: 'RuiCalendarHeader' });
+      await calendarHeader.vm.$emit('select-month', { month: 1, year: 2023 }); // February 2023
+
+      await nextTick();
+
+      const emitted = wrapper.emitted('update:modelValue');
+      expect(emitted).toBeTruthy();
+      const lastEmission = emitted!.at(-1);
+      assert(lastEmission);
+      const emittedValue = lastEmission[0] as Date;
+      expect(emittedValue.getFullYear()).toBe(2023);
+      expect(emittedValue.getMonth()).toBe(1); // February
+      expect(emittedValue.getDate()).toBe(28); // Day adjusted to last day of February
+    });
+
+    it('should not update modelValue when no date is selected', async () => {
+      wrapper = createWrapper({
+        props: {
+          modelValue: undefined,
+        },
+      });
+
+      // Simulate year/month selection from menu
+      const calendarHeader = wrapper.findComponent({ name: 'RuiCalendarHeader' });
+      await calendarHeader.vm.$emit('select-month', { month: 5, year: 2025 }); // June 2025
+
+      await nextTick();
+
+      // View should update
+      expect(wrapper.text()).toContain('June 2025');
+
+      // But modelValue should not be emitted since no date was selected
+      const emitted = wrapper.emitted('update:modelValue');
+      expect(emitted).toBeFalsy();
+    });
+
     it('should allow returning to max date year when navigating years', async () => {
       const maxDate = new Date(2025, 11, 31); // December 31, 2025
       wrapper = createWrapper({
