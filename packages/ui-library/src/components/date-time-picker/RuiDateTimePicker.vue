@@ -1,18 +1,14 @@
 <script lang="ts" setup>
 import type { DateTimeSegmentType } from '@/components/date-time-picker/types';
 import type { TimePickerSelection } from '@/components/time-picker/RuiTimePicker.vue';
-import type { TimeAccuracy } from '@/consts/time-accuracy';
 import { logicAnd, logicOr } from '@vueuse/math';
-import dayjs, { type Dayjs } from 'dayjs';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiDateTimePickerMenu from '@/components/date-time-picker/RuiDateTimePickerMenu.vue';
+import { useDateTimeSelection } from '@/components/date-time-picker/use-date-time-selection';
 import { useInputHandler } from '@/components/date-time-picker/use-input-handler';
 import { useKeyboardHandler } from '@/components/date-time-picker/use-keyboard-handler';
-import { guessTimezone, includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
-import { useRuiI8n } from '@/composables/use-rui-i18n';
-import { RUI_I18N_KEYS } from '@/i18n/keys';
 
 type DateFormat = 'year-first' | 'month-first' | 'day-first';
 
@@ -29,7 +25,7 @@ export interface RuiDateTimePickerProps {
   maxDate?: Date | number | 'now';
   format?: DateFormat;
   type?: DateTimeModelType;
-  accuracy?: TimeAccuracy;
+  accuracy?: 'minute' | 'second' | 'millisecond';
   disabled?: boolean;
   allowEmpty?: boolean;
   readonly?: boolean;
@@ -79,24 +75,9 @@ const baseFormats: Record<DateFormat, string> = {
   'year-first': 'YYYY/MM/DD HH:mm',
 };
 
-const MILLISECONDS = 1000;
-
 const isOpen = ref<boolean>(false);
 const cursorPosition = ref<number>(0);
-const internalErrorMessages = ref<string[]>([]);
-
-const selectedYear = ref<number>();
-const selectedMonth = ref<number>();
-const selectedDay = ref<number>();
-
-const selectedHour = ref<number>();
-const selectedMinute = ref<number>();
-const selectedSecond = ref<number>();
-const selectedMillisecond = ref<number>();
-const selectedTimezone = ref<string | undefined>(guessTimezone());
-
 const currentValue = ref<number>();
-const now = ref(dayjs.tz(undefined, guessTimezone()));
 
 const textInput = ref<HTMLInputElement>();
 const activator = ref();
@@ -107,40 +88,35 @@ const { focused: activatorFocusedWithin } = useFocusWithin(activator);
 const { focused: menuWrapperFocusedWithin } = useFocusWithin(menuWrapperRef);
 const { focused: searchInputFocused } = useFocus(textInput);
 
-const { setValue, update, getCurrent } = useInputHandler({
-  DD: selectedDay,
-  MM: selectedMonth,
-  YYYY: selectedYear,
-  HH: selectedHour,
-  mm: selectedMinute,
-  ss: selectedSecond,
-  SSS: selectedMillisecond,
-}, currentValue);
-
-const minAllowedDate = computed<Date>(() => {
-  if (props.minDate === undefined) {
-    return new Date(1970, 0, 1);
-  }
-
-  if (props.type === 'epoch' && typeof props.minDate === 'number') {
-    return new Date(props.minDate * MILLISECONDS);
-  }
-
-  return new Date(props.minDate);
+const {
+  clear: clearSelection,
+  getDateTime,
+  internalErrorMessages,
+  maxAllowedDate,
+  minAllowedDate,
+  segmentData,
+  selectedDate,
+  selectedDay,
+  selectedHour,
+  selectedMillisecond,
+  selectedMinute,
+  selectedMonth,
+  selectedSecond,
+  selectedTime,
+  selectedTimezone,
+  selectedYear,
+  setNow,
+  valueSet,
+} = useDateTimeSelection({
+  accuracy: props.accuracy,
+  allowEmpty: props.allowEmpty,
+  maxDate: props.maxDate,
+  minDate: props.minDate,
+  modelValue,
+  type: props.type,
 });
 
-const maxAllowedDate = computed<Date | undefined>(() => {
-  if (props.maxDate === undefined) {
-    return undefined;
-  }
-  if (props.maxDate === 'now') {
-    return get(now).toDate();
-  }
-  if (props.type === 'epoch' && typeof props.maxDate === 'number') {
-    return new Date(props.maxDate * MILLISECONDS);
-  }
-  return new Date(props.maxDate);
-});
+const { setValue, getCurrent } = useInputHandler(segmentData, currentValue);
 
 const dateFormat = computed<string>(() => {
   const dateFormat = props.format;
@@ -157,80 +133,38 @@ const dateFormat = computed<string>(() => {
 const {
   clear: clearSegment,
   getCurrentSegment,
+  handleBlur,
   handleClick,
   handleFocus,
   handleInput,
   handleInputSelection,
   handleKeyDown,
+  handleMouseDown,
   handlePaste,
   setSegment,
 } = useKeyboardHandler({
+  accuracy: props.accuracy,
   currentValue,
   cursorPosition,
-  disabled: props.disabled,
-  getDateTime,
-  getCurrent,
-  readonly: props.readonly,
   dateFormat,
+  disabled: props.disabled,
+  getCurrent,
+  getDateTime,
+  readonly: props.readonly,
   setValue,
   textInput,
-  accuracy: props.accuracy,
 });
 
-const { t } = useRuiI8n();
-
 function handleInputClick(event: MouseEvent): void {
+  // Handle segment selection first, before any DOM changes from menu opening
+  handleClick(event);
   // Open menu if not already open
   if (!get(isOpen)) {
     set(isOpen, true);
   }
-  // Handle segment selection
-  handleClick(event);
 }
 
 const anyFocused = logicOr(activatorFocusedWithin, menuWrapperFocusedWithin);
-
-const selectedDate = computed<Date | undefined>({
-  set(value?: Date) {
-    set(selectedYear, value?.getFullYear());
-    set(selectedMonth, value ? value.getMonth() + 1 : undefined);
-    set(selectedDay, value?.getDate());
-  },
-  get() {
-    if (!(isDefined(selectedYear) && isDefined(selectedMonth) && isDefined(selectedDay))) {
-      return undefined;
-    }
-    const date = new Date();
-    date.setFullYear(get(selectedYear));
-    date.setMonth(get(selectedMonth) - 1);
-    date.setDate(get(selectedDay));
-    return date;
-  },
-});
-
-const selectedTime = computed<Date | undefined>({
-  set(value?: Date) {
-    set(selectedHour, value?.getHours());
-    set(selectedMinute, value?.getMinutes());
-    set(selectedSecond, value?.getSeconds());
-    set(selectedMillisecond, value?.getMilliseconds());
-  },
-  get() {
-    if (!(isDefined(selectedHour) && isDefined(selectedMinute))) {
-      return undefined;
-    }
-    const date = new Date();
-    date.setHours(
-      get(selectedHour),
-      get(selectedMinute),
-      get(selectedSecond) ?? 0,
-      get(selectedMillisecond) ?? 0,
-    );
-    return date;
-  },
-});
-
-const valueSet = computed<boolean>(() => isDefined(selectedDate) && isDefined(selectedTime));
 
 const labelWithQuote = computed<string>(() => {
   if (!props.label)
@@ -325,18 +259,9 @@ async function setInputFocus(): Promise<void> {
 }
 
 function clear(segmentType?: string): void {
-  set(internalErrorMessages, []);
-
   if (!segmentType) {
-    set(selectedYear, undefined);
-    set(selectedMonth, undefined);
-    set(selectedDay, undefined);
-    set(selectedHour, undefined);
-    set(selectedMinute, undefined);
-    set(selectedSecond, undefined);
-    set(selectedMillisecond, undefined);
+    clearSelection();
     set(currentValue, undefined);
-    set(modelValue, undefined);
     return;
   }
 
@@ -349,175 +274,6 @@ function arrowClicked(event: any): void {
     event.stopPropagation();
   }
 }
-
-function getDateTime(): Dayjs {
-  let dateTime = dayjs();
-  if (isDefined(selectedYear)) {
-    dateTime = dateTime.year(get(selectedYear));
-  }
-
-  if (isDefined(selectedMonth)) {
-    dateTime = dateTime.month(get(selectedMonth) - 1);
-  }
-
-  if (isDefined(selectedDay)) {
-    const daysInMonth = dateTime.daysInMonth();
-    const day = Math.min(get(selectedDay), daysInMonth);
-    dateTime = dateTime.date(day);
-  }
-
-  if (isDefined(selectedHour)) {
-    dateTime = dateTime.hour(get(selectedHour));
-  }
-
-  if (isDefined(selectedMinute)) {
-    dateTime = dateTime.minute(get(selectedMinute));
-  }
-
-  if (isDefined(selectedSecond)) {
-    dateTime = dateTime.second(get(selectedSecond));
-  }
-
-  if (isDefined(selectedMillisecond)) {
-    dateTime = dateTime.millisecond(get(selectedMillisecond));
-  }
-
-  return dateTime;
-}
-
-function setNow(): void {
-  set(internalErrorMessages, []);
-
-  const date = dayjs();
-  set(now, date);
-  set(selectedYear, date.year());
-  set(selectedMonth, date.month() + 1);
-  set(selectedDay, date.date());
-  set(selectedHour, date.hour());
-  set(selectedMinute, date.minute());
-  set(selectedSecond, includeSeconds(props.accuracy) ? date.second() : 0);
-  set(selectedMillisecond, includeMilliseconds(props.accuracy) ? date.millisecond() : 0);
-
-  nextTick(() => {
-    updateModelValue();
-  });
-}
-
-function isDateValid(date: Dayjs): boolean {
-  const min = get(minAllowedDate);
-  const max = get(maxAllowedDate);
-
-  set(internalErrorMessages, []);
-
-  if (min && date.isBefore(min)) {
-    const errorMessage = t(RUI_I18N_KEYS.dateTimePicker.dateBeforeMin, {
-      date: min.toLocaleDateString(),
-    }, `Date cannot be before ${min.toLocaleDateString()}`);
-    set(internalErrorMessages, [...get(internalErrorMessages), errorMessage]);
-    return false;
-  }
-
-  if (max && date.isAfter(max)) {
-    const nowError = t(RUI_I18N_KEYS.dateTimePicker.dateInFuture, 'The selected date cannot be in the future');
-    const maxError = t(RUI_I18N_KEYS.dateTimePicker.dateAfterMax, { date: max.toLocaleDateString() }, `Date cannot be after ${max.toLocaleDateString()}`);
-    const errorMessage = props.maxDate === 'now' ? nowError : maxError;
-    set(internalErrorMessages, [...get(internalErrorMessages), errorMessage]);
-    return false;
-  }
-
-  return true;
-}
-
-function emitUpdate(updatedModel: Dayjs) {
-  const typeMap = {
-    'date': () => updatedModel.toDate(),
-    'epoch-ms': () => updatedModel.valueOf(),
-    'epoch': () => updatedModel.valueOf() / MILLISECONDS,
-  } as const;
-
-  set(modelValue, typeMap[props.type]());
-}
-
-function updateModelValue(): void {
-  if (!isDefined(selectedDate) || !isDefined(selectedTime)) {
-    return;
-  }
-
-  if (!(isDefined(selectedDate) && isDefined(selectedTime))) {
-    set(modelValue, undefined);
-  }
-  else {
-    const date = get(selectedDate);
-    const time = get(selectedTime);
-
-    const updatedModel = dayjs.tz(isDefined(modelValue) ? get(modelValue) : undefined, get(selectedTimezone))
-      .year(date.getFullYear())
-      .month(date.getMonth())
-      .date(date.getDate())
-      .hour(time.getHours())
-      .minute(time.getMinutes())
-      .second(includeSeconds(props.accuracy) ? time.getSeconds() : 0)
-      .millisecond(includeMilliseconds(props.accuracy) ? time.getMilliseconds() : 0);
-
-    if (!isDateValid(updatedModel)) {
-      return;
-    }
-
-    emitUpdate(updatedModel);
-  }
-}
-
-const { ignoreUpdates } = watchIgnorable([selectedDate, selectedTime], ([selectedDate, selectedTime], [prevSelectedDate, prevSelectedTime]) => {
-  const currentTimezone = get(selectedTimezone);
-  const newSelectedDate = dayjs.tz(selectedDate, currentTimezone);
-  const oldSelectedDate = dayjs.tz(prevSelectedDate, currentTimezone);
-  const newSelectedTime = dayjs.tz(selectedTime, currentTimezone);
-  const oldSelectedTime = dayjs.tz(prevSelectedTime, currentTimezone);
-
-  if (newSelectedDate.isSame(oldSelectedDate) && newSelectedTime.isSame(oldSelectedTime)) {
-    return;
-  }
-
-  set(now, dayjs());
-  updateModelValue();
-});
-
-function updateInternalModel(value: ModelValueType<typeof props.type>) {
-  ignoreUpdates(() => {
-    const updatedValue = props.type === 'epoch' && typeof value === 'number'
-      ? value * MILLISECONDS
-      : value;
-    const date = dayjs.tz(updatedValue, get(selectedTimezone));
-    isDateValid(date);
-    update(date, props.accuracy);
-  });
-}
-
-watch(selectedTimezone, (newTimezone: string | undefined) => {
-  if (newTimezone && isDefined(selectedDate) && isDefined(selectedTime)) {
-    set(now, dayjs());
-    updateModelValue();
-  }
-});
-
-watch(modelValue, (value) => {
-  set(now, dayjs());
-  if (value === undefined) {
-    clear();
-  }
-  else {
-    updateInternalModel(value);
-  }
-});
-
-onMounted(() => {
-  if (isDefined(modelValue)) {
-    updateInternalModel(get(modelValue));
-  }
-  else if (!props.allowEmpty) {
-    setNow();
-  }
-});
 </script>
 
 <template>
@@ -536,6 +292,7 @@ onMounted(() => {
       placement: 'bottom-start',
     }"
     full-width
+    disable-auto-focus
     v-bind="{
       ...getRootAttrs($attrs),
     }"
@@ -604,7 +361,9 @@ onMounted(() => {
             :placeholder="dateFormat"
             :readonly="readonly"
             :aria-invalid="hasError"
+            @mousedown="handleMouseDown($event)"
             @focus="handleFocus()"
+            @blur="handleBlur()"
             @select="handleInputSelection($event)"
             @click.stop="handleInputClick($event)"
             @keydown="handleKeyDown($event)"
