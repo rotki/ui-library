@@ -364,7 +364,6 @@ onMounted(() => {
   set(selectedMinute, getModelMinutes());
   set(selectedSecond, getModelSeconds());
   set(selectedMillisecond, getModelMilliseconds());
-  set(editMode, 'hour');
 });
 
 watch(modelValue, () => {

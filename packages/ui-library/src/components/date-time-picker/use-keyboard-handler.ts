@@ -5,11 +5,29 @@ import { type DateTimeSegmentType, isDateTimeSegmentType } from '@/components/da
 import { includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
 import { assert } from '@/utils/assert';
 
-interface Segment {
-  start: number;
-  end: number;
-  type: DateTimeSegmentType;
-}
+interface Segment { start: number; end: number; type: DateTimeSegmentType }
+
+type SegmentMethod = 'date' | 'hour' | 'month' | 'minute' | 'second' | 'millisecond' | 'year';
+const SEGMENT_METHODS: Record<DateTimeSegmentType, SegmentMethod> = {
+  DD: 'date',
+  HH: 'hour',
+  MM: 'month',
+  SSS: 'millisecond',
+  YYYY: 'year',
+  mm: 'minute',
+  ss: 'second',
+};
+
+interface SegmentBounds { maxValue: number; minValue?: number }
+const SEGMENT_CONFIG: Record<DateTimeSegmentType, SegmentBounds> = {
+  DD: { maxValue: 31, minValue: 1 },
+  HH: { maxValue: 23, minValue: 0 },
+  MM: { maxValue: 12, minValue: 1 },
+  SSS: { maxValue: 999, minValue: 0 },
+  YYYY: { maxValue: 9999, minValue: 1 },
+  mm: { maxValue: 59, minValue: 0 },
+  ss: { maxValue: 59, minValue: 0 },
+};
 
 interface KeyboardHandlerOptions {
   dateFormat: Ref<string>;
@@ -110,24 +128,11 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
   function changeSegmentValue(increment: boolean): void {
     if (!isDefined(textInput))
       return;
-
     const currentSegment = getCurrentSegment();
-
     if (!currentSegment)
       return;
-
-    const segmentMethods = {
-      DD: 'date',
-      HH: 'hour',
-      MM: 'month',
-      mm: 'minute',
-      ss: 'second',
-      SSS: 'millisecond',
-      YYYY: 'year',
-    } as const;
-
     const segmentType = currentSegment.type;
-    const method = segmentMethods[segmentType];
+    const method = SEGMENT_METHODS[segmentType];
     const selectedDate = getDateTime();
     const updatedDate = selectedDate.set(method, selectedDate.get(method) + (increment ? 1 : -1));
     if (updatedDate.year() >= 1970) {
@@ -169,71 +174,51 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
   }
 
   function handleDigitPressed(event: KeyboardEvent, digit: string): void {
-    if (!(event.target instanceof HTMLInputElement)) {
+    if (!(event.target instanceof HTMLInputElement))
       return;
-    }
     const position = event.target.selectionStart ?? 0;
     const currentSegment = getCurrentSegment(position);
-    if (!currentSegment)
+    if (!currentSegment || isNaN(parseInt(digit)))
       return;
-
-    const number = parseInt(digit);
-    if (isNaN(number))
-      return;
-
-    const segmentConfig: Record<DateTimeSegmentType, { maxValue: number; minValue?: number }> = {
-      DD: { maxValue: 31, minValue: 1 },
-      HH: { maxValue: 23, minValue: 0 },
-      MM: { maxValue: 12, minValue: 1 },
-      mm: { maxValue: 59, minValue: 0 },
-      ss: { maxValue: 59, minValue: 0 },
-      SSS: { maxValue: 999, minValue: 0 },
-      YYYY: { maxValue: 9999, minValue: 1 },
-    };
-
     const segmentType = currentSegment.type;
+    if (!isDateTimeSegmentType(segmentType))
+      return;
 
-    if (isDateTimeSegmentType(segmentType)) {
-      const config = segmentConfig[segmentType];
-      const value = get(currentValue) ?? '';
-      const combinedValue = parseInt(`${value}${digit}`);
-      const nextCombinedValue = parseInt(`${value}${digit}0`);
+    const config = SEGMENT_CONFIG[segmentType];
+    const value = get(currentValue) ?? '';
+    const combinedStr = `${value}${digit}`;
+    const combinedValue = parseInt(combinedStr);
+    const maxLength = segmentType.length;
+    const minValue = config.minValue ?? 0;
 
-      const maxLength = segmentType.length;
-      const minValue = config.minValue ?? 0;
-
-      if (combinedValue >= minValue && combinedValue <= config.maxValue) {
-        setValue(segmentType, combinedValue);
-        setCursorPosition(currentSegment);
-      }
-
-      const willExceedMax = nextCombinedValue > config.maxValue;
-      const reachedMaxLength = combinedValue.toString().length >= maxLength;
-
-      if (willExceedMax || reachedMaxLength) {
-        navigateSegments('ArrowRight');
-      }
+    if (combinedValue >= minValue && combinedValue <= config.maxValue) {
+      setValue(segmentType, combinedValue);
+      setCursorPosition(currentSegment);
     }
+    else if (combinedValue < minValue && combinedStr.length < maxLength) {
+      // Track digit even if below minValue, so next digit can combine (e.g., "0" allows "01")
+      set(currentValue, combinedValue);
+    }
+
+    const willExceedMax = parseInt(`${combinedStr}0`) > config.maxValue;
+    // Use string length of typed digits, not parsed number length (e.g., "01" has length 2)
+    if (willExceedMax || combinedStr.length >= maxLength)
+      navigateSegments('ArrowRight');
   }
 
   function handleKeyboardNavigation(event: KeyboardEvent): void {
-    if (event.key === 'ArrowUp') {
+    if (event.key === 'ArrowUp')
       changeSegmentValue(true);
-    }
-    else if (event.key === 'ArrowDown') {
+    else if (event.key === 'ArrowDown')
       changeSegmentValue(false);
-    }
   }
 
-  function handleBackspace(event: KeyboardEvent) {
-    if (!(event.target instanceof HTMLInputElement)) {
+  function handleBackspace(event: KeyboardEvent): void {
+    if (!(event.target instanceof HTMLInputElement))
       return;
-    }
-    const position = event.target.selectionStart ?? 0;
-    const currentSegment = getCurrentSegment(position);
+    const currentSegment = getCurrentSegment(event.target.selectionStart ?? 0);
     if (!currentSegment)
       return;
-
     const value = get(currentValue) ?? getCurrent(currentSegment.type) ?? '';
     const updatedValue = value.toString().slice(0, -1);
     setValue(currentSegment.type, updatedValue.length === 0 ? undefined : parseInt(updatedValue));
@@ -241,11 +226,9 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
   }
 
   function onInputDeletePressed(event: KeyboardEvent): void {
-    if (!(event.target instanceof HTMLInputElement)) {
+    if (!(event.target instanceof HTMLInputElement))
       return;
-    }
-    const selectionStart = event.target.selectionStart ?? 0;
-    const segment = getCurrentSegment(selectionStart);
+    const segment = getCurrentSegment(event.target.selectionStart ?? 0);
     if (segment) {
       clear(segment.type);
       setCursorPosition(segment);
@@ -255,30 +238,20 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
   function handleKeyDown(event: KeyboardEvent): void {
     if (disabled || readonly)
       return;
-
     const { key } = event;
-
-    if (['Tab'].includes(key)) {
+    if (key === 'Tab')
       return;
-    }
-
     event.preventDefault();
-
-    if (key === 'ArrowRight' || key === 'ArrowLeft') {
+    if (key === 'ArrowRight' || key === 'ArrowLeft')
       navigateSegments(key);
-    }
-    else if (key === 'ArrowUp' || key === 'ArrowDown') {
+    else if (key === 'ArrowUp' || key === 'ArrowDown')
       handleKeyboardNavigation(event);
-    }
-    else if (key === 'Backspace') {
+    else if (key === 'Backspace')
       handleBackspace(event);
-    }
-    else if (key === 'Delete') {
+    else if (key === 'Delete')
       onInputDeletePressed(event);
-    }
-    else if (/^\d$/.test(key)) {
+    else if (/^\d$/.test(key))
       handleDigitPressed(event, key);
-    }
   }
 
   function getClickPosition(event: MouseEvent, input: HTMLInputElement, useCaretPosition: boolean): number {
@@ -291,11 +264,25 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     return document.caretRangeFromPoint?.(event.clientX, event.clientY)?.startOffset ?? fallback;
   }
 
+  // Track the segment that was clicked, so handleFocus can restore it after DOM updates
+  let clickedSegment: Segment | undefined;
+
+  // Capture clicked segment on mousedown (fires before focus event)
+  function handleMouseDown(event: MouseEvent): void {
+    if (disabled || readonly || !(event.target instanceof HTMLInputElement))
+      return;
+    const currentSegment = getCurrentSegment(getClickPosition(event, event.target, true));
+    if (currentSegment) {
+      clickedSegment = currentSegment;
+    }
+  }
+
   function handleClick(event: MouseEvent): void {
     if (disabled || readonly || !(event.target instanceof HTMLInputElement))
       return;
     const currentSegment = getCurrentSegment(getClickPosition(event, event.target, true));
     if (currentSegment) {
+      clickedSegment = currentSegment;
       set(cursorPosition, currentSegment.end);
       event.target.setSelectionRange(currentSegment.start, currentSegment.end);
     }
@@ -307,6 +294,14 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
   }
 
   function handleFocus(): void {
+    // If we just clicked on a segment, restore that selection
+    // (the selection may have been lost due to menu opening/DOM updates)
+    if (clickedSegment) {
+      setCursorPosition(clickedSegment);
+      clickedSegment = undefined;
+      return;
+    }
+
     // Only select first segment if no text is currently selected in the input
     const input = get(textInput);
     if (input && input.selectionStart !== input.selectionEnd)
@@ -314,6 +309,14 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     const firstSegment = get(segmentPositions)[0];
     if (firstSegment)
       setCursorPosition(firstSegment);
+  }
+
+  function handleBlur(): void {
+    // Reset cursor position and clicked segment when input loses focus
+    // This prevents "blinking" when re-focusing on a different segment
+    set(cursorPosition, 0);
+    set(currentValue, undefined);
+    clickedSegment = undefined;
   }
 
   function parseAndSetDateValues(pastedText: string) {
@@ -378,11 +381,13 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
   return {
     clear,
     getCurrentSegment,
+    handleBlur,
     handleClick,
     handleFocus,
     handleInput,
     handleInputSelection,
     handleKeyDown,
+    handleMouseDown,
     handlePaste,
     setSegment,
   };
