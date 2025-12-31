@@ -326,6 +326,7 @@ function arrowClicked(event: any): void {
       >
         <span
           v-if="isOutlined && (searchInputFocused || open || valueSet)"
+          data-id="label"
           :class="[
             $style.label,
             {
@@ -337,6 +338,7 @@ function arrowClicked(event: any): void {
           {{ label }}
           <span
             v-if="props.required"
+            data-id="required-indicator"
             class="text-rui-error"
           >
             ﹡
@@ -394,6 +396,7 @@ function arrowClicked(event: any): void {
 
         <span
           :class="[$style.icon__wrapper, $style.icon__append]"
+          data-id="append"
           @click="arrowClicked($event)"
         >
           <RuiIcon
