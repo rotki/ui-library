@@ -121,9 +121,9 @@
     "@storybook/addon-links": "10.0.2",
     "@storybook/addon-themes": "10.0.2",
     "@storybook/vue3-vite": "10.0.2",
-    "@tsconfig/node22": "22.0.2",
+    "@tsconfig/node24": "24.0.3",
     "@types/jsdom": "27.0.0",
-    "@types/node": "22.18.13",
+    "@types/node": "24.10.4",
     "@types/tinycolor2": "1.4.6",
     "@vitejs/plugin-vue": "6.0.1",
     "@vitest/coverage-v8": "4.0.5",
@@ -168,7 +168,7 @@
     "vue-tsc": "3.1.2"
   },
   "engines": {
-    "node": ">=22 <23",
+    "node": ">=24 <25",
     "pnpm": ">=10 <11"
   }
 }
