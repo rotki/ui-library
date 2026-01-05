@@ -2,7 +2,7 @@
   "name": "@rotki/ui-library-monorepo",
   "version": "2.10.0",
   "private": true,
-  "packageManager": "pnpm@10.20.0",
+  "packageManager": "pnpm@10.27.0",
   "description": "A vue design system and component library for rotki - monorepo root",
   "type": "module",
   "license": "AGPL-3.0",
@@ -38,15 +38,15 @@
     "new": "pnpm --filter @rotki/ui-library new"
   },
   "devDependencies": {
-    "@commitlint/cli": "20.1.0",
-    "@commitlint/config-conventional": "20.0.0",
+    "@commitlint/cli": "20.3.0",
+    "@commitlint/config-conventional": "20.3.0",
     "@rotki/eslint-config": "4.5.0",
     "@rotki/eslint-plugin": "1.2.0",
     "@tsconfig/node24": "24.0.3",
-    "bumpp": "10.3.1",
-    "eslint": "9.38.0",
+    "bumpp": "10.3.2",
+    "eslint": "9.39.2",
     "husky": "9.1.7",
-    "lint-staged": "16.2.6",
+    "lint-staged": "16.2.7",
     "typescript": "5.9.3"
   },
   "engines": {
