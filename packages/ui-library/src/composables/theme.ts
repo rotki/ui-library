@@ -17,15 +17,11 @@ const config: Ref<ThemeConfig> = ref({ ...defaultTheme });
  * @returns {ThemeContent}
  */
 export const useRotkiTheme = createSharedComposable<() => ThemeContent>(() => {
-  const { state, store } = useColorMode<ThemeMode>();
-
-  const { state: attributeState } = useColorMode<ThemeMode>({
-    attribute: 'data-theme',
-  });
-
-  // Keep attributeState in sync with state
-  watch(state, (newState) => {
-    set(attributeState, newState);
+  const { state, store } = useColorMode<ThemeMode>({
+    onChanged(mode, defaultHandler) {
+      defaultHandler(mode);
+      document.documentElement.dataset.theme = mode;
+    },
   });
 
   /**
@@ -61,14 +57,14 @@ export const useRotkiTheme = createSharedComposable<() => ThemeContent>(() => {
    * switch theme through dark/light/auto modes
    * @param {ThemeMode} mode
    */
-  const switchThemeScheme = (mode: ThemeMode) => {
+  const switchThemeScheme = (mode: ThemeMode): void => {
     set(store, mode || ThemeMode.auto);
   };
 
   /**
    * toggle between auto|light|dark
    */
-  const toggleThemeMode = () => {
+  const toggleThemeMode = (): void => {
     if (get(isAutoControlled))
       switchThemeScheme(ThemeMode.light);
     else if (get(isLight))
@@ -81,7 +77,7 @@ export const useRotkiTheme = createSharedComposable<() => ThemeContent>(() => {
    * sets the configuration for the theme
    * @param {ThemeConfig} newConfig
    */
-  const setThemeConfig = (newConfig: ThemeConfig) => {
+  const setThemeConfig = (newConfig: ThemeConfig): void => {
     set(config, newConfig);
   };
 
@@ -89,7 +85,7 @@ export const useRotkiTheme = createSharedComposable<() => ThemeContent>(() => {
    * theme initializer, must be called once from the app's entry
    * @param {InitThemeOptions} options
    */
-  const init = (options: InitThemeOptions) => {
+  const init = (options: InitThemeOptions): void => {
     switchThemeScheme(options.mode ?? ThemeMode.auto);
     setThemeConfig(options.config ?? { ...defaultTheme });
 

@@ -1,4 +1,4 @@
-import type { BasicColorSchema } from '@vueuse/core';
+import type { BasicColorMode, BasicColorSchema } from '@vueuse/core';
 import type { ComputedRef, Ref } from 'vue';
 import type { GeneratedIcon } from '@/types/icons';
 import { contextColors } from '@/consts/colors';
@@ -33,17 +33,17 @@ export interface InitThemeOptions {
 }
 
 export interface ThemeContent {
-  theme: Ref<ThemeData | undefined>;
-  store: Ref<ThemeMode | BasicColorSchema>;
-  state: ComputedRef<ThemeMode | BasicColorSchema>;
-  config: Ref<ThemeConfig | undefined>;
+  config: Ref<ThemeConfig>;
+  init: (options: InitThemeOptions) => void;
   isAutoControlled: ComputedRef<boolean>;
   isDark: ComputedRef<boolean>;
   isLight: ComputedRef<boolean>;
-  init: (options: InitThemeOptions) => void;
-  switchThemeScheme: (mode: ThemeMode) => void;
-  toggleThemeMode: () => void;
   setThemeConfig: (newConfig: ThemeConfig) => void;
+  state: ComputedRef<ThemeMode | BasicColorMode>;
+  store: Ref<ThemeMode | BasicColorSchema>;
+  switchThemeScheme: (mode: ThemeMode) => void;
+  theme: ComputedRef<ThemeData>;
+  toggleThemeMode: () => void;
 }
 
 function createDefaultTheme(theme: 'light' | 'dark') {
