@@ -254,6 +254,13 @@ const labelWithQuote = computed<string>(() => {
   return `'  ${props.label}${asterisk}  '`;
 });
 
+const usedPlaceholder = computed<string>(() => {
+  if (get(searchInputFocused)) {
+    return props.placeholder;
+  }
+  return '';
+});
+
 const menuMinHeight = ref<number>(0);
 
 // Update menu min height only when rendered data changes
@@ -538,7 +545,7 @@ defineExpose({
               :value="internalSearch"
               class="bg-transparent outline-none"
               type="text"
-              :placeholder="placeholder"
+              :placeholder="usedPlaceholder"
               :class="focusInputClass"
               :aria-invalid="hasError"
               @keydown.delete="onInputDeletePressed()"
