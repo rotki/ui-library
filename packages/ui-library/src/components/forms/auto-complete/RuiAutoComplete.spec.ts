@@ -420,6 +420,39 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     expect(submitFunc).toBeCalledTimes(1);
   });
 
+  it('should only show placeholder when input is focused', async () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      attachTo: document.body,
+      props: {
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        placeholder: 'Search...',
+        textAttr: 'label',
+      },
+    });
+
+    const input = wrapper.find<HTMLInputElement>('input');
+    const activator = wrapper.find('[data-id=activator]');
+
+    // Placeholder should be empty when not focused
+    expect(input.element.placeholder).toBe('');
+
+    // Click on activator to focus the input
+    await activator.trigger('click');
+    await vi.runAllTimersAsync();
+
+    // Placeholder should now be visible
+    expect(input.element.placeholder).toBe('Search...');
+
+    // Blur the input element directly
+    input.element.blur();
+    await vi.runAllTimersAsync();
+
+    // Placeholder should be empty again
+    expect(input.element.placeholder).toBe('');
+  });
+
   it('should show required asterisk when required prop is true', async () => {
     wrapper = createWrapper<string | undefined, SelectOption>({
       props: {
