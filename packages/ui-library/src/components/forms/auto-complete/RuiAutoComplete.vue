@@ -48,6 +48,8 @@ export interface AutoCompleteProps<TValue, TItem> {
   customValue?: boolean;
   hideCustomValue?: boolean;
   required?: boolean;
+  hideSearchInput?: boolean;
+  hideSelectionWrapper?: boolean;
 }
 
 defineOptions({
@@ -89,6 +91,8 @@ const props = withDefaults(defineProps<AutoCompleteProps<TValue, TItem>>(), {
   customValue: false,
   hideCustomValue: false,
   required: false,
+  hideSearchInput: false,
+  hideSelectionWrapper: false,
 });
 
 const slots = useSlots();
@@ -522,7 +526,7 @@ defineExpose({
               </RuiChip>
               <div
                 v-else-if="multiple || ((!searchInputFocused) && (slots['selection.prepend'] || slots.selection))"
-                class="flex"
+                :class="hideSelectionWrapper ? 'contents' : 'flex'"
               >
                 <slot
                   name="selection.prepend"
@@ -546,7 +550,7 @@ defineExpose({
               class="bg-transparent outline-none"
               type="text"
               :placeholder="usedPlaceholder"
-              :class="focusInputClass"
+              :class="[focusInputClass, { hidden: hideSearchInput }]"
               :aria-invalid="hasError"
               @keydown.delete="onInputDeletePressed()"
               @input.stop="updateSearchInput($event)"
