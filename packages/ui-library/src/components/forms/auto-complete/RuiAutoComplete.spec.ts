@@ -477,4 +477,53 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     await wrapper.setProps({ required: false });
     expect(wrapper.find('div[data-id="activator"]').text()).not.toContain('﹡');
   });
+
+  it('should hide search input when hideSearchInput is true', async () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      props: {
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    const input = wrapper.find<HTMLInputElement>('input');
+
+    // Input should be visible by default
+    expect(input.classes()).not.toContain('hidden');
+
+    // Set hideSearchInput to true
+    await wrapper.setProps({ hideSearchInput: true });
+    expect(input.classes()).toContain('hidden');
+
+    // Set hideSearchInput back to false
+    await wrapper.setProps({ hideSearchInput: false });
+    expect(input.classes()).not.toContain('hidden');
+  });
+
+  it('should use contents class instead of flex when hideSelectionWrapper is true', async () => {
+    wrapper = createWrapper<string[], SelectOption>({
+      props: {
+        keyAttr: 'id',
+        modelValue: ['7', '8'],
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    // Selection wrapper should have flex class by default (multiple mode renders div wrapper)
+    const selectionWrapper = wrapper.find('div[data-id="activator"] div[class*=value] > div.flex');
+    expect(selectionWrapper.exists()).toBe(true);
+
+    // Set hideSelectionWrapper to true
+    await wrapper.setProps({ hideSelectionWrapper: true });
+    expect(wrapper.find('div[data-id="activator"] div[class*=value] > div.flex').exists()).toBe(false);
+    expect(wrapper.find('div[data-id="activator"] div[class*=value] > div.contents').exists()).toBe(true);
+
+    // Set hideSelectionWrapper back to false
+    await wrapper.setProps({ hideSelectionWrapper: false });
+    expect(wrapper.find('div[data-id="activator"] div[class*=value] > div.flex').exists()).toBe(true);
+    expect(wrapper.find('div[data-id="activator"] div[class*=value] > div.contents').exists()).toBe(false);
+  });
 });
