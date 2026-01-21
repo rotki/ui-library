@@ -1,4 +1,4 @@
-import { useColorMode } from '@vueuse/core';
+import { getSSRHandler, useColorMode } from '@vueuse/core';
 import { computed, type ComputedRef, type Ref, ref } from 'vue';
 import {
   type ColorIntensity,
@@ -17,10 +17,20 @@ const config: Ref<ThemeConfig> = ref({ ...defaultTheme });
  * @returns {ThemeContent}
  */
 export const useRotkiTheme = createSharedComposable<() => ThemeContent>(() => {
+  const updateHTMLAttrs = getSSRHandler(
+    'updateHTMLAttrs',
+    (selector, attribute, value) => {
+      const el = typeof selector === 'string' ? window?.document.querySelector(selector) : null;
+      if (!el)
+        return;
+      el.setAttribute(attribute, value);
+    },
+  );
+
   const { state, store } = useColorMode<ThemeMode>({
     onChanged(mode, defaultHandler) {
       defaultHandler(mode);
-      document.documentElement.dataset.theme = mode;
+      updateHTMLAttrs('html', 'data-theme', mode);
     },
   });
 

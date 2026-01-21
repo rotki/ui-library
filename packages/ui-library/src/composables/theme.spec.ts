@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils';
+import { setSSRHandler } from '@vueuse/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { defineComponent, nextTick } from 'vue';
 import { useRotkiTheme } from '@/composables/theme';
@@ -145,6 +146,53 @@ describe('composables/theme', () => {
       expect(get(result.isAutoControlled)).toBe(false);
 
       unmount();
+    });
+
+    it('should work with SSR handler and correctly set data-theme attribute', async () => {
+      const ssrCalls: Array<{ selector: string; attribute: string; value: string }> = [];
+
+      // Register SSR handler to capture calls (simulates SSR environment like Nuxt)
+      setSSRHandler('updateHTMLAttrs', (selector, attribute, value) => {
+        ssrCalls.push({ selector: String(selector), attribute, value });
+      });
+
+      // Reset module cache to ensure fresh composable instance with SSR handler
+      vi.resetModules();
+
+      // Re-import the composable after setting SSR handler and resetting modules
+      const { useRotkiTheme: useRotkiThemeFresh } = await import('@/composables/theme');
+
+      const { result, unmount } = withSetup(() => useRotkiThemeFresh());
+
+      result.switchThemeScheme(ThemeMode.light);
+      await nextTick();
+
+      // Verify SSR handler was called with correct data-theme attribute
+      const dataThemeCalls = ssrCalls.filter(call => call.attribute === 'data-theme');
+      expect(dataThemeCalls.length).toBeGreaterThan(0);
+      expect(dataThemeCalls.at(-1)).toEqual({
+        selector: 'html',
+        attribute: 'data-theme',
+        value: 'light',
+      });
+
+      // Switch to dark and verify
+      ssrCalls.length = 0;
+      result.switchThemeScheme(ThemeMode.dark);
+      await nextTick();
+
+      const darkThemeCalls = ssrCalls.filter(call => call.attribute === 'data-theme');
+      expect(darkThemeCalls.length).toBeGreaterThan(0);
+      expect(darkThemeCalls.at(-1)).toEqual({
+        selector: 'html',
+        attribute: 'data-theme',
+        value: 'dark',
+      });
+
+      unmount();
+
+      // Reset SSR handler by setting to undefined
+      setSSRHandler('updateHTMLAttrs', undefined as any);
     });
   });
 });
