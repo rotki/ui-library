@@ -42,25 +42,50 @@ const {
   width,
 } = toRefs(props);
 
-function onUpdateModelValue(value: boolean) {
+function onUpdateModelValue(value: boolean): void {
   emit('update:model-value', value);
 
   if (!value)
     emit('closed');
 }
 
-const internalValue: Ref<boolean> = ref(false);
+const internalValue = ref<boolean>(false);
+const isOpen = ref<boolean>(false);
 
 watchImmediate(modelValue, (value) => {
-  set(internalValue, value);
+  nextTick(() => {
+    set(internalValue, value);
+  });
 });
 
 watch(internalValue, (value) => {
-  onUpdateModelValue(value);
+  if (value) {
+    window.requestAnimationFrame(() => {
+      set(isOpen, value);
+    });
+  }
+  else {
+    setTimeout(() => {
+      set(isOpen, value);
+    }, 150);
+  }
 });
 
-function close() {
-  set(internalValue, false);
+watch(isOpen, (isOpen) => {
+  if (isOpen) {
+    onUpdateModelValue(isOpen);
+    set(internalValue, isOpen);
+  }
+  else {
+    setTimeout(() => {
+      onUpdateModelValue(isOpen);
+      set(internalValue, isOpen);
+    }, 150);
+  }
+});
+
+function close(): void {
+  set(isOpen, false);
 }
 
 const style = computed(() => ({
@@ -70,7 +95,7 @@ const style = computed(() => ({
 const content: Ref<MaybeElement | null> = ref(null);
 
 onClickOutside(content, () => {
-  if (get(internalValue) && props.temporary && !props.stateless) {
+  if (get(isOpen) && props.temporary && !props.stateless) {
     setTimeout(() => {
       close();
     }, 50);
@@ -99,23 +124,24 @@ const activatorAttrs = computed(() => ({
         enter-active-class="ease-out duration-150"
         enter-to-class="opacity-100"
         leave-from-class="opacity-100"
-        leave-active-class="ease-in duration-100"
+        leave-active-class="ease-in duration-150"
         leave-to-class="opacity-0"
       >
         <div
-          v-if="internalValue"
+          v-if="isOpen && internalValue"
           :class="$style.overlay"
           @click.stop="close()"
         />
       </Transition>
       <aside
+        v-if="isOpen || internalValue || miniVariant"
         ref="content"
         :style="style"
         :class="[
           $style.content,
           contentClass,
           {
-            [$style.visible]: internalValue,
+            [$style.visible]: isOpen && internalValue,
             [$style[position]]: position,
             [$style.mini]: miniVariant,
             [$style.temporary]: temporary,
@@ -136,7 +162,7 @@ const activatorAttrs = computed(() => ({
 }
 
 .content {
-  @apply transition-all top-0 h-full fixed text-rui-text bg-white z-[7];
+  @apply transition-all duration-150 ease-in-out top-0 h-full fixed text-rui-text bg-white z-[7];
 
   &.left {
     @apply -translate-x-full left-0;

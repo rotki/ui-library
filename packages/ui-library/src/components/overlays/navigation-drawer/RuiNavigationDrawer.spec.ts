@@ -52,6 +52,7 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
 
     // Open drawer by clicking activator
     await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
 
     drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
 
@@ -75,6 +76,7 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
 
     // Open dialog by clicking activator
     await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
 
     let drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
     assertExists(drawer);
@@ -98,6 +100,7 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
 
     // Open dialog by clicking activator
     await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
 
     let drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
     expect(drawer).toBeTruthy();
@@ -121,6 +124,7 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
 
     // Open dialog by clicking activator
     await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
 
     let drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
     expect(drawer).toBeTruthy();
@@ -132,5 +136,78 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
     drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
 
     expect(drawer).toBeFalsy();
+  });
+
+  it('should transition smoothly when modelValue is toggled externally', async () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: false,
+      },
+    });
+    await vi.runAllTimersAsync();
+
+    // Drawer element should not be in the DOM initially
+    let drawerElement = queryBody<HTMLDivElement>('aside[class*=_content_]');
+    expect(drawerElement).toBeFalsy();
+
+    // Open drawer by setting modelValue to true (simulates parent v-model update)
+    await wrapper.setProps({ modelValue: true });
+    await vi.runAllTimersAsync();
+
+    drawerElement = queryBody<HTMLDivElement>('aside[class*=_content_]');
+    assertExists(drawerElement);
+    // Should have visible class when fully open
+    expect(drawerElement.className).toMatch(/_visible_/);
+
+    // Close drawer by setting modelValue to false (simulates parent v-if + v-model)
+    await wrapper.setProps({ modelValue: false });
+
+    // Drawer element should still be in the DOM immediately after closing (transition in progress)
+    drawerElement = queryBody<HTMLDivElement>('aside[class*=_content_]');
+    expect(drawerElement).toBeTruthy();
+
+    // After timers complete, drawer element should be fully removed from the DOM
+    await vi.runAllTimersAsync();
+
+    drawerElement = queryBody<HTMLDivElement>('aside[class*=_content_]');
+    expect(drawerElement).toBeFalsy();
+  });
+
+  it('should keep DOM element when miniVariant is true and modelValue is false', async () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: false,
+        miniVariant: true,
+      },
+    });
+    await vi.runAllTimersAsync();
+
+    // Drawer element should be in the DOM even when modelValue is false (mini collapsed state)
+    let drawerElement = queryBody<HTMLDivElement>('aside[class*=_content_]');
+    assertExists(drawerElement);
+    // Should have mini class but not visible class
+    expect(drawerElement.className).toMatch(/_mini_/);
+    expect(drawerElement.className).not.toMatch(/_visible_/);
+
+    // Open drawer by setting modelValue to true
+    await wrapper.setProps({ modelValue: true });
+    await vi.runAllTimersAsync();
+
+    drawerElement = queryBody<HTMLDivElement>('aside[class*=_content_]');
+    assertExists(drawerElement);
+    // Should have both mini and visible classes (full width)
+    expect(drawerElement.className).toMatch(/_mini_/);
+    expect(drawerElement.className).toMatch(/_visible_/);
+
+    // Close drawer by setting modelValue to false
+    await wrapper.setProps({ modelValue: false });
+    await vi.runAllTimersAsync();
+
+    // Drawer element should still be in the DOM (collapsed to mini width)
+    drawerElement = queryBody<HTMLDivElement>('aside[class*=_content_]');
+    assertExists(drawerElement);
+    // Should have mini class but not visible class
+    expect(drawerElement.className).toMatch(/_mini_/);
+    expect(drawerElement.className).not.toMatch(/_visible_/);
   });
 });
