@@ -94,7 +94,47 @@ export const router = createRouter({
     {
       path: '/data-tables',
       name: 'data-tables',
-      component: () => import('@/views/DataTableView.vue'),
+      component: () => import('@/views/data-tables/index.vue'),
+    },
+    {
+      path: '/data-tables/basic',
+      name: 'data-tables-basic',
+      component: () => import('@/views/data-tables/DataTableBasicView.vue'),
+    },
+    {
+      path: '/data-tables/sorting',
+      name: 'data-tables-sorting',
+      component: () => import('@/views/data-tables/DataTableSortingView.vue'),
+    },
+    {
+      path: '/data-tables/pagination',
+      name: 'data-tables-pagination',
+      component: () => import('@/views/data-tables/DataTablePaginationView.vue'),
+    },
+    {
+      path: '/data-tables/search',
+      name: 'data-tables-search',
+      component: () => import('@/views/data-tables/DataTableSearchView.vue'),
+    },
+    {
+      path: '/data-tables/selection',
+      name: 'data-tables-selection',
+      component: () => import('@/views/data-tables/DataTableSelectionView.vue'),
+    },
+    {
+      path: '/data-tables/expandable',
+      name: 'data-tables-expandable',
+      component: () => import('@/views/data-tables/DataTableExpandableView.vue'),
+    },
+    {
+      path: '/data-tables/grouping',
+      name: 'data-tables-grouping',
+      component: () => import('@/views/data-tables/DataTableGroupingView.vue'),
+    },
+    {
+      path: '/data-tables/empty',
+      name: 'data-tables-empty',
+      component: () => import('@/views/data-tables/DataTableEmptyView.vue'),
     },
     {
       path: '/dialogs',

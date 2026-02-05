@@ -1045,6 +1045,7 @@ onMounted(() => {
       <table
         ref="table"
         :class="[$style.table, { [$style.dense]: dense }]"
+        :aria-busy="loading"
         aria-label=""
       >
         <RuiTableHead
@@ -1141,6 +1142,7 @@ onMounted(() => {
                         size="sm"
                         variant="text"
                         icon
+                        data-cy="group-copy-button"
                         @click="
                           onCopyGroup({ key: groupKey, value: row.group })
                         "
@@ -1187,6 +1189,7 @@ onMounted(() => {
                   { [$style.tr__selected ?? '']: isSelected(row[rowIdentifier]) },
                   typeof itemClass === 'string' ? itemClass : itemClass(row),
                 ]"
+                :aria-selected="selectedData ? isSelected(row[rowIdentifier]) : undefined"
               >
                 <td
                   v-if="selectedData"

@@ -138,6 +138,7 @@ function onLast() {
         text-attr="limit"
         hide-details
         dense
+        data-cy="table-pagination-limit"
       />
     </div>
     <div :class="$style.ranges">
@@ -153,17 +154,22 @@ function onLast() {
         text-attr="text"
         hide-details
         dense
+        data-cy="table-pagination-ranges"
       />
       <span :class="$style.indicator">
         {{ indicatorText }}
       </span>
     </div>
-    <div :class="$style.navigation">
+    <div
+      :class="$style.navigation"
+      data-cy="table-pagination-navigation"
+    >
       <RuiButton
         :size="dense ? 'sm' : undefined"
         :disabled="!hasPrev || loading"
         variant="text"
         icon
+        data-cy="table-pagination-first"
         @click="onFirst()"
       >
         <RuiIcon name="lu-chevrons-left" />
@@ -173,6 +179,7 @@ function onLast() {
         :disabled="!hasPrev || loading"
         variant="text"
         icon
+        data-cy="table-pagination-prev"
         @click="onPrev()"
       >
         <RuiIcon name="lu-chevron-left" />
@@ -182,6 +189,7 @@ function onLast() {
         :disabled="!hasNext || loading"
         variant="text"
         icon
+        data-cy="table-pagination-next"
         @click="onNext()"
       >
         <RuiIcon name="lu-chevron-right" />
@@ -191,6 +199,7 @@ function onLast() {
         :disabled="!hasNext || loading"
         variant="text"
         icon
+        data-cy="table-pagination-last"
         @click="onLast()"
       >
         <RuiIcon name="lu-chevrons-right" />

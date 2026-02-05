@@ -23,6 +23,7 @@ withDefaults(defineProps<Props>(), { icon: 'lu-chevron-down' });
         [$style.tr__expander_button_open ?? '']: expanded,
       },
     ]"
+    :aria-expanded="expanded"
     icon
     size="sm"
     variant="text"

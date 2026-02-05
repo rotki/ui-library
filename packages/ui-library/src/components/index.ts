@@ -4,6 +4,7 @@ import type {
   GroupKeys as DataTableGroupKeys,
   SortColumn as DataTableSortColumn,
   TableSortData as DataTableSortData,
+  GroupData,
 } from '@/components/tables/RuiTableHead.vue';
 import RuiAccordion, { type AccordionProps } from '@/components/accordions/accordion/RuiAccordion.vue';
 import RuiAccordions, { type Props as AccordionsProps } from '@/components/accordions/accordions/RuiAccordions.vue';
@@ -75,6 +76,7 @@ export type {
   DividerProps,
   ExpandButtonProps,
   FooterStepperProps,
+  GroupData,
   IconProps,
   LogoProps,
   MenuProps,
