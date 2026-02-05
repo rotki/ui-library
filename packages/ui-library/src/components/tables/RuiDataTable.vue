@@ -13,6 +13,9 @@ import RuiTableHead, { type GroupData, type GroupKeys, type NoneSortableTableCol
 import RuiTablePagination, { type TablePaginationData } from '@/components/tables/RuiTablePagination.vue';
 import noDataPlaceholder from '@/components/tables/table_no_data_placeholder.svg';
 import noDataPlaceholderDark from '@/components/tables/table_no_data_placeholder_dark.svg';
+import { useTable } from '@/composables/defaults/table';
+import { useStickyTableHeader } from '@/composables/sticky-header';
+import { useRotkiTheme } from '@/composables/theme';
 import { assert } from '@/utils/assert';
 
 export interface TableOptions<T> {

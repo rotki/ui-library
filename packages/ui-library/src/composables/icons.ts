@@ -30,6 +30,7 @@ import {
   LuTriangleAlert,
   LuX,
 } from '@/icons';
+import { assert } from '@/utils/assert';
 
 const requiredIcons: GeneratedIcon[] = [
   LuChevronsUpDown,

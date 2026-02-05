@@ -2,6 +2,7 @@
 import type { RouteLocationRaw } from 'vue-router';
 import type { ContextColorsType } from '@/consts/colors';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import { generateId } from '@/utils/generate-id';
 
 export interface Props {
   color?: ContextColorsType;

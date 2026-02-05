@@ -6,6 +6,8 @@ import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { assert } from '@/utils/assert';
+import { useFormTextDetail } from '@/utils/form-text-detail';
+import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
 export interface Props {
   label?: string;

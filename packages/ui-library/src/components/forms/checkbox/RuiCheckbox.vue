@@ -3,6 +3,7 @@ import type { ContextColorsType } from '@/consts/colors';
 import { objectPick } from '@vueuse/shared';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
+import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
 export interface Props {

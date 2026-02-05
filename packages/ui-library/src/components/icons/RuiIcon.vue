@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { ContextColorsType } from '@/consts/colors';
+import { useIcons } from '@/composables/icons';
 import { isRuiIcon, type RuiIcons } from '@/icons';
 
 export interface Props {

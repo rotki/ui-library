@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { type PopperOptions, usePopper } from '@/composables/popper';
+import { useFormTextDetail } from '@/utils/form-text-detail';
 
 export interface MenuProps {
   modelValue?: boolean;

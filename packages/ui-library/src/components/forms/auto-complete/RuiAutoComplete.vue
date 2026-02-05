@@ -9,7 +9,7 @@ import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue'
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { type KeyOfType, useDropdownMenu, useDropdownOptionProperty } from '@/composables/dropdown-menu';
 import { useAutoCompleteFocus, useAutoCompleteKeyboardNavigation, useAutoCompleteSearch, useAutoCompleteValue } from '@/composables/forms/auto-complete';
-import { getTextToken } from '@/utils/helpers';
+import { getNonRootAttrs, getRootAttrs, getTextToken } from '@/utils/helpers';
 import { isEqual } from '@/utils/is-equal';
 
 export type AutoCompleteModelValue<TValue> = TValue extends Array<infer U> ? U[] : TValue | undefined;

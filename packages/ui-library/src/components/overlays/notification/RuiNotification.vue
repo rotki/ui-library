@@ -1,4 +1,6 @@
 <script lang='ts' setup>
+import { transformPropsUnit } from '@/utils/helpers';
+
 export interface NotificationProps {
   modelValue: boolean;
   timeout: number;

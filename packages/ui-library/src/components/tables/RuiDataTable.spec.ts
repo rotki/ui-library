@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiDataTable from '@/components/tables/RuiDataTable.vue';
 import RuiTablePagination from '@/components/tables/RuiTablePagination.vue';
+import { createTableDefaults, TableSymbol } from '@/composables/defaults/table';
 import { assert } from '@/utils/assert';
 import { expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 

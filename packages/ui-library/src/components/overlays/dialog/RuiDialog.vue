@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getNonRootAttrs, getRootAttrs, transformPropsUnit } from '@/utils/helpers';
+
 export interface DialogProps {
   modelValue?: boolean;
   persistent?: boolean;

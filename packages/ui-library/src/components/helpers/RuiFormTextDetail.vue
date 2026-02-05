@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useFormTextDetail } from '@/utils/form-text-detail';
+
 const props = withDefaults(
   defineProps<{
     errorMessages?: string | string[];

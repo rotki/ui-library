@@ -2,6 +2,8 @@
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiMenuSelect from '@/components/forms/select/RuiMenuSelect.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
+import { useTable } from '@/composables/defaults/table';
+import { formatInteger } from '@/utils/helpers';
 
 export interface TablePaginationData {
   page: number;

@@ -4,6 +4,7 @@ import { objectPick } from '@vueuse/shared';
 import { Fragment, isVNode } from 'vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { assert } from '@/utils/assert';
+import { generateId } from '@/utils/generate-id';
 
 export interface Props {
   inline?: boolean;
