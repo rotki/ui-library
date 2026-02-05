@@ -25,7 +25,7 @@ const onSwitchTheme = ({ value }: Theme) => switchThemeScheme(value);
       class="wrapper"
     >
       <RouterLink
-        :to="{ name: 'buttons' }"
+        to="/"
         aria-label="Home page"
         class="flex items-center space-x-3"
       >

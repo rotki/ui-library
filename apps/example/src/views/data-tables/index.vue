@@ -6,49 +6,49 @@ const sections = [
   {
     title: 'Basic',
     description: 'Column definitions, auto-generated columns, outlined, dense, striped',
-    route: 'data-tables-basic',
+    route: '/data-tables/basic',
     icon: 'lu-table',
   },
   {
     title: 'Sorting',
     description: 'Single and multi-column sorting',
-    route: 'data-tables-sorting',
+    route: '/data-tables/sorting',
     icon: 'lu-arrow-up-down',
   },
   {
     title: 'Pagination',
     description: 'Page navigation and items per page',
-    route: 'data-tables-pagination',
+    route: '/data-tables/pagination',
     icon: 'lu-chevrons-left-right-ellipsis',
   },
   {
     title: 'Search',
     description: 'Filtering rows with search input',
-    route: 'data-tables-search',
+    route: '/data-tables/search',
     icon: 'lu-search',
   },
   {
     title: 'Selection',
     description: 'Row selection with checkboxes',
-    route: 'data-tables-selection',
+    route: '/data-tables/selection',
     icon: 'lu-square-check',
   },
   {
     title: 'Expandable',
     description: 'Expandable rows with custom content',
-    route: 'data-tables-expandable',
+    route: '/data-tables/expandable',
     icon: 'lu-chevron-down',
   },
   {
     title: 'Grouping',
     description: 'Group rows by column values',
-    route: 'data-tables-grouping',
+    route: '/data-tables/grouping',
     icon: 'lu-group',
   },
   {
     title: 'Empty States',
     description: 'Empty and loading states',
-    route: 'data-tables-empty',
+    route: '/data-tables/empty',
     icon: 'lu-inbox',
   },
 ];
@@ -67,7 +67,7 @@ const sections = [
       <RouterLink
         v-for="section in sections"
         :key="section.route"
-        :to="{ name: section.route }"
+        :to="section.route"
         class="no-underline"
       >
         <RuiCard

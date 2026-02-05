@@ -15,7 +15,7 @@ const links = computed(() =>
   get(navigation).flatMap(section => section.links),
 );
 const currentPage = computed(() =>
-  get(links).find(link => link.to.name === route.name),
+  get(links).find(link => link.to === route.path),
 );
 const currentPageIndex = computed(() => {
   const current = get(currentPage);

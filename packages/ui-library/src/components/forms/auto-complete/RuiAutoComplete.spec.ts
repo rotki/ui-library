@@ -75,8 +75,8 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
         textAttr: 'label',
       },
     });
-    expect(wrapper.find('div[data-id=activator][tabindex=-1]').exists()).toBeTruthy();
-    expect(wrapper.find<HTMLInputElement>('div[data-id=activator][tabindex=-1] input').element.value).toMatch('Spain');
+    expect(wrapper.find('div[data-id=activator][tabindex="-1"]').exists()).toBeTruthy();
+    expect(wrapper.find<HTMLInputElement>('div[data-id=activator][tabindex="-1"] input').element.value).toMatch('Spain');
   });
 
   it('should work with primitive options', () => {

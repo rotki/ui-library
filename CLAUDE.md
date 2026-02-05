@@ -25,6 +25,11 @@ This is `@rotki/ui-library` - a Vue 3 component library and design system for ro
 - `pnpm run test:all` - Run both unit and e2e tests
 - `pnpm run coverage` - Generate test coverage report
 
+**Note:** pnpm v9+ passes arguments directly to scripts without needing `--`. Examples:
+
+- `pnpm run test:run --testNamePattern="hideDefault"` - Run specific unit tests
+- `pnpm run test:e2e data-table.spec.ts` - Run specific e2e test file
+
 ### Linting & Type Checking
 
 - `pnpm run lint` - Run ESLint

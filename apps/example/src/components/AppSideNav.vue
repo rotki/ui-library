@@ -36,7 +36,7 @@ const route = useRoute();
             <RouterLink
               :class="[
                 $style.link,
-                (link.to.name && link.to.name !== route.name) ? $style.link__inactive : '',
+                link.to !== route.path ? $style.link__inactive : '',
               ]"
               :exact-active-class="$style.link__active"
               :to="link.to"

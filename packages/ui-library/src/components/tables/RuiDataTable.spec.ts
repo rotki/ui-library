@@ -1033,7 +1033,12 @@ describe('components/tables/RuiDataTable.vue', () => {
     const paginate = wrapper.findAllComponents(RuiTablePagination);
     expect(paginate).toHaveLength(1);
 
-    expect(wrapper.find('div > [data-cy="table-pagination"]:last-child').exists()).toBeTruthy();
+    // Verify pagination is after the scroller (footer position)
+    const wrapperEl = wrapper.find('[class*=_wrapper]').element;
+    const pagination = wrapper.find('[data-cy="table-pagination"]').element;
+    const scroller = wrapper.find('[class*=_scroller]').element;
+    const children = Array.from(wrapperEl.children);
+    expect(children.indexOf(pagination)).toBeGreaterThan(children.indexOf(scroller));
   });
 
   it('should hideDefaultFooter', () => {
@@ -1049,7 +1054,12 @@ describe('components/tables/RuiDataTable.vue', () => {
     const paginate = wrapper.findAllComponents(RuiTablePagination);
     expect(paginate).toHaveLength(1);
 
-    expect(wrapper.find('div > [data-cy="table-pagination"]:first-child').exists()).toBeTruthy();
+    // Verify pagination is before the scroller (header position)
+    const wrapperEl = wrapper.find('[class*=_wrapper]').element;
+    const pagination = wrapper.find('[data-cy="table-pagination"]').element;
+    const scroller = wrapper.find('[class*=_scroller]').element;
+    const children = Array.from(wrapperEl.children);
+    expect(children.indexOf(pagination)).toBeLessThan(children.indexOf(scroller));
   });
 
   describe('row grouping', () => {

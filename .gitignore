@@ -154,6 +154,7 @@ storybook-static
 packages/ui-library/src/icons
 packages/ui-library/tests/html
 packages/ui-library/tests/json
+packages/ui-library/test-results
 
 apps/example/dist
 apps/example/playwright-report

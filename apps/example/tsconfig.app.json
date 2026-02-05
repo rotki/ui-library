@@ -10,6 +10,12 @@
     "types": ["@rotki/ui-library/vite-plugin/client"],
     "verbatimModuleSyntax": false
   },
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+  "vueCompilerOptions": {
+    "plugins": [
+      "vue-router/volar/sfc-typed-router",
+      "vue-router/volar/sfc-route-blocks"
+    ]
+  },
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "src/route-map.d.ts"],
   "exclude": ["src/**/__tests__/*"]
 }

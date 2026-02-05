@@ -1,7 +1,7 @@
-import type { RouteLocationNamedRaw } from 'vue-router';
+import type { RouteLocationRaw } from 'vue-router';
 
 export interface SideNavLink {
-  to: RouteLocationNamedRaw;
+  to: RouteLocationRaw;
   title: string;
 }
 

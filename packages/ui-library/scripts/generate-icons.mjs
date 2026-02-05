@@ -14,7 +14,7 @@ function resolveRoot(...dir) {
 }
 
 function resolveLucideIconDir() {
-  return resolveRoot('node_modules', 'lucide', 'dist', 'esm', 'icons');
+  return resolveRoot('node_modules', 'lucide', 'dist', 'esm', 'lucide', 'src', 'icons');
 }
 
 function resolveCustomIconDir() {

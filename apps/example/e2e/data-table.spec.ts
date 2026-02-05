@@ -741,21 +741,21 @@ test.describe('data tables - index', () => {
     await expect(page.locator('[data-cy=data-tables-index]')).toBeVisible();
     await expect(page.locator('h2[data-cy=datatables]')).toContainText('Data Tables');
 
-    // Check navigation links exist
-    await expect(page.locator('[data-cy=link-data-tables-basic]')).toBeVisible();
-    await expect(page.locator('[data-cy=link-data-tables-sorting]')).toBeVisible();
-    await expect(page.locator('[data-cy=link-data-tables-pagination]')).toBeVisible();
-    await expect(page.locator('[data-cy=link-data-tables-search]')).toBeVisible();
-    await expect(page.locator('[data-cy=link-data-tables-selection]')).toBeVisible();
-    await expect(page.locator('[data-cy=link-data-tables-expandable]')).toBeVisible();
-    await expect(page.locator('[data-cy=link-data-tables-grouping]')).toBeVisible();
-    await expect(page.locator('[data-cy=link-data-tables-empty]')).toBeVisible();
+    // Check navigation links exist (routes are now path-based)
+    await expect(page.locator('[data-cy="link-/data-tables/basic"]')).toBeVisible();
+    await expect(page.locator('[data-cy="link-/data-tables/sorting"]')).toBeVisible();
+    await expect(page.locator('[data-cy="link-/data-tables/pagination"]')).toBeVisible();
+    await expect(page.locator('[data-cy="link-/data-tables/search"]')).toBeVisible();
+    await expect(page.locator('[data-cy="link-/data-tables/selection"]')).toBeVisible();
+    await expect(page.locator('[data-cy="link-/data-tables/expandable"]')).toBeVisible();
+    await expect(page.locator('[data-cy="link-/data-tables/grouping"]')).toBeVisible();
+    await expect(page.locator('[data-cy="link-/data-tables/empty"]')).toBeVisible();
   });
 
   test('should navigate to sub-pages', async ({ page }) => {
     await page.goto('/data-tables');
 
-    await page.locator('[data-cy=link-data-tables-basic]').click();
+    await page.locator('[data-cy="link-/data-tables/basic"]').click();
     await expect(page).toHaveURL(/\/data-tables\/basic/);
     await expect(page.locator('[data-cy=data-tables-basic]')).toBeVisible();
   });
