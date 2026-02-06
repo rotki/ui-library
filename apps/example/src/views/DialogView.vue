@@ -14,8 +14,8 @@ interface ExtraProperties {
 
 type DialogData = DialogProps & ExtraProperties;
 const dialogs = ref<DialogData[]>([
-  { label: 'Persistent', persistent: true },
-  { label: 'Non Persistent', persistent: false },
+  { label: 'Persistent', persistent: true, ariaLabel: 'Persistent dialog' },
+  { label: 'Non Persistent', persistent: false, ariaLabel: 'Non-persistent dialog' },
 ]);
 </script>
 

@@ -9,6 +9,7 @@ export interface DialogProps {
   bottomSheet?: boolean;
   contentClass?: any;
   zIndex?: string | number;
+  ariaLabel?: string;
 }
 
 defineOptions({
@@ -157,6 +158,8 @@ function onClickOutside() {
         :class="$style.wrapper"
         :style="{ zIndex }"
         role="dialog"
+        aria-modal="true"
+        :aria-label="ariaLabel"
         tabindex="0"
         v-bind="getNonRootAttrs($attrs)"
         @keydown.esc.stop="onEscClick()"
@@ -171,6 +174,7 @@ function onClickOutside() {
         >
           <div
             v-if="isOpen && internalValue"
+            data-id="overlay"
             :class="$style.overlay"
             @click.stop="onClickOutside()"
           />
@@ -179,6 +183,7 @@ function onClickOutside() {
           <div
             v-if="isOpen && internalValue"
             ref="contentRef"
+            data-id="content"
             :style="style"
             tabindex="0"
             :class="[$style.content, contentClass, { [$style.center]: !bottomSheet }]"

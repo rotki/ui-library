@@ -56,7 +56,7 @@ describe('components/overlays/dialog/RuiDialog.vue', () => {
     dialog = queryByRole<HTMLDivElement>('dialog');
 
     assertExists(dialog);
-    expect(dialog.querySelector('div[class*=_content_]')).toBeTruthy();
+    expect(dialog.querySelector('[data-id=content]')).toBeTruthy();
     expect(dialog.querySelector('div[class*=_center_]')).toBeTruthy();
 
     // Click the button that call close function
@@ -81,7 +81,7 @@ describe('components/overlays/dialog/RuiDialog.vue', () => {
     const dialog = queryByRole<HTMLDivElement>('dialog');
     assertExists(dialog);
 
-    const contentWrapper = dialog.querySelector<HTMLDivElement>('div[class*=_content_]');
+    const contentWrapper = dialog.querySelector<HTMLDivElement>('[data-id=content]');
     assertExists(contentWrapper);
 
     expect(contentWrapper.style.width).toBe('98%');
@@ -109,7 +109,7 @@ describe('components/overlays/dialog/RuiDialog.vue', () => {
     assertExists(dialog);
 
     // Click on the overlay should close the dialog
-    const overlay = dialog.querySelector<HTMLDivElement>('div[class*=_overlay_]');
+    const overlay = dialog.querySelector<HTMLDivElement>('[data-id=overlay]');
     assertExists(overlay);
     overlay.click();
 
@@ -153,7 +153,7 @@ describe('components/overlays/dialog/RuiDialog.vue', () => {
     assertExists(dialog);
 
     // Click on the overlay should not close the dialog
-    const overlay = dialog.querySelector<HTMLDivElement>('div[class*=_overlay_]');
+    const overlay = dialog.querySelector<HTMLDivElement>('[data-id=overlay]');
     assertExists(overlay);
     overlay.click();
 
@@ -170,6 +170,76 @@ describe('components/overlays/dialog/RuiDialog.vue', () => {
     dialog = queryByRole<HTMLDivElement>('dialog');
 
     assertExists(dialog);
+  });
+
+  it('should have aria-modal="true" when open', async () => {
+    wrapper = createWrapper();
+    await vi.runAllTimersAsync();
+
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    const dialog = queryByRole<HTMLDivElement>('dialog');
+    assertExists(dialog);
+
+    expect(dialog.getAttribute('aria-modal')).toBe('true');
+  });
+
+  it('should have aria-label when prop is provided', async () => {
+    wrapper = createWrapper({
+      props: {
+        ariaLabel: 'Test dialog',
+      },
+    });
+    await vi.runAllTimersAsync();
+
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    const dialog = queryByRole<HTMLDivElement>('dialog');
+    assertExists(dialog);
+
+    expect(dialog.getAttribute('aria-label')).toBe('Test dialog');
+  });
+
+  it('should not have aria-label when prop is not provided', async () => {
+    wrapper = createWrapper();
+    await vi.runAllTimersAsync();
+
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    const dialog = queryByRole<HTMLDivElement>('dialog');
+    assertExists(dialog);
+
+    expect(dialog.getAttribute('aria-label')).toBeNull();
+  });
+
+  it('should have data-id attributes on overlay and content', async () => {
+    wrapper = createWrapper();
+    await vi.runAllTimersAsync();
+
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    const dialog = queryByRole<HTMLDivElement>('dialog');
+    assertExists(dialog);
+
+    expect(dialog.querySelector('[data-id=overlay]')).toBeTruthy();
+    expect(dialog.querySelector('[data-id=content]')).toBeTruthy();
+  });
+
+  it('should display slot content inside dialog', async () => {
+    wrapper = createWrapper();
+    await vi.runAllTimersAsync();
+
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    const dialog = queryByRole<HTMLDivElement>('dialog');
+    assertExists(dialog);
+
+    expect(dialog.textContent).toContain(text);
   });
 
   it('should click:outside and click:esc emitted', async () => {
@@ -193,7 +263,7 @@ describe('components/overlays/dialog/RuiDialog.vue', () => {
     assertExists(dialog);
 
     // Click on the overlay should not close the dialog
-    const overlay = dialog.querySelector<HTMLDivElement>('div[class*=_overlay_]');
+    const overlay = dialog.querySelector<HTMLDivElement>('[data-id=overlay]');
     assertExists(overlay);
 
     overlay.click();
