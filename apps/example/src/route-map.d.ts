@@ -47,9 +47,44 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/auto-completes': RouteRecordInfo<
+    '/auto-completes/': RouteRecordInfo<
+      '/auto-completes/',
       '/auto-completes',
-      '/auto-completes',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/auto-completes/basic': RouteRecordInfo<
+      '/auto-completes/basic',
+      '/auto-completes/basic',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/auto-completes/custom': RouteRecordInfo<
+      '/auto-completes/custom',
+      '/auto-completes/custom',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/auto-completes/readonly': RouteRecordInfo<
+      '/auto-completes/readonly',
+      '/auto-completes/readonly',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/auto-completes/search': RouteRecordInfo<
+      '/auto-completes/search',
+      '/auto-completes/search',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/auto-completes/selection': RouteRecordInfo<
+      '/auto-completes/selection',
+      '/auto-completes/selection',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -323,9 +358,39 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/pages/auto-completes.vue': {
+    'src/pages/auto-completes/index.vue': {
       routes:
-        | '/auto-completes'
+        | '/auto-completes/'
+      views:
+        | never
+    }
+    'src/pages/auto-completes/basic.vue': {
+      routes:
+        | '/auto-completes/basic'
+      views:
+        | never
+    }
+    'src/pages/auto-completes/custom.vue': {
+      routes:
+        | '/auto-completes/custom'
+      views:
+        | never
+    }
+    'src/pages/auto-completes/readonly.vue': {
+      routes:
+        | '/auto-completes/readonly'
+      views:
+        | never
+    }
+    'src/pages/auto-completes/search.vue': {
+      routes:
+        | '/auto-completes/search'
+      views:
+        | never
+    }
+    'src/pages/auto-completes/selection.vue': {
+      routes:
+        | '/auto-completes/selection'
       views:
         | never
     }

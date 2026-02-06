@@ -27,7 +27,6 @@ export interface AutoCompleteProps<TValue, TItem> {
   menuOptions?: MenuProps;
   labelClass?: string;
   menuClass?: string;
-  itemClass?: string;
   prependWidth?: number; // in rem
   appendWidth?: number; // in rem
   itemHeight?: number; // in px
@@ -459,6 +458,12 @@ defineExpose({
             ...getNonRootAttrs($attrs, ['onClick', 'class']),
             ...(readOnly ? {} : attrs) }
           "
+          role="combobox"
+          :aria-expanded="open"
+          :aria-disabled="disabled || undefined"
+          :aria-readonly="readOnly || undefined"
+          :aria-required="required || undefined"
+          :aria-busy="loading || undefined"
           data-id="activator"
           :data-error="hasError ? '' : undefined"
           :tabindex="disabled || readOnly ? -1 : 0"
@@ -552,6 +557,7 @@ defineExpose({
               :placeholder="usedPlaceholder"
               :class="[focusInputClass, { hidden: hideSearchInput }]"
               :aria-invalid="hasError"
+              aria-autocomplete="list"
               @keydown.delete="onInputDeletePressed()"
               @input.stop="updateSearchInput($event)"
               @focus="focusOnInputFocused()"
@@ -565,6 +571,7 @@ defineExpose({
             size="sm"
             tabindex="-1"
             color="error"
+            data-id="clear"
             class="group-hover:!visible"
             :class="[$style.clear, focusAnyFocused && '!visible', {
               'mr-2': !dense,
@@ -624,6 +631,7 @@ defineExpose({
               ref="renderedOptions"
               :key="getIdentifier(item)?.toString()"
               :active="isActiveItem(item)"
+              :aria-selected="isActiveItem(item)"
               :size="dense ? 'sm' : undefined"
               tabindex="0"
               variant="list"
@@ -666,6 +674,7 @@ defineExpose({
             <div
               v-if="!customValue"
               class="p-4"
+              data-id="no-data"
             >
               {{ noDataText }}
             </div>

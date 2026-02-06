@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { options, type SelectOption } from '@/__test__/options';
 import RuiChip from '@/components/chips/RuiChip.vue';
 import RuiAutoComplete from '@/components/forms/auto-complete/RuiAutoComplete.vue';
+import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { assert } from '@/utils/assert';
 import {
   assertExists,
@@ -10,6 +11,7 @@ import {
   expectWrapperToHaveClass,
   queryAllMenuButtons,
   queryBody,
+  queryByDataId,
   queryByRole,
 } from '~/tests/helpers/dom-helpers';
 
@@ -525,5 +527,366 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     await wrapper.setProps({ hideSelectionWrapper: false });
     expect(wrapper.find('div[data-id="activator"] div[class*=value] > div.flex').exists()).toBe(true);
     expect(wrapper.find('div[data-id="activator"] div[class*=value] > div.contents').exists()).toBe(false);
+  });
+
+  it('should show clear button and emit undefined on click', async () => {
+    const option4 = options[4];
+    assert(option4);
+    wrapper = createWrapper<string, SelectOption>({
+      attachTo: document.body,
+      props: {
+        clearable: true,
+        keyAttr: 'id',
+        modelValue: option4.id,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    await vi.advanceTimersToNextTimerAsync();
+    const clearButton = wrapper.find('[data-id=clear]');
+    expect(clearButton.exists()).toBe(true);
+
+    await clearButton.trigger('click');
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(wrapper.emitted()).toHaveProperty('update:modelValue');
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([undefined]);
+  });
+
+  it('should show all options when noFilter is true', async () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      attachTo: document.body,
+      props: {
+        keyAttr: 'id',
+        modelValue: undefined,
+        noFilter: true,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    await wrapper.find('[data-id=activator]').trigger('click');
+    await vi.advanceTimersToNextTimerAsync();
+    expect(queryByRole('menu')).toBeTruthy();
+
+    const initialButtonCount = queryAllMenuButtons().length;
+
+    await wrapper.find('input').setValue('xyznonexistent');
+    await vi.advanceTimersToNextTimerAsync();
+
+    // With noFilter, the same number of options should remain visible
+    const menuButtons = queryAllMenuButtons();
+    expect(menuButtons.length).toBe(initialButtonCount);
+  });
+
+  it('should hide selected items from menu', async () => {
+    wrapper = createWrapper<string[], SelectOption>({
+      attachTo: document.body,
+      props: {
+        chips: true,
+        hideSelected: true,
+        keyAttr: 'id',
+        modelValue: ['7'],
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    await wrapper.find('[data-id=activator]').trigger('click');
+    await vi.advanceTimersToNextTimerAsync();
+    expect(queryByRole('menu')).toBeTruthy();
+
+    const menuButtons = queryAllMenuButtons();
+    const franceButton = menuButtons.find(btn => btn.innerHTML.includes('France'));
+    expect(franceButton).toBeFalsy();
+  });
+
+  it('should emit full object when returnObject is true', async () => {
+    wrapper = createWrapper<SelectOption | undefined, SelectOption>({
+      attachTo: document.body,
+      props: {
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        returnObject: true,
+        textAttr: 'label',
+      },
+    });
+
+    await wrapper.find('[data-id=activator]').trigger('click');
+    await vi.advanceTimersToNextTimerAsync();
+    expect(queryByRole('menu')).toBeTruthy();
+
+    const firstButton = queryBody<HTMLButtonElement>('button:first-child');
+    assertExists(firstButton);
+    firstButton.click();
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(wrapper.emitted()).toHaveProperty('update:modelValue');
+    const emittedValue = wrapper.emitted('update:modelValue')?.[0]?.[0];
+    expect(emittedValue).toEqual(options[0]);
+  });
+
+  it('should render progress indicator when loading', () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      props: {
+        keyAttr: 'id',
+        loading: true,
+        modelValue: undefined,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    expect(wrapper.findComponent(RuiProgress).exists()).toBe(true);
+  });
+
+  it('should render error messages', () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      props: {
+        errorMessages: ['Required'],
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    expect(wrapper.text()).toContain('Required');
+    expect(wrapper.find('input').attributes('aria-invalid')).toBe('true');
+  });
+
+  it('should render success messages', () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      props: {
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        successMessages: ['Valid'],
+        textAttr: 'label',
+      },
+    });
+
+    expect(wrapper.text()).toContain('Valid');
+  });
+
+  it('should hide messages when hideDetails is true', () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      props: {
+        errorMessages: ['Required'],
+        hideDetails: true,
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    expect(wrapper.text()).not.toContain('Required');
+  });
+
+  it('should render hint text', () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      props: {
+        hint: 'Select your country',
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    expect(wrapper.text()).toContain('Select your country');
+  });
+
+  it('should show custom no-data text', async () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      attachTo: document.body,
+      props: {
+        keyAttr: 'id',
+        modelValue: undefined,
+        noDataText: 'Nothing here',
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    await wrapper.find('[data-id=activator]').trigger('click');
+    await vi.advanceTimersToNextTimerAsync();
+
+    await wrapper.find('input').setValue('xyznonexistent');
+    await vi.advanceTimersToNextTimerAsync();
+
+    const noData = queryByDataId('no-data');
+    assertExists(noData);
+    expect(noData.textContent).toContain('Nothing here');
+  });
+
+  it('should hide no-data when hideNoData is true', async () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      attachTo: document.body,
+      props: {
+        hideNoData: true,
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    await wrapper.find('[data-id=activator]').trigger('click');
+    await vi.advanceTimersToNextTimerAsync();
+
+    await wrapper.find('input').setValue('xyznonexistent');
+    await vi.advanceTimersToNextTimerAsync();
+
+    const noData = queryByDataId('no-data');
+    expect(noData).toBeFalsy();
+  });
+
+  it('should use custom filter function', async () => {
+    const customFilter = vi.fn((item: SelectOption, query: string): boolean =>
+      item.label.toLowerCase().startsWith(query.toLowerCase()),
+    );
+
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      attachTo: document.body,
+      props: {
+        filter: customFilter,
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    await wrapper.find('[data-id=activator]').trigger('click');
+    await vi.advanceTimersToNextTimerAsync();
+
+    await wrapper.find('input').setValue('Ger');
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(customFilter).toHaveBeenCalled();
+    const menuButtons = queryAllMenuButtons();
+    expect(menuButtons.length).toBe(1);
+    expect(menuButtons[0]?.innerHTML).toContain('Germany');
+  });
+
+  it('should focus last chip on Delete key when input is empty', async () => {
+    wrapper = createWrapper<string[], SelectOption>({
+      attachTo: document.body,
+      props: {
+        chips: true,
+        keyAttr: 'id',
+        modelValue: ['7', '8'],
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    const chips = wrapper.find('div[data-id=activator]').findAllComponents(RuiChip);
+    expect(chips).toHaveLength(2);
+
+    // Focus input and press Delete with empty input
+    await wrapper.find('input').trigger('focus');
+    await vi.advanceTimersToNextTimerAsync();
+
+    await wrapper.find('input').trigger('keydown.delete');
+    await vi.advanceTimersToNextTimerAsync();
+
+    // In multi-select, Delete focuses the last chip (doesn't remove directly)
+    // Then pressing Delete on the focused chip removes it
+    const lastChip = chips[1];
+    assert(lastChip);
+    await lastChip.trigger('keydown', { key: 'Delete' });
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(wrapper.emitted()).toHaveProperty('update:modelValue');
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['7']]);
+  });
+
+  it('should sync searchInput model', async () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      attachTo: document.body,
+      props: {
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        searchInput: '',
+        textAttr: 'label',
+      },
+    });
+
+    await wrapper.find('[data-id=activator]').trigger('click');
+    await vi.advanceTimersToNextTimerAsync();
+
+    await wrapper.find('input').setValue('test');
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(wrapper.emitted()).toHaveProperty('update:searchInput');
+  });
+
+  it('should render correct aria attributes', () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      props: {
+        disabled: true,
+        keyAttr: 'id',
+        loading: true,
+        modelValue: undefined,
+        options,
+        required: true,
+        textAttr: 'label',
+      },
+    });
+
+    const activator = wrapper.find('div[data-id=activator]');
+    expect(activator.attributes('role')).toBe('combobox');
+    expect(activator.attributes('aria-expanded')).toBe('false');
+    expect(activator.attributes('aria-disabled')).toBe('true');
+    expect(activator.attributes('aria-required')).toBe('true');
+    expect(activator.attributes('aria-busy')).toBe('true');
+    expect(wrapper.find('input').attributes('aria-autocomplete')).toBe('list');
+  });
+
+  it('should render correct aria attributes for readonly', () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      props: {
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        readOnly: true,
+        textAttr: 'label',
+      },
+    });
+
+    const activator = wrapper.find('div[data-id=activator]');
+    expect(activator.attributes('aria-readonly')).toBe('true');
+  });
+
+  it('should set aria-selected on active menu options', async () => {
+    const option1 = options[0];
+    assert(option1);
+    wrapper = createWrapper<string, SelectOption>({
+      attachTo: document.body,
+      props: {
+        keyAttr: 'id',
+        modelValue: option1.id,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    await wrapper.find('[data-id=activator]').trigger('click');
+    await vi.advanceTimersToNextTimerAsync();
+    expect(queryByRole('menu')).toBeTruthy();
+
+    const firstButton = queryBody<HTMLButtonElement>('button:first-child');
+    assertExists(firstButton);
+    expect(firstButton.getAttribute('aria-selected')).toBe('true');
+
+    const secondButton = queryBody<HTMLButtonElement>('button:nth-child(2)');
+    assertExists(secondButton);
+    expect(secondButton.getAttribute('aria-selected')).toBe('false');
   });
 });
