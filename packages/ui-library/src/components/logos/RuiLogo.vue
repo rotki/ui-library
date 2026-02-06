@@ -110,6 +110,8 @@ onServerPrefetch(async () => {
   >
     <div
       v-if="!externalSource && decoding"
+      role="img"
+      :aria-label="appName"
       class="h-full transition delay-0 opacity-0"
       :style="{ width: `${size}rem` }"
     />

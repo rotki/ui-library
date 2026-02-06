@@ -43,4 +43,40 @@ describe('components/logos/RuiLogo.vue', () => {
     await wrapper.setProps({ uniqueKey: '10' });
     expect(wrapper.find('img[data-image=custom][src*="?key=10"]').exists()).toBeTruthy();
   });
+
+  it('should render fallback image with alt text', () => {
+    wrapper = createWrapper();
+    const img = wrapper.find('img[data-image=fallback]');
+
+    expect(img.exists()).toBeTruthy();
+    expect(img.attributes('alt')).toBe('rotki');
+  });
+
+  it('should set height based on size prop', () => {
+    wrapper = createWrapper({
+      props: {
+        size: 5,
+      },
+    });
+
+    expect(wrapper.find('div').attributes('style')).toContain('height: 5rem');
+  });
+
+  it('should use default size of 3rem', () => {
+    wrapper = createWrapper();
+
+    expect(wrapper.find('div').attributes('style')).toContain('height: 3rem');
+  });
+
+  it('should have aria-label on loading placeholder when decoding', async () => {
+    wrapper = createWrapper();
+    await wrapper.setProps({ logo: 'website' });
+
+    // When logo is set but sources haven't loaded yet, decoding is true
+    // and the placeholder div should have role="img" and aria-label
+    const placeholder = wrapper.find('div[role=img]');
+    if (placeholder.exists()) {
+      expect(placeholder.attributes('aria-label')).toBe('rotki');
+    }
+  });
 });

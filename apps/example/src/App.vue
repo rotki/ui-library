@@ -11,6 +11,7 @@ const navigation = ref([
     links: [
       { to: '/', title: 'Buttons' },
       { to: '/icons', title: 'Icons' },
+      { to: '/logos', title: 'Logos' },
       { to: '/checkboxes', title: 'Checkboxes' },
       { to: '/switches', title: 'Switches' },
       { to: '/radios', title: 'Radio' },

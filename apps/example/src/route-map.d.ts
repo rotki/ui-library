@@ -243,6 +243,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/logos': RouteRecordInfo<
+      '/logos',
+      '/logos',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/menu-selects/': RouteRecordInfo<
       '/menu-selects/',
       '/menu-selects',
@@ -572,6 +579,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/loaders.vue': {
       routes:
         | '/loaders'
+      views:
+        | never
+    }
+    'src/pages/logos.vue': {
+      routes:
+        | '/logos'
       views:
         | never
     }
