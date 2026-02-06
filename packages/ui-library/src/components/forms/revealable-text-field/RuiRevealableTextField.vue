@@ -51,10 +51,12 @@ const hidden = ref<boolean>(true);
       <div class="flex items-center">
         <RuiButton
           :disabled="disabled"
+          :aria-label="hidden ? 'Show password' : 'Hide password'"
           tabindex="-1"
           variant="text"
           type="button"
           icon
+          data-id="toggle-visibility"
           class="-mr-1 !p-2"
           @click="hidden = !hidden"
         >

@@ -66,4 +66,74 @@ describe('components/forms/revealable-text-field/RuiRevealableTextField.vue', ()
     await wrapper.setProps({ required: false });
     expect(wrapper.find('label').text()).not.toContain('﹡');
   });
+
+  it('should have aria-label on toggle button', () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: '',
+      },
+    });
+
+    const button = wrapper.find('button');
+    expect(button.attributes('aria-label')).toBe('Show password');
+  });
+
+  it('should update aria-label when toggled', async () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: '',
+      },
+    });
+
+    const button = wrapper.find('button');
+    expect(button.attributes('aria-label')).toBe('Show password');
+
+    await button.trigger('click');
+    expect(button.attributes('aria-label')).toBe('Hide password');
+
+    await button.trigger('click');
+    expect(button.attributes('aria-label')).toBe('Show password');
+  });
+
+  it('should have data-id on toggle button', () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: '',
+      },
+    });
+
+    expect(wrapper.find('[data-id=toggle-visibility]').exists()).toBeTruthy();
+  });
+
+  it('should disable toggle button when disabled', () => {
+    wrapper = createWrapper({
+      props: {
+        disabled: true,
+        modelValue: '',
+      },
+    });
+
+    expect(wrapper.find('button').attributes('disabled')).toBeDefined();
+  });
+
+  it('should render input with password type by default', () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: 'secret',
+      },
+    });
+
+    expect(wrapper.find('input').attributes('type')).toBe('password');
+  });
+
+  it('should pass variant prop to text field', () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: '',
+        variant: 'outlined',
+      },
+    });
+
+    expect(wrapper.find('fieldset').exists()).toBeTruthy();
+  });
 });
