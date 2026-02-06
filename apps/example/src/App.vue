@@ -28,6 +28,7 @@ const navigation = ref([
       { to: '/menu-selects', title: 'Menu Selects' },
       { to: '/simple-selects', title: 'Simple Selects' },
       { to: '/data-tables', title: 'Data Tables' },
+      { to: '/dividers', title: 'Dividers' },
       { to: '/cards', title: 'Cards' },
       { to: '/tabs', title: 'Tabs' },
       { to: '/badges', title: 'Badges' },

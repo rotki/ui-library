@@ -34,4 +34,32 @@ describe('components/divider/RuiDivider.vue', () => {
     expectNotToHaveClass(wrapper.element, /border-l/);
     expectToHaveClass(wrapper.element, /border-t/);
   });
+
+  it('should have role="separator"', () => {
+    wrapper = createWrapper();
+    expect(wrapper.attributes('role')).toBe('separator');
+  });
+
+  it('should have aria-orientation="horizontal" by default', () => {
+    wrapper = createWrapper();
+    expect(wrapper.attributes('aria-orientation')).toBe('horizontal');
+  });
+
+  it('should have aria-orientation="vertical" when vertical', () => {
+    wrapper = createWrapper({
+      props: {
+        vertical: true,
+      },
+    });
+    expect(wrapper.attributes('aria-orientation')).toBe('vertical');
+  });
+
+  it('should pass attrs to root element', () => {
+    wrapper = createWrapper({
+      attrs: {
+        'data-cy': 'test-divider',
+      },
+    });
+    expect(wrapper.attributes('data-cy')).toBe('test-divider');
+  });
 });

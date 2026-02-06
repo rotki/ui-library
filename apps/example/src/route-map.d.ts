@@ -222,6 +222,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/dividers': RouteRecordInfo<
+      '/dividers',
+      '/dividers',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/icons': RouteRecordInfo<
       '/icons',
       '/icons',
@@ -547,6 +554,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/dialogs.vue': {
       routes:
         | '/dialogs'
+      views:
+        | never
+    }
+    'src/pages/dividers.vue': {
+      routes:
+        | '/dividers'
       views:
         | never
     }
