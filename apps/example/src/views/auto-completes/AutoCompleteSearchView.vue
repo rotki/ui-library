@@ -6,13 +6,13 @@ import { createOptions } from '@/data/options';
 const objectOptions = createOptions();
 const primitiveOptions: string[] = ['Lorem', 'Ipsum', 'Dolor', 'Sit amet', 'Consecteur'];
 
-const filterValue = ref<number | undefined>(undefined);
-const noFilterValue = ref<string | undefined>(undefined);
-const customValue = ref<string | undefined>(undefined);
-const customHideValue = ref<string | undefined>(undefined);
-const noDataValue = ref<string | undefined>(undefined);
-const hideNoDataValue = ref<string | undefined>(undefined);
-const placeholderValue = ref<string | undefined>(undefined);
+const filterValue = ref<number>();
+const noFilterValue = ref<string>();
+const customValue = ref<string>();
+const customHideValue = ref<string>();
+const noDataValue = ref<string>();
+const hideNoDataValue = ref<string>();
+const placeholderValue = ref<string>();
 </script>
 
 <template>

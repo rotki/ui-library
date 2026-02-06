@@ -5,17 +5,17 @@ import { createOptions } from '@/data/options';
 
 const options = createOptions();
 
-const defaultValue = ref<number | undefined>(1);
-const outlinedValue = ref<number | undefined>(1);
-const denseValue = ref<number | undefined>(1);
-const disabledValue = ref<number | undefined>(1);
-const disabledOutlinedValue = ref<number | undefined>(1);
-const loadingValue = ref<number | undefined>(undefined);
-const errorValue = ref<number | undefined>(undefined);
-const successValue = ref<number | undefined>(undefined);
-const hideDetailsValue = ref<number | undefined>(undefined);
-const requiredValue = ref<number | undefined>(undefined);
-const hintValue = ref<number | undefined>(undefined);
+const defaultValue = ref<number>(1);
+const outlinedValue = ref<number>(1);
+const denseValue = ref<number>(1);
+const disabledValue = ref<number>(1);
+const disabledOutlinedValue = ref<number>(1);
+const loadingValue = ref<number>();
+const errorValue = ref<number>();
+const successValue = ref<number>();
+const hideDetailsValue = ref<number>();
+const requiredValue = ref<number>();
+const hintValue = ref<number>();
 </script>
 
 <template>

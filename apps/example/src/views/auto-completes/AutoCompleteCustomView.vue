@@ -9,8 +9,8 @@ import { createOptions, type SelectOption } from '@/data/options';
 
 const options = createOptions();
 
-const activatorValue = ref<number | undefined>(undefined);
-const itemValue = ref<number | undefined>(undefined);
+const activatorValue = ref<number>();
+const itemValue = ref<number>();
 
 function getDisplayText(value?: SelectOption | SelectOption[]): string {
   const defaultText = 'Choose Option';

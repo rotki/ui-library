@@ -50,9 +50,9 @@ export function usePopper(
   closeDelay: Ref<number> = ref(0),
   virtualReference?: Ref<Element | VirtualElement>,
 ): UsePopperReturn {
-  const reference = ref<HTMLElement | undefined>(undefined);
-  const popper = ref<MaybeElement | undefined>(undefined);
-  const instance = ref<Instance | undefined>(undefined);
+  const reference = ref<HTMLElement>();
+  const popper = ref<MaybeElement>();
+  const instance = ref<Instance>();
   const open = ref<boolean>(false);
   const popperEnter = ref<boolean>(false);
   const leavePending = ref<boolean>(false);

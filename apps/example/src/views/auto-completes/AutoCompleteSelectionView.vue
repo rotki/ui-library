@@ -4,11 +4,11 @@ import { ref } from 'vue';
 
 const primitiveOptions: string[] = ['Lorem', 'Ipsum', 'Dolor', 'Sit amet', 'Consecteur'];
 
-const singleValue = ref<string | undefined>(undefined);
-const singlePreselectedValue = ref<string | undefined>('Lorem');
+const singleValue = ref<string>();
+const singlePreselectedValue = ref<string>('Lorem');
 const multiValue = ref<string[]>([]);
 const multiPreselectedValue = ref<string[]>(['Lorem', 'Ipsum']);
-const autoFirstValue = ref<string | undefined>(undefined);
+const autoFirstValue = ref<string>();
 const hideSelectedValue = ref<string[]>([]);
 </script>
 

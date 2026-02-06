@@ -4,8 +4,8 @@ import { ref } from 'vue';
 
 const primitiveOptions: string[] = ['Lorem', 'Ipsum', 'Dolor', 'Sit amet', 'Consecteur'];
 
-const readonlyDefault = ref<string | undefined>('Lorem');
-const readonlyOutlined = ref<string | undefined>('Lorem');
+const readonlyDefault = ref<string>('Lorem');
+const readonlyOutlined = ref<string>('Lorem');
 const readonlyMulti = ref<string[]>(['Lorem', 'Ipsum']);
 </script>
 
