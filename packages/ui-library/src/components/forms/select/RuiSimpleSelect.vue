@@ -5,6 +5,7 @@ export interface Props {
   modelValue: string | number;
   options: string[] | number[];
   disabled?: boolean;
+  label?: string;
   name?: string;
   variant?: 'default' | 'outlined';
 }
@@ -16,6 +17,7 @@ defineOptions({
 
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
+  label: undefined,
   name: '',
   variant: 'default',
 });
@@ -46,6 +48,8 @@ const value = computed({
       ]"
       :name="name"
       :disabled="disabled"
+      :aria-label="label"
+      data-id="select"
     >
       <option
         v-for="(option, i) in options"
@@ -55,7 +59,10 @@ const value = computed({
         {{ option }}
       </option>
     </select>
-    <span :class="$style.icon__wrapper">
+    <span
+      :class="$style.icon__wrapper"
+      aria-hidden="true"
+    >
       <RuiIcon
         :class="$style.icon"
         name="lu-chevron-down"

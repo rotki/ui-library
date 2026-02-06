@@ -306,6 +306,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/simple-selects': RouteRecordInfo<
+      '/simple-selects',
+      '/simple-selects',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/sliders': RouteRecordInfo<
       '/sliders',
       '/sliders',
@@ -612,6 +619,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/radios.vue': {
       routes:
         | '/radios'
+      views:
+        | never
+    }
+    'src/pages/simple-selects.vue': {
+      routes:
+        | '/simple-selects'
       views:
         | never
     }
