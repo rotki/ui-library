@@ -236,8 +236,43 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/menus': RouteRecordInfo<
-      '/menus',
+    '/menu-selects/': RouteRecordInfo<
+      '/menu-selects/',
+      '/menu-selects',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/menu-selects/basic': RouteRecordInfo<
+      '/menu-selects/basic',
+      '/menu-selects/basic',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/menu-selects/custom': RouteRecordInfo<
+      '/menu-selects/custom',
+      '/menu-selects/custom',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/menu-selects/readonly': RouteRecordInfo<
+      '/menu-selects/readonly',
+      '/menu-selects/readonly',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/menu-selects/selection': RouteRecordInfo<
+      '/menu-selects/selection',
+      '/menu-selects/selection',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/menus/': RouteRecordInfo<
+      '/menus/',
       '/menus',
       Record<never, never>,
       Record<never, never>,
@@ -520,9 +555,39 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/pages/menus.vue': {
+    'src/pages/menu-selects/index.vue': {
       routes:
-        | '/menus'
+        | '/menu-selects/'
+      views:
+        | never
+    }
+    'src/pages/menu-selects/basic.vue': {
+      routes:
+        | '/menu-selects/basic'
+      views:
+        | never
+    }
+    'src/pages/menu-selects/custom.vue': {
+      routes:
+        | '/menu-selects/custom'
+      views:
+        | never
+    }
+    'src/pages/menu-selects/readonly.vue': {
+      routes:
+        | '/menu-selects/readonly'
+      views:
+        | never
+    }
+    'src/pages/menu-selects/selection.vue': {
+      routes:
+        | '/menu-selects/selection'
+      views:
+        | never
+    }
+    'src/pages/menus/index.vue': {
+      routes:
+        | '/menus/'
       views:
         | never
     }

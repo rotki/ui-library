@@ -168,6 +168,10 @@ function clear() {
           ref="activator"
           :disabled="disabled"
           :aria-disabled="disabled"
+          :aria-expanded="isOpen"
+          :aria-readonly="readOnly || undefined"
+          :aria-required="required || undefined"
+          :aria-busy="loading || undefined"
           type="button"
           :tabindex="disabled || readOnly ? -1 : 0"
           class="group"
@@ -235,6 +239,7 @@ function clear() {
 
           <span
             v-if="clearable && value && !disabled"
+            data-id="clear"
             class="group-hover:!visible"
             :class="[$style.clear, focused && '!visible']"
             @click.stop.prevent="clear()"
@@ -293,6 +298,7 @@ function clear() {
             v-for="({ item, _index }) in renderedData"
             :key="_index"
             :active="isActiveItem(item)"
+            :aria-selected="isActiveItem(item)"
             :size="dense ? 'sm' : undefined"
             :model-value="getIdentifier(item)"
             variant="list"
@@ -327,6 +333,7 @@ function clear() {
 
       <div
         v-else-if="!hideNoData"
+        data-id="no-data"
         :style="{ width: `${width}px`, minWidth: menuWidth }"
         :class="menuClass"
       >
