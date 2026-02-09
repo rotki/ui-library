@@ -368,6 +368,7 @@ const footerSteppers = ref<FooterStepperData[]>([
       v-for="(stepper, i) in footerSteppers"
       :key="i"
       v-model="stepper.value"
+      :data-cy="`footer-stepper-${i}`"
       class="mb-6"
       v-bind="stepper"
     />

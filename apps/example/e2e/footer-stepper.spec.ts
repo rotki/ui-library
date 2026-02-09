@@ -40,4 +40,54 @@ test.describe('footer steppers', () => {
     // Use first() since there are multiple pill elements
     await expect(pillStepper.locator('div[class*=_pills_] span[class*=_pill_]').first()).toBeVisible();
   });
+
+  test('should navigate forward and backward with buttons', async ({ page }) => {
+    const stepper = page.locator('[data-cy=footer-stepper-0]');
+    await expect(stepper.locator('span[class*=_numeric_]')).toContainText('1/5');
+
+    // Back should be disabled on first page
+    const backBtn = stepper.locator('button[aria-label=Previous]');
+    const nextBtn = stepper.locator('button[aria-label=Next]');
+    await expect(backBtn).toBeDisabled();
+
+    // Navigate forward
+    await nextBtn.click();
+    await expect(stepper.locator('span[class*=_numeric_]')).toContainText('2/5');
+    await expect(backBtn).toBeEnabled();
+
+    // Navigate back
+    await backBtn.click();
+    await expect(stepper.locator('span[class*=_numeric_]')).toContainText('1/5');
+    await expect(backBtn).toBeDisabled();
+  });
+
+  test('should have role="navigation" and aria-label on root', async ({ page }) => {
+    const stepper = page.locator('[data-cy=footer-stepper-0]');
+    await expect(stepper).toHaveAttribute('role', 'navigation');
+    await expect(stepper).toHaveAttribute('aria-label', 'Step navigation');
+  });
+
+  test('should have aria-label on navigation buttons', async ({ page }) => {
+    const stepper = page.locator('[data-cy=footer-stepper-0]');
+    await expect(stepper.locator('button[aria-label=Previous]')).toBeVisible();
+    await expect(stepper.locator('button[aria-label=Next]')).toBeVisible();
+  });
+
+  test('should have aria-current="step" on active bullet', async ({ page }) => {
+    // Footer stepper at index 1 is bullet variant with value=2
+    const stepper = page.locator('[data-cy=footer-stepper-1]');
+    const activeBullet = stepper.locator('[aria-current=step]');
+    await expect(activeBullet).toHaveCount(1);
+
+    // Click Next to advance
+    await stepper.locator('button[aria-label=Next]').click();
+    const newActive = stepper.locator('[aria-current=step]');
+    await expect(newActive).toHaveCount(1);
+  });
+
+  test('should hide buttons when hideButtons is true', async ({ page }) => {
+    // Footer stepper at index 2 has hideButtons=true
+    const stepper = page.locator('[data-cy=footer-stepper-2]');
+    await expect(stepper.locator('button')).toHaveCount(0);
+  });
 });

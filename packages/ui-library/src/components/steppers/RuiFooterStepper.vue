@@ -50,12 +50,17 @@ function onClick(index: number) {
 </script>
 
 <template>
-  <div :class="[$style['footer-stepper'], $style[variant ?? '']]">
+  <div
+    role="navigation"
+    aria-label="Step navigation"
+    :class="[$style['footer-stepper'], $style[variant ?? '']]"
+  >
     <template v-if="variant === 'pill'">
       <div :class="$style.pills">
         <span
           v-for="i in pages"
           :key="i"
+          :aria-current="modelValue === i ? 'step' : undefined"
           :class="[$style.pill, { [$style.active]: modelValue === i }]"
         />
       </div>
@@ -63,6 +68,7 @@ function onClick(index: number) {
     <template v-else>
       <RuiButton
         v-if="!hideButtons"
+        aria-label="Previous"
         :class="{ [$style.arrow__button]: arrowButtons }"
         :disabled="modelValue <= 1"
         :icon="arrowButtons"
@@ -99,6 +105,7 @@ function onClick(index: number) {
         <span
           v-for="i in pages"
           :key="i"
+          :aria-current="modelValue === i ? 'step' : undefined"
           :class="[$style.bullet, { [$style.active]: modelValue === i }]"
           @click="onClick(i)"
         />
@@ -111,6 +118,7 @@ function onClick(index: number) {
       />
       <RuiButton
         v-if="!hideButtons"
+        aria-label="Next"
         :class="{ [$style.arrow__button]: arrowButtons }"
         :disabled="modelValue >= pages"
         :icon="arrowButtons"
