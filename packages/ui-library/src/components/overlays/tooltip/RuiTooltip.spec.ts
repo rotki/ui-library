@@ -223,6 +223,56 @@ describe('components/overlays/tooltip/RuiTooltip.vue', () => {
     expect(document.body.innerHTML).not.toMatch(new RegExp(text)); // Now hidden
   });
 
+  it('should have aria-describedby on activator when tooltip is visible', async () => {
+    wrapper = createWrapper({
+      props: {
+        text,
+      },
+    });
+
+    // Initially no aria-describedby
+    const wrapperEl = wrapper.element as HTMLElement;
+    expect(wrapperEl.getAttribute('aria-describedby')).toBeNull();
+
+    // Open tooltip
+    await wrapper.trigger('mouseover');
+    vi.advanceTimersByTime(1);
+    await flushPromises();
+
+    // Should have aria-describedby linking to tooltip
+    const describedBy = wrapperEl.getAttribute('aria-describedby');
+    expect(describedBy).toBeTruthy();
+
+    // The tooltip element should have a matching id
+    const tooltip = queryByRole<HTMLDivElement>('tooltip');
+    expect(tooltip).toBeTruthy();
+    expect(tooltip?.id).toBe(describedBy);
+
+    // Close tooltip
+    await wrapper.trigger('mouseleave');
+    vi.advanceTimersByTime(600);
+    await flushPromises();
+
+    // aria-describedby should be removed
+    expect(wrapperEl.getAttribute('aria-describedby')).toBeNull();
+  });
+
+  it('should not have aria-describedby when disabled', async () => {
+    wrapper = createWrapper({
+      props: {
+        disabled: true,
+        text,
+      },
+    });
+
+    await wrapper.trigger('mouseover');
+    vi.advanceTimersByTime(1);
+    await flushPromises();
+
+    const wrapperEl = wrapper.element as HTMLElement;
+    expect(wrapperEl.getAttribute('aria-describedby')).toBeNull();
+  });
+
   it('should keep tooltip open when triggered by both hover and focus', async () => {
     wrapper = createWrapper({
       props: {

@@ -29,6 +29,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const { closeDelay, openDelay, popper, disabled } = toRefs(props);
 
+const tooltipId = useId();
+
 const {
   reference: activator,
   popper: tooltip,
@@ -51,6 +53,7 @@ defineExpose({
     ref="activator"
     :class="$style.wrapper"
     :data-tooltip-disabled="disabled"
+    :aria-describedby="!disabled && open ? tooltipId : undefined"
     @mouseover="onOpen()"
     @mouseleave="onClose()"
     @focusin="onOpen()"
@@ -68,6 +71,7 @@ defineExpose({
     >
       <div
         v-if="popperEnter"
+        :id="tooltipId"
         ref="tooltip"
         :class="[
           $style.tooltip,

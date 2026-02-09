@@ -60,4 +60,35 @@ test.describe('tooltip', () => {
     // The tooltip would normally appear quickly if enabled, so we check it stays at 0
     await expect(page.locator('div[role=tooltip-content]')).toHaveCount(0, { timeout: 1000 });
   });
+
+  test('should show tooltip on keyboard focus', async ({ page }) => {
+    const defaultTooltip = page.locator('div[data-cy=tooltip-0]');
+    const activator = defaultTooltip.locator('#activator');
+
+    // Focus the activator via keyboard (tab)
+    await activator.focus();
+    await expect(page.locator('div[role=tooltip]')).toBeVisible();
+    await expect(page.locator('div[role=tooltip-content]')).toBeVisible();
+
+    // Blur should close the tooltip
+    await activator.blur();
+    await expect(page.locator('div[role=tooltip-content]')).toHaveCount(0);
+  });
+
+  test('should have aria-describedby linking activator to tooltip', async ({ page }) => {
+    const defaultTooltip = page.locator('div[data-cy=tooltip-0]');
+
+    // Initially no aria-describedby
+    await expect(defaultTooltip).not.toHaveAttribute('aria-describedby');
+
+    // Hover to open tooltip
+    await defaultTooltip.hover();
+    const tooltip = page.locator('div[role=tooltip]');
+    await expect(tooltip).toBeVisible();
+
+    // Activator wrapper should have aria-describedby matching tooltip id
+    const tooltipId = await tooltip.getAttribute('id');
+    expect(tooltipId).toBeTruthy();
+    await expect(defaultTooltip).toHaveAttribute('aria-describedby', tooltipId!);
+  });
 });
