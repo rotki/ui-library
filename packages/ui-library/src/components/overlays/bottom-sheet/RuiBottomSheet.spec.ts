@@ -58,7 +58,7 @@ describe('components/overlays/bottom-sheet/RuiBottomSheet.vue', () => {
     bottomSheet = queryByRole<HTMLDivElement>('dialog');
 
     assertExists(bottomSheet);
-    expect(bottomSheet.querySelector('div[class*=_content_]')).toBeTruthy();
+    expect(bottomSheet.querySelector('[data-id=content]')).toBeTruthy();
     expect(bottomSheet.querySelector('div[class*=_center_]')).toBeFalsy();
 
     // Click the button that call close function
@@ -83,7 +83,7 @@ describe('components/overlays/bottom-sheet/RuiBottomSheet.vue', () => {
     const bottomSheet = queryByRole<HTMLDivElement>('dialog');
     assertExists(bottomSheet);
 
-    const contentWrapper = bottomSheet.querySelector<HTMLDivElement>('div[class*=_content_]');
+    const contentWrapper = bottomSheet.querySelector<HTMLDivElement>('[data-id=content]');
     assertExists(contentWrapper);
 
     expect(contentWrapper.style.width).toBe('98%');
@@ -110,7 +110,7 @@ describe('components/overlays/bottom-sheet/RuiBottomSheet.vue', () => {
     assertExists(bottomSheet);
 
     // Click on the overlay should close the bottom sheet
-    const overlay = bottomSheet.querySelector<HTMLDivElement>('div[class*=_overlay_]');
+    const overlay = bottomSheet.querySelector<HTMLDivElement>('[data-id=overlay]');
     assertExists(overlay);
     overlay.click();
 
@@ -154,7 +154,7 @@ describe('components/overlays/bottom-sheet/RuiBottomSheet.vue', () => {
     assertExists(bottomSheet);
 
     // Click on the overlay should not close the bottom sheet
-    const overlay = bottomSheet.querySelector<HTMLDivElement>('div[class*=_overlay_]');
+    const overlay = bottomSheet.querySelector<HTMLDivElement>('[data-id=overlay]');
     assertExists(overlay);
     overlay.click();
 
@@ -171,5 +171,45 @@ describe('components/overlays/bottom-sheet/RuiBottomSheet.vue', () => {
     bottomSheet = queryByRole<HTMLDivElement>('dialog');
 
     assertExists(bottomSheet);
+  });
+
+  it('should have role="dialog" when open', async () => {
+    wrapper = createWrapper();
+    await vi.runAllTimersAsync();
+
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    const bottomSheet = queryByRole<HTMLDivElement>('dialog');
+    assertExists(bottomSheet);
+
+    expect(bottomSheet.getAttribute('role')).toBe('dialog');
+  });
+
+  it('should have aria-modal="true" when open', async () => {
+    wrapper = createWrapper();
+    await vi.runAllTimersAsync();
+
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    const bottomSheet = queryByRole<HTMLDivElement>('dialog');
+    assertExists(bottomSheet);
+
+    expect(bottomSheet.getAttribute('aria-modal')).toBe('true');
+  });
+
+  it('should have data-id attributes on overlay and content', async () => {
+    wrapper = createWrapper();
+    await vi.runAllTimersAsync();
+
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    const bottomSheet = queryByRole<HTMLDivElement>('dialog');
+    assertExists(bottomSheet);
+
+    expect(bottomSheet.querySelector('[data-id=overlay]')).toBeTruthy();
+    expect(bottomSheet.querySelector('[data-id=content]')).toBeTruthy();
   });
 });

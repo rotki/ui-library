@@ -25,7 +25,7 @@ test.describe('bottom-sheet', () => {
     await expect(page.locator('div[role=dialog]')).toBeVisible();
 
     // should not close the bottom sheet
-    await page.locator('div[role=dialog] div[class*=_overlay_]').click({ force: true });
+    await page.locator('div[role=dialog] [data-id=overlay]').click({ force: true });
     await expect(page.locator('div[role=dialog]')).toBeVisible();
 
     // close the bottom sheet
@@ -50,7 +50,37 @@ test.describe('bottom-sheet', () => {
     await expect(page.locator('div[role=dialog]')).toBeVisible();
 
     // should close the bottom sheet too
-    await page.locator('div[role=dialog] div[class*=_overlay_]').click({ force: true });
+    await page.locator('div[role=dialog] [data-id=overlay]').click({ force: true });
     await expect(page.locator('div[role=dialog]')).toHaveCount(0);
+  });
+
+  test('should have aria-modal attribute when open', async ({ page }) => {
+    const defaultBottomSheet = page.locator('div[data-cy=bottom-sheet-0]');
+
+    const activator = defaultBottomSheet.locator('[data-cy=activator]');
+    await activator.click();
+
+    const dialog = page.locator('div[role=dialog]');
+    await expect(dialog).toBeVisible();
+    await expect(dialog).toHaveAttribute('aria-modal', 'true');
+
+    await page.locator('button[data-cy=close]').click();
+    await expect(dialog).toHaveCount(0);
+  });
+
+  test('should apply custom width to bottom sheet content', async ({ page }) => {
+    const defaultBottomSheet = page.locator('div[data-cy=bottom-sheet-0]');
+
+    const activator = defaultBottomSheet.locator('[data-cy=activator]');
+    await activator.click();
+
+    const dialog = page.locator('div[role=dialog]');
+    await expect(dialog).toBeVisible();
+
+    const content = dialog.locator('[data-id=content]');
+    await expect(content).toHaveCSS('width', '900px');
+
+    await page.locator('button[data-cy=close]').click();
+    await expect(dialog).toHaveCount(0);
   });
 });
