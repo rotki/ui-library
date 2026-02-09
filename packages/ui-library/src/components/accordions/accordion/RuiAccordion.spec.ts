@@ -93,6 +93,42 @@ describe('components/accordions/accordion/RuiAccordion.vue', () => {
     expect(content.attributes('aria-labelledby')).toBe(trigger.attributes('id'));
   });
 
+  it('should have aria-expanded="false" when closed', () => {
+    wrapper = createWrapper();
+
+    const trigger = wrapper.find('[data-accordion-trigger]');
+    expect(trigger.attributes('aria-expanded')).toBe('false');
+  });
+
+  it('should update aria-expanded when open changes', async () => {
+    wrapper = createWrapper();
+
+    const trigger = wrapper.find('[data-accordion-trigger]');
+    expect(trigger.attributes('aria-expanded')).toBe('false');
+
+    await wrapper.setProps({ open: true });
+    expect(trigger.attributes('aria-expanded')).toBe('true');
+
+    await wrapper.setProps({ open: false });
+    expect(trigger.attributes('aria-expanded')).toBe('false');
+  });
+
+  it('should have data-state attribute reflecting open state', async () => {
+    wrapper = createWrapper();
+
+    expect(wrapper.find('[data-accordion]').attributes('data-state')).toBe('closed');
+
+    await wrapper.setProps({ open: true });
+    expect(wrapper.find('[data-accordion]').attributes('data-state')).toBe('open');
+  });
+
+  it('should emit click on trigger click', async () => {
+    wrapper = createWrapper();
+
+    await wrapper.find('[data-accordion-trigger]').trigger('click');
+    expect(wrapper.emitted('click')).toHaveLength(1);
+  });
+
   it('should toggle on keyboard events', async () => {
     wrapper = createWrapper();
 
