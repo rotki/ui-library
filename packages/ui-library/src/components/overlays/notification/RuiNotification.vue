@@ -63,6 +63,8 @@ watchImmediate(modelValue, (display) => {
     >
       <div
         v-if="modelValue"
+        role="alert"
+        aria-live="polite"
         class="top-2 right-2 fixed drop-shadow-lg rounded-sm z-50"
         :class="{
           'bg-white dark:bg-[#363636]': !theme,

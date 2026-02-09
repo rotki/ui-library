@@ -28,6 +28,15 @@ describe('components/icons/RuiIcon.vue', () => {
     );
   });
 
+  it('should have aria-hidden="true" on svg', () => {
+    wrapper = createWrapper({
+      props: {
+        name: 'lu-circle-arrow-down',
+      },
+    });
+    expect(wrapper.attributes('aria-hidden')).toBe('true');
+  });
+
   it('should pass props correctly', async () => {
     wrapper = createWrapper({
       props: {

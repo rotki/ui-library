@@ -85,6 +85,20 @@ describe('components/overlays/notification/RuiNotification.vue', () => {
     expect(wrapper.emitted()).toEqual({});
   });
 
+  it('should have role="alert" and aria-live="polite"', async () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: true,
+        timeout: 0,
+      },
+    });
+
+    await nextTick();
+    const notification = queryBody<HTMLDivElement>('[role="alert"]');
+    assertExists(notification);
+    expect(notification.getAttribute('aria-live')).toBe('polite');
+  });
+
   it('should close automatically after timeout', async () => {
     vi.useFakeTimers();
     wrapper = createWrapper({

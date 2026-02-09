@@ -63,7 +63,10 @@ const children = computed(() => {
 </script>
 
 <template>
-  <div v-bind="$attrs">
+  <div
+    role="radiogroup"
+    v-bind="$attrs"
+  >
     <div
       v-if="props.label"
       class="text-rui-text-secondary text-body-1"

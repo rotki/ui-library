@@ -38,6 +38,7 @@ const components: ComputedRef<[string, Record<string, string>][] | undefined> = 
 
 <template>
   <svg
+    aria-hidden="true"
     :class="[$style['rui-icon'], $style[color ?? '']]"
     :height="size"
     :width="size"

@@ -23,6 +23,11 @@ describe('components/forms/radio-button/radio-group/RuiRadioGroup.vue', () => {
     wrapper?.unmount();
   });
 
+  it('should have role="radiogroup" on wrapper', () => {
+    wrapper = createWrapper();
+    expect(wrapper.attributes('role')).toBe('radiogroup');
+  });
+
   it('should pass inline props', async () => {
     wrapper = createWrapper();
     expectWrapperNotToHaveClass(wrapper, 'div[class*=wrapper]', /inline/);
