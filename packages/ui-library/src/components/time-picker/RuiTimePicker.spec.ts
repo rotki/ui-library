@@ -93,6 +93,135 @@ describe('components/time-picker/RuiTimePicker.vue', () => {
     expect(updatedDate.getMinutes()).toBe(30);
   });
 
+  it('should have role="group" and aria-label on root element', () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: new Date(2023, 0, 1, 10, 30),
+      },
+    });
+
+    const root = wrapper.find('[role="group"]');
+    expect(root.exists()).toBe(true);
+    expect(root.attributes('aria-label')).toBe('Time picker');
+  });
+
+  it('should have role="listbox" and aria-label on clock face', () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: new Date(2023, 0, 1, 10, 30),
+      },
+    });
+
+    const clockFace = wrapper.find('[role="listbox"]');
+    expect(clockFace.exists()).toBe(true);
+    expect(clockFace.attributes('aria-label')).toBe('Select hour');
+  });
+
+  it('should have role="option" and aria-selected on clock numbers', async () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: new Date(2023, 0, 1, 3, 30),
+      },
+    });
+
+    await nextTick();
+
+    const options = wrapper.findAll('[role="option"]');
+    expect(options.length).toBeGreaterThan(0);
+
+    // Hour 3 AM → displayHour 3, should be selected
+    const selected = wrapper.find('[role="option"][aria-selected="true"]');
+    expect(selected.exists()).toBe(true);
+    expect(selected.text()).toBe('3');
+  });
+
+  it('should have aria-label on digit selectors and AM/PM toggle', () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: new Date(2023, 0, 1, 10, 30),
+      },
+    });
+
+    const buttons = wrapper.findAll('[role="button"]');
+    const labels = buttons.map(b => b.attributes('aria-label'));
+
+    expect(labels).toContain('Select hours');
+    expect(labels).toContain('Select minutes');
+    expect(labels).toContain('Toggle AM/PM');
+  });
+
+  it('should display midnight hour as 12', async () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: new Date(2023, 0, 1, 0, 0),
+      },
+    });
+
+    await nextTick();
+
+    // Hour 0 (midnight) → displayHour should be 12
+    const selected = wrapper.find('[role="option"][aria-selected="true"]');
+    expect(selected.exists()).toBe(true);
+    expect(selected.text()).toBe('12');
+
+    // Period should be AM
+    expect(wrapper.find('.rui-time-picker-period').text()).toBe('AM');
+  });
+
+  it('should display noon hour as 12 PM', async () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: new Date(2023, 0, 1, 12, 0),
+      },
+    });
+
+    await nextTick();
+
+    const selected = wrapper.find('[role="option"][aria-selected="true"]');
+    expect(selected.exists()).toBe(true);
+    expect(selected.text()).toBe('12');
+
+    expect(wrapper.find('.rui-time-picker-period').text()).toBe('PM');
+  });
+
+  it('should update clock face aria-label when mode changes', async () => {
+    const wrapper = mount(RuiTimePicker, {
+      props: {
+        'accuracy': TimeAccuracy.SECOND,
+        'modelValue': new Date(2023, 0, 1, 10, 30),
+        'onUpdate:modelValue': (e?: Date) => wrapper.setProps({ modelValue: e }),
+      },
+    });
+
+    const clockFace = wrapper.find('[role="listbox"]');
+    expect(clockFace.attributes('aria-label')).toBe('Select hour');
+
+    // Click hour to switch to minute mode
+    await wrapper.find('.rui-hour-03').trigger('click');
+    expect(clockFace.attributes('aria-label')).toBe('Select minute');
+
+    // Click minute to switch to second mode
+    await wrapper.find('.rui-minute-15').trigger('click');
+    expect(clockFace.attributes('aria-label')).toBe('Select second');
+
+    wrapper.unmount();
+  });
+
+  it('should apply bordered class by default and remove with borderless prop', async () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: new Date(2023, 0, 1, 10, 30),
+      },
+    });
+
+    // Default: bordered
+    const root = wrapper.find('[role="group"]');
+    expect(root.classes().some(c => /bordered/.test(c))).toBe(true);
+
+    await wrapper.setProps({ borderless: true });
+    expect(root.classes().some(c => /bordered/.test(c))).toBe(false);
+  });
+
   it('should select time up to milliseconds and emit correct values', async () => {
     const initialDate = new Date(2023, 0, 1, 10, 30, 0, 0);
 

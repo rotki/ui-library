@@ -376,6 +376,8 @@ watch(modelValue, () => {
 
 <template>
   <div
+    role="group"
+    aria-label="Time picker"
     :class="{
       [$style['rui-timepicker']]: true,
       [$style.bordered]: !borderless,
@@ -384,6 +386,8 @@ watch(modelValue, () => {
     <div :class="$style['rui-digital-display']">
       <div class="flex justify-center items-center gap-1">
         <div
+          role="button"
+          aria-label="Select hours"
           :class="{
             [$style['rui-digit']]: true,
             [$style.active]: editMode === 'hour',
@@ -396,6 +400,8 @@ watch(modelValue, () => {
           :
         </div>
         <div
+          role="button"
+          aria-label="Select minutes"
           :class="{
             [$style['rui-digit']]: true,
             [$style.active]: editMode === 'minute',
@@ -412,6 +418,8 @@ watch(modelValue, () => {
         </div>
         <div
           v-if="showSecond"
+          role="button"
+          aria-label="Select seconds"
           :class="{
             [$style['rui-digit']]: true,
             [$style.active]: editMode === 'second',
@@ -430,6 +438,8 @@ watch(modelValue, () => {
 
         <div
           v-if="showMillisecond"
+          role="button"
+          aria-label="Select milliseconds"
           class="!text-lg"
           :class="{
             [$style.active]: editMode === 'millisecond',
@@ -441,6 +451,8 @@ watch(modelValue, () => {
         </div>
         <div class="text-xl">
           <div
+            role="button"
+            aria-label="Toggle AM/PM"
             class="rui-time-picker-period cursor-pointer"
             @click="toggleAmPm()"
           >
@@ -452,6 +464,8 @@ watch(modelValue, () => {
 
     <div
       ref="clockFace"
+      role="listbox"
+      :aria-label="`Select ${editMode}`"
       :class="$style['rui-clock-face']"
       @mousedown="startDrag($event)"
       @touchstart="startDrag($event)"
@@ -475,6 +489,8 @@ watch(modelValue, () => {
       <div
         v-for="num in clockNumbers"
         :key="`num-${num}`"
+        role="option"
+        :aria-selected="isSelectedNumber(num)"
         :class="{
           [$style['rui-clock-number']]: true,
           [$style['is-selected']]: isSelectedNumber(num),
