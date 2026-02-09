@@ -48,6 +48,8 @@ watch(state, (state) => {
 
 <template>
   <div
+    role="application"
+    aria-label="Color picker"
     class="rui-color-picker relative select-none bg-initial"
     v-bind="$attrs"
   >

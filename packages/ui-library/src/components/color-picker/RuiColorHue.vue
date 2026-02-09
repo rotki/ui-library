@@ -88,6 +88,11 @@ watch(modelValue, () => {
 <template>
   <div
     ref="barElement"
+    role="slider"
+    aria-label="Hue"
+    :aria-valuenow="modelValue"
+    aria-valuemin="0"
+    aria-valuemax="360"
     :class="$style.bar"
     class="rui-color-hue"
     v-bind="$attrs"

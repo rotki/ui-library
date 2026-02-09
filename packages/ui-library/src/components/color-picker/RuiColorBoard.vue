@@ -95,6 +95,9 @@ whenever(
 <template>
   <div
     ref="wrapper"
+    role="slider"
+    aria-label="Color saturation and brightness"
+    :aria-valuetext="`Saturation ${Math.round(state.saturation * 100)}%, Brightness ${Math.round(state.brightness * 100)}%`"
     class="rui-color-board"
     :class="$style.saturation"
     v-bind="$attrs"

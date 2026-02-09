@@ -152,6 +152,32 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
     expect(wrapper.emitted('update:model-value')!.at(-1)![0]).toBe('80ffff');
   });
 
+  it('should have role="application" and aria-label on root', () => {
+    wrapper = createWrapper();
+
+    const root = wrapper.find('.rui-color-picker');
+    expect(root.attributes('role')).toBe('application');
+    expect(root.attributes('aria-label')).toBe('Color picker');
+  });
+
+  it('should have role="slider" and aria-label on color board', () => {
+    wrapper = createWrapper();
+
+    const board = wrapper.find('.rui-color-board');
+    expect(board.attributes('role')).toBe('slider');
+    expect(board.attributes('aria-label')).toBe('Color saturation and brightness');
+  });
+
+  it('should have role="slider" and aria attributes on hue bar', () => {
+    wrapper = createWrapper();
+
+    const hue = wrapper.find('.rui-color-hue');
+    expect(hue.attributes('role')).toBe('slider');
+    expect(hue.attributes('aria-label')).toBe('Hue');
+    expect(hue.attributes('aria-valuemin')).toBe('0');
+    expect(hue.attributes('aria-valuemax')).toBe('360');
+  });
+
   it('should handle clicks on the UI selector', async () => {
     wrapper = createWrapper();
     await vi.runAllTimersAsync();
