@@ -25,6 +25,26 @@ test.describe('forms/Radio', () => {
     await expect(secondRadio).toBeChecked();
   });
 
+  test('should have role="radiogroup" on radio group containers', async ({ page }) => {
+    const radioGroups = page.locator('[data-cy=radio-group-wrapper] [role=radiogroup]');
+    const count = await radioGroups.count();
+    expect(count).toBeGreaterThanOrEqual(3);
+  });
+
+  test('should show disabled radio group', async ({ page }) => {
+    const contentWrapper = page.locator('[data-cy=radio-group-wrapper]');
+    // Third radio group is disabled (index 2)
+    const disabledGroup = contentWrapper.locator('[role=radiogroup]').nth(2);
+    const disabledRadio = disabledGroup.locator('input[type="radio"]').first();
+    await expect(disabledRadio).toBeDisabled();
+  });
+
+  test('should display hint messages', async ({ page }) => {
+    const contentWrapper = page.locator('[data-cy=radio-group-wrapper]');
+    const firstGroupHint = contentWrapper.locator('.details').first();
+    await expect(firstGroupHint).toContainText('Selected value:');
+  });
+
   test('checks for radio groups', async ({ page }) => {
     await expect(page.locator('h2[data-cy=radio-group-buttons]')).toContainText('Radio Groups');
 
