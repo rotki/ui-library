@@ -85,6 +85,8 @@ watch(step, () => {
 <template>
   <div
     ref="wrapperRef"
+    role="list"
+    aria-label="Progress steps"
     :class="[
       $style.stepper,
       $style[orientation ?? ''],
@@ -101,6 +103,8 @@ watch(step, () => {
         :class="$style.divider"
       />
       <div
+        role="listitem"
+        :aria-current="state === StepperState.active ? 'step' : undefined"
         :class="[
           $style.step,
           $style[state ?? StepperState.inactive],

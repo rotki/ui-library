@@ -355,6 +355,7 @@ const footerSteppers = ref<FooterStepperData[]>([
     <RuiStepper
       v-for="(stepper, i) in steppers"
       :key="i"
+      :data-cy="`stepper-${i}`"
       class="mb-6"
       v-bind="stepper"
     />
