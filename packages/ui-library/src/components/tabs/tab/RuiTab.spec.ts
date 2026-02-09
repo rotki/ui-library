@@ -125,6 +125,46 @@ describe('components/tabs/tab/RuiTab.vue', () => {
     expect(elem.attributes().href).toBeDefined();
   });
 
+  it('should have role="tab" on button', () => {
+    wrapper = createWrapper();
+    expect(wrapper.find('button').attributes('role')).toBe('tab');
+  });
+
+  it('should have aria-selected="false" when not active', () => {
+    wrapper = createWrapper();
+    expect(wrapper.find('button').attributes('aria-selected')).toBe('false');
+  });
+
+  it('should have aria-selected="true" when active', () => {
+    wrapper = createWrapper({ props: { active: true } });
+    expect(wrapper.find('button').attributes('aria-selected')).toBe('true');
+  });
+
+  it('should have aria-selected on disabled tab', () => {
+    wrapper = createWrapper({ props: { disabled: true } });
+    expect(wrapper.find('button').attributes('aria-selected')).toBe('false');
+    expect(wrapper.find('button').attributes('role')).toBe('tab');
+  });
+
+  it('should have role="tab" on link tab', () => {
+    wrapper = createWrapper({
+      props: { link: true, to: '/tabs' },
+    });
+    const link = wrapper.find('a');
+    expect(link.attributes('role')).toBe('tab');
+  });
+
+  it('should update aria-selected when active changes', async () => {
+    wrapper = createWrapper();
+    expect(wrapper.find('button').attributes('aria-selected')).toBe('false');
+
+    await wrapper.setProps({ active: true });
+    expect(wrapper.find('button').attributes('aria-selected')).toBe('true');
+
+    await wrapper.setProps({ active: false });
+    expect(wrapper.find('button').attributes('aria-selected')).toBe('false');
+  });
+
   it('should set tabindex to -1 for all tab variations', async () => {
     // Test disabled tab
     let wrapper = createWrapper({

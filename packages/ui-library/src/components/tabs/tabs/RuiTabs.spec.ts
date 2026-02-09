@@ -174,4 +174,56 @@ describe('components/tabs/tabs/RuiTabs.vue', () => {
     assertExists(button0);
     expectToHaveClass(button0.element, /active-tab/);
   });
+
+  it('should have role="tablist" on tab container', () => {
+    wrapper = createWrapper();
+
+    const tablist = wrapper.find('[role="tablist"]');
+    expect(tablist.exists()).toBeTruthy();
+  });
+
+  it('should have role="tab" on each tab', async () => {
+    wrapper = createWrapper();
+
+    await nextTick();
+
+    const tabs = wrapper.findAll('[role="tab"]');
+    expect(tabs).toHaveLength(4);
+  });
+
+  it('should have aria-selected on active tab only', async () => {
+    wrapper = createWrapper();
+
+    await nextTick();
+
+    const tabs = wrapper.findAll('[role="tab"]');
+    expect(tabs[0]!.attributes('aria-selected')).toBe('true');
+    expect(tabs[1]!.attributes('aria-selected')).toBe('false');
+    expect(tabs[2]!.attributes('aria-selected')).toBe('false');
+    expect(tabs[3]!.attributes('aria-selected')).toBe('false');
+  });
+
+  it('should update aria-selected when tab changes', async () => {
+    const modelValue = ref<number>();
+    wrapper = createWrapper({
+      props: {
+        'modelValue': get(modelValue),
+        'onUpdate:modelValue': (e: any) => set(modelValue, e),
+      },
+    });
+
+    await nextTick();
+
+    let tabs = wrapper.findAll('[role="tab"]');
+    expect(tabs[0]!.attributes('aria-selected')).toBe('true');
+
+    const button2 = tabs[2];
+    assertExists(button2);
+    await button2.trigger('click');
+    await nextTick();
+
+    tabs = wrapper.findAll('[role="tab"]');
+    expect(tabs[0]!.attributes('aria-selected')).toBe('false');
+    expect(tabs[2]!.attributes('aria-selected')).toBe('true');
+  });
 });

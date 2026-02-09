@@ -33,6 +33,11 @@ describe('components/tabs/tab-item/RuiTabItem.vue', () => {
     wrapper?.unmount();
   });
 
+  it('should have role="tabpanel" on root', () => {
+    wrapper = createWrapper();
+    expect(wrapper.element.getAttribute('role')).toBe('tabpanel');
+  });
+
   it('should not render if not active', () => {
     wrapper = createWrapper();
 

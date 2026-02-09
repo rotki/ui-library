@@ -86,6 +86,7 @@ function click() {
     hide-focus-indicator
     tabindex="-1"
     role="tab"
+    :aria-selected="active"
     v-bind="$attrs"
   >
     <template
@@ -103,6 +104,7 @@ function click() {
     :class="tabClass"
     :color="active ? color : undefined"
     role="tab"
+    :aria-selected="active"
     v-bind="$attrs"
     tabindex="-1"
     hide-focus-indicator
@@ -140,6 +142,7 @@ function click() {
       :href="isSelf ? undefined : href"
       :target="target"
       role="tab"
+      :aria-selected="active || (exact ? isExactActive : isActive)"
       no-outline
       tag="a"
       hide-focus-indicator
