@@ -261,6 +261,75 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
     });
   });
 
+  it('should have aria-haspopup on activator wrapper', () => {
+    wrapper = createWrapper();
+
+    const activatorWrapper = wrapper.find('[data-menu-disabled]');
+    expect(activatorWrapper.attributes('aria-haspopup')).toBe('true');
+  });
+
+  it('should have aria-expanded="false" when closed and "true" when open', async () => {
+    wrapper = createWrapper();
+
+    const activatorWrapper = wrapper.find('[data-menu-disabled]');
+    expect(activatorWrapper.attributes('aria-expanded')).toBe('false');
+
+    // Open menu
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    expect(activatorWrapper.attributes('aria-expanded')).toBe('true');
+
+    // Close menu by clicking outside
+    document.body.click();
+    await vi.runAllTimersAsync();
+
+    expect(activatorWrapper.attributes('aria-expanded')).toBe('false');
+  });
+
+  it('should have aria-haspopup on activator wrapper even when disabled', () => {
+    wrapper = createWrapper({
+      props: {
+        disabled: true,
+      },
+    });
+
+    const activatorWrapper = wrapper.find('[data-menu-disabled]');
+    expect(activatorWrapper.attributes('aria-haspopup')).toBe('true');
+    expect(activatorWrapper.attributes('aria-expanded')).toBe('false');
+  });
+
+  it('should not close when persistent and clicking outside', async () => {
+    wrapper = createWrapper({
+      props: {
+        persistent: true,
+      },
+    });
+
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    expect(document.body.innerHTML).toMatch(new RegExp(text));
+
+    // Click outside should not close the menu
+    document.body.click();
+    await vi.runAllTimersAsync();
+
+    expect(document.body.innerHTML).toMatch(new RegExp(text));
+  });
+
+  it('should focus menu content when opened', async () => {
+    wrapper = createWrapper();
+
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    // Menu content should be focused
+    const menuContent = queryByRole<HTMLElement>('menu-content');
+    assertExists(menuContent);
+    expect(document.activeElement).toBe(menuContent);
+  });
+
   it('should menu works with `closeOnContentClick=true`', async () => {
     wrapper = createWrapper({
       props: {

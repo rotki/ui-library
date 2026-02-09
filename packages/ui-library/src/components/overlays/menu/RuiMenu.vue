@@ -196,6 +196,8 @@ const { hasError, hasSuccess } = useFormTextDetail(
       ref="activator"
       :class="[$style.wrapper, wrapperClass, { 'w-full': fullWidth }]"
       :data-menu-disabled="disabled"
+      aria-haspopup="true"
+      :aria-expanded="open"
     >
       <slot
         name="activator"

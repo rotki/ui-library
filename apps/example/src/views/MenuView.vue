@@ -114,6 +114,13 @@ const menus = ref<SimpleMenu[]>([
     popper: { placement: 'right' },
     closeOnContentClick: true,
   },
+  {
+    disabled: false,
+    buttonText: 'Bottom (Persistent)',
+    buttonColor: 'primary',
+    popper: { placement: 'bottom' },
+    persistent: true,
+  },
 ]);
 </script>
 
