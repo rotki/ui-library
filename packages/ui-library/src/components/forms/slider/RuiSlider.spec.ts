@@ -164,6 +164,94 @@ describe('components/forms/slider/RuiSlider.vue', () => {
     expect(wrapper.find('.details div').exists()).toBeFalsy();
   });
 
+  it('should have aria-label on input when label is provided', () => {
+    wrapper = createWrapper({
+      props: {
+        label: 'Volume',
+        modelValue: 50,
+      },
+    });
+
+    expect(wrapper.find('input').attributes('aria-label')).toBe('Volume');
+  });
+
+  it('should not have aria-label on input when label is empty', () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: 50,
+      },
+    });
+
+    expect(wrapper.find('input').attributes('aria-label')).toBeUndefined();
+  });
+
+  it('should have aria-valuetext on input reflecting current value', async () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: 30,
+      },
+    });
+
+    expect(wrapper.find('input').attributes('aria-valuetext')).toBe('30');
+
+    await wrapper.setProps({ modelValue: 75 });
+    expect(wrapper.find('input').attributes('aria-valuetext')).toBe('75');
+  });
+
+  it('should emit update:model-value when input value changes', async () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: 50,
+      },
+    });
+
+    await wrapper.find('input').setValue(75);
+    expect(wrapper.emitted('update:model-value')).toBeTruthy();
+    expect(wrapper.emitted('update:model-value')![0]).toEqual(['75']);
+  });
+
+  it('should have aria-invalid when errorMessages are provided', async () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: 50,
+      },
+    });
+
+    expect(wrapper.find('input').attributes('aria-invalid')).toBe('false');
+
+    await wrapper.setProps({ errorMessages: ['Error'] });
+    expect(wrapper.find('input').attributes('aria-invalid')).toBe('true');
+
+    await wrapper.setProps({ errorMessages: [] });
+    expect(wrapper.find('input').attributes('aria-invalid')).toBe('false');
+  });
+
+  it('should not render required asterisk when required is true but no label', () => {
+    wrapper = createWrapper({
+      props: {
+        required: true,
+      },
+    });
+
+    expect(wrapper.text()).not.toContain('﹡');
+  });
+
+  it('should have data-error attribute when errorMessages present', async () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: 50,
+      },
+    });
+
+    expect(wrapper.find('label').attributes('data-error')).toBeUndefined();
+
+    await wrapper.setProps({ errorMessages: ['Error'] });
+    expect(wrapper.find('label').attributes('data-error')).toBe('');
+
+    await wrapper.setProps({ errorMessages: [] });
+    expect(wrapper.find('label').attributes('data-error')).toBeUndefined();
+  });
+
   it('should show required asterisk when required prop is true', async () => {
     const label = 'Slider Label';
     wrapper = createWrapper({

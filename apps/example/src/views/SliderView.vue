@@ -73,6 +73,7 @@ const textFields = ref<SliderData[]>([
         :key="i"
         v-model="field.value"
         :label="field.label"
+        :data-cy="`slider-${i}`"
         v-bind="field"
       />
     </div>

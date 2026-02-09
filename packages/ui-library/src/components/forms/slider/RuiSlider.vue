@@ -141,6 +141,8 @@ const tickSizeInPx = computed(() => `${get(tickSize)}px`);
             :step="step"
             :disabled="disabled"
             :aria-invalid="hasError"
+            :aria-label="label || undefined"
+            :aria-valuetext="String(vModel)"
             v-bind="getNonRootAttrs($attrs)"
           />
           <div :class="$style.slider">
