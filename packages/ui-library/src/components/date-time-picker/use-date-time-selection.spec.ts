@@ -49,14 +49,14 @@ describe('use-date-time-selection', () => {
     it('should initialize with undefined values when allowEmpty is true and modelValue is undefined', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       expect(get(result.selectedYear)).toBeUndefined();
       expect(get(result.selectedMonth)).toBeUndefined();
@@ -64,6 +64,8 @@ describe('use-date-time-selection', () => {
       expect(get(result.selectedHour)).toBeUndefined();
       expect(get(result.selectedMinute)).toBeUndefined();
       expect(get(result.valueSet)).toBe(false);
+
+      unmount();
     });
 
     it('should initialize with current date when allowEmpty is false and modelValue is undefined', async () => {
@@ -208,33 +210,35 @@ describe('use-date-time-selection', () => {
     it('should return undefined when not all date fields are set', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       set(result.selectedYear, 2023);
       set(result.selectedMonth, 6);
       // selectedDay is not set
 
       expect(get(result.selectedDate)).toBeUndefined();
+
+      unmount();
     });
 
     it('should return a Date when all date fields are set', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       set(result.selectedYear, 2023);
       set(result.selectedMonth, 6);
@@ -245,19 +249,21 @@ describe('use-date-time-selection', () => {
       expect(selectedDate?.getFullYear()).toBe(2023);
       expect(selectedDate?.getMonth()).toBe(5); // June (0-indexed)
       expect(selectedDate?.getDate()).toBe(15);
+
+      unmount();
     });
 
     it('should handle month overflow correctly when setting date', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       // Setting December 30, 2023 then changing to February
       set(result.selectedYear, 2023);
@@ -269,6 +275,8 @@ describe('use-date-time-selection', () => {
 
       expect(get(result.selectedMonth)).toBe(2); // February (1-indexed)
       expect(get(result.selectedDay)).toBe(15);
+
+      unmount();
     });
   });
 
@@ -276,32 +284,34 @@ describe('use-date-time-selection', () => {
     it('should return undefined when hour or minute are not set', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       set(result.selectedHour, 14);
       // selectedMinute is not set
 
       expect(get(result.selectedTime)).toBeUndefined();
+
+      unmount();
     });
 
     it('should return a Date when hour and minute are set', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       set(result.selectedHour, 14);
       set(result.selectedMinute, 30);
@@ -310,6 +320,8 @@ describe('use-date-time-selection', () => {
       expect(selectedTime).toBeInstanceOf(Date);
       expect(selectedTime?.getHours()).toBe(14);
       expect(selectedTime?.getMinutes()).toBe(30);
+
+      unmount();
     });
   });
 
@@ -317,14 +329,14 @@ describe('use-date-time-selection', () => {
     it('should return false when date or time is not fully set', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       set(result.selectedYear, 2023);
       set(result.selectedMonth, 6);
@@ -332,19 +344,21 @@ describe('use-date-time-selection', () => {
       // Time is not set
 
       expect(get(result.valueSet)).toBe(false);
+
+      unmount();
     });
 
     it('should return true when both date and time are fully set', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       set(result.selectedYear, 2023);
       set(result.selectedMonth, 6);
@@ -353,6 +367,8 @@ describe('use-date-time-selection', () => {
       set(result.selectedMinute, 30);
 
       expect(get(result.valueSet)).toBe(true);
+
+      unmount();
     });
   });
 
@@ -360,35 +376,39 @@ describe('use-date-time-selection', () => {
     it('should return default min date (1970-01-01) when minDate is undefined', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       const minDate = get(result.minAllowedDate);
       expect(minDate.getFullYear()).toBe(1970);
       expect(minDate.getMonth()).toBe(0);
       expect(minDate.getDate()).toBe(1);
+
+      unmount();
     });
 
     it('should return the provided minDate as Date', () => {
       const modelValue = ref<number | undefined>(undefined);
       const minDate = new Date(2020, 0, 1);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       expect(get(result.minAllowedDate)).toEqual(minDate);
+
+      unmount();
     });
 
     it('should convert epoch to Date for minDate when type is epoch', () => {
@@ -396,19 +416,21 @@ describe('use-date-time-selection', () => {
       const minDateTimestamp = new Date(2020, 0, 1);
       const minDateEpoch = Math.floor(minDateTimestamp.getTime() / 1000);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate: minDateEpoch,
         modelValue,
         type: 'epoch',
-      });
+      }));
 
       const minAllowed = get(result.minAllowedDate);
       expect(minAllowed.getFullYear()).toBe(2020);
       expect(minAllowed.getMonth()).toBe(0);
       expect(minAllowed.getDate()).toBe(1);
+
+      unmount();
     });
   });
 
@@ -416,51 +438,57 @@ describe('use-date-time-selection', () => {
     it('should return undefined when maxDate is undefined', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       expect(get(result.maxAllowedDate)).toBeUndefined();
+
+      unmount();
     });
 
     it('should return the provided maxDate as Date', () => {
       const modelValue = ref<number | undefined>(undefined);
       const maxDate = new Date(2025, 11, 31);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       expect(get(result.maxAllowedDate)).toEqual(maxDate);
+
+      unmount();
     });
 
     it('should return current time when maxDate is "now"', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: 'now',
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       const maxAllowed = get(result.maxAllowedDate);
       expect(maxAllowed).toBeDefined();
       expect(maxAllowed?.getFullYear()).toBe(fixedDate.getFullYear());
       expect(maxAllowed?.getMonth()).toBe(fixedDate.getMonth());
       expect(maxAllowed?.getDate()).toBe(fixedDate.getDate());
+
+      unmount();
     });
 
     it('should convert epoch to Date for maxDate when type is epoch', () => {
@@ -468,19 +496,21 @@ describe('use-date-time-selection', () => {
       const maxDateTimestamp = new Date(2025, 11, 31);
       const maxDateEpoch = Math.floor(maxDateTimestamp.getTime() / 1000);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: maxDateEpoch,
         minDate: undefined,
         modelValue,
         type: 'epoch',
-      });
+      }));
 
       const maxAllowed = get(result.maxAllowedDate);
       expect(maxAllowed?.getFullYear()).toBe(2025);
       expect(maxAllowed?.getMonth()).toBe(11);
       expect(maxAllowed?.getDate()).toBe(31);
+
+      unmount();
     });
   });
 
@@ -488,73 +518,81 @@ describe('use-date-time-selection', () => {
     it('should return true for valid date within bounds', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: new Date(2025, 11, 31),
         minDate: new Date(2020, 0, 1),
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       const testDate = dayjs('2023-06-15');
       expect(result.isDateValid(testDate)).toBe(true);
       expect(get(result.internalErrorMessages)).toHaveLength(0);
+
+      unmount();
     });
 
     it('should return false and set error when date is before minDate', () => {
       const modelValue = ref<number | undefined>(undefined);
       const minDate = new Date(2020, 0, 10);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       const testDate = dayjs('2019-12-31');
       expect(result.isDateValid(testDate)).toBe(false);
       expect(get(result.internalErrorMessages).length).toBeGreaterThan(0);
       expect(get(result.internalErrorMessages)[0]).toContain('Date cannot be before');
+
+      unmount();
     });
 
     it('should return false and set error when date is after maxDate', () => {
       const modelValue = ref<number | undefined>(undefined);
       const maxDate = new Date(2023, 5, 1);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       const testDate = dayjs('2023-06-15');
       expect(result.isDateValid(testDate)).toBe(false);
       expect(get(result.internalErrorMessages).length).toBeGreaterThan(0);
       expect(get(result.internalErrorMessages)[0]).toContain('Date cannot be after');
+
+      unmount();
     });
 
     it('should show future date error when maxDate is "now"', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: 'now',
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       const futureDate = dayjs('2024-01-01');
       expect(result.isDateValid(futureDate)).toBe(false);
       expect(get(result.internalErrorMessages)[0]).toContain('cannot be in the future');
+
+      unmount();
     });
   });
 
@@ -597,14 +635,14 @@ describe('use-date-time-selection', () => {
       const modelValue = ref<number | undefined>(undefined);
       const minDate = new Date(2023, 5, 1);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       // Trigger an error
       const invalidDate = dayjs('2022-01-01');
@@ -615,6 +653,8 @@ describe('use-date-time-selection', () => {
       result.clear();
 
       expect(get(result.internalErrorMessages)).toHaveLength(0);
+
+      unmount();
     });
   });
 
@@ -622,14 +662,14 @@ describe('use-date-time-selection', () => {
     it('should set all fields to current date and time', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       result.setNow();
       await nextTick();
@@ -639,94 +679,104 @@ describe('use-date-time-selection', () => {
       expect(get(result.selectedDay)).toBe(15);
       expect(get(result.selectedHour)).toBe(14);
       expect(get(result.selectedMinute)).toBe(30);
+
+      unmount();
     });
 
     it('should set seconds when accuracy is second', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'second',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       result.setNow();
       await nextTick();
 
       expect(get(result.selectedSecond)).toBe(45);
+
+      unmount();
     });
 
     it('should set milliseconds when accuracy is millisecond', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'millisecond',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       result.setNow();
       await nextTick();
 
       expect(get(result.selectedSecond)).toBe(45);
       expect(get(result.selectedMillisecond)).toBe(500);
+
+      unmount();
     });
 
     it('should emit correct epoch-ms value', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       result.setNow();
       await nextTick();
 
       const expected = dayjs(fixedDate).set('second', 0).set('millisecond', 0).valueOf();
       expect(get(modelValue)).toBe(expected);
+
+      unmount();
     });
 
     it('should emit correct epoch value', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'epoch',
-      });
+      }));
 
       result.setNow();
       await nextTick();
 
       const expected = dayjs(fixedDate).set('second', 0).set('millisecond', 0).valueOf() / 1000;
       expect(get(modelValue)).toBe(expected);
+
+      unmount();
     });
 
     it('should emit correct Date value', async () => {
       const modelValue = ref<Date | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'date',
-      });
+      }));
 
       result.setNow();
       await nextTick();
@@ -736,6 +786,8 @@ describe('use-date-time-selection', () => {
       expect(emittedDate.getFullYear()).toBe(2023);
       expect(emittedDate.getMonth()).toBe(5);
       expect(emittedDate.getDate()).toBe(15);
+
+      unmount();
     });
   });
 
@@ -743,14 +795,14 @@ describe('use-date-time-selection', () => {
     it('should return a dayjs object with all set values', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'millisecond',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       set(result.selectedYear, 2023);
       set(result.selectedMonth, 6);
@@ -768,19 +820,21 @@ describe('use-date-time-selection', () => {
       expect(dateTime.minute()).toBe(30);
       expect(dateTime.second()).toBe(45);
       expect(dateTime.millisecond()).toBe(500);
+
+      unmount();
     });
 
     it('should handle day overflow when month has fewer days', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       set(result.selectedYear, 2023);
       set(result.selectedMonth, 2); // February
@@ -789,6 +843,8 @@ describe('use-date-time-selection', () => {
       const dateTime = result.getDateTime();
       // Should clamp to max days in February
       expect(dateTime.date()).toBe(28);
+
+      unmount();
     });
   });
 
@@ -796,14 +852,14 @@ describe('use-date-time-selection', () => {
     it('should return the correct segment data structure', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       expect(result.segmentData).toHaveProperty('DD');
       expect(result.segmentData).toHaveProperty('MM');
@@ -812,6 +868,8 @@ describe('use-date-time-selection', () => {
       expect(result.segmentData).toHaveProperty('mm');
       expect(result.segmentData).toHaveProperty('ss');
       expect(result.segmentData).toHaveProperty('SSS');
+
+      unmount();
     });
 
     it('should update model value when segment data is modified', async () => {
@@ -934,16 +992,18 @@ describe('use-date-time-selection', () => {
     it('should use guessed timezone by default', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const result = useDateTimeSelection({
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         maxDate: undefined,
         minDate: undefined,
         modelValue,
         type: 'epoch-ms',
-      });
+      }));
 
       expect(get(result.selectedTimezone)).toBe('UTC');
+
+      unmount();
     });
   });
 });
