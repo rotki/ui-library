@@ -19,6 +19,20 @@ test.describe('notifications', () => {
     await expect(page.locator('[data-cy="notification-content"]')).toHaveCount(0);
   });
 
+  test('should have role="alert" and aria-live="polite"', async ({ page }) => {
+    await page.locator('[data-cy="visibility-toggle"]').click();
+    const notification = page.locator('[role="alert"]');
+    await expect(notification).toBeVisible();
+    await expect(notification).toHaveAttribute('aria-live', 'polite');
+  });
+
+  test('should contain notification text content', async ({ page }) => {
+    await page.locator('[data-cy="visibility-toggle"]').click();
+    const notification = page.locator('[role="alert"]');
+    await expect(notification).toBeVisible();
+    await expect(notification).toContainText('This is a notification');
+  });
+
   test('should dismiss by click', async ({ page }) => {
     await expect(page.locator('[data-cy="notification-content"]')).toHaveCount(0);
     await page.locator('[data-cy="visibility-toggle"]').click();
