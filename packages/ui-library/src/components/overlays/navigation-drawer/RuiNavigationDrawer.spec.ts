@@ -173,6 +173,67 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
     expect(drawerElement).toBeFalsy();
   });
 
+  it('should render as aside element', async () => {
+    wrapper = createWrapper();
+    await vi.runAllTimersAsync();
+
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    const drawer = queryBody<HTMLElement>('aside[class*=_visible_]');
+    assertExists(drawer);
+    expect(drawer.tagName).toBe('ASIDE');
+  });
+
+  it('should have aria-label when prop provided', async () => {
+    wrapper = createWrapper({
+      attrs: {
+        'aria-label': 'Main navigation',
+      },
+    });
+    await vi.runAllTimersAsync();
+
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    const drawer = queryBody<HTMLElement>('aside[class*=_visible_]');
+    assertExists(drawer);
+    expect(drawer.getAttribute('aria-label')).toBe('Main navigation');
+  });
+
+  it('should have aria-hidden when miniVariant is true and drawer is collapsed', async () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: false,
+        miniVariant: true,
+      },
+    });
+    await vi.runAllTimersAsync();
+
+    const drawer = queryBody<HTMLElement>('aside[class*=_content_]');
+    assertExists(drawer);
+    expect(drawer.getAttribute('aria-hidden')).toBe('true');
+
+    // Open drawer
+    await wrapper.setProps({ modelValue: true });
+    await vi.runAllTimersAsync();
+
+    const openDrawer = queryBody<HTMLElement>('aside[class*=_visible_]');
+    assertExists(openDrawer);
+    expect(openDrawer.getAttribute('aria-hidden')).toBeNull();
+  });
+
+  it('should apply left position class by default', async () => {
+    wrapper = createWrapper();
+    await vi.runAllTimersAsync();
+
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    const drawer = queryBody<HTMLElement>('aside[class*=_visible_][class*=_left_]');
+    assertExists(drawer);
+  });
+
   it('should keep DOM element when miniVariant is true and modelValue is false', async () => {
     wrapper = createWrapper({
       props: {

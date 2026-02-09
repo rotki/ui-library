@@ -12,6 +12,7 @@ export interface NavigationDrawerProps {
   overlay?: boolean;
   position?: 'left' | 'right';
   contentClass?: string | object | string[];
+  ariaLabel?: string;
 }
 
 defineOptions({
@@ -129,6 +130,7 @@ const activatorAttrs = computed(() => ({
       >
         <div
           v-if="isOpen && internalValue"
+          data-id="overlay"
           :class="$style.overlay"
           @click.stop="close()"
         />
@@ -148,6 +150,8 @@ const activatorAttrs = computed(() => ({
             [$style['with-overlay']]: overlay,
           },
         ]"
+        :aria-label="ariaLabel"
+        :aria-hidden="miniVariant && !(isOpen && internalValue) ? 'true' : undefined"
         v-bind="getRootAttrs($attrs)"
       >
         <slot v-bind="{ attrs: activatorAttrs, close }" />

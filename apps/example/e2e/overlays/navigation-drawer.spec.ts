@@ -44,4 +44,49 @@ test.describe('navigation drawer', () => {
     // The drawer should still be visible
     await expect(page.locator('aside[class*=_visible]')).toBeVisible();
   });
+
+  test('should render drawer on left by default', async ({ page }) => {
+    const defaultDrawer = page.locator('div[data-cy=navigation-drawer-0]');
+    await defaultDrawer.locator('[data-cy=activator]').click();
+
+    const aside = page.locator('aside[class*=_visible]');
+    await expect(aside).toBeVisible();
+    // Left drawer should have left position class
+    await expect(aside).toHaveClass(/\b_left_/);
+  });
+
+  test('should render drawer on right with position="right"', async ({ page }) => {
+    const rightDrawer = page.locator('div[data-cy=navigation-drawer-1]');
+    await rightDrawer.locator('[data-cy=activator]').click();
+
+    const aside = page.locator('aside[class*=_visible]');
+    await expect(aside).toBeVisible();
+    // Right drawer should have right position class
+    await expect(aside).toHaveClass(/\b_right_/);
+  });
+
+  test('should show overlay when overlay prop is true', async ({ page }) => {
+    const overlayDrawer = page.locator('div[data-cy=navigation-drawer-3]');
+    await overlayDrawer.locator('[data-cy=activator]').click();
+
+    const aside = page.locator('aside[class*=_visible]');
+    await expect(aside).toBeVisible();
+
+    // Overlay element should be present
+    const overlay = page.locator('[data-id=overlay]');
+    await expect(overlay).toBeVisible();
+
+    // Clicking overlay should close the drawer
+    await overlay.click();
+    await expect(page.locator('aside[class*=_visible]')).toHaveCount(0);
+  });
+
+  test('should have aria-label on drawer', async ({ page }) => {
+    const defaultDrawer = page.locator('div[data-cy=navigation-drawer-0]');
+    await defaultDrawer.locator('[data-cy=activator]').click();
+
+    const aside = page.locator('aside[class*=_visible]');
+    await expect(aside).toBeVisible();
+    await expect(aside).toHaveAttribute('aria-label', 'Left navigation');
+  });
 });
