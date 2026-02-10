@@ -1,4 +1,4 @@
-import { getSSRHandler, useColorMode } from '@vueuse/core';
+import { defaultWindow, getSSRHandler, useColorMode } from '@vueuse/core';
 import { computed, type ComputedRef, type Ref, ref } from 'vue';
 import {
   type ColorIntensity,
@@ -20,9 +20,13 @@ export const useRotkiTheme = createSharedComposable<() => ThemeContent>(() => {
   const updateHTMLAttrs = getSSRHandler(
     'updateHTMLAttrs',
     (selector, attribute, value) => {
-      const el = typeof selector === 'string' ? window?.document.querySelector(selector) : null;
+      if (typeof selector !== 'string' || !defaultWindow)
+        return;
+
+      const el = defaultWindow.document.querySelector(selector);
       if (!el)
         return;
+
       el.setAttribute(attribute, value);
     },
   );
@@ -99,7 +103,8 @@ export const useRotkiTheme = createSharedComposable<() => ThemeContent>(() => {
     switchThemeScheme(options.mode ?? ThemeMode.auto);
     setThemeConfig(options.config ?? { ...defaultTheme });
 
-    if (typeof window !== 'undefined') {
+    const windowReference = defaultWindow;
+    if (windowReference) {
       watch([isLight, theme], ([isLight, theme]) => {
         const styleVariables = new Map();
 
@@ -119,7 +124,7 @@ export const useRotkiTheme = createSharedComposable<() => ThemeContent>(() => {
         styleVariables.set('--rui-text-secondary', `var(--rui-${state}-text-secondary)`);
 
         // Apply all style variables in one operation
-        const rootStyle = document.documentElement.style;
+        const rootStyle = windowReference.document.documentElement.style;
         styleVariables.forEach((value, variableName) => {
           rootStyle.setProperty(variableName, value);
         });
