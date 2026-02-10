@@ -1,7 +1,6 @@
 import { defaultWindow, getSSRHandler, useColorMode } from '@vueuse/core';
 import { computed, type ComputedRef, type Ref, ref } from 'vue';
 import {
-  type ColorIntensity,
   defaultTheme,
   type InitThemeOptions,
   type ThemeConfig,
@@ -102,34 +101,6 @@ export const useRotkiTheme = createSharedComposable<() => ThemeContent>(() => {
   const init = (options: InitThemeOptions): void => {
     switchThemeScheme(options.mode ?? ThemeMode.auto);
     setThemeConfig(options.config ?? { ...defaultTheme });
-
-    const windowReference = defaultWindow;
-    if (windowReference) {
-      watch([isLight, theme], ([isLight, theme]) => {
-        const styleVariables = new Map();
-
-        // Compute context variables
-        Object.entries(theme).forEach(([context, contextObject]: [string, ColorIntensity]) => {
-          styleVariables.set(`--rui-${context}-darker`, contextObject.darker);
-          styleVariables.set(`--rui-${context}-lighter`, contextObject.lighter);
-          styleVariables.set(`--rui-${context}-main`, contextObject.DEFAULT);
-        });
-
-        // Determine the theme mode
-        const state = isLight ? ThemeMode.light : ThemeMode.dark;
-
-        // Add text color variables
-        styleVariables.set('--rui-text-disabled', `var(--rui-${state}-text-disabled)`);
-        styleVariables.set('--rui-text-primary', `var(--rui-${state}-text-primary)`);
-        styleVariables.set('--rui-text-secondary', `var(--rui-${state}-text-secondary)`);
-
-        // Apply all style variables in one operation
-        const rootStyle = windowReference.document.documentElement.style;
-        styleVariables.forEach((value, variableName) => {
-          rootStyle.setProperty(variableName, value);
-        });
-      }, { immediate: true });
-    }
   };
 
   return {

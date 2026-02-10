@@ -70,7 +70,25 @@ const adaptiveTextColorsCombination = {
 };
 
 const themePlugin = plugin(
-  ({ addUtilities, addVariant, matchUtilities }) => {
+  ({ addBase, addUtilities, addVariant, matchUtilities }) => {
+    // Adaptive theme variable aliases
+    const themeVariables = (theme: 'light' | 'dark'): Record<string, string> =>
+      Object.fromEntries([
+        ...contextColors.flatMap(color => [
+          [`--rui-${color}-main`, `var(--rui-${theme}-${color}-main)`],
+          [`--rui-${color}-darker`, `var(--rui-${theme}-${color}-darker)`],
+          [`--rui-${color}-lighter`, `var(--rui-${theme}-${color}-lighter)`],
+        ]),
+        ['--rui-text-primary', `var(--rui-${theme}-text-primary)`],
+        ['--rui-text-secondary', `var(--rui-${theme}-text-secondary)`],
+        ['--rui-text-disabled', `var(--rui-${theme}-text-disabled)`],
+      ]);
+
+    addBase({
+      'html[data-theme="light"], html.light': themeVariables('light'),
+      'html[data-theme="dark"], html.dark': themeVariables('dark'),
+    });
+
     // Border utilities
     addUtilities({
       '.border-default': {
