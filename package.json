@@ -1,6 +1,6 @@
 {
   "name": "@rotki/ui-library-monorepo",
-  "version": "2.12.1",
+  "version": "2.12.2",
   "private": true,
   "packageManager": "pnpm@10.28.2",
   "description": "A vue design system and component library for rotki - monorepo root",
