@@ -1,17 +1,20 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
-import RuiIcon, { type Props } from '@/components/icons/RuiIcon.vue';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { contextColors } from '@/consts/colors';
 import { RuiIcons } from '@/icons';
+import preview from '~/.storybook/preview';
 
-const render: StoryFn<Props> = args => ({
-  components: { RuiIcon },
-  setup() {
-    return { args };
-  },
-  template: '<RuiIcon v-bind="args" />',
-});
+function render(args: ComponentPropsAndSlots<typeof RuiIcon>) {
+  return {
+    components: { RuiIcon },
+    setup() {
+      return { args };
+    },
+    template: '<RuiIcon v-bind="args" />',
+  };
+}
 
-const meta: Meta<Props> = {
+const meta = preview.meta({
   argTypes: {
     color: { control: 'select', options: contextColors },
     name: {
@@ -34,32 +37,30 @@ const meta: Meta<Props> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Icon',
-};
+});
 
-type Story = StoryObj<Props>;
-
-export const Primary: Story = {
+export const Primary = meta.story({
   args: {
     color: 'primary',
     name: 'lu-arrow-down',
     size: 24,
   },
-};
+});
 
-export const Secondary: Story = {
+export const Secondary = meta.story({
   args: {
     color: 'secondary',
     name: 'lu-arrow-down',
     size: 24,
   },
-};
+});
 
-export const PrimaryLarge: Story = {
+export const PrimaryLarge = meta.story({
   args: {
     color: 'primary',
     name: 'lu-arrow-down',
     size: 48,
   },
-};
+});
 
 export default meta;

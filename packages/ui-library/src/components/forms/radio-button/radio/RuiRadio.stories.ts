@@ -1,30 +1,31 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
-import RuiRadio, { type RadioProps } from '@/components/forms/radio-button/radio/RuiRadio.vue';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import RuiRadio from '@/components/forms/radio-button/radio/RuiRadio.vue';
 import { contextColors } from '@/consts/colors';
+import preview from '~/.storybook/preview';
 
-type PropsAndLabel = RadioProps<string> & { label: string; modelValue: string };
-
-const render: StoryFn<PropsAndLabel> = args => ({
-  components: {
-    RuiRadio: RuiRadio as any,
-  },
-  setup() {
-    const modelValue = computed({
-      get() {
-        return args.modelValue;
-      },
-      set(val) {
-        args.modelValue = val;
-      },
-    });
-    return { args, modelValue };
-  },
-  template: `<RuiRadio v-bind="args" v-model="modelValue">
+function render(args: ComponentPropsAndSlots<typeof RuiRadio<string>>) {
+  return {
+    components: {
+      RuiRadio: RuiRadio<string>,
+    },
+    setup() {
+      const modelValue = computed({
+        get() {
+          return args.modelValue;
+        },
+        set(val) {
+          args.modelValue = val;
+        },
+      });
+      return { args, modelValue };
+    },
+    template: `<RuiRadio v-bind="args" v-model="modelValue">
   {{ args.default }}
   </RuiRadio>`,
-});
+  };
+}
 
-const meta: Meta<PropsAndLabel> = {
+const meta = preview.meta({
   args: {
     errorMessages: [],
   },
@@ -40,7 +41,7 @@ const meta: Meta<PropsAndLabel> = {
     size: { control: 'select', options: ['medium', 'sm', 'lg'] },
     value: { control: 'text' },
   },
-  component: RuiRadio as any,
+  component: RuiRadio<string>,
   parameters: {
     docs: {
       controls: { exclude: ['default'] },
@@ -49,84 +50,82 @@ const meta: Meta<PropsAndLabel> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Forms/Radio/Radio',
-};
+});
 
-type Story = StoryObj<PropsAndLabel>;
-
-export const Checked: Story = {
+export const Checked = meta.story({
   args: {
     modelValue: 'test',
     value: 'test',
   },
-};
+});
 
-export const Large: Story = {
+export const Large = meta.story({
   args: {
     size: 'lg',
     value: 'test',
   },
-};
+});
 
-export const Small: Story = {
+export const Small = meta.story({
   args: {
     size: 'sm',
     value: 'test',
   },
-};
+});
 
-export const Primary: Story = {
+export const Primary = meta.story({
   args: {
     color: 'primary',
     value: 'test',
   },
-};
+});
 
-export const WithLabel: Story = {
+export const WithLabel = meta.story({
   args: {
     label: 'With Label',
     value: 'test',
   },
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   args: {
     disabled: true,
     label: 'Disabled',
     value: 'test',
   },
-};
+});
 
-export const WithErrorMessage: Story = {
+export const WithErrorMessage = meta.story({
   args: {
     errorMessages: ['With error messages'],
     label: 'Label',
     value: 'test',
   },
-};
+});
 
-export const WithHint: Story = {
+export const WithHint = meta.story({
   args: {
     hint: 'With hint',
     label: 'Label',
     value: 'test',
   },
-};
+});
 
-export const HideDetails: Story = {
+export const HideDetails = meta.story({
   args: {
     hideDetails: true,
     hint: 'Hint (should be invisible)',
     label: 'Label',
     value: 'test',
   },
-};
+});
 
-export const Required: Story = {
+export const Required = meta.story({
   args: {
     label: 'Required Radio',
     required: true,
     value: 'test',
   },
-};
+});
 
 export default meta;

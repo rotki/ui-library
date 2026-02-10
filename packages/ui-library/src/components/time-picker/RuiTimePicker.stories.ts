@@ -1,21 +1,24 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { TimeAccuracy } from '@/consts/time-accuracy';
+import preview from '~/.storybook/preview';
 import RuiTimePicker from './RuiTimePicker.vue';
 
-const render: StoryFn<typeof RuiTimePicker> = args => ({
-  components: { RuiTimePicker },
-  setup() {
-    return { args };
-  },
-  template: `
-    <div class='flex gap-4'>
-      <RuiTimePicker v-bind="args" v-model='args.modelValue' />
-      <div class='text-rui-text'>{{ args.modelValue !== undefined ? new Date(args.modelValue).toISOString(): '-' }}</div>
-    </div>
-  `,
-});
+function render(args: ComponentPropsAndSlots<typeof RuiTimePicker>) {
+  return {
+    components: { RuiTimePicker },
+    setup() {
+      return { args };
+    },
+    template: `
+      <div class='flex gap-4'>
+        <RuiTimePicker v-bind="args" v-model='args.modelValue' />
+        <div class='text-rui-text'>{{ args.modelValue !== undefined ? new Date(args.modelValue).toISOString(): '-' }}</div>
+      </div>
+    `,
+  };
+}
 
-const meta: Meta<typeof RuiTimePicker> = {
+const meta = preview.meta({
   argTypes: {
     'accuracy': {
       control: 'select',
@@ -37,35 +40,33 @@ const meta: Meta<typeof RuiTimePicker> = {
   render,
   tags: ['autodocs'],
   title: 'Components/TimePicker',
-};
+});
 
-type Story = StoryObj<typeof RuiTimePicker>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     accuracy: TimeAccuracy.MINUTE,
     modelValue: new Date(),
   },
-};
+});
 
-export const WithSecondsAccuracy: Story = {
+export const WithSecondsAccuracy = meta.story({
   args: {
     accuracy: TimeAccuracy.SECOND,
     modelValue: new Date(),
   },
-};
+});
 
-export const WithMillisecondsAccuracy: Story = {
+export const WithMillisecondsAccuracy = meta.story({
   args: {
     accuracy: TimeAccuracy.MILLISECOND,
     modelValue: new Date(),
   },
-};
+});
 
-export const WithEmptyValue: Story = {
+export const WithEmptyValue = meta.story({
   args: {
     modelValue: undefined,
   },
-};
+});
 
 export default meta;

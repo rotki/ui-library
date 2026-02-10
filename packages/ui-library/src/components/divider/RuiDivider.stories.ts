@@ -1,16 +1,19 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
-import RuiDivider, { type Props } from '@/components/divider/RuiDivider.vue';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import RuiDivider from '@/components/divider/RuiDivider.vue';
+import preview from '~/.storybook/preview';
 
-const render: StoryFn<Props> = args => ({
-  components: { RuiDivider },
-  setup() {
-    return { args };
-  },
-  template: `
-    <RuiDivider :class="args.vertical ? 'h-96 mx-4' : 'w-96 my-4'" v-bind="args" />`,
-});
+function render(args: ComponentPropsAndSlots<typeof RuiDivider>) {
+  return {
+    components: { RuiDivider },
+    setup() {
+      return { args };
+    },
+    template: `
+      <RuiDivider :class="args.vertical ? 'h-96 mx-4' : 'w-96 my-4'" v-bind="args" />`,
+  };
+}
 
-const meta: Meta<Props> = {
+const meta = preview.meta({
   argTypes: {
     vertical: { control: 'boolean' },
   },
@@ -18,18 +21,16 @@ const meta: Meta<Props> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Divider',
-};
+});
 
-type Story = StoryObj<Props>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {},
-};
+});
 
-export const Vertical: Story = {
+export const Vertical = meta.story({
   args: {
     vertical: true,
   },
-};
+});
 
 export default meta;

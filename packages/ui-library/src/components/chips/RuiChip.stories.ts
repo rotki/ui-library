@@ -1,31 +1,33 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
-import RuiChip, { type Props as ChipProps } from '@/components/chips/RuiChip.vue';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import RuiChip from '@/components/chips/RuiChip.vue';
 import { contextColors } from '@/consts/colors';
+import preview from '~/.storybook/preview';
 
-type Props = ChipProps & { prepend: string; children: string };
+type ChipStoryArgs = ComponentPropsAndSlots<typeof RuiChip> & { children?: string; prepend?: string };
 
-const render: StoryFn<Props> = args => ({
-  components: { RuiChip },
-  setup() {
-    const show = ref(true);
-    const hideShow = () => {
-      set(show, false);
-      setTimeout(() => {
-        set(show, true);
-      }, 2000);
-    };
-    return { args, hideShow, show };
-  },
-  template: `
-    <div>
-    <RuiChip v-if="show" v-bind="args" @remove="hideShow()">
-      <template #prepend v-if="args.prepend">{{ args.prepend }}</template>
-      {{ args.children }}
-    </RuiChip>
-    </div>`,
-});
-
-const meta: Meta<Props> = {
+function render(args: ChipStoryArgs) {
+  return {
+    components: { RuiChip },
+    setup() {
+      const show = ref(true);
+      const hideShow = () => {
+        set(show, false);
+        setTimeout(() => {
+          set(show, true);
+        }, 2000);
+      };
+      return { args, hideShow, show };
+    },
+    template: `
+      <div>
+      <RuiChip v-if="show" v-bind="args" @remove="hideShow()">
+        <template #prepend v-if="args.prepend">{{ args.prepend }}</template>
+        {{ args.children }}
+      </RuiChip>
+      </div>`,
+  };
+}
+const meta = preview.meta({
   argTypes: {
     children: { control: 'text' },
     clickable: { control: 'boolean' },
@@ -46,7 +48,6 @@ const meta: Meta<Props> = {
       options: ['filled', 'outlined'],
     },
   },
-  component: RuiChip,
   parameters: {
     docs: {
       controls: {
@@ -57,11 +58,9 @@ const meta: Meta<Props> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Chip',
-};
+});
 
-type Story = StoryObj<Props>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     children: 'Chip',
     closeable: false,
@@ -70,9 +69,9 @@ export const Default: Story = {
     size: 'md',
     variant: 'filled',
   },
-};
+});
 
-export const Tile: Story = {
+export const Tile = meta.story({
   args: {
     children: 'Chip',
     closeable: false,
@@ -82,9 +81,9 @@ export const Tile: Story = {
     tile: true,
     variant: 'filled',
   },
-};
+});
 
-export const Clickable: Story = {
+export const Clickable = meta.story({
   args: {
     children: 'Chip',
     clickable: true,
@@ -93,9 +92,9 @@ export const Clickable: Story = {
     size: 'md',
     variant: 'filled',
   },
-};
+});
 
-export const Dismissible: Story = {
+export const Dismissible = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -104,44 +103,44 @@ export const Dismissible: Story = {
     size: 'md',
     variant: 'filled',
   },
-};
+});
 
-export const DismissiblePrefix: Story = {
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'grey',
-    disabled: false,
-    prepend: 'BTC',
-    size: 'md',
-    variant: 'filled',
-  },
-};
-
-export const SmallDismissible: Story = {
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'grey',
-    disabled: false,
-    size: 'sm',
-    variant: 'filled',
-  },
-};
-
-export const SmallDismissiblePrefix: Story = {
+export const DismissiblePrefix = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
     color: 'grey',
     disabled: false,
     prepend: 'BTC',
+    size: 'md',
+    variant: 'filled',
+  },
+});
+
+export const SmallDismissible = meta.story({
+  args: {
+    children: 'Chip',
+    closeable: true,
+    color: 'grey',
+    disabled: false,
     size: 'sm',
     variant: 'filled',
   },
-};
+});
 
-export const Primary: Story = {
+export const SmallDismissiblePrefix = meta.story({
+  args: {
+    children: 'Chip',
+    closeable: true,
+    color: 'grey',
+    disabled: false,
+    prepend: 'BTC',
+    size: 'sm',
+    variant: 'filled',
+  },
+});
+
+export const Primary = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -150,9 +149,9 @@ export const Primary: Story = {
     size: 'md',
     variant: 'filled',
   },
-};
+});
 
-export const PrimarySmall: Story = {
+export const PrimarySmall = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -161,9 +160,9 @@ export const PrimarySmall: Story = {
     size: 'sm',
     variant: 'filled',
   },
-};
+});
 
-export const PrimarySmallDisabled: Story = {
+export const PrimarySmallDisabled = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -172,9 +171,9 @@ export const PrimarySmallDisabled: Story = {
     size: 'sm',
     variant: 'filled',
   },
-};
+});
 
-export const Secondary: Story = {
+export const Secondary = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -183,9 +182,9 @@ export const Secondary: Story = {
     size: 'md',
     variant: 'filled',
   },
-};
+});
 
-export const SecondarySmall: Story = {
+export const SecondarySmall = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -194,9 +193,9 @@ export const SecondarySmall: Story = {
     size: 'sm',
     variant: 'filled',
   },
-};
+});
 
-export const SecondarySmallDisabled: Story = {
+export const SecondarySmallDisabled = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -205,9 +204,9 @@ export const SecondarySmallDisabled: Story = {
     size: 'sm',
     variant: 'filled',
   },
-};
+});
 
-export const Error: Story = {
+export const Error = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -216,9 +215,9 @@ export const Error: Story = {
     size: 'md',
     variant: 'filled',
   },
-};
+});
 
-export const ErrorSmall: Story = {
+export const ErrorSmall = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -227,9 +226,9 @@ export const ErrorSmall: Story = {
     size: 'sm',
     variant: 'filled',
   },
-};
+});
 
-export const ErrorSmallDisabled: Story = {
+export const ErrorSmallDisabled = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -238,9 +237,9 @@ export const ErrorSmallDisabled: Story = {
     size: 'sm',
     variant: 'filled',
   },
-};
+});
 
-export const OutlinedDefault: Story = {
+export const OutlinedDefault = meta.story({
   args: {
     children: 'Chip',
     closeable: false,
@@ -249,9 +248,9 @@ export const OutlinedDefault: Story = {
     size: 'md',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedDismissible: Story = {
+export const OutlinedDismissible = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -260,9 +259,9 @@ export const OutlinedDismissible: Story = {
     size: 'md',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedSmallDismissible: Story = {
+export const OutlinedSmallDismissible = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -271,9 +270,9 @@ export const OutlinedSmallDismissible: Story = {
     size: 'sm',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedPrimary: Story = {
+export const OutlinedPrimary = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -282,9 +281,9 @@ export const OutlinedPrimary: Story = {
     size: 'md',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedPrimarySmall: Story = {
+export const OutlinedPrimarySmall = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -293,9 +292,9 @@ export const OutlinedPrimarySmall: Story = {
     size: 'sm',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedPrimarySmallDisabled: Story = {
+export const OutlinedPrimarySmallDisabled = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -304,9 +303,9 @@ export const OutlinedPrimarySmallDisabled: Story = {
     size: 'sm',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedSecondary: Story = {
+export const OutlinedSecondary = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -315,9 +314,9 @@ export const OutlinedSecondary: Story = {
     size: 'md',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedSecondarySmall: Story = {
+export const OutlinedSecondarySmall = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -326,9 +325,9 @@ export const OutlinedSecondarySmall: Story = {
     size: 'sm',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedSecondarySmallDisabled: Story = {
+export const OutlinedSecondarySmallDisabled = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -337,9 +336,9 @@ export const OutlinedSecondarySmallDisabled: Story = {
     size: 'sm',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedError: Story = {
+export const OutlinedError = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -348,9 +347,9 @@ export const OutlinedError: Story = {
     size: 'md',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedErrorPrefix: Story = {
+export const OutlinedErrorPrefix = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -360,9 +359,9 @@ export const OutlinedErrorPrefix: Story = {
     size: 'md',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedErrorSmall: Story = {
+export const OutlinedErrorSmall = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -371,9 +370,9 @@ export const OutlinedErrorSmall: Story = {
     size: 'sm',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedErrorSmallDisabled: Story = {
+export const OutlinedErrorSmallDisabled = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -382,9 +381,9 @@ export const OutlinedErrorSmallDisabled: Story = {
     size: 'sm',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedErrorSmallDisabledPrefixed: Story = {
+export const OutlinedErrorSmallDisabledPrefixed = meta.story({
   args: {
     children: 'Chip',
     closeable: true,
@@ -394,6 +393,6 @@ export const OutlinedErrorSmallDisabledPrefixed: Story = {
     size: 'sm',
     variant: 'outlined',
   },
-};
+});
 
 export default meta;

@@ -64,30 +64,31 @@ describe('${directory}/${componentName}', () => {
 
   fs.writeFileSync(
     storyFile,
-    `import ${componentName} from './${componentName}.vue';
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
+    `import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import ${componentName} from './${componentName}.vue';
+import preview from '~/.storybook/preview';
 
-const render: StoryFn<typeof ${componentName}> = args => ({
-  components: { ${componentName} },
-  setup() {
-    return { args };
-  },
-  template: \`<${componentName} v-bind="args" />\`,
-});
+function render(args: ComponentPropsAndSlots<typeof ${componentName}>) {
+  return {
+    components: { ${componentName} },
+    setup() {
+      return { args };
+    },
+    template: \`<${componentName} v-bind="args" />\`,
+  };
+}
 
-const meta: Meta<typeof ${componentName}> = {
+const meta = preview.meta({
   argTypes: {},
   component: ${componentName},
   render,
   tags: ['autodocs'],
   title: 'Components/${directory.split(path.sep).map(x => pascalCase(x)).join('/')}/${componentName}',
-};
+});
 
-type Story = StoryObj<typeof ${componentName}>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {},
-};
+});
 
 export default meta;
 `,

@@ -1,29 +1,32 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
-import RuiTextField, { type TextFieldProps } from '@/components/forms/text-field/RuiTextField.vue';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
 import { contextColors } from '@/consts/colors';
+import preview from '~/.storybook/preview';
 
-type Props = TextFieldProps & { modelValue: string };
+function render(args: ComponentPropsAndSlots<typeof RuiTextField>) {
+  return {
+    components: { RuiTextField },
+    setup() {
+      const modelValue = computed({
+        get() {
+          return args.modelValue;
+        },
+        set(val) {
+          // @ts-expect-error Storybook args are mutable but Vue extracts readonly props
+          args.modelValue = val;
+        },
+      });
 
-const render: StoryFn<Props> = args => ({
-  components: { RuiTextField },
-  setup() {
-    const modelValue = computed({
-      get() {
-        return args.modelValue;
-      },
-      set(val) {
-        args.modelValue = val;
-      },
-    });
+      return { args, modelValue };
+    },
+    template: `<RuiTextField v-model="modelValue" v-bind="args" />`,
+  };
+}
 
-    return { args, modelValue };
-  },
-  template: `<RuiTextField v-model="modelValue" v-bind="args" />`,
-});
-
-const meta: Meta<Props> = {
+const meta = preview.meta({
   args: {
     errorMessages: [],
+    modelValue: undefined,
     successMessages: [],
   },
   argTypes: {
@@ -65,61 +68,59 @@ const meta: Meta<Props> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Forms/TextField',
-};
+});
 
-type Story = StoryObj<Props>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
   },
-};
+});
 
-export const Filled: Story = {
+export const Filled = meta.story({
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
     variant: 'filled',
   },
-};
+});
 
-export const Outlined: Story = {
+export const Outlined = meta.story({
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
     variant: 'outlined',
   },
-};
+});
 
-export const Primary: Story = {
+export const Primary = meta.story({
   args: {
     color: 'primary',
     label: 'Label',
     placeholder: 'Placeholder',
     variant: 'outlined',
   },
-};
+});
 
-export const Dense: Story = {
+export const Dense = meta.story({
   args: {
     dense: true,
     label: 'Label',
     placeholder: 'Placeholder',
     variant: 'outlined',
   },
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   args: {
     disabled: true,
     label: 'Label',
     placeholder: 'Placeholder',
     variant: 'outlined',
   },
-};
+});
 
-export const Readonly: Story = {
+export const Readonly = meta.story({
   args: {
     label: 'Label',
     modelValue: 'Readonly text',
@@ -127,36 +128,36 @@ export const Readonly: Story = {
     readonly: true,
     variant: 'outlined',
   },
-};
+});
 
-export const WithErrorMessage: Story = {
+export const WithErrorMessage = meta.story({
   args: {
     errorMessages: ['With error messages'],
     label: 'Label',
     placeholder: 'Placeholder',
     variant: 'outlined',
   },
-};
+});
 
-export const WithSuccessMessage: Story = {
+export const WithSuccessMessage = meta.story({
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
     successMessages: ['With success messages'],
     variant: 'outlined',
   },
-};
+});
 
-export const WithHint: Story = {
+export const WithHint = meta.story({
   args: {
     hint: 'With hint',
     label: 'Label',
     placeholder: 'Placeholder',
     variant: 'outlined',
   },
-};
+});
 
-export const HideDetails: Story = {
+export const HideDetails = meta.story({
   args: {
     hideDetails: true,
     hint: 'Hint (should be invisible)',
@@ -164,49 +165,49 @@ export const HideDetails: Story = {
     placeholder: 'Placeholder',
     variant: 'outlined',
   },
-};
+});
 
-export const WithPrependIcon: Story = {
+export const WithPrependIcon = meta.story({
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
     prependIcon: 'heart-fill',
     variant: 'outlined',
   },
-};
+});
 
-export const WithAppendIcon: Story = {
+export const WithAppendIcon = meta.story({
   args: {
     appendIcon: 'heart-fill',
     label: 'Label',
     placeholder: 'Placeholder',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedWithNoLabel: Story = {
+export const OutlinedWithNoLabel = meta.story({
   args: {
     placeholder: 'Placeholder',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedWithVeryLongLabel: Story = {
+export const OutlinedWithVeryLongLabel = meta.story({
   args: {
     label:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     placeholder: 'Placeholder',
     variant: 'outlined',
   },
-};
+});
 
-export const Required: Story = {
+export const Required = meta.story({
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
     required: true,
     variant: 'outlined',
   },
-};
+});
 
 export default meta;

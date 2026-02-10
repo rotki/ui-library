@@ -1,24 +1,27 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
-import RuiTooltip, { type Props } from '@/components/overlays/tooltip/RuiTooltip.vue';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
 import { DEFAULT_POPPER_OPTIONS } from '@/composables/popper';
+import preview from '~/.storybook/preview';
 
-const render: StoryFn<Props> = args => ({
-  components: { RuiTooltip },
-  setup() {
-    return { args };
-  },
-  template: `
-    <div class="text-center p-4">
-      <RuiTooltip v-bind="args">
-        <template #activator>
-          <span class="text-rui-primary"> Tooltip </span>
-        </template>
-        {{ args.text }}
-      </RuiTooltip>
-    </div>`,
-});
+function render(args: ComponentPropsAndSlots<typeof RuiTooltip>) {
+  return {
+    components: { RuiTooltip },
+    setup() {
+      return { args };
+    },
+    template: `
+      <div class="text-center p-4">
+        <RuiTooltip v-bind="args">
+          <template #activator>
+            <span class="text-rui-primary"> Tooltip </span>
+          </template>
+          {{ args.text }}
+        </RuiTooltip>
+      </div>`,
+  };
+}
 
-const meta: Meta<Props> = {
+const meta = preview.meta({
   args: {
     closeDelay: 500,
     disabled: false,
@@ -51,82 +54,80 @@ const meta: Meta<Props> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Overlays/Tooltip',
-};
+});
 
-type Story = StoryObj<Props>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {},
-};
+});
 
-export const Top: Story = {
+export const Top = meta.story({
   args: {
     popper: {
       placement: 'top',
     },
   },
-};
+});
 
-export const Right: Story = {
+export const Right = meta.story({
   args: {
     popper: {
       placement: 'right',
     },
   },
-};
+});
 
-export const Left: Story = {
+export const Left = meta.story({
   args: {
     popper: {
       placement: 'left',
     },
   },
-};
+});
 
-export const NoArrow: Story = {
+export const NoArrow = meta.story({
   args: {
     hideArrow: true,
   },
-};
+});
 
-export const NoArrowTop: Story = {
+export const NoArrowTop = meta.story({
   args: {
     hideArrow: true,
     popper: {
       placement: 'top',
     },
   },
-};
+});
 
-export const NoArrowRight: Story = {
+export const NoArrowRight = meta.story({
   args: {
     hideArrow: true,
     popper: {
       placement: 'right',
     },
   },
-};
+});
 
-export const NoArrowLeft: Story = {
+export const NoArrowLeft = meta.story({
   args: {
     hideArrow: true,
     popper: {
       placement: 'left',
     },
   },
-};
+});
 
-export const WithCustomSizeFromTooltipClass: Story = {
+export const WithCustomSizeFromTooltipClass = meta.story({
   args: {
     text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     tooltipClass: 'max-w-[20rem]',
   },
-};
+});
 
-export const TooltipDisabled: Story = {
+export const TooltipDisabled = meta.story({
   args: {
     disabled: true,
   },
-};
+});
 
 export default meta;

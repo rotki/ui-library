@@ -1,10 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import IconBrowser from '@/components/icons/IconBrowser.vue';
+import preview from '~/.storybook/preview';
 
-const meta: Meta<typeof IconBrowser> = {
+const meta = preview.meta({
   component: IconBrowser,
-  tags: ['autodocs'],
-  title: 'References/Icons',
   parameters: {
     docs: {
       description: {
@@ -12,10 +10,10 @@ const meta: Meta<typeof IconBrowser> = {
       },
     },
   },
-};
+  tags: ['autodocs'],
+  title: 'References/Icons',
+});
 
-type Story = StoryObj<typeof IconBrowser>;
-
-export const Default: Story = {};
+export const Default = meta.story({});
 
 export default meta;

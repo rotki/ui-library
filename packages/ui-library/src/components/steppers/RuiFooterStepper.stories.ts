@@ -1,24 +1,28 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
-import RuiFooterStepper, { type Props } from '@/components/steppers/RuiFooterStepper.vue';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import RuiFooterStepper from '@/components/steppers/RuiFooterStepper.vue';
+import preview from '~/.storybook/preview';
 
-const render: StoryFn<Props> = args => ({
-  components: { RuiFooterStepper },
-  setup() {
-    const modelValue = computed({
-      get() {
-        return args.modelValue;
-      },
-      set(val) {
-        args.modelValue = val;
-      },
-    });
+function render(args: ComponentPropsAndSlots<typeof RuiFooterStepper>) {
+  return {
+    components: { RuiFooterStepper },
+    setup() {
+      const modelValue = computed({
+        get() {
+          return args.modelValue;
+        },
+        set(val) {
+          // @ts-expect-error Storybook args are mutable but Vue extracts readonly props
+          args.modelValue = val;
+        },
+      });
 
-    return { args, modelValue };
-  },
-  template: `<RuiFooterStepper v-model="modelValue" v-bind="args" />`,
-});
+      return { args, modelValue };
+    },
+    template: `<RuiFooterStepper v-model="modelValue" v-bind="args" />`,
+  };
+}
 
-const meta: Meta<Props> = {
+const meta = preview.meta({
   argTypes: {
     arrowButtons: { control: 'boolean', table: { category: 'State' } },
     hideButtons: { control: 'boolean', table: { category: 'State' } },
@@ -42,20 +46,18 @@ const meta: Meta<Props> = {
   render,
   tags: ['autodocs'],
   title: 'Components/FooterStepper',
-};
+});
 
-type Story = StoryObj<Props>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     arrowButtons: false,
     modelValue: 1,
     pages: 5,
     variant: 'numeric',
   },
-};
+});
 
-export const DefaultWithoutButtons: Story = {
+export const DefaultWithoutButtons = meta.story({
   args: {
     arrowButtons: false,
     hideButtons: false,
@@ -63,18 +65,18 @@ export const DefaultWithoutButtons: Story = {
     pages: 5,
     variant: 'numeric',
   },
-};
+});
 
-export const Bullet: Story = {
+export const Bullet = meta.story({
   args: {
     arrowButtons: false,
     modelValue: 1,
     pages: 5,
     variant: 'bullet',
   },
-};
+});
 
-export const BulletWithoutButtons: Story = {
+export const BulletWithoutButtons = meta.story({
   args: {
     arrowButtons: false,
     hideButtons: true,
@@ -82,18 +84,18 @@ export const BulletWithoutButtons: Story = {
     pages: 5,
     variant: 'bullet',
   },
-};
+});
 
-export const Progress: Story = {
+export const Progress = meta.story({
   args: {
     arrowButtons: false,
     modelValue: 1,
     pages: 5,
     variant: 'progress',
   },
-};
+});
 
-export const ProgressWithoutButtons: Story = {
+export const ProgressWithoutButtons = meta.story({
   args: {
     arrowButtons: false,
     hideButtons: true,
@@ -101,42 +103,42 @@ export const ProgressWithoutButtons: Story = {
     pages: 5,
     variant: 'progress',
   },
-};
+});
 
-export const Pills: Story = {
+export const Pills = meta.story({
   args: {
     arrowButtons: false,
     modelValue: 1,
     pages: 5,
     variant: 'pill',
   },
-};
+});
 
-export const ArrowButtons: Story = {
+export const ArrowButtons = meta.story({
   args: {
     arrowButtons: true,
     modelValue: 1,
     pages: 5,
     variant: 'numeric',
   },
-};
+});
 
-export const BulletWithArrows: Story = {
+export const BulletWithArrows = meta.story({
   args: {
     arrowButtons: true,
     modelValue: 1,
     pages: 5,
     variant: 'bullet',
   },
-};
+});
 
-export const ProgressWithArrows: Story = {
+export const ProgressWithArrows = meta.story({
   args: {
     arrowButtons: true,
     modelValue: 1,
     pages: 5,
     variant: 'progress',
   },
-};
+});
 
 export default meta;

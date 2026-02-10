@@ -1,45 +1,49 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { objectOmit } from '@vueuse/shared';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
-import RuiBadge, { type Props as BadgeProps } from '@/components/overlays/badge/RuiBadge.vue';
+import RuiBadge from '@/components/overlays/badge/RuiBadge.vue';
 import { contextColors } from '@/consts/colors';
 import { RuiIcons } from '@/icons';
+import preview from '~/.storybook/preview';
 
-type Props = BadgeProps & {
+type BadgeStoryArgs = ComponentPropsAndSlots<typeof RuiBadge> & {
   buttonText?: string | null;
 };
 
-const render: StoryFn<Props> = args => ({
-  components: { RuiBadge, RuiButton, RuiIcon },
-  setup() {
-    const modelValue = computed({
-      get() {
-        return args.modelValue;
-      },
-      set(val) {
-        args.modelValue = val;
-      },
-    });
+function render(args: BadgeStoryArgs) {
+  return {
+    components: { RuiBadge, RuiButton, RuiIcon },
+    setup() {
+      const modelValue = computed({
+        get() {
+          return args.modelValue;
+        },
+        set(val) {
+          // @ts-expect-error Storybook args are mutable but Vue extracts readonly props
+          args.modelValue = val;
+        },
+      });
 
-    const badgeArgs = computed(() => objectOmit(args, ['buttonText']));
+      const badgeArgs = computed(() => objectOmit(args, ['buttonText']));
 
-    return { args, badgeArgs, modelValue };
-  },
-  template: `
-    <div class="text-center p-4">
-      <RuiBadge v-bind="badgeArgs" v-model="modelValue">
-        <template v-if="args.text" #badge>
-          {{ args.text }}
-        </template>
-        <RuiButton @click="modelValue = !modelValue">
-          {{ args.buttonText }}
-        </RuiButton>
-      </RuiBadge>
-    </div>`,
-});
+      return { args, badgeArgs, modelValue };
+    },
+    template: `
+      <div class="text-center p-4">
+        <RuiBadge v-bind="badgeArgs" v-model="modelValue">
+          <template v-if="args.text" #badge>
+            {{ args.text }}
+          </template>
+          <RuiButton @click="modelValue = !modelValue">
+            {{ args.buttonText }}
+          </RuiButton>
+        </RuiBadge>
+      </div>`,
+  };
+}
 
-const meta: Meta<Props> = {
+const meta = preview.meta({
   args: {
     buttonText: 'Badge',
     color: 'primary',
@@ -72,7 +76,6 @@ const meta: Meta<Props> = {
       control: 'text',
     },
   },
-  component: RuiBadge,
   parameters: {
     docs: {
       controls: { exclude: ['default', 'badge'] },
@@ -81,82 +84,80 @@ const meta: Meta<Props> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Overlays/Badge',
-};
+});
 
-type Story = StoryObj<Props>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {},
-};
+});
 
-export const Left: Story = {
+export const Left = meta.story({
   args: {
     left: true,
   },
-};
+});
 
-export const Center: Story = {
+export const Center = meta.story({
   args: {
     placement: 'center',
   },
-};
+});
 
-export const CenterLeft: Story = {
+export const CenterLeft = meta.story({
   args: {
     left: true,
     placement: 'center',
   },
-};
+});
 
-export const Bottom: Story = {
+export const Bottom = meta.story({
   args: {
     placement: 'bottom',
   },
-};
+});
 
-export const BottomLeft: Story = {
+export const BottomLeft = meta.story({
   args: {
     left: true,
     placement: 'bottom',
   },
-};
+});
 
-export const Dot: Story = {
+export const Dot = meta.story({
   args: { dot: true },
-};
+});
 
-export const DotLeft: Story = {
+export const DotLeft = meta.story({
   args: { dot: true, left: true },
-};
+});
 
-export const DotCenter: Story = {
+export const DotCenter = meta.story({
   args: {
     dot: true,
     placement: 'center',
   },
-};
+});
 
-export const DotCenterLeft: Story = {
+export const DotCenterLeft = meta.story({
   args: {
     dot: true,
     left: true,
     placement: 'center',
   },
-};
+});
 
-export const DotBottom: Story = {
+export const DotBottom = meta.story({
   args: {
     dot: true,
     placement: 'bottom',
   },
-};
+});
 
-export const DotBottomLeft: Story = {
+export const DotBottomLeft = meta.story({
   args: {
     dot: true,
     left: true,
     placement: 'bottom',
   },
-};
+});
 
 export default meta;

@@ -1,36 +1,40 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
-import RuiNavigationDrawer, { type NavigationDrawerProps } from '@/components/overlays/navigation-drawer/RuiNavigationDrawer.vue';
+import RuiNavigationDrawer from '@/components/overlays/navigation-drawer/RuiNavigationDrawer.vue';
+import preview from '~/.storybook/preview';
 
-const render: StoryFn<NavigationDrawerProps> = args => ({
-  components: { RuiButton, RuiNavigationDrawer },
-  setup() {
-    const modelValue = computed({
-      get() {
-        return args.modelValue;
-      },
-      set(val) {
-        args.modelValue = val;
-      },
-    });
+function render(args: ComponentPropsAndSlots<typeof RuiNavigationDrawer>) {
+  return {
+    components: { RuiButton, RuiNavigationDrawer },
+    setup() {
+      const modelValue = computed({
+        get() {
+          return args.modelValue;
+        },
+        set(val) {
+          // @ts-expect-error Storybook args are mutable but Vue extracts readonly props
+          args.modelValue = val;
+        },
+      });
 
-    return { args, modelValue };
-  },
-  template: `
-    <RuiNavigationDrawer v-bind="args" v-model='modelValue'>
-      <template #activator="{ attrs }">
-        <RuiButton v-bind="attrs">
-          Click me!
-        </RuiButton>
-      </template>
-      <div class="p-4">
-        Navigation Drawer
-      </div>
-    </RuiNavigationDrawer>
-  `,
-});
+      return { args, modelValue };
+    },
+    template: `
+      <RuiNavigationDrawer v-bind="args" v-model='modelValue'>
+        <template #activator="{ attrs }">
+          <RuiButton v-bind="attrs">
+            Click me!
+          </RuiButton>
+        </template>
+        <div class="p-4">
+          Navigation Drawer
+        </div>
+      </RuiNavigationDrawer>
+    `,
+  };
+}
 
-const meta: Meta<NavigationDrawerProps> = {
+const meta = preview.meta({
   args: {
     modelValue: false,
   },
@@ -52,25 +56,23 @@ const meta: Meta<NavigationDrawerProps> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Overlays/NavigationDrawer',
-};
+});
 
-type Story = StoryObj<NavigationDrawerProps>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     temporary: true,
   },
-};
+});
 
-export const Right: Story = {
+export const Right = meta.story({
   args: {
     position: 'right',
     temporary: true,
   },
-};
+});
 
-export const Persistent: Story = {
+export const Persistent = meta.story({
   args: {},
-};
+});
 
 export default meta;

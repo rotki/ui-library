@@ -1,29 +1,34 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
+import type { ComponentPropsAndSlots, Decorator } from '@storybook/vue3-vite';
 import { options, type SelectOption } from '@/__test__/options';
-import RuiMenuSelect, { type Props } from '@/components/forms/select/RuiMenuSelect.vue';
+import RuiMenuSelect from '@/components/forms/select/RuiMenuSelect.vue';
+import preview from '~/.storybook/preview';
 
-type SelectProps<T extends SelectOption | string = SelectOption> = Props<string, T> & { modelValue: string | undefined };
+type MenuSelectProps = ComponentPropsAndSlots<typeof RuiMenuSelect<string, SelectOption>>;
 
-const render: StoryFn<SelectProps> = args => ({
-  components: {
-    RuiMenuSelect: RuiMenuSelect as any,
-  },
-  setup() {
-    const modelValue = computed({
-      get() {
-        return args.modelValue;
-      },
-      set(val) {
-        args.modelValue = val;
-      },
-    });
+type MenuSelectMetaArgs = Required<Pick<MenuSelectProps, 'disabled' | 'options' | 'variant'>>;
 
-    return { args, modelValue };
-  },
-  template: `<RuiMenuSelect v-bind="args" v-model="modelValue" />`,
-});
+function render(args: MenuSelectProps) {
+  return {
+    components: {
+      RuiMenuSelect: RuiMenuSelect<string, SelectOption>,
+    },
+    setup() {
+      const modelValue = computed({
+        get() {
+          return args.modelValue;
+        },
+        set(val) {
+          args.modelValue = val;
+        },
+      });
 
-const meta: Meta<SelectProps> = {
+      return { args, modelValue };
+    },
+    template: `<RuiMenuSelect v-bind="args" v-model="modelValue" />`,
+  };
+}
+
+const meta = preview.meta<typeof RuiMenuSelect<string, SelectOption>, Decorator, MenuSelectMetaArgs>({
   args: {
     disabled: false,
     options,
@@ -40,7 +45,7 @@ const meta: Meta<SelectProps> = {
       options: ['default', 'outlined', 'filled'],
     },
   },
-  component: RuiMenuSelect as any,
+  component: RuiMenuSelect<string, SelectOption>,
   parameters: {
     docs: {
       controls: { exclude: ['update:model-value'] },
@@ -49,43 +54,42 @@ const meta: Meta<SelectProps> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Forms/MenuSelect',
-};
+});
 
-type Story<T extends SelectOption | string = SelectOption> = StoryObj<SelectProps<T>>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
   },
-};
+});
 
-export const PrimitiveItems: Story<string> = {
+// @ts-expect-error PrimitiveItems uses string[] options instead of SelectOption[]
+export const PrimitiveItems = meta.story({
   args: {
     options: options.map(item => item.label),
   },
-};
+});
 
-export const DefaultDisabled: Story = {
+export const DefaultDisabled = meta.story({
   args: {
     disabled: true,
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
   },
-};
+});
 
-export const Outlined: Story = {
+export const Outlined = meta.story({
   args: {
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedDisabled: Story = {
+export const OutlinedDisabled = meta.story({
   args: {
     disabled: true,
     keyAttr: 'id',
@@ -93,9 +97,9 @@ export const OutlinedDisabled: Story = {
     textAttr: 'label',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedDense: Story = {
+export const OutlinedDense = meta.story({
   args: {
     dense: false,
     disabled: true,
@@ -104,9 +108,9 @@ export const OutlinedDense: Story = {
     textAttr: 'label',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedDisabledDense: Story = {
+export const OutlinedDisabledDense = meta.story({
   args: {
     dense: true,
     disabled: true,
@@ -115,9 +119,9 @@ export const OutlinedDisabledDense: Story = {
     textAttr: 'label',
     variant: 'outlined',
   },
-};
+});
 
-export const Required: Story = {
+export const Required = meta.story({
   args: {
     keyAttr: 'id',
     modelValue: undefined,
@@ -125,6 +129,6 @@ export const Required: Story = {
     textAttr: 'label',
     variant: 'outlined',
   },
-};
+});
 
 export default meta;

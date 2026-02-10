@@ -1,53 +1,52 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { objectOmit } from '@vueuse/shared';
 import RuiButton, { type Props as ButtonProps } from '@/components/buttons/button/RuiButton.vue';
-import RuiCard, { type Props as CardProps } from '@/components/cards/RuiCard.vue';
+import RuiCard from '@/components/cards/RuiCard.vue';
+import preview from '~/.storybook/preview';
 
-type Props = CardProps & {
-  image?: string;
-  header?: string;
-  customHeader?: string;
-  subheader?: string;
+type CardStoryArgs = ComponentPropsAndSlots<typeof RuiCard> & {
   content?: string;
-  prepend?: string;
+  customHeader?: string;
   actions?: (ButtonProps & { text: string })[];
 };
 
-const render: StoryFn<Props> = args => ({
-  components: { RuiButton, RuiCard },
-  setup: () => {
-    const cardArgs = computed(() =>
-      objectOmit(args, ['header', 'subheader', 'content', 'actions']),
-    );
+function render(args: CardStoryArgs) {
+  return {
+    components: { RuiButton, RuiCard },
+    setup: () => {
+      const cardArgs = computed(() =>
+        objectOmit(args, ['header', 'subheader', 'content', 'actions']),
+      );
 
-    return { args, cardArgs };
-  },
-  template: `
-      <div>
-        <RuiCard v-bind="cardArgs">
-          <template v-if="args.image" #image><img :src="args.image" alt="card image" /></template>
-          <template v-if="args.prepend" #prepend>{{ args.prepend }}</template>
-          <template v-if="args.header" #header>{{ args.header }}</template>
-          <template v-if="args.customHeader" #custom-header><h5 class="p-4 text-rui-error text-h5">
-            {{ args.customHeader }}</h5></template>
-          <template v-if="args.subheader" #subheader>
-            {{ args.subheader }}
-          </template>
-          <p v-if="args.content">{{ args.content }}</p>
-          <template v-if="args.actions" #footer>
-            <RuiButton
-                v-for="(action, i) in args.actions"
-                v-bind="action"
-                :key="i"
-            >
-              {{ action.text }}
-            </RuiButton>
-          </template>
-        </RuiCard>
-      </div>`,
-});
+      return { args, cardArgs };
+    },
+    template: `
+        <div>
+          <RuiCard v-bind="cardArgs">
+            <template v-if="args.image" #image><img :src="args.image" alt="card image" /></template>
+            <template v-if="args.prepend" #prepend>{{ args.prepend }}</template>
+            <template v-if="args.header" #header>{{ args.header }}</template>
+            <template v-if="args.customHeader" #custom-header><h5 class="p-4 text-rui-error text-h5">
+              {{ args.customHeader }}</h5></template>
+            <template v-if="args.subheader" #subheader>
+              {{ args.subheader }}
+            </template>
+            <p v-if="args.content">{{ args.content }}</p>
+            <template v-if="args.actions" #footer>
+              <RuiButton
+                  v-for="(action, i) in args.actions"
+                  v-bind="action"
+                  :key="i"
+              >
+                {{ action.text }}
+              </RuiButton>
+            </template>
+          </RuiCard>
+        </div>`,
+  };
+}
 
-const meta: Meta<Props> = {
+const meta = preview.meta({
   args: {
     customHeader: '',
     dense: false,
@@ -79,7 +78,6 @@ const meta: Meta<Props> = {
       options: ['flat', 'outlined'],
     },
   },
-  component: RuiCard,
   parameters: {
     docs: {
       controls: { exclude: ['default', 'footer'] },
@@ -88,11 +86,9 @@ const meta: Meta<Props> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Card',
-};
+});
 
-type Story = StoryObj<Props>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     actions: [
       { color: 'secondary', size: 'lg', text: 'Action 1', variant: 'text' },
@@ -102,26 +98,26 @@ export const Default: Story = {
     header: 'Card header',
     subheader: 'Card subheader',
   },
-};
+});
 
-export const NoActions: Story = {
+export const NoActions = meta.story({
   args: {
     content: 'Lorem ipsum dolor sit amet consect '.repeat(50),
     header: 'Card header',
     subheader: 'Card subheader',
   },
-};
+});
 
-export const DividedNoActions: Story = {
+export const DividedNoActions = meta.story({
   args: {
     content: 'Lorem ipsum dolor sit amet consect '.repeat(50),
     divide: true,
     header: 'Card header',
     subheader: 'Card subheader',
   },
-};
+});
 
-export const Divided: Story = {
+export const Divided = meta.story({
   args: {
     actions: [
       { color: 'secondary', size: 'lg', text: 'Action 1', variant: 'text' },
@@ -132,9 +128,9 @@ export const Divided: Story = {
     header: 'Card header',
     subheader: 'Card subheader',
   },
-};
+});
 
-export const DividedPrepend: Story = {
+export const DividedPrepend = meta.story({
   args: {
     actions: [
       { color: 'secondary', size: 'lg', text: 'Action 1', variant: 'text' },
@@ -146,9 +142,9 @@ export const DividedPrepend: Story = {
     prepend: 'OP',
     subheader: 'Card subheader',
   },
-};
+});
 
-export const WithImage: Story = {
+export const WithImage = meta.story({
   args: {
     actions: [
       { color: 'secondary', size: 'lg', text: 'Action 1', variant: 'text' },
@@ -159,9 +155,9 @@ export const WithImage: Story = {
     image: 'https://placehold.co/960x320',
     subheader: 'Card subheader',
   },
-};
+});
 
-export const DividedWithImage: Story = {
+export const DividedWithImage = meta.story({
   args: {
     actions: [
       { color: 'secondary', size: 'lg', text: 'Action 1', variant: 'text' },
@@ -173,9 +169,9 @@ export const DividedWithImage: Story = {
     image: 'https://placehold.co/960x320',
     subheader: 'Card subheader',
   },
-};
+});
 
-export const Dense: Story = {
+export const Dense = meta.story({
   args: {
     actions: [
       { color: 'secondary', size: 'sm', text: 'Action 1', variant: 'text' },
@@ -186,9 +182,9 @@ export const Dense: Story = {
     header: 'Card header',
     subheader: 'Card subheader',
   },
-};
+});
 
-export const DenseFlat: Story = {
+export const DenseFlat = meta.story({
   args: {
     actions: [
       {
@@ -213,9 +209,9 @@ export const DenseFlat: Story = {
     subheader: 'Card subheader',
     variant: 'flat',
   },
-};
+});
 
-export const DenseDivide: Story = {
+export const DenseDivide = meta.story({
   args: {
     actions: [
       {
@@ -237,9 +233,9 @@ export const DenseDivide: Story = {
     header: 'Card header',
     subheader: 'Card subheader',
   },
-};
+});
 
-export const Elevated: Story = {
+export const Elevated = meta.story({
   args: {
     actions: [
       {
@@ -259,9 +255,9 @@ export const Elevated: Story = {
     subheader: 'Card subheader',
     variant: 'flat',
   },
-};
+});
 
-export const HighElevation: Story = {
+export const HighElevation = meta.story({
   args: {
     actions: [
       {
@@ -281,9 +277,9 @@ export const HighElevation: Story = {
     subheader: 'Card subheader',
     variant: 'flat',
   },
-};
+});
 
-export const CustomHeader: Story = {
+export const CustomHeader = meta.story({
   args: {
     actions: [
       {
@@ -304,6 +300,6 @@ export const CustomHeader: Story = {
     subheader: 'Card subheader',
     variant: 'flat',
   },
-};
+});
 
 export default meta;

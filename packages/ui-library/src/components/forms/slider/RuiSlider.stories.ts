@@ -1,28 +1,32 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
-import RuiSlider, { type Props } from '@/components/forms/slider/RuiSlider.vue';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import RuiSlider from '@/components/forms/slider/RuiSlider.vue';
 import { contextColors } from '@/consts/colors';
+import preview from '~/.storybook/preview';
 
-const render: StoryFn<Props> = args => ({
-  components: { RuiSlider },
-  setup() {
-    const modelValue = computed({
-      get() {
-        return args.modelValue;
-      },
-      set(val) {
-        args.modelValue = val;
-      },
-    });
+function render(args: ComponentPropsAndSlots<typeof RuiSlider>) {
+  return {
+    components: { RuiSlider },
+    setup() {
+      const modelValue = computed({
+        get() {
+          return args.modelValue;
+        },
+        set(val) {
+          // @ts-expect-error Storybook args are mutable but Vue extracts readonly props
+          args.modelValue = val;
+        },
+      });
 
-    return { args, modelValue };
-  },
-  template: `<div>
-    <RuiSlider v-bind="args" v-model="modelValue" />
-    <div class="text-rui-text">Value: {{ modelValue }}</div>
-  </div>`,
-});
+      return { args, modelValue };
+    },
+    template: `<div>
+      <RuiSlider v-bind="args" v-model="modelValue" />
+      <div class="text-rui-text">Value: {{ modelValue }}</div>
+    </div>`,
+  };
+}
 
-const meta: Meta<Props> = {
+const meta = preview.meta({
   args: {
     errorMessages: [],
     successMessages: [],
@@ -54,58 +58,56 @@ const meta: Meta<Props> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Forms/Slider',
-};
+});
 
-type Story = StoryObj<Props>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     label: 'Label',
     modelValue: 0,
   },
-};
+});
 
-export const Secondary: Story = {
+export const Secondary = meta.story({
   args: {
     color: 'secondary',
     label: 'Label',
     modelValue: 0,
   },
-};
+});
 
-export const Vertical: Story = {
+export const Vertical = meta.story({
   args: {
     label: 'Label',
     modelValue: 0,
     vertical: true,
   },
-};
+});
 
-export const ShowThumbLabel: Story = {
+export const ShowThumbLabel = meta.story({
   args: {
     label: 'Label',
     modelValue: 0,
     showThumbLabel: true,
   },
-};
+});
 
-export const ShowTicks: Story = {
+export const ShowTicks = meta.story({
   args: {
     label: 'Label',
     modelValue: 0,
     showTicks: true,
   },
-};
+});
 
-export const HideTrack: Story = {
+export const HideTrack = meta.story({
   args: {
     hideTrack: true,
     label: 'Label',
     modelValue: 0,
   },
-};
+});
 
-export const TriStateStyle: Story = {
+export const TriStateStyle = meta.story({
   args: {
     label: 'Label',
     max: 2,
@@ -116,55 +118,55 @@ export const TriStateStyle: Story = {
     tickClass: '!bg-rui-grey-200 dark:!bg-rui-grey-800',
     tickSize: 12,
   },
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   args: {
     disabled: true,
     label: 'Label',
     modelValue: 0,
   },
-};
+});
 
-export const WithHint: Story = {
+export const WithHint = meta.story({
   args: {
     hint: 'With hint',
     label: 'Label',
     modelValue: 0,
   },
-};
+});
 
-export const HideDetails: Story = {
+export const HideDetails = meta.story({
   args: {
     hideDetails: true,
     hint: 'Hint (should be invisible)',
     label: 'Label',
     modelValue: 0,
   },
-};
+});
 
-export const WithErrorMessage: Story = {
+export const WithErrorMessage = meta.story({
   args: {
     errorMessages: ['With error messages'],
     label: 'Label',
     modelValue: 0,
   },
-};
+});
 
-export const WithSuccessMessage: Story = {
+export const WithSuccessMessage = meta.story({
   args: {
     label: 'Label',
     modelValue: 0,
     successMessages: ['With success messages'],
   },
-};
+});
 
-export const Required: Story = {
+export const Required = meta.story({
   args: {
     label: 'Required Slider',
     modelValue: 0,
     required: true,
   },
-};
+});
 
 export default meta;

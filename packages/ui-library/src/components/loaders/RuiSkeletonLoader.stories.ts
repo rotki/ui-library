@@ -1,19 +1,18 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
-import RuiSkeletonLoader, { type Props as SkeletonProps } from '@/components/loaders/RuiSkeletonLoader.vue';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import RuiSkeletonLoader from '@/components/loaders/RuiSkeletonLoader.vue';
+import preview from '~/.storybook/preview';
 
-type Props = SkeletonProps & {
-  class: string;
-};
+function render(args: ComponentPropsAndSlots<typeof RuiSkeletonLoader>) {
+  return {
+    components: { RuiSkeletonLoader },
+    setup() {
+      return { args };
+    },
+    template: '<RuiSkeletonLoader v-bind="args" />',
+  };
+}
 
-const render: StoryFn<Props> = args => ({
-  components: { RuiSkeletonLoader },
-  setup() {
-    return { args };
-  },
-  template: '<RuiSkeletonLoader v-bind="args" />',
-});
-
-const meta: Meta<Props> = {
+const meta = preview.meta({
   args: {
     type: 'text',
   },
@@ -50,48 +49,46 @@ const meta: Meta<Props> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Loaders/Skeleton',
-};
+});
 
-type Story = StoryObj<Props>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {},
-};
+});
 
-export const Paragraph: Story = {
+export const Paragraph = meta.story({
   args: { type: 'paragraph' },
-};
+});
 
-export const Heading: Story = {
+export const Heading = meta.story({
   args: { type: 'heading' },
-};
+});
 
-export const Article: Story = {
+export const Article = meta.story({
   args: { type: 'article' },
-};
+});
 
-export const Button: Story = {
+export const Button = meta.story({
   args: { type: 'button' },
-};
+});
 
-export const Icon: Story = {
+export const Icon = meta.story({
   args: { type: 'icon' },
-};
+});
 
-export const Avatar: Story = {
+export const Avatar = meta.story({
   args: { type: 'avatar' },
-};
+});
 
-export const Thumbnail: Story = {
+export const Thumbnail = meta.story({
   args: { type: 'thumbnail' },
-};
+});
 
-export const Custom: Story = {
+export const Custom = meta.story({
   args: { class: 'w-20 h-20', rounded: 'lg', type: 'custom' },
-};
+});
 
-export const CustomFullRound: Story = {
+export const CustomFullRound = meta.story({
   args: { class: 'w-20 h-20', rounded: 'full', type: 'custom' },
-};
+});
 
 export default meta;

@@ -1,27 +1,30 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
-import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
+import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
 import { DEFAULT_POPPER_OPTIONS } from '@/composables/popper';
+import preview from '~/.storybook/preview';
 
-const render: StoryFn<MenuProps> = args => ({
-  components: { RuiButton, RuiMenu },
-  setup() {
-    return { args };
-  },
-  template: `
-    <div class="text-center p-4">
-      <RuiMenu v-bind="args">
-        <template #activator="{ attrs }">
-          <RuiButton v-bind='attrs'>Click Me!</RuiButton>
-        </template>
-        <div class="px-4 py-3">
-          This is menu
-        </div>
-      </RuiMenu>
-    </div>`,
-});
+function render(args: ComponentPropsAndSlots<typeof RuiMenu>) {
+  return {
+    components: { RuiButton, RuiMenu },
+    setup() {
+      return { args };
+    },
+    template: `
+      <div class="text-center p-4">
+        <RuiMenu v-bind="args">
+          <template #activator="{ attrs }">
+            <RuiButton v-bind='attrs'>Click Me!</RuiButton>
+          </template>
+          <div class="px-4 py-3">
+            This is menu
+          </div>
+        </RuiMenu>
+      </div>`,
+  };
+}
 
-const meta: Meta<MenuProps> = {
+const meta = preview.meta({
   args: {
     closeDelay: 0,
     closeOnContentClick: false,
@@ -54,61 +57,59 @@ const meta: Meta<MenuProps> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Overlays/Menu',
-};
+});
 
-type Story = StoryObj<MenuProps>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {},
-};
+});
 
-export const OpenOnHover: Story = {
+export const OpenOnHover = meta.story({
   args: {
     closeDelay: 200,
     openOnHover: true,
   },
-};
+});
 
-export const CloseOnContentClick: Story = {
+export const CloseOnContentClick = meta.story({
   args: {
     closeOnContentClick: true,
   },
-};
+});
 
-export const Top: Story = {
+export const Top = meta.story({
   args: {
     popper: {
       placement: 'top',
     },
   },
-};
+});
 
-export const Right: Story = {
+export const Right = meta.story({
   args: {
     popper: {
       placement: 'right',
     },
   },
-};
+});
 
-export const Left: Story = {
+export const Left = meta.story({
   args: {
     popper: {
       placement: 'left',
     },
   },
-};
+});
 
-export const MenuDisabled: Story = {
+export const MenuDisabled = meta.story({
   args: {
     disabled: true,
   },
-};
+});
 
-export const PersistentMenu: Story = {
+export const PersistentMenu = meta.story({
   args: {
     persistent: true,
   },
-};
+});
 
 export default meta;

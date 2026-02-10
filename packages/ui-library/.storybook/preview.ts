@@ -1,4 +1,4 @@
-import { type Preview, setup } from '@storybook/vue3-vite';
+import { definePreview, setup } from '@storybook/vue3-vite';
 import { useEffect, useGlobals } from 'storybook/preview-api';
 import { useRotkiTheme } from '@/composables/theme';
 import { RuiPlugin } from './rui';
@@ -10,7 +10,8 @@ setup((app) => {
   app.use(RuiPlugin);
 });
 
-const preview: Preview = {
+export default definePreview({
+  addons: [],
   parameters: {
     controls: {
       matchers: {
@@ -48,6 +49,4 @@ const preview: Preview = {
 
     return story();
   }],
-};
-
-export default preview;
+});

@@ -1,39 +1,42 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { TimeAccuracy } from '@/consts/time-accuracy';
+import preview from '~/.storybook/preview';
 import RuiDateTimePicker from './RuiDateTimePicker.vue';
 
-const render: StoryFn<typeof RuiDateTimePicker> = args => ({
-  components: { RuiDateTimePicker },
-  setup() {
-    const iso = computed<string>(() => {
-      if (args.modelValue) {
-        return new Date(args.modelValue).toISOString();
-      }
-      return '-';
-    });
+function render(args: ComponentPropsAndSlots<typeof RuiDateTimePicker>) {
+  return {
+    components: { RuiDateTimePicker },
+    setup() {
+      const iso = computed<string>(() => {
+        if (args.modelValue) {
+          return new Date(args.modelValue).toISOString();
+        }
+        return '-';
+      });
 
-    const epoch = computed<string>(() => {
-      if (args.modelValue) {
-        const epoch = new Date(args.modelValue).getTime();
-        return epoch >= 0 ? epoch.toString() : '-';
-      }
-      return '-';
-    });
+      const epoch = computed<string>(() => {
+        if (args.modelValue) {
+          const epoch = new Date(args.modelValue).getTime();
+          return epoch >= 0 ? epoch.toString() : '-';
+        }
+        return '-';
+      });
 
-    return { args, epoch, iso };
-  },
-  template: `<div>
-    <RuiDateTimePicker v-bind="args" v-model="args.modelValue" />
-    <div class="text-rui-text">
-      <span class='font-medium'>Date:</span> {{ iso }}
-    </div>
-    <div class="text-rui-text">
-      <span class='font-medium'>Epoch</span> {{ epoch }}
-    </div>
-  </div>`,
-});
+      return { args, epoch, iso };
+    },
+    template: `<div>
+      <RuiDateTimePicker v-bind="args" v-model="args.modelValue" />
+      <div class="text-rui-text">
+        <span class='font-medium'>Date:</span> {{ iso }}
+      </div>
+      <div class="text-rui-text">
+        <span class='font-medium'>Epoch</span> {{ epoch }}
+      </div>
+    </div>`,
+  };
+}
 
-const meta: Meta<typeof RuiDateTimePicker> = {
+const meta = preview.meta({
   argTypes: {
     accuracy: {
       control: 'select',
@@ -56,48 +59,46 @@ const meta: Meta<typeof RuiDateTimePicker> = {
   render,
   tags: ['autodocs'],
   title: 'Components/DateTimePicker',
-};
+});
 
-type Story = StoryObj<typeof RuiDateTimePicker>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     modelValue: new Date(),
   },
-};
+});
 
-export const Outlined: Story = {
+export const Outlined = meta.story({
   args: {
     accuracy: TimeAccuracy.SECOND,
     modelValue: new Date(),
     variant: 'outlined',
   },
-};
+});
 
-export const Optional: Story = {
+export const Optional = meta.story({
   args: {
     accuracy: TimeAccuracy.SECOND,
     allowEmpty: true,
     modelValue: undefined,
     variant: 'outlined',
   },
-};
+});
 
-export const WithMaxNow: Story = {
+export const WithMaxNow = meta.story({
   args: {
     accuracy: TimeAccuracy.SECOND,
     maxDate: 'now',
     modelValue: new Date(),
     variant: 'outlined',
   },
-};
+});
 
-export const Required: Story = {
+export const Required = meta.story({
   args: {
     modelValue: new Date(),
     required: true,
     variant: 'outlined',
   },
-};
+});
 
 export default meta;

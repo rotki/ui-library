@@ -1,18 +1,18 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
-import RuiButtonGroup, { type Props as ButtonProps } from '@/components/buttons/button-group/RuiButtonGroup.vue';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import RuiButtonGroup from '@/components/buttons/button-group/RuiButtonGroup.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { contextColors } from '@/consts/colors';
+import preview from '~/.storybook/preview';
 
-type Props = ButtonProps<string | number>;
-
-const render: StoryFn<Props> = args => ({
-  components: { RuiButton, RuiButtonGroup, RuiIcon },
-  setup() {
-    const count = ref(0);
-    return { args, count };
-  },
-  template: `
+function render(args: ComponentPropsAndSlots<typeof RuiButtonGroup<string | number>>) {
+  return {
+    components: { RuiButton, RuiButtonGroup, RuiIcon },
+    setup() {
+      const count = ref(0);
+      return { args, count };
+    },
+    template: `
     <div v-if="'modelValue' in args">
       <RuiButtonGroup v-bind="args" v-model="args.modelValue">
         <RuiButton>
@@ -41,9 +41,10 @@ const render: StoryFn<Props> = args => ({
       <div class="mt-4 text-rui-text">Count: {{ count }}</div>
     </div>
   `,
-});
+  };
+}
 
-const meta: Meta<Props> = {
+const meta = preview.meta({
   argTypes: {
     activeColor: { control: 'select', options: contextColors },
     color: { control: 'select', options: contextColors },
@@ -56,156 +57,154 @@ const meta: Meta<Props> = {
     },
     vertical: { control: 'boolean' },
   },
-  component: RuiButtonGroup as any,
+  component: RuiButtonGroup<string | number>,
   render,
   tags: ['autodocs'],
   title: 'Components/Button/ButtonGroup',
-};
+});
 
-type Story = StoryObj<Props>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {},
-};
+});
 
-export const Vertical: Story = {
+export const Vertical = meta.story({
   args: {
     vertical: true,
   },
-};
+});
 
-export const Primary: Story = {
+export const Primary = meta.story({
   args: {
     color: 'primary',
   },
-};
+});
 
-export const SmallGap: Story = {
+export const SmallGap = meta.story({
   args: {
     gap: 'sm',
   },
-};
+});
 
-export const Outlined: Story = {
+export const Outlined = meta.story({
   args: {
     variant: 'outlined',
   },
-};
+});
 
-export const Text: Story = {
+export const Text = meta.story({
   args: {
     variant: 'text',
   },
-};
+});
 
-export const DefaultToggle: Story = {
+export const DefaultToggle = meta.story({
   args: {
     color: 'primary',
     modelValue: 0,
   },
-};
+});
 
-export const ToggleRequired: Story = {
+export const ToggleRequired = meta.story({
   args: {
     color: 'primary',
     modelValue: 0,
     required: true,
   },
-};
+});
 
-export const VerticalToggle: Story = {
+export const VerticalToggle = meta.story({
   args: {
     color: 'primary',
     modelValue: 0,
     vertical: true,
   },
-};
+});
 
-export const Toggle: Story = {
+export const Toggle = meta.story({
   args: {
     color: 'primary',
     modelValue: 0,
   },
-};
+});
 
-export const OutlinedToggle: Story = {
+export const OutlinedToggle = meta.story({
   args: {
     color: 'primary',
     modelValue: 0,
     variant: 'outlined',
   },
-};
+});
 
-export const TextToggle: Story = {
+export const TextToggle = meta.story({
   args: {
     color: 'primary',
     modelValue: 0,
     variant: 'text',
   },
-};
+});
 
-export const ActiveColorToggle: Story = {
+export const ActiveColorToggle = meta.story({
   args: {
     activeColor: 'warning',
     color: 'primary',
     modelValue: 0,
     variant: 'text',
   },
-};
+});
 
-export const DefaultToggleMultiple: Story = {
+export const DefaultToggleMultiple = meta.story({
   args: {
     color: 'primary',
     modelValue: [0],
   },
-};
+});
 
-export const ToggleMultipleRequired: Story = {
+export const ToggleMultipleRequired = meta.story({
   args: {
     color: 'primary',
     modelValue: [0],
     required: true,
   },
-};
+});
 
-export const VerticalToggleMultiple: Story = {
+export const VerticalToggleMultiple = meta.story({
   args: {
     color: 'primary',
     modelValue: [0],
     vertical: true,
   },
-};
+});
 
-export const ToggleMultiple: Story = {
+export const ToggleMultiple = meta.story({
   args: {
     color: 'primary',
     modelValue: [0],
   },
-};
+});
 
-export const OutlinedToggleMultiple: Story = {
+export const OutlinedToggleMultiple = meta.story({
   args: {
     color: 'primary',
     modelValue: [0],
     variant: 'outlined',
   },
-};
+});
 
-export const TextToggleMultiple: Story = {
+export const TextToggleMultiple = meta.story({
   args: {
     color: 'primary',
     modelValue: [0],
     variant: 'text',
   },
-};
+});
 
-export const ActiveColorMultiple: Story = {
+export const ActiveColorMultiple = meta.story({
   args: {
     activeColor: 'warning',
     color: 'primary',
     modelValue: [0],
     variant: 'text',
   },
-};
+});
 
 export default meta;

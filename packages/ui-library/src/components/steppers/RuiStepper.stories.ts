@@ -1,16 +1,19 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
-import RuiStepper, { type Props } from '@/components/steppers/RuiStepper.vue';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import RuiStepper from '@/components/steppers/RuiStepper.vue';
 import { StepperOrientation, StepperState } from '@/types/stepper';
+import preview from '~/.storybook/preview';
 
-const render: StoryFn<Props> = args => ({
-  components: { RuiStepper },
-  setup() {
-    return { args };
-  },
-  template: `<RuiStepper v-bind="args" />`,
-});
+function render(args: ComponentPropsAndSlots<typeof RuiStepper>) {
+  return {
+    components: { RuiStepper },
+    setup() {
+      return { args };
+    },
+    template: `<RuiStepper v-bind="args" />`,
+  };
+}
 
-const meta: Meta<Props> = {
+const meta = preview.meta({
   argTypes: {
     custom: { control: 'boolean', table: { category: 'State' } },
     iconTop: { control: 'boolean', table: { category: 'State' } },
@@ -31,11 +34,9 @@ const meta: Meta<Props> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Stepper',
-};
+});
 
-type Story = StoryObj<Props>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     steps: [
       {
@@ -75,9 +76,9 @@ export const Default: Story = {
       },
     ],
   },
-};
+});
 
-export const VerticalOrientation: Story = {
+export const VerticalOrientation = meta.story({
   args: {
     orientation: StepperOrientation.vertical,
     steps: [
@@ -118,9 +119,9 @@ export const VerticalOrientation: Story = {
       },
     ],
   },
-};
+});
 
-export const TitleOnly: Story = {
+export const TitleOnly = meta.story({
   args: {
     steps: [
       { state: StepperState.done, title: 'Step' },
@@ -129,9 +130,9 @@ export const TitleOnly: Story = {
       { state: StepperState.inactive, title: 'Step' },
     ],
   },
-};
+});
 
-export const Loading: Story = {
+export const Loading = meta.story({
   args: {
     steps: [
       { state: StepperState.done, title: 'Step' },
@@ -140,9 +141,9 @@ export const Loading: Story = {
       { state: StepperState.inactive, title: 'Step' },
     ],
   },
-};
+});
 
-export const TitleOnlyAndVertical: Story = {
+export const TitleOnlyAndVertical = meta.story({
   args: {
     orientation: StepperOrientation.vertical,
     steps: [
@@ -152,9 +153,9 @@ export const TitleOnlyAndVertical: Story = {
       { state: StepperState.inactive, title: 'Step' },
     ],
   },
-};
+});
 
-export const DescriptionOnly: Story = {
+export const DescriptionOnly = meta.story({
   args: {
     steps: [
       { description: 'Lorem ipsum', state: StepperState.done },
@@ -163,9 +164,9 @@ export const DescriptionOnly: Story = {
       { description: 'Lorem ipsum', state: StepperState.inactive },
     ],
   },
-};
+});
 
-export const DescriptionOnlyAndVertical: Story = {
+export const DescriptionOnlyAndVertical = meta.story({
   args: {
     orientation: StepperOrientation.vertical,
     steps: [
@@ -175,9 +176,9 @@ export const DescriptionOnlyAndVertical: Story = {
       { description: 'Lorem ipsum', state: StepperState.inactive },
     ],
   },
-};
+});
 
-export const StepOnly: Story = {
+export const StepOnly = meta.story({
   args: {
     steps: [
       { state: StepperState.done },
@@ -186,9 +187,9 @@ export const StepOnly: Story = {
       { state: StepperState.inactive },
     ],
   },
-};
+});
 
-export const StepOnlyAndVertical: Story = {
+export const StepOnlyAndVertical = meta.story({
   args: {
     orientation: StepperOrientation.vertical,
     steps: [
@@ -198,9 +199,9 @@ export const StepOnlyAndVertical: Story = {
       { state: StepperState.inactive },
     ],
   },
-};
+});
 
-export const Custom: Story = {
+export const Custom = meta.story({
   args: {
     custom: true,
     step: 1,
@@ -220,9 +221,9 @@ export const Custom: Story = {
       },
     ],
   },
-};
+});
 
-export const CustomVertical: Story = {
+export const CustomVertical = meta.story({
   args: {
     custom: true,
     orientation: StepperOrientation.vertical,
@@ -243,9 +244,9 @@ export const CustomVertical: Story = {
       },
     ],
   },
-};
+});
 
-export const CustomWithColor: Story = {
+export const CustomWithColor = meta.story({
   args: {
     custom: true,
     step: 1,
@@ -267,6 +268,6 @@ export const CustomWithColor: Story = {
     subtitleClass: 'text-rui-primary/80',
     titleClass: 'text-rui-primary',
   },
-};
+});
 
 export default meta;

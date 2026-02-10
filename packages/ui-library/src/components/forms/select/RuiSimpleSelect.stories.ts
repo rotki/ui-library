@@ -1,24 +1,32 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
-import RuiSimpleSelect, { type Props } from '@/components/forms/select/RuiSimpleSelect.vue';
+import type { ComponentPropsAndSlots, Decorator } from '@storybook/vue3-vite';
+import RuiSimpleSelect from '@/components/forms/select/RuiSimpleSelect.vue';
+import preview from '~/.storybook/preview';
 
-const render: StoryFn<Props> = args => ({
-  components: { RuiSimpleSelect },
-  setup() {
-    const modelValue = computed({
-      get() {
-        return args.modelValue;
-      },
-      set(val) {
-        args.modelValue = val;
-      },
-    });
+type SimpleSelectProps = ComponentPropsAndSlots<typeof RuiSimpleSelect>;
 
-    return { args, modelValue };
-  },
-  template: `<RuiSimpleSelect v-bind="args" v-model="modelValue" />`,
-});
+type SimpleSelectMetaArgs = Required<Pick<SimpleSelectProps, 'disabled' | 'options' | 'variant'>>;
 
-const meta: Meta<Props> = {
+function render(args: SimpleSelectProps) {
+  return {
+    components: { RuiSimpleSelect },
+    setup() {
+      const modelValue = computed({
+        get() {
+          return args.modelValue;
+        },
+        set(val) {
+          // @ts-expect-error Storybook args are mutable but Vue extracts readonly props
+          args.modelValue = val;
+        },
+      });
+
+      return { args, modelValue };
+    },
+    template: `<RuiSimpleSelect v-bind="args" v-model="modelValue" />`,
+  };
+}
+
+const meta = preview.meta<typeof RuiSimpleSelect, Decorator, SimpleSelectMetaArgs>({
   args: {
     disabled: false,
     options: [...new Array(10)].map((_, i) => `Option ${i}`),
@@ -43,36 +51,34 @@ const meta: Meta<Props> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Forms/SimpleSelect',
-};
+});
 
-type Story = StoryObj<Props>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     modelValue: 'Option 1',
   },
-};
+});
 
-export const DefaultDisabled: Story = {
+export const DefaultDisabled = meta.story({
   args: {
     disabled: true,
     modelValue: 'Option 1',
   },
-};
+});
 
-export const Outlined: Story = {
+export const Outlined = meta.story({
   args: {
     modelValue: 'Option 1',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedDisabled: Story = {
+export const OutlinedDisabled = meta.story({
   args: {
     disabled: true,
     modelValue: 'Option 1',
     variant: 'outlined',
   },
-};
+});
 
 export default meta;

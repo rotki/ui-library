@@ -1,31 +1,34 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
+import type { ComponentPropsAndSlots, Decorator } from '@storybook/vue3-vite';
 import { options, type SelectOption } from '@/__test__/options';
-import RuiAutoComplete, { type AutoCompleteModelValue, type AutoCompleteProps } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
+import RuiAutoComplete from '@/components/forms/auto-complete/RuiAutoComplete.vue';
+import preview from '~/.storybook/preview';
 
-type ComponentProps<TValue = string, TItem = SelectOption> = AutoCompleteProps<TValue, TItem> & {
-  modelValue: AutoCompleteModelValue<TValue>;
-};
+type AutoCompleteProps = ComponentPropsAndSlots<typeof RuiAutoComplete<string, SelectOption>>;
 
-const render: StoryFn<ComponentProps> = args => ({
-  components: {
-    RuiAutoComplete: RuiAutoComplete as any,
-  },
-  setup() {
-    const modelValue = computed({
-      get() {
-        return args.modelValue;
-      },
-      set(val) {
-        args.modelValue = val;
-      },
-    });
+type AutoCompleteMetaArgs = Required<Pick<AutoCompleteProps, 'clearable' | 'disabled' | 'options'>>;
 
-    return { args, modelValue };
-  },
-  template: `<RuiAutoComplete v-bind="args" v-model="modelValue" />`,
-});
+function render(args: AutoCompleteProps) {
+  return {
+    components: {
+      RuiAutoComplete: RuiAutoComplete<string, SelectOption>,
+    },
+    setup() {
+      const modelValue = computed({
+        get() {
+          return args.modelValue;
+        },
+        set(val) {
+          args.modelValue = val;
+        },
+      });
 
-const meta: Meta<ComponentProps> = {
+      return { args, modelValue };
+    },
+    template: `<RuiAutoComplete v-bind="args" v-model="modelValue" />`,
+  };
+}
+
+const meta = preview.meta<typeof RuiAutoComplete<string, SelectOption>, Decorator, AutoCompleteMetaArgs>({
   args: {
     clearable: true,
     disabled: false,
@@ -43,7 +46,7 @@ const meta: Meta<ComponentProps> = {
       options: ['default', 'outlined', 'filled'],
     },
   },
-  component: RuiAutoComplete as any,
+  component: RuiAutoComplete<string, SelectOption>,
   parameters: {
     docs: {
       controls: { exclude: ['update:model-value'] },
@@ -52,52 +55,50 @@ const meta: Meta<ComponentProps> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Forms/AutoComplete',
-};
+});
 
-type Story<TValue = string> = StoryObj<ComponentProps<TValue>>;
-
-type PrimitiveStory<TValue = string> = StoryObj<ComponentProps<TValue, string>>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
   },
-};
+});
 
-export const PrimitiveItems: PrimitiveStory = {
+// @ts-expect-error PrimitiveItems uses string[] options instead of SelectOption[]
+export const PrimitiveItems = meta.story({
   args: {
     options: options.map(item => item.label),
   },
-};
+});
 
-export const MultipleValue: PrimitiveStory<string[]> = {
+// @ts-expect-error MultipleValue uses string[] options and array modelValue
+export const MultipleValue = meta.story({
   args: {
     modelValue: [],
     options: options.map(item => item.label),
   },
-};
+});
 
-export const DefaultDisabled: Story = {
+export const DefaultDisabled = meta.story({
   args: {
     disabled: true,
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
   },
-};
+});
 
-export const Outlined: Story = {
+export const Outlined = meta.story({
   args: {
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedDisabled: Story = {
+export const OutlinedDisabled = meta.story({
   args: {
     disabled: true,
     keyAttr: 'id',
@@ -105,9 +106,9 @@ export const OutlinedDisabled: Story = {
     textAttr: 'label',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedDense: Story = {
+export const OutlinedDense = meta.story({
   args: {
     dense: false,
     disabled: true,
@@ -116,9 +117,9 @@ export const OutlinedDense: Story = {
     textAttr: 'label',
     variant: 'outlined',
   },
-};
+});
 
-export const OutlinedDisabledDense: Story = {
+export const OutlinedDisabledDense = meta.story({
   args: {
     dense: true,
     disabled: true,
@@ -127,9 +128,10 @@ export const OutlinedDisabledDense: Story = {
     textAttr: 'label',
     variant: 'outlined',
   },
-};
+});
 
-export const Chips: Story<string[]> = {
+// @ts-expect-error Chips uses string[] modelValue for multi-select
+export const Chips = meta.story({
   args: {
     chips: true,
     dense: true,
@@ -138,9 +140,9 @@ export const Chips: Story<string[]> = {
     textAttr: 'label',
     variant: 'outlined',
   },
-};
+});
 
-export const CustomValue: Story = {
+export const CustomValue = meta.story({
   args: {
     customValue: true,
     dense: false,
@@ -149,9 +151,9 @@ export const CustomValue: Story = {
     textAttr: 'label',
     variant: 'outlined',
   },
-};
+});
 
-export const Required: Story = {
+export const Required = meta.story({
   args: {
     keyAttr: 'id',
     modelValue: undefined,
@@ -159,6 +161,6 @@ export const Required: Story = {
     textAttr: 'label',
     variant: 'outlined',
   },
-};
+});
 
 export default meta;

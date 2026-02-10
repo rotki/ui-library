@@ -1,56 +1,59 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCard from '@/components/cards/RuiCard.vue';
-import RuiBottomSheet, { type BottomSheetProps } from '@/components/overlays/bottom-sheet/RuiBottomSheet.vue';
+import RuiBottomSheet from '@/components/overlays/bottom-sheet/RuiBottomSheet.vue';
+import preview from '~/.storybook/preview';
 
-const render: StoryFn<BottomSheetProps> = args => ({
-  components: { RuiBottomSheet, RuiButton, RuiCard },
-  setup() {
-    return { args };
-  },
-  template: `
-    <RuiBottomSheet
-      v-bind="args"
-      width="900px"
-    >
-      <template #activator="{ attrs }">
-        <RuiButton v-bind="attrs">
-          Click me!
-        </RuiButton>
-      </template>
-      <template #default="{ close }">
-        <RuiCard no-padding>
-          <template #header>
-            Header
-          </template>
-          <template #subheader>
-            Subheader
-          </template>
-  
-          <div class="p-4 pb-0">
-            <div class="h-[500px]">
-              Contents
-            </div>
-  
-            <div class="border-t border-default py-4">
-              <div class="flex gap-2 w-full justify-end">
-                <RuiButton
-                  variant="outlined"
-                  color="primary"
-                  @click="close()"
-                >
-                  Close
-                </RuiButton>
+function render(args: ComponentPropsAndSlots<typeof RuiBottomSheet>) {
+  return {
+    components: { RuiBottomSheet, RuiButton, RuiCard },
+    setup() {
+      return { args };
+    },
+    template: `
+      <RuiBottomSheet
+        v-bind="args"
+        width="900px"
+      >
+        <template #activator="{ attrs }">
+          <RuiButton v-bind="attrs">
+            Click me!
+          </RuiButton>
+        </template>
+        <template #default="{ close }">
+          <RuiCard no-padding>
+            <template #header>
+              Header
+            </template>
+            <template #subheader>
+              Subheader
+            </template>
+
+            <div class="p-4 pb-0">
+              <div class="h-[500px]">
+                Contents
+              </div>
+
+              <div class="border-t border-default py-4">
+                <div class="flex gap-2 w-full justify-end">
+                  <RuiButton
+                    variant="outlined"
+                    color="primary"
+                    @click="close()"
+                  >
+                    Close
+                  </RuiButton>
+                </div>
               </div>
             </div>
-          </div>
-        </RuiCard>
-      </template>
-    </RuiBottomSheet>
-  `,
-});
+          </RuiCard>
+        </template>
+      </RuiBottomSheet>
+    `,
+  };
+}
 
-const meta: Meta<BottomSheetProps> = {
+const meta = preview.meta({
   args: {
     maxWidth: '500px',
     persistent: false,
@@ -70,24 +73,22 @@ const meta: Meta<BottomSheetProps> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Overlays/BottomSheet',
-};
+});
 
-type Story = StoryObj<BottomSheetProps>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {},
-};
+});
 
-export const Persistent: Story = {
+export const Persistent = meta.story({
   args: {
     persistent: true,
   },
-};
+});
 
-export const CustomMaxWidth: Story = {
+export const CustomMaxWidth = meta.story({
   args: {
     maxWidth: '1000px',
   },
-};
+});
 
 export default meta;

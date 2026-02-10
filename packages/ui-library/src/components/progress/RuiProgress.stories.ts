@@ -1,17 +1,20 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
-import RuiProgress, { type Props } from '@/components/progress/RuiProgress.vue';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { contextColors } from '@/consts/colors';
+import preview from '~/.storybook/preview';
 
-const render: StoryFn<Props> = args => ({
-  components: { Progress: RuiProgress },
-  setup() {
-    return { args };
-  },
-  template:
-    '<div class="text-black dark:text-white"><Progress v-bind="args" /></div>',
-});
+function render(args: ComponentPropsAndSlots<typeof RuiProgress>) {
+  return {
+    components: { Progress: RuiProgress },
+    setup() {
+      return { args };
+    },
+    template:
+      '<div class="text-black dark:text-white"><Progress v-bind="args" /></div>',
+  };
+}
 
-const meta: Meta<Props> = {
+const meta = preview.meta({
   args: {
     size: 32,
     thickness: 4,
@@ -46,11 +49,9 @@ const meta: Meta<Props> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Progress',
-};
+});
 
-type Story = StoryObj<Props>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     bufferValue: 60,
     circular: false,
@@ -58,9 +59,9 @@ export const Default: Story = {
     value: 50,
     variant: 'determinate',
   },
-};
+});
 
-export const Primary: Story = {
+export const Primary = meta.story({
   args: {
     bufferValue: 60,
     circular: false,
@@ -69,76 +70,76 @@ export const Primary: Story = {
     value: 50,
     variant: 'determinate',
   },
-};
+});
 
-export const WithLabel: Story = {
+export const WithLabel = meta.story({
   args: {
     showLabel: true,
     value: 50,
   },
-};
+});
 
-export const Secondary: Story = {
+export const Secondary = meta.story({
   args: {
     color: 'secondary',
     value: 50,
   },
-};
+});
 
-export const Indeterminate: Story = {
+export const Indeterminate = meta.story({
   args: {
     value: 50,
     variant: 'indeterminate',
   },
-};
+});
 
-export const Buffer: Story = {
+export const Buffer = meta.story({
   args: {
     bufferValue: 70,
     value: 50,
     variant: 'buffer',
   },
-};
+});
 
-export const BufferWithLabel: Story = {
+export const BufferWithLabel = meta.story({
   args: {
     bufferValue: 70,
     showLabel: true,
     value: 50,
     variant: 'buffer',
   },
-};
+});
 
-export const Circular: Story = {
+export const Circular = meta.story({
   args: {
     circular: true,
     value: 50,
   },
-};
+});
 
-export const CircularPrimary: Story = {
+export const CircularPrimary = meta.story({
   args: {
     circular: true,
     color: 'primary',
     value: 50,
   },
-};
+});
 
-export const CircularIndeterminate: Story = {
+export const CircularIndeterminate = meta.story({
   args: {
     circular: true,
     value: 50,
     variant: 'indeterminate',
   },
-};
+});
 
-export const CircularWithLabel: Story = {
+export const CircularWithLabel = meta.story({
   args: {
     circular: true,
     showLabel: true,
     value: 100,
     variant: 'determinate',
   },
-};
+});
 
 export default meta;

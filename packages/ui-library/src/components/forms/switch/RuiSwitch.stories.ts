@@ -1,29 +1,31 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
-import RuiSwitch, { type Props } from '@/components/forms/switch/RuiSwitch.vue';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import RuiSwitch from '@/components/forms/switch/RuiSwitch.vue';
 import { contextColors } from '@/consts/colors';
+import preview from '~/.storybook/preview';
 
-type PropsAndLabel = Props & { label: string };
+function render(args: ComponentPropsAndSlots<typeof RuiSwitch>) {
+  return {
+    components: { RuiSwitch },
+    setup() {
+      const modelValue = computed({
+        get() {
+          return args.modelValue;
+        },
+        set(val) {
+          // @ts-expect-error Storybook args are mutable but Vue extracts readonly props
+          args.modelValue = val;
+        },
+      });
 
-const render: StoryFn<PropsAndLabel> = args => ({
-  components: { RuiSwitch },
-  setup() {
-    const modelValue = computed({
-      get() {
-        return args.modelValue;
-      },
-      set(val) {
-        args.modelValue = val;
-      },
-    });
+      return { args, modelValue };
+    },
+    template: `<RuiSwitch v-bind="args" v-model="modelValue">
+      {{ args.label }}
+    </RuiSwitch>`,
+  };
+}
 
-    return { args, modelValue };
-  },
-  template: `<RuiSwitch v-bind="args" v-model="modelValue">
-    {{ args.label }}
-  </RuiSwitch>`,
-});
-
-const meta: Meta<PropsAndLabel> = {
+const meta = preview.meta({
   args: {
     errorMessages: [],
     successMessages: [],
@@ -49,76 +51,74 @@ const meta: Meta<PropsAndLabel> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Forms/Switch',
-};
+});
 
-type Story = StoryObj<PropsAndLabel>;
-
-export const Checked: Story = {
+export const Checked = meta.story({
   args: {
     modelValue: true,
   },
-};
+});
 
-export const Small: Story = {
+export const Small = meta.story({
   args: {
     label: 'asdfa',
     size: 'sm',
   },
-};
+});
 
-export const Primary: Story = {
+export const Primary = meta.story({
   args: {
     color: 'primary',
   },
-};
+});
 
-export const WithLabel: Story = {
+export const WithLabel = meta.story({
   args: {
     label: 'With Label',
   },
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   args: {
     disabled: true,
     label: 'Disabled',
   },
-};
+});
 
-export const WithErrorMessage: Story = {
+export const WithErrorMessage = meta.story({
   args: {
     errorMessages: ['With error messages'],
     label: 'Label',
   },
-};
+});
 
-export const WithSuccessMessage: Story = {
+export const WithSuccessMessage = meta.story({
   args: {
     label: 'Label',
     successMessages: ['With success messages'],
   },
-};
+});
 
-export const WithHint: Story = {
+export const WithHint = meta.story({
   args: {
     hint: 'With hint',
     label: 'Label',
   },
-};
+});
 
-export const HideDetails: Story = {
+export const HideDetails = meta.story({
   args: {
     hideDetails: true,
     hint: 'Hint (should be invisible)',
     label: 'Label',
   },
-};
+});
 
-export const Required: Story = {
+export const Required = meta.story({
   args: {
     label: 'Required Switch',
     required: true,
   },
-};
+});
 
 export default meta;

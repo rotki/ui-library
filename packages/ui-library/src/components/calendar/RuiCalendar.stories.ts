@@ -1,27 +1,30 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import RuiCalendar from '@/components/calendar/RuiCalendar.vue';
+import preview from '~/.storybook/preview';
 
-const render: StoryFn<typeof RuiCalendar> = args => ({
-  components: { RuiCalendar },
-  name: 'RuiCalendarStory',
-  setup() {
-    const iso = computed<string>(() => {
-      if (args.modelValue) {
-        return new Date(args.modelValue).toISOString();
-      }
-      return '-';
-    });
-    return { args, iso };
-  },
-  template: `
-    <div class="flex gap-4">
-      <RuiCalendar v-model="args.modelValue" v-bind="args" />
-      <div class="text-rui-text">{{ iso }}</div>
-    </div>
-  `,
-});
+function render(args: ComponentPropsAndSlots<typeof RuiCalendar>) {
+  return {
+    components: { RuiCalendar },
+    name: 'RuiCalendarStory',
+    setup() {
+      const iso = computed<string>(() => {
+        if (args.modelValue) {
+          return new Date(args.modelValue).toISOString();
+        }
+        return '-';
+      });
+      return { args, iso };
+    },
+    template: `
+      <div class="flex gap-4">
+        <RuiCalendar v-model="args.modelValue" v-bind="args" />
+        <div class="text-rui-text">{{ iso }}</div>
+      </div>
+    `,
+  };
+}
 
-const meta: Meta<typeof RuiCalendar> = {
+const meta = preview.meta({
   argTypes: {
     'allowEmpty': { control: 'boolean' },
     'maxDate': { control: 'date' },
@@ -42,30 +45,28 @@ const meta: Meta<typeof RuiCalendar> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Calendar',
-};
+});
 
-type Story = StoryObj<typeof RuiCalendar>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {},
-};
+});
 
-export const AllowEmpty: Story = {
+export const AllowEmpty = meta.story({
   args: {
     allowEmpty: true,
   },
-};
+});
 
-export const WithMinDate: Story = {
+export const WithMinDate = meta.story({
   args: {
     minDate: new Date(2025, 1, 10),
   },
-};
+});
 
-export const WithMaxDate: Story = {
+export const WithMaxDate = meta.story({
   args: {
     maxDate: new Date(2025, 3, 1),
   },
-};
+});
 
 export default meta;

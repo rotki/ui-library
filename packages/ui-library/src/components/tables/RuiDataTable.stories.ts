@@ -1,12 +1,13 @@
 /* eslint-disable max-lines */
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
+import type { ComponentPropsAndSlots, Decorator } from '@storybook/vue3-vite';
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
 import { objectOmit } from '@vueuse/shared';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCard from '@/components/cards/RuiCard.vue';
 import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
-import RuiDataTable, { type Props as TableProps } from '@/components/tables/RuiDataTable.vue';
+import RuiDataTable from '@/components/tables/RuiDataTable.vue';
+import preview from '~/.storybook/preview';
 
 interface User {
   id: number;
@@ -17,81 +18,85 @@ interface User {
   date: string;
 }
 
-type Props = TableProps<User, 'id'>;
+type DataTableProps = ComponentPropsAndSlots<typeof RuiDataTable<User>>;
 
-const render: StoryFn<Props> = args => ({
-  components: { RuiButton, RuiCard, RuiDataTable: RuiDataTable<User>, RuiIcon, RuiTextField },
-  setup() {
-    const modelValue = computed({
-      get() {
-        return args.modelValue;
-      },
-      set(val) {
-        args.modelValue = val;
-      },
-    });
-    const pagination = computed({
-      get() {
-        return args.pagination;
-      },
-      set(val) {
-        args.pagination = val;
-      },
-    });
-    const sort = computed({
-      get() {
-        return args.sort;
-      },
-      set(val) {
-        args.sort = val;
-      },
-    });
-    const search = computed({
-      get() {
-        return args.search;
-      },
-      set(val) {
-        args.search = val;
-      },
-    });
-    const expanded = computed({
-      get() {
-        return args.expanded;
-      },
-      set(val) {
-        args.expanded = val;
-      },
-    });
-    const group = computed({
-      get() {
-        return args.group;
-      },
-      set(val) {
-        args.group = val;
-      },
-    });
-    const collapsed = computed({
-      get() {
-        return args.collapsed;
-      },
-      set(val) {
-        args.collapsed = val;
-      },
-    });
+type DataTableMetaArgs = Required<Pick<DataTableProps, 'columnAttr' | 'dense' | 'loading' | 'outlined' | 'rounded' | 'rowAttr' | 'rows' | 'striped'>>
+  & Partial<Pick<DataTableProps, 'modelValue'>>;
 
-    return {
-      args,
-      collapsed,
-      expanded,
-      group,
-      modelValue,
-      objectOmit,
-      pagination,
-      search,
-      sort,
-    };
-  },
-  template: `
+function render(args: DataTableProps) {
+  return {
+    components: { RuiButton, RuiCard, RuiDataTable: RuiDataTable<User>, RuiIcon, RuiTextField },
+    setup() {
+      const modelValue = computed({
+        get() {
+          return args.modelValue;
+        },
+        set(val) {
+          args.modelValue = val;
+        },
+      });
+      const pagination = computed({
+        get() {
+          return args.pagination;
+        },
+        set(val) {
+          args.pagination = val;
+        },
+      });
+      const sort = computed({
+        get() {
+          return args.sort;
+        },
+        set(val) {
+          args.sort = val;
+        },
+      });
+      const search = computed({
+        get() {
+          return args.search;
+        },
+        set(val) {
+          args.search = val;
+        },
+      });
+      const expanded = computed({
+        get() {
+          return args.expanded;
+        },
+        set(val) {
+          args.expanded = val;
+        },
+      });
+      const group = computed({
+        get() {
+          return args.group;
+        },
+        set(val) {
+          args.group = val;
+        },
+      });
+      const collapsed = computed({
+        get() {
+          return args.collapsed;
+        },
+        set(val) {
+          args.collapsed = val;
+        },
+      });
+
+      return {
+        args,
+        collapsed,
+        expanded,
+        group,
+        modelValue,
+        objectOmit,
+        pagination,
+        search,
+        sort,
+      };
+    },
+    template: `
     <div class="flex flex-col space-y-4">
       <div class="flex items-center space-x-4">
         <RuiTextField
@@ -153,7 +158,8 @@ const render: StoryFn<Props> = args => ({
         </template>
       </RuiDataTable>
     </div>`,
-});
+  };
+}
 
 const data: User[] = [
   {
@@ -254,7 +260,7 @@ const columns: TableColumn<User>[] = [
   },
 ];
 
-const meta: Meta<Props> = {
+const meta = preview.meta<typeof RuiDataTable<User>, Decorator, DataTableMetaArgs>({
   args: {
     columnAttr: 'label',
     dense: false,
@@ -272,7 +278,7 @@ const meta: Meta<Props> = {
       options: ['sm', 'md', 'lg'],
     },
   },
-  component: RuiDataTable as any,
+  component: RuiDataTable<User>,
   parameters: {
     docs: {
       controls: {
@@ -301,76 +307,74 @@ const meta: Meta<Props> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Tables/DataTable',
-};
+});
 
-type Story = StoryObj<Props>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     cols: columns,
     pagination: { limit: 10, page: 1, total: 50 },
     rows: data,
     sort: [{ column: 'name', direction: 'asc' }],
   },
-};
+});
 
-export const Dense: Story = {
+export const Dense = meta.story({
   args: {
     dense: true,
     rows: data,
   },
-};
+});
 
-export const Loading: Story = {
+export const Loading = meta.story({
   args: {
     cols: columns,
     loading: true,
     rows: [],
   },
-};
+});
 
-export const WithColumnDefinitions: Story = {
+export const WithColumnDefinitions = meta.story({
   args: {
     cols: columns,
     rows: data,
   },
-};
+});
 
-export const Selectable: Story = {
+export const Selectable = meta.story({
   args: {
     cols: columns,
     modelValue: [],
     rows: data,
   },
-};
+});
 
-export const SelectableAndDense: Story = {
+export const SelectableAndDense = meta.story({
   args: {
     cols: columns,
     dense: true,
     modelValue: [],
     rows: data,
   },
-};
+});
 
-export const WithPagination: Story = {
+export const WithPagination = meta.story({
   args: {
     modelValue: [],
     pagination: { limit: 10, page: 1, total: 50 },
     rows: data,
   },
-};
+});
 
-export const ColumnsWithPagination: Story = {
+export const ColumnsWithPagination = meta.story({
   args: {
     cols: columns,
     modelValue: [],
     pagination: { limit: 10, page: 1, total: 50 },
     rows: data,
   },
-};
+});
 
-export const Outlined: Story = {
+export const Outlined = meta.story({
   args: {
     cols: columns,
     modelValue: [],
@@ -378,9 +382,9 @@ export const Outlined: Story = {
     pagination: { limit: 10, page: 1, total: 50 },
     rows: data,
   },
-};
+});
 
-export const Striped: Story = {
+export const Striped = meta.story({
   args: {
     cols: columns,
     modelValue: [],
@@ -388,9 +392,9 @@ export const Striped: Story = {
     rows: data,
     striped: true,
   },
-};
+});
 
-export const SingleSort: Story = {
+export const SingleSort = meta.story({
   args: {
     cols: columns,
     modelValue: [],
@@ -398,9 +402,9 @@ export const SingleSort: Story = {
     rows: data,
     sort: { column: 'name', direction: 'asc' },
   },
-};
+});
 
-export const MultipleSort: Story = {
+export const MultipleSort = meta.story({
   args: {
     cols: columns,
     modelValue: [],
@@ -411,9 +415,9 @@ export const MultipleSort: Story = {
       { column: 'email', direction: 'asc' },
     ],
   },
-};
+});
 
-export const LoadingWithData: Story = {
+export const LoadingWithData = meta.story({
   args: {
     cols: columns,
     loading: true,
@@ -426,9 +430,9 @@ export const LoadingWithData: Story = {
       { column: 'email', direction: 'asc' },
     ],
   },
-};
+});
 
-export const LoadingWithoutData: Story = {
+export const LoadingWithoutData = meta.story({
   args: {
     cols: columns,
     loading: true,
@@ -441,9 +445,9 @@ export const LoadingWithoutData: Story = {
       { column: 'email', direction: 'asc' },
     ],
   },
-};
+});
 
-export const EmptyState: Story = {
+export const EmptyState = meta.story({
   args: {
     cols: columns,
     empty: {
@@ -459,9 +463,9 @@ export const EmptyState: Story = {
       { column: 'email', direction: 'asc' },
     ],
   },
-};
+});
 
-export const Expandable: Story = {
+export const Expandable = meta.story({
   args: {
     cols: columns,
     expanded: [],
@@ -474,9 +478,9 @@ export const Expandable: Story = {
       { column: 'email', direction: 'asc' },
     ],
   },
-};
+});
 
-export const SingleExpandable: Story = {
+export const SingleExpandable = meta.story({
   args: {
     cols: columns,
     expanded: [],
@@ -490,9 +494,9 @@ export const SingleExpandable: Story = {
       { column: 'email', direction: 'asc' },
     ],
   },
-};
+});
 
-export const StickyHeader: Story = {
+export const StickyHeader = meta.story({
   args: {
     cols: columns,
     expanded: [],
@@ -508,9 +512,9 @@ export const StickyHeader: Story = {
     stickyHeader: true,
     stickyOffset: 40,
   },
-};
+});
 
-export const Grouped: Story = {
+export const Grouped = meta.story({
   args: {
     collapsed: [],
     cols: columns,
@@ -525,6 +529,6 @@ export const Grouped: Story = {
       { column: 'email', direction: 'asc' },
     ],
   },
-};
+});
 
 export default meta;

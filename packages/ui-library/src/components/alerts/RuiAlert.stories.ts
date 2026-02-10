@@ -1,18 +1,21 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
-import RuiAlert, { type Props } from '@/components/alerts/RuiAlert.vue';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import RuiAlert from '@/components/alerts/RuiAlert.vue';
 import { contextColors } from '@/consts/colors';
 import { RuiIcons } from '@/icons';
+import preview from '~/.storybook/preview';
 
-const render: StoryFn<Props> = args => ({
-  components: { RuiAlert },
-  setup() {
-    return { args };
-  },
-  template: `
-    <RuiAlert v-bind="args" class="w-[400px]" />`,
-});
+function render(args: ComponentPropsAndSlots<typeof RuiAlert>) {
+  return {
+    components: { RuiAlert },
+    setup() {
+      return { args };
+    },
+    template: `
+      <RuiAlert v-bind="args" class="w-[400px]" />`,
+  };
+}
 
-const meta: Meta<Props> = {
+const meta = preview.meta({
   argTypes: {
     actionText: { control: 'text' },
     description: { control: 'text' },
@@ -32,74 +35,72 @@ const meta: Meta<Props> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Alert',
-};
+});
 
-type Story = StoryObj<Props>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     description: 'Description',
     title: 'Title',
   },
-};
+});
 
-export const Error: Story = {
+export const Error = meta.story({
   args: {
     description: 'Description',
     title: 'Title',
     type: 'error',
   },
-};
+});
 
-export const Warning: Story = {
+export const Warning = meta.story({
   args: {
     description: 'Description',
     title: 'Title',
     type: 'warning',
   },
-};
+});
 
-export const Info: Story = {
+export const Info = meta.story({
   args: {
     description: 'Description',
     title: 'Title',
     type: 'info',
   },
-};
+});
 
-export const Success: Story = {
+export const Success = meta.story({
   args: {
     description: 'Description',
     title: 'Title',
     type: 'success',
   },
-};
+});
 
-export const Filled: Story = {
+export const Filled = meta.story({
   args: {
     description: 'Description',
     title: 'Title',
     type: 'error',
     variant: 'filled',
   },
-};
+});
 
-export const Outlined: Story = {
+export const Outlined = meta.story({
   args: {
     description: 'Description',
     title: 'Title',
     type: 'error',
     variant: 'outlined',
   },
-};
+});
 
-export const WithActionButton: Story = {
+export const WithActionButton = meta.story({
   args: {
     actionText: 'Action',
     description: 'Description',
     title: 'Title',
     type: 'error',
   },
-};
+});
 
 export default meta;

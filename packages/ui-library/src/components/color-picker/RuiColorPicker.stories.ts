@@ -1,25 +1,29 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import RuiCard from '@/components/cards/RuiCard.vue';
-import RuiColorPicker, { type Props } from '@/components/color-picker/RuiColorPicker.vue';
+import RuiColorPicker from '@/components/color-picker/RuiColorPicker.vue';
+import preview from '~/.storybook/preview';
 
-const render: StoryFn<Props> = args => ({
-  components: { RuiCard, RuiColorPicker },
-  setup() {
-    const modelValue = computed({
-      get() {
-        return args.modelValue;
-      },
-      set(val) {
-        args.modelValue = val;
-      },
-    });
+function render(args: ComponentPropsAndSlots<typeof RuiColorPicker>) {
+  return {
+    components: { RuiCard, RuiColorPicker },
+    setup() {
+      const modelValue = computed({
+        get() {
+          return args.modelValue;
+        },
+        set(val) {
+          // @ts-expect-error Storybook args are mutable but Vue extracts readonly props
+          args.modelValue = val;
+        },
+      });
 
-    return { args, modelValue };
-  },
-  template: `<RuiCard class='!w-[300px]'><RuiColorPicker v-model="modelValue" v-bind="args" /></RuiCard>`,
-});
+      return { args, modelValue };
+    },
+    template: `<RuiCard class='!w-[300px]'><RuiColorPicker v-model="modelValue" v-bind="args" /></RuiCard>`,
+  };
+}
 
-const meta: Meta<Props> = {
+const meta = preview.meta({
   argTypes: {
     modelValue: { control: 'text' },
   },
@@ -32,18 +36,16 @@ const meta: Meta<Props> = {
   render,
   tags: ['autodocs'],
   title: 'Components/ColorPicker',
-};
+});
 
-type Story = StoryObj<Props>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {},
-};
+});
 
-export const PreDefinedValue: Story = {
+export const PreDefinedValue = meta.story({
   args: {
     modelValue: '45858a',
   },
-};
+});
 
 export default meta;

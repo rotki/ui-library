@@ -1,36 +1,37 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import RuiCard from '@/components/cards/RuiCard.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiTabItem from '@/components/tabs/tab-item/RuiTabItem.vue';
 import RuiTabItems from '@/components/tabs/tab-items/RuiTabItems.vue';
 import RuiTab from '@/components/tabs/tab/RuiTab.vue';
-import RuiTabs, { type Props as TabsProps } from '@/components/tabs/tabs/RuiTabs.vue';
+import RuiTabs from '@/components/tabs/tabs/RuiTabs.vue';
 import { contextColors } from '@/consts/colors';
+import preview from '~/.storybook/preview';
 
-type Props = TabsProps & { class?: string };
+function render(args: ComponentPropsAndSlots<typeof RuiTabs>) {
+  return {
+    components: {
+      RuiCard,
+      RuiIcon,
+      RuiTab,
+      RuiTabItem,
+      RuiTabItems: RuiTabItems<number>,
+      RuiTabs,
+    },
+    setup() {
+      const modelValue = computed({
+        get() {
+          return args.modelValue;
+        },
+        set(val) {
+          // @ts-expect-error Storybook args are mutable but Vue extracts readonly props
+          args.modelValue = val;
+        },
+      });
 
-const render: StoryFn<Props> = args => ({
-  components: {
-    RuiCard,
-    RuiIcon,
-    RuiTab,
-    RuiTabItem,
-    RuiTabItems: RuiTabItems as any,
-    RuiTabs,
-  },
-  setup() {
-    const modelValue = computed({
-      get() {
-        return args.modelValue;
-      },
-      set(val) {
-        args.modelValue = val;
-      },
-    });
-
-    return { args, modelValue };
-  },
-  template: `
+      return { args, modelValue };
+    },
+    template: `
     <div class="flex" :class="args.vertical ? 'flex-row gap-x-6' : 'flex-col'">
       <RuiTabs v-bind="args" v-model='modelValue'>
         <RuiTab>
@@ -71,9 +72,10 @@ const render: StoryFn<Props> = args => ({
       </RuiTabItems>
     </div>
   `,
-});
+  };
+}
 
-const meta: Meta<Props> = {
+const meta = preview.meta({
   argTypes: {
     align: { control: 'select', options: ['start', 'center', 'end'] },
     class: { control: 'text' },
@@ -92,65 +94,63 @@ const meta: Meta<Props> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Tabs',
-};
+});
 
-type Story = StoryObj<Props>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {},
-};
+});
 
-export const Primary: Story = {
+export const Primary = meta.story({
   args: {
     color: 'primary',
   },
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   args: {
     disabled: true,
   },
-};
+});
 
-export const Grow: Story = {
+export const Grow = meta.story({
   args: {
     grow: true,
   },
-};
+});
 
-export const Vertical: Story = {
+export const Vertical = meta.story({
   args: {
     class: 'w-[200px]',
     vertical: true,
   },
-};
+});
 
-export const DefaultWithArrow: Story = {
+export const DefaultWithArrow = meta.story({
   args: {
     class: 'w-[500px]',
   },
-};
+});
 
-export const VerticalWithArrow: Story = {
+export const VerticalWithArrow = meta.story({
   args: {
     class: 'w-[200px] h-[300px]',
     vertical: true,
   },
-};
+});
 
-export const IndicatorPositionOnTop: Story = {
+export const IndicatorPositionOnTop = meta.story({
   args: {
     class: 'w-[200px] h-[300px]',
     indicatorPosition: 'start',
   },
-};
+});
 
-export const IndicatorPositionOnLeft: Story = {
+export const IndicatorPositionOnLeft = meta.story({
   args: {
     class: 'w-[200px] h-[300px]',
     indicatorPosition: 'start',
     vertical: true,
   },
-};
+});
 
 export default meta;

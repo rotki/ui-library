@@ -1,28 +1,32 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
-import RuiRevealableTextField, { type Props } from '@/components/forms/revealable-text-field/RuiRevealableTextField.vue';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import RuiRevealableTextField from '@/components/forms/revealable-text-field/RuiRevealableTextField.vue';
 import { contextColors } from '@/consts/colors';
+import preview from '~/.storybook/preview';
 
-type RuiRevealableTextFieldProps = Props & { modelValue: string };
-const render: StoryFn<RuiRevealableTextFieldProps> = args => ({
-  components: { RuiRevealableTextField },
-  setup() {
-    const modelValue = computed({
-      get() {
-        return args.modelValue;
-      },
-      set(val) {
-        args.modelValue = val;
-      },
-    });
+function render(args: ComponentPropsAndSlots<typeof RuiRevealableTextField>) {
+  return {
+    components: { RuiRevealableTextField },
+    setup() {
+      const modelValue = computed({
+        get() {
+          return args.modelValue;
+        },
+        set(val) {
+          // @ts-expect-error Storybook args are mutable but Vue extracts readonly props
+          args.modelValue = val;
+        },
+      });
 
-    return { args, modelValue };
-  },
-  template: `<RuiRevealableTextField v-model="modelValue" v-bind="args" />`,
-});
+      return { args, modelValue };
+    },
+    template: `<RuiRevealableTextField v-model="modelValue" v-bind="args" />`,
+  };
+}
 
-const meta: Meta<RuiRevealableTextFieldProps> = {
+const meta = preview.meta({
   args: {
     errorMessages: [],
+    modelValue: undefined,
     successMessages: [],
   },
   argTypes: {
@@ -63,19 +67,17 @@ const meta: Meta<RuiRevealableTextFieldProps> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Forms/RevealableTextField',
-};
+});
 
-type Story = StoryObj<RuiRevealableTextFieldProps>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     label: 'Password',
     placeholder: 'Placeholder',
     variant: 'outlined',
   },
-};
+});
 
-export const PrimaryText: Story = {
+export const PrimaryText = meta.story({
   args: {
     appendIcon: 'lu-eye',
     label: 'Password',
@@ -83,9 +85,9 @@ export const PrimaryText: Story = {
     textColor: 'primary',
     variant: 'outlined',
   },
-};
+});
 
-export const SuccessText: Story = {
+export const SuccessText = meta.story({
   args: {
     appendIcon: 'lu-eye',
     label: 'Password',
@@ -93,42 +95,42 @@ export const SuccessText: Story = {
     textColor: 'success',
     variant: 'outlined',
   },
-};
+});
 
-export const ErrorsMessage: Story = {
+export const ErrorsMessage = meta.story({
   args: {
     errorMessages: ['Lorem ipsum dolor'],
     label: 'Password',
     placeholder: 'Placeholder',
     variant: 'outlined',
   },
-};
+});
 
-export const SuccessMessage: Story = {
+export const SuccessMessage = meta.story({
   args: {
     label: 'Password',
     placeholder: 'Placeholder',
     successMessages: ['Lorem ipsum dolor'],
     variant: 'outlined',
   },
-};
+});
 
-export const Hinted: Story = {
+export const Hinted = meta.story({
   args: {
     hint: 'Lorem ipsum dolor',
     label: 'Password',
     placeholder: 'Placeholder',
     variant: 'outlined',
   },
-};
+});
 
-export const Required: Story = {
+export const Required = meta.story({
   args: {
     label: 'Password',
     placeholder: 'Placeholder',
     required: true,
     variant: 'outlined',
   },
-};
+});
 
 export default meta;

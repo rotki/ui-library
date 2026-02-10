@@ -1,15 +1,18 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
-import RuiLogo, { type Props } from '@/components/logos/RuiLogo.vue';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import RuiLogo from '@/components/logos/RuiLogo.vue';
+import preview from '~/.storybook/preview';
 
-const render: StoryFn<Props> = args => ({
-  components: { RuiLogo },
-  setup() {
-    return { args };
-  },
-  template: `<RuiLogo v-bind="args" />`,
-});
+function render(args: ComponentPropsAndSlots<typeof RuiLogo>) {
+  return {
+    components: { RuiLogo },
+    setup() {
+      return { args };
+    },
+    template: `<RuiLogo v-bind="args" />`,
+  };
+}
 
-const meta: Meta<Props> = {
+const meta = preview.meta({
   argTypes: {
     branch: { control: 'text' },
     logo: { control: 'text' },
@@ -20,30 +23,28 @@ const meta: Meta<Props> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Logo',
-};
+});
 
-type Story = StoryObj<Props>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {},
-};
+});
 
-export const WithText: Story = {
+export const WithText = meta.story({
   args: {
     text: true,
   },
-};
+});
 
-export const WithCustomSrc: Story = {
+export const WithCustomSrc = meta.story({
   args: {
     logo: 'drawer_logo',
   },
-};
+});
 
-export const WithCustomSrcAndFallback: Story = {
+export const WithCustomSrcAndFallback = meta.story({
   args: {
     logo: 'notfoundkey',
   },
-};
+});
 
 export default meta;

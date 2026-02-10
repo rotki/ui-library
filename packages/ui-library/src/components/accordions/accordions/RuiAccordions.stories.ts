@@ -1,46 +1,50 @@
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3-vite';
+import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import RuiAccordion from '@/components/accordions/accordion/RuiAccordion.vue';
-import RuiAccordions, { type Props as AccordionsProps } from '@/components/accordions/accordions/RuiAccordions.vue';
+import RuiAccordions from '@/components/accordions/accordions/RuiAccordions.vue';
+import preview from '~/.storybook/preview';
 
-const render: StoryFn<AccordionsProps> = args => ({
-  components: { RuiAccordion, RuiAccordions },
-  setup() {
-    const modelValue = computed({
-      get() {
-        return args.modelValue;
-      },
-      set(val) {
-        args.modelValue = val;
-      },
-    });
+function render(args: ComponentPropsAndSlots<typeof RuiAccordions>) {
+  return {
+    components: { RuiAccordion, RuiAccordions },
+    setup() {
+      const modelValue = computed({
+        get() {
+          return args.modelValue;
+        },
+        set(val) {
+          // @ts-expect-error Storybook args are mutable but Vue extracts readonly props
+          args.modelValue = val;
+        },
+      });
 
-    return { args, modelValue };
-  },
-  template: `
-    <div>
-      <RuiAccordions v-bind="args" v-model='modelValue'>
-        <RuiAccordion>
-          <template #header>
-            Accordion 1 header
-          </template>
-          <template #default>
-            Accordion 1 content
-          </template>
-        </RuiAccordion>
-        <RuiAccordion eager>
-          <template #header>
-            Accordion 2 header
-          </template>
-          <template #default>
-            Accordion 2 content
-          </template>
-        </RuiAccordion>
-      </RuiAccordions>
-    </div>
-  `,
-});
+      return { args, modelValue };
+    },
+    template: `
+      <div>
+        <RuiAccordions v-bind="args" v-model='modelValue'>
+          <RuiAccordion>
+            <template #header>
+              Accordion 1 header
+            </template>
+            <template #default>
+              Accordion 1 content
+            </template>
+          </RuiAccordion>
+          <RuiAccordion eager>
+            <template #header>
+              Accordion 2 header
+            </template>
+            <template #default>
+              Accordion 2 content
+            </template>
+          </RuiAccordion>
+        </RuiAccordions>
+      </div>
+    `,
+  };
+}
 
-const meta: Meta<AccordionsProps> = {
+const meta = preview.meta({
   argTypes: {
     modelValue: { control: 'text' },
     multiple: { control: 'boolean', table: { category: 'State' } },
@@ -49,18 +53,16 @@ const meta: Meta<AccordionsProps> = {
   render,
   tags: ['autodocs'],
   title: 'Components/Accordions',
-};
+});
 
-type Story = StoryObj<AccordionsProps>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {},
-};
+});
 
-export const Multiple: Story = {
+export const Multiple = meta.story({
   args: {
     multiple: true,
   },
-};
+});
 
 export default meta;
