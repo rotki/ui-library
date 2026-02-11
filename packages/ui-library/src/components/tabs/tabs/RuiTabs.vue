@@ -12,7 +12,6 @@ export interface Props {
   vertical?: boolean;
   disabled?: boolean;
   grow?: boolean;
-  modelValue?: number | string;
   align?: 'start' | 'center' | 'end';
   indicatorPosition?: 'start' | 'end';
 }
@@ -21,21 +20,18 @@ defineOptions({
   name: 'RuiTabs',
 });
 
+const modelValue = defineModel<number | string>();
+
 const props = withDefaults(defineProps<Props>(), {
   color: undefined,
   vertical: false,
   disabled: false,
   grow: false,
-  modelValue: undefined,
   align: 'center',
   indicatorPosition: 'end',
 });
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', modelValue: number | string): void;
-}>();
-
-const { color, grow, modelValue, disabled, vertical, align, indicatorPosition } = toRefs(props);
+const { color, grow, disabled, vertical, align, indicatorPosition } = toRefs(props);
 
 const internalModelValue = ref();
 const bar = ref<HTMLDivElement>();
@@ -87,7 +83,7 @@ const children = computed(() => {
 });
 
 function updateModelValue(newModelValue: string | number) {
-  emit('update:modelValue', newModelValue);
+  set(modelValue, newModelValue);
   set(internalModelValue, newModelValue);
 }
 

@@ -13,23 +13,18 @@ export interface TablePaginationData {
 }
 
 export interface Props {
-  modelValue: TablePaginationData;
   dense?: boolean;
   disablePerPage?: boolean;
   loading?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const modelValue = defineModel<TablePaginationData>({ required: true });
+
+withDefaults(defineProps<Props>(), {
   dense: false,
   loading: false,
   disablePerPage: false,
 });
-
-const emit = defineEmits<{
-  (e: 'update:model-value', value: TablePaginationData): void;
-}>();
-
-const { modelValue } = toRefs(props);
 
 const tableDefaults = useTable();
 
@@ -38,7 +33,7 @@ const limits = computed(() => (get(modelValue).limits ?? get(tableDefaults.limit
 const currentLimit = computed({
   get: () => get(modelValue).limit,
   set: limit =>
-    emit('update:model-value', {
+    set(modelValue, {
       ...get(modelValue),
       limit: Number(limit),
       page: 1,
@@ -70,7 +65,7 @@ const indicatorText = computed(() => {
 const currentRange = computed({
   get: () => get(modelValue).page,
   set: page =>
-    emit('update:model-value', {
+    set(modelValue, {
       ...get(modelValue),
       page,
     }),
@@ -80,7 +75,7 @@ const hasPrev = computed(() => get(modelValue).page > 1);
 const hasNext = computed(() => get(pages) > get(modelValue).page);
 
 function goToPage(page: number) {
-  emit('update:model-value', {
+  set(modelValue, {
     ...get(modelValue),
     page,
   });

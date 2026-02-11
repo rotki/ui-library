@@ -1,11 +1,21 @@
 <script lang="ts" setup>
-import { type CheckboxProps, RuiCheckbox } from '@rotki/ui-library';
+import { type ContextColorsType, RuiCheckbox } from '@rotki/ui-library';
 import ComponentGroup from '@/components/ComponentGroup.vue';
 import ComponentView from '@/components/ComponentView.vue';
 
-type CheckboxData = CheckboxProps & {
+interface CheckboxData {
   value?: boolean;
-};
+  indeterminate?: boolean;
+  disabled?: boolean;
+  color?: ContextColorsType;
+  size?: 'sm' | 'lg';
+  label?: string;
+  hint?: string;
+  errorMessages?: string | string[];
+  successMessages?: string | string[];
+  hideDetails?: boolean;
+  required?: boolean;
+}
 
 const colors = ['primary', 'secondary', 'error', 'warning', 'info', 'success'] as const;
 const attributes: Partial<CheckboxData>[] = [

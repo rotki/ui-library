@@ -2,7 +2,7 @@
 import type { ContextColorsType } from '@/consts/colors';
 import { Fragment, isVNode } from 'vue';
 
-export interface Props<T = undefined> {
+export interface Props {
   vertical?: boolean;
   color?: ContextColorsType;
   activeColor?: ContextColorsType;
@@ -10,7 +10,6 @@ export interface Props<T = undefined> {
   size?: 'sm' | 'lg';
   gap?: 'sm' | 'md' | 'lg';
   required?: boolean;
-  modelValue?: T | T[];
   disabled?: boolean;
 }
 
@@ -19,7 +18,9 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<Props<T>>(), {
+const modelValue = defineModel<T | T[]>();
+
+const props = withDefaults(defineProps<Props>(), {
   vertical: false,
   color: undefined,
   activeColor: undefined,
@@ -27,16 +28,11 @@ const props = withDefaults(defineProps<Props<T>>(), {
   size: undefined,
   gap: undefined,
   required: false,
-  modelValue: undefined,
   disabled: false,
 });
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', modelValue?: T | T[]): void;
-}>();
-
 const slots = useSlots();
-const { modelValue, required, disabled, color, variant, size } = toRefs(props);
+const { required, disabled, color, variant, size } = toRefs(props);
 
 // When using dynamic content with v-for the slot content can contain fragment,
 // Go through the fragment and always return RuiButton only
@@ -98,18 +94,19 @@ function onClick(id: T) {
     const index = selected.indexOf(id);
     if (index >= 0) {
       if (!mandatory || selected.length !== 1)
-        selected.splice(index, 1);
+        set(modelValue, selected.filter((_, i) => i !== index));
+      else
+        set(modelValue, [...selected]);
     }
     else {
-      selected.push(id);
+      set(modelValue, [...selected, id]);
     }
-    emit('update:modelValue', selected);
   }
   else if (mandatory) {
-    emit('update:modelValue', id);
+    set(modelValue, id);
   }
   else {
-    emit('update:modelValue', activeItem(id, selected) ? undefined : id);
+    set(modelValue, activeItem(id, selected) ? undefined : id);
   }
 }
 

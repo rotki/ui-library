@@ -56,10 +56,10 @@ const props = withDefaults(defineProps<TextFieldProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'focus-input', event: Event): void;
-  (e: 'blur', event: Event): void;
-  (e: 'remove', value: unknown): void;
-  (e: 'clear'): void;
+  'focus-input': [event: Event];
+  'blur': [event: Event];
+  'remove': [value: unknown];
+  'clear': [];
 }>();
 
 const {

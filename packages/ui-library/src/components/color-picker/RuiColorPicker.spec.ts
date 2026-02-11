@@ -110,7 +110,7 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
     expect(wrapper.find('.rui-color-board div[class*=_cursor_]').attributes('style')).toBe('top: 0%; left: 100%;');
     expect(wrapper.find('[data-cy="color-display"]').attributes('style')).toBe('background: rgb(255, 0, 0);');
     expect(wrapper.find('.rui-color-hue div[class*=_cursor_]').attributes('style')).toBe('left: calc(0% + 8px);');
-    expect(wrapper.emitted('update:model-value')!.at(-1)![0]).toBe('ff0000');
+    expect(wrapper.emitted('update:modelValue')!.at(-1)![0]).toBe('ff0000');
 
     // Change input type to RGB
     await wrapper.find('button').trigger('click');
@@ -149,7 +149,7 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
     await wrapper.find('button').trigger('click');
     expect(wrapper.find<HTMLInputElement>('input').element.value).toBe('80ffff');
 
-    expect(wrapper.emitted('update:model-value')!.at(-1)![0]).toBe('80ffff');
+    expect(wrapper.emitted('update:modelValue')!.at(-1)![0]).toBe('80ffff');
   });
 
   it('should have role="application" and aria-label on root', () => {
@@ -197,7 +197,7 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
       `left: calc(${percentagePosition}% + 8px);`,
     );
 
-    expect(wrapper.emitted('update:model-value')!.at(-1)![0]).toBe('ff0000');
+    expect(wrapper.emitted('update:modelValue')!.at(-1)![0]).toBe('ff0000');
 
     // Drag board to the middle
     await wrapper.find('.rui-color-board').trigger('click', { clientX: 150, clientY: 100 });
@@ -208,6 +208,6 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
     expect(wrapper.find<HTMLInputElement>('input').element.value).toBe('804040');
     expect(wrapper.find('.rui-color-board div[class*=_cursor_]').attributes('style')).toBe('top: 50%; left: 50%;');
 
-    expect(wrapper.emitted('update:model-value')!.at(-1)![0]).toBe('804040');
+    expect(wrapper.emitted('update:modelValue')!.at(-1)![0]).toBe('804040');
   });
 });

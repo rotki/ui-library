@@ -2,7 +2,6 @@
 import { transformPropsUnit } from '@/utils/helpers';
 
 export interface NotificationProps {
-  modelValue: boolean;
   timeout: number;
   width?: number | string;
   theme?: 'light' | 'dark';
@@ -13,6 +12,8 @@ defineOptions({
   inheritAttrs: false,
 });
 
+const modelValue = defineModel<boolean>({ required: true });
+
 const props = withDefaults(
   defineProps<NotificationProps>(),
   {
@@ -21,11 +22,7 @@ const props = withDefaults(
   },
 );
 
-const emit = defineEmits<{
-  (e: 'update:model-value', value: boolean): void;
-}>();
-
-const { timeout, modelValue, width } = toRefs(props);
+const { timeout, width } = toRefs(props);
 
 const style = computed(() => ({
   width: transformPropsUnit(get(width)),
@@ -35,7 +32,7 @@ function dismiss() {
   if (get(timeout) < 0)
     return;
 
-  emit('update:model-value', false);
+  set(modelValue, false);
 }
 
 watchImmediate(modelValue, (display) => {
@@ -45,7 +42,7 @@ watchImmediate(modelValue, (display) => {
   const duration = get(timeout);
   if (duration > 0) {
     setTimeout(() => {
-      emit('update:model-value', false);
+      set(modelValue, false);
     }, duration);
   }
 });

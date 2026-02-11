@@ -65,7 +65,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'click:clear'): void;
+  'click:clear': [];
 }>();
 
 const {

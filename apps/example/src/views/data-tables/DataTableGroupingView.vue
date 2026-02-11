@@ -2,27 +2,24 @@
 import type { ExtendedUser } from '@/data/tables';
 import {
   type DataTableColumn,
-  type DataTableProps,
   type GroupData,
   RuiButton,
   RuiDataTable,
   RuiIcon,
+  type TablePaginationData,
 } from '@rotki/ui-library/components';
-import { ref } from 'vue';
 import { fixedColumns as baseColumns, fixedRows } from '@/data/table-configs';
 
 // Cast columns to ExtendedUser type for proper typing
 const fixedColumns = baseColumns as DataTableColumn<ExtendedUser>[];
 
-type TableProps = DataTableProps<ExtendedUser, 'id'>;
-
-const group = ref<TableProps['group']>(['username']);
-const collapsed = ref<TableProps['collapsed']>([]);
+const group = ref<keyof ExtendedUser | (keyof ExtendedUser)[]>(['username']);
+const collapsed = ref<ExtendedUser[]>([]);
 const lastCopiedGroup = ref<string>('');
 
-const groupEnd = ref<TableProps['group']>(['username']);
-const collapsedEnd = ref<TableProps['collapsed']>([]);
-const pagination = ref<TableProps['pagination']>({
+const groupEnd = ref<keyof ExtendedUser | (keyof ExtendedUser)[]>(['username']);
+const collapsedEnd = ref<ExtendedUser[]>([]);
+const pagination = ref<TablePaginationData>({
   limit: 10,
   page: 1,
   total: fixedRows.length,

@@ -1,9 +1,12 @@
 <script setup lang='ts'>
-import { type ColorPickerProps, RuiCard, RuiColorPicker } from '@rotki/ui-library';
-import { ref } from 'vue';
+import { RuiCard, RuiColorPicker } from '@rotki/ui-library';
 import ComponentView from '@/components/ComponentView.vue';
 
-const colorPickers = ref<ColorPickerProps[]>([
+interface ColorPickerItem {
+  modelValue: string;
+}
+
+const colorPickers = ref<ColorPickerItem[]>([
   { modelValue: '' },
   { modelValue: '45858a' },
 ]);
@@ -23,7 +26,6 @@ const colorPickers = ref<ColorPickerProps[]>([
         <RuiCard class="mb-2">
           <RuiColorPicker
             v-model="item.modelValue"
-            v-bind="item"
             :data-cy="`color-picker-${i}`"
           />
         </RuiCard>

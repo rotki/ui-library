@@ -5,7 +5,6 @@ import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
 export interface Props {
-  modelValue?: boolean;
   disabled?: boolean;
   color?: ContextColorsType;
   size?: 'sm';
@@ -22,8 +21,9 @@ defineOptions({
   inheritAttrs: false,
 });
 
+const modelValue = defineModel<boolean>({ default: false });
+
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: false,
   disabled: false,
   color: undefined,
   size: undefined,
@@ -35,15 +35,11 @@ const props = withDefaults(defineProps<Props>(), {
   required: false,
 });
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', modelValue: boolean): void;
-}>();
-
-const { size, modelValue, errorMessages, successMessages } = toRefs(props);
+const { size, errorMessages, successMessages } = toRefs(props);
 
 function input(event: Event) {
   const checked = (event.target as HTMLInputElement).checked;
-  emit('update:modelValue', checked);
+  set(modelValue, checked);
 }
 
 const { hasError, hasSuccess } = useFormTextDetail(

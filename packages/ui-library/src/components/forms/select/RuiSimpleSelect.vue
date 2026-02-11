@@ -2,7 +2,6 @@
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 
 export interface Props {
-  modelValue: string | number;
   options: string[] | number[];
   disabled?: boolean;
   label?: string;
@@ -15,22 +14,13 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<Props>(), {
+const modelValue = defineModel<string | number>({ required: true });
+
+withDefaults(defineProps<Props>(), {
   disabled: false,
   label: undefined,
   name: '',
   variant: 'default',
-});
-
-const emit = defineEmits<{
-  (e: 'update:model-value', value?: string | number): void;
-}>();
-
-const { modelValue } = toRefs(props);
-
-const value = computed({
-  get: () => get(modelValue),
-  set: value => emit('update:model-value', value),
 });
 </script>
 
@@ -40,7 +30,7 @@ const value = computed({
     v-bind="$attrs"
   >
     <select
-      v-model="value"
+      v-model="modelValue"
       :class="[
         $style.select,
         $style[variant ?? 'default'],

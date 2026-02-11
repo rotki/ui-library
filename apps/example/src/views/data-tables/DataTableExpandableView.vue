@@ -7,7 +7,6 @@ import {
   RuiIcon,
   RuiTableRowExpander,
 } from '@rotki/ui-library/components';
-import { ref } from 'vue';
 import { fixedColumns, fixedRows } from '@/data/table-configs';
 
 const expandedMultiple = ref<ExtendedUser[]>([]);

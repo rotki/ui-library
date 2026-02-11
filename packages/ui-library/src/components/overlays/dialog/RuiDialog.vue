@@ -2,7 +2,6 @@
 import { getNonRootAttrs, getRootAttrs, transformPropsUnit } from '@/utils/helpers';
 
 export interface DialogProps {
-  modelValue?: boolean;
   persistent?: boolean;
   width?: string | number;
   maxWidth?: string | number;
@@ -17,8 +16,9 @@ defineOptions({
   inheritAttrs: false,
 });
 
+const modelValue = defineModel<boolean>({ default: false });
+
 const props = withDefaults(defineProps<DialogProps>(), {
-  modelValue: false,
   persistent: false,
   width: '98%',
   bottomSheet: false,
@@ -27,14 +27,12 @@ const props = withDefaults(defineProps<DialogProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'update:model-value', value: boolean): void;
-  (e: 'closed'): void;
-  (e: 'click:outside'): void;
-  (e: 'click:esc'): void;
+  'closed': [];
+  'click:outside': [];
+  'click:esc': [];
 }>();
 
 const {
-  modelValue,
   width,
   maxWidth,
   bottomSheet,
@@ -43,11 +41,11 @@ const {
 const internalValue = ref<boolean>(false);
 const isOpen = ref<boolean>(false);
 
-watchImmediate(modelValue, (value) => {
+watch(modelValue, (value) => {
   nextTick(() => {
     set(internalValue, value);
   });
-});
+}, { immediate: true });
 
 watch(internalValue, (value) => {
   if (value) {
@@ -63,7 +61,7 @@ watch(internalValue, (value) => {
 });
 
 function onUpdateModelValue(value: boolean) {
-  emit('update:model-value', value);
+  set(modelValue, value);
 
   if (!value)
     emit('closed');

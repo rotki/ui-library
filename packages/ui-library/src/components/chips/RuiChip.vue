@@ -40,8 +40,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (event: 'click:close'): void;
-  (event: 'click', e: any): void;
+  'click:close': [];
+  'click': [e: any];
 }>();
 
 const { clickable, disabled, bgColor, textColor } = toRefs(props);

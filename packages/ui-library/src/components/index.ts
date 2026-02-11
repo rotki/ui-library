@@ -15,7 +15,7 @@ import RuiCalendar, { type CalendarProps } from '@/components/calendar/RuiCalend
 import RuiCard, { type Props as CardProps } from '@/components/cards/RuiCard.vue';
 import RuiCardHeader, { type Props as CardHeaderProps } from '@/components/cards/RuiCardHeader.vue';
 import RuiChip, { type Props as ChipProps } from '@/components/chips/RuiChip.vue';
-import RuiColorPicker, { type Props as ColorPickerProps } from '@/components/color-picker/RuiColorPicker.vue';
+import RuiColorPicker from '@/components/color-picker/RuiColorPicker.vue';
 import RuiDateTimePicker, { type RuiDateTimePickerProps } from '@/components/date-time-picker/RuiDateTimePicker.vue';
 import RuiDivider, { type Props as DividerProps } from '@/components/divider/RuiDivider.vue';
 import RuiAutoComplete, { type AutoCompleteProps } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
@@ -46,7 +46,7 @@ import RuiDataTable, { type TableOptions as DataTableOptions, type Props as Data
 import RuiTableRowExpander, { type Props as ExpandButtonProps } from '@/components/tables/RuiExpandButton.vue';
 import RuiTablePagination, { type TablePaginationData, type Props as TablePaginationProps } from '@/components/tables/RuiTablePagination.vue';
 import RuiTabItem, { type Props as TabItemProps } from '@/components/tabs/tab-item/RuiTabItem.vue';
-import RuiTabItems, { type Props as TabItemsProps } from '@/components/tabs/tab-items/RuiTabItems.vue';
+import RuiTabItems from '@/components/tabs/tab-items/RuiTabItems.vue';
 import RuiTab, { type Props as TabProps } from '@/components/tabs/tab/RuiTab.vue';
 import RuiTabs, { type Props as TabsProps } from '@/components/tabs/tabs/RuiTabs.vue';
 import RuiTimePicker, { type RuiTimePickerProps } from '@/components/time-picker/RuiTimePicker.vue';
@@ -65,7 +65,6 @@ export type {
   CardProps,
   CheckboxProps,
   ChipProps,
-  ColorPickerProps,
   DataTableColumn,
   DataTableGroupKeys,
   DataTableOptions,
@@ -95,7 +94,6 @@ export type {
   StepperProps,
   SwitchProps,
   TabItemProps,
-  TabItemsProps,
   TablePaginationData,
   TablePaginationProps,
   TabProps,

@@ -74,13 +74,13 @@ describe('components/steppers/RuiFooterStepper.vue', () => {
 
     const buttons = wrapper.findAll('button');
 
-    // Click Next
+    // Click Next (2 → 3)
     await buttons[1]!.trigger('click');
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([3]);
 
-    // Click Back
+    // Click Back (3 → 2, since defineModel updates internal state)
     await buttons[0]!.trigger('click');
-    expect(wrapper.emitted('update:modelValue')?.[1]).toEqual([1]);
+    expect(wrapper.emitted('update:modelValue')?.[1]).toEqual([2]);
   });
 
   it('should disable Back button on first page and Next on last page', async () => {

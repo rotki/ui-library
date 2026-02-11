@@ -40,7 +40,7 @@ const props = withDefaults(defineProps<Props<T>>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'update:model-value', value?: T): void;
+  'update:modelValue': [value?: T];
 }>();
 
 const btnValue = computed<T | undefined>(() => props.modelValue);
@@ -91,7 +91,7 @@ const spinnerSize = computed<number>(() => {
     :disabled="disabled || loading"
     :type="tag === 'button' ? type : undefined"
     v-bind="$attrs"
-    @click="emit('update:model-value', btnValue)"
+    @click="emit('update:modelValue', btnValue)"
   >
     <slot
       v-if="$slots.prepend"

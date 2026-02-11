@@ -12,7 +12,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: 'update:board', event: { saturation: number; brightness: number }): void;
+  'update:board': [event: { saturation: number; brightness: number }];
 }>();
 
 function hueToHex(hue: number) {

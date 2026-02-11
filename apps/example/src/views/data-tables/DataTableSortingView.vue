@@ -7,7 +7,6 @@ import {
   RuiDataTable,
   RuiIcon,
 } from '@rotki/ui-library/components';
-import { ref } from 'vue';
 import { columns as baseColumns, fixedRows } from '@/data/table-configs';
 
 // Cast columns to ExtendedUser type for proper typing

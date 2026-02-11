@@ -25,7 +25,7 @@ const {
   is2xlAndDown,
 } = useBreakpoint();
 
-const groups = computed(() => [
+const groups = computed<{ name: string; value: string | number | boolean }[][]>(() => [
   [
     { name: 'Name', value: get(name) },
     { name: 'Width', value: get(width) },

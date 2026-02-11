@@ -11,25 +11,25 @@ const props = defineProps<{
 const route = useRoute();
 
 const { navigation } = toRefs(props);
-const links = computed(() =>
+const links = computed<SideNavLink[]>(() =>
   get(navigation).flatMap(section => section.links),
 );
-const currentPage = computed(() =>
+const currentPage = computed<SideNavLink | undefined>(() =>
   get(links).find(link => link.to === route.path),
 );
-const currentPageIndex = computed(() => {
+const currentPageIndex = computed<number>(() => {
   const current = get(currentPage);
   return current ? get(links).indexOf(current) : -1;
 });
 
-const hasPrev = computed(() => get(currentPageIndex) > 0);
-const hasNext = computed(() => get(currentPageIndex) < get(links).length);
+const hasPrev = computed<boolean>(() => get(currentPageIndex) > 0);
+const hasNext = computed<boolean>(() => get(currentPageIndex) < get(links).length);
 
-const previousPage = computed(
+const previousPage = computed<SideNavLink | false | undefined>(
   () => get(hasPrev) && get(links)[get(currentPageIndex) - 1],
 );
 
-const nextPage = computed(
+const nextPage = computed<SideNavLink | false | undefined>(
   () => get(hasNext) && get(links)[get(currentPageIndex) + 1],
 );
 </script>

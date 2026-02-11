@@ -1,19 +1,19 @@
 <script lang="ts" setup>
-import {
-  type AccordionsProps,
-  RuiAccordion,
-  RuiAccordions,
-} from '@rotki/ui-library';
+import { RuiAccordion, RuiAccordions } from '@rotki/ui-library';
 import ComponentView from '@/components/ComponentView.vue';
 
-const accordions = ref<(AccordionsProps & { label: string })[]>([
+interface AccordionItem {
+  label: string;
+  multiple?: boolean;
+  modelValue?: number | number[];
+}
+
+const accordions = ref<AccordionItem[]>([
   {
-    modelValue: undefined,
     label: 'Single',
     multiple: false,
   },
   {
-    modelValue: undefined,
     label: 'Multiple',
     multiple: true,
   },

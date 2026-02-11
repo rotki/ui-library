@@ -4,7 +4,6 @@ import { type Ref, ref } from 'vue';
 import { getRootAttrs, transformPropsUnit } from '@/utils/helpers';
 
 export interface NavigationDrawerProps {
-  modelValue?: boolean;
   temporary?: boolean;
   stateless?: boolean;
   width?: string | number;
@@ -20,8 +19,9 @@ defineOptions({
   inheritAttrs: false,
 });
 
+const modelValue = defineModel<boolean>({ default: false });
+
 const props = withDefaults(defineProps<NavigationDrawerProps>(), {
-  modelValue: false,
   temporary: false,
   stateless: false,
   width: 360,
@@ -32,19 +32,17 @@ const props = withDefaults(defineProps<NavigationDrawerProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'update:model-value', value: boolean): void;
-  (e: 'closed'): void;
+  closed: [];
 }>();
 
 const {
-  modelValue,
   position,
   miniVariant,
   width,
 } = toRefs(props);
 
 function onUpdateModelValue(value: boolean): void {
-  emit('update:model-value', value);
+  set(modelValue, value);
 
   if (!value)
     emit('closed');
@@ -53,11 +51,11 @@ function onUpdateModelValue(value: boolean): void {
 const internalValue = ref<boolean>(false);
 const isOpen = ref<boolean>(false);
 
-watchImmediate(modelValue, (value) => {
+watch(modelValue, (value) => {
   nextTick(() => {
     set(internalValue, value);
   });
-});
+}, { immediate: true });
 
 watch(internalValue, (value) => {
   if (value) {

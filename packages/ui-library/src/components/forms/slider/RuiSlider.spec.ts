@@ -198,7 +198,7 @@ describe('components/forms/slider/RuiSlider.vue', () => {
     expect(wrapper.find('input').attributes('aria-valuetext')).toBe('75');
   });
 
-  it('should emit update:model-value when input value changes', async () => {
+  it('should emit update:modelValue when input value changes', async () => {
     wrapper = createWrapper({
       props: {
         modelValue: 50,
@@ -206,8 +206,8 @@ describe('components/forms/slider/RuiSlider.vue', () => {
     });
 
     await wrapper.find('input').setValue(75);
-    expect(wrapper.emitted('update:model-value')).toBeTruthy();
-    expect(wrapper.emitted('update:model-value')![0]).toEqual(['75']);
+    expect(wrapper.emitted('update:modelValue')).toBeTruthy();
+    expect(wrapper.emitted('update:modelValue')![0]).toEqual(['75']);
   });
 
   it('should have aria-invalid when errorMessages are provided', async () => {

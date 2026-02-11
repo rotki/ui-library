@@ -1,31 +1,36 @@
 <script setup lang="ts">
 import {
+  type ContextColorsType,
   RuiCard,
   RuiIcon,
   RuiTab,
   RuiTabItem,
   RuiTabItems,
   RuiTabs,
-  type TabsProps,
 } from '@rotki/ui-library';
 import ComponentGroup from '@/components/ComponentGroup.vue';
 import ComponentView from '@/components/ComponentView.vue';
 
+interface TabItem {
+  color?: ContextColorsType;
+  vertical?: boolean;
+  modelValue?: number | string;
+}
+
 const colors = ['primary', 'secondary', 'error', 'warning', 'info', 'success'] as const;
 const verticalAttributes = [false, true] as const;
 
-const tabs = ref<TabsProps[]>([]);
+const tabs = ref<TabItem[]>([]);
 
-function createTab(color: typeof colors[number], vertical: boolean = false): TabsProps {
+function createTab(color: ContextColorsType, vertical: boolean = false): TabItem {
   return {
     color,
     vertical,
-    modelValue: undefined,
   };
 }
 
-function generateTabs(): TabsProps[] {
-  const tabs: TabsProps[] = [];
+function generateTabs(): TabItem[] {
+  const tabs: TabItem[] = [];
   for (const color of colors) {
     for (const vertical of verticalAttributes) {
       tabs.push(createTab(color, vertical));

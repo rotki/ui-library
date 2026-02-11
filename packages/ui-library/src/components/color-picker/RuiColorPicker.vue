@@ -6,22 +6,12 @@ import RuiColorHue from '@/components/color-picker/RuiColorHue.vue';
 import RuiColorInput from '@/components/color-picker/RuiColorInput.vue';
 import { Color } from './utils';
 
-export interface Props {
-  modelValue?: string;
-}
-
 defineOptions({
   name: 'RuiColorPicker',
   inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<Props>(), { modelValue: '' });
-
-const emit = defineEmits<{
-  (e: 'update:model-value', value: string): void;
-}>();
-
-const { modelValue } = toRefs(props);
+const modelValue = defineModel<string>({ default: '' });
 
 const state = reactive({
   color: new Color(get(modelValue)),
@@ -42,7 +32,7 @@ whenever(
 );
 
 watch(state, (state) => {
-  emit('update:model-value', state.color.hex);
+  set(modelValue, state.color.hex);
 }, { immediate: true, deep: true });
 </script>
 

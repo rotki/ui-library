@@ -5,7 +5,6 @@ import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
 export interface Props {
-  modelValue?: number;
   min?: number;
   max?: number;
   step?: number;
@@ -31,8 +30,9 @@ defineOptions({
   inheritAttrs: false,
 });
 
+const modelValue = defineModel<number>({ default: 0 });
+
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: 0,
   min: 0,
   max: 100,
   step: 1,
@@ -53,20 +53,7 @@ const props = withDefaults(defineProps<Props>(), {
   required: false,
 });
 
-const emit = defineEmits<{
-  (e: 'update:model-value', value: number): void;
-}>();
-
-const { modelValue, max, min, step, errorMessages, successMessages, vertical, tickSize } = toRefs(props);
-
-const vModel = computed({
-  get() {
-    return get(modelValue);
-  },
-  set(value: number) {
-    emit('update:model-value', value);
-  },
-});
+const { max, min, step, errorMessages, successMessages, vertical, tickSize } = toRefs(props);
 
 const ticksData = computed<[number, number]>(() => {
   const minVal = get(min);
@@ -133,7 +120,7 @@ const tickSizeInPx = computed(() => `${get(tickSize)}px`);
       >
         <div :class="$style.inner">
           <input
-            v-model="vModel"
+            v-model="modelValue"
             :class="$style.input"
             type="range"
             :max="max"
@@ -142,7 +129,7 @@ const tickSizeInPx = computed(() => `${get(tickSize)}px`);
             :disabled="disabled"
             :aria-invalid="hasError"
             :aria-label="label || undefined"
-            :aria-valuetext="String(vModel)"
+            :aria-valuetext="String(modelValue)"
             v-bind="getNonRootAttrs($attrs)"
           />
           <div :class="$style.slider">

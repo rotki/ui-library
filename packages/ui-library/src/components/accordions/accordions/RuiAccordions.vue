@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 export interface Props {
-  modelValue?: number[] | number;
   multiple?: boolean;
 }
 
@@ -9,16 +8,13 @@ defineOptions({
   inheritAttrs: false,
 });
 
+const modelValue = defineModel<number[] | number>({ default: -1 });
+
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: -1,
   multiple: false,
 });
 
-const emit = defineEmits<{
-  (e: 'update:model-value', modelValue: number | number[]): void;
-}>();
-
-const { modelValue, multiple } = toRefs(props);
+const { multiple } = toRefs(props);
 
 const internalValue = ref();
 
@@ -59,7 +55,7 @@ function updateValue(newModelValue: number) {
     else
       newValue = newModelValue;
   }
-  emit('update:model-value', newValue);
+  set(modelValue, newValue);
   set(internalValue, newValue);
 }
 

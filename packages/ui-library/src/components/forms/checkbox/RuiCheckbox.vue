@@ -7,8 +7,6 @@ import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
 export interface Props {
-  modelValue?: boolean;
-  indeterminate?: boolean;
   disabled?: boolean;
   color?: ContextColorsType;
   size?: 'sm' | 'lg';
@@ -25,9 +23,11 @@ defineOptions({
   inheritAttrs: false,
 });
 
+const modelValue = defineModel<boolean>({ default: false });
+
+const indeterminate = defineModel<boolean>('indeterminate', { default: false });
+
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: false,
-  indeterminate: false,
   disabled: false,
   color: undefined,
   size: undefined,
@@ -39,12 +39,7 @@ const props = withDefaults(defineProps<Props>(), {
   required: false,
 });
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', modelValue: boolean): void;
-  (e: 'update:indeterminate', indeterminate: boolean): void;
-}>();
-
-const { size, modelValue, indeterminate, errorMessages, successMessages } = toRefs(props);
+const { size, errorMessages, successMessages } = toRefs(props);
 
 const el = ref<HTMLInputElement | null>(null);
 
@@ -52,8 +47,8 @@ const internalModelValue = computed<boolean>({
   get: () => get(modelValue),
   set: (checked: boolean) => {
     if (checked)
-      emit('update:indeterminate', false);
-    emit('update:modelValue', checked);
+      set(indeterminate, false);
+    set(modelValue, checked);
   },
 });
 

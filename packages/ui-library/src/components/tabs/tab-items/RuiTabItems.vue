@@ -1,16 +1,12 @@
 <script lang="ts" setup generic='T extends string | number'>
 import { Fragment, isVNode } from 'vue';
 
-export interface Props<T> {
-  modelValue?: T;
-}
-
 defineOptions({
   name: 'RuiTabItems',
   inheritAttrs: false,
 });
 
-const modelValue = defineModel<Props<T>['modelValue']>();
+const modelValue = defineModel<T>();
 
 const slots = useSlots();
 const reverse = ref<boolean>(false);

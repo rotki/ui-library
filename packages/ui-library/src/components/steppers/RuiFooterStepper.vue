@@ -5,7 +5,6 @@ import RuiProgress from '@/components/progress/RuiProgress.vue';
 
 export interface Props {
   pages: number;
-  modelValue?: number;
   variant?: 'numeric' | 'bullet' | 'progress' | 'pill';
   arrowButtons?: boolean;
   hideButtons?: boolean;
@@ -15,21 +14,18 @@ defineOptions({
   name: 'RuiFooterStepper',
 });
 
+const modelValue = defineModel<number>({ default: 1 });
+
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: 1,
   variant: 'numeric',
   arrowButtons: false,
   hideButtons: false,
 });
 
-const emit = defineEmits<{
-  (event: 'update:modelValue', modelValue: number): void;
-}>();
-
-const { modelValue, pages } = toRefs(props);
+const { pages } = toRefs(props);
 
 function onChange(delta: number) {
-  emit('update:modelValue', get(modelValue) + delta);
+  set(modelValue, get(modelValue) + delta);
 }
 
 function onPrev() {

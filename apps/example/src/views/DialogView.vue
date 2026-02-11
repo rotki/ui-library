@@ -5,7 +5,6 @@ import {
   RuiCard,
   RuiDialog,
 } from '@rotki/ui-library';
-import { ref } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 interface ExtraProperties {

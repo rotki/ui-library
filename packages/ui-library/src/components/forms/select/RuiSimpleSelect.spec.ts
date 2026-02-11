@@ -110,7 +110,7 @@ describe('components/forms/select/RuiSimpleSelect.vue', () => {
     ).toBe('Option 2');
   });
 
-  it('should emit update:model-value on change', async () => {
+  it('should emit update:modelValue on change', async () => {
     wrapper = createWrapper({
       props: {
         modelValue: 'Option 0',
@@ -119,8 +119,8 @@ describe('components/forms/select/RuiSimpleSelect.vue', () => {
     });
 
     await wrapper.find('select').setValue('Option 3');
-    expect(wrapper.emitted('update:model-value')).toBeTruthy();
-    expect(wrapper.emitted('update:model-value')?.[0]).toEqual(['Option 3']);
+    expect(wrapper.emitted('update:modelValue')).toBeTruthy();
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['Option 3']);
   });
 
   it('should work with number options', () => {

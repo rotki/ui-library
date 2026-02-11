@@ -4,7 +4,6 @@ import { type PopperOptions, usePopper } from '@/composables/popper';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 
 export interface MenuProps {
-  modelValue?: boolean;
   openOnHover?: boolean;
   fullWidth?: boolean;
   disabled?: boolean;
@@ -28,8 +27,9 @@ defineOptions({
   name: 'RuiMenu',
 });
 
+const modelValue = defineModel<boolean>({ default: false });
+
 const props = withDefaults(defineProps<MenuProps>(), {
-  modelValue: false,
   openOnHover: false,
   disabled: false,
   fullWidth: false,
@@ -47,12 +47,7 @@ const props = withDefaults(defineProps<MenuProps>(), {
   disableAutoFocus: false,
 });
 
-const emit = defineEmits<{
-  (e: 'update:model-value', value: boolean): void;
-}>();
-
 const {
-  modelValue,
   closeDelay,
   openDelay,
   popper,
@@ -135,6 +130,9 @@ function checkClick() {
 }
 
 watch(modelValue, (value) => {
+  if (get(open) === value)
+    return;
+
   if (value) {
     onOpen();
     set(click, true);
@@ -145,7 +143,7 @@ watch(modelValue, (value) => {
 });
 
 watch(open, (open) => {
-  emit('update:model-value', open);
+  set(modelValue, open);
   if (open) {
     focusMenu();
   }

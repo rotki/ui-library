@@ -1,14 +1,20 @@
 <script lang="ts" setup>
-import { type NavigationDrawerProps, RuiButton, RuiNavigationDrawer } from '@rotki/ui-library';
-import { ref } from 'vue';
+import { RuiButton, RuiNavigationDrawer } from '@rotki/ui-library';
 import ComponentView from '@/components/ComponentView.vue';
 
-interface ExtraProperties {
+interface NavigationDrawerItem {
   label: string;
+  modelValue: boolean;
+  temporary?: boolean;
+  stateless?: boolean;
+  width?: string | number;
+  miniVariant?: boolean;
+  overlay?: boolean;
+  position?: 'left' | 'right';
+  ariaLabel?: string;
 }
 
-type NavigationDrawerData = NavigationDrawerProps & ExtraProperties;
-const navigationDrawers = ref<NavigationDrawerData[]>([
+const navigationDrawers = ref<NavigationDrawerItem[]>([
   { modelValue: false, label: 'Left', temporary: true, ariaLabel: 'Left navigation' },
   { modelValue: false, label: 'Right', position: 'right', temporary: true, ariaLabel: 'Right navigation' },
   { modelValue: false, label: 'Persistent', temporary: false, ariaLabel: 'Persistent navigation' },

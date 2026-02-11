@@ -9,7 +9,7 @@ import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import RuiExpandButton from '@/components/tables/RuiExpandButton.vue';
-import RuiTableHead, { type GroupData, type GroupKeys, type NoneSortableTableColumn, type SortColumn, type TableColumn, type TableRowKey, type TableRowKeyData, type TableSortData } from '@/components/tables/RuiTableHead.vue';
+import RuiTableHead, { type GroupData, type NoneSortableTableColumn, type SortColumn, type TableColumn, type TableRowKey, type TableRowKeyData, type TableSortData } from '@/components/tables/RuiTableHead.vue';
 import RuiTablePagination, { type TablePaginationData } from '@/components/tables/RuiTablePagination.vue';
 import noDataPlaceholder from '@/components/tables/table_no_data_placeholder.svg';
 import noDataPlaceholderDark from '@/components/tables/table_no_data_placeholder_dark.svg';
@@ -41,10 +41,6 @@ export interface Props<T, K extends keyof T> {
    */
   rowAttr: K;
   /**
-   * model for selected rows, add a v-model to support row selection
-   */
-  modelValue?: T[K][];
-  /**
    * model for internal searching
    */
   search?: string;
@@ -54,11 +50,6 @@ export interface Props<T, K extends keyof T> {
    */
   itemsPerPage?: number;
   /**
-   * model for paginating data
-   * @example v-model:pagination="{ total: 10, limit: 5, page: 1 }"
-   */
-  pagination?: TablePaginationData;
-  /**
    * modifiers for specifying externally paginated tables
    * use this when api controls pagination
    * @example v-model:pagination.external="{ total: 10, limit: 5, page: 1 }"
@@ -66,14 +57,6 @@ export interface Props<T, K extends keyof T> {
   paginationModifiers?: {
     external: boolean;
   };
-  /**
-   * model for sort column/columns data
-   * single column sort
-   * @example v-model:sort="{ column: 'name', direction: 'asc' }"
-   * multi columns sort
-   * @example v-model:sort="[{ column: 'name', direction: 'asc' }]"
-   */
-  sort?: TableSortData<T>;
   /**
    * modifiers for specifying externally sorted tables
    * use this when api controls sorting
@@ -131,10 +114,6 @@ export interface Props<T, K extends keyof T> {
 
   rounded?: 'sm' | 'md' | 'lg';
   /**
-   * model for expanded rows
-   */
-  expanded?: T[];
-  /**
    * make expansion work like accordion
    */
   singleExpand?: boolean;
@@ -148,16 +127,7 @@ export interface Props<T, K extends keyof T> {
    * When true, changing the items per page setting in one table will affect other tables.
    */
   globalItemsPerPage?: boolean;
-  /**
-   * model for grouping column/columns data
-   * single column grouping
-   * @example v-model:group="'name'"
-   * multi columns grouping
-   * @example v-model:group="['name', 'country']"
-   */
-  group?: TableRowKeyData<T>;
   groupExpandButtonPosition?: 'start' | 'end';
-  collapsed?: T[];
   disabledRows?: T[];
   multiPageSelect?: boolean;
   scroller?: HTMLElement | null;
@@ -168,14 +138,23 @@ defineOptions({
   name: 'RuiDataTable',
 });
 
+const modelValue = defineModel<T[IdType][]>();
+
+const expanded = defineModel<T[]>('expanded');
+
+const pagination = defineModel<TablePaginationData>('pagination');
+
+const sort = defineModel<TableSortData<T>>('sort');
+
+const group = defineModel<TableRowKeyData<T>>('group');
+
+const collapsed = defineModel<T[]>('collapsed');
+
 const props = withDefaults(defineProps<Props<T, IdType>>(), {
-  modelValue: undefined,
   search: '',
   cols: undefined,
   itemsPerPage: 10,
-  pagination: undefined,
   columnAttr: 'label',
-  sort: undefined,
   loading: false,
   dense: false,
   outlined: false,
@@ -187,13 +166,10 @@ const props = withDefaults(defineProps<Props<T, IdType>>(), {
   hideDefaultFooter: false,
   disablePerPage: false,
   striped: false,
-  expanded: undefined,
   singleExpand: false,
   stickyHeader: false,
   stickyOffset: undefined,
   globalItemsPerPage: undefined,
-  group: undefined,
-  collapsed: undefined,
   disabledRows: undefined,
   multiPageSelect: false,
   groupExpandButtonPosition: 'start',
@@ -202,14 +178,8 @@ const props = withDefaults(defineProps<Props<T, IdType>>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'update:model-value', value?: T[IdType][]): void;
-  (e: 'update:expanded', value: T[]): void;
-  (e: 'update:pagination', value: TablePaginationData): void;
-  (e: 'update:sort', value?: TableSortData<T>): void;
-  (e: 'update:options', value: TableOptions<T>): void;
-  (e: 'update:group', value?: GroupKeys<T>): void;
-  (e: 'update:collapsed', value?: T[]): void;
-  (e: 'copy:group', value: GroupData<T>): void;
+  'update:options': [value: TableOptions<T>];
+  'copy:group': [value: GroupData<T>];
 }>();
 
 const slots = defineSlots<
@@ -241,7 +211,7 @@ const slots = defineSlots<
   }>
 >();
 
-const { stickyHeader, collapsed, modelValue, disabledRows } = toRefs(props);
+const { stickyHeader, disabledRows } = toRefs(props);
 const tableDefaults = useTable();
 
 const { isDark } = useRotkiTheme();
@@ -261,7 +231,7 @@ const { stick, table, tableScroller } = useStickyTableHeader(
   get(stickyHeaderOffset),
 );
 
-const expandable = computed(() => props.expanded && slots['expanded-item']);
+const expandable = computed(() => get(expanded) && slots['expanded-item']);
 
 const headerSlots = computed<`header.${string}`[]>(() =>
   Object.keys(slots).filter(isHeaderSlot),
@@ -277,7 +247,7 @@ const globalItemsPerPageSettings = computed(() => {
 const getKeys = <T extends object>(t: T) => Object.keys(t) as TableRowKey<T>[];
 
 const groupKeys: ComputedRef<TableRowKey<T>[]> = computed(() => {
-  const groupBy = props.group;
+  const groupBy = get(group);
 
   if (!groupBy) {
     // no grouping
@@ -338,35 +308,26 @@ const columns = computed<TableColumn<T>[]>(() => {
 
 const itemsLength = ref(0);
 
-const selectedData = computed<T[IdType][] | undefined>({
-  get() {
-    return get(modelValue);
-  },
-  set(value) {
-    emit('update:model-value', value);
-  },
-});
+const selectedData = modelValue;
 
 const internalSelectedData: Ref<T[IdType][]> = ref([]);
 
-watchImmediate(modelValue, (modelValue) => {
-  set(internalSelectedData, modelValue);
-});
+watch(modelValue, (val) => {
+  set(internalSelectedData, val);
+}, { immediate: true });
 
 const rowIdentifier = computed(() => props.rowAttr);
 
 const internalPaginationState: Ref<TablePaginationData | undefined> = ref();
 const collapsedRows: Ref<T[]> = ref([]);
 
-const pagination = computed(() => props.pagination);
+watch(pagination, (val) => {
+  set(internalPaginationState, val);
+}, { immediate: true });
 
-watchImmediate(pagination, (pagination) => {
-  set(internalPaginationState, pagination);
-});
-
-watchImmediate(collapsed, (value) => {
+watch(collapsed, (value) => {
   set(collapsedRows, value ?? []);
-});
+}, { immediate: true });
 
 /**
  * Pagination is different for search
@@ -396,23 +357,23 @@ const paginationData: Ref<TablePaginationData> = computed({
   },
   set(value: TablePaginationData) {
     set(internalPaginationState, value);
-    emit('update:pagination', value);
+    set(pagination, value);
     emit('update:options', {
       pagination: value,
-      sort: props.sort,
+      sort: get(sort),
     });
   },
 });
 
 const sortData = computed({
   get() {
-    return props.sort;
+    return get(sort);
   },
   set(value) {
     if (!props.multiPageSelect)
       onToggleAll(false);
     resetCheckboxShiftState();
-    emit('update:sort', value);
+    set(sort, value);
     emit('update:options', {
       sort: value,
       pagination: get(pagination),
@@ -658,29 +619,29 @@ function isDisabledRow(rowKey: T[IdType]) {
 }
 
 function isExpanded(identifier: T[IdType]) {
-  const { expanded } = props;
-  if (!expanded?.length)
+  const expandedVal = get(expanded);
+  if (!expandedVal?.length)
     return false;
 
-  return expanded.some(data => data[props.rowAttr] === identifier);
+  return expandedVal.some(data => data[props.rowAttr] === identifier);
 }
 
 function onToggleExpand(row: T) {
-  const { expanded } = props;
-  if (!expanded)
+  const expandedVal = get(expanded);
+  if (!expandedVal)
     return;
 
   const key = props.rowAttr;
   const rowExpanded = isExpanded(row[key]);
 
   if (props.singleExpand)
-    return emit('update:expanded', rowExpanded ? [] : [row]);
+    return set(expanded, rowExpanded ? [] : [row]);
 
-  return emit(
-    'update:expanded',
+  return set(
+    expanded,
     rowExpanded
-      ? expanded.filter(item => item[key] !== row[key])
-      : [...expanded, row],
+      ? expandedVal.filter(item => item[key] !== row[key])
+      : [...expandedVal, row],
   );
 }
 
@@ -723,7 +684,7 @@ function onToggleExpandGroup(group: Partial<T>, value?: string) {
   if (!value)
     return;
 
-  const collapsed = get(collapsedRows);
+  const currentCollapsed = get(collapsedRows);
 
   const groupExpanded = isExpandedGroup(group);
 
@@ -732,18 +693,18 @@ function onToggleExpandGroup(group: Partial<T>, value?: string) {
   set(
     collapsedRows,
     groupExpanded
-      ? [...collapsed, ...groupRows]
-      : collapsed.filter(row => !compareGroupsFn(row, group)),
+      ? [...currentCollapsed, ...groupRows]
+      : currentCollapsed.filter(row => !compareGroupsFn(row, group)),
   );
 
-  emit('update:collapsed', get(collapsedRows));
+  set(collapsed, get(collapsedRows));
 }
 
 function onUngroup() {
   set(collapsedRows, []);
 
-  emit('update:collapsed', []);
-  emit('update:group', Array.isArray(props.group) ? [] : undefined);
+  set(collapsed, []);
+  set(group, Array.isArray(get(group)) ? [] : undefined);
 }
 
 function onCopyGroup(value: GroupData<T>) {
@@ -791,12 +752,14 @@ function onSort({
     const sortByCol = sortBy[index];
     assert(sortByCol);
 
-    if (sortByCol.direction === newDirection)
-      sortBy.splice(index, 1);
-    else
-      sortByCol.direction = sortByCol.direction === 'asc' ? 'desc' : 'asc';
-
-    set(sortData, sortBy);
+    if (sortByCol.direction === newDirection) {
+      set(sortData, sortBy.filter((_, i) => i !== index));
+    }
+    else {
+      set(sortData, sortBy.map((col, i) =>
+        i === index ? { ...col, direction: col.direction === 'asc' ? 'desc' : 'asc' } : col,
+      ));
+    }
   }
   else {
     set(sortData, [...sortBy, { column: key, direction: direction || 'asc' }]);
@@ -944,7 +907,7 @@ function deselectRemovedRows() {
 }
 
 function onPaginate() {
-  emit('update:expanded', []);
+  set(expanded, []);
   if (!props.multiPageSelect)
     onToggleAll(false);
   resetCheckboxShiftState();

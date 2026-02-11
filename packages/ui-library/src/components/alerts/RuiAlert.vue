@@ -30,8 +30,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'action'): void;
-  (e: 'close'): void;
+  action: [];
+  close: [];
 }>();
 
 const { icon, type } = toRefs(props);

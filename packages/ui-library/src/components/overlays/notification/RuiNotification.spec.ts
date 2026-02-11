@@ -66,7 +66,7 @@ describe('components/overlays/notification/RuiNotification.vue', () => {
     assertExists(notification);
     notification.click();
     await nextTick();
-    expect(wrapper.emitted()).toHaveProperty('update:model-value', [[false]]);
+    expect(wrapper.emitted()).toHaveProperty('update:modelValue', [[false]]);
   });
 
   it('should not close on click if timeout is negative', async () => {
@@ -114,6 +114,6 @@ describe('components/overlays/notification/RuiNotification.vue', () => {
     expect(notification).toBeTruthy();
     expect(wrapper.emitted()).toEqual({});
     vi.advanceTimersByTime(2000);
-    expect(wrapper.emitted()).toHaveProperty('update:model-value', [[false]]);
+    expect(wrapper.emitted()).toHaveProperty('update:modelValue', [[false]]);
   });
 });

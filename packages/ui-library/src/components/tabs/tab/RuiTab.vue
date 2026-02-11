@@ -44,7 +44,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'click', value: string | number): void;
+  click: [value: string | number];
 }>();
 
 const slots = defineSlots<{

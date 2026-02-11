@@ -107,14 +107,8 @@ const props = withDefaults(defineProps<Props<T>>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'select:all', value: boolean): void;
-  (
-    e: 'sort',
-    value: {
-      key: TableRowKey<T>;
-      direction?: 'asc' | 'desc';
-    },
-  ): void;
+  'select:all': [value: boolean];
+  'sort': [value: { key: TableRowKey<T>; direction?: 'asc' | 'desc' }];
 }>();
 
 function onSort({ key, direction }: TableColumn<T>) {
