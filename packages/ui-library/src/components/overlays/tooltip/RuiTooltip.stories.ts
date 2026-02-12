@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect, within } from 'storybook/test';
 import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
 import { DEFAULT_POPPER_OPTIONS } from '@/composables/popper';
 import preview from '~/.storybook/preview';
@@ -58,6 +59,13 @@ const meta = preview.meta({
 
 export const Default = meta.story({
   args: {},
+  async play({ canvas, userEvent }) {
+    const activator = canvas.getByText('Tooltip');
+    await userEvent.hover(activator);
+    // Tooltip teleports to document body
+    const body = within(document.body);
+    await expect(body.getByRole('tooltip')).toBeVisible();
+  },
 });
 
 export const Top = meta.story({

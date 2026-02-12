@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect } from 'storybook/test';
 import RuiFooterStepper from '@/components/steppers/RuiFooterStepper.vue';
 import preview from '~/.storybook/preview';
 
@@ -54,6 +55,17 @@ export const Default = meta.story({
     modelValue: 1,
     pages: 5,
     variant: 'numeric',
+  },
+  async play({ canvas, userEvent }) {
+    const prevButton = canvas.getByRole('button', { name: 'Previous' });
+    const nextButton = canvas.getByRole('button', { name: 'Next' });
+    await expect(prevButton).toBeDisabled();
+    // Navigate forward
+    await userEvent.click(nextButton);
+    await expect(prevButton).not.toBeDisabled();
+    // Navigate back to first page
+    await userEvent.click(prevButton);
+    await expect(prevButton).toBeDisabled();
   },
 });
 

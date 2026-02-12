@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect } from 'storybook/test';
 import RuiAlert from '@/components/alerts/RuiAlert.vue';
 import { contextColors } from '@/consts/colors';
 import { RuiIcons } from '@/icons';
@@ -100,6 +101,11 @@ export const WithActionButton = meta.story({
     description: 'Description',
     title: 'Title',
     type: 'error',
+  },
+  async play({ canvas }) {
+    await expect(canvas.getByText('Title')).toBeVisible();
+    await expect(canvas.getByText('Description')).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Action' })).toBeVisible();
   },
 });
 

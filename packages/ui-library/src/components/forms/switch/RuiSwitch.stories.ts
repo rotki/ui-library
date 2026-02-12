@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect } from 'storybook/test';
 import RuiSwitch from '@/components/forms/switch/RuiSwitch.vue';
 import { contextColors } from '@/consts/colors';
 import preview from '~/.storybook/preview';
@@ -56,6 +57,12 @@ const meta = preview.meta({
 export const Checked = meta.story({
   args: {
     modelValue: true,
+  },
+  async play({ canvas, userEvent }) {
+    const checkbox = canvas.getByRole('checkbox');
+    await expect(checkbox).toBeChecked();
+    await userEvent.click(checkbox);
+    await expect(checkbox).not.toBeChecked();
   },
 });
 

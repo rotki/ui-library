@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots, Decorator } from '@storybook/vue3-vite';
+import { expect } from 'storybook/test';
 import RuiSimpleSelect from '@/components/forms/select/RuiSimpleSelect.vue';
 import preview from '~/.storybook/preview';
 
@@ -56,6 +57,12 @@ const meta = preview.meta<typeof RuiSimpleSelect, Decorator, SimpleSelectMetaArg
 export const Default = meta.story({
   args: {
     modelValue: 'Option 1',
+  },
+  async play({ canvas, userEvent }) {
+    const select = canvas.getByRole('combobox');
+    await expect(select).toHaveValue('Option 1');
+    await userEvent.selectOptions(select, 'Option 3');
+    await expect(select).toHaveValue('Option 3');
   },
 });
 

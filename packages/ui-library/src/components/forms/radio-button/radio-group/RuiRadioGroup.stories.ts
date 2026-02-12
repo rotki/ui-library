@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect } from 'storybook/test';
 import RuiRadioGroup from '@/components/forms/radio-button/radio-group/RuiRadioGroup.vue';
 import RuiRadio from '@/components/forms/radio-button/radio/RuiRadio.vue';
 import { contextColors } from '@/consts/colors';
@@ -51,6 +52,17 @@ const meta = preview.meta({
 
 export const Default = meta.story({
   args: {},
+  async play({ canvas, userEvent }) {
+    const yesRadio = canvas.getByRole('radio', { name: 'yes' });
+    const noRadio = canvas.getByRole('radio', { name: 'no' });
+    // Both should start unchecked
+    await expect(yesRadio).not.toBeChecked();
+    await expect(noRadio).not.toBeChecked();
+    // Select "no" and verify
+    await userEvent.click(noRadio);
+    await expect(noRadio).toBeChecked();
+    await expect(yesRadio).not.toBeChecked();
+  },
 });
 
 export const Inline = meta.story({

@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect } from 'storybook/test';
 import { TimeAccuracy } from '@/consts/time-accuracy';
 import preview from '~/.storybook/preview';
 import RuiTimePicker from './RuiTimePicker.vue';
@@ -46,6 +47,16 @@ export const Default = meta.story({
   args: {
     accuracy: TimeAccuracy.MINUTE,
     modelValue: new Date(),
+  },
+  async play({ canvas, userEvent }) {
+    const hourSelector = canvas.getByRole('button', { name: 'Select hours' });
+    const minuteSelector = canvas.getByRole('button', { name: 'Select minutes' });
+    await expect(hourSelector).toBeVisible();
+    await expect(minuteSelector).toBeVisible();
+    await expect(canvas.getByRole('listbox')).toBeVisible();
+    // Switch to minute selection mode
+    await userEvent.click(minuteSelector);
+    await expect(canvas.getByRole('listbox')).toBeVisible();
   },
 });
 

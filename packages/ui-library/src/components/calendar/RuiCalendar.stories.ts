@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect } from 'storybook/test';
 import RuiCalendar from '@/components/calendar/RuiCalendar.vue';
 import preview from '~/.storybook/preview';
 
@@ -49,6 +50,11 @@ const meta = preview.meta({
 
 export const Default = meta.story({
   args: {},
+  async play({ canvas, userEvent }) {
+    // Day 15 exists in every month, verify calendar renders and is clickable
+    await expect(canvas.getByText('15')).toBeVisible();
+    await userEvent.click(canvas.getByText('15'));
+  },
 });
 
 export const AllowEmpty = meta.story({

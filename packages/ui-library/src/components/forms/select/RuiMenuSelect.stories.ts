@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots, Decorator } from '@storybook/vue3-vite';
+import { expect, waitFor, within } from 'storybook/test';
 import { options, type SelectOption } from '@/__test__/options';
 import RuiMenuSelect from '@/components/forms/select/RuiMenuSelect.vue';
 import preview from '~/.storybook/preview';
@@ -61,6 +62,12 @@ export const Default = meta.story({
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
+  },
+  async play({ canvas, userEvent }) {
+    const trigger = canvas.getByRole('button');
+    await userEvent.click(trigger);
+    const body = within(document.body);
+    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
   },
 });
 

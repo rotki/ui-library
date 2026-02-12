@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect } from 'storybook/test';
 import RuiStepper from '@/components/steppers/RuiStepper.vue';
 import { StepperOrientation, StepperState } from '@/types/stepper';
 import preview from '~/.storybook/preview';
@@ -75,6 +76,11 @@ export const Default = meta.story({
         title: 'Success',
       },
     ],
+  },
+  async play({ canvas }) {
+    await expect(canvas.getByText('Active')).toBeVisible();
+    await expect(canvas.getByText('Done')).toBeVisible();
+    await expect(canvas.getByText('Inactive')).toBeVisible();
   },
 });
 

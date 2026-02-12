@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect, waitFor, within } from 'storybook/test';
 import { TimeAccuracy } from '@/consts/time-accuracy';
 import preview from '~/.storybook/preview';
 import RuiDateTimePicker from './RuiDateTimePicker.vue';
@@ -64,6 +65,12 @@ const meta = preview.meta({
 export const Default = meta.story({
   args: {
     modelValue: new Date(),
+  },
+  async play({ canvas, userEvent }) {
+    const input = canvas.getByRole('textbox');
+    await userEvent.click(input);
+    const body = within(document.body);
+    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
   },
 });
 

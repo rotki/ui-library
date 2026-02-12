@@ -1,4 +1,6 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { objectOmit } from '@vueuse/shared';
+import { expect } from 'storybook/test';
 import RuiChip from '@/components/chips/RuiChip.vue';
 import { contextColors } from '@/consts/colors';
 import preview from '~/.storybook/preview';
@@ -16,11 +18,12 @@ function render(args: ChipStoryArgs) {
           set(show, true);
         }, 2000);
       };
-      return { args, hideShow, show };
+      const chipArgs = computed(() => objectOmit(args, ['children', 'prepend']));
+      return { args, chipArgs, hideShow, show };
     },
     template: `
       <div>
-      <RuiChip v-if="show" v-bind="args" @remove="hideShow()">
+      <RuiChip v-if="show" v-bind="chipArgs" @remove="hideShow()">
         <template #prepend v-if="args.prepend">{{ args.prepend }}</template>
         {{ args.children }}
       </RuiChip>
@@ -102,6 +105,11 @@ export const Dismissible = meta.story({
     disabled: false,
     size: 'md',
     variant: 'filled',
+  },
+  async play({ canvas }) {
+    await expect(canvas.getByText('Chip')).toBeVisible();
+    const buttons = canvas.getAllByRole('button');
+    await expect(buttons.length).toBeGreaterThanOrEqual(2);
   },
 });
 

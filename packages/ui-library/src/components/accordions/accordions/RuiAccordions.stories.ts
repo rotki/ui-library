@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect } from 'storybook/test';
 import RuiAccordion from '@/components/accordions/accordion/RuiAccordion.vue';
 import RuiAccordions from '@/components/accordions/accordions/RuiAccordions.vue';
 import preview from '~/.storybook/preview';
@@ -57,6 +58,11 @@ const meta = preview.meta({
 
 export const Default = meta.story({
   args: {},
+  async play({ canvas, userEvent }) {
+    const header = canvas.getByText('Accordion 1 header');
+    await userEvent.click(header);
+    await expect(canvas.getByText('Accordion 1 content')).toBeVisible();
+  },
 });
 
 export const Multiple = meta.story({

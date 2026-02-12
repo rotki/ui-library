@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect } from 'storybook/test';
 import RuiRadio from '@/components/forms/radio-button/radio/RuiRadio.vue';
 import { contextColors } from '@/consts/colors';
 import preview from '~/.storybook/preview';
@@ -56,6 +57,10 @@ export const Checked = meta.story({
   args: {
     modelValue: 'test',
     value: 'test',
+  },
+  async play({ canvas }) {
+    const radio = canvas.getByRole('radio');
+    await expect(radio).toBeChecked();
   },
 });
 

@@ -3,6 +3,7 @@
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "../node_modules/.tmp/tsconfig.storybook.tsbuildinfo",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "baseUrl": "..",
     "module": "ESNext",
     "moduleResolution": "Bundler",

@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect, waitFor, within } from 'storybook/test';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiNotification from '@/components/overlays/notification/RuiNotification.vue';
 import preview from '~/.storybook/preview';
@@ -57,6 +58,15 @@ export const Default = meta.story({
   args: {
     modelValue: false,
     timeout: 0,
+  },
+  async play({ canvas, userEvent }) {
+    const button = canvas.getByRole('button', { name: 'Click' });
+    await userEvent.click(button);
+    const body = within(document.body);
+    await waitFor(() => expect(body.getByRole('alert')).toBeVisible());
+    // Dismiss notification by clicking it
+    await userEvent.click(body.getByRole('alert'));
+    await waitFor(() => expect(body.queryByRole('alert')).toBeNull());
   },
 });
 

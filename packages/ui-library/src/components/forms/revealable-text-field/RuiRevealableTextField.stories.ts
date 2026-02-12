@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect } from 'storybook/test';
 import RuiRevealableTextField from '@/components/forms/revealable-text-field/RuiRevealableTextField.vue';
 import { contextColors } from '@/consts/colors';
 import preview from '~/.storybook/preview';
@@ -26,7 +27,7 @@ function render(args: ComponentPropsAndSlots<typeof RuiRevealableTextField>) {
 const meta = preview.meta({
   args: {
     errorMessages: [],
-    modelValue: undefined,
+    modelValue: '',
     successMessages: [],
   },
   argTypes: {
@@ -74,6 +75,14 @@ export const Default = meta.story({
     label: 'Password',
     placeholder: 'Placeholder',
     variant: 'outlined',
+  },
+  async play({ canvas, userEvent }) {
+    const input = canvas.getByPlaceholderText('Placeholder');
+    await userEvent.type(input, 'secret123');
+    await expect(input).toHaveAttribute('type', 'password');
+    const toggleButton = canvas.getByRole('button', { name: 'Show password' });
+    await userEvent.click(toggleButton);
+    await expect(input).toHaveAttribute('type', 'text');
   },
 });
 

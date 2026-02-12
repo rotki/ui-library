@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect, waitFor, within } from 'storybook/test';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiNavigationDrawer from '@/components/overlays/navigation-drawer/RuiNavigationDrawer.vue';
 import preview from '~/.storybook/preview';
@@ -61,6 +62,12 @@ const meta = preview.meta({
 export const Default = meta.story({
   args: {
     temporary: true,
+  },
+  async play({ canvas, userEvent }) {
+    const activator = canvas.getByRole('button', { name: 'Click me!' });
+    await userEvent.click(activator);
+    const body = within(document.body);
+    await waitFor(() => expect(body.getByText('Navigation Drawer')).toBeVisible());
   },
 });
 

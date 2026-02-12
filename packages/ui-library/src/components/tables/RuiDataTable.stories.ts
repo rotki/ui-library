@@ -1,7 +1,7 @@
-/* eslint-disable max-lines */
 import type { ComponentPropsAndSlots, Decorator } from '@storybook/vue3-vite';
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
 import { objectOmit } from '@vueuse/shared';
+import { expect } from 'storybook/test';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCard from '@/components/cards/RuiCard.vue';
 import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
@@ -134,7 +134,7 @@ function render(args: DataTableProps) {
       >
         <template #item.action>
           <RuiButton icon variant="text" size="sm">
-            <Icon name="lu-ellipsis" color="primary" />
+            <RuiIcon name="lu-ellipsis" color="primary" />
           </RuiButton>
         </template>
         <template v-if="args.expanded" #expanded-item>
@@ -315,6 +315,13 @@ export const Default = meta.story({
     pagination: { limit: 10, page: 1, total: 50 },
     rows: data,
     sort: [{ column: 'name', direction: 'asc' }],
+  },
+  async play({ canvas, userEvent }) {
+    await expect(canvas.getByRole('table')).toBeVisible();
+    await expect(canvas.getByText('Lefteris')).toBeVisible();
+    // Click sortable column header to toggle sort
+    const fullNameHeader = canvas.getByRole('columnheader', { name: /Full name/ });
+    await userEvent.click(fullNameHeader);
   },
 });
 

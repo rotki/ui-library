@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect } from 'storybook/test';
 import RuiButtonGroup from '@/components/buttons/button-group/RuiButtonGroup.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
@@ -16,16 +17,16 @@ function render(args: ComponentPropsAndSlots<typeof RuiButtonGroup<string | numb
     <div v-if="'modelValue' in args">
       <RuiButtonGroup v-bind="args" v-model="args.modelValue">
         <RuiButton>
-          <RuiIcon name="lu-align-left" />
+          <RuiIcon name="lu-align-start-horizontal" />
         </RuiButton>
         <RuiButton>
-          <RuiIcon name="lu-align-center" />
+          <RuiIcon name="lu-align-center-horizontal" />
         </RuiButton>
         <RuiButton>
-          <RuiIcon name="lu-align-right" />
+          <RuiIcon name="lu-align-end-horizontal" />
         </RuiButton>
         <RuiButton>
-          <RuiIcon name="lu-align-justify" />
+          <RuiIcon name="lu-align-horizontal-justify-center" />
         </RuiButton>
       </RuiButtonGroup>
       <div v-if="args.required" class="mt-4 text-rui-error">required: *</div>
@@ -35,7 +36,7 @@ function render(args: ComponentPropsAndSlots<typeof RuiButtonGroup<string | numb
         <RuiButton @click="count--">Decrease</RuiButton>
         <RuiButton @click="count++">Increase</RuiButton>
         <RuiButton @click="count++">
-          <RuiIcon name="add-line"></RuiIcon>
+          <RuiIcon name="lu-plus"></RuiIcon>
         </RuiButton>
       </RuiButtonGroup>
       <div class="mt-4 text-rui-text">Count: {{ count }}</div>
@@ -65,6 +66,12 @@ const meta = preview.meta({
 
 export const Default = meta.story({
   args: {},
+  async play({ canvas, userEvent }) {
+    await expect(canvas.getByText('Count: 0')).toBeVisible();
+    const increaseButton = canvas.getByRole('button', { name: 'Increase' });
+    await userEvent.click(increaseButton);
+    await expect(canvas.getByText('Count: 1')).toBeVisible();
+  },
 });
 
 export const Vertical = meta.story({

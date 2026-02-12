@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import type { RouteLocationRaw } from 'vue-router';
 import type { ContextColorsType } from '@/consts/colors';
+import { type RouteLocationRaw, RouterLink } from 'vue-router';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import { generateId } from '@/utils/generate-id';
 

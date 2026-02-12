@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect } from 'storybook/test';
 import RuiSlider from '@/components/forms/slider/RuiSlider.vue';
 import { contextColors } from '@/consts/colors';
 import preview from '~/.storybook/preview';
@@ -64,6 +65,11 @@ export const Default = meta.story({
   args: {
     label: 'Label',
     modelValue: 0,
+  },
+  async play({ canvas }) {
+    const slider = canvas.getByRole('slider');
+    await expect(slider).toHaveValue('0');
+    await expect(canvas.getByText('Value: 0')).toBeVisible();
   },
 });
 

@@ -1,5 +1,6 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { objectOmit } from '@vueuse/shared';
+import { expect } from 'storybook/test';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiBadge from '@/components/overlays/badge/RuiBadge.vue';
@@ -88,6 +89,11 @@ const meta = preview.meta({
 
 export const Default = meta.story({
   args: {},
+  async play({ canvas, userEvent }) {
+    await expect(canvas.getByText('1')).toBeVisible();
+    const button = canvas.getByRole('button', { name: 'Badge' });
+    await userEvent.click(button);
+  },
 });
 
 export const Left = meta.story({

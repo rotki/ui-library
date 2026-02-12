@@ -87,6 +87,14 @@ jobs:
       - name: Build Storybook
         run: pnpm run build:storybook
 
+      - name: Install Playwright Browsers (Storybook)
+        working-directory: packages/ui-library
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run Storybook Tests
+        working-directory: packages/ui-library
+        run: pnpm run test:storybook --run
+
       - name: Test
         run: pnpm run coverage
 

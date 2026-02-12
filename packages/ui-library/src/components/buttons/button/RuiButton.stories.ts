@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect } from 'storybook/test';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import { contextColors } from '@/consts/colors';
 import preview from '~/.storybook/preview';
@@ -67,6 +68,12 @@ export const Primary = meta.story({
   args: {
     color: 'primary',
     label: 'Medium',
+  },
+  async play({ canvas, userEvent }) {
+    const button = canvas.getByRole('button');
+    await expect(canvas.getByText('Clicked: 0 times')).toBeVisible();
+    await userEvent.click(button);
+    await expect(canvas.getByText('Clicked: 1 times')).toBeVisible();
   },
 });
 

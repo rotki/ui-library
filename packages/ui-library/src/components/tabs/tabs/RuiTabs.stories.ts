@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect } from 'storybook/test';
 import RuiCard from '@/components/cards/RuiCard.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiTabItem from '@/components/tabs/tab-item/RuiTabItem.vue';
@@ -36,7 +37,7 @@ function render(args: ComponentPropsAndSlots<typeof RuiTabs>) {
       <RuiTabs v-bind="args" v-model='modelValue'>
         <RuiTab>
           <template #prepend>
-            <RuiIcon name='add-line' />
+            <RuiIcon name='lu-plus' />
           </template>
           Tab 1
         </RuiTab>
@@ -50,7 +51,7 @@ function render(args: ComponentPropsAndSlots<typeof RuiTabs>) {
         <RuiTab>
           Tab 9
           <template #append>
-            <RuiIcon name='add-line' />
+            <RuiIcon name='lu-plus' />
           </template>
         </RuiTab>
       </RuiTabs>
@@ -98,6 +99,14 @@ const meta = preview.meta({
 
 export const Default = meta.story({
   args: {},
+  async play({ canvas, userEvent }) {
+    const tab1 = canvas.getByRole('tab', { name: /Tab 1/ });
+    await expect(tab1).toHaveAttribute('aria-selected', 'true');
+    const tab3 = canvas.getByRole('tab', { name: 'Tab 3' });
+    await userEvent.click(tab3);
+    await expect(tab3).toHaveAttribute('aria-selected', 'true');
+    await expect(tab1).toHaveAttribute('aria-selected', 'false');
+  },
 });
 
 export const Primary = meta.story({

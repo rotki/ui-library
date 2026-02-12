@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect, waitFor, within } from 'storybook/test';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCard from '@/components/cards/RuiCard.vue';
 import RuiDialog from '@/components/overlays/dialog/RuiDialog.vue';
@@ -77,6 +78,17 @@ const meta = preview.meta({
 
 export const Default = meta.story({
   args: {},
+  async play({ canvas, userEvent }) {
+    const activator = canvas.getByRole('button', { name: 'Click me!' });
+    await userEvent.click(activator);
+    // Dialog content teleports to document body, query outside canvas
+    const body = within(document.body);
+    await waitFor(() => expect(body.getByText('Contents')).toBeVisible());
+    const closeButton = body.getByRole('button', { name: 'Close' });
+    await userEvent.click(closeButton);
+    // Verify dialog closed
+    await waitFor(() => expect(body.queryByRole('dialog')).toBeNull());
+  },
 });
 
 export const Persistent = meta.story({

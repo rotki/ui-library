@@ -17,6 +17,7 @@ export default rotki({
   files: ['**/*.stories.ts', '**/vue-shim.d.ts', '**/.storybook/**/*.ts'],
   rules: {
     'import/no-default-export': 'off',
+    'max-lines': 'off',
   },
 }, {
   files: ['**/*.ts'],

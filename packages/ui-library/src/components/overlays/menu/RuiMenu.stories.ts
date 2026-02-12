@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect, waitFor, within } from 'storybook/test';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
 import { DEFAULT_POPPER_OPTIONS } from '@/composables/popper';
@@ -61,6 +62,15 @@ const meta = preview.meta({
 
 export const Default = meta.story({
   args: {},
+  async play({ canvas, userEvent }) {
+    const activator = canvas.getByRole('button', { name: 'Click Me!' });
+    await userEvent.click(activator);
+    const body = within(document.body);
+    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+    // Close menu with Escape
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+  },
 });
 
 export const OpenOnHover = meta.story({

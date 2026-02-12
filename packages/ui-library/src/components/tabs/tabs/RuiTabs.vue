@@ -91,9 +91,14 @@ function updateModelValue(newModelValue: string | number) {
   set(internalModelValue, newModelValue);
 }
 
-const route = useRoute();
+const hasRouter = !!getCurrentInstance()?.appContext.config.globalProperties.$router;
+const route = hasRouter ? useRoute() : undefined;
+const router = hasRouter ? useRouter() : undefined;
 
 function isPathMatch(path: string, { exactPath, exact }: { exactPath?: boolean; exact?: boolean }) {
+  if (!route)
+    return false;
+
   const currentRoute = route.fullPath;
 
   if (exactPath)
@@ -150,8 +155,6 @@ function keepActiveTabVisible() {
   });
 }
 
-const router = useRouter();
-
 function applyNewValue(onlyLink = false) {
   const enabledChildren = get(children).filter(
     child => !child.props.disabled,
@@ -163,7 +166,7 @@ function applyNewValue(onlyLink = false) {
       if (!onlyLink && index === 0 && props.value)
         newModelValue = props.value;
 
-      const to = props.to ? router.resolve(props.to) : undefined;
+      const to = props.to && router ? router.resolve(props.to) : undefined;
 
       if (props.link !== false && to && isPathMatch(to.fullPath, props))
         newModelValue = to.fullPath;
@@ -180,9 +183,11 @@ onMounted(() => {
   applyNewValue();
 });
 
-watch(route, () => {
-  applyNewValue(true);
-});
+if (route) {
+  watch(route, () => {
+    applyNewValue(true);
+  });
+}
 
 const { width, height } = useElementSize(bar);
 const { width: wrapperWidth, height: wrapperHeight } = useElementSize(wrapper);

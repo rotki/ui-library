@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots, Decorator } from '@storybook/vue3-vite';
+import { expect, waitFor, within } from 'storybook/test';
 import { options, type SelectOption } from '@/__test__/options';
 import RuiAutoComplete from '@/components/forms/auto-complete/RuiAutoComplete.vue';
 import preview from '~/.storybook/preview';
@@ -62,6 +63,12 @@ export const Default = meta.story({
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
+  },
+  async play({ canvas, userEvent }) {
+    const combobox = canvas.getByRole('combobox');
+    await userEvent.click(combobox);
+    const body = within(document.body);
+    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
   },
 });
 

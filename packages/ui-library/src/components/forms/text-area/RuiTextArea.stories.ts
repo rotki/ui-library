@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { expect } from 'storybook/test';
 import RuiTextArea from '@/components/forms/text-area/RuiTextArea.vue';
 import { contextColors } from '@/consts/colors';
 import preview from '~/.storybook/preview';
@@ -26,7 +27,7 @@ function render(args: ComponentPropsAndSlots<typeof RuiTextArea>) {
 const meta = preview.meta({
   args: {
     errorMessages: [],
-    modelValue: undefined,
+    modelValue: '',
     successMessages: [],
   },
   argTypes: {
@@ -78,6 +79,11 @@ export const Default = meta.story({
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
+  },
+  async play({ canvas, userEvent }) {
+    const textarea = canvas.getByPlaceholderText('Placeholder');
+    await userEvent.type(textarea, 'Hello World');
+    await expect(textarea).toHaveValue('Hello World');
   },
 });
 
@@ -165,14 +171,14 @@ export const WithPrependIcon = meta.story({
   args: {
     label: 'Label',
     placeholder: 'Placeholder',
-    prependIcon: 'heart-fill',
+    prependIcon: 'lu-heart',
     variant: 'outlined',
   },
 });
 
 export const WithAppendIcon = meta.story({
   args: {
-    appendIcon: 'heart-fill',
+    appendIcon: 'lu-heart',
     label: 'Label',
     placeholder: 'Placeholder',
     variant: 'outlined',
