@@ -1,3 +1,4 @@
+import addonDocs from '@storybook/addon-docs';
 import { definePreview, setup } from '@storybook/vue3-vite';
 import { useEffect, useGlobals } from 'storybook/preview-api';
 import { useRotkiTheme } from '@/composables/theme';
@@ -11,7 +12,7 @@ setup((app) => {
 });
 
 export default definePreview({
-  addons: [],
+  addons: [addonDocs()],
   parameters: {
     controls: {
       matchers: {
