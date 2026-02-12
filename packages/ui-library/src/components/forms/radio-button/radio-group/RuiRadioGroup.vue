@@ -1,10 +1,8 @@
-<script lang="ts" setup generic='TValue'>
+<script lang="ts" setup generic="TValue">
 import type { ContextColorsType } from '@/consts/colors';
-import { objectPick } from '@vueuse/shared';
 import { Fragment, isVNode } from 'vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { assert } from '@/utils/assert';
-import { generateId } from '@/utils/generate-id';
 
 export interface Props {
   inline?: boolean;
@@ -26,27 +24,23 @@ defineOptions({
 
 const modelValue = defineModel<TValue>({ required: false });
 
-const props = withDefaults(defineProps<Props>(), {
-  inline: false,
-  label: '',
-  hint: '',
-  errorMessages: () => [],
-  successMessages: () => [],
-  hideDetails: false,
-  disabled: false,
-  color: undefined,
-  size: undefined,
-  required: false,
-});
+const {
+  inline = false,
+  label = '',
+  hint = '',
+  errorMessages = [],
+  successMessages = [],
+  hideDetails = false,
+  disabled = false,
+  color,
+  size,
+  required = false,
+} = defineProps<Props>();
 
-const radioGroupName = ref('');
-
-onMounted(() => {
-  set(radioGroupName, generateId('radio-group'));
-});
+const radioGroupName = useId();
 
 const slots = useSlots();
-const children = computed(() => {
+const children = computed<VNode[]>(() => {
   const slotContent = slots.default?.() ?? [];
 
   // When using dynamic content with v-for the slot content is a single fragment
@@ -68,12 +62,12 @@ const children = computed(() => {
     v-bind="$attrs"
   >
     <div
-      v-if="props.label"
+      v-if="label"
       class="text-rui-text-secondary text-body-1"
     >
-      {{ props.label }}
+      {{ label }}
       <span
-        v-if="props.required"
+        v-if="required"
         class="text-rui-error"
       >
         ﹡
@@ -83,9 +77,11 @@ const children = computed(() => {
       <Component
         :is="child"
         v-for="(child, i) in children"
-        v-bind="objectPick($props, ['disabled', 'color', 'size'])"
         :key="i"
         v-model="modelValue"
+        :disabled="disabled"
+        :color="color"
+        :size="size"
         hide-details
         :name="radioGroupName"
       />

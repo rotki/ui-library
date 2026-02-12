@@ -2,7 +2,7 @@
 import type { Props as TabProps } from '@/components/tabs/tab/RuiTab.vue';
 import type { ContextColorsType } from '@/consts/colors';
 import { throttleFilter } from '@vueuse/shared';
-import { Fragment, isVNode, type VNode } from 'vue';
+import { Fragment, getCurrentInstance, isVNode, type VNode } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
@@ -22,47 +22,46 @@ defineOptions({
 
 const modelValue = defineModel<number | string>();
 
-const props = withDefaults(defineProps<Props>(), {
-  color: undefined,
-  vertical: false,
-  disabled: false,
-  grow: false,
-  align: 'center',
-  indicatorPosition: 'end',
-});
+const {
+  color,
+  vertical = false,
+  disabled = false,
+  grow = false,
+  align = 'center',
+  indicatorPosition = 'end',
+} = defineProps<Props>();
 
-const { color, grow, disabled, vertical, align, indicatorPosition } = toRefs(props);
-
-const internalModelValue = ref();
-const bar = ref<HTMLDivElement>();
-const wrapper = ref<HTMLDivElement>();
+const internalModelValue = ref<string | number>();
+const bar = useTemplateRef<HTMLDivElement>('bar');
+const wrapper = useTemplateRef<HTMLDivElement>('wrapper');
 const showArrows: Ref<boolean> = ref(false);
 
-// When using dynamic content with v-for the slot content can contain fragment,
-// Go through the fragment and always return RuiTab only
-function getChildrenTabs(children: VNode[]): VNode[] {
-  return children.flatMap((item) => {
-    if (item.type === Fragment && Array.isArray(item.children) && item.children.length > 0)
-      return getChildrenTabs(item.children.filter(isVNode));
-
-    return [item];
-  }).flat();
-}
-
 const slots = useSlots();
-const children = computed(() => {
+const hasRouter = !!getCurrentInstance()?.appContext.config.globalProperties.$router;
+const route = hasRouter ? useRoute() : undefined;
+const router = hasRouter ? useRouter() : undefined;
+const { width, height } = useElementSize(bar);
+const { width: wrapperWidth, height: wrapperHeight } = useElementSize(wrapper);
+const { arrivedState, x, y } = useScroll(bar, { behavior: 'smooth' });
+const { top, bottom, left, right } = toRefs(arrivedState);
+
+useResizeObserver(bar, () => {
+  keepActiveTabVisible();
+});
+
+const children = computed<(VNode & { props: Record<string, any> })[]>(() => {
   const slotContent = slots.default?.() ?? [];
 
   const tabs = getChildrenTabs(slotContent);
 
   const currentModelValue = get(internalModelValue);
   const inheritedProps = {
-    color: get(color),
-    grow: get(grow),
-    disabled: get(disabled),
-    vertical: get(vertical),
-    align: get(align),
-    indicatorPosition: get(indicatorPosition),
+    color,
+    grow,
+    disabled,
+    vertical,
+    align,
+    indicatorPosition,
   };
   return tabs.map((tab, index) => {
     let tabValue = tab.props?.value ?? index;
@@ -82,16 +81,42 @@ const children = computed(() => {
   });
 });
 
-function updateModelValue(newModelValue: string | number) {
+const prevArrowDisabled = computed<boolean>(() => {
+  if (!vertical)
+    return get(left);
+
+  return get(top);
+});
+
+const nextArrowDisabled = computed<boolean>(() => {
+  if (!vertical)
+    return get(right);
+
+  return get(bottom);
+});
+
+// When using dynamic content with v-for the slot content can contain fragment,
+// Go through the fragment and always return RuiTab only
+function getChildrenTabs(children: VNode[]): VNode[] {
+  return children
+    .flatMap((item) => {
+      if (item.type === Fragment && Array.isArray(item.children) && item.children.length > 0)
+        return getChildrenTabs(item.children.filter(isVNode));
+
+      return [item];
+    })
+    .flat();
+}
+
+function updateModelValue(newModelValue: string | number): void {
   set(modelValue, newModelValue);
   set(internalModelValue, newModelValue);
 }
 
-const hasRouter = !!getCurrentInstance()?.appContext.config.globalProperties.$router;
-const route = hasRouter ? useRoute() : undefined;
-const router = hasRouter ? useRouter() : undefined;
-
-function isPathMatch(path: string, { exactPath, exact }: { exactPath?: boolean; exact?: boolean }) {
+function isPathMatch(
+  path: string,
+  { exactPath, exact }: { exactPath?: boolean; exact?: boolean },
+): boolean {
   if (!route)
     return false;
 
@@ -100,8 +125,7 @@ function isPathMatch(path: string, { exactPath, exact }: { exactPath?: boolean; 
   if (exactPath)
     return currentRoute === path;
 
-  const routeWithoutQueryParams = new URL(path, window.location.origin)
-    .pathname;
+  const routeWithoutQueryParams = new URL(path, window.location.origin).pathname;
 
   if (exact)
     return currentRoute === routeWithoutQueryParams;
@@ -109,7 +133,7 @@ function isPathMatch(path: string, { exactPath, exact }: { exactPath?: boolean; 
   return currentRoute.startsWith(routeWithoutQueryParams);
 }
 
-function keepActiveTabVisible() {
+function keepActiveTabVisible(): void {
   nextTick(() => {
     if (!get(showArrows))
       return;
@@ -117,8 +141,8 @@ function keepActiveTabVisible() {
     const elem = get(wrapper);
     const barElem = get(bar);
     if (elem) {
-      const activeTab = (elem.querySelector('.active-tab')
-        ?? elem.querySelector('.active-tab-link')) as HTMLElement;
+      const activeTab = (elem.querySelector('.active-tab') ??
+        elem.querySelector('.active-tab-link')) as HTMLElement;
 
       if (!activeTab || !barElem)
         return;
@@ -151,10 +175,8 @@ function keepActiveTabVisible() {
   });
 }
 
-function applyNewValue(onlyLink = false) {
-  const enabledChildren = get(children).filter(
-    child => !child.props.disabled,
-  );
+function applyNewValue(onlyLink = false): void {
+  const enabledChildren = get(children).filter(child => !child.props?.disabled);
   if (enabledChildren.length > 0) {
     let newModelValue: string | number = get(modelValue) || 0;
     enabledChildren.forEach((child, index) => {
@@ -172,24 +194,17 @@ function applyNewValue(onlyLink = false) {
   keepActiveTabVisible();
 }
 
-onMounted(() => {
-  if (get(modelValue) !== undefined)
-    return;
-
-  applyNewValue();
-});
-
-if (route) {
-  watch(route, () => {
-    applyNewValue(true);
-  });
+function onPrevSliderClick(): void {
+  if (!vertical)
+    set(x, get(x) - get(width));
+  else set(y, get(y) - get(height));
 }
 
-const { width, height } = useElementSize(bar);
-const { width: wrapperWidth, height: wrapperHeight } = useElementSize(wrapper);
-const { arrivedState, x, y } = useScroll(bar, { behavior: 'smooth' });
-
-const { top, bottom, left, right } = toRefs(arrivedState);
+function onNextSliderClick(): void {
+  if (!vertical)
+    set(x, get(x) + get(width));
+  else set(y, get(y) + get(height));
+}
 
 const { trigger: triggerHorizontal, stop: stopHorizontal } = watchTriggerable(
   [wrapperWidth, width],
@@ -213,55 +228,42 @@ const { trigger: triggerVertical, stop: stopVertical } = watchTriggerable(
   },
 );
 
-watchImmediate(vertical, (vertical) => {
-  if (vertical) {
-    triggerVertical();
-    stopHorizontal();
-  }
-  else {
-    triggerHorizontal();
-    stopVertical();
-  }
-});
+watchImmediate(
+  () => vertical,
+  (vertical) => {
+    if (vertical) {
+      triggerVertical();
+      stopHorizontal();
+    }
+    else {
+      triggerHorizontal();
+      stopVertical();
+    }
+  },
+);
 
-const prevArrowDisabled = computed(() => {
-  if (!get(vertical))
-    return get(left);
-
-  return get(top);
-});
-
-const nextArrowDisabled = computed(() => {
-  if (!get(vertical))
-    return get(right);
-
-  return get(bottom);
-});
-
-function onPrevSliderClick() {
-  if (!get(vertical))
-    set(x, get(x) - get(width));
-  else
-    set(y, get(y) - get(height));
+if (route) {
+  watch(route, () => {
+    applyNewValue(true);
+  });
 }
 
-function onNextSliderClick() {
-  if (!get(vertical))
-    set(x, get(x) + get(width));
-  else
-    set(y, get(y) + get(height));
-}
-
-useResizeObserver(bar, () => {
-  keepActiveTabVisible();
-});
-
-watchImmediate(modelValue, (modelValue) => {
-  set(internalModelValue, modelValue);
-});
+watchImmediate(
+  () => get(modelValue),
+  (modelValue) => {
+    set(internalModelValue, modelValue);
+  },
+);
 
 watch(internalModelValue, () => {
   keepActiveTabVisible();
+});
+
+onMounted(() => {
+  if (get(modelValue) !== undefined)
+    return;
+
+  applyNewValue();
 });
 </script>
 

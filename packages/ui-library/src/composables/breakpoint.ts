@@ -19,21 +19,16 @@ export function useBreakpoint() {
 
   const list = getKeys(breakpointList);
 
-  const rawSizes: [Breakpoint, Ref<boolean>][] = list.map(
-    (breakpoint, index) => {
-      if (index < list.length - 1) {
-        const nextBreakpoint = list[index + 1];
-        assert(nextBreakpoint);
-        return [breakpoint, breakpoints.between(breakpoint, nextBreakpoint)];
-      }
-      return [breakpoint, breakpoints[breakpoint]];
-    },
-  );
+  const rawSizes: [Breakpoint, Ref<boolean>][] = list.map((breakpoint, index) => {
+    if (index < list.length - 1) {
+      const nextBreakpoint = list[index + 1];
+      assert(nextBreakpoint);
+      return [breakpoint, breakpoints.between(breakpoint, nextBreakpoint)];
+    }
+    return [breakpoint, breakpoints[breakpoint]];
+  });
 
-  const sizes = rawSizes.map(([breakpoint, value]) => [
-    camelCase(`is_${breakpoint}`),
-    value,
-  ]);
+  const sizes = rawSizes.map(([breakpoint, value]) => [camelCase(`is_${breakpoint}`), value]);
 
   const sizesUp = list.map(breakpoint => [
     camelCase(`is_${breakpoint}_and_up`),
@@ -45,7 +40,7 @@ export function useBreakpoint() {
     breakpoints.smaller(breakpoint),
   ]);
 
-  const name = computed(() => rawSizes.find(item => get(item[1]))?.[0] || '');
+  const name = computed<string>(() => rawSizes.find(item => get(item[1]))?.[0] || '');
 
   return {
     ...Object.fromEntries(sizes),

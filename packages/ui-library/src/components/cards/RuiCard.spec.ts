@@ -4,7 +4,9 @@ import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCard from '@/components/cards/RuiCard.vue';
 import { expectNotToHaveClass, expectToHaveClass } from '~/tests/helpers/dom-helpers';
 
-function createWrapper(options: ComponentMountingOptions<typeof RuiCard>): VueWrapper<InstanceType<typeof RuiCard>> {
+function createWrapper(
+  options: ComponentMountingOptions<typeof RuiCard>,
+): VueWrapper<InstanceType<typeof RuiCard>> {
   return mount(RuiCard, { ...options, global: { stubs: { 'rui-button': RuiButton } } });
 }
 
@@ -158,10 +160,10 @@ describe('components/cards/RuiCard.vue', () => {
         footer: ['Action 1', 'Action 2'].map((action, i) => ({
           template: `<rui-button :key="${i}">${action}</rui-button>`,
         })),
-        header: ({ text = 'Card header' }: { text?: string }) => text,
+        header: () => 'Card header',
         image: { template: `<img src="https://placehold.co/960x320" alt />` },
-        prepend: ({ text = 'OP' }: { text?: string }) => text,
-        subheader: ({ text = 'Card subheader' }: { text?: string }) => text,
+        prepend: () => 'OP',
+        subheader: () => 'Card subheader',
       },
     });
 

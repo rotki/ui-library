@@ -5,7 +5,8 @@ import { logicAnd, logicNot } from '@vueuse/math';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
-import { assert } from '@/utils/assert';
+import { useLabelWithQuote } from '@/composables/forms/use-label-with-quote';
+import { usePrependAppendWidth } from '@/composables/forms/use-prepend-append-width';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
@@ -35,25 +36,24 @@ defineOptions({
 
 const modelValue = defineModel<string>({ required: true });
 
-const props = withDefaults(defineProps<TextFieldProps>(), {
-  label: '',
-  placeholder: '',
-  disabled: false,
-  variant: 'default',
-  color: undefined,
-  textColor: undefined,
-  dense: false,
-  hint: '',
-  as: 'input',
-  errorMessages: () => [],
-  successMessages: () => [],
-  hideDetails: false,
-  prependIcon: undefined,
-  appendIcon: undefined,
-  readonly: false,
-  clearable: false,
-  required: false,
-});
+const {
+  label = '',
+  placeholder = '',
+  disabled = false,
+  variant = 'default',
+  color = undefined,
+  textColor = undefined,
+  dense = false,
+  hint = '',
+  errorMessages = [],
+  successMessages = [],
+  hideDetails = false,
+  prependIcon = undefined,
+  appendIcon = undefined,
+  readonly = false,
+  clearable = false,
+  required = false,
+} = defineProps<TextFieldProps>();
 
 const emit = defineEmits<{
   'focus-input': [event: Event];
@@ -62,70 +62,41 @@ const emit = defineEmits<{
   'clear': [];
 }>();
 
-const {
-  label,
-  clearable,
-  disabled,
-  readonly,
-  errorMessages,
-  successMessages,
-  required,
-} = toRefs(props);
+const prepend = useTemplateRef<HTMLDivElement>('prepend');
+const append = useTemplateRef<HTMLDivElement>('append');
+const innerWrapper = useTemplateRef<HTMLDivElement>('innerWrapper');
+const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
 
-function input(event: Event) {
-  const value = (event.target as HTMLInputElement).value;
-  set(modelValue, value);
-}
-
-const labelWithQuote = computed<string>(() => {
-  const labelVal = get(label);
-  if (!labelVal)
-    return '"\\200B"';
-
-  const asterisk = get(required) ? '﹡' : '';
-  return `'  ${labelVal}${asterisk}  '`;
-});
-
-const prepend = ref<HTMLDivElement>();
-const append = ref<HTMLDivElement>();
-const innerWrapper = ref<HTMLDivElement>();
-const inputRef = ref<HTMLInputElement>();
-
-const prependWidth = ref('0px');
-const appendWidth = ref('0px');
+const { prependWidth, appendWidth } = usePrependAppendWidth(prepend, append);
 
 const { width } = useElementBounding(innerWrapper);
 
-useResizeObserver(prepend, (entries) => {
-  const [entry] = entries;
-  assert(entry);
-  const { width, left } = entry.contentRect;
-  set(prependWidth, `${width + left}px`);
-});
-
-useResizeObserver(append, (entries) => {
-  const [entry] = entries;
-  assert(entry);
-  const { width, right } = entry.contentRect;
-  set(appendWidth, `${width + right}px`);
-});
-
 const { hasError, hasSuccess, hasMessages } = useFormTextDetail(
-  errorMessages,
-  successMessages,
+  toRef(() => errorMessages),
+  toRef(() => successMessages),
 );
 
 const { focused } = useFocus(inputRef);
 const focusedDebounced = refDebounced(focused, 500);
 
 const showClearIcon = logicAnd(
-  clearable,
+  () => clearable,
   modelValue,
-  logicNot(disabled),
-  logicNot(readonly),
+  logicNot(() => disabled),
+  logicNot(() => readonly),
 );
 
-function clearIconClicked() {
+const labelWithQuote = useLabelWithQuote(
+  () => label,
+  () => required,
+);
+
+function input(event: Event): void {
+  const value = (event.target as HTMLInputElement).value;
+  set(modelValue, value);
+}
+
+function clearIconClicked(): void {
   set(modelValue, '');
   emit('clear');
 }

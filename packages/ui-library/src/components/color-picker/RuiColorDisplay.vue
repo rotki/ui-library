@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
 
 defineOptions({
@@ -6,13 +6,11 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = defineProps<{
+const { color } = defineProps<{
   color: string;
 }>();
 
-const { color } = toRefs(props);
-
-const { copy, copied } = useClipboard({ source: color });
+const { copy, copied } = useClipboard({ source: toRef(() => color) });
 </script>
 
 <template>

@@ -8,9 +8,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-withDefaults(defineProps<Props>(), {
-  dense: false,
-});
+const { dense = false } = defineProps<Props>();
 </script>
 
 <template>

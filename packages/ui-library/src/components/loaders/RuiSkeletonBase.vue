@@ -7,9 +7,7 @@ defineOptions({
   name: 'RuiSkeletonLoaderBase',
 });
 
-withDefaults(defineProps<Props>(), {
-  rounded: undefined,
-});
+const { rounded } = defineProps<Props>();
 </script>
 
 <template>

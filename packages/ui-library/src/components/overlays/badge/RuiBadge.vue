@@ -22,27 +22,29 @@ defineOptions({
   name: 'RuiBadge',
 });
 
-const props = withDefaults(defineProps<Props>(), {
-  text: null,
-  icon: null,
-  modelValue: true,
-  dot: false,
-  placement: 'top',
-  left: false,
-  size: 'md',
-  rounded: 'full',
-  color: 'primary',
-  offsetX: 0,
-  offsetY: 0,
-});
+const {
+  text = null,
+  icon = null,
+  modelValue = true,
+  dot = false,
+  placement = 'top',
+  left = false,
+  size = 'md',
+  rounded = 'full',
+  color = 'primary',
+  offsetX = 0,
+  offsetY = 0,
+} = defineProps<Props>();
 
-const slots = useSlots();
+const slots = defineSlots<{
+  default?: () => any;
+  badge?: () => any;
+  icon?: () => any;
+}>();
 
-const { modelValue, offsetX, offsetY, icon, text } = toRefs(props);
+const hasIcon = logicOr(() => icon, slots.icon);
 
-const hasIcon = logicOr(icon, slots.icon);
-
-const hasText = logicOr(text, slots.badge);
+const hasText = logicOr(() => text, slots.badge);
 
 const hasIconAndText = logicAnd(hasIcon, hasText);
 </script>

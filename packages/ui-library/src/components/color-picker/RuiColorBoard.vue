@@ -7,7 +7,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = defineProps<{
+const { color } = defineProps<{
   color: Color;
 }>();
 
@@ -15,39 +15,36 @@ const emit = defineEmits<{
   'update:board': [event: { saturation: number; brightness: number }];
 }>();
 
-function hueToHex(hue: number) {
-  return new Color({ h: hue, s: 1, v: 1 }).hexString;
-}
+const wrapper = useTemplateRef<HTMLElement>('wrapper');
 
 const state = reactive({
-  hexString: hueToHex(props.color.hue),
-  saturation: props.color.saturation,
-  brightness: props.color.brightness,
+  hexString: hueToHex(color.hue),
+  saturation: color.saturation,
+  brightness: color.brightness,
 });
 
 const cursorTop = ref<number>(0);
 const cursorLeft = ref<number>(0);
 
-const cursorStyle = computed(() => ({
+const instance = getCurrentInstance();
+
+const { handleClick, onMouseDown } = useElementDrag(emitColor);
+
+const cursorStyle = computed<{ top: string; left: string }>(() => ({
   top: `${get(cursorTop) * 100}%`,
   left: `${get(cursorLeft) * 100}%`,
 }));
 
-const wrapper = ref<HTMLElement>();
-
-function updatePosition() {
-  set(cursorLeft, state.saturation);
-  set(cursorTop, (1 - state.brightness));
+function hueToHex(hue: number): string {
+  return new Color({ h: hue, s: 1, v: 1 }).hexString;
 }
 
-const instance = getCurrentInstance();
+function updatePosition(): void {
+  set(cursorLeft, state.saturation);
+  set(cursorTop, 1 - state.brightness);
+}
 
-const {
-  handleClick,
-  onMouseDown,
-} = useElementDrag(emitColor);
-
-function emitColor(x: number, y: number) {
+function emitColor(x: number, y: number): void {
   if (!instance)
     return;
 
@@ -76,12 +73,8 @@ function emitColor(x: number, y: number) {
   emit('update:board', { saturation, brightness });
 }
 
-onMounted(() => {
-  updatePosition();
-});
-
 whenever(
-  () => props.color,
+  () => color,
   (value) => {
     state.hexString = hueToHex(value.hue);
     state.saturation = value.saturation;
@@ -90,6 +83,10 @@ whenever(
   },
   { deep: true },
 );
+
+onMounted(() => {
+  updatePosition();
+});
 </script>
 
 <template>

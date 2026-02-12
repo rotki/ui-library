@@ -23,43 +23,42 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<Props<T>>(), {
-  disabled: false,
-  loading: false,
-  color: undefined,
-  rounded: false,
-  elevation: null,
-  variant: 'default',
-  icon: false,
-  active: false,
-  size: undefined,
-  tag: 'button',
-  type: 'button',
-  modelValue: undefined,
-  hideFocusIndicator: false,
-});
+const {
+  disabled = false,
+  loading = false,
+  color = undefined,
+  rounded = false,
+  elevation = null,
+  variant = 'default',
+  icon = false,
+  active = false,
+  size = undefined,
+  tag = 'button',
+  type = 'button',
+  modelValue = undefined,
+  hideFocusIndicator = false,
+} = defineProps<Props<T>>();
 
 const emit = defineEmits<{
   'update:modelValue': [value?: T];
 }>();
 
-const btnValue = computed<T | undefined>(() => props.modelValue);
+const btnValue = computed<T | undefined>(() => modelValue);
 
 const usedElevation = computed<number | string>(() => {
-  if (props.disabled)
+  if (disabled)
     return 0;
 
-  if (props.elevation !== null)
-    return props.elevation;
+  if (elevation !== null)
+    return elevation;
 
-  if (props.variant === 'fab')
+  if (variant === 'fab')
     return 6;
 
   return 0;
 });
 
 const spinnerSize = computed<number>(() => {
-  const size = props.size;
   if (size === 'lg')
     return 26;
 

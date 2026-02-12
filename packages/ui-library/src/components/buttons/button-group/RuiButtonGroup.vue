@@ -20,35 +20,25 @@ defineOptions({
 
 const modelValue = defineModel<T | T[]>();
 
-const props = withDefaults(defineProps<Props>(), {
-  vertical: false,
-  color: undefined,
-  activeColor: undefined,
-  variant: 'default',
-  size: undefined,
-  gap: undefined,
-  required: false,
-  disabled: false,
-});
+const {
+  vertical = false,
+  color,
+  activeColor,
+  variant = 'default',
+  size,
+  gap,
+  required = false,
+  disabled = false,
+} = defineProps<Props>();
 
 const slots = useSlots();
-const { required, disabled, color, variant, size } = toRefs(props);
+const css = useCssModule();
 
-// When using dynamic content with v-for the slot content can contain fragment,
-// Go through the fragment and always return RuiButton only
-function getChildren(children: VNode[]): VNode[] {
-  return children.flatMap((item) => {
-    if (item.type === Fragment && Array.isArray(item.children) && item.children.length > 0)
-      return getChildren(item.children.filter(isVNode));
+const colorClass = computed<string | undefined>(() => (color ? css[color] : undefined));
+const variantClass = computed<string | undefined>(() => (variant ? css[variant] : undefined));
 
-    return [item];
-  }).flat();
-}
-
-const children = computed(() => {
+const children = computed<VNode[]>(() => {
   // if group is disabled, disable child buttons
-  const isDisabled = get(disabled);
-  const rootColor = get(color);
   const selectedValue: T | T[] | undefined = get(modelValue);
 
   const slotContent = slots.default?.() ?? [];
@@ -66,37 +56,55 @@ const children = computed(() => {
       active: activeItem(value ?? i, selectedValue),
     };
 
-    if (isDisabled)
+    if (disabled)
       child.props.disabled = true;
 
     // if given root color, use it
-    if (rootColor)
-      child.props.color = rootColor;
+    if (color)
+      child.props.color = color;
 
-    if (child.props.active && props.activeColor)
-      child.props.color = props.activeColor;
+    if (child.props.active && activeColor)
+      child.props.color = activeColor;
 
     return child;
   });
 });
 
-function activeItem(id: T, selected?: T | T[]) {
+// When using dynamic content with v-for the slot content can contain fragment,
+// Go through the fragment and always return RuiButton only
+function getChildren(children: VNode[]): VNode[] {
+  return children
+    .flatMap((item) => {
+      if (item.type === Fragment && Array.isArray(item.children) && item.children.length > 0)
+        return getChildren(item.children.filter(isVNode));
+
+      return [item];
+    })
+    .flat();
+}
+
+function activeItem(id: T, selected?: T | T[]): boolean {
   if (Array.isArray(selected))
     return selected.includes(id);
 
   return selected === id;
 }
 
-function onClick(id: T) {
+function onClick(id: T): void {
   const selected = get(modelValue);
-  const mandatory = get(required);
+  const mandatory = required;
   if (Array.isArray(selected)) {
     const index = selected.indexOf(id);
     if (index >= 0) {
-      if (!mandatory || selected.length !== 1)
-        set(modelValue, selected.filter((_, i) => i !== index));
-      else
+      if (!mandatory || selected.length !== 1) {
+        set(
+          modelValue,
+          selected.filter((_, i) => i !== index),
+        );
+      }
+      else {
         set(modelValue, [...selected]);
+      }
     }
     else {
       set(modelValue, [...selected, id]);
@@ -109,12 +117,6 @@ function onClick(id: T) {
     set(modelValue, activeItem(id, selected) ? undefined : id);
   }
 }
-
-const css = useCssModule();
-const colorClass = computed(() => (props.color ? css[props.color] : undefined));
-const variantClass = computed(() =>
-  props.variant ? css[props.variant] : undefined,
-);
 </script>
 
 <template>

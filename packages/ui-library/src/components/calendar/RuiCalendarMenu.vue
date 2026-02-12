@@ -45,12 +45,15 @@ const canGoToNext = ref<boolean>(true);
 const canGoToPrev = ref<boolean>(true);
 
 // Pre-calculation functions using VueUse get/set
-function calculateYearRange() {
+function calculateYearRange(): void {
   const start = get(startYear);
-  set(yearRange, Array.from({ length: 12 }, (_, i) => start + i));
+  set(
+    yearRange,
+    Array.from({ length: 12 }, (_, i) => start + i),
+  );
 }
 
-function calculateTitle() {
+function calculateTitle(): void {
   if (get(viewMode) === 'months') {
     set(title, props.viewYear.toString());
   }
@@ -60,7 +63,7 @@ function calculateTitle() {
   }
 }
 
-function calculateNavigation() {
+function calculateNavigation(): void {
   const { maxDate, minDate } = calendarState;
   const mode = get(viewMode);
 
@@ -85,7 +88,7 @@ function calculateNavigation() {
   }
 }
 
-function calculateMonthsInRange() {
+function calculateMonthsInRange(): void {
   const { minDate, maxDate } = calendarState;
   const currentYear = props.viewYear;
   const result = new Array(12).fill(true);
@@ -105,7 +108,7 @@ function calculateMonthsInRange() {
   set(monthsInRange, result);
 }
 
-function calculateYearsInRange() {
+function calculateYearsInRange(): void {
   const { minDate, maxDate } = calendarState;
   const range = get(yearRange);
   const currentMonth = props.viewMonth;
@@ -124,6 +127,50 @@ function calculateYearsInRange() {
   });
 
   set(yearsInRange, result);
+}
+
+function toggleSelection(): void {
+  set(viewMode, get(viewMode) === 'months' ? 'years' : 'months');
+}
+
+function selectMonth(month: number): void {
+  if (!get(monthsInRange)[month])
+    return;
+  emit('select', { month, year: props.viewYear });
+  set(modelValue, false);
+}
+
+function selectYear(year: number): void {
+  const yearIndex = get(yearRange).indexOf(year);
+  if (yearIndex === -1 || !get(yearsInRange)[yearIndex])
+    return;
+
+  emit('select', { month: props.viewMonth, year });
+  set(viewMode, 'months');
+}
+
+function handleNext(): void {
+  if (get(viewMode) === 'months') {
+    const nextYear = props.viewYear + 1;
+    // Emit directly - navigation is already constrained by canGoToNext
+    emit('select', { month: props.viewMonth, year: nextYear });
+  }
+  else {
+    const lastYearInRange = get(startYear) + 11;
+    set(startYear, lastYearInRange + 1);
+  }
+}
+
+function handlePrev(): void {
+  if (get(viewMode) === 'months') {
+    const previousYear = props.viewYear - 1;
+    // Emit directly - navigation is already constrained by canGoToPrev
+    emit('select', { month: props.viewMonth, year: previousYear });
+  }
+  else {
+    const firstYearInRange = get(startYear);
+    set(startYear, firstYearInRange - 12);
+  }
 }
 
 // Initial calculations
@@ -146,60 +193,22 @@ watch(viewMode, () => {
   calculateNavigation();
 });
 
-watch(() => props.viewYear, () => {
-  calculateTitle();
-  calculateNavigation();
-  calculateMonthsInRange();
-  calculateYearsInRange();
-});
+watch(
+  () => props.viewYear,
+  () => {
+    calculateTitle();
+    calculateNavigation();
+    calculateMonthsInRange();
+    calculateYearsInRange();
+  },
+);
 
-watch(() => props.viewMonth, () => {
-  calculateYearsInRange();
-});
-
-function toggleSelection() {
-  set(viewMode, get(viewMode) === 'months' ? 'years' : 'months');
-}
-
-function selectMonth(month: number) {
-  if (!get(monthsInRange)[month])
-    return;
-  emit('select', { month, year: props.viewYear });
-  set(modelValue, false);
-}
-
-function selectYear(year: number) {
-  const yearIndex = get(yearRange).indexOf(year);
-  if (yearIndex === -1 || !get(yearsInRange)[yearIndex])
-    return;
-
-  emit('select', { month: props.viewMonth, year });
-  set(viewMode, 'months');
-}
-
-function handleNext() {
-  if (get(viewMode) === 'months') {
-    const nextYear = props.viewYear + 1;
-    // Emit directly - navigation is already constrained by canGoToNext
-    emit('select', { month: props.viewMonth, year: nextYear });
-  }
-  else {
-    const lastYearInRange = get(startYear) + 11;
-    set(startYear, lastYearInRange + 1);
-  }
-}
-
-function handlePrev() {
-  if (get(viewMode) === 'months') {
-    const previousYear = props.viewYear - 1;
-    // Emit directly - navigation is already constrained by canGoToPrev
-    emit('select', { month: props.viewMonth, year: previousYear });
-  }
-  else {
-    const firstYearInRange = get(startYear);
-    set(startYear, firstYearInRange - 12);
-  }
-}
+watch(
+  () => props.viewMonth,
+  () => {
+    calculateYearsInRange();
+  },
+);
 </script>
 
 <template>
@@ -257,10 +266,14 @@ function handlePrev() {
           class="h-9 w-full flex items-center justify-center text-sm font-medium rounded-md transition-colors duration-150 ease-in-out border-none outline-none cursor-pointer focus:ring-2 focus:ring-rui-primary focus:ring-opacity-50"
           :class="[
             {
-              'bg-rui-primary text-white hover:bg-rui-primary-darker active:bg-rui-primary-darker dark:bg-rui-primary dark:text-white dark:hover:bg-rui-primary-darker': index === viewMonth && get(monthsInRange)[index],
-              'bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400': index === viewMonth && !get(monthsInRange)[index],
-              'text-gray-700 bg-transparent hover:bg-gray-100 active:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700 dark:active:bg-gray-600': index !== viewMonth && get(monthsInRange)[index],
-              'opacity-50 cursor-not-allowed bg-transparent hover:bg-transparent active:bg-transparent dark:hover:bg-transparent dark:active:bg-transparent pointer-events-none text-gray-400 dark:text-gray-600': !get(monthsInRange)[index],
+              'bg-rui-primary text-white hover:bg-rui-primary-darker active:bg-rui-primary-darker dark:bg-rui-primary dark:text-white dark:hover:bg-rui-primary-darker':
+                index === viewMonth && get(monthsInRange)[index],
+              'bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400':
+                index === viewMonth && !get(monthsInRange)[index],
+              'text-gray-700 bg-transparent hover:bg-gray-100 active:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700 dark:active:bg-gray-600':
+                index !== viewMonth && get(monthsInRange)[index],
+              'opacity-50 cursor-not-allowed bg-transparent hover:bg-transparent active:bg-transparent dark:hover:bg-transparent dark:active:bg-transparent pointer-events-none text-gray-400 dark:text-gray-600':
+                !get(monthsInRange)[index],
             },
           ]"
           :disabled="!get(monthsInRange)[index]"
@@ -281,10 +294,14 @@ function handlePrev() {
           class="h-9 w-full flex items-center justify-center text-sm font-medium rounded-md transition-colors duration-150 ease-in-out border-none outline-none cursor-pointer focus:ring-2 focus:ring-rui-primary focus:ring-opacity-50"
           :class="[
             {
-              'bg-rui-primary text-white hover:bg-rui-primary-darker active:bg-rui-primary-darker dark:bg-rui-primary dark:text-white dark:hover:bg-rui-primary-darker': year === viewYear && get(yearsInRange)[index],
-              'bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400': year === viewYear && !get(yearsInRange)[index],
-              'text-gray-700 bg-transparent hover:bg-gray-100 active:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700 dark:active:bg-gray-600': year !== viewYear && get(yearsInRange)[index],
-              'opacity-50 cursor-not-allowed bg-transparent hover:bg-transparent active:bg-transparent dark:hover:bg-transparent dark:active:bg-transparent pointer-events-none text-gray-400 dark:text-gray-600': !get(yearsInRange)[index],
+              'bg-rui-primary text-white hover:bg-rui-primary-darker active:bg-rui-primary-darker dark:bg-rui-primary dark:text-white dark:hover:bg-rui-primary-darker':
+                year === viewYear && get(yearsInRange)[index],
+              'bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400':
+                year === viewYear && !get(yearsInRange)[index],
+              'text-gray-700 bg-transparent hover:bg-gray-100 active:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700 dark:active:bg-gray-600':
+                year !== viewYear && get(yearsInRange)[index],
+              'opacity-50 cursor-not-allowed bg-transparent hover:bg-transparent active:bg-transparent dark:hover:bg-transparent dark:active:bg-transparent pointer-events-none text-gray-400 dark:text-gray-600':
+                !get(yearsInRange)[index],
             },
           ]"
           :disabled="!get(yearsInRange)[index]"

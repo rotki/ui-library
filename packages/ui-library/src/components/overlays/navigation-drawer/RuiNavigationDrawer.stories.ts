@@ -68,6 +68,9 @@ export const Default = meta.story({
     await userEvent.click(activator);
     const body = within(document.body);
     await waitFor(() => expect(body.getByText('Navigation Drawer')).toBeVisible());
+    // Close by clicking the activator (toggles the drawer)
+    await userEvent.click(activator);
+    await waitFor(() => expect(body.queryByText('Navigation Drawer')).toBeNull());
   },
 });
 

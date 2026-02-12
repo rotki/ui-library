@@ -30,38 +30,32 @@ defineOptions({
   name: 'RuiProgress',
 });
 
-const props = withDefaults(defineProps<Props>(), {
-  value: 0,
-  bufferValue: 0,
-  variant: 'determinate',
-  color: 'inherit',
-  circular: false,
-  showLabel: false,
-  thickness: 4,
-  size: 32,
-});
+const {
+  value = 0,
+  bufferValue = 0,
+  variant = 'determinate',
+  color = 'inherit',
+  circular = false,
+  showLabel = false,
+  thickness = 4,
+  size = 32,
+} = defineProps<Props>();
 
-const { variant, value, bufferValue, thickness, size } = toRefs(props);
+const currentValue = computed<number>(() => Math.max(0, Math.min(value ?? 100, 100)));
 
-const currentValue = computed(() =>
-  Math.max(0, Math.min(get(value) ?? 100, 100)),
+const label = computed<string>(() => `${Math.floor(get(currentValue))}%`);
+
+const progress = computed<number>(() => -100 + get(currentValue));
+
+const valuePercent = computed<string>(() => `${get(progress)}%`);
+
+const bufferPercent = computed<string>(
+  () => `${-100 + Math.max(0, Math.min(bufferValue ?? 100, 100))}%`,
 );
 
-const label = computed(() => `${Math.floor(get(currentValue))}%`);
+const circularScaledThickness = computed<number>(() => (+thickness * 32) / +size);
 
-const progress = computed(() => -100 + get(currentValue));
-
-const valuePercent = computed(() => `${get(progress)}%`);
-
-const bufferPercent = computed(
-  () => `${-100 + Math.max(0, Math.min(get(bufferValue) ?? 100, 100))}%`,
-);
-
-const circularScaledThickness = computed(
-  () => (+get(thickness) * 32) / +get(size),
-);
-
-const circularViewSize = computed(() => 40 + get(circularScaledThickness));
+const circularViewSize = computed<number>(() => 40 + get(circularScaledThickness));
 </script>
 
 <template>
@@ -100,9 +94,7 @@ const circularViewSize = computed(() => 40 + get(circularScaledThickness));
           v-if="variant === 'buffer'"
           :class="$style['buffer-dots']"
         />
-        <div
-          :class="[$style.rail, { [$style['buffer-rail']]: variant === 'buffer' }]"
-        />
+        <div :class="[$style.rail, { [$style['buffer-rail']]: variant === 'buffer' }]" />
         <div :class="$style[variant ?? '']" />
       </template>
     </div>

@@ -1,6 +1,5 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import type { MaybeElement } from '@vueuse/core';
-import { type Ref, ref } from 'vue';
 import { getRootAttrs, transformPropsUnit } from '@/utils/helpers';
 
 export interface NavigationDrawerProps {
@@ -21,25 +20,36 @@ defineOptions({
 
 const modelValue = defineModel<boolean>({ default: false });
 
-const props = withDefaults(defineProps<NavigationDrawerProps>(), {
-  temporary: false,
-  stateless: false,
-  width: 360,
-  miniVariant: false,
-  overlay: false,
-  position: 'left',
-  contentClass: '',
-});
+const {
+  temporary = false,
+  stateless = false,
+  width = 360,
+  miniVariant = false,
+  overlay = false,
+  position = 'left',
+  contentClass = '',
+  ariaLabel,
+} = defineProps<NavigationDrawerProps>();
 
 const emit = defineEmits<{
   closed: [];
 }>();
 
-const {
-  position,
-  miniVariant,
-  width,
-} = toRefs(props);
+const internalValue = ref<boolean>(false);
+const isOpen = ref<boolean>(false);
+const content = useTemplateRef<MaybeElement>('content');
+
+const style = computed<{ width: string | undefined }>(() => ({
+  width: transformPropsUnit(width),
+}));
+
+const activatorAttrs = computed<{ onClick: () => void }>(() => ({
+  onClick: () => {
+    const newValue = !get(internalValue);
+    set(internalValue, newValue);
+    onUpdateModelValue(newValue);
+  },
+}));
 
 function onUpdateModelValue(value: boolean): void {
   set(modelValue, value);
@@ -48,14 +58,19 @@ function onUpdateModelValue(value: boolean): void {
     emit('closed');
 }
 
-const internalValue = ref<boolean>(false);
-const isOpen = ref<boolean>(false);
+function close(): void {
+  set(isOpen, false);
+}
 
-watch(modelValue, (value) => {
-  nextTick(() => {
-    set(internalValue, value);
-  });
-}, { immediate: true });
+watch(
+  modelValue,
+  (value) => {
+    nextTick(() => {
+      set(internalValue, value);
+    });
+  },
+  { immediate: true },
+);
 
 watch(internalValue, (value) => {
   if (value) {
@@ -83,31 +98,13 @@ watch(isOpen, (isOpen) => {
   }
 });
 
-function close(): void {
-  set(isOpen, false);
-}
-
-const style = computed(() => ({
-  width: transformPropsUnit(get(width)),
-}));
-
-const content: Ref<MaybeElement | null> = ref(null);
-
 onClickOutside(content, () => {
-  if (get(isOpen) && props.temporary && !props.stateless) {
+  if (get(isOpen) && temporary && !stateless) {
     setTimeout(() => {
       close();
     }, 50);
   }
 });
-
-const activatorAttrs = computed(() => ({
-  onClick: () => {
-    const newValue = !get(internalValue);
-    set(internalValue, newValue);
-    onUpdateModelValue(newValue);
-  },
-}));
 </script>
 
 <template>

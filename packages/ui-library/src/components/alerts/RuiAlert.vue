@@ -19,27 +19,24 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<Props>(), {
-  title: '',
-  description: '',
-  type: 'primary',
-  icon: undefined,
-  variant: 'default',
-  actionText: '',
-  closeable: false,
-});
+const {
+  title = '',
+  description = '',
+  type = 'primary',
+  icon = undefined,
+  variant = 'default',
+  actionText = '',
+  closeable = false,
+} = defineProps<Props>();
 
 const emit = defineEmits<{
   action: [];
   close: [];
 }>();
 
-const { icon, type } = toRefs(props);
-
 const usedIcon = computed<RuiIcons | undefined>(() => {
-  const iconVal = get(icon);
-  if (iconVal)
-    return iconVal;
+  if (icon)
+    return icon;
 
   const iconMap: Record<ContextColorsType, RuiIcons | undefined> = {
     primary: undefined,
@@ -50,17 +47,13 @@ const usedIcon = computed<RuiIcons | undefined>(() => {
     success: 'lu-circle-check',
   };
 
-  return iconMap[get(type)];
+  return iconMap[type];
 });
 </script>
 
 <template>
   <div
-    :class="[
-      $style.alert,
-      $style[type],
-      $style[variant],
-    ]"
+    :class="[$style.alert, $style[type], $style[variant]]"
     v-bind="$attrs"
   >
     <div class="flex space-x-3 py-1 flex-grow">

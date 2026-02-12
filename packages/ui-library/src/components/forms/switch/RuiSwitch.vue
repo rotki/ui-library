@@ -23,29 +23,27 @@ defineOptions({
 
 const modelValue = defineModel<boolean>({ default: false });
 
-const props = withDefaults(defineProps<Props>(), {
-  disabled: false,
-  color: undefined,
-  size: undefined,
-  label: '',
-  hint: '',
-  errorMessages: () => [],
-  successMessages: () => [],
-  hideDetails: false,
-  required: false,
-});
+const {
+  disabled = false,
+  color = undefined,
+  size = undefined,
+  label = '',
+  hint = '',
+  errorMessages = [],
+  successMessages = [],
+  hideDetails = false,
+  required = false,
+} = defineProps<Props>();
 
-const { size, errorMessages, successMessages } = toRefs(props);
+const { hasError, hasSuccess } = useFormTextDetail(
+  toRef(() => errorMessages),
+  toRef(() => successMessages),
+);
 
-function input(event: Event) {
+function input(event: Event): void {
   const checked = (event.target as HTMLInputElement).checked;
   set(modelValue, checked);
 }
-
-const { hasError, hasSuccess } = useFormTextDetail(
-  errorMessages,
-  successMessages,
-);
 </script>
 
 <template>
@@ -74,9 +72,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
           v-bind="getNonRootAttrs($attrs)"
           @input="input($event)"
         />
-        <div
-          :class="$style.toggle"
-        />
+        <div :class="$style.toggle" />
       </div>
       <span
         v-if="label || $slots.default"

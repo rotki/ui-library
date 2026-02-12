@@ -1,8 +1,19 @@
-import type { MaybeRef } from 'vue';
+import type { ComputedRef, MaybeRef, Ref } from 'vue';
 import { logicOr } from '@vueuse/math';
 
-export function useFormTextDetail(errorMessages: MaybeRef<string | string[]>, successMessages: MaybeRef<string | string[]>) {
-  const formattedErrorMessages = computed(() => {
+export interface FormTextDetailReturn {
+  formattedErrorMessages: ComputedRef<string[]>;
+  formattedSuccessMessages: ComputedRef<string[]>;
+  hasError: ComputedRef<boolean>;
+  hasMessages: Ref<boolean>;
+  hasSuccess: ComputedRef<boolean>;
+}
+
+export function useFormTextDetail(
+  errorMessages: MaybeRef<string | string[]>,
+  successMessages: MaybeRef<string | string[]>,
+): FormTextDetailReturn {
+  const formattedErrorMessages = computed<string[]>(() => {
     let errorMessagesVal = get(errorMessages);
     if (typeof errorMessagesVal === 'string')
       errorMessagesVal = [errorMessagesVal];
@@ -10,7 +21,7 @@ export function useFormTextDetail(errorMessages: MaybeRef<string | string[]>, su
     return errorMessagesVal.filter(item => !!item);
   });
 
-  const formattedSuccessMessages = computed(() => {
+  const formattedSuccessMessages = computed<string[]>(() => {
     let successMessagesVal = get(successMessages);
     if (typeof successMessagesVal === 'string')
       successMessagesVal = [successMessagesVal];
@@ -18,9 +29,9 @@ export function useFormTextDetail(errorMessages: MaybeRef<string | string[]>, su
     return successMessagesVal.filter(item => !!item);
   });
 
-  const hasError = computed(() => get(formattedErrorMessages).length > 0);
+  const hasError = computed<boolean>(() => get(formattedErrorMessages).length > 0);
 
-  const hasSuccess = computed(() => get(formattedSuccessMessages).length > 0);
+  const hasSuccess = computed<boolean>(() => get(formattedSuccessMessages).length > 0);
   const hasMessages = logicOr(hasError, hasSuccess);
 
   return {

@@ -91,12 +91,14 @@ jobs:
         working-directory: packages/ui-library
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Run Storybook Tests
-        working-directory: packages/ui-library
-        run: pnpm run test:storybook --run
+      - name: Run Unit Tests with Coverage
+        run: pnpm run coverage:unit
 
-      - name: Test
-        run: pnpm run coverage
+      - name: Run Storybook Tests with Coverage
+        run: pnpm run coverage:storybook
+
+      - name: Merge Coverage Reports
+        run: pnpm run coverage:merge
 
       - name: Typecheck
         run: pnpm run -r typecheck

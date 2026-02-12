@@ -1,4 +1,4 @@
-<script lang='ts' setup>
+<script lang="ts" setup>
 import { transformPropsUnit } from '@/utils/helpers';
 
 export interface NotificationProps {
@@ -14,22 +14,14 @@ defineOptions({
 
 const modelValue = defineModel<boolean>({ required: true });
 
-const props = withDefaults(
-  defineProps<NotificationProps>(),
-  {
-    width: 400,
-    theme: undefined,
-  },
-);
+const { timeout, width = 400, theme } = defineProps<NotificationProps>();
 
-const { timeout, width } = toRefs(props);
-
-const style = computed(() => ({
-  width: transformPropsUnit(get(width)),
+const style = computed<{ width: string | undefined }>(() => ({
+  width: transformPropsUnit(width),
 }));
 
-function dismiss() {
-  if (get(timeout) < 0)
+function dismiss(): void {
+  if (timeout < 0)
     return;
 
   set(modelValue, false);
@@ -39,7 +31,7 @@ watchImmediate(modelValue, (display) => {
   if (!display)
     return;
 
-  const duration = get(timeout);
+  const duration = timeout;
   if (duration > 0) {
     setTimeout(() => {
       set(modelValue, false);

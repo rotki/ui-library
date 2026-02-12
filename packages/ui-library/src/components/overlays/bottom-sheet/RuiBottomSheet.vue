@@ -3,7 +3,6 @@ import RuiDialog from '@/components/overlays/dialog/RuiDialog.vue';
 
 // keep these props in sync with Dialog props
 export interface BottomSheetProps {
-  modelValue?: boolean;
   persistent?: boolean;
   width?: string | number;
   maxWidth?: string | number;
@@ -14,16 +13,19 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<BottomSheetProps>(), {
-  modelValue: false,
-  persistent: false,
-});
+const modelValue = defineModel<boolean>({ default: false });
+
+const { persistent = false, width, maxWidth } = defineProps<BottomSheetProps>();
 </script>
 
 <template>
   <RuiDialog
+    v-model="modelValue"
     bottom-sheet
-    v-bind="{ ...props, ...$attrs }"
+    v-bind="$attrs"
+    :persistent="persistent"
+    :width="width"
+    :max-width="maxWidth"
   >
     <template
       v-for="slot in Object.keys($slots)"

@@ -1,27 +1,21 @@
 <script setup lang="ts">
 import { useFormTextDetail } from '@/utils/form-text-detail';
 
-const props = withDefaults(
-  defineProps<{
-    errorMessages?: string | string[];
-    successMessages?: string | string[];
-    hint?: string;
-  }>(),
-  {
-    errorMessages: () => [],
-    successMessages: () => [],
-    hint: '',
-  },
-);
-
-const { errorMessages, successMessages } = toRefs(props);
-
 const {
-  formattedErrorMessages,
-  formattedSuccessMessages,
-  hasError,
-  hasSuccess,
-} = useFormTextDetail(errorMessages, successMessages);
+  errorMessages = [],
+  successMessages = [],
+  hint = '',
+} = defineProps<{
+  errorMessages?: string | string[];
+  successMessages?: string | string[];
+  hint?: string;
+}>();
+
+const { formattedErrorMessages, formattedSuccessMessages, hasError, hasSuccess } =
+  useFormTextDetail(
+    toRef(() => errorMessages),
+    toRef(() => successMessages),
+  );
 </script>
 
 <template>

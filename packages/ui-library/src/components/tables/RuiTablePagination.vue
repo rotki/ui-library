@@ -20,17 +20,15 @@ export interface Props {
 
 const modelValue = defineModel<TablePaginationData>({ required: true });
 
-withDefaults(defineProps<Props>(), {
-  dense: false,
-  loading: false,
-  disablePerPage: false,
-});
+const { dense = false, loading = false, disablePerPage = false } = defineProps<Props>();
 
 const tableDefaults = useTable();
 
-const limits = computed(() => (get(modelValue).limits ?? get(tableDefaults.limits)).map(limit => ({ limit })));
+const limits = computed<{ limit: number }[]>(() =>
+  (get(modelValue).limits ?? get(tableDefaults.limits)).map(limit => ({ limit })),
+);
 
-const currentLimit = computed({
+const currentLimit = computed<number>({
   get: () => get(modelValue).limit,
   set: limit =>
     set(modelValue, {
@@ -40,7 +38,7 @@ const currentLimit = computed({
     }),
 });
 
-const pages = computed(() => {
+const pages = computed<number>(() => {
   const { limit, total } = get(modelValue);
   if (!total)
     return 0;
@@ -48,21 +46,20 @@ const pages = computed(() => {
   return Math.ceil(total / limit);
 });
 
-const ranges = computed(() => {
+const ranges = computed<{ page: number; text: string }[]>(() => {
   const segments = [];
 
-  for (let page = 1; page <= get(pages); page++)
-    segments.push({ page, text: pageRangeText(page) });
+  for (let page = 1; page <= get(pages); page++) segments.push({ page, text: pageRangeText(page) });
 
   return segments;
 });
 
-const indicatorText = computed(() => {
+const indicatorText = computed<string>(() => {
   const { total } = get(modelValue);
   return `${!total ? '0 ' : ''}of ${formatInteger(total)}`;
 });
 
-const currentRange = computed({
+const currentRange = computed<number>({
   get: () => get(modelValue).page,
   set: page =>
     set(modelValue, {
@@ -71,49 +68,49 @@ const currentRange = computed({
     }),
 });
 
-const hasPrev = computed(() => get(modelValue).page > 1);
-const hasNext = computed(() => get(pages) > get(modelValue).page);
+const hasPrev = computed<boolean>(() => get(modelValue).page > 1);
+const hasNext = computed<boolean>(() => get(pages) > get(modelValue).page);
 
-function goToPage(page: number) {
+function goToPage(page: number): void {
   set(modelValue, {
     ...get(modelValue),
     page,
   });
 }
 
-function pageRangeText(page: number) {
+function pageRangeText(page: number): string {
   const { limit, total } = get(modelValue);
   return `${formatInteger((page - 1) * limit + 1)} - ${formatInteger(
     Math.min(page * limit, total),
   )}`;
 }
 
-function onNavigate(delta: number) {
+function onNavigate(delta: number): void {
   goToPage(get(modelValue).page + delta);
 }
 
-function onPrev() {
+function onPrev(): void {
   if (!get(hasPrev))
     return;
 
   onNavigate(-1);
 }
 
-function onNext() {
+function onNext(): void {
   if (!get(hasNext))
     return;
 
   onNavigate(1);
 }
 
-function onFirst() {
+function onFirst(): void {
   if (!get(hasPrev))
     return;
 
   goToPage(1);
 }
 
-function onLast() {
+function onLast(): void {
   if (!get(hasNext))
     return;
 

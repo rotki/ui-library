@@ -2,10 +2,7 @@ import type { SetupContext } from 'vue';
 import { objectOmit, objectPick } from '@vueuse/shared';
 import { camelCase, snakeCase } from 'scule';
 
-interface CurrencyOptions {
-  currency?: string;
-  locale?: string;
-  style?: Intl.NumberFormatOptionsStyle;
+interface FormatNumberOptions {
   fractionDigits?: number;
 }
 
@@ -13,31 +10,10 @@ type SetupContextAttrs = SetupContext['attrs'];
 
 type SetupContextAttrsKeys = (keyof SetupContextAttrs)[];
 
-/**
- * Format number value to specified currency format
- * @param {number} amount
- * @param {CurrencyOptions} options
- */
-export function formatCurrency(amount: number | string, {
-  currency = 'EUR',
-  fractionDigits = 2,
-  locale = 'de-De',
-  style = 'currency',
-}: CurrencyOptions) {
-  return new Intl.NumberFormat(locale, {
-    currency,
-    maximumFractionDigits: fractionDigits,
-    minimumFractionDigits: fractionDigits,
-    style,
-  }).format(Number(amount));
-}
-
-/**
- * Format number value
- * @param {number} amount
- * @param {CurrencyOptions} options
- */
-export function formatNumber(amount: number | string, { fractionDigits = 2 }: CurrencyOptions) {
+function formatNumber(
+  amount: number | string,
+  { fractionDigits = 2 }: FormatNumberOptions,
+): string {
   return new Intl.NumberFormat(undefined, {
     maximumFractionDigits: fractionDigits,
     minimumFractionDigits: fractionDigits,
@@ -48,7 +24,7 @@ export function formatNumber(amount: number | string, { fractionDigits = 2 }: Cu
  * Format number value without fraction
  * @param {number} amount
  */
-export function formatInteger(amount: number | string) {
+export function formatInteger(amount: number | string): string {
   return formatNumber(amount, { fractionDigits: 0 });
 }
 
@@ -57,10 +33,8 @@ export function formatInteger(amount: number | string) {
  * @param {SetupContextAttrs} data
  * @returns {SetupContextAttrsKeys}
  */
-export function getRootKeys(data: SetupContextAttrs) {
-  return Object.keys(data).filter(key =>
-    key.startsWith('data-'),
-  ) as SetupContextAttrsKeys;
+function getRootKeys(data: SetupContextAttrs): SetupContextAttrsKeys {
+  return Object.keys(data).filter(key => key.startsWith('data-')) as SetupContextAttrsKeys;
 }
 
 /**
@@ -79,7 +53,10 @@ export function getRootAttrs(data: SetupContextAttrs, include: SetupContextAttrs
  * @param {SetupContextAttrsKeys} exclude
  * @returns {Omit<SetupContextAttrs, any>}
  */
-export function getNonRootAttrs(data: SetupContextAttrs, exclude: SetupContextAttrsKeys = ['class']) {
+export function getNonRootAttrs(
+  data: SetupContextAttrs,
+  exclude: SetupContextAttrsKeys = ['class'],
+) {
   return objectOmit(data, [...getRootKeys(data), ...exclude]);
 }
 
@@ -89,18 +66,23 @@ export function getNonRootAttrs(data: SetupContextAttrs, exclude: SetupContextAt
  * @param {"camelCase" | "snake_case"} to
  * @returns {Record<string, any>}
  */
-export function transformCase<T extends object>(item: T, to: 'camelCase' | 'snake_case') {
+export function transformCase<T extends object>(
+  item: T,
+  to: 'camelCase' | 'snake_case',
+): Record<string, T[keyof T]> {
   if (!item)
     return item;
 
-  return Object.keys(item).reduce((acc, curr) => {
-    if (to === 'camelCase')
-      acc[camelCase(curr)] = item[curr as keyof T];
-    else
-      acc[snakeCase(curr)] = item[curr as keyof T];
+  return Object.keys(item).reduce(
+    (acc, curr) => {
+      if (to === 'camelCase')
+        acc[camelCase(curr)] = item[curr as keyof T];
+      else acc[snakeCase(curr)] = item[curr as keyof T];
 
-    return acc;
-  }, {} as Record<string, any>);
+      return acc;
+    },
+    {} as Record<string, T[keyof T]>,
+  );
 }
 
 /**
@@ -111,11 +93,14 @@ export function transformCase<T extends object>(item: T, to: 'camelCase' | 'snak
  * getTextToken('this is a sentence'); // thisisasentence
  */
 
-export function getTextToken(string: any): string {
+export function getTextToken(string: unknown): string {
   if (!string)
     return '';
 
-  return string.toString().toLowerCase().replace(/[^\da-z]/gi, '');
+  return string
+    .toString()
+    .toLowerCase()
+    .replace(/[^\da-z]/gi, '');
 }
 
 export function transformPropsUnit(value?: string | number): string | undefined {

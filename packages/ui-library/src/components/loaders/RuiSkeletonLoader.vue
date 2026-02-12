@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import RuiSkeletonBase, { type Props as SkeletonBaseProps } from '@/components/loaders/RuiSkeletonBase.vue';
+import RuiSkeletonBase, {
+  type Props as SkeletonBaseProps,
+} from '@/components/loaders/RuiSkeletonBase.vue';
 
 export interface Props extends SkeletonBaseProps {
   type?:
@@ -19,10 +21,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-withDefaults(defineProps<Props>(), {
-  type: 'text',
-  rounded: undefined,
-});
+const { type = 'text', rounded } = defineProps<Props>();
 </script>
 
 <template>

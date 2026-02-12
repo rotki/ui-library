@@ -25,21 +25,16 @@ defineOptions({
 const model = defineModel<Date | undefined>({ required: false });
 const isMenuOpen = defineModel<boolean>('menu-open', { required: false, default: false });
 
-const props = withDefaults(defineProps<CalendarProps>(), {
-  maxDate: undefined,
-  minDate: undefined,
-  allowEmpty: false,
-  borderless: false,
-});
+const { maxDate, minDate, allowEmpty = false, borderless = false } = defineProps<CalendarProps>();
 
 const emit = defineEmits<{
   'update:pages': [{ title: string }[]];
 }>();
 
-const currentDate = ref(isDefined(model) ? new Date(get(model)) : new Date());
-const selectedDate = ref(isDefined(model) ? new Date(get(model)) : undefined);
-const viewMonth = ref(get(currentDate).getMonth());
-const viewYear = ref(get(currentDate).getFullYear());
+const currentDate = ref<Date>(isDefined(model) ? new Date(get(model)) : new Date());
+const selectedDate = ref<Date | undefined>(isDefined(model) ? new Date(get(model)) : undefined);
+const viewMonth = ref<number>(get(currentDate).getMonth());
+const viewYear = ref<number>(get(currentDate).getFullYear());
 
 const { isDark } = useRotkiTheme();
 
@@ -52,13 +47,13 @@ provide(CalendarStateSymbol.valueOf(), {
   viewMonth,
   viewYear,
   selectedDate,
-  maxDate: computed(() => props.maxDate ? new Date(props.maxDate) : undefined),
-  minDate: computed(() => props.minDate ? new Date(props.minDate) : undefined),
+  maxDate: computed(() => (maxDate ? new Date(maxDate) : undefined)),
+  minDate: computed(() => (minDate ? new Date(minDate) : undefined)),
   isDark,
-  allowEmpty: props.allowEmpty,
+  allowEmpty,
 } satisfies RuiCalendarState);
 
-function moveMonth(delta: number) {
+function moveMonth(delta: number): void {
   let newMonth = get(viewMonth) + delta;
   let newYear = get(viewYear);
 
@@ -77,13 +72,13 @@ function moveMonth(delta: number) {
   emit('update:pages', [{ title: get(monthTitle) }]);
 }
 
-function move(date: Date | number) {
+function move(date: Date | number): void {
   const newDate = new Date(date);
   set(viewMonth, newDate.getMonth());
   set(viewYear, newDate.getFullYear());
 }
 
-function selectMonth(selection: MonthYearSelection) {
+function selectMonth(selection: MonthYearSelection): void {
   set(viewMonth, selection.month);
   set(viewYear, selection.year);
 
@@ -105,7 +100,7 @@ function selectMonth(selection: MonthYearSelection) {
 }
 
 watch([selectedDate], ([date]) => {
-  if (!date && !props.allowEmpty)
+  if (!date && !allowEmpty)
     return;
 
   if (date) {

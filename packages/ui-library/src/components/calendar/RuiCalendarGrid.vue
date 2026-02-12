@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { get, isDefined, set } from '@vueuse/core';
 import { inject, ref, watch } from 'vue';
-import { CalendarStateSymbol, getDaysOfWeek, type RuiCalendarState } from '@/components/calendar/state';
+import {
+  CalendarStateSymbol,
+  getDaysOfWeek,
+  type RuiCalendarState,
+} from '@/components/calendar/state';
 
 defineOptions({
   name: 'RuiCalendarGrid',
@@ -28,7 +32,25 @@ const today = new Date();
 const todayKey = createDateKey(today);
 
 // Pre-calculated arrays for performance - using refs for better control
-const calendarDays = ref<Array<{
+const calendarDays = ref<
+  Array<{
+    date: Date;
+    isCurrentMonth: boolean;
+    isInRange: boolean;
+    isSelected: boolean;
+    isToday: boolean;
+    key: string;
+    dayNumber: number;
+  }>
+>([]);
+
+function createDayData(
+  date: Date,
+  isCurrentMonth: boolean,
+  modelValue: Date | null | undefined,
+  maxDateValue: Date | null,
+  minDateValue: Date | null,
+): {
   date: Date;
   isCurrentMonth: boolean;
   isInRange: boolean;
@@ -36,9 +58,7 @@ const calendarDays = ref<Array<{
   isToday: boolean;
   key: string;
   dayNumber: number;
-}>>([]);
-
-function createDayData(date: Date, isCurrentMonth: boolean, modelValue: Date | null | undefined, maxDateValue: Date | null, minDateValue: Date | null) {
+} {
   const key = createDateKey(date);
   return {
     date,
@@ -52,7 +72,7 @@ function createDayData(date: Date, isCurrentMonth: boolean, modelValue: Date | n
 }
 
 // Pre-calculation functions using VueUse get/set
-function calculateCalendarDays() {
+function calculateCalendarDays(): void {
   const firstDayOfMonth = new Date(props.viewYear, props.viewMonth, 1);
   const lastDayOfMonth = new Date(props.viewYear, props.viewMonth + 1, 0);
   const daysInMonth = lastDayOfMonth.getDate();
@@ -91,7 +111,11 @@ function calculateCalendarDays() {
   set(calendarDays, result);
 }
 
-function isDateInRangeCheck(date: Date, maxDateValue: Date | null, minDateValue: Date | null): boolean {
+function isDateInRangeCheck(
+  date: Date,
+  maxDateValue: Date | null,
+  minDateValue: Date | null,
+): boolean {
   if (maxDateValue && date > maxDateValue)
     return false;
   if (minDateValue && date < minDateValue)
@@ -100,28 +124,14 @@ function isDateInRangeCheck(date: Date, maxDateValue: Date | null, minDateValue:
 }
 
 function isDateSelectedCheck(date: Date, modelValue: Date): boolean {
-  return date.getFullYear() === modelValue.getFullYear()
-    && date.getMonth() === modelValue.getMonth()
-    && date.getDate() === modelValue.getDate();
+  return (
+    date.getFullYear() === modelValue.getFullYear() &&
+    date.getMonth() === modelValue.getMonth() &&
+    date.getDate() === modelValue.getDate()
+  );
 }
 
-// Initial calculation
-calculateCalendarDays();
-
-// Watchers for recalculation only when needed
-watch([() => props.viewMonth, () => props.viewYear], () => {
-  calculateCalendarDays();
-});
-
-watch(model, () => {
-  calculateCalendarDays();
-});
-
-watch([() => calendarState.maxDate, () => calendarState.minDate], () => {
-  calculateCalendarDays();
-}, { deep: true });
-
-function selectDate(dayData: { date: Date; isInRange: boolean; isSelected: boolean }) {
+function selectDate(dayData: { date: Date; isInRange: boolean; isSelected: boolean }): void {
   if (!dayData.isInRange)
     return;
 
@@ -143,6 +153,26 @@ function selectDate(dayData: { date: Date; isInRange: boolean; isSelected: boole
   }
   set(model, updateModel);
 }
+
+// Initial calculation
+calculateCalendarDays();
+
+// Watchers for recalculation only when needed
+watch([() => props.viewMonth, () => props.viewYear], () => {
+  calculateCalendarDays();
+});
+
+watch(model, () => {
+  calculateCalendarDays();
+});
+
+watch(
+  [() => calendarState.maxDate, () => calendarState.minDate],
+  () => {
+    calculateCalendarDays();
+  },
+  { deep: true },
+);
 </script>
 
 <template>
@@ -166,9 +196,11 @@ function selectDate(dayData: { date: Date; isInRange: boolean; isSelected: boole
         class="h-9 w-full flex items-center justify-center text-sm rounded-full mx-auto max-w-[2.25rem] transition-colors duration-150 ease-in-out border-none outline-none cursor-pointer focus:ring-2 focus:ring-rui-primary focus:ring-opacity-50"
         :class="[
           {
-            'bg-rui-primary text-white hover:bg-rui-primary/90 dark:hover:bg-rui-primary/90': dayData.isSelected,
+            'bg-rui-primary text-white hover:bg-rui-primary/90 dark:hover:bg-rui-primary/90':
+              dayData.isSelected,
             'text-gray-400 dark:text-gray-600': !dayData.isCurrentMonth && !dayData.isSelected,
-            'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700': dayData.isCurrentMonth && !dayData.isSelected && dayData.isInRange,
+            'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700':
+              dayData.isCurrentMonth && !dayData.isSelected && dayData.isInRange,
             'opacity-50 cursor-not-allowed hover:bg-transparent': !dayData.isInRange,
             'today-indicator': dayData.isToday && !dayData.isSelected,
           },

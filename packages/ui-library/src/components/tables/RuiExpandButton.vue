@@ -12,7 +12,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-withDefaults(defineProps<Props>(), { icon: 'lu-chevron-down' });
+const { expanded, icon = 'lu-chevron-down' } = defineProps<Props>();
 </script>
 
 <template>

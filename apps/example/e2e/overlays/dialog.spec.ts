@@ -24,8 +24,8 @@ test.describe('dialog', () => {
     await page.keyboard.press('Escape');
     await expect(page.locator('div[role=dialog]')).toBeVisible();
 
-    // should not close the dialog
-    await page.locator('div[role=dialog] [data-id=overlay]').click({ force: true });
+    // should not close the dialog (click near top-left corner where overlay is not covered by content)
+    await page.locator('div[role=dialog] [data-id=overlay]').click({ position: { x: 5, y: 5 } });
     await expect(page.locator('div[role=dialog]')).toBeVisible();
 
     // close the dialog
@@ -91,8 +91,8 @@ test.describe('dialog', () => {
     await activator.click();
     await expect(page.locator('div[role=dialog]')).toBeVisible();
 
-    // should close the dialog too
-    await page.locator('div[role=dialog] [data-id=overlay]').click({ force: true });
+    // should close the dialog too (click near top-left corner where overlay is not covered by content)
+    await page.locator('div[role=dialog] [data-id=overlay]').click({ position: { x: 5, y: 5 } });
     await expect(page.locator('div[role=dialog]')).toHaveCount(0);
   });
 });

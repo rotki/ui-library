@@ -12,9 +12,7 @@ defineOptions({
   name: 'LazyIcon',
 });
 
-const props = withDefaults(defineProps<LazyIconProps>(), {
-  size: 24,
-});
+const { name, size = 24 } = defineProps<LazyIconProps>();
 
 const target = useTemplateRef<HTMLElement>('target');
 const isVisible = ref<boolean>(false);
@@ -35,12 +33,12 @@ useIntersectionObserver(
 <template>
   <div
     ref="target"
-    :style="{ width: `${props.size}px`, height: `${props.size}px` }"
+    :style="{ width: `${size}px`, height: `${size}px` }"
   >
     <RuiIcon
       v-if="isVisible"
-      :name="props.name"
-      :size="props.size"
+      :name="name"
+      :size="size"
     />
   </div>
 </template>

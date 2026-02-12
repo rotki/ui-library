@@ -9,11 +9,24 @@ defineOptions({
 
 const modelValue = defineModel<number>({ required: true });
 
-const barElement = ref<HTMLElement>();
+const barElement = useTemplateRef<HTMLElement>('barElement');
 
 const cursorWidth = 16;
+const cursorLeft = ref<string>('');
 
-function getLimit(width: number) {
+const instance = getCurrentInstance();
+
+const { handleClick, onMouseDown } = useElementDrag(emitHue);
+
+const cursorStyle = computed<{ left: string }>(() => ({
+  left: get(cursorLeft),
+}));
+
+function getLimit(width: number): {
+  lowerLimit: number;
+  upperLimit: number;
+  availableWidth: number;
+} {
   const lowerLimit = cursorWidth / 2;
   const upperLimit = width - lowerLimit;
   const availableWidth = upperLimit - lowerLimit;
@@ -21,19 +34,11 @@ function getLimit(width: number) {
   return { lowerLimit, upperLimit, availableWidth };
 }
 
-const cursorLeft = ref<string>('');
-
-function updatePosition() {
+function updatePosition(): void {
   set(cursorLeft, getCursorLeft().toString());
 }
 
-const cursorStyle = computed(() => ({
-  left: get(cursorLeft),
-}));
-
-const instance = getCurrentInstance();
-
-function getCursorLeft() {
+function getCursorLeft(): number | string {
   if (!instance)
     return 0;
 
@@ -53,7 +58,7 @@ function getCursorLeft() {
   return `calc(${percentage}% + ${lowerLimit}px)`;
 }
 
-function emitHue(x: number) {
+function emitHue(x: number): void {
   if (!instance)
     return;
 
@@ -71,16 +76,11 @@ function emitHue(x: number) {
   set(modelValue, Math.round(((calculatedX - lowerLimit) / availableWidth) * 360));
 }
 
-const {
-  handleClick,
-  onMouseDown,
-} = useElementDrag(emitHue);
-
-onMounted(() => {
+watch(modelValue, () => {
   updatePosition();
 });
 
-watch(modelValue, () => {
+onMounted(() => {
   updatePosition();
 });
 </script>

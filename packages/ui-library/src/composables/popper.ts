@@ -1,4 +1,11 @@
-import { createPopper, type Instance, type Placement, type PositioningStrategy, type VirtualElement } from '@popperjs/core';
+import {
+  createPopper,
+  type Instance,
+  type Placement,
+  type PositioningStrategy,
+  type StrictModifiers,
+  type VirtualElement,
+} from '@popperjs/core';
 import { type MaybeElement, unrefElement } from '@vueuse/core';
 import { onMounted, type Ref, ref, watchEffect } from 'vue';
 import { useTimeoutManager } from './timeout-manager';
@@ -60,7 +67,7 @@ export function usePopper(
   const openTimeoutManager = useTimeoutManager();
   const closeTimeoutManager = useTimeoutManager();
 
-  const onPopperLeave = () => {
+  const onPopperLeave = (): void => {
     set(popperEnter, false);
   };
 
@@ -68,7 +75,7 @@ export function usePopper(
     await get(instance)?.update();
   };
 
-  const onOpen = (immediate = false) => {
+  const onOpen = (immediate: boolean = false): void => {
     if (get(disabled))
       return;
 
@@ -78,33 +85,39 @@ export function usePopper(
     if (!openTimeoutManager.isActive()) {
       set(popperEnter, true);
 
-      openTimeoutManager.create(() => {
-        set(open, true);
-      }, immediate ? 0 : get(openDelay));
+      openTimeoutManager.create(
+        () => {
+          set(open, true);
+        },
+        immediate ? 0 : get(openDelay),
+      );
     }
   };
 
-  const onClose = (immediate = false) => {
+  const onClose = (immediate: boolean = false): void => {
     if (get(disabled))
       return;
 
     openTimeoutManager.clear();
 
     if (!closeTimeoutManager.isActive()) {
-      closeTimeoutManager.create(() => {
-        if (!get(open))
-          onPopperLeave();
+      closeTimeoutManager.create(
+        () => {
+          if (!get(open))
+            onPopperLeave();
 
-        set(open, false);
-      }, immediate ? 0 : get(closeDelay));
+          set(open, false);
+        },
+        immediate ? 0 : get(closeDelay),
+      );
     }
   };
 
-  const onLeavePending = () => {
+  const onLeavePending = (): void => {
     set(leavePending, true);
   };
 
-  const modifiers = computed(() => {
+  const modifiers = computed<StrictModifiers[]>(() => {
     const {
       adaptive = DEFAULT_POPPER_OPTIONS.adaptive,
       gpuAcceleration = DEFAULT_POPPER_OPTIONS.gpuAcceleration,
@@ -116,43 +129,55 @@ export function usePopper(
       scroll = DEFAULT_POPPER_OPTIONS.scroll,
     } = get(options);
 
-    return [{
-      enabled: false,
-      name: 'hide',
-    }, {
-      enabled: !locked,
-      name: 'flip',
-    }, {
-      name: 'preventOverflow',
-      options: {
-        padding: overflowPadding,
+    return [
+      {
+        enabled: false,
+        name: 'hide',
       },
-    }, {
-      name: 'offset',
-      options: {
-        offset: [offsetSkid, offsetDistance],
+      {
+        enabled: !locked,
+        name: 'flip',
       },
-    }, {
-      name: 'computeStyles',
-      options: {
-        adaptive,
-        gpuAcceleration,
+      {
+        name: 'preventOverflow',
+        options: {
+          padding: overflowPadding,
+        },
       },
-    }, {
-      name: 'eventListeners',
-      options: {
-        resize,
-        scroll,
+      {
+        name: 'offset',
+        options: {
+          offset: [offsetSkid, offsetDistance],
+        },
       },
-    }, {
-      name: 'arrow',
-      options: {
-        padding: 4,
+      {
+        name: 'computeStyles',
+        options: {
+          adaptive,
+          gpuAcceleration,
+        },
       },
-    }];
+      {
+        name: 'eventListeners',
+        options: {
+          resize,
+          scroll,
+        },
+      },
+      {
+        name: 'arrow',
+        options: {
+          padding: 4,
+        },
+      },
+    ];
   });
 
-  const popperConfig = computed(() => {
+  const popperConfig = computed<{
+    modifiers: StrictModifiers[];
+    placement: Placement | undefined;
+    strategy: PositioningStrategy | undefined;
+  }>(() => {
     const {
       placement = DEFAULT_POPPER_OPTIONS.placement,
       strategy = DEFAULT_POPPER_OPTIONS.strategy,
@@ -165,7 +190,10 @@ export function usePopper(
     };
   });
 
-  function getValidElements(): { popperEl: HTMLElement; referenceEl: Element | VirtualElement } | null {
+  function getValidElements(): {
+    popperEl: HTMLElement;
+    referenceEl: Element | VirtualElement;
+  } | null {
     if (!get(popper) || (!get(reference) && !get(virtualReference))) {
       return null;
     }
@@ -180,7 +208,7 @@ export function usePopper(
     return { popperEl, referenceEl };
   }
 
-  function initializePopper(onInvalidate: (cleanupFn: () => void) => void) {
+  function initializePopper(onInvalidate: (cleanupFn: () => void) => void): void {
     const elements = getValidElements();
     if (!elements)
       return;

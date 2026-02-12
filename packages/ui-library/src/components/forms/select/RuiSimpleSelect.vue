@@ -16,12 +16,7 @@ defineOptions({
 
 const modelValue = defineModel<string | number>({ required: true });
 
-withDefaults(defineProps<Props>(), {
-  disabled: false,
-  label: undefined,
-  name: '',
-  variant: 'default',
-});
+const { options, disabled = false, label, name = '', variant = 'default' } = defineProps<Props>();
 </script>
 
 <template>
@@ -31,11 +26,7 @@ withDefaults(defineProps<Props>(), {
   >
     <select
       v-model="modelValue"
-      :class="[
-        $style.select,
-        $style[variant ?? 'default'],
-        { [$style.disabled ?? '']: disabled },
-      ]"
+      :class="[$style.select, $style[variant ?? 'default'], { [$style.disabled ?? '']: disabled }]"
       :name="name"
       :disabled="disabled"
       :aria-label="label"

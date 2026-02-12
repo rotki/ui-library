@@ -4,10 +4,13 @@ import { assert } from '@/utils/assert';
 /**
  * Setup sticky table header
  */
-export function useStickyTableHeader(sticky: MaybeRef<boolean> = ref(false), offsetTop?: MaybeRef<number>) {
-  const table: Ref<HTMLTableElement | null> = ref(null);
-  const tableScroller: Ref<HTMLElement | null> = ref(null);
-  const stick: Ref<boolean> = ref(false);
+export function useStickyTableHeader(
+  sticky: MaybeRef<boolean> = ref(false),
+  offsetTop?: MaybeRef<number | undefined>,
+) {
+  const table = ref<HTMLTableElement | null>(null);
+  const tableScroller = ref<HTMLElement | null>(null);
+  const stick = ref<boolean>(false);
   const borderPrecision = -0.5;
   const selectors = {
     head: ':scope > thead[data-id=head-main]',
@@ -16,26 +19,22 @@ export function useStickyTableHeader(sticky: MaybeRef<boolean> = ref(false), off
     th: ':scope > th',
   };
 
-  const watchCellWidth = () => {
+  const watchCellWidth = (): void => {
     const root = get(table);
 
     if (!get(sticky) || !root)
       return;
 
-    const theadClone: HTMLHeadElement | null = root.querySelector(
-      `${selectors.headClone} > tr`,
-    );
+    const theadClone: HTMLHeadElement | null = root.querySelector(`${selectors.headClone} > tr`);
 
-    const head: HTMLHeadElement | null
-      = root.querySelector(`${selectors.head} > tr`) ?? null;
+    const head: HTMLHeadElement | null = root.querySelector(`${selectors.head} > tr`) ?? null;
 
-    const observeChildTh = () => {
-      const columns: NodeListOf<HTMLElement> | undefined = head?.querySelectorAll(
+    const observeChildTh = (): void => {
+      const columns: NodeListOf<HTMLElement> | undefined = head?.querySelectorAll(selectors.th);
+
+      const clonedColumns: NodeListOf<HTMLElement> | undefined = theadClone?.querySelectorAll(
         selectors.th,
       );
-
-      const clonedColumns: NodeListOf<HTMLElement> | undefined
-        = theadClone?.querySelectorAll(selectors.th);
 
       clonedColumns?.forEach((th: HTMLElement, i: number) => {
         useResizeObserver(th, (entries) => {
@@ -49,47 +48,44 @@ export function useStickyTableHeader(sticky: MaybeRef<boolean> = ref(false), off
       });
     };
 
-    useMutationObserver(theadClone, (mutationsList) => {
-      for (const mutation of mutationsList) {
-        if (mutation.type === 'childList' || mutation.type === 'attributes')
-          observeChildTh();
-      }
-    }, {
-      attributes: true,
-      childList: true,
-      subtree: true,
-    });
+    useMutationObserver(
+      theadClone,
+      (mutationsList) => {
+        for (const mutation of mutationsList) {
+          if (mutation.type === 'childList' || mutation.type === 'attributes')
+            observeChildTh();
+        }
+      },
+      {
+        attributes: true,
+        childList: true,
+        subtree: true,
+      },
+    );
 
     // Initial setup to observe the existing th elements
     observeChildTh();
   };
 
-  const toggleStickyClass = () => {
+  const toggleStickyClass = (): void => {
     const root = get(table);
 
     if (!get(sticky) || !root)
       return;
 
     const rect = root.getBoundingClientRect();
-    const theadClone: HTMLHeadElement | null = root.querySelector(
-      selectors.headClone,
-    );
+    const theadClone: HTMLHeadElement | null = root.querySelector(selectors.headClone);
 
     const clonedRect: DOMRect | undefined = theadClone?.getBoundingClientRect();
 
-    const head: HTMLHeadElement | null
-      = root.querySelector(selectors.head) ?? null;
+    const head: HTMLHeadElement | null = root.querySelector(selectors.head) ?? null;
 
     const headRect: DOMRect | undefined = head?.getBoundingClientRect();
 
     if (!rect || !clonedRect || !head || !theadClone || !headRect)
       return;
 
-    const {
-      height: theadHeight,
-      left: theadLeft,
-      width: theadWidth,
-    } = clonedRect;
+    const { height: theadHeight, left: theadLeft, width: theadWidth } = clonedRect;
 
     const { bottom: tableBottom, top: tableTop } = rect;
     const top = get(offsetTop) ?? 0;
@@ -98,9 +94,7 @@ export function useStickyTableHeader(sticky: MaybeRef<boolean> = ref(false), off
 
     const rows = root.querySelectorAll(selectors.row);
 
-    const lastRowRect: DOMRect | undefined = rows
-      .item(rows.length - 1)
-      ?.getBoundingClientRect();
+    const lastRowRect: DOMRect | undefined = rows.item(rows.length - 1)?.getBoundingClientRect();
 
     if (tableTop <= top && tableBottom > top && rows.length > 1) {
       set(stick, true);
@@ -109,8 +103,7 @@ export function useStickyTableHeader(sticky: MaybeRef<boolean> = ref(false), off
       const lastRowHeight = lastRowRect?.height ?? 0;
       if (tableBottom <= lastRowHeight + theadHeight + top)
         head.style.top = `${tableBottom - lastRowHeight - theadHeight}px`;
-      else
-        head.style.top = `${top}px`;
+      else head.style.top = `${top}px`;
     }
     else {
       set(stick, false);

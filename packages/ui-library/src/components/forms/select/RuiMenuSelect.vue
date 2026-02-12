@@ -4,6 +4,7 @@ import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { type KeyOfType, useDropdownMenu } from '@/composables/dropdown-menu';
+import { useLabelWithQuote } from '@/composables/forms/use-label-with-quote';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
 export interface Props<TValue, TItem> {
@@ -41,57 +42,52 @@ defineOptions({
 
 const modelValue = defineModel<TValue | undefined>({ required: true });
 
-const props = withDefaults(defineProps<Props<TValue, TItem>>(), {
-  disabled: false,
-  loading: false,
-  readOnly: false,
-  dense: false,
-  clearable: false,
-  hideDetails: false,
-  label: 'Select',
-  prependWidth: 0,
-  appendWidth: 0,
-  variant: 'default',
-  hint: undefined,
-  keyAttr: undefined,
-  textAttr: undefined,
-  itemHeight: undefined,
-  errorMessages: () => [],
-  successMessages: () => [],
-  autoSelectFirst: false,
-  hideNoData: false,
-  noDataText: 'No data available',
-  required: false,
-});
+const {
+  options,
+  disabled = false,
+  loading = false,
+  readOnly = false,
+  dense = false,
+  clearable = false,
+  hideDetails = false,
+  label = 'Select',
+  menuOptions,
+  labelClass,
+  menuClass,
+  variant = 'default',
+  hint,
+  keyAttr,
+  textAttr,
+  itemHeight,
+  errorMessages = [],
+  successMessages = [],
+  autoSelectFirst = false,
+  hideNoData = false,
+  noDataText = 'No data available',
+  required = false,
+} = defineProps<Props<TValue, TItem>>();
 
-const { dense, options, disabled } = toRefs(props);
-
-const menuRef = ref();
-const activator = ref();
+const menuRef = useTemplateRef<HTMLDivElement>('menuRef');
+const activator = useTemplateRef<HTMLDivElement>('activator');
 const { focused } = useFocus(activator);
 
 const value = computed<TItem | undefined>({
   get: () => {
-    const keyAttr = props.keyAttr;
     const value = get(modelValue);
     if (keyAttr)
-      return props.options.find(option => option[keyAttr] === value);
+      return options.find(option => option[keyAttr] === value);
     return value as unknown as TItem;
   },
   set: (selected?: TItem) => {
-    const keyAttr = props.keyAttr;
     const selection = keyAttr && selected ? selected[keyAttr] : selected;
     set(modelValue, selection as TValue);
   },
 });
 
-const labelWithQuote = computed<string>(() => {
-  if (!props.label)
-    return '"\\200B"';
-
-  const asterisk = props.required ? '﹡' : '';
-  return `'  ${props.label}${asterisk}  '`;
-});
+const labelWithQuote = useLabelWithQuote(
+  () => label,
+  () => required,
+);
 
 const {
   containerProps,
@@ -106,28 +102,30 @@ const {
   moveHighlight,
   valueKey,
 } = useDropdownMenu<TValue, TItem>({
-  itemHeight: props.itemHeight ?? (props.dense ? 30 : 48),
-  keyAttr: props.keyAttr,
-  textAttr: props.textAttr,
-  options,
+  itemHeight: itemHeight ?? (dense ? 30 : 48),
+  keyAttr,
+  textAttr,
+  options: toRef(() => options),
   autoFocus: true,
-  dense,
+  dense: toRef(() => dense),
   value,
   menuRef,
-  disabled,
-  autoSelectFirst: props.autoSelectFirst,
+  disabled: toRef(() => disabled),
+  autoSelectFirst,
 });
 
-const outlined = computed(() => props.variant === 'outlined');
+const outlined = computed<boolean>(() => variant === 'outlined');
 
-const float = computed(() => (get(isOpen) || !!get(value)) && get(outlined));
+const float = computed<boolean>(() => (get(isOpen) || !!get(value)) && get(outlined));
 
-const virtualContainerProps = computed(() => ({
-  style: containerProps.style as any,
-  ref: containerProps.ref as any,
-}));
+const virtualContainerProps = computed<{ style: Record<string, string>; ref: (el: any) => void }>(
+  () => ({
+    style: containerProps.style as any,
+    ref: containerProps.ref as any,
+  }),
+);
 
-function setValue(val: TItem, index?: number) {
+function setValue(val: TItem, index?: number): void {
   if (isDefined(index))
     set(highlightedIndex, index);
 
@@ -135,7 +133,7 @@ function setValue(val: TItem, index?: number) {
   set(focused, true);
 }
 
-function clear() {
+function clear(): void {
   set(modelValue, undefined);
 }
 </script>
@@ -295,7 +293,7 @@ function clear() {
           ref="menuRef"
         >
           <RuiButton
-            v-for="({ item, _index }) in renderedData"
+            v-for="{ item, _index } in renderedData"
             :key="_index"
             :active="isActiveItem(item)"
             :aria-selected="isActiveItem(item)"

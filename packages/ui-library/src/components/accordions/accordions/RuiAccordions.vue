@@ -10,22 +10,20 @@ defineOptions({
 
 const modelValue = defineModel<number[] | number>({ default: -1 });
 
-const props = withDefaults(defineProps<Props>(), {
-  multiple: false,
-});
+const { multiple = false } = defineProps<Props>();
 
-const { multiple } = toRefs(props);
-
-const internalValue = ref();
+const internalValue = ref<number[] | number>();
 
 const slots = useSlots();
-const children = computed(() => {
+const children = computed<VNode[]>(() => {
   const accordions = slots.default?.() ?? [];
   const currentValue = get(internalValue);
-  const multipleVal = get(multiple);
 
   return accordions.map((accordion, index) => {
-    const open = multipleVal && Array.isArray(currentValue) ? currentValue.includes(index) : currentValue === index;
+    const open =
+      multiple && Array.isArray(currentValue)
+        ? currentValue.includes(index)
+        : currentValue === index;
 
     return {
       ...accordion,
@@ -37,37 +35,39 @@ const children = computed(() => {
   });
 });
 
-function updateValue(newModelValue: number) {
+function updateValue(newModelValue: number): void {
   let newValue: number[] | number;
   const internal = get(internalValue);
-  if (get(multiple) && Array.isArray(internal)) {
-    const temp = [...get(internal)];
+  if (multiple && Array.isArray(internal)) {
+    const temp = [...internal];
     const index = temp.indexOf(newModelValue);
     if (index === -1)
       temp.push(newModelValue);
-    else
-      temp.splice(index, 1);
+    else temp.splice(index, 1);
     newValue = temp;
   }
   else {
     if (internal === newModelValue)
       newValue = -1;
-    else
-      newValue = newModelValue;
+    else newValue = newModelValue;
   }
   set(modelValue, newValue);
   set(internalValue, newValue);
 }
 
-watch([modelValue, multiple], ([value, multiple]) => {
-  let internal: number | number[] = value;
-  if (multiple && !Array.isArray(internal))
-    internal = internal === -1 ? [] : [internal];
-  else if (!multiple && Array.isArray(internal))
-    internal = internal[0] ?? -1;
+watch(
+  [modelValue, () => multiple],
+  ([value, isMultiple]) => {
+    let internal: number | number[] = value;
+    if (isMultiple && !Array.isArray(internal))
+      internal = internal === -1 ? [] : [internal];
+    else if (!isMultiple && Array.isArray(internal))
+      internal = internal[0] ?? -1;
 
-  set(internalValue, internal);
-}, { immediate: true });
+    set(internalValue, internal);
+  },
+  { immediate: true },
+);
 </script>
 
 <template>

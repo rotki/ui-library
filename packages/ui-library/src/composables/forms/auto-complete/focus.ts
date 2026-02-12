@@ -1,4 +1,4 @@
-import type { ComputedRef, MaybeRef, Ref } from 'vue';
+import type { ComputedRef, MaybeRef, Ref, TemplateRef } from 'vue';
 
 export interface UseAutoCompleteFocusOptions {
   customValue: MaybeRef<boolean>;
@@ -16,7 +16,7 @@ export interface UseAutoCompleteFocusDeps<TItem> {
   justOpened: Ref<boolean>;
   menuWrapperFocusedWithin: Ref<boolean>;
   searchInputFocused: Ref<boolean>;
-  textInput: Ref<HTMLInputElement | undefined>;
+  textInput: Ref<HTMLInputElement | undefined> | TemplateRef<HTMLInputElement>;
   setSearchAsValue: () => void;
   updateInternalSearch: (value?: string) => void;
 }
@@ -33,8 +33,8 @@ export function useAutoCompleteFocus<TItem>(
   options: UseAutoCompleteFocusOptions,
   deps: UseAutoCompleteFocusDeps<TItem>,
 ): UseAutoCompleteFocusReturn {
-  const anyFocused = computed<boolean>(() =>
-    get(deps.activatorFocusedWithin) || get(deps.menuWrapperFocusedWithin),
+  const anyFocused = computed<boolean>(
+    () => get(deps.activatorFocusedWithin) || get(deps.menuWrapperFocusedWithin),
   );
 
   const inputClass = computed<string>(() => {
@@ -80,27 +80,31 @@ export function useAutoCompleteFocus<TItem>(
 
   // Close menu if the activator is not focused anymore
   // Using debounced to avoid the menu closing momentarily while focus switches.
-  watchDebounced(anyFocused, (focused) => {
-    if (!focused) {
-      set(deps.isOpen, false);
+  watchDebounced(
+    anyFocused,
+    (focused) => {
+      if (!focused) {
+        set(deps.isOpen, false);
 
-      const customValue = get(options.customValue);
-      const filteredOptions = get(deps.filteredOptions);
-      const internalSearch = get(deps.internalSearch);
+        const customValue = get(options.customValue);
+        const filteredOptions = get(deps.filteredOptions);
+        const internalSearch = get(deps.internalSearch);
 
-      if (customValue && filteredOptions.length === 0 && internalSearch) {
-        deps.setSearchAsValue();
+        if (customValue && filteredOptions.length === 0 && internalSearch) {
+          deps.setSearchAsValue();
+        }
+
+        const shouldApply = get(options.shouldApplyValueAsSearch);
+        if (!shouldApply) {
+          deps.updateInternalSearch();
+        }
       }
-
-      const shouldApply = get(options.shouldApplyValueAsSearch);
-      if (!shouldApply) {
-        deps.updateInternalSearch();
-      }
-    }
-  }, {
-    debounce: 200,
-    maxWait: 400,
-  });
+    },
+    {
+      debounce: 200,
+      maxWait: 400,
+    },
+  );
 
   return {
     anyFocused,

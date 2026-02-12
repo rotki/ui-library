@@ -12,32 +12,32 @@ defineOptions({
 
 const modelValue = defineModel<string>({ required: true });
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   label: '',
   placeholder: '',
   disabled: false,
   variant: 'default',
-  color: undefined,
-  textColor: undefined,
   dense: false,
   hint: '',
-  as: undefined,
   errorMessages: () => [],
   successMessages: () => [],
   hideDetails: false,
-  prependIcon: undefined,
-  appendIcon: undefined,
   readonly: false,
   clearable: false,
   required: false,
 });
+
+defineSlots<{
+  prepend?: () => any;
+  append?: () => any;
+}>();
 
 const hidden = ref<boolean>(true);
 </script>
 
 <template>
   <RuiTextField
-    v-bind="{ ...props, ...$attrs }"
+    v-bind="{ ...$props, ...$attrs }"
     v-model="modelValue"
     :type="hidden ? 'password' : 'text'"
   >
@@ -50,7 +50,7 @@ const hidden = ref<boolean>(true);
     <template #append>
       <div class="flex items-center">
         <RuiButton
-          :disabled="disabled"
+          :disabled="$props.disabled"
           :aria-label="hidden ? 'Show password' : 'Hide password'"
           tabindex="-1"
           variant="text"

@@ -20,22 +20,20 @@ const state = reactive({
   rgb: get(modelValue).rgb,
 });
 
-function onInputTypeChange() {
-  set(inputType, get(inputType) === 'rgb' ? 'hex' : 'rgb');
-}
-
-const onBlurChange = useDebounceFn((inputType: string, event: any, key?: number) => {
+const onBlurChange = useDebounceFn((inputType: string, event: Event, key?: number) => {
   if (!state.color)
     return;
 
-  const value = event.target.value;
+  const target = event.target;
+  if (!(target instanceof HTMLInputElement))
+    return;
+
+  const value = target.value;
   if (inputType === 'hex') {
     const _hex = value.replace('#', '');
     if (tinycolor(_hex).isValid() && [3, 4, 6].includes(_hex.length))
       state.color.hex = _hex;
-
-    else
-      state.color.hex = '000000';
+    else state.color.hex = '000000';
   }
   else if (key !== undefined && state.rgb && state.color) {
     let valueInNumber = Number(value);
@@ -68,6 +66,10 @@ const onInputChange = useDebounceFn((inputType: string, value: string, key?: num
   set(modelValue, state.color);
 }, 300);
 
+function onInputTypeChange(): void {
+  set(inputType, get(inputType) === 'rgb' ? 'hex' : 'rgb');
+}
+
 whenever(
   modelValue,
   (value) => {
@@ -99,9 +101,7 @@ whenever(
           @blur="onBlurChange(inputType, $event)"
         >
           <template #prepend>
-            <span class="text-rui-text">
-              #
-            </span>
+            <span class="text-rui-text"> # </span>
           </template>
         </RuiTextField>
         <div

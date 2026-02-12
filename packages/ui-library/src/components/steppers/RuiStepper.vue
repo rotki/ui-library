@@ -2,11 +2,7 @@
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import RuiStepperCustomIcon from '@/components/steppers/RuiStepperCustomIcon.vue';
 import RuiStepperIcon from '@/components/steppers/RuiStepperIcon.vue';
-import {
-  StepperOrientation,
-  StepperState,
-  type StepperStep,
-} from '@/types/stepper';
+import { StepperOrientation, StepperState, type StepperStep } from '@/types/stepper';
 
 export interface Props {
   step?: number;
@@ -23,33 +19,31 @@ defineOptions({
   name: 'RuiStepper',
 });
 
-const props = withDefaults(defineProps<Props>(), {
-  step: undefined,
-  iconTop: false,
-  custom: false,
-  titleClass: '',
-  subtitleClass: '',
-  orientation: StepperOrientation.horizontal,
-  keepActiveVisible: true,
-});
+const {
+  step,
+  steps,
+  iconTop = false,
+  custom = false,
+  titleClass = '',
+  subtitleClass = '',
+  orientation = StepperOrientation.horizontal,
+  keepActiveVisible = true,
+} = defineProps<Props>();
 
-const { custom, steps, step, orientation, keepActiveVisible } = toRefs(props);
+const wrapperRef = useTemplateRef<HTMLDivElement>('wrapperRef');
 
 // automatically set step state to stepper.
-const renderedStep = computed(() => {
-  const currentStep = get(step);
-  const stepsVal = get(steps);
+const renderedStep = computed<StepperStep[]>(() => {
+  if (step === undefined)
+    return steps;
 
-  if (!isDefined(currentStep))
-    return stepsVal;
-
-  return stepsVal.map((text, index) => {
+  return steps.map((text, index) => {
     let stepStatus: StepperState = StepperState.inactive;
 
-    if (index + 1 === currentStep)
+    if (index + 1 === step)
       stepStatus = StepperState.active;
 
-    if (index + 1 < currentStep)
+    if (index + 1 < step)
       stepStatus = StepperState.done;
 
     return {
@@ -59,27 +53,25 @@ const renderedStep = computed(() => {
   });
 });
 
-const wrapperRef = ref<HTMLDivElement>();
-
-watch(step, () => {
-  if (
-    !get(keepActiveVisible)
-    || get(orientation) !== StepperOrientation.horizontal
-  ) {
-    return;
-  }
-
-  nextTick(() => {
-    const elem = get(wrapperRef);
-    if (elem) {
-      const activeStep = elem.querySelector('.active-step');
-      activeStep?.scrollIntoView?.({
-        behavior: 'smooth',
-        inline: 'center',
-      });
+watch(
+  () => step,
+  () => {
+    if (!keepActiveVisible || orientation !== StepperOrientation.horizontal) {
+      return;
     }
-  });
-});
+
+    nextTick(() => {
+      const elem = get(wrapperRef);
+      if (elem) {
+        const activeStep = elem.querySelector('.active-step');
+        activeStep?.scrollIntoView?.({
+          behavior: 'smooth',
+          inline: 'center',
+        });
+      }
+    });
+  },
+);
 </script>
 
 <template>

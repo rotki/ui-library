@@ -1,15 +1,11 @@
-import type { Ref } from 'vue';
+import type { Ref, TemplateRef } from 'vue';
 
 export type KeyOfType<T, V> = T extends string | number | boolean | symbol | null | undefined
   ? never
   : V extends object
     ? keyof T
     : keyof {
-      [P in keyof T as T[P] extends V
-        ? P
-        : V extends T[P]
-          ? P
-          : never]: any
+      [P in keyof T as T[P] extends V ? P : V extends T[P] ? P : never]: any;
     };
 
 export interface DropdownItemAttr<TValue, TItem> {
@@ -22,7 +18,7 @@ export interface DropdownOptions<TValue, TItem> {
   dense?: Ref<boolean>;
   disabled?: Ref<boolean>;
   value: Ref<TItem | TItem[] | undefined>;
-  menuRef: Ref<HTMLElement>;
+  menuRef: Ref<HTMLElement> | TemplateRef<HTMLElement>;
   keyAttr?: KeyOfType<TItem, TValue extends Array<infer U> ? U : TValue>;
   textAttr?: keyof TItem | ((item: TItem) => string);
   appendWidth?: number;
@@ -43,15 +39,15 @@ export function useDropdownOptionProperty<TValue, TItem>({
     if (textAttr) {
       if (typeof textAttr === 'function')
         return textAttr(item);
-
-      else
-        return item[textAttr]?.toString();
+      else return item[textAttr]?.toString();
     }
 
     return item?.toString();
   }
 
-  function getIdentifier(item: TItem): TItem | TItem[KeyOfType<TItem, TValue extends Array<infer U> ? U : TValue>] {
+  function getIdentifier(
+    item: TItem,
+  ): TItem | TItem[KeyOfType<TItem, TValue extends Array<infer U> ? U : TValue>] {
     if (keyAttr)
       return item[keyAttr];
 
@@ -81,7 +77,7 @@ export function useDropdownMenu<TValue, TItem>({
   textAttr,
   value,
 }: DropdownOptions<TValue, TItem>) {
-  const options = computed(() => {
+  const options = computed<TItem[]>(() => {
     const options = get(allOptions);
     if (!hideSelected)
       return options;
@@ -94,17 +90,14 @@ export function useDropdownMenu<TValue, TItem>({
     textAttr,
   });
 
-  const { containerProps, list, scrollTo, wrapperProps } = useVirtualList<TItem>(
-    options,
-    {
-      itemHeight,
-      overscan,
-    },
-  );
+  const { containerProps, list, scrollTo, wrapperProps } = useVirtualList<TItem>(options, {
+    itemHeight,
+    overscan,
+  });
 
   const renderedData = useArrayMap(list, ({ data, index: _index }) => ({ _index, item: data }));
 
-  const isOpen = ref(false);
+  const isOpen = ref<boolean>(false);
 
   const valueKey = computed(() => {
     const selected = get(value);
@@ -115,7 +108,7 @@ export function useDropdownMenu<TValue, TItem>({
 
   const highlightedIndex: Ref<number> = ref(get(autoSelectFirst) ? 0 : -1);
 
-  const menuWidth = computed(() => {
+  const menuWidth = computed<string>(() => {
     const widths = { max: 0, min: 0 };
     const maxWidth = 30;
     const paddingX = 1.5;
@@ -137,8 +130,9 @@ export function useDropdownMenu<TValue, TItem>({
 
     const difference = widths.max - widths.min;
 
-    function computeValue(width: number) {
-      const additionalWidths = (prependWidth ? prependWidth + 0.5 : 0) + (appendWidth ? appendWidth + 0.5 : 0);
+    function computeValue(width: number): string {
+      const additionalWidths =
+        (prependWidth ? prependWidth + 0.5 : 0) + (appendWidth ? appendWidth + 0.5 : 0);
       return `${Math.min((width * fontMultiplier) / 16 + paddingX + additionalWidths, maxWidth)}rem`;
     }
 
@@ -148,13 +142,13 @@ export function useDropdownMenu<TValue, TItem>({
     return computeValue(widths.min + difference / 2);
   });
 
-  function toggle(state: boolean = false) {
+  function toggle(state: boolean = false): void {
     set(isOpen, state);
   }
 
   function itemIndexInValue(item: TItem): number {
     const val = get(value);
-    const selected: TItem[] = Array.isArray(val) ? val : (val ? [val] : []);
+    const selected: TItem[] = Array.isArray(val) ? val : val ? [val] : [];
 
     if (selected.length === 0)
       return -1;
@@ -170,23 +164,32 @@ export function useDropdownMenu<TValue, TItem>({
     return itemIndexInValue(item) !== -1;
   }
 
-  async function adjustScrollByHighlightedIndex(smooth: boolean = false) {
+  async function adjustScrollByHighlightedIndex(smooth: boolean = false): Promise<void> {
     const index = get(highlightedIndex);
     if (index > -1) {
       await nextTick(() => {
-        const container = get(menuRef)?.parentElement;
-        if (container) {
-          const highlightedElem = get(menuRef).getElementsByClassName('highlighted')[0];
+        const menuEl = get(menuRef);
+        const container = menuEl?.parentElement;
+        if (container && menuEl) {
+          const highlightedElem = menuEl.getElementsByClassName('highlighted')[0];
 
           if (highlightedElem) {
-            highlightedElem.scrollIntoView?.({ behavior: smooth ? 'smooth' : 'auto', block: 'nearest' });
-            if (get(autoFocus) && 'focus' in highlightedElem && typeof highlightedElem.focus === 'function')
+            highlightedElem.scrollIntoView?.({
+              behavior: smooth ? 'smooth' : 'auto',
+              block: 'nearest',
+            });
+            if (
+              get(autoFocus) &&
+              'focus' in highlightedElem &&
+              typeof highlightedElem.focus === 'function'
+            ) {
               highlightedElem?.focus();
+            }
           }
           else {
             scrollTo(index);
             if (get(autoFocus)) {
-              const elem = get(menuRef).getElementsByClassName('highlighted')[0];
+              const elem = menuEl.getElementsByClassName('highlighted')[0];
               if (elem && 'focus' in elem && typeof elem.focus === 'function')
                 elem.focus();
             }
@@ -196,7 +199,7 @@ export function useDropdownMenu<TValue, TItem>({
     }
   }
 
-  async function updateOpen(open: boolean) {
+  async function updateOpen(open: boolean): Promise<void> {
     await nextTick(() => {
       if (open) {
         const val = get(value);
@@ -240,7 +243,7 @@ export function useDropdownMenu<TValue, TItem>({
     }
   });
 
-  const moveHighlight = (up: boolean) => {
+  const moveHighlight = (up: boolean): void => {
     if (!get(isOpen)) {
       toggle(true);
       return;
@@ -257,11 +260,10 @@ export function useDropdownMenu<TValue, TItem>({
       set(highlightedIndex, 0);
     else if (position < 0)
       set(highlightedIndex, total - 1);
-    else
-      set(highlightedIndex, position);
+    else set(highlightedIndex, position);
   };
 
-  const applyHighlighted = () => {
+  const applyHighlighted = (): void => {
     if (!setValue || !get(isOpen))
       return;
 

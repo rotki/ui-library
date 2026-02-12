@@ -16,31 +16,30 @@ defineOptions({
 
 const modelValue = defineModel<number>({ default: 1 });
 
-const props = withDefaults(defineProps<Props>(), {
-  variant: 'numeric',
-  arrowButtons: false,
-  hideButtons: false,
-});
+const {
+  pages,
+  variant = 'numeric',
+  arrowButtons = false,
+  hideButtons = false,
+} = defineProps<Props>();
 
-const { pages } = toRefs(props);
-
-function onChange(delta: number) {
+function onChange(delta: number): void {
   set(modelValue, get(modelValue) + delta);
 }
 
-function onPrev() {
+function onPrev(): void {
   const value = get(modelValue);
   if (value)
     onChange(-1);
 }
 
-function onNext() {
+function onNext(): void {
   const value = get(modelValue);
-  if (value < get(pages))
+  if (value < pages)
     onChange(1);
 }
 
-function onClick(index: number) {
+function onClick(index: number): void {
   onChange(index - get(modelValue));
 }
 </script>

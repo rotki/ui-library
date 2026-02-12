@@ -2,7 +2,6 @@
 import type { ContextColorsType } from '@/consts/colors';
 import { type RouteLocationRaw, RouterLink } from 'vue-router';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
-import { generateId } from '@/utils/generate-id';
 
 export interface Props {
   color?: ContextColorsType;
@@ -26,22 +25,22 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<Props>(), {
-  color: undefined,
-  disabled: false,
-  grow: false,
-  value: generateId(),
-  active: false,
-  activeClass: '',
-  link: false,
-  to: '',
-  target: '_self',
-  exact: false,
-  exactPath: false,
-  vertical: false,
-  align: 'center',
-  indicatorPosition: 'end',
-});
+const {
+  color,
+  disabled = false,
+  grow = false,
+  value = useId(),
+  active = false,
+  activeClass = '',
+  link = false,
+  to = '',
+  target = '_self',
+  exact = false,
+  exactPath = false,
+  vertical = false,
+  align = 'center',
+  indicatorPosition = 'end',
+} = defineProps<Props>();
 
 const emit = defineEmits<{
   click: [value: string | number];
@@ -53,27 +52,24 @@ const slots = defineSlots<{
   append?: (props?: object) => any;
 }>();
 
-const { target, grow, active, activeClass, disabled, vertical, align, value, indicatorPosition }
-  = toRefs(props);
-
 const css = useCssModule();
 
-const isSelf = computed(() => get(target) === '_self');
+const isSelf = computed<boolean>(() => target === '_self');
 
-const tabClass = computed(() => [
+const tabClass = computed<(string | undefined | Record<string, string | boolean>)[]>(() => [
   css.tab,
-  css[`tab--${get(align)}`],
-  css[`tab-indicator--${get(indicatorPosition)}`],
+  css[`tab--${align}`],
+  css[`tab-indicator--${indicatorPosition}`],
   {
-    [css['tab--grow'] ?? '']: get(grow),
-    [`${css['tab--active']} active-tab ${get(activeClass)}`]: get(active),
-    [css['tab--disabled'] ?? '']: get(disabled),
-    [css['tab--vertical'] ?? '']: get(vertical),
+    [css['tab--grow'] ?? '']: grow,
+    [`${css['tab--active']} active-tab ${activeClass}`]: active,
+    [css['tab--disabled'] ?? '']: disabled,
+    [css['tab--vertical'] ?? '']: vertical,
   },
 ]);
 
-function click() {
-  emit('click', get(value));
+function click(): void {
+  emit('click', value);
 }
 </script>
 
@@ -133,9 +129,7 @@ function click() {
       :class="[
         ...tabClass,
         {
-          [`${css['tab--active']} active-tab-link`]: exact
-            ? isExactActive
-            : isActive,
+          [`${css['tab--active']} active-tab-link`]: exact ? isExactActive : isActive,
         },
       ]"
       :color="active || (exact ? isExactActive : isActive) ? color : undefined"

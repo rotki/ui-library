@@ -5,7 +5,8 @@ import { logicAnd, logicNot } from '@vueuse/math';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
-import { assert } from '@/utils/assert';
+import { useLabelWithQuote } from '@/composables/forms/use-label-with-quote';
+import { usePrependAppendWidth } from '@/composables/forms/use-prepend-append-width';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
@@ -40,69 +41,67 @@ defineOptions({
 
 const modelValue = defineModel<string>({ required: true });
 
-const props = withDefaults(defineProps<Props>(), {
-  label: '',
-  placeholder: '',
-  disabled: false,
-  variant: 'default',
-  color: undefined,
-  textColor: undefined,
-  dense: false,
-  hint: '',
-  errorMessages: () => [],
-  successMessages: () => [],
-  hideDetails: false,
-  prependIcon: undefined,
-  appendIcon: undefined,
-  readonly: false,
-  clearable: false,
-  noResize: false,
-  minRows: 2,
-  rowHeight: 1.5, // in rems
-  maxRows: undefined,
-  autoGrow: false,
-  required: false,
-});
+const {
+  label = '',
+  placeholder = '',
+  disabled = false,
+  variant = 'default',
+  color = undefined,
+  textColor = undefined,
+  dense = false,
+  hint = '',
+  errorMessages = [],
+  successMessages = [],
+  hideDetails = false,
+  prependIcon = undefined,
+  appendIcon = undefined,
+  readonly = false,
+  clearable = false,
+  noResize = false,
+  minRows = 2,
+  rowHeight = 1.5, // in rems
+  maxRows = undefined,
+  autoGrow = false,
+  required = false,
+} = defineProps<Props>();
 
 const emit = defineEmits<{
   'click:clear': [];
 }>();
 
-const {
-  label,
-  autoGrow,
-  clearable,
-  disabled,
-  readonly,
-  minRows,
-  maxRows,
-  noResize,
-  rowHeight,
-  errorMessages,
-  successMessages,
-  required,
-} = toRefs(props);
+const prepend = useTemplateRef<HTMLDivElement>('prepend');
+const append = useTemplateRef<HTMLDivElement>('append');
+const textarea = useTemplateRef<HTMLTextAreaElement>('textarea');
+const textareaSizer = useTemplateRef<HTMLTextAreaElement>('textareaSizer');
 
-const prepend = ref<HTMLDivElement>();
-const append = ref<HTMLDivElement>();
-const textarea = ref<HTMLTextAreaElement>();
-const textareaSizer = ref<HTMLTextAreaElement>();
+const { prependWidth, appendWidth } = usePrependAppendWidth(prepend, append, 24);
 
 const css = useCssModule();
 
-const labelWithQuote = computed<string>(() => {
-  const labelVal = get(label);
-  if (!labelVal)
-    return '"\\200B"';
+const { focused } = useFocus(textarea);
+const focusedDebounced = refDebounced(focused, 500);
 
-  const asterisk = get(required) ? '﹡' : '';
-  return `'  ${labelVal}${asterisk}  '`;
-});
+const showClearIcon = logicAnd(
+  () => clearable,
+  modelValue,
+  logicNot(() => disabled),
+  logicNot(() => readonly),
+);
 
-const fieldStyles = computed(() => {
-  const height = Number(get(rowHeight));
-  const min = Number(get(minRows));
-  const max = Number(get(maxRows));
+const { hasError, hasSuccess, hasMessages } = useFormTextDetail(
+  toRef(() => errorMessages),
+  toRef(() => successMessages),
+);
+
+const labelWithQuote = useLabelWithQuote(
+  () => label,
+  () => required,
+);
+
+const fieldStyles = computed<{ minHeight: string; maxHeight?: string }>(() => {
+  const height = Number(rowHeight);
+  const min = Number(minRows);
+  const max = Number(maxRows);
   const value: { minHeight: string; maxHeight?: string } = {
     minHeight: `${min * height + 0.75}rem`,
   };
@@ -112,44 +111,15 @@ const fieldStyles = computed(() => {
   return value;
 });
 
-const prependWidth = ref('0px');
-const appendWidth = ref('0px');
+const colorClass = computed<string | undefined>(() => (color ? css[color] : undefined));
 
-useResizeObserver(prepend, (entries) => {
-  const [entry] = entries;
-  assert(entry);
-  const { width, left } = entry.contentRect;
-  set(prependWidth, `${width + left + 24}px`);
-});
-
-useResizeObserver(append, (entries) => {
-  const [entry] = entries;
-  assert(entry);
-  const { width, right } = entry.contentRect;
-  set(appendWidth, `${width + right + 24}px`);
-});
-
-const colorClass = computed(() => (props.color ? css[props.color] : undefined));
-
-const showClearIcon = logicAnd(
-  clearable,
-  modelValue,
-  logicNot(disabled),
-  logicNot(readonly),
-);
-
-const { hasError, hasSuccess, hasMessages } = useFormTextDetail(
-  errorMessages,
-  successMessages,
-);
-
-function clearIconClicked() {
+function clearIconClicked(): void {
   set(modelValue, '');
   emit('click:clear');
 }
 
-function computeFieldHeight(newVal?: string, oldVal?: string) {
-  if (!get(autoGrow))
+function computeFieldHeight(newVal?: string, oldVal?: string): void {
+  if (!autoGrow)
     return;
 
   const field = get(textarea);
@@ -169,9 +139,6 @@ function computeFieldHeight(newVal?: string, oldVal?: string) {
     field.style.height = height;
   });
 }
-
-const { focused } = useFocus(textarea);
-const focusedDebounced = refDebounced(focused, 500);
 
 watch(modelValue, computeFieldHeight);
 onMounted(computeFieldHeight);

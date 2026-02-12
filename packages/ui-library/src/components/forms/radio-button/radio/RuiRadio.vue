@@ -1,4 +1,4 @@
-<script lang="ts" setup generic='TValue'>
+<script lang="ts" setup generic="TValue">
 import type { ContextColorsType } from '@/consts/colors';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
@@ -25,29 +25,25 @@ defineOptions({
 
 const modelValue = defineModel<TValue>({ required: false });
 
-const props = withDefaults(defineProps<RadioProps<TValue>>(), {
-  disabled: false,
-  color: undefined,
-  size: undefined,
-  label: '',
-  hint: '',
-  errorMessages: () => [],
-  successMessages: () => [],
-  hideDetails: false,
-  required: false,
-});
+const {
+  value,
+  disabled = false,
+  color,
+  size,
+  label = '',
+  hint = '',
+  errorMessages = [],
+  successMessages = [],
+  hideDetails = false,
+  required = false,
+} = defineProps<RadioProps<TValue>>();
 
-const { value, successMessages, errorMessages }
-  = toRefs(props);
+const { hasError, hasSuccess } = useFormTextDetail(
+  toRef(() => errorMessages),
+  toRef(() => successMessages),
+);
 
-function input(event: Event) {
-  const checked = (event.target as HTMLInputElement).checked;
-  if (checked)
-    set(modelValue, get(value));
-}
-
-const iconSize: ComputedRef<number> = computed(() => {
-  const size = props.size;
+const iconSize = computed<number>(() => {
   if (size === 'lg')
     return 28;
 
@@ -57,12 +53,13 @@ const iconSize: ComputedRef<number> = computed(() => {
   return 24;
 });
 
-const selected = computed(() => get(modelValue) === get(value));
+const selected = computed<boolean>(() => get(modelValue) === value);
 
-const { hasError, hasSuccess } = useFormTextDetail(
-  errorMessages,
-  successMessages,
-);
+function input(event: Event): void {
+  const checked = (event.target as HTMLInputElement).checked;
+  if (checked)
+    set(modelValue, value);
+}
 </script>
 
 <template>

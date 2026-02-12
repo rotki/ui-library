@@ -8,9 +8,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-withDefaults(defineProps<Props>(), {
-  vertical: false,
-});
+const { vertical = false } = defineProps<Props>();
 </script>
 
 <template>

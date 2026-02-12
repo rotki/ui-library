@@ -17,7 +17,13 @@ const state = reactive({
   color: new Color(get(modelValue)),
 });
 
-function onBoardChange({ saturation, brightness }: { saturation: number; brightness: number }) {
+function onBoardChange({
+  saturation,
+  brightness,
+}: {
+  saturation: number;
+  brightness: number;
+}): void {
   state.color.saturation = saturation;
   state.color.brightness = brightness;
 }
@@ -31,9 +37,13 @@ whenever(
   { deep: true },
 );
 
-watch(state, (state) => {
-  set(modelValue, state.color.hex);
-}, { immediate: true, deep: true });
+watch(
+  state,
+  (state) => {
+    set(modelValue, state.color.hex);
+  },
+  { immediate: true, deep: true },
+);
 </script>
 
 <template>

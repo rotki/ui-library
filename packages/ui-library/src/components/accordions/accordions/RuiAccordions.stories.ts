@@ -62,12 +62,28 @@ export const Default = meta.story({
     const header = canvas.getByText('Accordion 1 header');
     await userEvent.click(header);
     await expect(canvas.getByText('Accordion 1 content')).toBeVisible();
+    // Close accordion for cleanup
+    await userEvent.click(header);
   },
 });
 
 export const Multiple = meta.story({
   args: {
     multiple: true,
+  },
+  async play({ canvas, userEvent }) {
+    const header1 = canvas.getByText('Accordion 1 header');
+    const header2 = canvas.getByText('Accordion 2 header');
+    // Open first accordion
+    await userEvent.click(header1);
+    await expect(canvas.getByText('Accordion 1 content')).toBeVisible();
+    // Open second accordion — both should stay open in multiple mode
+    await userEvent.click(header2);
+    await expect(canvas.getByText('Accordion 1 content')).toBeVisible();
+    await expect(canvas.getByText('Accordion 2 content')).toBeVisible();
+    // Close both for cleanup
+    await userEvent.click(header1);
+    await userEvent.click(header2);
   },
 });
 

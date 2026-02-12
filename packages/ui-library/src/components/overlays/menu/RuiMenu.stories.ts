@@ -78,11 +78,28 @@ export const OpenOnHover = meta.story({
     closeDelay: 200,
     openOnHover: true,
   },
+  async play({ canvas, userEvent }) {
+    const activator = canvas.getByRole('button', { name: 'Click Me!' });
+    await userEvent.hover(activator);
+    const body = within(document.body);
+    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+    await userEvent.unhover(activator);
+    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+  },
 });
 
 export const CloseOnContentClick = meta.story({
   args: {
     closeOnContentClick: true,
+  },
+  async play({ canvas, userEvent }) {
+    const activator = canvas.getByRole('button', { name: 'Click Me!' });
+    await userEvent.click(activator);
+    const body = within(document.body);
+    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+    // Clicking menu content should close the menu
+    await userEvent.click(body.getByText('This is menu'));
+    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
   },
 });
 
@@ -114,11 +131,30 @@ export const MenuDisabled = meta.story({
   args: {
     disabled: true,
   },
+  async play({ canvas, userEvent }) {
+    const activator = canvas.getByRole('button', { name: 'Click Me!' });
+    await userEvent.click(activator);
+    const body = within(document.body);
+    // Disabled menu should not open
+    await expect(body.queryByRole('menu')).toBeNull();
+  },
 });
 
 export const PersistentMenu = meta.story({
   args: {
     persistent: true,
+  },
+  async play({ canvas, userEvent }) {
+    const activator = canvas.getByRole('button', { name: 'Click Me!' });
+    await userEvent.click(activator);
+    const body = within(document.body);
+    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+    // Simulate click outside — persistent menu should stay open
+    document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+    await expect(body.getByRole('menu')).toBeVisible();
+    // Close via activator toggle
+    await userEvent.click(activator);
+    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
   },
 });
 

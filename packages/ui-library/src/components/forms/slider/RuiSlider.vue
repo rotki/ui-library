@@ -32,56 +32,52 @@ defineOptions({
 
 const modelValue = defineModel<number>({ default: 0 });
 
-const props = withDefaults(defineProps<Props>(), {
-  min: 0,
-  max: 100,
-  step: 1,
-  disabled: false,
-  showThumbLabel: false,
-  showTicks: false,
-  hideTrack: false,
-  vertical: false,
-  tickSize: 2,
-  color: 'primary',
-  label: '',
-  hint: '',
-  errorMessages: () => [],
-  successMessages: () => [],
-  hideDetails: false,
-  sliderClass: '',
-  tickClass: '',
-  required: false,
-});
+const {
+  min = 0,
+  max = 100,
+  step = 1,
+  disabled = false,
+  showThumbLabel = false,
+  showTicks = false,
+  hideTrack = false,
+  vertical = false,
+  tickSize = 2,
+  color = 'primary',
+  label = '',
+  hint = '',
+  errorMessages = [],
+  successMessages = [],
+  hideDetails = false,
+  sliderClass = '',
+  tickClass = '',
+  required = false,
+} = defineProps<Props>();
 
-const { max, min, step, errorMessages, successMessages, vertical, tickSize } = toRefs(props);
+const outer = useTemplateRef<HTMLDivElement>('outer');
+
+const { hasError, hasSuccess } = useFormTextDetail(
+  toRef(() => errorMessages),
+  toRef(() => successMessages),
+);
+const { width, height } = useElementBounding(outer);
 
 const ticksData = computed<[number, number]>(() => {
-  const minVal = get(min);
-  const stepVal = get(step);
-  const range = get(max) - minVal;
-  const total = range / stepVal;
-  const current = Math.round((get(modelValue) - minVal) / stepVal);
+  const range = max - min;
+  const total = range / step;
+  const current = Math.round((get(modelValue) - min) / step);
 
   return [current, total];
 });
 
-const trackWidth = computed(() => {
+const trackWidth = computed<string>(() => {
   const [current, total] = get(ticksData);
-  const percentage = Math.min(100, Math.max(0, Math.round(current / total * 100)));
+  const percentage = Math.min(100, Math.max(0, Math.round((current / total) * 100)));
   return `${percentage}%`;
 });
 
-const { hasError, hasSuccess } = useFormTextDetail(
-  errorMessages,
-  successMessages,
-);
-
-const outer = ref<HTMLDivElement>();
-const { width, height } = useElementBounding(outer);
-
-const sliderWidth = computed(() => `${get(width)}px`);
-const sliderHeight = computed(() => `${get(height)}px`);
-const tickSizeInPx = computed(() => `${get(tickSize)}px`);
+const sliderWidth = computed<string>(() => `${get(width)}px`);
+const sliderHeight = computed<string>(() => `${get(height)}px`);
+const tickSizeInPx = computed<string>(() => `${tickSize}px`);
 </script>
 
 <template>
@@ -144,9 +140,16 @@ const tickSizeInPx = computed(() => `${get(tickSize)}px`);
                   :class="$style.slider__ticks"
                 >
                   <span
-                    v-for="i in (ticksData[1] + 1)"
+                    v-for="i in ticksData[1] + 1"
                     :key="i"
-                    :class="hideTrack ? [tickClass] : { [$style.highlighted]: i - 1 <= ticksData[0], [tickClass]: i - 1 > ticksData[0] }"
+                    :class="
+                      hideTrack
+                        ? [tickClass]
+                        : {
+                          [$style.highlighted]: i - 1 <= ticksData[0],
+                          [tickClass]: i - 1 > ticksData[0],
+                        }
+                    "
                   />
                 </div>
               </div>

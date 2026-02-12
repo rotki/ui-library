@@ -6,7 +6,7 @@ export interface DialogProps {
   width?: string | number;
   maxWidth?: string | number;
   bottomSheet?: boolean;
-  contentClass?: any;
+  contentClass?: string | string[] | Record<string, boolean>;
   zIndex?: string | number;
   ariaLabel?: string;
 }
@@ -18,13 +18,15 @@ defineOptions({
 
 const modelValue = defineModel<boolean>({ default: false });
 
-const props = withDefaults(defineProps<DialogProps>(), {
-  persistent: false,
-  width: '98%',
-  bottomSheet: false,
-  contentClass: '',
-  zIndex: 9999,
-});
+const {
+  persistent = false,
+  width = '98%',
+  maxWidth,
+  bottomSheet = false,
+  contentClass = '',
+  zIndex = 9999,
+  ariaLabel,
+} = defineProps<DialogProps>();
 
 const emit = defineEmits<{
   'closed': [];
@@ -32,74 +34,16 @@ const emit = defineEmits<{
   'click:esc': [];
 }>();
 
-const {
-  width,
-  maxWidth,
-  bottomSheet,
-} = toRefs(props);
-
 const internalValue = ref<boolean>(false);
 const isOpen = ref<boolean>(false);
+const contentRef = useTemplateRef<HTMLDivElement>('contentRef');
 
-watch(modelValue, (value) => {
-  nextTick(() => {
-    set(internalValue, value);
-  });
-}, { immediate: true });
-
-watch(internalValue, (value) => {
-  if (value) {
-    nextTick(() => {
-      set(isOpen, value);
-    });
-  }
-  else {
-    setTimeout(() => {
-      set(isOpen, value);
-    }, 100);
-  }
-});
-
-function onUpdateModelValue(value: boolean) {
-  set(modelValue, value);
-
-  if (!value)
-    emit('closed');
-}
-
-watch(isOpen, (isOpen) => {
-  if (isOpen) {
-    onUpdateModelValue(isOpen);
-    set(internalValue, isOpen);
-  }
-  else {
-    setTimeout(() => {
-      onUpdateModelValue(isOpen);
-      set(internalValue, isOpen);
-    }, 100);
-  }
-});
-
-function close() {
-  set(isOpen, false);
-}
-
-const style = computed(() => ({
-  width: transformPropsUnit(get(width)),
-  maxWidth: transformPropsUnit(get(maxWidth)),
+const style = computed<{ width: string | undefined; maxWidth: string | undefined }>(() => ({
+  width: transformPropsUnit(width),
+  maxWidth: transformPropsUnit(maxWidth),
 }));
 
-const contentRef = ref<HTMLDivElement>();
-
-watch(contentRef, (contentRef) => {
-  if (contentRef) {
-    nextTick(() => {
-      contentRef.focus();
-    });
-  }
-});
-
-const dialogAttrs = computed(() => ({
+const dialogAttrs = computed<{ onClick: () => void }>(() => ({
   onClick: () => {
     const newValue = !get(internalValue);
     set(internalValue, newValue);
@@ -107,8 +51,8 @@ const dialogAttrs = computed(() => ({
   },
 }));
 
-const contentTransition = computed(() => {
-  if (!get(bottomSheet)) {
+const contentTransition = computed<Record<string, string>>(() => {
+  if (!bottomSheet) {
     return {
       enterFromClass: 'opacity-0 scale-75',
       enterActiveClass: 'ease-out duration-150',
@@ -129,19 +73,74 @@ const contentTransition = computed(() => {
   };
 });
 
-function onEscClick() {
-  if (!props.persistent) {
+function onUpdateModelValue(value: boolean): void {
+  set(modelValue, value);
+
+  if (!value)
+    emit('closed');
+}
+
+function close(): void {
+  set(isOpen, false);
+}
+
+function onEscClick(): void {
+  if (!persistent) {
     close();
   }
   emit('click:esc');
 }
 
-function onClickOutside() {
-  if (!props.persistent) {
+function onClickOutside(): void {
+  if (!persistent) {
     close();
   }
   emit('click:outside');
 }
+
+watch(
+  modelValue,
+  (value) => {
+    nextTick(() => {
+      set(internalValue, value);
+    });
+  },
+  { immediate: true },
+);
+
+watch(internalValue, (value) => {
+  if (value) {
+    nextTick(() => {
+      set(isOpen, value);
+    });
+  }
+  else {
+    setTimeout(() => {
+      set(isOpen, value);
+    }, 100);
+  }
+});
+
+watch(isOpen, (isOpen) => {
+  if (isOpen) {
+    onUpdateModelValue(isOpen);
+    set(internalValue, isOpen);
+  }
+  else {
+    setTimeout(() => {
+      onUpdateModelValue(isOpen);
+      set(internalValue, isOpen);
+    }, 100);
+  }
+});
+
+watch(contentRef, (contentRef) => {
+  if (contentRef) {
+    nextTick(() => {
+      contentRef.focus();
+    });
+  }
+});
 </script>
 
 <template>

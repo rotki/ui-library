@@ -1,16 +1,22 @@
-<script
-  lang="ts"
-  setup
-  generic="T extends object, IdType extends keyof T = keyof T"
->
+<script lang="ts" setup generic="T extends object, IdType extends keyof T = keyof T">
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import RuiExpandButton from '@/components/tables/RuiExpandButton.vue';
-import RuiTableHead, { type GroupData, type NoneSortableTableColumn, type SortColumn, type TableColumn, type TableRowKey, type TableRowKeyData, type TableSortData } from '@/components/tables/RuiTableHead.vue';
-import RuiTablePagination, { type TablePaginationData } from '@/components/tables/RuiTablePagination.vue';
+import RuiTableHead, {
+  type GroupData,
+  type NoneSortableTableColumn,
+  type SortColumn,
+  type TableColumn,
+  type TableRowKey,
+  type TableRowKeyData,
+  type TableSortData,
+} from '@/components/tables/RuiTableHead.vue';
+import RuiTablePagination, {
+  type TablePaginationData,
+} from '@/components/tables/RuiTablePagination.vue';
 import noDataPlaceholder from '@/components/tables/table_no_data_placeholder.svg';
 import noDataPlaceholderDark from '@/components/tables/table_no_data_placeholder_dark.svg';
 import { useTable } from '@/composables/defaults/table';
@@ -49,25 +55,6 @@ export interface Props<T, K extends keyof T> {
    * will be used if the `pagination` model isn't specified
    */
   itemsPerPage?: number;
-  /**
-   * modifiers for specifying externally paginated tables
-   * use this when api controls pagination
-   * @example v-model:pagination.external="{ total: 10, limit: 5, page: 1 }"
-   */
-  paginationModifiers?: {
-    external: boolean;
-  };
-  /**
-   * modifiers for specifying externally sorted tables
-   * use this when api controls sorting
-   * single column sort
-   * @example v-model:sort.external="{ column: 'name', direction: 'asc' }"
-   * multi columns sort
-   * @example v-model:sort.external="[{ column: 'name', direction: 'asc' }]"
-   */
-  sortModifiers?: {
-    external: boolean;
-  };
   /**
    * list of column definitions
    */
@@ -142,40 +129,41 @@ const modelValue = defineModel<T[IdType][]>();
 
 const expanded = defineModel<T[]>('expanded');
 
-const pagination = defineModel<TablePaginationData>('pagination');
+const [pagination, paginationModifiers] = defineModel<TablePaginationData, 'external'>(
+  'pagination',
+);
 
-const sort = defineModel<TableSortData<T>>('sort');
+const [sort, sortModifiers] = defineModel<TableSortData<T>, 'external'>('sort');
 
 const group = defineModel<TableRowKeyData<T>>('group');
 
 const collapsed = defineModel<T[]>('collapsed');
 
-const props = withDefaults(defineProps<Props<T, IdType>>(), {
-  search: '',
-  cols: undefined,
-  itemsPerPage: 10,
-  columnAttr: 'label',
-  loading: false,
-  dense: false,
-  outlined: false,
-  paginationModifiers: undefined,
-  sortModifiers: undefined,
-  empty: () => ({ label: 'No item found' }),
-  rounded: 'md',
-  hideDefaultHeader: false,
-  hideDefaultFooter: false,
-  disablePerPage: false,
-  striped: false,
-  singleExpand: false,
-  stickyHeader: false,
-  stickyOffset: undefined,
-  globalItemsPerPage: undefined,
-  disabledRows: undefined,
-  multiPageSelect: false,
-  groupExpandButtonPosition: 'start',
-  scroller: undefined,
-  itemClass: '',
-});
+const {
+  rows,
+  rowAttr,
+  search = '',
+  itemsPerPage = 10,
+  cols,
+  columnAttr = 'label',
+  dense = false,
+  outlined = false,
+  striped = false,
+  loading = false,
+  disablePerPage = false,
+  empty = { label: 'No item found' },
+  hideDefaultHeader = false,
+  hideDefaultFooter = false,
+  rounded = 'md',
+  singleExpand = false,
+  stickyHeader = false,
+  stickyOffset,
+  globalItemsPerPage = undefined,
+  groupExpandButtonPosition = 'start',
+  disabledRows,
+  multiPageSelect = false,
+  itemClass = '',
+} = defineProps<Props<T, IdType>>();
 
 const emit = defineEmits<{
   'update:options': [value: TableOptions<T>];
@@ -183,63 +171,57 @@ const emit = defineEmits<{
 }>();
 
 const slots = defineSlots<
-  Partial<Record<`header.${string}`, (props: {
-    column: TableColumn<T>;
-  }) => any>
-  & Record<`item.${string}`, (props: {
-    column: TableColumn<T>;
-    row: T;
-    index: number;
-  }) => any>
-  & {
-    'body.prepend': (props: { colspan: number }) => any;
-    'body.append': (props: { colspan: number }) => any;
-    'group.header': (props: {
-      colspan: number;
-      header: GroupHeader<T>;
-      isOpen: boolean;
-      toggle: () => void;
-    }) => any;
-    'group.header.content': (props: {
-      header: GroupHeader<T>;
-      groupKey: string;
-    }) => any;
-    'expanded-item': (props: { row: T; index: number }) => any;
-    'no-data': () => any;
-    'empty-description': () => any;
-    'tfoot': () => any;
-  }>
+  Partial<
+    Record<`header.${string}`, (props: { column: TableColumn<T> }) => any> &
+    Record<
+        `item.${string}`,
+        (props: { column: TableColumn<T>; row: T; index: number }) => any
+      > & {
+        'body.prepend': (props: { colspan: number }) => any;
+        'body.append': (props: { colspan: number }) => any;
+        'group.header': (props: {
+          colspan: number;
+          header: GroupHeader<T>;
+          isOpen: boolean;
+          toggle: () => void;
+        }) => any;
+        'group.header.content': (props: { header: GroupHeader<T>; groupKey: string }) => any;
+        'expanded-item': (props: { row: T; index: number }) => any;
+        'no-data': () => any;
+        'empty-description': () => any;
+        'tfoot': () => any;
+      }
+  >
 >();
 
-const { stickyHeader, disabledRows } = toRefs(props);
 const tableDefaults = useTable();
 
 const { isDark } = useRotkiTheme();
 
-const stickyHeaderOffset = computed(() => props.stickyOffset !== undefined ? props.stickyOffset : get(tableDefaults.stickyOffset));
-
-function isRow<T extends object>(item: GroupedTableRow<T>): item is T {
-  return !('__header__' in item);
-}
-
-function isHeaderSlot(slotName: string): slotName is `header.${string}` {
-  return slotName.startsWith('header.');
-}
+const stickyHeaderOffset = computed<number | undefined>(() =>
+  stickyOffset !== undefined ? stickyOffset : get(tableDefaults.stickyOffset),
+);
 
 const { stick, table, tableScroller } = useStickyTableHeader(
-  stickyHeader,
-  get(stickyHeaderOffset),
+  toRef(() => stickyHeader),
+  stickyHeaderOffset,
 );
+
+const itemsLength = ref<number>(0);
+const selectedData = modelValue;
+const internalSelectedData: Ref<T[IdType][]> = ref([]);
+const internalPaginationState: Ref<TablePaginationData | undefined> = ref();
+const collapsedRows: Ref<T[]> = ref([]);
+const shiftClicked: Ref<boolean> = ref(false);
+const lastSelectedIndex: Ref<number> = ref(-1);
 
 const expandable = computed(() => get(expanded) && slots['expanded-item']);
 
-const headerSlots = computed<`header.${string}`[]>(() =>
-  Object.keys(slots).filter(isHeaderSlot),
-);
+const headerSlots = computed<`header.${string}`[]>(() => Object.keys(slots).filter(isHeaderSlot));
 
-const globalItemsPerPageSettings = computed(() => {
-  if (props.globalItemsPerPage !== undefined)
-    return props.globalItemsPerPage;
+const globalItemsPerPageSettings = computed<boolean>(() => {
+  if (globalItemsPerPage !== undefined)
+    return globalItemsPerPage;
 
   return get(tableDefaults.globalItemsPerPage);
 });
@@ -263,23 +245,23 @@ const groupKeys: ComputedRef<TableRowKey<T>[]> = computed(() => {
   return groupBy;
 });
 
-const groupKey = computed(() => get(groupKeys).join(':'));
+const groupKey = computed<string>(() => get(groupKeys).join(':'));
 
-const isGrouped = computed(() => !!get(groupKey));
+const isGrouped = computed<boolean>(() => !!get(groupKey));
 
 /**
  * Prepare the columns from props or generate using first item in the list
  */
 const columns = computed<TableColumn<T>[]>(() => {
-  const data
-    = props.cols
-      ?? getKeys(props.rows[0] ?? {}).map(
-        key =>
+  const data =
+    cols ??
+    getKeys(rows[0] ?? {}).map(
+      key =>
         ({
           key,
-          [props.columnAttr]: String(key),
+          [columnAttr]: String(key),
         }) satisfies NoneSortableTableColumn<T>,
-      );
+    );
 
   const hasExpandColumn = data.some(row => row.key === 'expand');
 
@@ -301,33 +283,10 @@ const columns = computed<TableColumn<T>[]>(() => {
   if (groupByKeys.length === 0)
     return data;
 
-  return data.filter(
-    column => !groupByKeys.includes(column.key as TableRowKey<T>),
-  );
+  return data.filter(column => !groupByKeys.includes(column.key as TableRowKey<T>));
 });
 
-const itemsLength = ref(0);
-
-const selectedData = modelValue;
-
-const internalSelectedData: Ref<T[IdType][]> = ref([]);
-
-watch(modelValue, (val) => {
-  set(internalSelectedData, val);
-}, { immediate: true });
-
-const rowIdentifier = computed(() => props.rowAttr);
-
-const internalPaginationState: Ref<TablePaginationData | undefined> = ref();
-const collapsedRows: Ref<T[]> = ref([]);
-
-watch(pagination, (val) => {
-  set(internalPaginationState, val);
-}, { immediate: true });
-
-watch(collapsed, (value) => {
-  set(collapsedRows, value ?? []);
-}, { immediate: true });
+const rowIdentifier = computed<IdType>(() => rowAttr);
 
 /**
  * Pagination is different for search
@@ -340,12 +299,12 @@ const paginationData: Ref<TablePaginationData> = computed({
     if (!paginated) {
       return {
         total: get(itemsLength),
-        limit: props.itemsPerPage,
+        limit: itemsPerPage,
         page: 1,
       };
     }
 
-    if (props.paginationModifiers?.external)
+    if (paginationModifiers.external)
       return paginated;
 
     return {
@@ -365,12 +324,12 @@ const paginationData: Ref<TablePaginationData> = computed({
   },
 });
 
-const sortData = computed({
+const sortData = computed<TableSortData<T>>({
   get() {
     return get(sort);
   },
-  set(value) {
-    if (!props.multiPageSelect)
+  set(value: TableSortData<T>) {
+    if (!multiPageSelect)
       onToggleAll(false);
     resetCheckboxShiftState();
     set(sort, value);
@@ -385,7 +344,7 @@ const sortData = computed({
  * A mapping of the sort columns
  * for easily checking if a column is sorted instead of looping through the array
  */
-const sortedMap = computed(() => {
+const sortedMap = computed<Partial<Record<TableRowKey<T>, SortColumn<T>>>>(() => {
   const mapped: Partial<Record<TableRowKey<T>, SortColumn<T>>> = {};
   const sortBy = get(sortData);
   if (!sortBy)
@@ -410,14 +369,12 @@ const sortedMap = computed(() => {
  * rows filtered based on search query if it exists
  */
 const searchData = computed<T[]>(() => {
-  const query = props.search?.toLocaleLowerCase();
+  const query = search?.toLocaleLowerCase();
   if (!query)
-    return props.rows;
+    return rows;
 
-  return props.rows.filter(row =>
-    getKeys(row).some(key =>
-      `${row[key]}`.toLocaleLowerCase().includes(query),
-    ),
+  return rows.filter(row =>
+    getKeys(row).some(key => `${row[key]}`.toLocaleLowerCase().includes(query)),
   );
 });
 
@@ -427,7 +384,7 @@ const searchData = computed<T[]>(() => {
 const sorted: ComputedRef<T[]> = computed(() => {
   const sortBy = get(sortData);
   const data = [...get(searchData)];
-  if (!sortBy || props.sortModifiers?.external)
+  if (!sortBy || sortModifiers.external)
     return data;
 
   const sortOptions: Intl.CollatorOptions = { sensitivity: 'accent', usage: 'sort' };
@@ -447,18 +404,13 @@ const sorted: ComputedRef<T[]> = computed(() => {
       if (!isNaN(aNumber) && !isNaN(bNumber))
         return aNumber - bNumber;
 
-      return `${aValue}`.localeCompare(
-        `${bValue}`,
-        undefined,
-        sortOptions,
-      );
+      return `${aValue}`.localeCompare(`${bValue}`, undefined, sortOptions);
     });
   };
 
   if (!Array.isArray(sortBy))
     sort(sortBy);
-  else
-    [...sortBy].reverse().forEach(sort);
+  else [...sortBy].reverse().forEach(sort);
 
   return data;
 });
@@ -473,7 +425,7 @@ const mappedGroups = computed<Record<string, GroupedTableRow<T>[]>>(() => {
   }
 
   const result = get(sorted);
-  const identifier = props.rowAttr;
+  const identifier = rowAttr;
 
   return result.reduce((acc: Record<string, GroupedTableRow<T>[]>, row) => {
     if (!isDefined(row[identifier]) || row[identifier] === '')
@@ -520,11 +472,13 @@ const filtered = computed<GroupedTableRow<T>[]>(() => {
 
   const paginated = get(paginationData);
   const limit = paginated.limit;
-  if (paginated && !props.paginationModifiers?.external) {
+  if (paginated && !paginationModifiers.external) {
     const start = (paginated.page - 1) * limit;
     const end = start + limit;
     const preGroups = result.slice(0, start + 1).filter(item => !isRow(item));
-    const postGroups = result.slice(start + 1, end + preGroups.length).filter(item => !isRow(item));
+    const postGroups = result
+      .slice(start + 1, end + preGroups.length)
+      .filter(item => !isRow(item));
     const data = result.slice(start + preGroups.length, end + preGroups.length + postGroups.length);
     const nearestGroup = preGroups.at(-1);
     if (data.length > 0) {
@@ -549,7 +503,7 @@ const filtered = computed<GroupedTableRow<T>[]>(() => {
  * list if ids of the visible table rows used for check-all and uncheck-all
  */
 const visibleIdentifiers = computed<T[IdType][]>(() => {
-  const selectBy = props.rowAttr;
+  const selectBy = rowAttr;
 
   if (!selectBy)
     return [];
@@ -568,12 +522,11 @@ const isAllSelected = computed<boolean>(() => {
     return false;
 
   return (
-    selectedRows.length > 0
-    && get(visibleIdentifiers).every(id => selectedRows.includes(id))
+    selectedRows.length > 0 && get(visibleIdentifiers).every(id => selectedRows.includes(id))
   );
 });
 
-const indeterminate = computed(() => {
+const indeterminate = computed<boolean>(() => {
   const selectedRows = get(selectedData);
   if (!selectedRows)
     return false;
@@ -581,9 +534,9 @@ const indeterminate = computed(() => {
   return selectedRows.length > 0 && !get(isAllSelected);
 });
 
-const noData = computed(() => get(filtered).length === 0);
+const noData = computed<boolean>(() => get(filtered).length === 0);
 
-const colspan = computed(() => {
+const colspan = computed<number>(() => {
   let columnLength = get(columns).length;
   if (get(selectedData))
     columnLength++;
@@ -593,7 +546,15 @@ const colspan = computed(() => {
 
 const isSortedBy = (key: TableRowKey<T>) => key in get(sortedMap);
 
-function getSortIndex(key: TableRowKey<T>) {
+function isRow<T extends object>(item: GroupedTableRow<T>): item is T {
+  return !('__header__' in item);
+}
+
+function isHeaderSlot(slotName: string): slotName is `header.${string}` {
+  return slotName.startsWith('header.');
+}
+
+function getSortIndex(key: TableRowKey<T>): number {
   const sortBy = get(sortData);
 
   if (!sortBy || !Array.isArray(sortBy) || !isSortedBy(key))
@@ -602,7 +563,7 @@ function getSortIndex(key: TableRowKey<T>) {
   return sortBy.findIndex(sort => sort.column === key) ?? -1;
 }
 
-function isSelected(identifier: T[IdType]) {
+function isSelected(identifier: T[IdType]): boolean {
   const selection = get(selectedData);
   if (!selection)
     return false;
@@ -610,38 +571,35 @@ function isSelected(identifier: T[IdType]) {
   return selection.includes(identifier);
 }
 
-function isDisabledRow(rowKey: T[IdType]) {
-  const identifier = props.rowAttr;
-  if (!identifier)
+function isDisabledRow(rowKey: T[IdType]): boolean {
+  if (!rowAttr)
     return false;
 
-  return !!get(disabledRows)?.some((disabledRow: T) => rowKey === disabledRow[identifier]);
+  return !!disabledRows?.some((disabledRow: T) => rowKey === disabledRow[rowAttr]);
 }
 
-function isExpanded(identifier: T[IdType]) {
+function isExpanded(identifier: T[IdType]): boolean {
   const expandedVal = get(expanded);
   if (!expandedVal?.length)
     return false;
 
-  return expandedVal.some(data => data[props.rowAttr] === identifier);
+  return expandedVal.some(data => data[rowAttr] === identifier);
 }
 
-function onToggleExpand(row: T) {
+function onToggleExpand(row: T): void {
   const expandedVal = get(expanded);
   if (!expandedVal)
     return;
 
-  const key = props.rowAttr;
+  const key = rowAttr;
   const rowExpanded = isExpanded(row[key]);
 
-  if (props.singleExpand)
+  if (singleExpand)
     return set(expanded, rowExpanded ? [] : [row]);
 
   return set(
     expanded,
-    rowExpanded
-      ? expandedVal.filter(item => item[key] !== row[key])
-      : [...expandedVal, row],
+    rowExpanded ? expandedVal.filter(item => item[key] !== row[key]) : [...expandedVal, row],
   );
 }
 
@@ -649,7 +607,7 @@ function getRowGroup(row: T): Partial<T> {
   return get(groupKeys).reduce((acc, key) => ({ ...acc, [key]: row[key] }), {});
 }
 
-function getGroupRows(groupVal: string) {
+function getGroupRows(groupVal: string): T[] {
   if (!get(isGrouped))
     return [];
 
@@ -658,7 +616,7 @@ function getGroupRows(groupVal: string) {
   return groupRows.filter(isRow);
 }
 
-function compareGroupsFn(a: T, b: Partial<T>) {
+function compareGroupsFn(a: T, b: Partial<T>): boolean {
   const group = get(groupKeys);
   if (group.length === 0)
     return false;
@@ -666,21 +624,19 @@ function compareGroupsFn(a: T, b: Partial<T>) {
   return group.every(key => a[key] === b[key]);
 }
 
-function isExpandedGroup(value: Partial<T>) {
+function isExpandedGroup(value: Partial<T>): boolean {
   return get(collapsedRows).every(row => !compareGroupsFn(row, value));
 }
 
-function isHiddenRow(row: GroupedTableRow<T>) {
-  const identifier = props.rowAttr;
+function isHiddenRow(row: GroupedTableRow<T>): boolean {
+  const identifier = rowAttr;
   return (
-    get(isGrouped)
-    && get(collapsedRows).some(
-      value => isRow(row) && row[identifier] === value[identifier],
-    )
+    get(isGrouped) &&
+    get(collapsedRows).some(value => isRow(row) && row[identifier] === value[identifier])
   );
 }
 
-function onToggleExpandGroup(group: Partial<T>, value?: string) {
+function onToggleExpandGroup(group: Partial<T>, value?: string): void {
   if (!value)
     return;
 
@@ -700,27 +656,21 @@ function onToggleExpandGroup(group: Partial<T>, value?: string) {
   set(collapsed, get(collapsedRows));
 }
 
-function onUngroup() {
+function onUngroup(): void {
   set(collapsedRows, []);
 
   set(collapsed, []);
   set(group, Array.isArray(get(group)) ? [] : undefined);
 }
 
-function onCopyGroup(value: GroupData<T>) {
+function onCopyGroup(value: GroupData<T>): void {
   emit('copy:group', value);
 }
 
 /**
  * Sort to handle single sort or multiple sort columns
  */
-function onSort({
-  key,
-  direction,
-}: {
-  key: TableRowKey<T>;
-  direction?: 'asc' | 'desc';
-}) {
+function onSort({ key, direction }: { key: TableRowKey<T>; direction?: 'asc' | 'desc' }): void {
   const sortBy = get(sortData);
   if (!sortBy)
     return;
@@ -753,12 +703,18 @@ function onSort({
     assert(sortByCol);
 
     if (sortByCol.direction === newDirection) {
-      set(sortData, sortBy.filter((_, i) => i !== index));
+      set(
+        sortData,
+        sortBy.filter((_, i) => i !== index),
+      );
     }
     else {
-      set(sortData, sortBy.map((col, i) =>
-        i === index ? { ...col, direction: col.direction === 'asc' ? 'desc' : 'asc' } : col,
-      ));
+      set(
+        sortData,
+        sortBy.map((col, i) =>
+          i === index ? { ...col, direction: col.direction === 'asc' ? 'desc' : 'asc' } : col,
+        ),
+      );
     }
   }
   else {
@@ -778,44 +734,39 @@ function mustSelect(rowKey: T[IdType]): boolean {
  * toggles selected rows
  * @param {boolean} checked checkbox state
  */
-function onToggleAll(checked: boolean) {
+function onToggleAll(checked: boolean): void {
   const selectedRows = get(selectedData);
 
   if (!isDefined(selectedRows)) {
     return;
   }
 
-  if (!props.multiPageSelect) {
+  if (!multiPageSelect) {
     if (checked)
       set(selectedData, get(visibleIdentifiers).filter(isSelectable));
-    else
-      set(selectedData, get(visibleIdentifiers).filter(mustSelect));
+    else set(selectedData, get(visibleIdentifiers).filter(mustSelect));
   }
   else {
     if (checked) {
       set(
         selectedData,
-        Array.from(new Set(
-          [
-            ...selectedRows,
-            ...get(visibleIdentifiers).filter(isSelectable),
-          ],
-        )),
+        Array.from(new Set([...selectedRows, ...get(visibleIdentifiers).filter(isSelectable)])),
       );
     }
     else {
       set(
         selectedData,
-        selectedRows.filter(rowKey => !get(visibleIdentifiers).includes(rowKey) || get(visibleIdentifiers).filter(mustSelect).includes(rowKey)),
+        selectedRows.filter(
+          rowKey =>
+            !get(visibleIdentifiers).includes(rowKey) ||
+            get(visibleIdentifiers).filter(mustSelect).includes(rowKey),
+        ),
       );
     }
   }
 }
 
-const shiftClicked: Ref<boolean> = ref(false);
-const lastSelectedIndex: Ref<number> = ref(-1);
-
-function resetCheckboxShiftState() {
+function resetCheckboxShiftState(): void {
   set(shiftClicked, false);
   set(lastSelectedIndex, -1);
 }
@@ -827,13 +778,13 @@ function resetCheckboxShiftState() {
  * @param {boolean} userAction whether the select triggered by user manually
  *
  */
-function onSelect(checked: boolean, value: T[typeof props.rowAttr], userAction = false) {
+function onSelect(checked: boolean, value: T[IdType], userAction: boolean = false): void {
   if (get(shiftClicked) && userAction)
     return;
 
   const selectedRows = get(internalSelectedData);
   if (!selectedRows)
-    return false;
+    return;
 
   const selected = isSelected(value);
 
@@ -851,9 +802,14 @@ function onSelect(checked: boolean, value: T[typeof props.rowAttr], userAction =
     set(selectedData, get(internalSelectedData));
 }
 
-function onCheckboxClick(event: any, value: T[typeof props.rowAttr], index: number) {
-  const input = event.currentTarget.querySelector('input');
-  const nodeName = event.target.nodeName;
+function onCheckboxClick(event: MouseEvent, value: T[IdType], index: number): void {
+  const currentTarget = event.currentTarget;
+  if (!(currentTarget instanceof HTMLElement))
+    return;
+
+  const input = currentTarget.querySelector('input');
+  const target = event.target;
+  const nodeName = target instanceof HTMLElement ? target.nodeName : undefined;
 
   const shiftKey = event.shiftKey;
   set(shiftClicked, shiftKey);
@@ -892,35 +848,58 @@ function onCheckboxClick(event: any, value: T[typeof props.rowAttr], index: numb
         }
       }, 1);
     }
-
-    else { set(lastSelectedIndex, index); }
+    else {
+      set(lastSelectedIndex, index);
+    }
   }
 }
 
-const search = computed(() => props.search);
-
-function deselectRemovedRows() {
+function deselectRemovedRows(): void {
   get(selectedData)?.forEach((key: T[IdType]) => {
     if (isSelected(key) && !get(visibleIdentifiers).includes(key))
       onSelect(false, key, true);
   });
 }
 
-function onPaginate() {
+function onPaginate(): void {
   set(expanded, []);
-  if (!props.multiPageSelect)
+  if (!multiPageSelect)
     onToggleAll(false);
   resetCheckboxShiftState();
 }
 
-function setInternalTotal(items: GroupedTableRow<T>[]) {
-  if (!props.paginationModifiers?.external)
+function setInternalTotal(items: GroupedTableRow<T>[]): void {
+  if (!paginationModifiers.external)
     set(itemsLength, items.filter(isRow).length);
 }
 
-function cellValue(row: T, key: TableColumn<T>['key']) {
+function cellValue(row: T, key: TableColumn<T>['key']): T[TableRowKey<T>] {
   return row[key as TableRowKey<T>];
 }
+
+watch(
+  modelValue,
+  (val) => {
+    set(internalSelectedData, val);
+  },
+  { immediate: true },
+);
+
+watch(
+  pagination,
+  (val) => {
+    set(internalPaginationState, val);
+  },
+  { immediate: true },
+);
+
+watch(
+  collapsed,
+  (value) => {
+    set(collapsedRows, value ?? []);
+  },
+  { immediate: true },
+);
 
 /**
  * Keeps the global items per page in sync with the internal state.
@@ -943,17 +922,20 @@ watch(tableDefaults.itemsPerPage, (itemsPerPage) => {
 /**
  * on changing search query, need to reset pagination page to 1
  */
-watch(search, () => {
-  set(paginationData, {
-    ...get(paginationData),
-    page: 1,
-  });
-  onToggleAll(false);
-  resetCheckboxShiftState();
-});
+watch(
+  () => search,
+  () => {
+    set(paginationData, {
+      ...get(paginationData),
+      page: 1,
+    });
+    onToggleAll(false);
+    resetCheckboxShiftState();
+  },
+);
 
 watch(sorted, (items) => {
-  if (!props.multiPageSelect)
+  if (!multiPageSelect)
     deselectRemovedRows();
   setInternalTotal(items);
 });
@@ -988,13 +970,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div
-    :class="[
-      $style.wrapper,
-      $style[`rounded__${rounded}`],
-      { [$style.outlined]: outlined },
-    ]"
-  >
+  <div :class="[$style.wrapper, $style[`rounded__${rounded}`], { [$style.outlined]: outlined }]">
     <RuiTablePagination
       v-if="paginationData && !hideDefaultHeader"
       v-model="paginationData"
@@ -1109,9 +1085,7 @@ onMounted(() => {
                         variant="text"
                         icon
                         data-cy="group-copy-button"
-                        @click="
-                          onCopyGroup({ key: groupKey, value: row.group })
-                        "
+                        @click="onCopyGroup({ key: groupKey, value: row.group })"
                       >
                         <RuiIcon
                           name="lu-copy"
@@ -1230,9 +1204,7 @@ onMounted(() => {
               </tr>
             </template>
           </template>
-          <tr
-            v-if="loading && noData"
-          >
+          <tr v-if="loading && noData">
             <td
               :class="$style.tbody__loader"
               :colspan="colspan"

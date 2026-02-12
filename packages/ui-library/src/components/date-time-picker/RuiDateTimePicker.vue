@@ -9,17 +9,20 @@ import { useInputHandler } from '@/components/date-time-picker/use-input-handler
 import { useKeyboardHandler } from '@/components/date-time-picker/use-keyboard-handler';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
+import { useLabelWithQuote } from '@/composables/forms/use-label-with-quote';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
 type DateFormat = 'year-first' | 'month-first' | 'day-first';
 
 type DateTimeModelType = 'date' | 'epoch-ms' | 'epoch';
 
-type ModelValueType<T extends DateTimeModelType> =
-  T extends 'date' ? Date | undefined :
-    T extends 'epoch-ms' ? number | undefined :
-      T extends 'epoch' ? number | undefined :
-        Date | number | undefined;
+type ModelValueType<T extends DateTimeModelType> = T extends 'date'
+  ? Date | undefined
+  : T extends 'epoch-ms'
+    ? number | undefined
+    : T extends 'epoch'
+      ? number | undefined
+      : Date | number | undefined;
 
 export interface RuiDateTimePickerProps {
   minDate?: Date | number;
@@ -45,26 +48,26 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const modelValue = defineModel<ModelValueType<typeof props.type>>({ required: true });
+const modelValue = defineModel<ModelValueType<DateTimeModelType>>({ required: true });
 
-const props = withDefaults(defineProps<RuiDateTimePickerProps>(), {
-  disabled: false,
-  readonly: false,
-  allowEmpty: false,
-  dense: false,
-  type: 'epoch-ms',
-  hideDetails: false,
-  label: 'Pick a date',
-  variant: 'default',
-  hint: undefined,
-  maxDate: undefined,
-  minDate: undefined,
-  format: 'day-first',
-  accuracy: 'minute',
-  errorMessages: () => [],
-  successMessages: () => [],
-  required: false,
-});
+const {
+  disabled = false,
+  readonly = false,
+  allowEmpty = false,
+  dense = false,
+  type = 'epoch-ms',
+  hideDetails = false,
+  label = 'Pick a date',
+  variant = 'default',
+  hint,
+  maxDate,
+  minDate,
+  format = 'day-first',
+  accuracy = 'minute',
+  errorMessages = [],
+  successMessages = [],
+  required = false,
+} = defineProps<RuiDateTimePickerProps>();
 
 defineSlots<{
   'menu-content': () => any;
@@ -80,14 +83,16 @@ const isOpen = ref<boolean>(false);
 const cursorPosition = ref<number>(0);
 const currentValue = ref<number>();
 
-const textInput = ref<HTMLInputElement>();
-const activator = ref();
-const menuWrapperRef = ref();
+const textInput = useTemplateRef<HTMLInputElement>('textInput');
+const activator = useTemplateRef<HTMLDivElement>('activator');
+const menuWrapperRef = useTemplateRef<HTMLDivElement>('menuWrapperRef');
 const calendarMenuOpen = ref<boolean>(false);
 
 const { focused: activatorFocusedWithin } = useFocusWithin(activator);
 const { focused: menuWrapperFocusedWithin } = useFocusWithin(menuWrapperRef);
 const { focused: searchInputFocused } = useFocus(textInput);
+
+const anyFocused = logicOr(activatorFocusedWithin, menuWrapperFocusedWithin);
 
 const {
   clear: clearSelection,
@@ -109,26 +114,25 @@ const {
   setNow,
   valueSet,
 } = useDateTimeSelection({
-  accuracy: props.accuracy,
-  allowEmpty: props.allowEmpty,
-  maxDate: props.maxDate,
-  minDate: props.minDate,
+  accuracy,
+  allowEmpty,
+  maxDate,
+  minDate,
   modelValue,
-  type: props.type,
+  type,
 });
 
 const { setValue, getCurrent } = useInputHandler(segmentData, currentValue);
 
 const dateFormat = computed<string>(() => {
-  const dateFormat = props.format;
-  const format = baseFormats[dateFormat];
-  if (props.accuracy === 'second') {
-    return format.replace('HH:mm', 'HH:mm:ss');
+  const fmt = baseFormats[format];
+  if (accuracy === 'second') {
+    return fmt.replace('HH:mm', 'HH:mm:ss');
   }
-  else if (props.accuracy === 'millisecond') {
-    return format.replace('HH:mm', 'HH:mm:ss.SSS');
+  else if (accuracy === 'millisecond') {
+    return fmt.replace('HH:mm', 'HH:mm:ss.SSS');
   }
-  return format;
+  return fmt;
 });
 
 const {
@@ -144,38 +148,24 @@ const {
   handlePaste,
   setSegment,
 } = useKeyboardHandler({
-  accuracy: props.accuracy,
+  accuracy,
   currentValue,
   cursorPosition,
   dateFormat,
-  disabled: props.disabled,
+  disabled,
   getCurrent,
   getDateTime,
-  readonly: props.readonly,
+  readonly,
   setValue,
   textInput,
 });
 
-function handleInputClick(event: MouseEvent): void {
-  // Handle segment selection first, before any DOM changes from menu opening
-  handleClick(event);
-  // Open menu if not already open
-  if (!get(isOpen)) {
-    set(isOpen, true);
-  }
-}
+const labelWithQuote = useLabelWithQuote(
+  () => label,
+  () => required,
+);
 
-const anyFocused = logicOr(activatorFocusedWithin, menuWrapperFocusedWithin);
-
-const labelWithQuote = computed<string>(() => {
-  if (!props.label)
-    return '"\\200B"';
-
-  const asterisk = props.required ? '﹡' : '';
-  return `'  ${props.label}${asterisk}  '`;
-});
-
-const isOutlined = computed<boolean>(() => props.variant === 'outlined');
+const isOutlined = computed<boolean>(() => variant === 'outlined');
 
 const formattedDisplay = computed<string>(() => {
   let result = get(dateFormat);
@@ -234,23 +224,17 @@ const float = logicAnd(logicOr(isOpen, valueSet, searchInputFocused), isOutlined
 
 const combinedErrorMessages = computed<string[]>(() => {
   let propErrors: string[];
-  if (props.errorMessages) {
-    propErrors = Array.isArray(props.errorMessages)
-      ? props.errorMessages
-      : [props.errorMessages];
+  if (errorMessages) {
+    propErrors = Array.isArray(errorMessages) ? errorMessages : [errorMessages];
   }
   else {
-    propErrors = Array.isArray(props.errorMessages)
-      ? props.errorMessages
-      : [];
+    propErrors = Array.isArray(errorMessages) ? errorMessages : [];
   }
   return [...propErrors, ...get(internalErrorMessages)];
 });
 
 function getDisplayValue(digit: Ref<number | undefined>, padding: number): string | undefined {
-  return isDefined(digit)
-    ? get(digit).toString().padStart(padding, '0')
-    : undefined;
+  return isDefined(digit) ? get(digit).toString().padStart(padding, '0') : undefined;
 }
 
 async function setInputFocus(): Promise<void> {
@@ -269,7 +253,16 @@ function clear(segmentType?: string): void {
   clearSegment(segmentType);
 }
 
-function arrowClicked(event: any): void {
+function handleInputClick(event: MouseEvent): void {
+  // Handle segment selection first, before any DOM changes from menu opening
+  handleClick(event);
+  // Open menu if not already open
+  if (!get(isOpen)) {
+    set(isOpen, true);
+  }
+}
+
+function arrowClicked(event: MouseEvent): void {
   if (get(isOpen)) {
     set(isOpen, false);
     event.stopPropagation();
@@ -318,11 +311,11 @@ function arrowClicked(event: any): void {
         ]"
         v-bind="{
           ...getNonRootAttrs($attrs, ['onClick', 'class']),
-          ...(props.readonly ? {} : attrs) }
-        "
+          ...(readonly ? {} : attrs),
+        }"
         data-id="activator"
         :data-error="hasError ? '' : undefined"
-        :tabindex="disabled || props.readonly ? -1 : 0"
+        :tabindex="disabled || readonly ? -1 : 0"
         @click="setInputFocus()"
       >
         <span
@@ -338,7 +331,7 @@ function arrowClicked(event: any): void {
         >
           {{ label }}
           <span
-            v-if="props.required"
+            v-if="required"
             data-id="required-indicator"
             class="text-rui-error"
           >
@@ -384,9 +377,13 @@ function arrowClicked(event: any): void {
           tabindex="-1"
           color="error"
           class="group-hover:!visible"
-          :class="[$style.clear, anyFocused && '!visible', {
-            'mr-2': !dense,
-          }]"
+          :class="[
+            $style.clear,
+            anyFocused && '!visible',
+            {
+              'mr-2': !dense,
+            },
+          ]"
           @click.stop.prevent="clear()"
         >
           <RuiIcon

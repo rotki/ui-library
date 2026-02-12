@@ -119,6 +119,14 @@ export const Disabled = meta.story({
   args: {
     disabled: true,
   },
+  async play({ canvas, userEvent }) {
+    const tab3 = canvas.getByRole('tab', { name: 'Tab 3' });
+    // All tabs should be disabled when parent is disabled
+    await expect(tab3).toBeDisabled();
+    await userEvent.click(tab3);
+    // Tab should remain disabled and unselected after click
+    await expect(tab3).toHaveAttribute('aria-selected', 'false');
+  },
 });
 
 export const Grow = meta.story({

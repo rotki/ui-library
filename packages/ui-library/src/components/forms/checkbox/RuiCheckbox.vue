@@ -27,21 +27,24 @@ const modelValue = defineModel<boolean>({ default: false });
 
 const indeterminate = defineModel<boolean>('indeterminate', { default: false });
 
-const props = withDefaults(defineProps<Props>(), {
-  disabled: false,
-  color: undefined,
-  size: undefined,
-  label: '',
-  hint: '',
-  errorMessages: () => [],
-  successMessages: () => [],
-  hideDetails: false,
-  required: false,
-});
+const {
+  disabled = false,
+  color = undefined,
+  size = undefined,
+  label = '',
+  hint = '',
+  errorMessages = [],
+  successMessages = [],
+  hideDetails = false,
+  required = false,
+} = defineProps<Props>();
 
-const { size, errorMessages, successMessages } = toRefs(props);
+const el = useTemplateRef<HTMLInputElement>('el');
 
-const el = ref<HTMLInputElement | null>(null);
+const { hasError, hasSuccess } = useFormTextDetail(
+  toRef(() => errorMessages),
+  toRef(() => successMessages),
+);
 
 const internalModelValue = computed<boolean>({
   get: () => get(modelValue),
@@ -53,20 +56,14 @@ const internalModelValue = computed<boolean>({
 });
 
 const iconSize = computed<number>(() => {
-  const sizeVal = get(size);
-  if (sizeVal === 'lg')
+  if (size === 'lg')
     return 28;
 
-  if (sizeVal === 'sm')
+  if (size === 'sm')
     return 20;
 
   return 24;
 });
-
-const { hasError, hasSuccess } = useFormTextDetail(
-  errorMessages,
-  successMessages,
-);
 
 watch(indeterminate, (val) => {
   const input = get(el);
@@ -74,8 +71,7 @@ watch(indeterminate, (val) => {
     input.checked = !val;
     if (val)
       input.value = 'off';
-    else
-      input.value = 'on';
+    else input.value = 'on';
   }
 });
 

@@ -95,6 +95,19 @@ export const Persistent = meta.story({
   args: {
     persistent: true,
   },
+  async play({ canvas, userEvent }) {
+    const activator = canvas.getByRole('button', { name: 'Click me!' });
+    await userEvent.click(activator);
+    const body = within(document.body);
+    await waitFor(() => expect(body.getByText('Contents')).toBeVisible());
+    // Escape should not close a persistent dialog
+    await userEvent.keyboard('{Escape}');
+    await expect(body.getByText('Contents')).toBeVisible();
+    // Close button should still work
+    const closeButton = body.getByRole('button', { name: 'Close' });
+    await userEvent.click(closeButton);
+    await waitFor(() => expect(body.queryByRole('dialog')).toBeNull());
+  },
 });
 
 export const CustomMaxWidth = meta.story({

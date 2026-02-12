@@ -29,37 +29,31 @@ defineOptions({
 
 const modelValue = defineModel<boolean>({ default: false });
 
-const props = withDefaults(defineProps<MenuProps>(), {
-  openOnHover: false,
-  disabled: false,
-  fullWidth: false,
-  openDelay: 0,
-  closeDelay: 0,
-  popper: () => ({}),
-  wrapperClass: '',
-  menuClass: '',
-  closeOnContentClick: false,
-  persistOnActivatorClick: false,
-  hint: undefined,
-  errorMessages: () => [],
-  successMessages: () => [],
-  persistent: false,
-  disableAutoFocus: false,
-});
-
 const {
-  closeDelay,
-  openDelay,
-  popper,
-  disabled,
-  persistOnActivatorClick,
-  closeOnContentClick,
-  openOnHover,
-  errorMessages,
-  successMessages,
-  persistent,
-  disableAutoFocus,
-} = toRefs(props);
+  openOnHover = false,
+  disabled = false,
+  fullWidth = false,
+  openDelay = 0,
+  closeDelay = 0,
+  popper = {},
+  wrapperClass = '',
+  menuClass = '',
+  closeOnContentClick = false,
+  persistOnActivatorClick = false,
+  hint,
+  errorMessages = [],
+  successMessages = [],
+  showDetails = false,
+  dense = false,
+  persistent = false,
+  disableAutoFocus = false,
+} = defineProps<MenuProps>();
+
+const click = ref<boolean>(false);
+const menuContent = useTemplateRef<HTMLElement>('menuContent');
+
+const FOCUSABLE_ELEMENTS_SELECTOR =
+  'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 const {
   reference: activator,
@@ -72,17 +66,50 @@ const {
   onClose,
   onPopperLeave,
   updatePopper,
-} = usePopper(popper, disabled, openDelay, closeDelay);
+} = usePopper(
+  toRef(() => popper),
+  toRef(() => disabled),
+  toRef(() => openDelay),
+  toRef(() => closeDelay),
+);
 
 const { width } = useElementSize(activator);
 
-const click = ref<boolean>(false);
-const menuContent = ref<HTMLElement>();
+const { hasError, hasSuccess } = useFormTextDetail(
+  toRef(() => errorMessages),
+  toRef(() => successMessages),
+);
 
-const FOCUSABLE_ELEMENTS_SELECTOR = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+const baseMenuAttrs = computed<{ onMouseover?: () => void; onMouseleave?: () => void }>(() => {
+  if (disabled)
+    return {};
 
-function focusMenu() {
-  if (get(disableAutoFocus))
+  const clickVal = get(click);
+  return {
+    onMouseover: () => {
+      if (openOnHover)
+        onOpen();
+    },
+    onMouseleave: () => {
+      if (openOnHover && !clickVal)
+        onClose();
+    },
+  };
+});
+
+const menuAttrs = computed<{
+  onMouseover?: () => void;
+  onMouseleave?: () => void;
+  onClick?: () => void;
+}>(() => {
+  if (disabled)
+    return {};
+
+  return { ...get(baseMenuAttrs), onClick: checkClick };
+});
+
+function focusMenu(): void {
+  if (disableAutoFocus)
     return;
 
   nextTick(() => {
@@ -95,7 +122,7 @@ function focusMenu() {
   });
 }
 
-function onLeave(event?: KeyboardEvent) {
+function onLeave(event?: KeyboardEvent): void {
   if (!get(open))
     return;
   onClose();
@@ -103,13 +130,11 @@ function onLeave(event?: KeyboardEvent) {
   event?.stopPropagation();
 
   // Return focus to activator when menu closes
-  if (!get(disableAutoFocus)) {
+  if (!disableAutoFocus) {
     nextTick(() => {
       const activatorEl = get(activator);
       if (activatorEl) {
-        const focusableEl = activatorEl.querySelector<HTMLElement>(
-          FOCUSABLE_ELEMENTS_SELECTOR,
-        );
+        const focusableEl = activatorEl.querySelector<HTMLElement>(FOCUSABLE_ELEMENTS_SELECTOR);
         if (focusableEl) {
           focusableEl.focus();
         }
@@ -118,9 +143,9 @@ function onLeave(event?: KeyboardEvent) {
   }
 }
 
-function checkClick() {
+function checkClick(): void {
   if (get(open) && get(click)) {
-    if (!get(persistOnActivatorClick))
+    if (!persistOnActivatorClick)
       onLeave();
   }
   else {
@@ -149,39 +174,13 @@ watch(open, (open) => {
   }
 });
 
-onClickOutside(menu, () => {
-  if (get(open) && !get(persistent))
-    onLeave();
-}, { ignore: [activator] });
-
-const baseMenuAttrs = computed(() => {
-  if (get(disabled))
-    return {};
-
-  const openOnHoverVal = get(openOnHover);
-  const clickVal = get(click);
-  return {
-    onMouseover: () => {
-      if (openOnHoverVal)
-        onOpen();
-    },
-    onMouseleave: () => {
-      if (openOnHoverVal && !clickVal)
-        onClose();
-    },
-  };
-});
-
-const menuAttrs = computed(() => {
-  if (get(disabled))
-    return {};
-
-  return { ...get(baseMenuAttrs), onClick: checkClick };
-});
-
-const { hasError, hasSuccess } = useFormTextDetail(
-  errorMessages,
-  successMessages,
+onClickOutside(
+  menu,
+  () => {
+    if (get(open) && !persistent)
+      onLeave();
+  },
+  { ignore: [activator] },
 );
 </script>
 
@@ -209,11 +208,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
       <div
         v-if="popperEnter"
         ref="menu"
-        :class="[
-          $style.menu,
-          menuClass,
-          $style[`menu__${popper?.strategy ?? 'absolute'}`],
-        ]"
+        :class="[$style.menu, menuClass, $style[`menu__${popper?.strategy ?? 'absolute'}`]]"
         role="menu"
         @click="closeOnContentClick ? onLeave() : undefined"
         @keydown.esc.stop="onLeave()"

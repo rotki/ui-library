@@ -1,4 +1,4 @@
-<script lang="ts" setup generic='TValue, TItem'>
+<script lang="ts" setup generic="TValue, TItem">
 import type { ComponentPublicInstance, ComputedRef } from 'vue';
 import { syncRef } from '@vueuse/core';
 import { logicAnd, logicOr } from '@vueuse/math';
@@ -7,12 +7,23 @@ import RuiChip from '@/components/chips/RuiChip.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
-import { type KeyOfType, useDropdownMenu, useDropdownOptionProperty } from '@/composables/dropdown-menu';
-import { useAutoCompleteFocus, useAutoCompleteKeyboardNavigation, useAutoCompleteSearch, useAutoCompleteValue } from '@/composables/forms/auto-complete';
+import {
+  type KeyOfType,
+  useDropdownMenu,
+  useDropdownOptionProperty,
+} from '@/composables/dropdown-menu';
+import {
+  useAutoCompleteFocus,
+  useAutoCompleteKeyboardNavigation,
+  useAutoCompleteSearch,
+  useAutoCompleteValue,
+} from '@/composables/forms/auto-complete';
+import { useLabelWithQuote } from '@/composables/forms/use-label-with-quote';
 import { getNonRootAttrs, getRootAttrs, getTextToken } from '@/utils/helpers';
 import { isEqual } from '@/utils/is-equal';
 
-export type AutoCompleteModelValue<TValue> = TValue extends Array<infer U> ? U[] : TValue | undefined;
+export type AutoCompleteModelValue<TValue> =
+  TValue extends Array<infer U> ? U[] : TValue | undefined;
 
 export interface AutoCompleteProps<TValue, TItem> {
   options?: TItem[];
@@ -60,60 +71,77 @@ const modelValue = defineModel<AutoCompleteModelValue<TValue>>({ required: true 
 
 const searchInputModel = defineModel<string>('searchInput', { default: '' });
 
-const props = withDefaults(defineProps<AutoCompleteProps<TValue, TItem>>(), {
-  options: () => [],
-  disabled: false,
-  loading: false,
-  readOnly: false,
-  dense: false,
-  clearable: false,
-  hideDetails: false,
-  chips: false,
-  label: 'Select',
-  menuOptions: undefined,
-  prependWidth: 0,
-  appendWidth: 0,
-  variant: 'default',
-  hint: undefined,
-  keyAttr: undefined,
-  textAttr: undefined,
-  itemHeight: undefined,
-  errorMessages: () => [],
-  successMessages: () => [],
-  autoSelectFirst: false,
-  noFilter: false,
-  hideNoData: false,
-  noDataText: 'No data available',
-  hideSelected: false,
-  placeholder: '',
-  returnObject: false,
-  customValue: false,
-  hideCustomValue: false,
-  required: false,
-  hideSearchInput: false,
-  hideSelectionWrapper: false,
-});
+const {
+  options = [],
+  disabled = false,
+  loading = false,
+  readOnly = false,
+  dense = false,
+  clearable = false,
+  hideDetails = false,
+  chips = false,
+  label = 'Select',
+  menuOptions,
+  labelClass,
+  menuClass,
+  variant = 'default',
+  hint,
+  keyAttr,
+  textAttr,
+  itemHeight,
+  errorMessages = [],
+  successMessages = [],
+  autoSelectFirst = false,
+  noFilter = false,
+  hideNoData = false,
+  noDataText = 'No data available',
+  filter,
+  hideSelected = false,
+  placeholder = '',
+  returnObject = false,
+  customValue = false,
+  hideCustomValue = false,
+  required = false,
+  hideSearchInput = false,
+  hideSelectionWrapper = false,
+} = defineProps<AutoCompleteProps<TValue, TItem>>();
 
-const slots = useSlots();
-
-const { dense, disabled, options } = toRefs(props);
+const slots = defineSlots<{
+  'activator'?: (props: {
+    disabled: boolean;
+    value: TItem[];
+    variant: string;
+    readOnly: boolean;
+    attrs: Record<string, unknown>;
+    open: boolean;
+    hasError: boolean;
+    hasSuccess: boolean;
+  }) => any;
+  'activator.label'?: (props: { value: TItem[] }) => any;
+  'selection.prepend'?: (props: { index: number; item: TItem }) => any;
+  'selection'?: (props: { index: number; item: TItem; chipAttrs?: Record<string, unknown> }) => any;
+  'item.prepend'?: (props: { disabled: boolean; item: TItem; active: boolean }) => any;
+  'item'?: (props: { disabled: boolean; item: TItem; active: boolean }) => any;
+  'item.append'?: (props: { disabled: boolean; item: TItem; active: boolean }) => any;
+  'no-data'?: () => any;
+}>();
 
 const { getText, getIdentifier } = useDropdownOptionProperty<TValue, TItem>({
-  keyAttr: props.keyAttr,
-  textAttr: props.textAttr,
+  keyAttr,
+  textAttr,
 });
 
-const textInput = ref();
-const activator = ref();
-const menuRef = ref();
-const menuWrapperRef = ref();
+const textInput = useTemplateRef<HTMLInputElement>('textInput');
+const activator = useTemplateRef<HTMLDivElement>('activator');
+const menuRef = useTemplateRef<HTMLDivElement>('menuRef');
+const menuWrapperRef = useTemplateRef<HTMLDivElement>('menuWrapperRef');
 
 const { focused: activatorFocusedWithin } = useFocusWithin(activator);
 const { focused: menuWrapperFocusedWithin } = useFocusWithin(menuWrapperRef);
 const { focused: searchInputFocused } = useFocus(textInput);
 const { focused: activatorFocused } = useFocus(activator);
 
-const renderedOptions = ref<ComponentPublicInstance[]>([]);
+const renderedOptions = useTemplateRef<ComponentPublicInstance[]>('renderedOptions');
 
 const {
   internalSearch,
@@ -122,37 +150,36 @@ const {
   updateInternalSearch,
   textValueToProperValue,
 } = useAutoCompleteSearch<TItem>(
-  options,
+  toRef(() => options),
   searchInputModel,
   {
-    keyAttr: toRef(props, 'keyAttr'),
-    textAttr: toRef(props, 'textAttr'),
-    noFilter: toRef(props, 'noFilter'),
-    filter: toRef(props, 'filter'),
-    customValue: toRef(props, 'customValue'),
-    hideCustomValue: toRef(props, 'hideCustomValue'),
-    returnObject: toRef(props, 'returnObject'),
+    keyAttr: toRef(() => keyAttr),
+    textAttr: toRef(() => textAttr),
+    noFilter: toRef(() => noFilter),
+    filter: toRef(() => filter),
+    customValue: toRef(() => customValue),
+    hideCustomValue: toRef(() => hideCustomValue),
+    returnObject: toRef(() => returnObject),
   },
 );
 
 // Calculate multiple from modelValue directly to avoid circular dependency
 const multiple = computed<boolean>(() => Array.isArray(get(modelValue)));
 
-const shouldApplyValueAsSearch = computed<boolean>(() => !(slots.selection || get(multiple) || props.chips));
+const shouldApplyValueAsSearch = computed<boolean>(
+  () => !(slots.selection || get(multiple) || chips),
+);
 
 // Create a temporary isOpen ref that we'll sync with useDropdownMenu's isOpen
 const tempIsOpen = ref<boolean>(false);
 
-const {
-  value,
-  setSelected,
-} = useAutoCompleteValue<AutoCompleteModelValue<TValue>, TItem>(
+const { value, setSelected } = useAutoCompleteValue<AutoCompleteModelValue<TValue>, TItem>(
   modelValue,
-  options,
+  toRef(() => options),
   {
-    keyAttr: toRef(props, 'keyAttr'),
-    returnObject: toRef(props, 'returnObject'),
-    customValue: toRef(props, 'customValue'),
+    keyAttr: toRef(() => keyAttr),
+    returnObject: toRef(() => returnObject),
+    customValue: toRef(() => customValue),
   },
   {
     getIdentifier,
@@ -177,16 +204,16 @@ const {
   applyHighlighted,
   optionsWithSelectedHidden,
 } = useDropdownMenu<TValue, TItem>({
-  itemHeight: props.itemHeight ?? (props.dense ? 30 : 48),
-  keyAttr: props.keyAttr,
-  textAttr: props.textAttr,
+  itemHeight: itemHeight ?? (dense ? 30 : 48),
+  keyAttr,
+  textAttr,
   options: filteredOptions,
-  dense,
+  dense: toRef(() => dense),
   value,
   menuRef,
   setValue,
-  autoSelectFirst: props.autoSelectFirst,
-  hideSelected: props.hideSelected,
+  autoSelectFirst,
+  hideSelected,
 });
 
 // Sync the isOpen states
@@ -201,7 +228,7 @@ const {
   setValueFocus,
 } = useAutoCompleteKeyboardNavigation<TItem>(
   {
-    customValue: toRef(props, 'customValue'),
+    customValue: toRef(() => customValue),
     multiple,
   },
   {
@@ -212,7 +239,7 @@ const {
     highlightedIndex,
     internalSearch,
     isOpen,
-    options,
+    options: toRef(() => options),
     searchInputFocused,
     setSearchAsValue,
     value,
@@ -227,8 +254,8 @@ const {
   setInputFocus: focusSetInputFocus,
 } = useAutoCompleteFocus<TItem>(
   {
-    customValue: toRef(props, 'customValue'),
-    disabled,
+    customValue: toRef(() => customValue),
+    disabled: toRef(() => disabled),
     shouldApplyValueAsSearch,
   },
   {
@@ -247,56 +274,42 @@ const {
   },
 );
 
+const menuMinHeight = ref<number>(0);
+
 const valueSet = computed<boolean>(() => get(value).length > 0);
 
-const labelWithQuote = computed<string>(() => {
-  if (!props.label)
-    return '"\\200B"';
-
-  const asterisk = props.required ? '﹡' : '';
-  return `'  ${props.label}${asterisk}  '`;
-});
+const labelWithQuote = useLabelWithQuote(
+  () => label,
+  () => required,
+);
 
 const usedPlaceholder = computed<string>(() => {
   if (get(searchInputFocused)) {
-    return props.placeholder;
+    return placeholder;
   }
   return '';
 });
 
-const menuMinHeight = ref<number>(0);
-
-// Update menu min height only when rendered data changes
-watch(renderedData, async () => {
-  await nextTick();
-  const renderedOptionsData = get(renderedOptions).slice(0, Math.min(5, get(renderedData).length));
-  let height = 0;
-  for (const item of renderedOptionsData) {
-    if (item.$el) {
-      height += item.$el.offsetHeight;
-    }
-  }
-  set(menuMinHeight, height);
-}, { immediate: true });
-
-const outlined = computed<boolean>(() => props.variant === 'outlined');
+const outlined = computed<boolean>(() => variant === 'outlined');
 
 const float: ComputedRef<boolean> = logicAnd(
-  logicOr(
-    isOpen,
-    valueSet,
-    searchInputFocused,
-  ),
+  logicOr(isOpen, valueSet, searchInputFocused),
   outlined,
 );
 
-const virtualContainerProps = computed(() => ({
-  style: containerProps.style as any,
-  ref: containerProps.ref as any,
-}));
+const virtualContainerProps = computed<{ style: Record<string, string>; ref: (el: any) => void }>(
+  () => ({
+    style: containerProps.style as any,
+    ref: containerProps.ref as any,
+  }),
+);
 
-function updateSearchInput(event: any) {
-  const value = event.target.value;
+function updateSearchInput(event: Event): void {
+  const target = event.target;
+  if (!(target instanceof HTMLInputElement))
+    return;
+
+  const value = target.value;
   set(isOpen, true);
   updateInternalSearch(value);
   set(justOpened, false);
@@ -315,15 +328,15 @@ async function setValue(val: TItem, index?: number, skipRefocused = false): Prom
       updateInternalSearch();
       newValue.push(val);
     }
-
-    else { newValue.splice(indexInValue, 1); }
+    else {
+      newValue.splice(indexInValue, 1);
+    }
     set(value, newValue);
   }
   else {
     if (get(shouldApplyValueAsSearch))
       updateInternalSearch(getText(val));
-    else
-      updateInternalSearch();
+    else updateInternalSearch();
 
     set(value, [val]);
   }
@@ -345,7 +358,7 @@ async function setValue(val: TItem, index?: number, skipRefocused = false): Prom
   }
 }
 
-function setSearchAsValue() {
+function setSearchAsValue(): void {
   const searchToBeValue = get(internalSearch);
   if (!searchToBeValue)
     return;
@@ -356,10 +369,13 @@ function setSearchAsValue() {
 
 function clear(): void {
   updateInternalSearch();
-  set(modelValue, (Array.isArray(get(modelValue)) ? [] : undefined) as AutoCompleteModelValue<TValue>);
+  set(
+    modelValue,
+    (Array.isArray(get(modelValue)) ? [] : undefined) as AutoCompleteModelValue<TValue>,
+  );
 }
 
-function chipAttrs(item: TItem, index: number) {
+function chipAttrs(item: TItem, index: number): Record<string, unknown> {
   return {
     'data-index': index,
     'data-value': getIdentifier(item),
@@ -382,24 +398,45 @@ function setSelectionRange(start: number, end: number): void {
   get(textInput)?.setSelectionRange?.(start, end);
 }
 
-// Optimize options watcher with shallow comparison first
-watch(options, (curr, old) => {
-  if (curr === old || props.customValue)
-    return;
-
-  // Only do deep comparison if reference changed
-  if (isEqual(curr, old))
-    return;
-
-  setSelected(get(value));
-});
-
-function arrowClicked(event: any): void {
+function arrowClicked(event: MouseEvent): void {
   if (get(isOpen)) {
     set(isOpen, false);
     event.stopPropagation();
   }
 }
+
+// Update menu min height only when rendered data changes
+watch(
+  renderedData,
+  async () => {
+    await nextTick();
+    const renderedOptionsData =
+      get(renderedOptions)?.slice(0, Math.min(5, get(renderedData).length)) ?? [];
+    let height = 0;
+    for (const item of renderedOptionsData) {
+      if (item.$el) {
+        height += item.$el.offsetHeight;
+      }
+    }
+    set(menuMinHeight, height);
+  },
+  { immediate: true },
+);
+
+// Optimize options watcher with shallow comparison first
+watch(
+  () => options,
+  (curr, old) => {
+    if (curr === old || customValue)
+      return;
+
+    // Only do deep comparison if reference changed
+    if (isEqual(curr, old))
+      return;
+
+    setSelected(get(value));
+  },
+);
 
 defineExpose({
   focus: focusSetInputFocus,
@@ -420,7 +457,7 @@ defineExpose({
       persistOnActivatorClick: true,
       ...menuOptions,
       menuClass: [
-        { hidden: (optionsWithSelectedHidden.length === 0 && customValue && !slots['no-data']) },
+        { hidden: optionsWithSelectedHidden.length === 0 && customValue && !slots['no-data'] },
         menuOptions?.menuClass,
       ],
       errorMessages,
@@ -456,8 +493,8 @@ defineExpose({
           ]"
           v-bind="{
             ...getNonRootAttrs($attrs, ['onClick', 'class']),
-            ...(readOnly ? {} : attrs) }
-          "
+            ...(readOnly ? {} : attrs),
+          }"
           role="combobox"
           :aria-expanded="open"
           :aria-disabled="disabled || undefined"
@@ -530,7 +567,10 @@ defineExpose({
                 </div>
               </RuiChip>
               <div
-                v-else-if="multiple || ((!searchInputFocused) && (slots['selection.prepend'] || slots.selection))"
+                v-else-if="
+                  multiple
+                    || (!searchInputFocused && (slots['selection.prepend'] || slots.selection))
+                "
                 :class="hideSelectionWrapper ? 'contents' : 'flex'"
               >
                 <slot
@@ -573,9 +613,13 @@ defineExpose({
             color="error"
             data-id="clear"
             class="group-hover:!visible"
-            :class="[$style.clear, focusAnyFocused && '!visible', {
-              'mr-2': !dense,
-            }]"
+            :class="[
+              $style.clear,
+              focusAnyFocused && '!visible',
+              {
+                'mr-2': !dense,
+              },
+            ]"
             @click.stop.prevent="clear()"
           >
             <RuiIcon
@@ -627,7 +671,7 @@ defineExpose({
             ref="menuRef"
           >
             <RuiButton
-              v-for="({ item, _index }) in renderedData"
+              v-for="{ item, _index } in renderedData"
               ref="renderedOptions"
               :key="getIdentifier(item)?.toString()"
               :active="isActiveItem(item)"

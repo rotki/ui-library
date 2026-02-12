@@ -2,7 +2,11 @@
 import { get, isDefined, set } from '@vueuse/core';
 import { computed, inject, ref } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
-import { CalendarStateSymbol, type MonthYearSelection, type RuiCalendarState } from '@/components/calendar/state';
+import {
+  CalendarStateSymbol,
+  type MonthYearSelection,
+  type RuiCalendarState,
+} from '@/components/calendar/state';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiCalendarMenu from './RuiCalendarMenu.vue';
 
@@ -49,12 +53,12 @@ const canGoToPrev = computed<boolean>(() => {
   return date.getTime() > get(minDate).getTime();
 });
 
-function handleTitleClick(e: Event) {
-  set(anchorEl, e.currentTarget as HTMLElement ?? undefined);
+function handleTitleClick(e: Event): void {
+  set(anchorEl, (e.currentTarget as HTMLElement) ?? undefined);
   set(isMenuOpen, true);
 }
 
-function handleDateSelection(selection: MonthYearSelection) {
+function handleDateSelection(selection: MonthYearSelection): void {
   emit('select-month', selection);
 }
 </script>

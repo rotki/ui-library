@@ -25,46 +25,50 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<Props>(), {
-  tile: false,
-  size: 'md',
-  color: 'grey',
-  clickable: false,
-  closeable: false,
-  disabled: false,
-  variant: 'filled',
-  closeIcon: 'lu-circle-x',
-  bgColor: undefined,
-  textColor: undefined,
-  contentClass: '',
-});
+const {
+  tile = false,
+  size = 'md',
+  color = 'grey',
+  clickable = false,
+  closeable = false,
+  disabled = false,
+  variant = 'filled',
+  closeIcon = 'lu-circle-x',
+  bgColor = undefined,
+  textColor = undefined,
+  contentClass = '',
+} = defineProps<Props>();
 
 const emit = defineEmits<{
   'click:close': [];
-  'click': [e: any];
+  'click': [e: MouseEvent];
 }>();
-
-const { clickable, disabled, bgColor, textColor } = toRefs(props);
-
-function click(e: any) {
-  if (get(logicOr(logicNot(clickable), disabled)))
-    return;
-
-  emit('click', e);
-}
 
 const style = computed<Partial<StyleValue>>(() => {
   const style: Partial<StyleValue> = {};
-  const bg = get(bgColor);
-  const text = get(textColor);
-  if (bg)
-    style.backgroundColor = bg;
+  if (bgColor)
+    style.backgroundColor = bgColor;
 
-  if (text)
-    style.color = text;
+  if (textColor)
+    style.color = textColor;
 
   return style;
 });
+
+function click(e: MouseEvent): void {
+  if (
+    get(
+      logicOr(
+        logicNot(() => clickable),
+        () => disabled,
+      ),
+    )
+  ) {
+    return;
+  }
+
+  emit('click', e);
+}
 </script>
 
 <template>

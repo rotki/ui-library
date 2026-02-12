@@ -10,12 +10,7 @@ defineOptions({
   name: 'RuiTabItem',
 });
 
-withDefaults(defineProps<Props>(), {
-  value: undefined,
-  eager: false,
-  active: false,
-  reverse: false,
-});
+const { active = false, eager = false, reverse = false } = defineProps<Props>();
 </script>
 
 <template>

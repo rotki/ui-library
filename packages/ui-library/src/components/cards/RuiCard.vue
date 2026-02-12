@@ -17,17 +17,25 @@ defineOptions({
   inheritAttrs: false,
 });
 
-withDefaults(defineProps<Props>(), {
-  divide: false,
-  dense: false,
-  elevation: 0,
-  variant: 'outlined',
-  rounded: 'md',
-  noPadding: false,
-  contentClass: '',
-});
+const {
+  divide = false,
+  dense = false,
+  elevation = 0,
+  variant = 'outlined',
+  rounded = 'md',
+  noPadding = false,
+  contentClass = '',
+} = defineProps<Props>();
 
-const slots = useSlots();
+const slots = defineSlots<{
+  'image'?: () => any;
+  'custom-header'?: () => any;
+  'prepend'?: () => any;
+  'header'?: () => any;
+  'subheader'?: () => any;
+  'default'?: () => any;
+  'footer'?: () => any;
+}>();
 
 const hasHeadContent = computed<boolean>(() => !!slots.header || !!slots.subheader);
 </script>

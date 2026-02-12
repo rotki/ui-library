@@ -18,10 +18,7 @@ const selectedSecond = defineModel<number | undefined>('second');
 const selectedMillisecond = defineModel<number | undefined>('millisecond');
 const editMode = defineModel<TimePickerSelection>('selection', { default: 'hour' });
 
-const props = withDefaults(defineProps<RuiTimePickerProps>(), {
-  accuracy: TimeAccuracy.MINUTE,
-  borderless: false,
-});
+const { accuracy = TimeAccuracy.MINUTE, borderless = false } = defineProps<RuiTimePickerProps>();
 
 const FULL_CIRCLE = 360;
 const TWELVE_HOURS = 12;
@@ -43,10 +40,14 @@ const intervals: Record<TimePickerSelection, number> = {
 const isDragging = ref<boolean>(false);
 const clockFace = useTemplateRef<InstanceType<typeof HTMLDivElement>>('clockFace');
 
-const showSecond = computed<boolean>(() => props.accuracy === TimeAccuracy.SECOND || props.accuracy === TimeAccuracy.MILLISECOND);
-const showMillisecond = computed<boolean>(() => props.accuracy === TimeAccuracy.MILLISECOND);
+const showSecond = computed<boolean>(
+  () => accuracy === TimeAccuracy.SECOND || accuracy === TimeAccuracy.MILLISECOND,
+);
+const showMillisecond = computed<boolean>(() => accuracy === TimeAccuracy.MILLISECOND);
 
-const period = computed<'PM' | 'AM'>(() => isDefined(selectedHour) && get(selectedHour) >= TWELVE_HOURS ? 'PM' : 'AM');
+const period = computed<'PM' | 'AM'>(() =>
+  isDefined(selectedHour) && get(selectedHour) >= TWELVE_HOURS ? 'PM' : 'AM',
+);
 
 const displayHour = computed<number | undefined>(() => {
   if (!isDefined(selectedHour)) {
@@ -97,7 +98,7 @@ const clockHandStyle = computed<StyleValue>(() => {
   }
   const currentValue = get(editedValue);
   const totalItems = totalItemsPerMode[get(editMode)];
-  const angle = (currentValue * (FULL_CIRCLE / totalItems));
+  const angle = currentValue * (FULL_CIRCLE / totalItems);
 
   return {
     height: '36%',
@@ -116,7 +117,7 @@ const clockHandCircleStyle = computed<StyleValue>(() => {
   const radius = '38%';
   const currentValue = get(editedValue);
   const totalItems = totalItemsPerMode[get(editMode)];
-  const angle = (currentValue * (FULL_CIRCLE / totalItems));
+  const angle = currentValue * (FULL_CIRCLE / totalItems);
 
   const radians = (angle * Math.PI) / 180;
 
@@ -146,23 +147,23 @@ const clockNumbers = computed<number[]>(() => {
   return numbers;
 });
 
-function getModelHours() {
+function getModelHours(): number | undefined {
   return isDefined(modelValue) ? new Date(get(modelValue)).getHours() : undefined;
 }
 
-function getModelMinutes() {
+function getModelMinutes(): number | undefined {
   return isDefined(modelValue) ? new Date(get(modelValue)).getMinutes() : undefined;
 }
 
-function getModelSeconds() {
+function getModelSeconds(): number | undefined {
   const acceptedAccuracy: TimeAccuracy[] = [TimeAccuracy.SECOND, TimeAccuracy.MILLISECOND];
-  return acceptedAccuracy.includes(props.accuracy) && isDefined(modelValue)
+  return acceptedAccuracy.includes(accuracy) && isDefined(modelValue)
     ? new Date(get(modelValue)).getSeconds()
     : undefined;
 }
 
-function getModelMilliseconds() {
-  return props.accuracy === TimeAccuracy.MILLISECOND && isDefined(modelValue)
+function getModelMilliseconds(): number | undefined {
+  return accuracy === TimeAccuracy.MILLISECOND && isDefined(modelValue)
     ? new Date(get(modelValue)).getMilliseconds()
     : undefined;
 }
@@ -176,15 +177,13 @@ function generateNumbers(total: number, interval: number): number[] {
 }
 
 function formatValue(value?: number, padding = 2): string {
-  return value !== undefined
-    ? value.toString().padStart(padding, '0')
-    : '-'.repeat(padding);
+  return value !== undefined ? value.toString().padStart(padding, '0') : '-'.repeat(padding);
 }
 
 function numberStyle(num: number): StyleValue {
   const radius = '38%';
   const totalItems = totalItemsPerMode[get(editMode)];
-  const angle = (num * (FULL_CIRCLE / totalItems)) - 90;
+  const angle = num * (FULL_CIRCLE / totalItems) - 90;
 
   const radians = (angle * Math.PI) / 180;
   const x = 50 + parseFloat(radius) * Math.cos(radians);
@@ -212,7 +211,7 @@ function isSelectedNumber(num: number): boolean {
   }
 }
 
-function toggleAmPm() {
+function toggleAmPm(): void {
   if (!isDefined(selectedHour)) {
     return;
   }
@@ -226,7 +225,7 @@ function toggleAmPm() {
   updateModelValue();
 }
 
-function startDrag(event: MouseEvent | TouchEvent) {
+function startDrag(event: MouseEvent | TouchEvent): void {
   event.preventDefault();
   set(isDragging, true);
 
@@ -259,7 +258,8 @@ function startDrag(event: MouseEvent | TouchEvent) {
       angle += FULL_CIRCLE;
 
     const mode = get(editMode);
-    const unit = Math.round(angle / (FULL_CIRCLE / totalItemsPerMode[mode])) % totalItemsPerMode[mode];
+    const unit =
+      Math.round(angle / (FULL_CIRCLE / totalItemsPerMode[mode])) % totalItemsPerMode[mode];
     if (mode === 'hour') {
       let hour;
 
@@ -315,7 +315,7 @@ function startDrag(event: MouseEvent | TouchEvent) {
   handleMove(event);
 }
 
-function selectByClick(num: number) {
+function selectByClick(num: number): void {
   const mode = get(editMode);
   if (mode === 'hour') {
     let newHour = num;
@@ -345,7 +345,7 @@ function selectByClick(num: number) {
   updateModelValue();
 }
 
-function updateModelValue() {
+function updateModelValue(): void {
   if (!(isDefined(selectedHour) && isDefined(selectedMinute))) {
     return;
   }
@@ -359,19 +359,23 @@ function updateModelValue() {
   });
 }
 
+watch(
+  modelValue,
+  () => {
+    set(selectedHour, getModelHours());
+    set(selectedMinute, getModelMinutes());
+    set(selectedSecond, getModelSeconds());
+    set(selectedMillisecond, getModelMilliseconds());
+  },
+  { deep: true },
+);
+
 onMounted(() => {
   set(selectedHour, getModelHours());
   set(selectedMinute, getModelMinutes());
   set(selectedSecond, getModelSeconds());
   set(selectedMillisecond, getModelMilliseconds());
 });
-
-watch(modelValue, () => {
-  set(selectedHour, getModelHours());
-  set(selectedMinute, getModelMinutes());
-  set(selectedSecond, getModelSeconds());
-  set(selectedMillisecond, getModelMilliseconds());
-}, { deep: true });
 </script>
 
 <template>

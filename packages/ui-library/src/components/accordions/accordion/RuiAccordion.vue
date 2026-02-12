@@ -14,25 +14,25 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<AccordionProps>(), {
-  open: false,
-  eager: false,
-  headerGrow: false,
-  headerClass: '',
-  contentClass: '',
-});
+const {
+  open = false,
+  eager = false,
+  headerGrow = false,
+  headerClass = '',
+  contentClass = '',
+} = defineProps<AccordionProps>();
 
 const emit = defineEmits<{
   click: [];
 }>();
 
+const inner = useTemplateRef<HTMLDivElement>('inner');
+
 const triggerId = useId();
 const contentId = useId();
-
-const inner = ref<HTMLDivElement>();
 const { height: innerHeight } = useElementSize(inner);
 
-const contentHeight = computed<string>(() => (props.open ? `${get(innerHeight)}px` : '0px'));
+const contentHeight = computed<string>(() => (open ? `${get(innerHeight)}px` : '0px'));
 
 function toggle(): void {
   emit('click');
@@ -66,9 +66,7 @@ function onKeydown(event: KeyboardEvent): void {
       @click="toggle()"
       @keydown="onKeydown($event)"
     >
-      <div
-        :class="{ grow: headerGrow }"
-      >
+      <div :class="{ grow: headerGrow }">
         <slot
           name="header"
           :open="open"

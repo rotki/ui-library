@@ -1,4 +1,4 @@
-<script lang="ts" setup generic='T extends string | number'>
+<script lang="ts" setup generic="T extends string | number">
 import { Fragment, isVNode } from 'vue';
 
 defineOptions({
@@ -9,28 +9,16 @@ defineOptions({
 const modelValue = defineModel<T>();
 
 const slots = useSlots();
+
 const reverse = ref<boolean>(false);
 const currIndex = ref<number>(-1);
 const activeIndex = ref<number>(-1);
+const wrapper = useTemplateRef<HTMLDivElement>('wrapper');
+const inner = useTemplateRef<HTMLDivElement>('inner');
 
-watch(currIndex, (index) => {
-  nextTick(() => {
-    set(activeIndex, index);
-  });
-});
+const { height: innerHeight } = useElementSize(inner);
 
-// When using dynamic content with v-for the slot content can contain fragment,
-// Go through the fragment and always return RuiTabItem only
-function getChildrenTabs(children: VNode[]): VNode[] {
-  return children.flatMap((item) => {
-    if (item.type === Fragment && Array.isArray(item.children) && item.children.length > 0)
-      return getChildrenTabs(item.children.filter(isVNode));
-
-    return [item];
-  }).flat();
-}
-
-const children = computed(() => {
+const children = computed<VNode[]>(() => {
   const slotContent = slots.default?.() ?? [];
 
   const tabs = getChildrenTabs(slotContent);
@@ -62,10 +50,24 @@ const children = computed(() => {
   return children;
 });
 
-const wrapper = ref<HTMLDivElement>();
-const inner = ref<HTMLDivElement>();
+// When using dynamic content with v-for the slot content can contain fragment,
+// Go through the fragment and always return RuiTabItem only
+function getChildrenTabs(children: VNode[]): VNode[] {
+  return children
+    .flatMap((item) => {
+      if (item.type === Fragment && Array.isArray(item.children) && item.children.length > 0)
+        return getChildrenTabs(item.children.filter(isVNode));
 
-const { height: innerHeight } = useElementSize(inner);
+      return [item];
+    })
+    .flat();
+}
+
+watch(currIndex, (index) => {
+  nextTick(() => {
+    set(activeIndex, index);
+  });
+});
 </script>
 
 <template>

@@ -1,5 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
-import { expect, within } from 'storybook/test';
+import { expect, waitFor, within } from 'storybook/test';
 import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
 import { DEFAULT_POPPER_OPTIONS } from '@/composables/popper';
 import preview from '~/.storybook/preview';
@@ -65,6 +65,8 @@ export const Default = meta.story({
     // Tooltip teleports to document body
     const body = within(document.body);
     await expect(body.getByRole('tooltip')).toBeVisible();
+    await userEvent.unhover(activator);
+    await waitFor(() => expect(body.queryByRole('tooltip')).toBeNull());
   },
 });
 
@@ -135,6 +137,14 @@ export const WithCustomSizeFromTooltipClass = meta.story({
 export const TooltipDisabled = meta.story({
   args: {
     disabled: true,
+  },
+  async play({ canvas, userEvent }) {
+    const activator = canvas.getByText('Tooltip');
+    await userEvent.hover(activator);
+    const body = within(document.body);
+    // Disabled tooltip should not appear
+    await expect(body.queryByRole('tooltip')).toBeNull();
+    await userEvent.unhover(activator);
   },
 });
 

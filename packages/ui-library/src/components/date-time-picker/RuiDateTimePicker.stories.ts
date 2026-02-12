@@ -71,6 +71,8 @@ export const Default = meta.story({
     await userEvent.click(input);
     const body = within(document.body);
     await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
   },
 });
 

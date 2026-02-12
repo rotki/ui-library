@@ -1,39 +1,19 @@
-import type { Ref } from 'vue';
+import type { Dayjs } from 'dayjs';
+import type { Ref, ShallowRef } from 'vue';
 import type { TimeAccuracy } from '@/consts/time-accuracy';
-import dayjs, { type Dayjs } from 'dayjs';
-import { type DateTimeSegmentType, isDateTimeSegmentType } from '@/components/date-time-picker/types';
-import { includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
+import { type Segment, SEGMENT_CONFIG, SEGMENT_METHODS } from '@/components/date-time-picker/segment-config';
+import { getClickPosition, parseAndSetDateValues } from '@/components/date-time-picker/segment-utils';
+import {
+  type DateTimeSegmentType,
+  isDateTimeSegmentType,
+} from '@/components/date-time-picker/types';
 import { assert } from '@/utils/assert';
-
-interface Segment { start: number; end: number; type: DateTimeSegmentType }
-
-type SegmentMethod = 'date' | 'hour' | 'month' | 'minute' | 'second' | 'millisecond' | 'year';
-const SEGMENT_METHODS: Record<DateTimeSegmentType, SegmentMethod> = {
-  DD: 'date',
-  HH: 'hour',
-  MM: 'month',
-  SSS: 'millisecond',
-  YYYY: 'year',
-  mm: 'minute',
-  ss: 'second',
-};
-
-interface SegmentBounds { maxValue: number; minValue?: number }
-const SEGMENT_CONFIG: Record<DateTimeSegmentType, SegmentBounds> = {
-  DD: { maxValue: 31, minValue: 1 },
-  HH: { maxValue: 23, minValue: 0 },
-  MM: { maxValue: 12, minValue: 1 },
-  SSS: { maxValue: 999, minValue: 0 },
-  YYYY: { maxValue: 9999, minValue: 1 },
-  mm: { maxValue: 59, minValue: 0 },
-  ss: { maxValue: 59, minValue: 0 },
-};
 
 interface KeyboardHandlerOptions {
   dateFormat: Ref<string>;
   cursorPosition: Ref<number>;
   currentValue: Ref<number | undefined>;
-  textInput: Ref<HTMLInputElement | undefined>;
+  textInput: Readonly<ShallowRef<HTMLInputElement | null>> | Ref<HTMLInputElement | undefined>;
   setValue: (segment: DateTimeSegmentType, value?: number) => void;
   getCurrent: (segment: DateTimeSegmentType) => number | undefined;
   getDateTime: () => Dayjs;
@@ -83,9 +63,7 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
 
   function getCurrentSegment(position: number = get(cursorPosition)) {
     const segments = get(segmentPositions);
-    return segments.find(
-      segment => position >= segment.start && position <= segment.end,
-    );
+    return segments.find(segment => position >= segment.start && position <= segment.end);
   }
 
   function setCursorPosition(segment: Segment): void {
@@ -136,7 +114,10 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     const selectedDate = getDateTime();
     const updatedDate = selectedDate.set(method, selectedDate.get(method) + (increment ? 1 : -1));
     if (updatedDate.year() >= 1970) {
-      setValue(segmentType, segmentType === 'MM' ? updatedDate.get(method) + 1 : updatedDate.get(method));
+      setValue(
+        segmentType,
+        segmentType === 'MM' ? updatedDate.get(method) + 1 : updatedDate.get(method),
+      );
       setCursorPosition(currentSegment);
     }
   }
@@ -254,16 +235,6 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
       handleDigitPressed(event, key);
   }
 
-  function getClickPosition(event: MouseEvent, input: HTMLInputElement, useCaretPosition: boolean): number {
-    const fallback = input.selectionStart ?? 0;
-    if (!useCaretPosition)
-      return fallback;
-    const caretPos = document.caretPositionFromPoint?.(event.clientX, event.clientY);
-    if (caretPos)
-      return caretPos.offset;
-    return document.caretRangeFromPoint?.(event.clientX, event.clientY)?.startOffset ?? fallback;
-  }
-
   // Track the segment that was clicked, so handleFocus can restore it after DOM updates
   let clickedSegment: Segment | undefined;
 
@@ -319,32 +290,6 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     clickedSegment = undefined;
   }
 
-  function parseAndSetDateValues(pastedText: string) {
-    try {
-      const parsedDate = dayjs(pastedText, get(dateFormat));
-
-      if (!parsedDate.isValid()) {
-        return;
-      }
-
-      const date = parsedDate.toDate();
-      setValue('YYYY', date.getFullYear());
-      setValue('MM', date.getMonth() + 1);
-      setValue('DD', date.getDate());
-      setValue('HH', date.getHours());
-      setValue('mm', date.getMinutes());
-      if (includeSeconds(accuracy)) {
-        setValue('ss', date.getSeconds());
-      }
-      if (includeMilliseconds(accuracy)) {
-        setValue('SSS', date.getMilliseconds());
-      }
-    }
-    catch {
-      // Invalid format, ignore paste
-    }
-  }
-
   function handlePaste(event: ClipboardEvent): void {
     if (disabled || readonly)
       return;
@@ -359,7 +304,7 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     if (!pastedText) {
       return;
     }
-    parseAndSetDateValues(pastedText);
+    parseAndSetDateValues(pastedText, get(dateFormat), accuracy, setValue);
   }
 
   function handleInput(event: Event): void {
@@ -375,7 +320,7 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
       return;
     }
 
-    parseAndSetDateValues(inputText);
+    parseAndSetDateValues(inputText, get(dateFormat), accuracy, setValue);
   }
 
   return {

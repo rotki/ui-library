@@ -6,10 +6,11 @@ import { configDefaults, defineConfig } from 'vitest/config';
 import viteConfig from './vite.config.js';
 
 const chromiumPath = process.env.PLAYWRIGHT_CHROMIUM_PATH;
+const isCI = process.env.CI === 'true';
 
 const vitestConfig = defineConfig({
   test: {
-    reporters: ['default', 'html', 'json'],
+    reporters: ['default', 'html', 'json', ...(isCI ? ['github-actions'] : [])],
     outputFile: {
       html: './tests/html/index.html',
       json: './tests/json/index.json',
@@ -40,20 +41,37 @@ const vitestConfig = defineConfig({
       },
       {
         extends: true,
-        plugins: [
-          storybookTest({ configDir: `${import.meta.dirname}/.storybook` }),
-        ],
+        plugins: [storybookTest({ configDir: `${import.meta.dirname}/.storybook` })],
+        optimizeDeps: {
+          include: [
+            'storybook/test',
+            '@storybook/addon-a11y/preview',
+            '@storybook/vue3-vite',
+            'storybook/preview-api',
+            '@popperjs/core',
+            'tinycolor2',
+          ],
+        },
         test: {
           name: 'storybook',
           browser: {
             enabled: true,
             provider: playwright({
-              launchOptions: chromiumPath ? { executablePath: chromiumPath } : {},
+              launchOptions: {
+                ...(chromiumPath ? { executablePath: chromiumPath } : {}),
+                args: ['--disable-dev-shm-usage', '--no-sandbox'],
+              },
+              actionTimeout: 5_000,
             }),
             headless: true,
             instances: [{ browser: 'chromium' }],
           },
+          isolate: false,
+          fileParallelism: false,
+          testTimeout: 15_000,
+          hookTimeout: 15_000,
           retry: 2,
+          exclude: ['**/stories/references/**'],
           setupFiles: ['./.storybook/vitest.setup.ts'],
         },
       },
@@ -61,7 +79,4 @@ const vitestConfig = defineConfig({
   },
 });
 
-export default mergeConfig(
-  viteConfig,
-  vitestConfig,
-);
+export default mergeConfig(viteConfig, vitestConfig);

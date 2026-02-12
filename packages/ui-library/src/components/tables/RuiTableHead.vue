@@ -46,9 +46,7 @@ export interface NoneSortableTableColumn<T> extends BaseTableColumn<T> {
   sortable?: false;
 }
 
-export type TableColumn<T> =
-  | SortableTableColumn<T>
-  | NoneSortableTableColumn<T>;
+export type TableColumn<T> = SortableTableColumn<T> | NoneSortableTableColumn<T>;
 
 export interface SortColumn<T> {
   column?: TableRowKey<T>;
@@ -87,31 +85,30 @@ export interface Props<T> {
   dataId?: string;
 }
 
-const props = withDefaults(defineProps<Props<T>>(), {
-  loading: false,
-  stickyHeader: false,
-  stick: false,
-  selectable: false,
-  disableCheckAll: false,
-  noData: false,
-  colspan: 0,
-  columns: undefined,
-  capitalizeHeaders: false,
-  isAllSelected: false,
-  indeterminate: false,
-  dense: false,
-  sortedMap: () => ({}),
-  columnAttr: 'label',
-  sortData: undefined,
-  dataId: 'head-main',
-});
+const {
+  loading = false,
+  stickyHeader = false,
+  stick = false,
+  selectable = false,
+  disableCheckAll = false,
+  colspan = 0,
+  columns,
+  capitalizeHeaders = false,
+  isAllSelected = false,
+  indeterminate = false,
+  dense = false,
+  sortedMap = {} as Partial<Record<TableRowKey<T>, SortColumn<T>>>,
+  columnAttr = 'label',
+  sortData,
+  dataId = 'head-main',
+} = defineProps<Props<T>>();
 
 const emit = defineEmits<{
   'select:all': [value: boolean];
   'sort': [value: { key: TableRowKey<T>; direction?: 'asc' | 'desc' }];
 }>();
 
-function onSort({ key, direction }: TableColumn<T>) {
+function onSort({ key, direction }: TableColumn<T>): void {
   return emit('sort', {
     key: key as TableRowKey<T>,
     direction: direction ?? 'asc',
@@ -120,19 +117,17 @@ function onSort({ key, direction }: TableColumn<T>) {
 
 const onToggleAll = (checked: boolean) => emit('select:all', checked);
 
-const isSortedBy = (key: TableColumn<T>['key']) => key in props.sortedMap;
+const isSortedBy = (key: TableColumn<T>['key']) => key in sortedMap;
 
 function getSortIndex(key: TableColumn<T>['key']): number {
-  const sortBy = props.sortData;
-
-  if (!sortBy || !Array.isArray(sortBy) || !isSortedBy(key))
+  if (!sortData || !Array.isArray(sortData) || !isSortedBy(key))
     return -1;
 
-  return sortBy.findIndex(sort => sort.column === key);
+  return sortData.findIndex(sort => sort.column === key);
 }
 
-function getSortDirection(key: TableColumn<T>['key']) {
-  return props.sortedMap[key]?.direction;
+function getSortDirection(key: TableColumn<T>['key']): 'asc' | 'desc' | undefined {
+  return sortedMap[key]?.direction;
 }
 </script>
 
@@ -201,9 +196,7 @@ function getSortDirection(key: TableColumn<T>['key']) {
                 $style.sort__button,
                 {
                   [$style.sort__active ?? '']: isSortedBy(column.key),
-                  [$style[`sort__${getSortDirection(column.key)}`] ?? '']: isSortedBy(
-                    column.key,
-                  ),
+                  [$style[`sort__${getSortDirection(column.key)}`] ?? '']: isSortedBy(column.key),
                 },
               ]"
               size="sm"

@@ -1,4 +1,4 @@
-import type { MaybeRef, Ref } from 'vue';
+import type { MaybeRef, Ref, TemplateRef } from 'vue';
 import { get, set } from '@vueuse/shared';
 
 export interface UseAutoCompleteKeyboardNavigationOptions {
@@ -17,7 +17,7 @@ export interface UseAutoCompleteKeyboardNavigationDeps<TItem> {
   applyHighlighted: () => void;
   clear: () => void;
   setSearchAsValue: () => void;
-  activator: Ref<HTMLElement | undefined>;
+  activator: Ref<HTMLElement | undefined> | TemplateRef<HTMLElement>;
 }
 
 export interface UseAutoCompleteKeyboardNavigationReturn {
@@ -148,8 +148,7 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
     if (!internalSearch && total > 0) {
       if (multiple)
         set(focusedValueIndex, total - 1);
-      else
-        deps.clear();
+      else deps.clear();
     }
   }
 

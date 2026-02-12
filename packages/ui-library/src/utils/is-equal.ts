@@ -1,4 +1,4 @@
-export function isEqual(value: any, other: any) {
+export function isEqual(value: unknown, other: unknown): boolean {
   // Check if the values are identical (covers primitives and functions)
   if (value === other)
     return true;
@@ -25,14 +25,16 @@ export function isEqual(value: any, other: any) {
 
   // Compare objects
   if (typeof value === 'object') {
-    const valueKeys = Object.keys(value);
-    const otherKeys = Object.keys(other);
+    const valueRecord = value as Record<string, unknown>;
+    const otherRecord = other as Record<string, unknown>;
+    const valueKeys = Object.keys(valueRecord);
+    const otherKeys = Object.keys(otherRecord);
 
     if (valueKeys.length !== otherKeys.length)
       return false;
 
     for (const key of valueKeys) {
-      if (!isEqual(value[key], other[key]))
+      if (!isEqual(valueRecord[key], otherRecord[key]))
         return false;
     }
     return true;

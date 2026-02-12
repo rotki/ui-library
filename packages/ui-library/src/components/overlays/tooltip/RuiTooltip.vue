@@ -16,18 +16,16 @@ defineOptions({
   name: 'RuiTooltip',
 });
 
-const props = withDefaults(defineProps<Props>(), {
-  text: null,
-  disabled: false,
-  hideArrow: false,
-  openDelay: 0,
-  closeDelay: 500,
-  persistOnTooltipHover: false,
-  popper: () => ({}),
-  tooltipClass: '',
-});
-
-const { closeDelay, openDelay, popper, disabled } = toRefs(props);
+const {
+  text = null,
+  disabled = false,
+  hideArrow = false,
+  openDelay = 0,
+  closeDelay = 500,
+  persistOnTooltipHover = false,
+  popper = {},
+  tooltipClass = '',
+} = defineProps<Props>();
 
 const tooltipId = useId();
 
@@ -40,7 +38,12 @@ const {
   onClose,
   onPopperLeave,
   updatePopper,
-} = usePopper(popper, disabled, openDelay, closeDelay);
+} = usePopper(
+  toRef(() => popper),
+  toRef(() => disabled),
+  toRef(() => openDelay),
+  toRef(() => closeDelay),
+);
 
 defineExpose({
   onOpen,

@@ -25,18 +25,12 @@ defineOptions({
   name: 'RuiLogo',
 });
 
-const props = withDefaults(defineProps<Props>(), {
-  text: false,
-  branch: 'develop',
-  logo: undefined,
-  size: 3,
-  uniqueKey: undefined,
-});
+const { text = false, branch = 'develop', logo, size = 3, uniqueKey } = defineProps<Props>();
 
-const customImageRef = ref<HTMLImageElement>();
-const error = ref(false);
-const decoding = ref(!!props.logo);
-const pendingSources = ref(false);
+const customImageRef = useTemplateRef<HTMLImageElement>('customImageRef');
+const error = ref<boolean>(false);
+const decoding = ref<boolean>(!!logo);
+const pendingSources = ref<boolean>(false);
 const appName = 'rotki';
 const emptyLinks: ExternalLinks = {
   app: undefined,
@@ -44,32 +38,31 @@ const emptyLinks: ExternalLinks = {
   about: undefined,
   emptyScreen: undefined,
 };
-const externalSources = ref(emptyLinks);
+const externalSources = ref<ExternalLinks>(emptyLinks);
 
-const externalSource = computed(() => {
+const externalSource = computed<string | undefined>(() => {
   const sources = get(externalSources);
-  const { logo } = props;
   if (!logo || !sources[logo]) {
     set(decoding, get(pendingSources));
     return undefined;
   }
 
-  const url = `https://raw.githubusercontent.com/rotki/data/${props.branch}/assets/icons/${sources[logo]}`;
+  const url = `https://raw.githubusercontent.com/rotki/data/${branch}/assets/icons/${sources[logo]}`;
 
-  if (props.uniqueKey !== undefined)
-    return `${url}?key=${props.uniqueKey}`;
+  if (uniqueKey !== undefined)
+    return `${url}?key=${uniqueKey}`;
 
   return url;
 });
 
-async function fetchSources() {
-  if (!props.logo)
+async function fetchSources(): Promise<void> {
+  if (!logo)
     return;
 
   set(pendingSources, true);
   try {
     const { data } = await useFetch<string>(
-      `https://raw.githubusercontent.com/rotki/data/${props.branch}/constants/asset-mappings.json`,
+      `https://raw.githubusercontent.com/rotki/data/${branch}/constants/asset-mappings.json`,
     );
 
     const links = transformCase(JSON.parse(get(data) ?? 'null')?.logo, 'camelCase');

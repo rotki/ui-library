@@ -13,24 +13,22 @@ defineOptions({
   name: 'RuiIcon',
 });
 
-const props = withDefaults(defineProps<Props>(), {
-  size: 24,
-  color: undefined,
-});
+const { name, size = 24, color } = defineProps<Props>();
 
 const { registeredIcons } = useIcons();
 
-const isFill = computed(() => props.name.endsWith('-fill'));
+const isFill = computed<boolean>(() => name.endsWith('-fill'));
 
-const components: ComputedRef<[string, Record<string, string>][] | undefined> = computed(() => {
-  const name = props.name;
+const components = computed<[string, Record<string, string>][] | undefined>(() => {
   if (!isRuiIcon(name)) {
     console.warn(`icon ${name} must be a valid RuiIcon`);
   }
   const found = registeredIcons[name];
 
   if (!found) {
-    console.error(`Icons "${name}" not found. Make sure that you have register the icon when installing the RuiPlugin`);
+    console.error(
+      `Icons "${name}" not found. Make sure that you have register the icon when installing the RuiPlugin`,
+    );
   }
   return found;
 });
@@ -50,8 +48,8 @@ const components: ComputedRef<[string, Record<string, string>][] | undefined> = 
       v-for="(component, index) in components"
       :key="index"
       v-bind="component[1]"
-      :fill="(!isFill) ? 'none' : 'currentColor'"
-      :stroke="(!isFill) ? 'currentColor' : 'none'"
+      :fill="!isFill ? 'none' : 'currentColor'"
+      :stroke="!isFill ? 'currentColor' : 'none'"
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
