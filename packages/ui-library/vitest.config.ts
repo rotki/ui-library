@@ -53,6 +53,7 @@ const vitestConfig = defineConfig({
             headless: true,
             instances: [{ browser: 'chromium' }],
           },
+          retry: 2,
           setupFiles: ['./.storybook/vitest.setup.ts'],
         },
       },

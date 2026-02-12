@@ -1,3 +1,4 @@
+import addonA11y from '@storybook/addon-a11y';
 import addonDocs from '@storybook/addon-docs';
 import { definePreview, setup } from '@storybook/vue3-vite';
 import { useEffect, useGlobals } from 'storybook/preview-api';
@@ -12,8 +13,11 @@ setup((app) => {
 });
 
 export default definePreview({
-  addons: [addonDocs()],
+  addons: [addonA11y(), addonDocs()],
   parameters: {
+    a11y: {
+      test: 'todo',
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,

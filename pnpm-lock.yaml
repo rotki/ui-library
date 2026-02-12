@@ -118,6 +118,9 @@ importers:
       '@fontsource/roboto':
         specifier: 5.2.9
         version: 5.2.9
+      '@storybook/addon-a11y':
+        specifier: 10.2.8
+        version: 10.2.8(storybook@10.2.8(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))
       '@storybook/addon-docs':
         specifier: 10.2.8
         version: 10.2.8(@types/react@19.2.13)(esbuild@0.27.3)(rollup@4.57.1)(storybook@10.2.8(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(vite@7.3.1(@types/node@24.10.11)(jiti@2.6.1)(sass@1.97.3)(tsx@4.21.0)(yaml@2.8.2))
@@ -128,7 +131,7 @@ importers:
         specifier: 10.2.8
         version: 10.2.8(storybook@10.2.8(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))
       '@storybook/addon-vitest':
-        specifier: ^10.2.8
+        specifier: 10.2.8
         version: 10.2.8(@vitest/browser-playwright@4.0.18)(@vitest/browser@4.0.18(msw@2.12.8(@types/node@24.10.11)(typescript@5.9.3))(vite@7.3.1(@types/node@24.10.11)(jiti@2.6.1)(sass@1.97.3)(tsx@4.21.0)(yaml@2.8.2))(vitest@4.0.18))(@vitest/runner@4.0.18)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(storybook@10.2.8(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(vitest@4.0.18)
       '@storybook/vue3-vite':
         specifier: 10.2.8
@@ -149,10 +152,10 @@ importers:
         specifier: 6.0.4
         version: 6.0.4(vite@7.3.1(@types/node@24.10.11)(jiti@2.6.1)(sass@1.97.3)(tsx@4.21.0)(yaml@2.8.2))(vue@3.5.27(typescript@5.9.3))
       '@vitest/browser':
-        specifier: ^4.0.18
+        specifier: 4.0.18
         version: 4.0.18(msw@2.12.8(@types/node@24.10.11)(typescript@5.9.3))(vite@7.3.1(@types/node@24.10.11)(jiti@2.6.1)(sass@1.97.3)(tsx@4.21.0)(yaml@2.8.2))(vitest@4.0.18)
       '@vitest/browser-playwright':
-        specifier: ^4.0.18
+        specifier: 4.0.18
         version: 4.0.18(msw@2.12.8(@types/node@24.10.11)(typescript@5.9.3))(playwright@1.58.1)(vite@7.3.1(@types/node@24.10.11)(jiti@2.6.1)(sass@1.97.3)(tsx@4.21.0)(yaml@2.8.2))(vitest@4.0.18)
       '@vitest/coverage-v8':
         specifier: 4.0.18
@@ -1168,6 +1171,11 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
+  '@storybook/addon-a11y@10.2.8':
+    resolution: {integrity: sha512-EW5MzPKNzyPorvodd416U2Np+zEdMPe+BSyomjm0oCXoC/6rDurf05H1pa99rZsrTDRrpog+HCz8iVa4XSwN5Q==}
+    peerDependencies:
+      storybook: ^10.2.8
+
   '@storybook/addon-docs@10.2.8':
     resolution: {integrity: sha512-cEoWqQrLzrxOwZFee5zrD4cYrdEWKV80POb7jUZO0r5vfl2DuslIr3n/+RfLT52runCV4aZcFEfOfP/IWHNPxg==}
     peerDependencies:
@@ -1780,6 +1788,10 @@ packages:
     hasBin: true
     peerDependencies:
       postcss: ^8.1.0
+
+  axe-core@4.11.1:
+    resolution: {integrity: sha512-BASOg+YwO2C+346x3LZOeoovTIoTrRqEsqMa6fmfAV0P+U9mFr9NsyOEpiYvFjbc64NMrSswhV50WdXzdb/Z5A==}
+    engines: {node: '>=4'}
 
   babel-walk@3.0.0-canary-5:
     resolution: {integrity: sha512-GAwkz0AihzY5bkwIY5QDR+LvsRQgB/B+1foMPvi0FZPMl5fjD7ICiznUiBdLYMH1QYe6vqu4gWYytZOccLouFw==}
@@ -5207,6 +5219,12 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
+  '@storybook/addon-a11y@10.2.8(storybook@10.2.8(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))':
+    dependencies:
+      '@storybook/global': 5.0.0
+      axe-core: 4.11.1
+      storybook: 10.2.8(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+
   '@storybook/addon-docs@10.2.8(@types/react@19.2.13)(esbuild@0.27.3)(rollup@4.57.1)(storybook@10.2.8(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(vite@7.3.1(@types/node@24.10.11)(jiti@2.6.1)(sass@1.97.3)(tsx@4.21.0)(yaml@2.8.2))':
     dependencies:
       '@mdx-js/react': 3.1.1(@types/react@19.2.13)(react@19.2.4)
@@ -5999,6 +6017,8 @@ snapshots:
       picocolors: 1.1.1
       postcss: 8.5.6
       postcss-value-parser: 4.2.0
+
+  axe-core@4.11.1: {}
 
   babel-walk@3.0.0-canary-5:
     dependencies:
