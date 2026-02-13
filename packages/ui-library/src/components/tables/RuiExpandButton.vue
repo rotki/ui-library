@@ -24,6 +24,7 @@ const { expanded, icon = 'lu-chevron-down' } = defineProps<Props>();
       },
     ]"
     :aria-expanded="expanded"
+    data-id="expand-button"
     icon
     size="sm"
     variant="text"

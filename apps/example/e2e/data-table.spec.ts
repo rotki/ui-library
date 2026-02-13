@@ -10,11 +10,11 @@ test.describe('data tables - basic', () => {
     await expect(table).toBeVisible();
 
     await expect(
-      table.locator('thead th span[class*=_column__text_]').filter({ hasText: 'Street' }).first(),
+      table.locator('thead th span[data-id="column-text"]').filter({ hasText: 'Street' }).first(),
     ).toBeVisible();
 
     await expect(
-      table.locator('thead th span[class*=_column__text_]').getByText('address.street', { exact: true }),
+      table.locator('thead th span[data-id="column-text"]').getByText('address.street', { exact: true }),
     ).toHaveCount(0);
   });
 
@@ -23,7 +23,7 @@ test.describe('data tables - basic', () => {
     await expect(table).toBeVisible();
 
     await expect(
-      table.locator('thead th span[class*=_column__text_]').filter({ hasText: 'address.street' }).first(),
+      table.locator('thead th span[data-id="column-text"]').filter({ hasText: 'address.street' }).first(),
     ).toBeVisible();
   });
 
@@ -55,7 +55,7 @@ test.describe('data tables - sorting', () => {
     const table = page.locator('[data-cy=table-single-sort] [data-cy=table]');
     await expect(table).toBeVisible();
 
-    const sortButton = table.locator('thead th[class*=_sortable_] button').first();
+    const sortButton = table.locator('thead th[data-id="column-sortable"] button').first();
     await expect(sortButton).toBeVisible();
 
     // Get initial first row name
@@ -74,7 +74,7 @@ test.describe('data tables - sorting', () => {
     const table = page.locator('[data-cy=table-single-sort] [data-cy=table]');
     await expect(table).toBeVisible();
 
-    const sortButton = table.locator('thead th[class*=_sortable_] button').first();
+    const sortButton = table.locator('thead th[data-id="column-sortable"] button').first();
     const firstCell = table.locator('tbody tr:first-child td:nth-child(2)');
 
     // Get initial state (asc)
@@ -98,7 +98,7 @@ test.describe('data tables - sorting', () => {
     const table = page.locator('[data-cy=table-multi-sort] [data-cy=table]');
     await expect(table).toBeVisible();
 
-    const sortButtons = table.locator('thead th[class*=_sortable_] button');
+    const sortButtons = table.locator('thead th[data-id="column-sortable"] button');
     const secondSortButton = sortButtons.nth(1);
 
     // Click second sortable column to add to sort
@@ -161,7 +161,7 @@ test.describe('data tables - pagination', () => {
     await expect(table).toBeVisible();
 
     // Count initial rows
-    const initialRows = await table.locator('tbody tr:not([class*=_tr__empty_])').count();
+    const initialRows = await table.locator('tbody tr:not([data-id="row-empty"])').count();
 
     // Open per-page dropdown and select different value
     const perPageSelect = container.locator('[data-cy=table-pagination-limit] [data-id=activator]').first();
@@ -172,7 +172,7 @@ test.describe('data tables - pagination', () => {
     await option.click();
 
     // Row count should change
-    const newRows = await table.locator('tbody tr:not([class*=_tr__empty_])').count();
+    const newRows = await table.locator('tbody tr:not([data-id="row-empty"])').count();
     expect(newRows).not.toEqual(initialRows);
   });
 
@@ -269,7 +269,7 @@ test.describe('data tables - search', () => {
     await expect(searchInput).toBeVisible();
 
     // Count initial rows
-    const initialRows = await table.locator('tbody tr:not([class*=_tr__empty_])').count();
+    const initialRows = await table.locator('tbody tr:not([data-id="row-empty"])').count();
 
     // Type search query
     await searchInput.fill('Chelsey');
@@ -278,7 +278,7 @@ test.describe('data tables - search', () => {
     await page.waitForTimeout(100);
 
     // Row count should be reduced
-    const filteredRows = await table.locator('tbody tr:not([class*=_tr__empty_])').count();
+    const filteredRows = await table.locator('tbody tr:not([data-id="row-empty"])').count();
     expect(filteredRows).toBeLessThan(initialRows);
   });
 
@@ -290,13 +290,13 @@ test.describe('data tables - search', () => {
     await expect(table).toBeVisible();
 
     // Count initial rows
-    const initialRows = await table.locator('tbody tr:not([class*=_tr__empty_])').count();
+    const initialRows = await table.locator('tbody tr:not([data-id="row-empty"])').count();
 
     // Search to filter
     await searchInput.fill('Chelsey');
     await page.waitForTimeout(100);
 
-    const filteredRows = await table.locator('tbody tr:not([class*=_tr__empty_])').count();
+    const filteredRows = await table.locator('tbody tr:not([data-id="row-empty"])').count();
     expect(filteredRows).toBeLessThan(initialRows);
 
     // Clear search
@@ -304,7 +304,7 @@ test.describe('data tables - search', () => {
     await page.waitForTimeout(100);
 
     // Rows should be restored
-    const restoredRows = await table.locator('tbody tr:not([class*=_tr__empty_])').count();
+    const restoredRows = await table.locator('tbody tr:not([data-id="row-empty"])').count();
     expect(restoredRows).toEqual(initialRows);
   });
 
@@ -319,13 +319,13 @@ test.describe('data tables - search', () => {
     await searchInput.fill('chelsey');
     await page.waitForTimeout(100);
 
-    const lowerCaseResults = await table.locator('tbody tr:not([class*=_tr__empty_])').count();
+    const lowerCaseResults = await table.locator('tbody tr:not([data-id="row-empty"])').count();
 
     // Clear and search with uppercase
     await searchInput.fill('CHELSEY');
     await page.waitForTimeout(100);
 
-    const upperCaseResults = await table.locator('tbody tr:not([class*=_tr__empty_])').count();
+    const upperCaseResults = await table.locator('tbody tr:not([data-id="row-empty"])').count();
 
     // Should find same results regardless of case
     expect(lowerCaseResults).toEqual(upperCaseResults);
@@ -346,7 +346,7 @@ test.describe('data tables - search', () => {
     await page.waitForTimeout(100);
 
     // Should show empty row
-    await expect(table.locator('tbody tr[class*=_tr__empty_]')).toBeVisible();
+    await expect(table.locator('tbody tr[data-id="row-empty"]')).toBeVisible();
   });
 
   test('should reset pagination when searching', async ({ page }) => {
@@ -619,7 +619,7 @@ test.describe('data tables - grouping', () => {
     await expect(table).toBeVisible();
 
     // Should have group header rows
-    const groupHeaders = table.locator('tbody tr[class*=_tr__group]');
+    const groupHeaders = table.locator('tbody tr[data-id="row-group"]');
     await expect(groupHeaders.first()).toBeVisible();
   });
 
@@ -628,21 +628,21 @@ test.describe('data tables - grouping', () => {
     const table = container.locator('[data-cy=table]');
     await expect(table).toBeVisible();
 
-    const groupExpandButton = table.locator('tr[class*=_tr__group] button[aria-expanded]').first();
+    const groupExpandButton = table.locator('tr[data-id="row-group"] button[aria-expanded]').first();
     await expect(groupExpandButton).toBeVisible();
 
     // Initially expanded
     await expect(groupExpandButton).toHaveAttribute('aria-expanded', 'true');
 
     // Count initial data rows
-    const initialDataRows = await table.locator('tbody tr:not([class*=_tr__group]):not([class*=_tr__empty_])').count();
+    const initialDataRows = await table.locator('tbody tr:not([data-id="row-group"]):not([data-id="row-empty"])').count();
 
     // Collapse first group
     await groupExpandButton.click();
     await expect(groupExpandButton).toHaveAttribute('aria-expanded', 'false');
 
     // Should have fewer visible data rows
-    const collapsedDataRows = await table.locator('tbody tr:not([class*=_tr__group]):not([class*=_tr__empty_]):not([hidden])').count();
+    const collapsedDataRows = await table.locator('tbody tr:not([data-id="row-group"]):not([data-id="row-empty"]):not([hidden])').count();
     expect(collapsedDataRows).toBeLessThan(initialDataRows);
   });
 
@@ -670,7 +670,7 @@ test.describe('data tables - grouping', () => {
     await expect(table).toBeVisible();
 
     // Get the first group header row
-    const groupRow = table.locator('tr[class*=_tr__group]').first();
+    const groupRow = table.locator('tr[data-id="row-group"]').first();
     const groupCell = groupRow.locator('td').first();
 
     // The expand button should be the last element in the flex container
@@ -694,8 +694,8 @@ test.describe('data tables - empty states', () => {
     const table = container.locator('[data-cy=table]');
     await expect(table).toBeVisible();
 
-    await expect(table.locator('tbody tr[class*=_tr__empty_] p[class*=_empty__label_]')).toBeVisible();
-    await expect(table.locator('tbody tr[class*=_tr__empty_] p[class*=_empty__description_]')).toBeVisible();
+    await expect(table.locator('tbody tr[data-id="row-empty"] p[data-id="empty-label"]')).toBeVisible();
+    await expect(table.locator('tbody tr[data-id="row-empty"] p[data-id="empty-description"]')).toBeVisible();
   });
 
   test('should render empty table with action slot', async ({ page }) => {
@@ -703,8 +703,8 @@ test.describe('data tables - empty states', () => {
     const table = container.locator('[data-cy=table]');
     await expect(table).toBeVisible();
 
-    await expect(table.locator('tbody tr[class*=_tr__empty_] p[class*=_empty__label_]')).toBeVisible();
-    await expect(table.locator('tbody tr[class*=_tr__empty_] button')).toBeVisible();
+    await expect(table.locator('tbody tr[data-id="row-empty"] p[data-id="empty-label"]')).toBeVisible();
+    await expect(table.locator('tbody tr[data-id="row-empty"] button')).toBeVisible();
   });
 
   test('should render loading state without data', async ({ page }) => {
@@ -714,7 +714,7 @@ test.describe('data tables - empty states', () => {
 
     // Table should have aria-busy attribute when loading
     await expect(table.locator('table')).toHaveAttribute('aria-busy', 'true');
-    await expect(table.locator('tbody td[class*=_tbody__loader_] div[class*=_circular_]')).toBeVisible();
+    await expect(table.locator('tbody td[data-id="tbody-loader"] div[class*=_circular_]')).toBeVisible();
   });
 
   test('should render loading state with data', async ({ page }) => {
@@ -726,11 +726,11 @@ test.describe('data tables - empty states', () => {
     await expect(table.locator('table')).toHaveAttribute('aria-busy', 'true');
 
     // Should show data rows
-    const rows = table.locator('tbody tr:not([class*=_tr__empty_])');
+    const rows = table.locator('tbody tr:not([data-id="row-empty"])');
     await expect(rows.first()).toBeVisible();
 
     // Should show progress bar in header
-    await expect(table.locator('thead tr[class*=_thead__loader_]')).toHaveCount(1);
+    await expect(table.locator('thead tr[data-id="thead-loader"]')).toHaveCount(1);
   });
 });
 

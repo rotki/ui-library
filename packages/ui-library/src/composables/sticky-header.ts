@@ -1,15 +1,20 @@
-import type { MaybeRef } from 'vue';
+import type { MaybeRef, ShallowRef } from 'vue';
 import { assert } from '@/utils/assert';
+
+export interface UseStickyTableHeaderRefs {
+  table: Readonly<ShallowRef<HTMLTableElement | null>>;
+  tableScroller: Readonly<ShallowRef<HTMLElement | null>>;
+}
 
 /**
  * Setup sticky table header
  */
 export function useStickyTableHeader(
   sticky: MaybeRef<boolean> = ref(false),
-  offsetTop?: MaybeRef<number | undefined>,
+  offsetTop: MaybeRef<number | undefined>,
+  refs: UseStickyTableHeaderRefs,
 ) {
-  const table = ref<HTMLTableElement | null>(null);
-  const tableScroller = ref<HTMLElement | null>(null);
+  const { table, tableScroller } = refs;
   const stick = ref<boolean>(false);
   const borderPrecision = -0.5;
   const selectors = {
@@ -27,9 +32,14 @@ export function useStickyTableHeader(
 
     const theadClone: HTMLHeadElement | null = root.querySelector(`${selectors.headClone} > tr`);
 
-    const head: HTMLHeadElement | null = root.querySelector(`${selectors.head} > tr`) ?? null;
+    const head: HTMLHeadElement | null = root.querySelector(`${selectors.head} > tr`);
+
+    let resizeCleanups: (() => void)[] = [];
 
     const observeChildTh = (): void => {
+      resizeCleanups.forEach(cleanup => cleanup());
+      resizeCleanups = [];
+
       const columns: NodeListOf<HTMLElement> | undefined = head?.querySelectorAll(selectors.th);
 
       const clonedColumns: NodeListOf<HTMLElement> | undefined = theadClone?.querySelectorAll(
@@ -37,7 +47,7 @@ export function useStickyTableHeader(
       );
 
       clonedColumns?.forEach((th: HTMLElement, i: number) => {
-        useResizeObserver(th, (entries) => {
+        const { stop } = useResizeObserver(th, (entries) => {
           const entry = entries[0];
           assert(entry);
           const cellRect = entry.target.getBoundingClientRect();
@@ -45,6 +55,7 @@ export function useStickyTableHeader(
           if (column)
             column.style.width = `${cellRect.width}px`;
         });
+        resizeCleanups.push(stop);
       });
     };
 
@@ -63,7 +74,6 @@ export function useStickyTableHeader(
       },
     );
 
-    // Initial setup to observe the existing th elements
     observeChildTh();
   };
 
@@ -78,11 +88,9 @@ export function useStickyTableHeader(
 
     const clonedRect: DOMRect | undefined = theadClone?.getBoundingClientRect();
 
-    const head: HTMLHeadElement | null = root.querySelector(selectors.head) ?? null;
+    const head: HTMLHeadElement | null = root.querySelector(selectors.head);
 
-    const headRect: DOMRect | undefined = head?.getBoundingClientRect();
-
-    if (!rect || !clonedRect || !head || !theadClone || !headRect)
+    if (!clonedRect || !head || !theadClone)
       return;
 
     const { height: theadHeight, left: theadLeft, width: theadWidth } = clonedRect;
@@ -93,10 +101,16 @@ export function useStickyTableHeader(
     head.style.width = `${theadWidth}px`;
 
     const rows = root.querySelectorAll(selectors.row);
+    if (rows.length <= 1) {
+      set(stick, false);
+      head.style.left = `${borderPrecision}px`;
+      head.style.top = '0';
+      return;
+    }
 
     const lastRowRect: DOMRect | undefined = rows.item(rows.length - 1)?.getBoundingClientRect();
 
-    if (tableTop <= top && tableBottom > top && rows.length > 1) {
+    if (tableTop <= top && tableBottom > top) {
       set(stick, true);
       head.style.left = `${theadLeft + borderPrecision}px`;
 
@@ -112,17 +126,26 @@ export function useStickyTableHeader(
     }
   };
 
+  let rafId: number | null = null;
+
+  function throttledToggleStickyClass(): void {
+    if (rafId !== null)
+      return;
+    rafId = requestAnimationFrame(() => {
+      toggleStickyClass();
+      rafId = null;
+    });
+  }
+
   onMounted(() => {
     toggleStickyClass();
-    useEventListener(tableScroller, 'scroll', toggleStickyClass);
-    useEventListener(document.body, 'scroll', toggleStickyClass);
-    useEventListener(window, 'resize', toggleStickyClass);
+    useEventListener(tableScroller, 'scroll', throttledToggleStickyClass);
+    useEventListener(document.body, 'scroll', throttledToggleStickyClass);
+    useEventListener(window, 'resize', throttledToggleStickyClass);
     watchCellWidth();
   });
 
   return {
     stick,
-    table,
-    tableScroller,
   };
 }

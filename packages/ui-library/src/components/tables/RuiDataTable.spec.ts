@@ -111,12 +111,12 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(wrapper.find('div div[class*=_navigation_]').exists()).toBeTruthy();
     expect(wrapper.find('div div[class*=_navigation_] button[disabled]').exists()).toBeTruthy();
 
-    expect(wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button]').exists()).toBeTruthy();
+    expect(wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"]').exists()).toBeTruthy();
     expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeFalsy();
 
-    await wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button]').trigger('click');
+    await wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"]').trigger('click');
 
-    expect(wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]').exists()).toBeTruthy();
+    expect(wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"][aria-expanded="true"]').exists()).toBeTruthy();
     expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeTruthy();
     expect(wrapper.find('div[data-cy=table-pagination] div[class*=limit]').exists()).toBeTruthy();
     expect(wrapper.find('div[data-cy=table-pagination] div[class*=ranges]').exists()).toBeTruthy();
@@ -143,16 +143,16 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(wrapper.props().expanded).toHaveLength(0);
     expect(wrapper.find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]').exists()).toBeFalsy();
 
-    await wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button]').trigger('click');
+    await wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"]').trigger('click');
 
     expect(wrapper.props().expanded).toHaveLength(1);
-    expect(wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]').exists()).toBeTruthy();
+    expect(wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"][aria-expanded="true"]').exists()).toBeTruthy();
     expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeTruthy();
 
-    await wrapper.find('tbody tr:nth-child(3) button[class*=_tr__expander_button]').trigger('click');
+    await wrapper.find('tbody tr:nth-child(3) button[data-id="expand-button"]').trigger('click');
 
     expect(wrapper.props().expanded).toHaveLength(2);
-    expect(wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]').exists()).toBeTruthy();
+    expect(wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"][aria-expanded="true"]').exists()).toBeTruthy();
     expect(wrapper.find('tbody tr:nth-child(4) div[data-cy=expanded-content]').exists()).toBeTruthy();
   });
 
@@ -206,25 +206,25 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(wrapper.props().expanded).toHaveLength(0);
     expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeFalsy();
 
-    await wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button]').trigger('click');
+    await wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"]').trigger('click');
 
     expect(wrapper.props().expanded).toHaveLength(1);
-    expect(wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]').exists()).toBeTruthy();
+    expect(wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"][aria-expanded="true"]').exists()).toBeTruthy();
     expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeTruthy();
 
-    await wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button]').trigger('click');
+    await wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"]').trigger('click');
 
     expect(wrapper.props().expanded).toHaveLength(0);
     expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeFalsy();
 
-    await wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button]').trigger('click');
+    await wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"]').trigger('click');
 
     expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeTruthy();
 
-    await wrapper.find('tbody tr:nth-child(3) button[class*=_tr__expander_button]').trigger('click');
+    await wrapper.find('tbody tr:nth-child(3) button[data-id="expand-button"]').trigger('click');
 
     expect(wrapper.props().expanded).toHaveLength(1);
-    expect(wrapper.find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]').exists()).toBeFalsy();
+    expect(wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"][aria-expanded="true"]').exists()).toBeFalsy();
     expect(wrapper.find('tbody tr:nth-child(4) div[data-cy=expanded-content]').exists()).toBeFalsy();
   });
 
@@ -319,7 +319,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const rows = wrapper.findAll('tbody tr:not([class*=_tr__expanded_]):not([class*=_tr__empty_])');
+      const rows = wrapper.findAll('tbody tr:not([data-id="row-expanded"]):not([data-id="row-empty"])');
       expect(rows).toHaveLength(5);
       expect(rows[0]?.find('td:nth-child(1)').text()).toBe('1');
     });
@@ -334,7 +334,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const rows = wrapper.findAll('tbody tr:not([class*=_tr__expanded_]):not([class*=_tr__empty_])');
+      const rows = wrapper.findAll('tbody tr:not([data-id="row-expanded"]):not([data-id="row-empty"])');
       expect(rows).toHaveLength(5);
       expect(rows[0]?.find('td:nth-child(1)').text()).toBe('6');
     });
@@ -349,7 +349,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const rows = wrapper.findAll('tbody tr:not([class*=_tr__expanded_]):not([class*=_tr__empty_])');
+      const rows = wrapper.findAll('tbody tr:not([data-id="row-expanded"]):not([data-id="row-empty"])');
       expect(rows).toHaveLength(5);
     });
   });
@@ -433,7 +433,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const sortButton = wrapper.find('thead th[class*=_sortable_] button');
+      const sortButton = wrapper.find('thead th[data-id="column-sortable"] button');
       await sortButton.trigger('click');
 
       expect(onUpdateSort).toHaveBeenCalledWith(
@@ -453,7 +453,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const sortButton = wrapper.find('thead th[class*=_sortable_] button');
+      const sortButton = wrapper.find('thead th[data-id="column-sortable"] button');
       await sortButton.trigger('click');
 
       expect(onUpdateSort).toHaveBeenCalledWith(
@@ -473,7 +473,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const sortButtons = wrapper.findAll('thead th[class*=_sortable_] button');
+      const sortButtons = wrapper.findAll('thead th[data-id="column-sortable"] button');
       const titleSortButton = sortButtons[1];
       await titleSortButton?.trigger('click');
 
@@ -500,7 +500,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const sortButton = wrapper.find('thead th[class*=_sortable_] button');
+      const sortButton = wrapper.find('thead th[data-id="column-sortable"] button');
       await sortButton.trigger('click');
 
       expect(onUpdateSort).toHaveBeenCalledWith([
@@ -526,7 +526,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const rows = wrapper.findAll('tbody tr:not([class*=_tr__empty_])');
+      const rows = wrapper.findAll('tbody tr:not([data-id="row-empty"])');
       expect(rows).toHaveLength(1);
       expect(rows[0]?.find('td:nth-child(2)').text()).toBe('Alice Smith');
     });
@@ -546,7 +546,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const rows = wrapper.findAll('tbody tr:not([class*=_tr__empty_])');
+      const rows = wrapper.findAll('tbody tr:not([data-id="row-empty"])');
       expect(rows).toHaveLength(1);
     });
 
@@ -566,7 +566,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const rows = wrapper.findAll('tbody tr:not([class*=_tr__empty_])');
+      const rows = wrapper.findAll('tbody tr:not([data-id="row-empty"])');
       expect(rows).toHaveLength(1);
       expect(rows[0]?.find('td:nth-child(2)').text()).toBe('Charlie Brown');
     });
@@ -586,7 +586,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const emptyRow = wrapper.find('tbody tr[class*=_tr__empty_]');
+      const emptyRow = wrapper.find('tbody tr[data-id="row-empty"]');
       expect(emptyRow.exists()).toBeTruthy();
     });
 
@@ -605,11 +605,11 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      expect(wrapper.findAll('tbody tr:not([class*=_tr__empty_])')).toHaveLength(1);
+      expect(wrapper.findAll('tbody tr:not([data-id="row-empty"])')).toHaveLength(1);
 
       await wrapper.setProps({ search: 'bob' });
 
-      const rows = wrapper.findAll('tbody tr:not([class*=_tr__empty_])');
+      const rows = wrapper.findAll('tbody tr:not([data-id="row-empty"])');
       expect(rows).toHaveLength(1);
       expect(rows[0]?.find('td:nth-child(2)').text()).toBe('Bob Jones');
     });
@@ -634,7 +634,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const rows = wrapper.findAll('tbody tr:not([class*=_tr__empty_])');
+      const rows = wrapper.findAll('tbody tr:not([data-id="row-empty"])');
       expect(rows).toHaveLength(5);
     });
 
@@ -655,7 +655,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const rows = wrapper.findAll('tbody tr:not([class*=_tr__empty_])');
+      const rows = wrapper.findAll('tbody tr:not([data-id="row-empty"])');
       expect(rows).toHaveLength(2);
       expect(rows[0]?.find('td:nth-child(2)').text()).toBe('Alice Dev');
       expect(rows[1]?.find('td:nth-child(2)').text()).toBe('Zack Dev');
@@ -708,7 +708,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const headers = wrapper.findAll('thead th span[class*=_column__text_]');
+      const headers = wrapper.findAll('thead th span[data-id="column-text"]');
       const headerTexts = headers.map(h => h.text());
 
       expect(headerTexts).toContain('id');
@@ -794,14 +794,14 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const ungroupButton = wrapper.find('tr[class*=_tr__group] button:has([class*=lu-trash])');
+      const ungroupButton = wrapper.find('tr[data-id="row-group"] button:has([class*=lu-trash])');
       if (ungroupButton.exists()) {
         await ungroupButton.trigger('click');
         expect(onUpdateGroup).toHaveBeenCalledWith(undefined);
         expect(onUpdateCollapsed).toHaveBeenCalledWith([]);
       }
       else {
-        const buttons = wrapper.findAll('tr[class*=_tr__group] button');
+        const buttons = wrapper.findAll('tr[data-id="row-group"] button');
         for (const btn of buttons) {
           if (btn.html().includes('trash')) {
             await btn.trigger('click');
@@ -1035,9 +1035,9 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(paginate).toHaveLength(1);
 
     // Verify pagination is after the scroller (footer position)
-    const wrapperEl = wrapper.find('[class*=_wrapper]').element;
+    const wrapperEl = wrapper.find('[data-id="table-wrapper"]').element;
     const pagination = wrapper.find('[data-cy="table-pagination"]').element;
-    const scroller = wrapper.find('[class*=_scroller]').element;
+    const scroller = wrapper.find('[data-id="table-scroller"]').element;
     const children = Array.from(wrapperEl.children);
     expect(children.indexOf(pagination)).toBeGreaterThan(children.indexOf(scroller));
   });
@@ -1056,9 +1056,9 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(paginate).toHaveLength(1);
 
     // Verify pagination is before the scroller (header position)
-    const wrapperEl = wrapper.find('[class*=_wrapper]').element;
+    const wrapperEl = wrapper.find('[data-id="table-wrapper"]').element;
     const pagination = wrapper.find('[data-cy="table-pagination"]').element;
-    const scroller = wrapper.find('[class*=_scroller]').element;
+    const scroller = wrapper.find('[data-id="table-scroller"]').element;
     const children = Array.from(wrapperEl.children);
     expect(children.indexOf(pagination)).toBeLessThan(children.indexOf(scroller));
   });
@@ -1076,7 +1076,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const groupHeaders = wrapper.findAll('tr[class*=_tr__group]');
+      const groupHeaders = wrapper.findAll('tr[data-id="row-group"]');
       expect(groupHeaders.length).toBeGreaterThan(0);
     });
 
@@ -1092,7 +1092,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const groupExpandButton = wrapper.find('tr[class*=_tr__group] button[class*=_tr__expander_button]');
+      const groupExpandButton = wrapper.find('tr[data-id="row-group"] button[data-id="expand-button"]');
       expect(groupExpandButton.exists()).toBeTruthy();
 
       await groupExpandButton.trigger('click');
@@ -1113,7 +1113,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const groupExpandButton = wrapper.find('tr[class*=_tr__group] button[class*=_tr__expander_button]');
+      const groupExpandButton = wrapper.find('tr[data-id="row-group"] button[data-id="expand-button"]');
       await groupExpandButton.trigger('click');
 
       expect(onUpdateCollapsed).toHaveBeenCalled();
@@ -1130,10 +1130,10 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const groupHeader = wrapper.find('tr[class*=_tr__group]');
+      const groupHeader = wrapper.find('tr[data-id="row-group"]');
       expect(groupHeader.exists()).toBeTruthy();
 
-      const expandButton = groupHeader.find('button[class*=_tr__expander_button]');
+      const expandButton = groupHeader.find('button[data-id="expand-button"]');
       expect(expandButton.exists()).toBeTruthy();
     });
 
@@ -1149,10 +1149,10 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const groupHeader = wrapper.find('tr[class*=_tr__group]');
+      const groupHeader = wrapper.find('tr[data-id="row-group"]');
       expect(groupHeader.exists()).toBeTruthy();
 
-      const expandButton = groupHeader.find('button[class*=_tr__expander_button]');
+      const expandButton = groupHeader.find('button[data-id="expand-button"]');
       expect(expandButton.exists()).toBeTruthy();
     });
 
@@ -1169,13 +1169,13 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const copyButton = wrapper.find('tr[class*=_tr__group] button:has([class*=lu-copy])');
+      const copyButton = wrapper.find('tr[data-id="row-group"] button:has([class*=lu-copy])');
       if (copyButton.exists()) {
         await copyButton.trigger('click');
         expect(onCopyGroup).toHaveBeenCalled();
       }
       else {
-        const buttons = wrapper.findAll('tr[class*=_tr__group] button');
+        const buttons = wrapper.findAll('tr[data-id="row-group"] button');
         const copyBtn = buttons[1];
         if (copyBtn) {
           await copyBtn.trigger('click');
@@ -1291,7 +1291,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const tbodyRows = wrapper.findAll('tbody tr:not([class*=_tr__expanded_])');
+      const tbodyRows = wrapper.findAll('tbody tr:not([data-id="row-expanded"])');
       expect(tbodyRows).toHaveLength(5);
     });
 
@@ -1461,8 +1461,8 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const emptyLabel = wrapper.find('p[class*=_empty__label_]');
-      const emptyDescription = wrapper.find('p[class*=_empty__description_]');
+      const emptyLabel = wrapper.find('p[data-id="empty-label"]');
+      const emptyDescription = wrapper.find('p[data-id="empty-description"]');
 
       expect(emptyLabel.exists()).toBeTruthy();
       expect(emptyLabel.text()).toBe('No results found');
@@ -1556,7 +1556,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const rows = wrapper.findAll('tbody tr:not([class*=_tr__expanded_]):not([class*=_tr__empty_])');
+      const rows = wrapper.findAll('tbody tr:not([data-id="row-expanded"]):not([data-id="row-empty"])');
       rows.forEach((row) => {
         expect(row.classes()).toContain('custom-row-class');
       });
@@ -1606,7 +1606,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const loader = wrapper.find('td[class*=_tbody__loader_]');
+      const loader = wrapper.find('td[data-id="tbody-loader"]');
       expect(loader.exists()).toBeTruthy();
     });
 
@@ -1620,10 +1620,10 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const rows = wrapper.findAll('tbody tr:not([class*=_tr__empty_])');
+      const rows = wrapper.findAll('tbody tr:not([data-id="row-empty"])');
       expect(rows.length).toBeGreaterThan(0);
 
-      const circularLoader = wrapper.find('td[class*=_tbody__loader_]');
+      const circularLoader = wrapper.find('td[data-id="tbody-loader"]');
       expect(circularLoader.exists()).toBeFalsy();
 
       const progressBar = wrapper.findComponent({ name: 'RuiProgress' });
@@ -1640,7 +1640,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const circularLoader = wrapper.find('td[class*=_tbody__loader_]');
+      const circularLoader = wrapper.find('td[data-id="tbody-loader"]');
       expect(circularLoader.exists()).toBeFalsy();
     });
   });
@@ -1665,7 +1665,7 @@ describe('components/tables/RuiDataTable.vue', () => {
       });
 
       // Group headers should be rendered
-      const groupHeaders = wrapper.findAll('tr[class*=_tr__group]');
+      const groupHeaders = wrapper.findAll('tr[data-id="row-group"]');
       expect(groupHeaders.length).toBeGreaterThan(0);
     });
   });
@@ -1759,7 +1759,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const sortableButton = wrapper.find('thead th[class*=_sortable_] button');
+      const sortableButton = wrapper.find('thead th[data-id="column-sortable"] button');
       await sortableButton.trigger('click');
 
       expect(onUpdateSort).toHaveBeenCalled();
@@ -1777,7 +1777,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const sortableButton = wrapper.find('thead th[class*=_sortable_] button');
+      const sortableButton = wrapper.find('thead th[data-id="column-sortable"] button');
       await sortableButton.trigger('click');
 
       expect(onUpdateOptions).toHaveBeenCalledWith(
@@ -1822,7 +1822,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const rows = wrapper.findAll('tbody tr:not([class*=_tr__expanded_]):not([class*=_tr__empty_])');
+      const rows = wrapper.findAll('tbody tr:not([data-id="row-expanded"]):not([data-id="row-empty"])');
       expect(rows).toHaveLength(5);
     });
   });
@@ -1929,7 +1929,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const headers = wrapper.findAll('thead th span[class*=_column__text_]');
+      const headers = wrapper.findAll('thead th span[data-id="column-text"]');
       expect(headers[0]?.text()).toBe('Custom ID');
       expect(headers[1]?.text()).toBe('Custom Name');
     });
@@ -2011,10 +2011,10 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const emptyRow = wrapper.find('tr[class*=_tr__empty_]');
+      const emptyRow = wrapper.find('tr[data-id="row-empty"]');
       expect(emptyRow.exists()).toBeTruthy();
 
-      const emptyLabel = wrapper.find('p[class*=_empty__label_]');
+      const emptyLabel = wrapper.find('p[data-id="empty-label"]');
       expect(emptyLabel.text()).toBe('No data available');
     });
   });
@@ -2037,7 +2037,7 @@ describe('components/tables/RuiDataTable.vue', () => {
       expect(wrapper.props().modelValue).toHaveLength(3);
 
       // Click sort button
-      const sortButton = wrapper.find('thead th[class*=_sortable_] button');
+      const sortButton = wrapper.find('thead th[data-id="column-sortable"] button');
       await sortButton.trigger('click');
 
       // Selection should be cleared

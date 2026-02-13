@@ -19,8 +19,8 @@ const vitestConfig = defineConfig({
       provider: 'v8',
       reportsDirectory: 'tests/coverage',
       reporter: ['html', 'json'],
-      include: ['src/*'],
-      exclude: ['node_modules', 'tests/', '**/*.d.ts', 'src/**/*.stories.ts'],
+      include: ['src/**'],
+      exclude: ['node_modules', 'tests/', '**/*.d.ts', 'src/**/*.stories.ts', 'src/**/__test__/**'],
     },
     projects: [
       {

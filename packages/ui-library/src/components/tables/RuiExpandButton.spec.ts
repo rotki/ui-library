@@ -16,9 +16,7 @@ describe('components/tables/RuiExpandButton.vue', () => {
       },
     });
 
-    expect(wrapper.find('button').exists()).toBeTruthy();
-    const buttonClasses = wrapper.find('button').classes();
-    expect(buttonClasses.some(c => c.includes('_tr__expander_button'))).toBeTruthy();
+    expect(wrapper.find('button[data-id="expand-button"]').exists()).toBeTruthy();
   });
 
   it('should apply open class when expanded is true', () => {
@@ -28,8 +26,8 @@ describe('components/tables/RuiExpandButton.vue', () => {
       },
     });
 
-    const button = wrapper.find('button');
-    expect(button.classes().some(c => c.includes('_tr__expander_button_open'))).toBeTruthy();
+    const button = wrapper.find('button[data-id="expand-button"]');
+    expect(button.attributes('aria-expanded')).toBe('true');
   });
 
   it('should not apply open class when expanded is false', () => {
@@ -39,8 +37,8 @@ describe('components/tables/RuiExpandButton.vue', () => {
       },
     });
 
-    const button = wrapper.find('button');
-    expect(button.classes().some(c => c.includes('_tr__expander_button_open'))).toBeFalsy();
+    const button = wrapper.find('button[data-id="expand-button"]');
+    expect(button.attributes('aria-expanded')).toBe('false');
   });
 
   it('should emit click event when clicked', async () => {

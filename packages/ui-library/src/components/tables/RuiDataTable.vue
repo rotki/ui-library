@@ -7,10 +7,7 @@ import RuiProgress from '@/components/progress/RuiProgress.vue';
 import RuiExpandButton from '@/components/tables/RuiExpandButton.vue';
 import RuiTableHead, {
   type GroupData,
-  type NoneSortableTableColumn,
-  type SortColumn,
   type TableColumn,
-  type TableRowKey,
   type TableRowKeyData,
   type TableSortData,
 } from '@/components/tables/RuiTableHead.vue';
@@ -21,21 +18,16 @@ import noDataPlaceholder from '@/components/tables/table_no_data_placeholder.svg
 import noDataPlaceholderDark from '@/components/tables/table_no_data_placeholder_dark.svg';
 import { useTable } from '@/composables/defaults/table';
 import { useStickyTableHeader } from '@/composables/sticky-header';
+import { useTableColumns } from '@/composables/tables/data-table/columns';
+import { useTableExpansion } from '@/composables/tables/data-table/expansion';
+import { useTableGrouping } from '@/composables/tables/data-table/grouping';
+import { useTablePagination } from '@/composables/tables/data-table/pagination';
+import { useTableSelection } from '@/composables/tables/data-table/selection';
+import { useTableSort } from '@/composables/tables/data-table/sort';
+import { type GroupHeader, isRow } from '@/composables/tables/data-table/types';
 import { useRotkiTheme } from '@/composables/theme';
-import { assert } from '@/utils/assert';
 
-export interface TableOptions<T> {
-  pagination?: TablePaginationData;
-  sort?: TableSortData<T>;
-}
-
-export interface GroupHeader<T> {
-  __header__: true;
-  identifier: string;
-  group: Partial<T>;
-}
-
-export type GroupedTableRow<T> = T | GroupHeader<T>;
+export type { GroupedTableRow, GroupHeader, TableOptions } from '@/composables/tables/data-table/types';
 
 export interface Props<T, K extends keyof T> {
   /**
@@ -117,7 +109,6 @@ export interface Props<T, K extends keyof T> {
   groupExpandButtonPosition?: 'start' | 'end';
   disabledRows?: T[];
   multiPageSelect?: boolean;
-  scroller?: HTMLElement | null;
   itemClass?: ((item: T) => string) | string;
 }
 
@@ -125,13 +116,11 @@ defineOptions({
   name: 'RuiDataTable',
 });
 
-const modelValue = defineModel<T[IdType][]>();
+const selectedData = defineModel<T[IdType][]>();
 
 const expanded = defineModel<T[]>('expanded');
 
-const [pagination, paginationModifiers] = defineModel<TablePaginationData, 'external'>(
-  'pagination',
-);
+const [pagination, paginationModifiers] = defineModel<TablePaginationData, 'external'>('pagination');
 
 const [sort, sortModifiers] = defineModel<TableSortData<T>, 'external'>('sort');
 
@@ -166,33 +155,28 @@ const {
 } = defineProps<Props<T, IdType>>();
 
 const emit = defineEmits<{
-  'update:options': [value: TableOptions<T>];
+  'update:options': [value: { pagination?: TablePaginationData; sort?: TableSortData<T> }];
   'copy:group': [value: GroupData<T>];
 }>();
 
-const slots = defineSlots<
-  Partial<
-    Record<`header.${string}`, (props: { column: TableColumn<T> }) => any> &
-    Record<
-        `item.${string}`,
-        (props: { column: TableColumn<T>; row: T; index: number }) => any
-      > & {
-        'body.prepend': (props: { colspan: number }) => any;
-        'body.append': (props: { colspan: number }) => any;
-        'group.header': (props: {
-          colspan: number;
-          header: GroupHeader<T>;
-          isOpen: boolean;
-          toggle: () => void;
-        }) => any;
-        'group.header.content': (props: { header: GroupHeader<T>; groupKey: string }) => any;
-        'expanded-item': (props: { row: T; index: number }) => any;
-        'no-data': () => any;
-        'empty-description': () => any;
-        'tfoot': () => any;
-      }
-  >
->();
+const slots = defineSlots<Partial<
+  Record<`header.${string}`, (props: { column: TableColumn<T> }) => any> &
+  Record<`item.${string}`, (props: { column: TableColumn<T>; row: T; index: number }) => any> & {
+    'body.prepend': (props: { colspan: number }) => any;
+    'body.append': (props: { colspan: number }) => any;
+    'group.header': (props: {
+      colspan: number;
+      header: GroupHeader<T>;
+      isOpen: boolean;
+      toggle: () => void;
+    }) => any;
+    'group.header.content': (props: { header: GroupHeader<T>; groupKey: string }) => any;
+    'expanded-item': (props: { row: T; index: number }) => any;
+    'no-data': () => any;
+    'empty-description': () => any;
+    'tfoot': () => any;
+  }
+  >>();
 
 const tableDefaults = useTable();
 
@@ -202,663 +186,113 @@ const stickyHeaderOffset = computed<number | undefined>(() =>
   stickyOffset !== undefined ? stickyOffset : get(tableDefaults.stickyOffset),
 );
 
-const { stick, table, tableScroller } = useStickyTableHeader(
+const table = useTemplateRef<HTMLTableElement>('table');
+const tableScroller = useTemplateRef<HTMLElement>('tableScroller');
+
+const { stick } = useStickyTableHeader(
   toRef(() => stickyHeader),
   stickyHeaderOffset,
+  { table, tableScroller },
 );
 
-const itemsLength = ref<number>(0);
-const selectedData = modelValue;
-const internalSelectedData: Ref<T[IdType][]> = ref([]);
-const internalPaginationState: Ref<TablePaginationData | undefined> = ref();
-const collapsedRows: Ref<T[]> = ref([]);
-const shiftClicked: Ref<boolean> = ref(false);
-const lastSelectedIndex: Ref<number> = ref(-1);
+const hasExpandedItemSlot = computed<boolean>(() => !!slots['expanded-item']);
 
-const expandable = computed(() => get(expanded) && slots['expanded-item']);
+const { expandable, isExpanded, onToggleExpand } = useTableExpansion<T, IdType>(
+  { rowAttr, singleExpand },
+  { expanded, hasExpandedItemSlot },
+);
 
-const headerSlots = computed<`header.${string}`[]>(() => Object.keys(slots).filter(isHeaderSlot));
+function emitUpdateOptions(opts: { sort?: TableSortData<T>; pagination?: TablePaginationData }): void {
+  emit('update:options', opts);
+}
 
-const globalItemsPerPageSettings = computed<boolean>(() => {
-  if (globalItemsPerPage !== undefined)
-    return globalItemsPerPage;
-
-  return get(tableDefaults.globalItemsPerPage);
-});
-
-const getKeys = <T extends object>(t: T) => Object.keys(t) as TableRowKey<T>[];
-
-const groupKeys: ComputedRef<TableRowKey<T>[]> = computed(() => {
-  const groupBy = get(group);
-
-  if (!groupBy) {
-    // no grouping
-    return [];
-  }
-
-  if (!Array.isArray(groupBy)) {
-    // currently only supports a single grouping
-    // only the first item in the array is used
-    return [groupBy];
-  }
-
-  return groupBy;
-});
-
-const groupKey = computed<string>(() => get(groupKeys).join(':'));
-
-const isGrouped = computed<boolean>(() => !!get(groupKey));
-
-/**
- * Prepare the columns from props or generate using first item in the list
- */
-const columns = computed<TableColumn<T>[]>(() => {
-  const data =
-    cols ??
-    getKeys(rows[0] ?? {}).map(
-      key =>
-        ({
-          key,
-          [columnAttr]: String(key),
-        }) satisfies NoneSortableTableColumn<T>,
-    );
-
-  const hasExpandColumn = data.some(row => row.key === 'expand');
-
-  if (get(expandable) && !hasExpandColumn) {
-    return [
-      ...data,
-      {
-        key: 'expand' as TableRowKey<T>,
-        sortable: false,
-        class: 'w-16',
-        cellClass: '!py-0 w-16',
-        align: 'end',
-      } satisfies NoneSortableTableColumn<T>,
-    ];
-  }
-
-  const groupByKeys = get(groupKeys);
-
-  if (groupByKeys.length === 0)
-    return data;
-
-  return data.filter(column => !groupByKeys.includes(column.key as TableRowKey<T>));
-});
-
-const rowIdentifier = computed<IdType>(() => rowAttr);
-
-/**
- * Pagination is different for search
- * since search is only used for internal filtering
- * we return the length of search results as total
- */
-const paginationData: Ref<TablePaginationData> = computed({
-  get() {
-    const paginated = get(internalPaginationState);
-    if (!paginated) {
-      return {
-        total: get(itemsLength),
-        limit: itemsPerPage,
-        page: 1,
-      };
-    }
-
-    if (paginationModifiers.external)
-      return paginated;
-
-    return {
-      total: get(itemsLength),
-      limit: paginated.limit,
-      page: paginated.page,
-      limits: paginated.limits,
-    };
+const {
+  sortData,
+  sortedMap,
+  sorted,
+  onSort: applySort,
+} = useTableSort<T>(
+  { rows: () => rows, search: () => search, sortModifiersExternal: sortModifiers.external },
+  {
+    sort,
+    pagination,
+    emitUpdateOptions,
   },
-  set(value: TablePaginationData) {
-    set(internalPaginationState, value);
-    set(pagination, value);
-    emit('update:options', {
-      pagination: value,
-      sort: get(sort),
-    });
+);
+
+const {
+  groupKeys,
+  groupKey,
+  grouped,
+  isExpandedGroup,
+  isHiddenRow,
+  onToggleExpandGroup,
+  onUngroup,
+  onCopyGroup,
+} = useTableGrouping<T, IdType>(
+  { rowAttr },
+  {
+    group,
+    collapsed,
+    sorted,
+    emitCopyGroup: (value: GroupData<T>) => emit('copy:group', value),
   },
-});
+);
 
-const sortData = computed<TableSortData<T>>({
-  get() {
-    return get(sort);
+const {
+  paginationData,
+  filtered,
+  setInternalTotal,
+  resetPagination,
+} = useTablePagination<T>(
+  {
+    itemsPerPage,
+    paginationModifiersExternal: paginationModifiers.external,
+    globalItemsPerPage,
   },
-  set(value: TableSortData<T>) {
-    if (!multiPageSelect)
-      onToggleAll(false);
-    resetCheckboxShiftState();
-    set(sort, value);
-    emit('update:options', {
-      sort: value,
-      pagination: get(pagination),
-    });
+  {
+    pagination,
+    grouped,
+    isHiddenRow,
+    sort,
+    emitUpdateOptions,
+    tableDefaults,
   },
-});
-
-/**
- * A mapping of the sort columns
- * for easily checking if a column is sorted instead of looping through the array
- */
-const sortedMap = computed<Partial<Record<TableRowKey<T>, SortColumn<T>>>>(() => {
-  const mapped: Partial<Record<TableRowKey<T>, SortColumn<T>>> = {};
-  const sortBy = get(sortData);
-  if (!sortBy)
-    return mapped;
-
-  if (!Array.isArray(sortBy)) {
-    if (sortBy.column)
-      mapped[sortBy.column] = sortBy;
-
-    return mapped;
-  }
-
-  return sortBy.reduce((acc, curr) => {
-    if (!curr.column)
-      return acc;
-
-    return { ...acc, [curr.column]: curr };
-  }, mapped);
-});
-
-/**
- * rows filtered based on search query if it exists
- */
-const searchData = computed<T[]>(() => {
-  const query = search?.toLocaleLowerCase();
-  if (!query)
-    return rows;
-
-  return rows.filter(row =>
-    getKeys(row).some(key => `${row[key]}`.toLocaleLowerCase().includes(query)),
-  );
-});
-
-/**
- * sort the search results
- */
-const sorted: ComputedRef<T[]> = computed(() => {
-  const sortBy = get(sortData);
-  const data = [...get(searchData)];
-  if (!sortBy || sortModifiers.external)
-    return data;
-
-  const sortOptions: Intl.CollatorOptions = { sensitivity: 'accent', usage: 'sort' };
-
-  const sort = (by: SortColumn<T>) => {
-    data.sort((a, b) => {
-      const column = by.column;
-      if (!column)
-        return 0;
-
-      let [aValue, bValue] = [a[column], b[column]];
-      if (by.direction === 'desc')
-        [aValue, bValue] = [bValue, aValue];
-
-      const aNumber = Number(aValue);
-      const bNumber = Number(bValue);
-      if (!isNaN(aNumber) && !isNaN(bNumber))
-        return aNumber - bNumber;
-
-      return `${aValue}`.localeCompare(`${bValue}`, undefined, sortOptions);
-    });
-  };
-
-  if (!Array.isArray(sortBy))
-    sort(sortBy);
-  else [...sortBy].reverse().forEach(sort);
-
-  return data;
-});
-
-/**
- * comprises search, sorted paginated, and grouped data
- */
-const mappedGroups = computed<Record<string, GroupedTableRow<T>[]>>(() => {
-  if (!get(isGrouped)) {
-    // no grouping
-    return {};
-  }
-
-  const result = get(sorted);
-  const identifier = rowAttr;
-
-  return result.reduce((acc: Record<string, GroupedTableRow<T>[]>, row) => {
-    if (!isDefined(row[identifier]) || row[identifier] === '')
-      return acc;
-
-    const group = getRowGroup(row);
-    const groupVal = Object.values(group).filter(isDefined).join(',');
-    if (!acc[groupVal]) {
-      acc[groupVal] = [
-        {
-          __header__: true,
-          group,
-          identifier: groupVal,
-        } satisfies GroupHeader<T>,
-      ];
-    }
-
-    acc[groupVal].push(row);
-
-    return acc;
-  }, {});
-});
-
-/**
- * comprises search, sorted paginated, and grouped data
- */
-const grouped = computed<GroupedTableRow<T>[]>(() => {
-  const result = get(sorted);
-  const groupByKey = get(groupKey);
-
-  if (!groupByKey) {
-    // no grouping
-    return result;
-  }
-
-  return Object.values(get(mappedGroups)).flatMap(grouped => grouped);
-});
-
-/**
- * comprises search, sorted and paginated data
- */
-const filtered = computed<GroupedTableRow<T>[]>(() => {
-  const result = get(grouped);
-
-  const paginated = get(paginationData);
-  const limit = paginated.limit;
-  if (paginated && !paginationModifiers.external) {
-    const start = (paginated.page - 1) * limit;
-    const end = start + limit;
-    const preGroups = result.slice(0, start + 1).filter(item => !isRow(item));
-    const postGroups = result
-      .slice(start + 1, end + preGroups.length)
-      .filter(item => !isRow(item));
-    const data = result.slice(start + preGroups.length, end + preGroups.length + postGroups.length);
-    const nearestGroup = preGroups.at(-1);
-    if (data.length > 0) {
-      // if our first item is not a group, push in the nearest group
-      const firstItem = data[0];
-      assert(firstItem);
-      if (isRow(firstItem) && nearestGroup)
-        data.unshift(nearestGroup);
-      const lastItem = data.at(-1);
-      // if our last item is a group, remove it
-      if (lastItem && !isRow(lastItem))
-        data.pop();
-    }
-
-    return data.filter(row => !isHiddenRow(row));
-  }
-
-  return result.filter(row => !isHiddenRow(row));
-});
-
-/**
- * list if ids of the visible table rows used for check-all and uncheck-all
- */
-const visibleIdentifiers = computed<T[IdType][]>(() => {
-  const selectBy = rowAttr;
-
-  if (!selectBy)
-    return [];
-
-  return get(filtered)
-    .filter(isRow)
-    .map(row => row[selectBy]);
-});
-
-/**
- * Flag to know when all rows are selected for the current screen
- */
-const isAllSelected = computed<boolean>(() => {
-  const selectedRows = get(selectedData);
-  if (!selectedRows)
-    return false;
-
-  return (
-    selectedRows.length > 0 && get(visibleIdentifiers).every(id => selectedRows.includes(id))
-  );
-});
-
-const indeterminate = computed<boolean>(() => {
-  const selectedRows = get(selectedData);
-  if (!selectedRows)
-    return false;
-
-  return selectedRows.length > 0 && !get(isAllSelected);
-});
+);
 
 const noData = computed<boolean>(() => get(filtered).length === 0);
 
-const colspan = computed<number>(() => {
-  let columnLength = get(columns).length;
-  if (get(selectedData))
-    columnLength++;
-
-  return columnLength;
+const { columns, colspan, headerSlots, cellValue } = useTableColumns<T, IdType>({
+  cols: () => cols,
+  columnAttr,
+  rows: () => rows,
+  expandable,
+  groupKeys,
+  selectedData,
+  slots,
 });
 
-const isSortedBy = (key: TableRowKey<T>) => key in get(sortedMap);
+const {
+  isAllSelected,
+  indeterminate,
+  isSelected,
+  isDisabledRow,
+  onToggleAll,
+  onSelect,
+  onCheckboxClick,
+  deselectRemovedRows,
+  resetCheckboxShiftState,
+} = useTableSelection<T, IdType>(
+  { rowAttr, multiPageSelect, disabledRows: () => disabledRows },
+  { selectedData, filtered },
+);
 
-function isRow<T extends object>(item: GroupedTableRow<T>): item is T {
-  return !('__header__' in item);
-}
-
-function isHeaderSlot(slotName: string): slotName is `header.${string}` {
-  return slotName.startsWith('header.');
-}
-
-function getSortIndex(key: TableRowKey<T>): number {
-  const sortBy = get(sortData);
-
-  if (!sortBy || !Array.isArray(sortBy) || !isSortedBy(key))
-    return -1;
-
-  return sortBy.findIndex(sort => sort.column === key) ?? -1;
-}
-
-function isSelected(identifier: T[IdType]): boolean {
-  const selection = get(selectedData);
-  if (!selection)
-    return false;
-
-  return selection.includes(identifier);
-}
-
-function isDisabledRow(rowKey: T[IdType]): boolean {
-  if (!rowAttr)
-    return false;
-
-  return !!disabledRows?.some((disabledRow: T) => rowKey === disabledRow[rowAttr]);
-}
-
-function isExpanded(identifier: T[IdType]): boolean {
-  const expandedVal = get(expanded);
-  if (!expandedVal?.length)
-    return false;
-
-  return expandedVal.some(data => data[rowAttr] === identifier);
-}
-
-function onToggleExpand(row: T): void {
-  const expandedVal = get(expanded);
-  if (!expandedVal)
-    return;
-
-  const key = rowAttr;
-  const rowExpanded = isExpanded(row[key]);
-
-  if (singleExpand)
-    return set(expanded, rowExpanded ? [] : [row]);
-
-  return set(
-    expanded,
-    rowExpanded ? expandedVal.filter(item => item[key] !== row[key]) : [...expandedVal, row],
-  );
-}
-
-function getRowGroup(row: T): Partial<T> {
-  return get(groupKeys).reduce((acc, key) => ({ ...acc, [key]: row[key] }), {});
-}
-
-function getGroupRows(groupVal: string): T[] {
-  if (!get(isGrouped))
-    return [];
-
-  const groupRows = get(mappedGroups)[groupVal];
-  assert(groupRows);
-  return groupRows.filter(isRow);
-}
-
-function compareGroupsFn(a: T, b: Partial<T>): boolean {
-  const group = get(groupKeys);
-  if (group.length === 0)
-    return false;
-
-  return group.every(key => a[key] === b[key]);
-}
-
-function isExpandedGroup(value: Partial<T>): boolean {
-  return get(collapsedRows).every(row => !compareGroupsFn(row, value));
-}
-
-function isHiddenRow(row: GroupedTableRow<T>): boolean {
-  const identifier = rowAttr;
-  return (
-    get(isGrouped) &&
-    get(collapsedRows).some(value => isRow(row) && row[identifier] === value[identifier])
-  );
-}
-
-function onToggleExpandGroup(group: Partial<T>, value?: string): void {
-  if (!value)
-    return;
-
-  const currentCollapsed = get(collapsedRows);
-
-  const groupExpanded = isExpandedGroup(group);
-
-  const groupRows = getGroupRows(value);
-
-  set(
-    collapsedRows,
-    groupExpanded
-      ? [...currentCollapsed, ...groupRows]
-      : currentCollapsed.filter(row => !compareGroupsFn(row, group)),
-  );
-
-  set(collapsed, get(collapsedRows));
-}
-
-function onUngroup(): void {
-  set(collapsedRows, []);
-
-  set(collapsed, []);
-  set(group, Array.isArray(get(group)) ? [] : undefined);
-}
-
-function onCopyGroup(value: GroupData<T>): void {
-  emit('copy:group', value);
-}
-
-/**
- * Sort to handle single sort or multiple sort columns
- */
-function onSort({ key, direction }: { key: TableRowKey<T>; direction?: 'asc' | 'desc' }): void {
-  const sortBy = get(sortData);
-  if (!sortBy)
-    return;
-
-  if (!Array.isArray(sortBy)) {
-    if (isSortedBy(key)) {
-      const newDirection = !direction || direction === 'asc' ? 'desc' : 'asc';
-
-      if (sortBy.direction === newDirection) {
-        set(sortData, { ...sortBy, column: undefined, direction: 'asc' });
-      }
-      else {
-        set(sortData, {
-          ...sortBy,
-          direction: sortBy.direction === 'asc' ? 'desc' : 'asc',
-        });
-      }
-    }
-    else {
-      set(sortData, { column: key, direction: direction || 'asc' });
-    }
-    return;
-  }
-
-  if (isSortedBy(key)) {
-    const newDirection = !direction || direction === 'asc' ? 'desc' : 'asc';
-
-    const index = getSortIndex(key);
-    const sortByCol = sortBy[index];
-    assert(sortByCol);
-
-    if (sortByCol.direction === newDirection) {
-      set(
-        sortData,
-        sortBy.filter((_, i) => i !== index),
-      );
-    }
-    else {
-      set(
-        sortData,
-        sortBy.map((col, i) =>
-          i === index ? { ...col, direction: col.direction === 'asc' ? 'desc' : 'asc' } : col,
-        ),
-      );
-    }
-  }
-  else {
-    set(sortData, [...sortBy, { column: key, direction: direction || 'asc' }]);
-  }
-}
-
-function isSelectable(rowKey: T[IdType]): boolean {
-  return isSelected(rowKey) || !isDisabledRow(rowKey);
-}
-
-function mustSelect(rowKey: T[IdType]): boolean {
-  return isSelected(rowKey) && isDisabledRow(rowKey);
-}
-
-/**
- * toggles selected rows
- * @param {boolean} checked checkbox state
- */
-function onToggleAll(checked: boolean): void {
-  const selectedRows = get(selectedData);
-
-  if (!isDefined(selectedRows)) {
-    return;
-  }
-
-  if (!multiPageSelect) {
-    if (checked)
-      set(selectedData, get(visibleIdentifiers).filter(isSelectable));
-    else set(selectedData, get(visibleIdentifiers).filter(mustSelect));
-  }
-  else {
-    if (checked) {
-      set(
-        selectedData,
-        Array.from(new Set([...selectedRows, ...get(visibleIdentifiers).filter(isSelectable)])),
-      );
-    }
-    else {
-      set(
-        selectedData,
-        selectedRows.filter(
-          rowKey =>
-            !get(visibleIdentifiers).includes(rowKey) ||
-            get(visibleIdentifiers).filter(mustSelect).includes(rowKey),
-        ),
-      );
-    }
-  }
-}
-
-function resetCheckboxShiftState(): void {
-  set(shiftClicked, false);
-  set(lastSelectedIndex, -1);
-}
-
-/**
- * toggles a single row
- * @param {boolean} checked checkbox state
- * @param {string} value the id of the selected row
- * @param {boolean} userAction whether the select triggered by user manually
- *
- */
-function onSelect(checked: boolean, value: T[IdType], userAction: boolean = false): void {
-  if (get(shiftClicked) && userAction)
-    return;
-
-  const selectedRows = get(internalSelectedData);
-  if (!selectedRows)
-    return;
-
-  const selected = isSelected(value);
-
-  if (checked && !selected) {
-    set(internalSelectedData, [...selectedRows, value]);
-  }
-  else if (!checked && selected) {
-    set(
-      internalSelectedData,
-      [...selectedRows].filter(r => r !== value),
-    );
-  }
-
-  if (userAction)
-    set(selectedData, get(internalSelectedData));
-}
-
-function onCheckboxClick(event: MouseEvent, value: T[IdType], index: number): void {
-  const currentTarget = event.currentTarget;
-  if (!(currentTarget instanceof HTMLElement))
-    return;
-
-  const input = currentTarget.querySelector('input');
-  const target = event.target;
-  const nodeName = target instanceof HTMLElement ? target.nodeName : undefined;
-
-  const shiftKey = event.shiftKey;
-  set(shiftClicked, shiftKey);
-
-  if (input && nodeName !== 'INPUT') {
-    if (shiftKey) {
-      setTimeout(() => {
-        let lastIndex = get(lastSelectedIndex);
-        if (lastIndex === -1)
-          lastIndex = index;
-        const tableData = get(filtered);
-        const lastSelectedData = tableData[lastIndex];
-        assert(lastSelectedData);
-
-        if (isRow(lastSelectedData)) {
-          const id = get(rowIdentifier);
-          const valueToApply = isSelected(lastSelectedData[id]);
-
-          if (lastIndex === index) {
-            onSelect(!valueToApply, value);
-          }
-          else {
-            const from = Math.min(lastIndex, index);
-            const to = Math.max(lastIndex, index);
-
-            for (let i = from; i <= to; i++) {
-              const currSelectedData = tableData[i];
-              assert(currSelectedData);
-              if (isRow(currSelectedData) && !isDisabledRow(currSelectedData[id]))
-                onSelect(valueToApply, currSelectedData[id]);
-            }
-          }
-
-          set(lastSelectedIndex, index);
-          set(selectedData, get(internalSelectedData));
-        }
-      }, 1);
-    }
-    else {
-      set(lastSelectedIndex, index);
-    }
-  }
-}
-
-function deselectRemovedRows(): void {
-  get(selectedData)?.forEach((key: T[IdType]) => {
-    if (isSelected(key) && !get(visibleIdentifiers).includes(key))
-      onSelect(false, key, true);
-  });
+// Sort triggers selection reset — handled here to avoid circular dependency between sort and selection
+function onSort(payload: Parameters<typeof applySort>[0]): void {
+  applySort(payload);
+  if (!multiPageSelect)
+    onToggleAll(false);
+  resetCheckboxShiftState();
 }
 
 function onPaginate(): void {
@@ -868,71 +302,12 @@ function onPaginate(): void {
   resetCheckboxShiftState();
 }
 
-function setInternalTotal(items: GroupedTableRow<T>[]): void {
-  if (!paginationModifiers.external)
-    set(itemsLength, items.filter(isRow).length);
-}
-
-function cellValue(row: T, key: TableColumn<T>['key']): T[TableRowKey<T>] {
-  return row[key as TableRowKey<T>];
-}
-
-watch(
-  modelValue,
-  (val) => {
-    set(internalSelectedData, val);
-  },
-  { immediate: true },
-);
-
-watch(
-  pagination,
-  (val) => {
-    set(internalPaginationState, val);
-  },
-  { immediate: true },
-);
-
-watch(
-  collapsed,
-  (value) => {
-    set(collapsedRows, value ?? []);
-  },
-  { immediate: true },
-);
-
-/**
- * Keeps the global items per page in sync with the internal state.
- */
-watch(internalPaginationState, (pagination) => {
-  if (pagination?.limit && get(globalItemsPerPageSettings))
-    set(tableDefaults.itemsPerPage, pagination.limit);
+// Reset pagination page to 1 on search query change
+watch(() => search, () => {
+  resetPagination();
+  onToggleAll(false);
+  resetCheckboxShiftState();
 });
-
-watch(tableDefaults.itemsPerPage, (itemsPerPage) => {
-  if (!get(globalItemsPerPageSettings))
-    return;
-
-  set(paginationData, {
-    ...get(paginationData),
-    limit: itemsPerPage,
-  });
-});
-
-/**
- * on changing search query, need to reset pagination page to 1
- */
-watch(
-  () => search,
-  () => {
-    set(paginationData, {
-      ...get(paginationData),
-      page: 1,
-    });
-    onToggleAll(false);
-    resetCheckboxShiftState();
-  },
-);
 
 watch(sorted, (items) => {
   if (!multiPageSelect)
@@ -940,37 +315,16 @@ watch(sorted, (items) => {
   setInternalTotal(items);
 });
 
-/**
- * Automatically adjust page when current page exceeds maximum available pages
- * This can happen when total data decreases while user is on a higher page
- */
-watch(paginationData, (pagination) => {
-  const { total, limit, page } = pagination;
-  const maxPages = Math.ceil(total / limit);
-
-  if (maxPages > 0 && page > maxPages) {
-    set(paginationData, {
-      ...pagination,
-      page: maxPages,
-    });
-  }
-});
-
 onMounted(() => {
   setInternalTotal(get(sorted));
-
-  if (!get(globalItemsPerPageSettings))
-    return;
-
-  set(paginationData, {
-    ...get(paginationData),
-    limit: get(tableDefaults.itemsPerPage),
-  });
 });
 </script>
 
 <template>
-  <div :class="[$style.wrapper, $style[`rounded__${rounded}`], { [$style.outlined]: outlined }]">
+  <div
+    :class="[$style.wrapper, $style[`rounded__${rounded}`], { [$style.outlined]: outlined }]"
+    data-id="table-wrapper"
+  >
     <RuiTablePagination
       v-if="paginationData && !hideDefaultHeader"
       v-model="paginationData"
@@ -983,12 +337,12 @@ onMounted(() => {
     <div
       ref="tableScroller"
       :class="$style.scroller"
+      data-id="table-scroller"
     >
       <table
         ref="table"
         :class="[$style.table, { [$style.dense]: dense }]"
         :aria-busy="loading"
-        aria-label=""
       >
         <RuiTableHead
           :loading="loading"
@@ -1055,6 +409,7 @@ onMounted(() => {
               v-if="!isRow(row)"
               :key="`row-${index}`"
               :class="[$style.tr, $style.tr__group]"
+              data-id="row-group"
             >
               <slot
                 name="group.header"
@@ -1126,10 +481,11 @@ onMounted(() => {
                 :key="`row-${index}`"
                 :class="[
                   $style.tr,
-                  { [$style.tr__selected ?? '']: isSelected(row[rowIdentifier]) },
+                  { [$style.tr__selected ?? '']: isSelected(row[rowAttr]) },
                   typeof itemClass === 'string' ? itemClass : itemClass(row),
                 ]"
-                :aria-selected="selectedData ? isSelected(row[rowIdentifier]) : undefined"
+                :aria-selected="selectedData ? isSelected(row[rowAttr]) : undefined"
+                data-id="row"
               >
                 <td
                   v-if="selectedData"
@@ -1139,14 +495,14 @@ onMounted(() => {
                 >
                   <RuiCheckbox
                     :data-cy="`table-toggle-check-${index}`"
-                    :model-value="isSelected(row[rowIdentifier])"
-                    :disabled="isDisabledRow(row[rowIdentifier])"
+                    :model-value="isSelected(row[rowAttr])"
+                    :disabled="isDisabledRow(row[rowAttr])"
                     :size="dense ? 'sm' : undefined"
                     color="primary"
                     class="select-none"
                     hide-details
-                    @update:model-value="onSelect($event, row[rowIdentifier], true)"
-                    @click="onCheckboxClick($event, row[rowIdentifier], index)"
+                    @update:model-value="onSelect($event, row[rowAttr], true)"
+                    @click="onCheckboxClick($event, row[rowAttr], index)"
                   />
                 </td>
 
@@ -1170,7 +526,7 @@ onMounted(() => {
                   >
                     <RuiExpandButton
                       v-if="!slots['item.expand']"
-                      :expanded="isExpanded(row[rowIdentifier])"
+                      :expanded="isExpanded(row[rowAttr])"
                       @click="onToggleExpand(row)"
                     />
                   </slot>
@@ -1187,9 +543,10 @@ onMounted(() => {
               </tr>
 
               <tr
-                v-if="expandable && isExpanded(row[rowIdentifier])"
+                v-if="expandable && isExpanded(row[rowAttr])"
                 :key="`row-expand-${index}`"
                 :class="[$style.tr, $style.tr__expandable]"
+                data-id="row-expanded"
               >
                 <td
                   :colspan="colspan"
@@ -1208,6 +565,7 @@ onMounted(() => {
             <td
               :class="$style.tbody__loader"
               :colspan="colspan"
+              data-id="tbody-loader"
             >
               <RuiProgress
                 color="primary"
@@ -1219,6 +577,7 @@ onMounted(() => {
           <tr
             v-if="noData && empty && !loading"
             :class="[$style.tr, $style.tr__empty]"
+            data-id="row-empty"
           >
             <Transition
               appear
@@ -1243,6 +602,7 @@ onMounted(() => {
                     <p
                       v-if="empty.label"
                       :class="$style.empty__label"
+                      data-id="empty-label"
                     >
                       {{ empty.label }}
                     </p>
@@ -1251,6 +611,7 @@ onMounted(() => {
                       <p
                         v-if="empty.description"
                         :class="$style.empty__description"
+                        data-id="empty-description"
                       >
                         {{ empty.description }}
                       </p>
@@ -1292,26 +653,12 @@ onMounted(() => {
 
   &.rounded__sm {
     @apply rounded-[.25rem];
-
-    .image {
-      @apply rounded-t-[.25rem];
-    }
   }
-
   &.rounded__md {
     @apply rounded-[.75rem];
-
-    .image {
-      @apply rounded-t-[.75rem];
-    }
   }
-
   &.rounded__lg {
     @apply rounded-[1rem];
-
-    .image {
-      @apply rounded-t-[1rem];
-    }
   }
 
   .scroller {
@@ -1369,7 +716,7 @@ onMounted(() => {
           }
 
           .empty {
-            @apply flex flex-col gap-3 items-center justify-center flex-1 min-h-[4.4rem] my-4;
+            @apply flex flex-col gap-3 items-center justify-center flex-1 min-h-56 my-4;
 
             &__label {
               @apply text-body-1 leading-none font-bold text-center text-current pb-0 mb-0;
@@ -1383,7 +730,7 @@ onMounted(() => {
       }
 
       &__loader {
-        @apply py-8 text-center;
+        @apply py-8 text-center min-h-56;
       }
     }
 

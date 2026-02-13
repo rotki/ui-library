@@ -178,6 +178,7 @@ function getSortDirection(key: TableColumn<T>['key']): 'asc' | 'desc' | undefine
         scope="col"
         :colspan="column.colspan ?? 1"
         :rowspan="column.rowspan ?? 1"
+        :data-id="column.sortable ? 'column-sortable' : undefined"
       >
         <slot
           :column="column"
@@ -203,7 +204,10 @@ function getSortDirection(key: TableColumn<T>['key']): 'asc' | 'desc' | undefine
               variant="text"
               @click="onSort(column)"
             >
-              <span :class="$style.column__text">
+              <span
+                :class="$style.column__text"
+                data-id="column-text"
+              >
                 <slot
                   :name="`header.text.${column.key.toString()}`"
                   :column="column"
@@ -236,6 +240,7 @@ function getSortDirection(key: TableColumn<T>['key']): 'asc' | 'desc' | undefine
           <span
             v-else
             :class="$style.column__text"
+            data-id="column-text"
           >
             <slot
               :name="`header.text.${column.key.toString()}`"
@@ -250,6 +255,7 @@ function getSortDirection(key: TableColumn<T>['key']): 'asc' | 'desc' | undefine
     <tr
       v-if="loading"
       :class="[$style.thead__loader, $style.thead__loader_linear]"
+      data-id="thead-loader"
     >
       <th
         :class="$style.progress"
