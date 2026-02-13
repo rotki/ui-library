@@ -1,5 +1,4 @@
 import type { StorybookConfig } from '@storybook/vue3-vite';
-import vueDevTools from 'vite-plugin-vue-devtools';
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
@@ -21,13 +20,6 @@ const config: StorybookConfig = {
   },
   typescript: {
     check: true,
-  },
-  async viteFinal(config) {
-    const { mergeConfig } = await import('vite');
-
-    return mergeConfig(config, {
-      plugins: [vueDevTools()],
-    });
   },
 };
 
