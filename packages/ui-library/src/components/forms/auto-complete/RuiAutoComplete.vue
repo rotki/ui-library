@@ -1,6 +1,4 @@
 <script lang="ts" setup generic="TValue, TItem">
-import type { ComponentPublicInstance, ComputedRef } from 'vue';
-import { syncRef } from '@vueuse/core';
 import { logicAnd, logicOr } from '@vueuse/math';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiChip from '@/components/chips/RuiChip.vue';
@@ -141,8 +139,6 @@ const { focused: menuWrapperFocusedWithin } = useFocusWithin(menuWrapperRef);
 const { focused: searchInputFocused } = useFocus(textInput);
 const { focused: activatorFocused } = useFocus(activator);
 
-const renderedOptions = useTemplateRef<ComponentPublicInstance[]>('renderedOptions');
-
 const {
   internalSearch,
   filteredOptions,
@@ -163,15 +159,14 @@ const {
   },
 );
 
+const isOpen = ref<boolean>(false);
+
 // Calculate multiple from modelValue directly to avoid circular dependency
 const multiple = computed<boolean>(() => Array.isArray(get(modelValue)));
 
 const shouldApplyValueAsSearch = computed<boolean>(
   () => !(slots.selection || get(multiple) || chips),
 );
-
-// Create a temporary isOpen ref that we'll sync with useDropdownMenu's isOpen
-const tempIsOpen = ref<boolean>(false);
 
 const { value, setSelected } = useAutoCompleteValue<AutoCompleteModelValue<TValue>, TItem>(
   modelValue,
@@ -186,16 +181,18 @@ const { value, setSelected } = useAutoCompleteValue<AutoCompleteModelValue<TValu
     getText,
     textValueToProperValue,
     shouldApplyValueAsSearch,
-    isOpen: tempIsOpen,
+    isOpen,
+    multiple,
     updateInternalSearch,
   },
 );
+
+const resolvedItemHeight = itemHeight ?? (dense ? 30 : 48);
 
 const {
   containerProps,
   wrapperProps,
   renderedData,
-  isOpen,
   menuWidth,
   isActiveItem,
   itemIndexInValue,
@@ -204,7 +201,7 @@ const {
   applyHighlighted,
   optionsWithSelectedHidden,
 } = useDropdownMenu<TValue, TItem>({
-  itemHeight: itemHeight ?? (dense ? 30 : 48),
+  itemHeight: resolvedItemHeight,
   keyAttr,
   textAttr,
   options: filteredOptions,
@@ -214,10 +211,10 @@ const {
   setValue,
   autoSelectFirst,
   hideSelected,
+  isOpen,
+  getText,
+  getIdentifier,
 });
-
-// Sync the isOpen states
-syncRef(isOpen, tempIsOpen);
 
 const {
   focusedValueIndex,
@@ -228,6 +225,7 @@ const {
   setValueFocus,
 } = useAutoCompleteKeyboardNavigation<TItem>(
   {
+    chips: toRef(() => chips),
     customValue: toRef(() => customValue),
     multiple,
   },
@@ -236,10 +234,11 @@ const {
     applyHighlighted,
     clear,
     filteredOptions,
+    getText,
     highlightedIndex,
     internalSearch,
     isOpen,
-    options: toRef(() => options),
+    removeValue: (item: TItem): void => { setValue(item); },
     searchInputFocused,
     setSearchAsValue,
     value,
@@ -274,14 +273,13 @@ const {
   },
 );
 
-const menuMinHeight = ref<number>(0);
+const menuMinHeight = computed<number>(
+  () => Math.min(5, get(optionsWithSelectedHidden).length) * resolvedItemHeight,
+);
 
 const valueSet = computed<boolean>(() => get(value).length > 0);
 
-const labelWithQuote = useLabelWithQuote(
-  () => label,
-  () => required,
-);
+const labelWithQuote = useLabelWithQuote(() => label, () => required);
 
 const usedPlaceholder = computed<string>(() => {
   if (get(searchInputFocused)) {
@@ -292,17 +290,15 @@ const usedPlaceholder = computed<string>(() => {
 
 const outlined = computed<boolean>(() => variant === 'outlined');
 
-const float: ComputedRef<boolean> = logicAnd(
+const float = logicAnd(
   logicOr(isOpen, valueSet, searchInputFocused),
   outlined,
 );
 
-const virtualContainerProps = computed<{ style: Record<string, string>; ref: (el: any) => void }>(
-  () => ({
-    style: containerProps.style as any,
-    ref: containerProps.ref as any,
-  }),
-);
+const virtualContainerProps = computed<{ style: Record<string, string>; ref: (el: any) => void }>(() => ({
+  style: containerProps.style as any,
+  ref: containerProps.ref as any,
+}));
 
 function updateSearchInput(event: Event): void {
   const target = event.target;
@@ -369,10 +365,7 @@ function setSearchAsValue(): void {
 
 function clear(): void {
   updateInternalSearch();
-  set(
-    modelValue,
-    (Array.isArray(get(modelValue)) ? [] : undefined) as AutoCompleteModelValue<TValue>,
-  );
+  set(modelValue, (Array.isArray(get(modelValue)) ? [] : undefined) as AutoCompleteModelValue<TValue>);
 }
 
 function chipAttrs(item: TItem, index: number): Record<string, unknown> {
@@ -381,10 +374,14 @@ function chipAttrs(item: TItem, index: number): Record<string, unknown> {
     'data-value': getIdentifier(item),
     'onKeydown': (event: KeyboardEvent): void => {
       const { key } = event;
-      if (['Backspace', 'Delete'].includes(key))
+      if (['Backspace', 'Delete'].includes(key)) {
+        event.stopPropagation();
+        event.preventDefault();
         setValue(item);
+      }
     },
-    'onClick.stop': (): void => {
+    'onClick': (e: MouseEvent): void => {
+      e.stopPropagation();
       setValueFocus(index);
     },
     'onClick:close': (): void => {
@@ -405,38 +402,17 @@ function arrowClicked(event: MouseEvent): void {
   }
 }
 
-// Update menu min height only when rendered data changes
-watch(
-  renderedData,
-  async () => {
-    await nextTick();
-    const renderedOptionsData =
-      get(renderedOptions)?.slice(0, Math.min(5, get(renderedData).length)) ?? [];
-    let height = 0;
-    for (const item of renderedOptionsData) {
-      if (item.$el) {
-        height += item.$el.offsetHeight;
-      }
-    }
-    set(menuMinHeight, height);
-  },
-  { immediate: true },
-);
-
 // Optimize options watcher with shallow comparison first
-watch(
-  () => options,
-  (curr, old) => {
-    if (curr === old || customValue)
-      return;
+watch(() => options, (curr, old) => {
+  if (curr === old || customValue)
+    return;
 
-    // Only do deep comparison if reference changed
-    if (isEqual(curr, old))
-      return;
+  // Only do deep comparison if reference changed
+  if (isEqual(curr, old))
+    return;
 
-    setSelected(get(value));
-  },
-);
+  setSelected(get(value));
+});
 
 defineExpose({
   focus: focusSetInputFocus,
@@ -672,7 +648,6 @@ defineExpose({
           >
             <RuiButton
               v-for="{ item, _index } in renderedData"
-              ref="renderedOptions"
               :key="getIdentifier(item)?.toString()"
               :active="isActiveItem(item)"
               :aria-selected="isActiveItem(item)"

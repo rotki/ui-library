@@ -19,6 +19,7 @@ export interface UseAutoCompleteValueDeps<TItem> {
   textValueToProperValue: (val: any, returnObject?: boolean) => TItem;
   shouldApplyValueAsSearch: MaybeRef<boolean>;
   isOpen: MaybeRef<boolean>;
+  multiple: MaybeRef<boolean>;
   updateInternalSearch: (value?: string) => void;
 }
 
@@ -28,8 +29,6 @@ export function useAutoCompleteValue<TValue, TItem>(
   opts: UseAutoCompleteValueOptions<TItem>,
   deps: UseAutoCompleteValueDeps<TItem>,
 ): UseAutoCompleteValueReturn<TItem> {
-  const multiple = computed<boolean>(() => Array.isArray(get(modelValue)));
-
   // Create maps for O(1) lookup performance
   const optionsMap = computed<Map<any, TItem>>(() => {
     const map = new Map<any, TItem>();
@@ -41,7 +40,7 @@ export function useAutoCompleteValue<TValue, TItem>(
   });
 
   function convertModelValueToArray(modelValueData: TValue | undefined): any[] {
-    if (!modelValueData)
+    if (modelValueData === null || modelValueData === undefined)
       return [];
     return Array.isArray(modelValueData) ? modelValueData : [modelValueData];
   }
@@ -60,7 +59,7 @@ export function useAutoCompleteValue<TValue, TItem>(
       const identifier = deps.getIdentifier(val);
       const inOptions = optionsMapData.get(identifier);
 
-      if (inOptions) {
+      if (inOptions !== undefined) {
         filtered[index++] = inOptions;
       }
       else if (customValue) {
@@ -85,7 +84,7 @@ export function useAutoCompleteValue<TValue, TItem>(
     for (const val of valueArray) {
       const inOptions = optionsMapData.get(val);
 
-      if (inOptions) {
+      if (inOptions !== undefined) {
         filtered[index++] = inOptions;
       }
       else if (customValue) {
@@ -102,22 +101,16 @@ export function useAutoCompleteValue<TValue, TItem>(
     optionsMapData: Map<any, TItem>,
     returnObject: boolean,
     customValue: boolean,
-    shouldUpdateInternalSearch: boolean,
   ): TItem[] {
     const multipleValue = Array.isArray(modelValueData);
     const valueArray = convertModelValueToArray(modelValueData);
     const filtered = filterValuesByOptions(valueArray, optionsMapData, customValue, returnObject);
 
-    if (multipleValue || filtered.length === 0) {
-      if (shouldUpdateInternalSearch)
-        deps.updateInternalSearch();
+    if (multipleValue || filtered.length === 0)
       return filtered;
-    }
 
     const val = filtered[0];
     assert(val);
-    if (shouldUpdateInternalSearch)
-      deps.updateInternalSearch(deps.getText(val));
     return [val];
   }
 
@@ -126,23 +119,9 @@ export function useAutoCompleteValue<TValue, TItem>(
     optionsMapData: Map<any, TItem>,
     returnObject: boolean,
     customValue: boolean,
-    shouldUpdateInternalSearch: boolean,
   ): TItem[] {
     const valueArray = convertModelValueToArray(modelValueData);
-    const filtered = filterValuesByIdentifier(valueArray, optionsMapData, customValue, returnObject);
-
-    if (shouldUpdateInternalSearch) {
-      if (filtered.length > 0) {
-        const firstItem = filtered[0];
-        assert(firstItem);
-        deps.updateInternalSearch(deps.getText(firstItem));
-      }
-      else {
-        deps.updateInternalSearch();
-      }
-    }
-
-    return filtered;
+    return filterValuesByIdentifier(valueArray, optionsMapData, customValue, returnObject);
   }
 
   function onUpdateModelValue(value: TValue | undefined): void {
@@ -154,7 +133,7 @@ export function useAutoCompleteValue<TValue, TItem>(
     const returnObject = get(opts.returnObject);
     const selection = keyAttr && !returnObject ? selected.map(item => item[keyAttr]) : selected;
 
-    if (get(multiple))
+    if (get(deps.multiple))
       return onUpdateModelValue(selection as TValue);
 
     if (selection.length === 0)
@@ -170,30 +149,32 @@ export function useAutoCompleteValue<TValue, TItem>(
       const returnObject = get(opts.returnObject) ?? false;
       const customValue = get(opts.customValue) ?? false;
       const optionsMapData = get(optionsMap);
-      const shouldUpdateInternalSearch = get(deps.shouldApplyValueAsSearch) && !get(deps.isOpen);
 
-      if (keyAttr && returnObject) {
-        return processReturnObjectValue(
-          modelValueData,
-          optionsMapData,
-          returnObject,
-          customValue,
-          shouldUpdateInternalSearch,
-        );
-      }
+      if (keyAttr && returnObject)
+        return processReturnObjectValue(modelValueData, optionsMapData, returnObject, customValue);
 
-      return processStandardValue(
-        modelValueData,
-        optionsMapData,
-        returnObject,
-        customValue,
-        shouldUpdateInternalSearch,
-      );
+      return processStandardValue(modelValueData, optionsMapData, returnObject, customValue);
     },
     set: (selected: TItem[]): void => {
       setSelected(selected);
     },
   });
+
+  // Sync search text when menu is closed and value changes
+  watch([modelValue, () => get(deps.isOpen)], () => {
+    if (get(deps.isOpen) || !get(deps.shouldApplyValueAsSearch))
+      return;
+
+    const currentValue = get(value);
+    if (get(deps.multiple) || currentValue.length === 0) {
+      deps.updateInternalSearch();
+    }
+    else {
+      const firstItem = currentValue[0];
+      assert(firstItem);
+      deps.updateInternalSearch(deps.getText(firstItem));
+    }
+  }, { immediate: true });
 
   return {
     setSelected,

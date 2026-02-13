@@ -19,6 +19,7 @@ function render(args: AutoCompleteProps) {
           return args.modelValue;
         },
         set(val) {
+          // @ts-expect-error Storybook args are mutable but Vue extracts readonly props
           args.modelValue = val;
         },
       });
@@ -69,9 +70,9 @@ export const Default = meta.story({
     textAttr: 'label',
   },
   async play({ canvas, userEvent }) {
+    const body = within(document.body);
     const combobox = canvas.getByRole('combobox');
     await userEvent.click(combobox);
-    const body = within(document.body);
     await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
@@ -153,6 +154,65 @@ export const Chips = meta.story({
     textAttr: 'label',
     variant: 'outlined',
   },
+  async play({ canvas, userEvent }) {
+    const body = within(document.body);
+
+    // Verify initial chips are rendered
+    expect(canvas.getByText('Greece')).toBeVisible();
+    expect(canvas.getByText('Indonesia')).toBeVisible();
+
+    // Focus input
+    const input = canvas.getByRole('textbox');
+    await userEvent.click(input);
+
+    // First Backspace: focuses last chip
+    await userEvent.keyboard('{Backspace}');
+
+    // Wait for chip to receive focus
+    const lastChip = canvas.getByText('Indonesia').closest('[role="button"]');
+    await waitFor(() => expect(lastChip).toHaveFocus());
+
+    // Second Backspace: removes the focused chip
+    await userEvent.keyboard('{Backspace}');
+
+    // Verify chip was removed
+    await waitFor(() => expect(canvas.queryByText('Indonesia')).toBeNull());
+    expect(canvas.getByText('Greece')).toBeVisible();
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+  },
+});
+
+// @ts-expect-error MultipleValueDeletion uses string[] options and array modelValue
+export const MultipleValueDeletion = meta.story({
+  args: {
+    modelValue: ['Germany', 'Nigeria'],
+    options: options.map(item => item.label),
+  },
+  async play({ canvas, userEvent }) {
+    const body = within(document.body);
+
+    // Verify initial values are rendered
+    expect(canvas.getByText('Germany')).toBeVisible();
+    expect(canvas.getByText('Nigeria')).toBeVisible();
+
+    // Focus input
+    const input = canvas.getByRole('textbox');
+    await userEvent.click(input);
+
+    // Backspace removes last value directly (no chip focus step)
+    await userEvent.keyboard('{Backspace}');
+    await waitFor(() => expect(canvas.queryByText('Nigeria')).toBeNull());
+    expect(canvas.getByText('Germany')).toBeVisible();
+
+    // Another Backspace removes the remaining value
+    await userEvent.keyboard('{Backspace}');
+    await waitFor(() => expect(canvas.queryByText('Germany')).toBeNull());
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+  },
 });
 
 export const CustomValue = meta.story({
@@ -163,6 +223,190 @@ export const CustomValue = meta.story({
     modelValue: undefined,
     textAttr: 'label',
     variant: 'outlined',
+  },
+});
+
+export const Filled = meta.story({
+  args: {
+    keyAttr: 'id',
+    modelValue: undefined,
+    textAttr: 'label',
+    variant: 'filled',
+  },
+});
+
+export const ReadOnly = meta.story({
+  args: {
+    keyAttr: 'id',
+    modelValue: '3',
+    readOnly: true,
+    textAttr: 'label',
+  },
+  async play({ canvas }) {
+    const combobox = canvas.getByRole('combobox');
+    expect(combobox.getAttribute('aria-readonly')).toBe('true');
+    expect(combobox.getAttribute('tabindex')).toBe('-1');
+  },
+});
+
+export const Loading = meta.story({
+  args: {
+    keyAttr: 'id',
+    loading: true,
+    modelValue: undefined,
+    textAttr: 'label',
+  },
+});
+
+export const WithPlaceholder = meta.story({
+  args: {
+    keyAttr: 'id',
+    modelValue: undefined,
+    placeholder: 'Search countries...',
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+});
+
+export const WithHint = meta.story({
+  args: {
+    hint: 'Select your country of residence',
+    keyAttr: 'id',
+    modelValue: undefined,
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+});
+
+export const WithErrors = meta.story({
+  args: {
+    errorMessages: ['This field is required', 'Please select a valid option'],
+    keyAttr: 'id',
+    modelValue: undefined,
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+});
+
+export const WithSuccess = meta.story({
+  args: {
+    keyAttr: 'id',
+    modelValue: '1',
+    successMessages: ['Selection confirmed'],
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+});
+
+export const HideDetails = meta.story({
+  args: {
+    errorMessages: ['This error should not be visible'],
+    hideDetails: true,
+    hint: 'This hint should not be visible',
+    keyAttr: 'id',
+    modelValue: undefined,
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+});
+
+// @ts-expect-error HideSelected uses string[] modelValue for multi-select
+export const HideSelected = meta.story({
+  args: {
+    hideSelected: true,
+    keyAttr: 'id',
+    modelValue: ['1', '2'],
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+  async play({ canvas, userEvent }) {
+    const combobox = canvas.getByRole('combobox');
+    await userEvent.click(combobox);
+    const body = within(document.body);
+
+    await waitFor(() => {
+      const menu = body.getByRole('menu');
+      expect(menu).toBeVisible();
+      const menuContent = within(menu);
+      // Selected items (Germany, Nigeria) should not appear in menu
+      expect(menuContent.queryByText('Germany')).toBeNull();
+      expect(menuContent.queryByText('Nigeria')).toBeNull();
+      // Unselected items should still be visible
+      expect(menuContent.getByText('Greece')).toBeVisible();
+    });
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+  },
+});
+
+export const NoFilter = meta.story({
+  args: {
+    keyAttr: 'id',
+    modelValue: undefined,
+    noFilter: true,
+    textAttr: 'label',
+  },
+  async play({ canvas, userEvent }) {
+    const input = canvas.getByRole('textbox');
+    await userEvent.click(input);
+    await userEvent.type(input, 'xyz');
+
+    const body = within(document.body);
+
+    // All options should remain visible despite non-matching search
+    await waitFor(() => {
+      const menu = body.getByRole('menu');
+      expect(menu).toBeVisible();
+      expect(within(menu).getByText('Germany')).toBeVisible();
+    });
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+  },
+});
+
+export const AutoSelectFirst = meta.story({
+  args: {
+    autoSelectFirst: true,
+    keyAttr: 'id',
+    modelValue: undefined,
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+  async play({ canvas, userEvent }) {
+    const body = within(document.body);
+    const combobox = canvas.getByRole('combobox');
+    await userEvent.click(combobox);
+    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+
+    // Press Enter to select auto-highlighted first item
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+
+    // First option (Germany) should be selected
+    expect(canvas.getByDisplayValue('Germany')).toBeVisible();
+  },
+});
+
+export const CustomValueInteraction = meta.story({
+  args: {
+    customValue: true,
+    keyAttr: 'id',
+    modelValue: undefined,
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+  async play({ canvas, userEvent }) {
+    const body = within(document.body);
+    const input = canvas.getByRole('textbox');
+    await userEvent.click(input);
+    await userEvent.type(input, 'Custom Country');
+    await userEvent.keyboard('{Enter}');
+
+    // Custom value should be accepted
+    await waitFor(() => expect(canvas.getByDisplayValue('Custom Country')).toBeVisible());
+    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
   },
 });
 

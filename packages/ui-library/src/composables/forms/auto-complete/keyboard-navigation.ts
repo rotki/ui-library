@@ -4,19 +4,21 @@ import { get, set } from '@vueuse/shared';
 export interface UseAutoCompleteKeyboardNavigationOptions {
   multiple: MaybeRef<boolean>;
   customValue: MaybeRef<boolean>;
+  chips: MaybeRef<boolean>;
 }
 
 export interface UseAutoCompleteKeyboardNavigationDeps<TItem> {
   internalSearch: Ref<string>;
   value: Ref<TItem[]>;
   filteredOptions: Ref<TItem[]>;
-  options: Ref<TItem[]>;
   isOpen: Ref<boolean>;
   highlightedIndex: Ref<number>;
   searchInputFocused: Ref<boolean>;
   applyHighlighted: () => void;
   clear: () => void;
+  removeValue: (item: TItem) => void;
   setSearchAsValue: () => void;
+  getText: (item: TItem) => string | undefined;
   activator: Ref<HTMLElement | undefined> | TemplateRef<HTMLElement>;
 }
 
@@ -89,8 +91,7 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
           hasExactMatch = highlightedOption === internalSearch;
         }
         else if (highlightedOption && typeof highlightedOption === 'object') {
-          const label = (highlightedOption as any).label || (highlightedOption as any).value || '';
-          hasExactMatch = label === internalSearch;
+          hasExactMatch = (deps.getText(highlightedOption) ?? '') === internalSearch;
         }
       }
 
@@ -146,9 +147,19 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
     const multiple = get(options.multiple);
 
     if (!internalSearch && total > 0) {
-      if (multiple)
-        set(focusedValueIndex, total - 1);
-      else deps.clear();
+      if (multiple) {
+        if (get(options.chips)) {
+          set(focusedValueIndex, total - 1);
+        }
+        else {
+          const lastItem = value[total - 1];
+          if (lastItem !== undefined)
+            deps.removeValue(lastItem);
+        }
+      }
+      else {
+        deps.clear();
+      }
     }
   }
 

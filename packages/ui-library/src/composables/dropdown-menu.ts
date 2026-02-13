@@ -29,6 +29,9 @@ export interface DropdownOptions<TValue, TItem> {
   autoFocus?: boolean;
   setValue?: (val: TItem) => void;
   hideSelected?: boolean;
+  isOpen?: Ref<boolean>;
+  getText?: (item: TItem) => string | undefined;
+  getIdentifier?: (item: TItem) => any;
 }
 
 export function useDropdownOptionProperty<TValue, TItem>({
@@ -66,7 +69,10 @@ export function useDropdownMenu<TValue, TItem>({
   autoSelectFirst,
   dense,
   disabled = ref(false),
+  getIdentifier: externalGetIdentifier,
+  getText: externalGetText,
   hideSelected,
+  isOpen: externalIsOpen,
   itemHeight = 48,
   keyAttr,
   menuRef,
@@ -77,17 +83,34 @@ export function useDropdownMenu<TValue, TItem>({
   textAttr,
   value,
 }: DropdownOptions<TValue, TItem>) {
+  const { getIdentifier: defaultGetIdentifier, getText: defaultGetText } = useDropdownOptionProperty({
+    keyAttr,
+    textAttr,
+  });
+
+  const getIdentifier = externalGetIdentifier ?? defaultGetIdentifier;
+  const getText = externalGetText ?? defaultGetText;
+
+  const activeIdentifiers = computed<Set<any>>(() => {
+    const val = get(value);
+    const selected: TItem[] = Array.isArray(val) ? val : (val !== null && val !== undefined) ? [val] : [];
+    const identifiers = new Set<any>();
+    for (const item of selected) {
+      identifiers.add(getIdentifier(item));
+    }
+    return identifiers;
+  });
+
+  function isActiveItem(item: TItem): boolean {
+    return get(activeIdentifiers).has(getIdentifier(item));
+  }
+
   const options = computed<TItem[]>(() => {
     const options = get(allOptions);
     if (!hideSelected)
       return options;
 
     return options.filter(item => !isActiveItem(item));
-  });
-
-  const { getIdentifier, getText } = useDropdownOptionProperty({
-    keyAttr,
-    textAttr,
   });
 
   const { containerProps, list, scrollTo, wrapperProps } = useVirtualList<TItem>(options, {
@@ -97,7 +120,7 @@ export function useDropdownMenu<TValue, TItem>({
 
   const renderedData = useArrayMap(list, ({ data, index: _index }) => ({ _index, item: data }));
 
-  const isOpen = ref<boolean>(false);
+  const isOpen = externalIsOpen ?? ref<boolean>(false);
 
   const valueKey = computed(() => {
     const selected = get(value);
@@ -148,20 +171,13 @@ export function useDropdownMenu<TValue, TItem>({
 
   function itemIndexInValue(item: TItem): number {
     const val = get(value);
-    const selected: TItem[] = Array.isArray(val) ? val : val ? [val] : [];
+    const selected: TItem[] = Array.isArray(val) ? val : (val !== null && val !== undefined) ? [val] : [];
 
     if (selected.length === 0)
       return -1;
 
-    return selected.findIndex((selectedItem) => {
-      if (keyAttr)
-        return selectedItem[keyAttr] === item[keyAttr];
-      return selectedItem === item;
-    });
-  }
-
-  function isActiveItem(item: TItem): boolean {
-    return itemIndexInValue(item) !== -1;
+    const itemId = getIdentifier(item);
+    return selected.findIndex(selectedItem => getIdentifier(selectedItem) === itemId);
   }
 
   async function adjustScrollByHighlightedIndex(smooth: boolean = false): Promise<void> {
@@ -205,7 +221,7 @@ export function useDropdownMenu<TValue, TItem>({
         const val = get(value);
 
         // set highlighted index to active item
-        if ((Array.isArray(val) && val.length > 0) || !!val) {
+        if ((Array.isArray(val) && val.length > 0) || (val !== null && val !== undefined)) {
           const index = get(options).findIndex(isActiveItem);
           if (index > -1)
             set(highlightedIndex, index);
@@ -271,8 +287,8 @@ export function useDropdownMenu<TValue, TItem>({
     if (highlightedIndexVal === -1)
       return;
 
-    const entry = get(options).find((_data, index) => highlightedIndexVal === index);
-    if (entry)
+    const entry = get(options)[highlightedIndexVal];
+    if (entry !== undefined)
       setValue(entry);
   };
 

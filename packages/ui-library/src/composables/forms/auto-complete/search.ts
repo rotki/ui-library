@@ -60,12 +60,12 @@ export function useAutoCompleteSearch<TItem>(
       if (!item)
         return false;
 
-      const keywords: string[] = [keyAttr ? getCachedTextToken((item as any)[keyAttr]) : item.toString()];
+      const keywords: string[] = [getCachedTextToken(keyAttr ? String((item as any)[keyAttr]) : item.toString())];
 
       if (textAttr && typeof item === 'object')
-        keywords.push(getCachedTextToken((item as any)[textAttr]));
+        keywords.push(getCachedTextToken(String((item as any)[textAttr])));
 
-      return keywords.some(keyword => getCachedTextToken(keyword).includes(searchToken));
+      return keywords.some(keyword => keyword.includes(searchToken));
     });
 
     const filtered = optionsValue.filter(item => usedFilter(item, search));

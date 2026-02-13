@@ -806,6 +806,69 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['7']]);
   });
 
+  it('should stop propagation when deleting chip via keyboard', async () => {
+    wrapper = createWrapper<string[], SelectOption>({
+      attachTo: document.body,
+      props: {
+        chips: true,
+        keyAttr: 'id',
+        modelValue: ['7', '8'],
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    const chips = wrapper.find('div[data-id=activator]').findAllComponents(RuiChip);
+    expect(chips).toHaveLength(2);
+
+    // Focus input and press Delete to focus last chip
+    await wrapper.find('input').trigger('focus');
+    await vi.advanceTimersToNextTimerAsync();
+    await wrapper.find('input').trigger('keydown.delete');
+    await vi.advanceTimersToNextTimerAsync();
+
+    // Press Backspace on focused chip and verify event is stopped
+    const lastChip = chips[1];
+    assert(lastChip);
+    const keydownEvent = new KeyboardEvent('keydown', { key: 'Backspace', bubbles: true, cancelable: true });
+    const stopPropagationSpy = vi.spyOn(keydownEvent, 'stopPropagation');
+    const preventDefaultSpy = vi.spyOn(keydownEvent, 'preventDefault');
+
+    lastChip.element.dispatchEvent(keydownEvent);
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(stopPropagationSpy).toHaveBeenCalled();
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['7']]);
+  });
+
+  it('should remove last value on Delete key in non-chips multi-value mode', async () => {
+    wrapper = createWrapper<string[], SelectOption>({
+      attachTo: document.body,
+      props: {
+        keyAttr: 'id',
+        modelValue: ['7', '8'],
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    // No chips should be rendered
+    const chips = wrapper.find('div[data-id=activator]').findAllComponents(RuiChip);
+    expect(chips).toHaveLength(0);
+
+    // Focus input and press Delete with empty input
+    await wrapper.find('input').trigger('focus');
+    await vi.advanceTimersToNextTimerAsync();
+
+    await wrapper.find('input').trigger('keydown.delete');
+    await vi.advanceTimersToNextTimerAsync();
+
+    // Should directly remove last item without two-step chip focus
+    expect(wrapper.emitted()).toHaveProperty('update:modelValue');
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['7']]);
+  });
+
   it('should sync searchInput model', async () => {
     wrapper = createWrapper<string | undefined, SelectOption>({
       attachTo: document.body,
@@ -888,5 +951,72 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     const secondButton = queryBody<HTMLButtonElement>('button:nth-child(2)');
     assertExists(secondButton);
     expect(secondButton.getAttribute('aria-selected')).toBe('false');
+  });
+
+  it('should handle falsy modelValue like 0 correctly', async () => {
+    const numericOptions = [
+      { id: 0, label: 'Zero' },
+      { id: 1, label: 'One' },
+      { id: 2, label: 'Two' },
+    ];
+
+    wrapper = createWrapper<number | undefined, { id: number; label: string }>({
+      attachTo: document.body,
+      props: {
+        keyAttr: 'id',
+        modelValue: 0,
+        options: numericOptions,
+        textAttr: 'label',
+      },
+    });
+
+    await vi.advanceTimersToNextTimerAsync();
+
+    // Value 0 should be resolved to 'Zero', not treated as empty
+    const input = wrapper.find('input');
+    expect(input.element.value).toBe('Zero');
+
+    // Opening the menu should show the first option as selected
+    await wrapper.find('[data-id=activator]').trigger('click');
+    await vi.advanceTimersToNextTimerAsync();
+    expect(queryByRole('menu')).toBeTruthy();
+
+    const firstButton = queryBody<HTMLButtonElement>('button:first-child');
+    assertExists(firstButton);
+    expect(firstButton.getAttribute('aria-selected')).toBe('true');
+  });
+
+  it('should focus chip on click via stopPropagation', async () => {
+    wrapper = createWrapper<string[], SelectOption>({
+      attachTo: document.body,
+      props: {
+        chips: true,
+        keyAttr: 'id',
+        modelValue: ['7', '8'],
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    await vi.advanceTimersToNextTimerAsync();
+
+    const chips = wrapper.find('div[data-id=activator]').findAllComponents(RuiChip);
+    expect(chips).toHaveLength(2);
+
+    const firstChip = chips[0];
+    assert(firstChip);
+
+    // Click the chip - should focus it via stopPropagation
+    const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+    const stopPropagationSpy = vi.spyOn(clickEvent, 'stopPropagation');
+
+    firstChip.element.dispatchEvent(clickEvent);
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(stopPropagationSpy).toHaveBeenCalled();
+
+    // The chip should have data-index="0" and receive focus
+    const chipElement = firstChip.element as HTMLElement;
+    expect(chipElement.getAttribute('data-index')).toBe('0');
   });
 });
