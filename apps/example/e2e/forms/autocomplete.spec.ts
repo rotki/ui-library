@@ -12,6 +12,8 @@ test.describe('auto-complete - index', () => {
     await expect(page.locator('[data-cy="link-/auto-completes/search"]')).toBeVisible();
     await expect(page.locator('[data-cy="link-/auto-completes/readonly"]')).toBeVisible();
     await expect(page.locator('[data-cy="link-/auto-completes/custom"]')).toBeVisible();
+    await expect(page.locator('[data-cy="link-/auto-completes/keyboard"]')).toBeVisible();
+    await expect(page.locator('[data-cy="link-/auto-completes/advanced"]')).toBeVisible();
   });
 
   test('should navigate to sub-routes', async ({ page }) => {
@@ -375,5 +377,252 @@ test.describe('auto-complete - custom slots', () => {
 
     const activeButton = page.locator('div[role=menu] button[aria-selected=true]');
     await expect(activeButton.locator('svg')).toBeVisible();
+  });
+});
+
+test.describe('auto-complete - keyboard', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/auto-completes/keyboard');
+  });
+
+  test.afterEach(async ({ page }) => {
+    await page.keyboard.press('Escape');
+  });
+
+  test('should remove last value with Backspace in non-chips multi mode', async ({ page }) => {
+    const ac = page.locator('[data-cy=ac-kb-multi-no-chips]');
+    const activator = ac.locator('[data-id=activator]');
+
+    // Verify initial state: 3 items selected (Lorem, Ipsum, Dolor)
+    await expect(activator).toContainText('Lorem');
+    await expect(activator).toContainText('Ipsum');
+    await expect(activator).toContainText('Dolor');
+
+    // Click the activator to focus, then press Backspace with empty search
+    await activator.click();
+    await page.keyboard.press('Backspace');
+
+    // Last item (Dolor) should be removed
+    await expect(activator).toContainText('Lorem');
+    await expect(activator).toContainText('Ipsum');
+    await expect(activator).not.toContainText('Dolor');
+  });
+
+  test('should focus chip on first Backspace, then delete on second', async ({ page }) => {
+    const ac = page.locator('[data-cy=ac-kb-multi-chips]');
+    const activator = ac.locator('[data-id=activator]');
+    const chips = activator.locator('[data-value]');
+
+    // Verify initial state: 3 chips
+    await expect(chips).toHaveCount(3);
+
+    // Focus the search input explicitly (input is hidden behind chips)
+    await ac.locator('input').focus();
+    await page.keyboard.press('Backspace');
+
+    // First Backspace should focus the last chip (not remove it)
+    await expect(chips).toHaveCount(3);
+    await expect(activator.locator('[data-index="2"]')).toBeFocused();
+
+    // Second Backspace on the focused chip should remove it
+    await page.keyboard.press('Backspace');
+    await expect(chips).toHaveCount(2);
+  });
+
+  test('should navigate between chips with arrow keys', async ({ page }) => {
+    const ac = page.locator('[data-cy=ac-kb-chip-nav]');
+    const activator = ac.locator('[data-id=activator]');
+    const chips = activator.locator('[data-value]');
+
+    // Verify initial state: 4 chips
+    await expect(chips).toHaveCount(4);
+
+    // Focus the search input explicitly (input is hidden behind chips)
+    await ac.locator('input').focus();
+
+    // Press ArrowLeft to move to the last chip
+    await page.keyboard.press('ArrowLeft');
+    await expect(activator.locator('[data-index="3"]')).toBeFocused();
+
+    // Press ArrowLeft again to move to the previous chip
+    await page.keyboard.press('ArrowLeft');
+    await expect(activator.locator('[data-index="2"]')).toBeFocused();
+
+    // Press ArrowRight to move back to the next chip
+    await page.keyboard.press('ArrowRight');
+    await expect(activator.locator('[data-index="3"]')).toBeFocused();
+  });
+
+  test('should close menu with Escape', async ({ page }) => {
+    const ac = page.locator('[data-cy=ac-kb-escape]');
+    const activator = ac.locator('[data-id=activator]');
+
+    // Open the menu
+    await activator.click();
+    await expect(page.locator('div[role=menu]')).toBeVisible();
+
+    // Press Escape to close
+    await page.keyboard.press('Escape');
+    await expect(page.locator('div[role=menu]')).toHaveCount(0);
+  });
+
+  test('should submit form on Enter when menu is closed and value is set', async ({ page }) => {
+    const ac = page.locator('[data-cy=ac-kb-form-submit]');
+    const form = page.locator('[data-cy=ac-kb-form]');
+
+    // Value is preselected ('Lorem'), verify it
+    await expect(ac.locator('input')).toHaveValue('Lorem');
+
+    // Focus the input - this should open the menu
+    await ac.locator('input').click();
+    await expect(page.locator('div[role=menu]')).toBeVisible();
+
+    // Close menu with Escape
+    await page.keyboard.press('Escape');
+    await expect(page.locator('div[role=menu]')).toHaveCount(0);
+
+    // Press Enter - should submit the form
+    await ac.locator('input').press('Enter');
+    await expect(form.locator('[data-cy=form-submitted]')).toBeVisible();
+  });
+
+  test('should highlight selected item when re-opening menu', async ({ page }) => {
+    const ac = page.locator('[data-cy=ac-kb-reopen]');
+    const activator = ac.locator('[data-id=activator]');
+
+    // Open and select an item
+    await activator.click();
+    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await page.locator('div[role=menu] button').nth(2).click();
+
+    // Menu should close (single mode)
+    await expect(page.locator('div[role=menu]')).toHaveCount(0);
+
+    // Value should be set
+    const selectedValue = await ac.locator('input').inputValue();
+    expect(selectedValue).toBeTruthy();
+
+    // Re-open the menu
+    await activator.click();
+    await expect(page.locator('div[role=menu]')).toBeVisible();
+
+    // The selected item should be highlighted
+    const highlightedButton = page.locator('div[role=menu] button.highlighted');
+    await expect(highlightedButton).toBeVisible();
+    await expect(highlightedButton).toHaveAttribute('aria-selected', 'true');
+  });
+});
+
+test.describe('auto-complete - advanced', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/auto-completes/advanced');
+  });
+
+  test.afterEach(async ({ page }) => {
+    await page.keyboard.press('Escape');
+  });
+
+  test('should work with return-object mode', async ({ page }) => {
+    const ac = page.locator('[data-cy=ac-adv-return-object]');
+    const activator = ac.locator('[data-id=activator]');
+
+    // Open and select an item
+    await activator.click();
+    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await page.locator('div[role=menu] button').first().click();
+
+    // Value should be displayed
+    await expect(ac.locator('input')).toHaveValue('Germany');
+  });
+
+  test('should display pre-selected return-object value', async ({ page }) => {
+    const ac = page.locator('[data-cy=ac-adv-return-object-pre]');
+    await expect(ac.locator('input')).toHaveValue('Germany');
+  });
+
+  test('should render filled variant', async ({ page }) => {
+    const ac = page.locator('[data-cy=ac-adv-filled]');
+    await expect(ac).toBeVisible();
+
+    // Filled variant should be functional - open and select
+    const activator = ac.locator('[data-id=activator]');
+    await activator.click();
+    await expect(page.locator('div[role=menu]')).toBeVisible();
+
+    await page.locator('div[role=menu] button').first().click();
+    await expect(ac.locator('input')).toHaveValue('Lorem');
+  });
+
+  test('should handle falsy modelValue like 0 correctly', async ({ page }) => {
+    const ac = page.locator('[data-cy=ac-adv-falsy]');
+    const display = page.locator('[data-cy=ac-adv-falsy-display]');
+
+    // Value is preselected as 0, should display "Zero"
+    await expect(ac.locator('input')).toHaveValue('Zero');
+    await expect(display).toContainText('Model: 0');
+
+    // Clear and select a different value
+    const activator = ac.locator('[data-id=activator]');
+    await activator.click();
+    await expect(page.locator('div[role=menu]')).toBeVisible();
+
+    // Select "One" (id: 1)
+    await page.locator('div[role=menu] button').nth(1).click();
+    await expect(ac.locator('input')).toHaveValue('One');
+    await expect(display).toContainText('Model: 1');
+
+    // Re-open and select "Zero" (id: 0) again
+    await activator.click();
+    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await page.locator('div[role=menu] button').first().click();
+    await expect(ac.locator('input')).toHaveValue('Zero');
+    await expect(display).toContainText('Model: 0');
+  });
+
+  test('should sync search input model', async ({ page }) => {
+    const ac = page.locator('[data-cy=ac-adv-search-input]');
+    const display = page.locator('[data-cy=ac-adv-search-display]');
+
+    // Initially search should be empty
+    await expect(display).toContainText('Search: ""');
+
+    // Focus and type
+    await ac.locator('[data-id=activator]').click();
+    await ac.locator('input').fill('test');
+    await expect(display).toContainText('Search: "test"');
+
+    // Clear the input
+    await ac.locator('input').fill('');
+    await expect(display).toContainText('Search: ""');
+  });
+
+  test('should clear all values in multi-select with clear button', async ({ page }) => {
+    const ac = page.locator('[data-cy=ac-adv-multi-clear]');
+    const activator = ac.locator('[data-id=activator]');
+    const chips = activator.locator('[data-value]');
+
+    // Verify initial state: 3 chips
+    await expect(chips).toHaveCount(3);
+
+    // Hover and click clear button
+    await activator.hover();
+    await ac.locator('[data-id=clear]').click();
+
+    // All chips should be removed
+    await expect(chips).toHaveCount(0);
+  });
+
+  test('should set custom value on blur', async ({ page }) => {
+    const ac = page.locator('[data-cy=ac-adv-custom-blur]');
+
+    // Focus and type a custom value
+    await ac.locator('[data-id=activator]').click();
+    await ac.locator('input').fill('MyCustomBlur');
+
+    // Click somewhere else to blur
+    await page.locator('[data-cy=auto-completes-advanced] h2').click();
+
+    // The custom value should be set
+    await expect(ac.locator('input')).toHaveValue('MyCustomBlur');
   });
 });

@@ -54,6 +54,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/auto-completes/advanced': RouteRecordInfo<
+      '/auto-completes/advanced',
+      '/auto-completes/advanced',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/auto-completes/basic': RouteRecordInfo<
       '/auto-completes/basic',
       '/auto-completes/basic',
@@ -64,6 +71,13 @@ declare module 'vue-router/auto-routes' {
     '/auto-completes/custom': RouteRecordInfo<
       '/auto-completes/custom',
       '/auto-completes/custom',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/auto-completes/keyboard': RouteRecordInfo<
+      '/auto-completes/keyboard',
+      '/auto-completes/keyboard',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -420,6 +434,12 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
+    'src/pages/auto-completes/advanced.vue': {
+      routes:
+        | '/auto-completes/advanced'
+      views:
+        | never
+    }
     'src/pages/auto-completes/basic.vue': {
       routes:
         | '/auto-completes/basic'
@@ -429,6 +449,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/auto-completes/custom.vue': {
       routes:
         | '/auto-completes/custom'
+      views:
+        | never
+    }
+    'src/pages/auto-completes/keyboard.vue': {
+      routes:
+        | '/auto-completes/keyboard'
       views:
         | never
     }

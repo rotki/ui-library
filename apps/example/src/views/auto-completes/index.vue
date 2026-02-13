@@ -33,6 +33,18 @@ const sections = [
     route: '/auto-completes/custom',
     icon: 'lu-blocks',
   },
+  {
+    title: 'Keyboard',
+    description: 'Keyboard navigation, Backspace, Escape, Enter, chip arrows',
+    route: '/auto-completes/keyboard',
+    icon: 'lu-keyboard',
+  },
+  {
+    title: 'Advanced',
+    description: 'Return object, filled variant, falsy values, search model',
+    route: '/auto-completes/advanced',
+    icon: 'lu-settings',
+  },
 ];
 </script>
 
