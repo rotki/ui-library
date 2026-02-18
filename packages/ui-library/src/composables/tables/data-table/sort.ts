@@ -3,7 +3,7 @@ import type { SortColumn, TableRowKey, TableSortData } from '@/components/tables
 import type { TablePaginationData } from '@/components/tables/RuiTablePagination.vue';
 import { assert } from '@/utils/assert';
 
-const SORT_COLLATOR_OPTIONS: Intl.CollatorOptions = { sensitivity: 'accent', usage: 'sort' };
+const SORT_COLLATOR = new Intl.Collator(undefined, { sensitivity: 'accent', usage: 'sort' });
 
 export interface UseTableSortOptions<T extends object> {
   rows: MaybeRefOrGetter<T[]>;
@@ -87,9 +87,10 @@ export function useTableSort<T extends object>(
 
   const sorted: ComputedRef<T[]> = computed(() => {
     const sortBy = get(sortData);
-    const data = [...get(searchData)];
     if (!sortBy || sortModifiersExternal)
-      return data;
+      return get(searchData);
+
+    const data = [...get(searchData)];
 
     const sortFn = (by: SortColumn<T>): void => {
       data.sort((a, b) => {
@@ -106,7 +107,7 @@ export function useTableSort<T extends object>(
         if (!isNaN(aNumber) && !isNaN(bNumber))
           return aNumber - bNumber;
 
-        return `${aValue}`.localeCompare(`${bValue}`, undefined, SORT_COLLATOR_OPTIONS);
+        return SORT_COLLATOR.compare(`${aValue}`, `${bValue}`);
       });
     };
 
