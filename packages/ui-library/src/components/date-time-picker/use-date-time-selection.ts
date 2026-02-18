@@ -5,6 +5,7 @@ import dayjs, { type Dayjs } from 'dayjs';
 import { guessTimezone, includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
 import { useRuiI8n } from '@/composables/use-rui-i18n';
 import { RUI_I18N_KEYS } from '@/i18n/keys';
+import '@/components/date-time-picker/dayjs-setup';
 
 type DateTimeModelType = 'date' | 'epoch-ms' | 'epoch';
 

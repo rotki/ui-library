@@ -1,9 +1,5 @@
 import type { App } from 'vue';
 import type { InitThemeOptions } from '@/types/theme';
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat.js';
-import timezone from 'dayjs/plugin/timezone.js';
-import utc from 'dayjs/plugin/utc.js';
 import {
   createTableDefaults,
   type TableOptions,
@@ -59,9 +55,6 @@ export function createRui(options: RuiOptions = {}) {
 
     app.provide(TableSymbol, defaults.table);
     app.provide(IconsSymbol, defaults.icons);
-    dayjs.extend(utc);
-    dayjs.extend(timezone);
-    dayjs.extend(customParseFormat);
   };
 
   return {

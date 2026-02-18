@@ -3,6 +3,8 @@ import type { TimeAccuracy } from '@/consts/time-accuracy';
 import dayjs from 'dayjs';
 import { includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
 
+import '@/components/date-time-picker/dayjs-setup';
+
 export function getClickPosition(
   event: MouseEvent,
   input: HTMLInputElement,
