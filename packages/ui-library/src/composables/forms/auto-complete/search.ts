@@ -31,11 +31,15 @@ export function useAutoCompleteSearch<TItem>(
   const justOpened = ref<boolean>(false);
 
   // Memoize token computation to avoid repeated string processing
+  const MAX_CACHE_SIZE = 500;
   const tokenCache = new Map<string, string>();
   const getCachedTextToken = (text: string): string => {
-    if (tokenCache.has(text)) {
+    if (tokenCache.has(text))
       return tokenCache.get(text)!;
-    }
+
+    if (tokenCache.size >= MAX_CACHE_SIZE)
+      tokenCache.clear();
+
     const token = getTextToken(text);
     tokenCache.set(text, token);
     return token;
