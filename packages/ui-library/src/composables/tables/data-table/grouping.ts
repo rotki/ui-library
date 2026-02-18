@@ -85,7 +85,11 @@ export function useTableGrouping<T extends object, IdType extends keyof T>(
   });
 
   function getRowGroup(row: T): Partial<T> {
-    return get(groupKeys).reduce((acc, key) => ({ ...acc, [key]: row[key] }), {});
+    const result: Partial<T> = {};
+    for (const key of get(groupKeys)) {
+      result[key] = row[key];
+    }
+    return result;
   }
 
   function compareGroupsFn(a: T, b: Partial<T>): boolean {
