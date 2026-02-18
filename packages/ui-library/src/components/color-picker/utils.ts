@@ -192,18 +192,34 @@ export class Color {
 }
 
 export function useElementDrag(handler: (x: number, y: number) => any) {
-  function handleClick(e: { clientX: number; clientY: number }) {
-    handler(e.clientX, e.clientY);
+  let rafId: number | null = null;
+
+  function handleClick(e: { clientX: number; clientY: number }): void {
+    if (rafId !== null)
+      return;
+
+    rafId = requestAnimationFrame(() => {
+      handler(e.clientX, e.clientY);
+      rafId = null;
+    });
   }
 
-  function onMouseDown(e: MouseEvent) {
+  function cancelRaf(): void {
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+  }
+
+  function onMouseDown(e: MouseEvent): void {
     e.preventDefault();
 
     window.addEventListener('mousemove', handleClick);
     window.addEventListener('mouseup', handleMouseUp);
   }
 
-  function handleMouseUp() {
+  function handleMouseUp(): void {
+    cancelRaf();
     window.removeEventListener('mousemove', handleClick);
     window.removeEventListener('mouseup', handleMouseUp);
   }

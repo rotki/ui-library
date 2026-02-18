@@ -229,27 +229,15 @@ function startDrag(event: MouseEvent | TouchEvent): void {
   event.preventDefault();
   set(isDragging, true);
 
-  const handleMove = (moveEvent: MouseEvent | TouchEvent) => {
-    if (!get(isDragging) || !isDefined(clockFace))
-      return;
+  if (!isDefined(clockFace))
+    return;
 
-    const rect = get(clockFace).getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
+  const rect = get(clockFace).getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+  let rafId: number | null = null;
 
-    let clientX, clientY;
-
-    if ('touches' in moveEvent) {
-      const touch = moveEvent.touches[0];
-      assert(touch);
-      clientX = touch.clientX;
-      clientY = touch.clientY;
-    }
-    else {
-      clientX = moveEvent.clientX;
-      clientY = moveEvent.clientY;
-    }
-
+  const applyMove = (clientX: number, clientY: number): void => {
     const x = clientX - centerX;
     const y = clientY - centerY;
 
@@ -261,9 +249,7 @@ function startDrag(event: MouseEvent | TouchEvent): void {
     const unit =
       Math.round(angle / (FULL_CIRCLE / totalItemsPerMode[mode])) % totalItemsPerMode[mode];
     if (mode === 'hour') {
-      let hour;
-
-      hour = unit;
+      let hour = unit;
       if (hour === 0)
         hour = TWELVE_HOURS;
 
@@ -289,7 +275,38 @@ function startDrag(event: MouseEvent | TouchEvent): void {
     updateModelValue();
   };
 
+  const handleMove = (moveEvent: MouseEvent | TouchEvent): void => {
+    if (!get(isDragging))
+      return;
+
+    if (rafId !== null)
+      return;
+
+    let clientX: number;
+    let clientY: number;
+
+    if ('touches' in moveEvent) {
+      const touch = moveEvent.touches[0];
+      assert(touch);
+      clientX = touch.clientX;
+      clientY = touch.clientY;
+    }
+    else {
+      clientX = moveEvent.clientX;
+      clientY = moveEvent.clientY;
+    }
+
+    rafId = requestAnimationFrame(() => {
+      applyMove(clientX, clientY);
+      rafId = null;
+    });
+  };
+
   const handleEnd = (): void => {
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
     set(isDragging, false);
     document.removeEventListener('mousemove', handleMove);
     document.removeEventListener('touchmove', handleMove);
@@ -312,7 +329,21 @@ function startDrag(event: MouseEvent | TouchEvent): void {
   document.addEventListener('mouseup', handleEnd);
   document.addEventListener('touchend', handleEnd);
 
-  handleMove(event);
+  // Apply initial position synchronously for immediate feedback
+  const initialEvent = event;
+  let clientX: number;
+  let clientY: number;
+  if ('touches' in initialEvent) {
+    const touch = initialEvent.touches[0];
+    assert(touch);
+    clientX = touch.clientX;
+    clientY = touch.clientY;
+  }
+  else {
+    clientX = initialEvent.clientX;
+    clientY = initialEvent.clientY;
+  }
+  applyMove(clientX, clientY);
 }
 
 function selectByClick(num: number): void {
