@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
-import { logicAnd, logicOr } from '@vueuse/math';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 
 export interface Props {
@@ -42,11 +41,11 @@ const slots = defineSlots<{
   icon?: () => any;
 }>();
 
-const hasIcon = logicOr(() => icon, slots.icon);
+const hasIcon = computed<boolean>(() => !!icon || !!slots.icon);
 
-const hasText = logicOr(() => text, slots.badge);
+const hasText = computed<boolean>(() => !!text || !!slots.badge);
 
-const hasIconAndText = logicAnd(hasIcon, hasText);
+const hasIconAndText = computed<boolean>(() => get(hasIcon) && get(hasText));
 </script>
 
 <template>

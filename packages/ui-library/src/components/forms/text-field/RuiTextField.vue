@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
-import { logicAnd, logicNot } from '@vueuse/math';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
@@ -79,12 +78,7 @@ const { hasError, hasSuccess, hasMessages } = useFormTextDetail(
 const { focused } = useFocus(inputRef);
 const focusedDebounced = refDebounced(focused, 500);
 
-const showClearIcon = logicAnd(
-  () => clearable,
-  modelValue,
-  logicNot(() => disabled),
-  logicNot(() => readonly),
-);
+const showClearIcon = computed<boolean>(() => clearable && !!get(modelValue) && !disabled && !readonly);
 
 const labelWithQuote = useLabelWithQuote(
   () => label,

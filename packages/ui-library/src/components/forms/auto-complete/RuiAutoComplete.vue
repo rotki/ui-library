@@ -1,5 +1,4 @@
 <script lang="ts" setup generic="TValue, TItem">
-import { logicAnd, logicOr } from '@vueuse/math';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiChip from '@/components/chips/RuiChip.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
@@ -290,10 +289,7 @@ const usedPlaceholder = computed<string>(() => {
 
 const outlined = computed<boolean>(() => variant === 'outlined');
 
-const float = logicAnd(
-  logicOr(isOpen, valueSet, searchInputFocused),
-  outlined,
-);
+const float = computed<boolean>(() => (get(isOpen) || get(valueSet) || get(searchInputFocused)) && get(outlined));
 
 const virtualContainerProps = computed<{ style: Record<string, string>; ref: (el: any) => void }>(() => ({
   style: containerProps.style as any,

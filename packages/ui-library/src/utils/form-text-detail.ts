@@ -1,11 +1,10 @@
-import type { ComputedRef, MaybeRef, Ref } from 'vue';
-import { logicOr } from '@vueuse/math';
+import type { ComputedRef, MaybeRef } from 'vue';
 
 export interface FormTextDetailReturn {
   formattedErrorMessages: ComputedRef<string[]>;
   formattedSuccessMessages: ComputedRef<string[]>;
   hasError: ComputedRef<boolean>;
-  hasMessages: Ref<boolean>;
+  hasMessages: ComputedRef<boolean>;
   hasSuccess: ComputedRef<boolean>;
 }
 
@@ -32,7 +31,7 @@ export function useFormTextDetail(
   const hasError = computed<boolean>(() => get(formattedErrorMessages).length > 0);
 
   const hasSuccess = computed<boolean>(() => get(formattedSuccessMessages).length > 0);
-  const hasMessages = logicOr(hasError, hasSuccess);
+  const hasMessages = computed<boolean>(() => get(hasError) || get(hasSuccess));
 
   return {
     formattedErrorMessages,

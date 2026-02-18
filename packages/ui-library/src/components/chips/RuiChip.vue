@@ -2,7 +2,6 @@
 import type { StyleValue } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
-import { logicNot, logicOr } from '@vueuse/math';
 import { objectOmit } from '@vueuse/shared';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 
@@ -56,16 +55,8 @@ const style = computed<Partial<StyleValue>>(() => {
 });
 
 function click(e: MouseEvent): void {
-  if (
-    get(
-      logicOr(
-        logicNot(() => clickable),
-        () => disabled,
-      ),
-    )
-  ) {
+  if (!clickable || disabled)
     return;
-  }
 
   emit('click', e);
 }

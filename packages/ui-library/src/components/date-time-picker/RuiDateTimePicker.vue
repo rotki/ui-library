@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { DateTimeSegmentType } from '@/components/date-time-picker/types';
 import type { TimePickerSelection } from '@/components/time-picker/RuiTimePicker.vue';
-import { logicAnd, logicOr } from '@vueuse/math';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiDateTimePickerMenu from '@/components/date-time-picker/RuiDateTimePickerMenu.vue';
 import { useDateTimeSelection } from '@/components/date-time-picker/use-date-time-selection';
@@ -92,7 +91,7 @@ const { focused: activatorFocusedWithin } = useFocusWithin(activator);
 const { focused: menuWrapperFocusedWithin } = useFocusWithin(menuWrapperRef);
 const { focused: searchInputFocused } = useFocus(textInput);
 
-const anyFocused = logicOr(activatorFocusedWithin, menuWrapperFocusedWithin);
+const anyFocused = computed<boolean>(() => get(activatorFocusedWithin) || get(menuWrapperFocusedWithin));
 
 const {
   clear: clearSelection,
@@ -220,7 +219,7 @@ const timeSelection = computed<TimePickerSelection>({
   },
 });
 
-const float = logicAnd(logicOr(isOpen, valueSet, searchInputFocused), isOutlined);
+const float = computed<boolean>(() => (get(isOpen) || get(valueSet) || get(searchInputFocused)) && get(isOutlined));
 
 const combinedErrorMessages = computed<string[]>(() => {
   let propErrors: string[];
