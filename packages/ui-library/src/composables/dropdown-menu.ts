@@ -131,27 +131,31 @@ export function useDropdownMenu<TValue, TItem>({
 
   const highlightedIndex: Ref<number> = ref(get(autoSelectFirst) ? 0 : -1);
 
+  const optionWidthBounds = computed<{ min: number; max: number }>(() => {
+    let min = 0;
+    let max = 0;
+    for (const option of get(options)) {
+      const length = getText(option)?.toString()?.length ?? 0;
+      if (min === 0 && max === 0) {
+        min = length;
+        max = length;
+      }
+      else if (length < min) {
+        min = length;
+      }
+      else if (length > max) {
+        max = length;
+      }
+    }
+    return { min, max };
+  });
+
   const menuWidth = computed<string>(() => {
-    const widths = { max: 0, min: 0 };
+    const { min, max } = get(optionWidthBounds);
     const maxWidth = 30;
     const paddingX = 1.5;
     const fontMultiplier = get(dense) ? 12 : 13;
-
-    get(options).forEach((option) => {
-      const length = getText(option)?.toString()?.length ?? 0;
-      if (widths.min === 0 && widths.max === 0) {
-        widths.min = length;
-        widths.max = length;
-      }
-      else if (length < widths.min) {
-        widths.min = length;
-      }
-      else if (length > widths.max) {
-        widths.max = length;
-      }
-    });
-
-    const difference = widths.max - widths.min;
+    const difference = max - min;
 
     function computeValue(width: number): string {
       const additionalWidths =
@@ -160,9 +164,9 @@ export function useDropdownMenu<TValue, TItem>({
     }
 
     if (difference <= 5)
-      return computeValue(widths.max);
+      return computeValue(max);
 
-    return computeValue(widths.min + difference / 2);
+    return computeValue(min + difference / 2);
   });
 
   function toggle(state: boolean = false): void {
