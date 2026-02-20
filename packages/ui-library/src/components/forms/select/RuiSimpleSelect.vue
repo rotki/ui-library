@@ -33,8 +33,8 @@ const { options, disabled = false, label, name = '', variant = 'default' } = def
       data-id="select"
     >
       <option
-        v-for="(option, i) in options"
-        :key="i"
+        v-for="option in options"
+        :key="option"
         :value="option"
       >
         {{ option }}

@@ -398,7 +398,6 @@ watch(
     set(selectedSecond, getModelSeconds());
     set(selectedMillisecond, getModelMilliseconds());
   },
-  { deep: true },
 );
 
 onMounted(() => {

@@ -108,30 +108,50 @@ watch(
   { immediate: true },
 );
 
+let internalValueTimeoutId: ReturnType<typeof setTimeout> | undefined;
+let isOpenTimeoutId: ReturnType<typeof setTimeout> | undefined;
+
 watch(internalValue, (value) => {
+  if (internalValueTimeoutId !== undefined) {
+    clearTimeout(internalValueTimeoutId);
+    internalValueTimeoutId = undefined;
+  }
   if (value) {
     nextTick(() => {
       set(isOpen, value);
     });
   }
   else {
-    setTimeout(() => {
+    internalValueTimeoutId = setTimeout(() => {
       set(isOpen, value);
+      internalValueTimeoutId = undefined;
     }, 100);
   }
 });
 
 watch(isOpen, (isOpen) => {
+  if (isOpenTimeoutId !== undefined) {
+    clearTimeout(isOpenTimeoutId);
+    isOpenTimeoutId = undefined;
+  }
   if (isOpen) {
     onUpdateModelValue(isOpen);
     set(internalValue, isOpen);
   }
   else {
-    setTimeout(() => {
+    isOpenTimeoutId = setTimeout(() => {
       onUpdateModelValue(isOpen);
       set(internalValue, isOpen);
+      isOpenTimeoutId = undefined;
     }, 100);
   }
+});
+
+onBeforeUnmount(() => {
+  if (internalValueTimeoutId !== undefined)
+    clearTimeout(internalValueTimeoutId);
+  if (isOpenTimeoutId !== undefined)
+    clearTimeout(isOpenTimeoutId);
 });
 
 watch(contentRef, (contentRef) => {

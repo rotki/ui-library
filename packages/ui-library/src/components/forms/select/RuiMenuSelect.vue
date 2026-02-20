@@ -294,7 +294,7 @@ function clear(): void {
         >
           <RuiButton
             v-for="{ item, _index } in renderedData"
-            :key="_index"
+            :key="getIdentifier(item)"
             :active="isActiveItem(item)"
             :aria-selected="isActiveItem(item)"
             :size="dense ? 'sm' : undefined"

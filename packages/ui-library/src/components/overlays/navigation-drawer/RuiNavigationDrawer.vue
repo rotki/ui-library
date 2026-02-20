@@ -72,38 +72,65 @@ watch(
   { immediate: true },
 );
 
+let internalValueTimeoutId: ReturnType<typeof setTimeout> | undefined;
+let isOpenTimeoutId: ReturnType<typeof setTimeout> | undefined;
+let clickOutsideTimeoutId: ReturnType<typeof setTimeout> | undefined;
+
 watch(internalValue, (value) => {
+  if (internalValueTimeoutId !== undefined) {
+    clearTimeout(internalValueTimeoutId);
+    internalValueTimeoutId = undefined;
+  }
   if (value) {
     window.requestAnimationFrame(() => {
       set(isOpen, value);
     });
   }
   else {
-    setTimeout(() => {
+    internalValueTimeoutId = setTimeout(() => {
       set(isOpen, value);
+      internalValueTimeoutId = undefined;
     }, 150);
   }
 });
 
 watch(isOpen, (isOpen) => {
+  if (isOpenTimeoutId !== undefined) {
+    clearTimeout(isOpenTimeoutId);
+    isOpenTimeoutId = undefined;
+  }
   if (isOpen) {
     onUpdateModelValue(isOpen);
     set(internalValue, isOpen);
   }
   else {
-    setTimeout(() => {
+    isOpenTimeoutId = setTimeout(() => {
       onUpdateModelValue(isOpen);
       set(internalValue, isOpen);
+      isOpenTimeoutId = undefined;
     }, 150);
   }
 });
 
 onClickOutside(content, () => {
   if (get(isOpen) && temporary && !stateless) {
-    setTimeout(() => {
+    if (clickOutsideTimeoutId !== undefined)
+      clearTimeout(clickOutsideTimeoutId);
+
+    clickOutsideTimeoutId = setTimeout(() => {
       close();
+      clickOutsideTimeoutId = undefined;
     }, 50);
   }
+});
+
+onBeforeUnmount(() => {
+  if (internalValueTimeoutId !== undefined)
+    clearTimeout(internalValueTimeoutId);
+  if (isOpenTimeoutId !== undefined)
+    clearTimeout(isOpenTimeoutId);
+  if (clickOutsideTimeoutId !== undefined)
+    clearTimeout(clickOutsideTimeoutId);
 });
 </script>
 

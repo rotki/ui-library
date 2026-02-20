@@ -250,7 +250,7 @@ const {
   onActivatorFocused: focusOnActivatorFocused,
   onInputFocused: focusOnInputFocused,
   setInputFocus: focusSetInputFocus,
-} = useAutoCompleteFocus<TItem>(
+} = useAutoCompleteFocus(
   {
     customValue: toRef(() => customValue),
     disabled: toRef(() => disabled),

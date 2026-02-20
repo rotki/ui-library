@@ -261,7 +261,7 @@ watch(
       >
         <button
           v-for="(month, index) in months"
-          :key="index"
+          :key="month"
           type="button"
           class="h-9 w-full flex items-center justify-center text-sm font-medium rounded-md transition-colors duration-150 ease-in-out border-none outline-none cursor-pointer focus:ring-2 focus:ring-rui-primary focus:ring-opacity-50"
           :class="[

@@ -171,7 +171,6 @@ watch(
   () => {
     calculateCalendarDays();
   },
-  { deep: true },
 );
 </script>
 

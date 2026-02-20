@@ -164,8 +164,8 @@ function getSortDirection(key: TableColumn<T>['key']): 'asc' | 'desc' | undefine
       </th>
 
       <th
-        v-for="(column, index) in columns"
-        :key="index"
+        v-for="column in columns"
+        :key="column.key"
         :class="[
           $style.th,
           column.class,

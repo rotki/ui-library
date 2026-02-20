@@ -34,15 +34,14 @@ whenever(
     if (state.color.hex !== value)
       state.color = new Color(value);
   },
-  { deep: true },
 );
 
 watch(
-  state,
-  (state) => {
-    set(modelValue, state.color.hex);
+  () => state.color.hex,
+  (hex: string) => {
+    set(modelValue, hex);
   },
-  { immediate: true, deep: true },
+  { immediate: true },
 );
 </script>
 

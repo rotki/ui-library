@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useTimeoutFn } from '@vueuse/core';
 import { transformPropsUnit } from '@/utils/helpers';
 
 export interface NotificationProps {
@@ -20,6 +21,10 @@ const style = computed<{ width: string | undefined }>(() => ({
   width: transformPropsUnit(width),
 }));
 
+const { start, stop } = useTimeoutFn(() => {
+  set(modelValue, false);
+}, timeout, { immediate: false });
+
 function dismiss(): void {
   if (timeout < 0)
     return;
@@ -28,14 +33,14 @@ function dismiss(): void {
 }
 
 watchImmediate(modelValue, (display) => {
-  if (!display)
+  if (!display) {
+    stop();
     return;
+  }
 
-  const duration = timeout;
-  if (duration > 0) {
-    setTimeout(() => {
-      set(modelValue, false);
-    }, duration);
+  if (timeout > 0) {
+    stop();
+    start();
   }
 });
 </script>
