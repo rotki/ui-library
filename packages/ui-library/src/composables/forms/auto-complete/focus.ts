@@ -6,11 +6,10 @@ export interface UseAutoCompleteFocusOptions {
   disabled: MaybeRef<boolean>;
 }
 
-export interface UseAutoCompleteFocusDeps<TItem> {
+export interface UseAutoCompleteFocusDeps {
   activatorFocused: Ref<boolean>;
   activatorFocusedWithin: Ref<boolean>;
   focusedValueIndex: Ref<number>;
-  filteredOptions: Ref<TItem[]>;
   internalSearch: Ref<string>;
   isOpen: Ref<boolean>;
   justOpened: Ref<boolean>;
@@ -29,9 +28,9 @@ export interface UseAutoCompleteFocusReturn {
   setInputFocus: () => Promise<void>;
 }
 
-export function useAutoCompleteFocus<TItem>(
+export function useAutoCompleteFocus(
   options: UseAutoCompleteFocusOptions,
-  deps: UseAutoCompleteFocusDeps<TItem>,
+  deps: UseAutoCompleteFocusDeps,
 ): UseAutoCompleteFocusReturn {
   const anyFocused = computed<boolean>(
     () => get(deps.activatorFocusedWithin) || get(deps.menuWrapperFocusedWithin),
@@ -78,6 +77,17 @@ export function useAutoCompleteFocus<TItem>(
     }
   }
 
+  // Capture the search value immediately when focus is lost, before the debounced
+  // handler fires. Other watchers (value.ts) may clear internalSearch when isOpen
+  // changes, so we need to preserve it for the custom value blur flow.
+  let pendingCustomSearch = '';
+
+  watch(anyFocused, (focused) => {
+    if (!focused && get(options.customValue)) {
+      pendingCustomSearch = get(deps.internalSearch);
+    }
+  });
+
   // Close menu if the activator is not focused anymore
   // Using debounced to avoid the menu closing momentarily while focus switches.
   watchDebounced(
@@ -87,10 +97,11 @@ export function useAutoCompleteFocus<TItem>(
         set(deps.isOpen, false);
 
         const customValue = get(options.customValue);
-        const filteredOptions = get(deps.filteredOptions);
-        const internalSearch = get(deps.internalSearch);
+        const searchToUse = pendingCustomSearch;
+        pendingCustomSearch = '';
 
-        if (customValue && filteredOptions.length === 0 && internalSearch) {
+        if (customValue && searchToUse) {
+          deps.updateInternalSearch(searchToUse);
           deps.setSearchAsValue();
         }
 

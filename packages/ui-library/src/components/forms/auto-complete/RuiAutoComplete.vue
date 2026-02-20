@@ -259,7 +259,6 @@ const {
   {
     activatorFocused,
     activatorFocusedWithin,
-    filteredOptions,
     focusedValueIndex,
     internalSearch,
     isOpen,
