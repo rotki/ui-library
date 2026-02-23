@@ -1,7 +1,9 @@
 import type { ComputedRef, Ref } from 'vue';
 
 export interface UseTableExpansionOptions<T extends object, IdType extends keyof T> {
+  /** The property on each row used as the unique row identifier. */
   rowAttr: IdType;
+  /** Whether only one row can be expanded at a time. */
   singleExpand: boolean;
 }
 

@@ -68,6 +68,11 @@ const emit = defineEmits<{
   'click:clear': [];
 }>();
 
+defineSlots<{
+  prepend?: () => any;
+  append?: () => any;
+}>();
+
 const prepend = useTemplateRef<HTMLDivElement>('prepend');
 const append = useTemplateRef<HTMLDivElement>('append');
 const textarea = useTemplateRef<HTMLTextAreaElement>('textarea');

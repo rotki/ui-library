@@ -38,6 +38,10 @@ const {
   required = false,
 } = defineProps<RadioProps<TValue>>();
 
+defineSlots<{
+  default?: () => any;
+}>();
+
 const { hasError, hasSuccess } = useFormTextDetail(
   toRef(() => errorMessages),
   toRef(() => successMessages),

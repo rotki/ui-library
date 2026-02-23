@@ -10,12 +10,12 @@ export interface UseStickyTableHeaderRefs {
  * Setup sticky table header
  */
 export function useStickyTableHeader(
-  sticky: MaybeRef<boolean> = ref(false),
+  sticky: MaybeRef<boolean> = shallowRef(false),
   offsetTop: MaybeRef<number | undefined>,
   refs: UseStickyTableHeaderRefs,
 ) {
   const { table, tableScroller } = refs;
-  const stick = ref<boolean>(false);
+  const stick = shallowRef<boolean>(false);
   const borderPrecision = -0.5;
   const selectors = {
     head: ':scope > thead[data-id=head-main]',

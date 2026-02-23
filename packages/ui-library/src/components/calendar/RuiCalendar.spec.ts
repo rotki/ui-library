@@ -154,7 +154,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
       // Should not emit undefined when allowEmpty is false
       const emissions = wrapper.emitted('update:modelValue') || [];
       const lastEmission = emissions.at(-1)?.[0];
-      expect(lastEmission).not.toBeUndefined();
+      expect(lastEmission).toBeDefined();
     });
   });
 
@@ -469,10 +469,9 @@ describe('components/calendar/RuiCalendar.vue', () => {
       const dayButtons = wrapper.findAll('button[type="button"]');
       const targetButton = dayButtons.find(button => button.text() === '15' && !button.attributes('disabled'));
 
-      if (targetButton) {
-        await targetButton.trigger('click');
-        expect(wrapper.emitted('update:modelValue')).toBeTruthy();
-      }
+      assert(targetButton);
+      await targetButton.trigger('click');
+      expect(wrapper.emitted('update:modelValue')).toBeTruthy();
     });
 
     it('should handle number-based minDate and maxDate', () => {
@@ -539,12 +538,11 @@ describe('components/calendar/RuiCalendar.vue', () => {
       // Find a day from previous month that should be selectable
       const prevMonthDays = wrapper.findAll('button[class*="text-gray-400"]:not([disabled])');
 
-      if (prevMonthDays.length > 0) {
-        const firstPrevMonthDay = prevMonthDays[0];
-        assert(firstPrevMonthDay);
-        await firstPrevMonthDay.trigger('click');
-        expect(wrapper.emitted('update:modelValue')).toBeTruthy();
-      }
+      expect(prevMonthDays.length).toBeGreaterThan(0);
+      const firstPrevMonthDay = prevMonthDays[0];
+      assert(firstPrevMonthDay);
+      await firstPrevMonthDay.trigger('click');
+      expect(wrapper.emitted('update:modelValue')).toBeTruthy();
     });
   });
 
@@ -682,18 +680,17 @@ describe('components/calendar/RuiCalendar.vue', () => {
       const dayButtons = wrapper.findAll('button[type="button"]');
       const targetButton = dayButtons.find(button => button.text() === '20' && !button.attributes('disabled'));
 
-      if (targetButton) {
-        await targetButton.trigger('click');
+      assert(targetButton);
+      await targetButton.trigger('click');
 
-        const emitted = wrapper.emitted('update:modelValue');
-        assert(emitted);
-        const emittedFirst = emitted[0];
-        assert(emittedFirst);
-        const emittedValue = emittedFirst[0] as Date;
-        expect(emittedValue.getHours()).toBe(14);
-        expect(emittedValue.getMinutes()).toBe(30);
-        expect(emittedValue.getSeconds()).toBe(45);
-      }
+      const emitted = wrapper.emitted('update:modelValue');
+      assert(emitted);
+      const emittedFirst = emitted[0];
+      assert(emittedFirst);
+      const emittedValue = emittedFirst[0] as Date;
+      expect(emittedValue.getHours()).toBe(14);
+      expect(emittedValue.getMinutes()).toBe(30);
+      expect(emittedValue.getSeconds()).toBe(45);
     });
   });
 });

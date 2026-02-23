@@ -2,8 +2,11 @@ import type { MaybeRef, Ref, TemplateRef } from 'vue';
 import { get, set } from '@vueuse/shared';
 
 export interface UseAutoCompleteKeyboardNavigationOptions {
+  /** Whether multiple items can be selected. */
   multiple: MaybeRef<boolean>;
+  /** Whether custom (free-text) values are allowed. */
   customValue: MaybeRef<boolean>;
+  /** Whether selected values are displayed as chips. */
   chips: MaybeRef<boolean>;
 }
 

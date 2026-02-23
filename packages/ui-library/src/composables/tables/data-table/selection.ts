@@ -1,10 +1,14 @@
 import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue';
 import { type GroupedTableRow, isRow } from '@/composables/tables/data-table/types';
+import { useTimeoutManager } from '@/composables/timeout-manager';
 import { assert } from '@/utils/assert';
 
 export interface UseTableSelectionOptions<T extends object, IdType extends keyof T> {
+  /** The property on each row used as the unique row identifier. */
   rowAttr: IdType;
+  /** Whether selection persists across pages. */
   multiPageSelect: boolean;
+  /** Rows that cannot be selected or deselected by the user. */
   disabledRows: MaybeRefOrGetter<T[] | undefined>;
 }
 
@@ -32,12 +36,13 @@ export function useTableSelection<T extends object, IdType extends keyof T>(
   options: UseTableSelectionOptions<T, IdType>,
   deps: UseTableSelectionDeps<T, IdType>,
 ): UseTableSelectionReturn<T, IdType> {
-  const { rowAttr, multiPageSelect } = options;
+  const { rowAttr, multiPageSelect, disabledRows } = options;
   const { selectedData, filtered } = deps;
 
-  const shiftClicked: Ref<boolean> = ref(false);
-  const lastSelectedIndex: Ref<number> = ref(-1);
+  const shiftClicked: Ref<boolean> = shallowRef(false);
+  const lastSelectedIndex: Ref<number> = shallowRef(-1);
   const internalSelectedData: Ref<T[IdType][]> = ref([]);
+  const { create: scheduleShiftSelect } = useTimeoutManager();
 
   // Sync external selection model to internal state
   watch(selectedData, val => set(internalSelectedData, val), { immediate: true });
@@ -51,7 +56,7 @@ export function useTableSelection<T extends object, IdType extends keyof T>(
   const selectedSet = computed<Set<T[IdType]>>(() => new Set(get(selectedData) ?? []));
 
   const disabledRowKeySet = computed<Set<T[IdType]>>(() => {
-    const currentDisabledRows = toValue(options.disabledRows);
+    const currentDisabledRows = toValue(disabledRows);
     if (!currentDisabledRows || !rowAttr)
       return new Set<T[IdType]>();
     return new Set<T[IdType]>(currentDisabledRows.map((row: T) => row[rowAttr]));
@@ -162,7 +167,7 @@ export function useTableSelection<T extends object, IdType extends keyof T>(
 
     if (input && nodeName !== 'INPUT') {
       if (shiftKey) {
-        setTimeout(() => {
+        scheduleShiftSelect(() => {
           let lastIndex = get(lastSelectedIndex);
           if (lastIndex === -1)
             lastIndex = index;

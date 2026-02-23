@@ -1,5 +1,6 @@
 import type { ScanResult } from './types';
 import { describe, expect, it } from 'vitest';
+import { assert } from '@/utils/assert';
 import {
   extractIconsFromSource,
   generateVirtualModule,
@@ -184,12 +185,9 @@ describe('scanner', () => {
       // Should be sorted: arrow-down, check, star
       // eslint-disable-next-line regexp/strict
       const importMatch = result.match(/import {([^}]+)}/);
-      expect(importMatch).toBeTruthy();
-
-      const importContent = importMatch![1];
-      if (!importContent) {
-        throw new Error('Failed to extract import content from generated module');
-      }
+      assert(importMatch);
+      const importContent = importMatch[1];
+      assert(importContent);
       const arrowIndex = importContent.indexOf('LuArrowDown');
       const checkIndex = importContent.indexOf('LuCheck');
       const starIndex = importContent.indexOf('LuStar');

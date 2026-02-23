@@ -3,12 +3,19 @@ import { get, set } from '@vueuse/shared';
 import { getTextToken } from '@/utils/helpers';
 
 export interface UseAutoCompleteSearchOptions<TItem> {
+  /** The property used as the unique identifier for each item. */
   keyAttr?: MaybeRef<keyof TItem | undefined>;
+  /** The property used to display text for each item. */
   textAttr?: MaybeRef<keyof TItem | undefined>;
+  /** Whether to disable client-side filtering of options. */
   noFilter?: MaybeRef<boolean>;
+  /** Custom filter function to match items against the search query. */
   filter?: MaybeRef<((item: TItem, queryText: string) => boolean) | undefined>;
+  /** Whether custom (free-text) values are allowed. */
   customValue?: MaybeRef<boolean>;
+  /** Whether to hide the custom value option from the dropdown. */
   hideCustomValue?: MaybeRef<boolean>;
+  /** Whether to return the full item object instead of just the key. */
   returnObject?: MaybeRef<boolean>;
 }
 
@@ -26,9 +33,9 @@ export function useAutoCompleteSearch<TItem>(
   searchModel: Ref<string>,
   opts: UseAutoCompleteSearchOptions<TItem>,
 ): UseAutoCompleteSearchReturn<TItem> {
-  const internalSearch = ref<string>('');
+  const internalSearch = shallowRef<string>('');
   const debouncedInternalSearch = refDebounced(internalSearch, 50);
-  const justOpened = ref<boolean>(false);
+  const justOpened = shallowRef<boolean>(false);
 
   // Memoize token computation to avoid repeated string processing
   const MAX_CACHE_SIZE = 500;

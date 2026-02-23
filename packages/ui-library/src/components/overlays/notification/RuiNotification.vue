@@ -17,6 +17,10 @@ const modelValue = defineModel<boolean>({ required: true });
 
 const { timeout, width = 400, theme } = defineProps<NotificationProps>();
 
+defineSlots<{
+  default?: () => any;
+}>();
+
 const style = computed<{ width: string | undefined }>(() => ({
   width: transformPropsUnit(width),
 }));

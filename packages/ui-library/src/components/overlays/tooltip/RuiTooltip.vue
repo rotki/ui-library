@@ -27,6 +27,11 @@ const {
   tooltipClass = '',
 } = defineProps<Props>();
 
+defineSlots<{
+  activator?: (props: { open: boolean; close: () => void }) => any;
+  default?: () => any;
+}>();
+
 const tooltipId = useId();
 
 const {

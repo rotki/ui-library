@@ -69,7 +69,7 @@ describe('components/accordions/accordions/RuiAccordions.vue', () => {
     const accordions = wrapper.findAll('[data-accordion]');
     expect(accordions).toHaveLength(2);
     expect(wrapper.findAll('[data-accordion-content]')).toHaveLength(0);
-    expect(get(modelValue)).toBe(undefined);
+    expect(get(modelValue)).toBeUndefined();
 
     // Click first accordion
     const firstAccordionHeader = wrapper.findAll('[data-accordion-trigger]')[0];
@@ -112,7 +112,7 @@ describe('components/accordions/accordions/RuiAccordions.vue', () => {
     const accordions = wrapper.findAll('[data-accordion]');
     expect(accordions).toHaveLength(2);
     expect(wrapper.findAll('[data-accordion-content]')).toHaveLength(0);
-    expect(get(modelValue)).toBe(undefined);
+    expect(get(modelValue)).toBeUndefined();
 
     // Click first accordion
     const firstAccordionHeader = wrapper.findAll('[data-accordion-trigger]')[0];

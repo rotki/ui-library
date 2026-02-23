@@ -81,7 +81,7 @@ describe('components/loaders/RuiSkeletonLoader.vue', () => {
 
     // Paragraph wraps multiple skeleton_text elements in a div
     const textElements = wrapper.findAll('div[role=alert]');
-    expect(textElements.length).toBe(3);
+    expect(textElements).toHaveLength(3);
   });
 
   it('should render article type with heading and text lines', () => {
@@ -93,7 +93,7 @@ describe('components/loaders/RuiSkeletonLoader.vue', () => {
 
     // Article has a heading + 3 text lines = 4 skeleton bases
     const elements = wrapper.findAll('div[role=alert]');
-    expect(elements.length).toBe(4);
+    expect(elements).toHaveLength(4);
   });
 
   it('should apply rounded classes', async () => {

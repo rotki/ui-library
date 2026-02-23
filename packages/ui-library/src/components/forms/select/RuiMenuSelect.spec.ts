@@ -319,10 +319,9 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
     await vi.runAllTimersAsync();
 
     const menu = queryByRole('menu');
-    if (menu) {
-      const noData = menu.querySelector('[data-id=no-data]');
-      expect(noData).toBeFalsy();
-    }
+    assert(menu);
+    const noData = menu.querySelector('[data-id=no-data]');
+    expect(noData).toBeFalsy();
   });
 
   it('should render outlined variant with fieldset', () => {

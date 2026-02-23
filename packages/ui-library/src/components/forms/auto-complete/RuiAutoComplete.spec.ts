@@ -241,7 +241,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     await wrapper.find('input').setValue('India');
     await vi.runAllTimersAsync();
 
-    expect(document.body.querySelectorAll('button').length).toBe(1);
+    expect(document.body.querySelectorAll('button')).toHaveLength(1);
     const itemButton = queryBody<HTMLButtonElement>('button');
     assertExists(itemButton);
     expect(itemButton.innerHTML).toContain('India');
@@ -326,7 +326,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
       btn.innerHTML.includes('German') || btn.innerHTML.includes('Germany'),
     );
 
-    expect(relevantButtons.length).toBe(1);
+    expect(relevantButtons).toHaveLength(1);
 
     let firstButton = relevantButtons[0];
     assert(firstButton);
@@ -338,7 +338,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     menuButtons = queryAllMenuButtons();
     relevantButtons = menuButtons.filter(btn => btn.innerHTML.includes('German') || btn.innerHTML.includes('Germany'));
 
-    expect(relevantButtons.length).toBe(2);
+    expect(relevantButtons).toHaveLength(2);
 
     firstButton = relevantButtons[0];
     assert(firstButton);
@@ -355,7 +355,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     const updatedMenuButtons = queryAllMenuButtons();
     const updatedRelevantButtons = updatedMenuButtons.filter(btn => btn.innerHTML.includes('Germany'));
 
-    expect(updatedRelevantButtons.length).toBe(1);
+    expect(updatedRelevantButtons).toHaveLength(1);
 
     firstButton = updatedRelevantButtons[0];
     assert(firstButton);
@@ -577,7 +577,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
 
     // With noFilter, the same number of options should remain visible
     const menuButtons = queryAllMenuButtons();
-    expect(menuButtons.length).toBe(initialButtonCount);
+    expect(menuButtons).toHaveLength(initialButtonCount);
   });
 
   it('should hide selected items from menu', async () => {
@@ -769,7 +769,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
 
     expect(customFilter).toHaveBeenCalled();
     const menuButtons = queryAllMenuButtons();
-    expect(menuButtons.length).toBe(1);
+    expect(menuButtons).toHaveLength(1);
     expect(menuButtons[0]?.innerHTML).toContain('Germany');
   });
 

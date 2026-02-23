@@ -37,9 +37,12 @@ const {
   required = false,
 } = defineProps<Props>();
 
+const slots = defineSlots<{
+  default?: () => any;
+}>();
+
 const radioGroupName = useId();
 
-const slots = useSlots();
 const children = computed<VNode[]>(() => {
   const slotContent = slots.default?.() ?? [];
 

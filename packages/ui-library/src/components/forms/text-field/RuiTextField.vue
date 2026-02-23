@@ -61,6 +61,11 @@ const emit = defineEmits<{
   'clear': [];
 }>();
 
+defineSlots<{
+  prepend?: () => any;
+  append?: () => any;
+}>();
+
 const prepend = useTemplateRef<HTMLDivElement>('prepend');
 const append = useTemplateRef<HTMLDivElement>('append');
 const innerWrapper = useTemplateRef<HTMLDivElement>('innerWrapper');

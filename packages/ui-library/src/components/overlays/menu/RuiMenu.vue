@@ -49,6 +49,17 @@ const {
   disableAutoFocus = false,
 } = defineProps<MenuProps>();
 
+defineSlots<{
+  activator?: (props: {
+    attrs: { onMouseover?: () => void; onMouseleave?: () => void; onClick?: () => void };
+    open: boolean;
+    disabled: boolean;
+    hasError: boolean;
+    hasSuccess: boolean;
+  }) => any;
+  default?: (props: { width: number }) => any;
+}>();
+
 const click = ref<boolean>(false);
 const menuContent = useTemplateRef<HTMLElement>('menuContent');
 

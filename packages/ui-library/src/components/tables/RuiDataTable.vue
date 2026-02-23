@@ -176,7 +176,7 @@ const slots = defineSlots<Partial<
     'empty-description': () => any;
     'tfoot': () => any;
   }
-  >>();
+>>();
 
 const tableDefaults = useTable();
 
@@ -399,6 +399,7 @@ onMounted(() => {
           </template>
         </RuiTableHead>
         <tbody :class="[$style.tbody, { [$style['tbody--striped'] ?? '']: striped }]">
+          <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
           <slot
             v-if="slots['body.prepend']"
             :colspan="colspan"
@@ -411,6 +412,7 @@ onMounted(() => {
               :class="[$style.tr, $style.tr__group]"
               data-id="row-group"
             >
+              <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
               <slot
                 name="group.header"
                 :colspan="colspan"
@@ -429,6 +431,7 @@ onMounted(() => {
                       :expanded="isExpandedGroup(row.group)"
                       @click="onToggleExpandGroup(row.group, row.identifier)"
                     />
+                    <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
                     <slot
                       :group-key="groupKey"
                       name="group.header.content"
@@ -457,6 +460,7 @@ onMounted(() => {
                           size="sm"
                           variant="text"
                           icon
+                          data-cy="group-ungroup-button"
                           @click="onUngroup()"
                         >
                           <RuiIcon
@@ -552,6 +556,7 @@ onMounted(() => {
                   :colspan="colspan"
                   :class="[$style.td]"
                 >
+                  <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
                   <slot
                     name="expanded-item"
                     :row="row"
@@ -592,6 +597,7 @@ onMounted(() => {
                 :class="$style.td"
                 :colspan="colspan"
               >
+                <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
                 <slot name="no-data">
                   <div :class="$style.empty">
                     <img
@@ -607,6 +613,7 @@ onMounted(() => {
                       {{ empty.label }}
                     </p>
 
+                    <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
                     <slot name="empty-description">
                       <p
                         v-if="empty.description"
@@ -621,6 +628,7 @@ onMounted(() => {
               </td>
             </Transition>
           </tr>
+          <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
           <slot
             v-if="slots['body.append']"
             :colspan="colspan"
@@ -628,6 +636,7 @@ onMounted(() => {
           />
         </tbody>
         <tfoot>
+          <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
           <slot name="tfoot" />
         </tfoot>
       </table>

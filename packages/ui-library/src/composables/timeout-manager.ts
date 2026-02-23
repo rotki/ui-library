@@ -1,5 +1,5 @@
 import { get, set } from '@vueuse/shared';
-import { ref } from 'vue';
+import { onScopeDispose, ref } from 'vue';
 
 interface UseTimeoutManagerReturn {
   clear: () => void;
@@ -23,6 +23,8 @@ export function useTimeoutManager(): UseTimeoutManagerReturn {
   };
 
   const isActive = (): boolean => !!get(timeout);
+
+  onScopeDispose(clear);
 
   return { clear, create, isActive };
 }

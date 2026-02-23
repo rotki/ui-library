@@ -6,8 +6,11 @@ import { assert } from '@/utils/assert';
 const SORT_COLLATOR = new Intl.Collator(undefined, { sensitivity: 'accent', usage: 'sort' });
 
 export interface UseTableSortOptions<T extends object> {
+  /** The data rows to sort. */
   rows: MaybeRefOrGetter<T[]>;
+  /** The current search query used to filter rows before sorting. */
   search: MaybeRefOrGetter<string>;
+  /** Whether sorting is managed externally (e.g. server-side). */
   sortModifiersExternal: boolean | undefined;
 }
 
@@ -34,7 +37,7 @@ export function useTableSort<T extends object>(
   options: UseTableSortOptions<T>,
   deps: UseTableSortDeps<T>,
 ): UseTableSortReturn<T> {
-  const { sortModifiersExternal } = options;
+  const { rows, search, sortModifiersExternal } = options;
   const { sort, pagination, emitUpdateOptions } = deps;
 
   const getKeys = <O extends object>(t: O): TableRowKey<O>[] => Object.keys(t) as TableRowKey<O>[];
@@ -75,8 +78,8 @@ export function useTableSort<T extends object>(
   });
 
   const searchData = computed<T[]>(() => {
-    const currentRows = toValue(options.rows);
-    const query = toValue(options.search)?.toLocaleLowerCase();
+    const currentRows = toValue(rows);
+    const query = toValue(search)?.toLocaleLowerCase();
     if (!query)
       return currentRows;
 

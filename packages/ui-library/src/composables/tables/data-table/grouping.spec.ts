@@ -87,7 +87,7 @@ describe('composables/tables/data-table/grouping', () => {
     unmount = u;
 
     const grouped = get(result.grouped);
-    expect(grouped.length).toBe(5);
+    expect(grouped).toHaveLength(5);
 
     const headers = grouped.filter(item => '__header__' in item);
     expect(headers).toHaveLength(2);

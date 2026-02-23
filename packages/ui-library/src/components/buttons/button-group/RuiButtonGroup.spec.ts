@@ -102,7 +102,7 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
 
     // on click, second button should take active state
     await button1.trigger('click');
-    expect(wrapper.props('modelValue')).toEqual(1);
+    expect(wrapper.props('modelValue')).toBe(1);
 
     expectNotToHaveClass(button0.element, /_active_/);
     expectToHaveClass(button1.element, /_active_/);
@@ -110,7 +110,7 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
 
     // on click, third button should take active state
     await button2.trigger('click');
-    expect(wrapper.props('modelValue')).toEqual(2);
+    expect(wrapper.props('modelValue')).toBe(2);
     const clickEvent = wrapper.emitted('click');
     expect(clickEvent).toHaveLength(2);
 
@@ -131,12 +131,12 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
     expectNotToHaveClass(button0.element, /_active_/);
     expectNotToHaveClass(button1.element, /_active_/);
     expectToHaveClass(button2.element, /_active_/);
-    expect(wrapper.props('modelValue')).toEqual(2);
+    expect(wrapper.props('modelValue')).toBe(2);
 
     // required so, can't deselect the active item
     await button2.trigger('click');
     expectToHaveClass(button2.element, /_active_/);
-    expect(wrapper.props('modelValue')).toEqual(2);
+    expect(wrapper.props('modelValue')).toBe(2);
   });
 
   it('should multiple toggleable button group', async () => {

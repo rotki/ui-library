@@ -39,6 +39,10 @@ const {
   required = false,
 } = defineProps<Props>();
 
+defineSlots<{
+  default?: () => any;
+}>();
+
 const el = useTemplateRef<HTMLInputElement>('el');
 
 const { hasError, hasSuccess } = useFormTextDetail(

@@ -34,6 +34,11 @@ const emit = defineEmits<{
   'click:esc': [];
 }>();
 
+defineSlots<{
+  activator?: (props: { attrs: { onClick: () => void }; isOpen: boolean }) => any;
+  default?: (props: { isOpen: boolean; close: () => void }) => any;
+}>();
+
 const internalValue = ref<boolean>(false);
 const isOpen = ref<boolean>(false);
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef');

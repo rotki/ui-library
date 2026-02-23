@@ -19,12 +19,9 @@ describe('date-time-picker/utils', () => {
 
     it('should return a timezone from the list if browser timezone is valid', () => {
       const result = guessTimezone();
-      // In test environment, this might be undefined or a valid timezone
-      if (result !== undefined) {
-        // Result should be a string containing a valid timezone format
-        expect(typeof result).toBe('string');
-        expect(result.length).toBeGreaterThan(0);
-      }
+      expect(result).toBeDefined();
+      expect(typeof result).toBe('string');
+      expect(result!.length).toBeGreaterThan(0);
     });
   });
 

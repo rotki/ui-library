@@ -6,8 +6,11 @@ import { type GroupedTableRow, isRow } from '@/composables/tables/data-table/typ
 import { assert } from '@/utils/assert';
 
 export interface UseTablePaginationOptions {
+  /** The default number of items displayed per page. */
   itemsPerPage: number;
+  /** Whether pagination is managed externally (e.g. server-side). */
   paginationModifiersExternal: boolean | undefined;
+  /** Whether to share the items-per-page setting across all tables. */
   globalItemsPerPage: boolean | undefined;
 }
 
@@ -39,7 +42,7 @@ export function useTablePagination<T extends object>(
   const { itemsPerPage, paginationModifiersExternal, globalItemsPerPage } = options;
   const { pagination, grouped, isHiddenRow, sort, emitUpdateOptions, tableDefaults } = deps;
 
-  const itemsLength = ref<number>(0);
+  const itemsLength = shallowRef<number>(0);
   const internalPaginationState: Ref<TablePaginationData | undefined> = ref();
 
   const globalItemsPerPageSettings = computed<boolean>(() => {

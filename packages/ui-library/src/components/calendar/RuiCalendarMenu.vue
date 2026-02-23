@@ -18,7 +18,7 @@ defineOptions({
 
 const modelValue = defineModel<boolean>();
 
-const props = defineProps<{
+const { viewMonth, viewYear } = defineProps<{
   anchorEl: HTMLElement | undefined;
   viewMonth: number;
   viewYear: number;
@@ -30,7 +30,7 @@ const emit = defineEmits<{
 
 // Core reactive state - minimal
 const viewMode = ref<'months' | 'years'>('months');
-const startYear = ref<number>(props.viewYear - 6);
+const startYear = ref<number>(viewYear - 6);
 
 // Pre-calculated constants
 const months = getShortMonthNames();
@@ -55,7 +55,7 @@ function calculateYearRange(): void {
 
 function calculateTitle(): void {
   if (get(viewMode) === 'months') {
-    set(title, props.viewYear.toString());
+    set(title, viewYear.toString());
   }
   else {
     const range = get(yearRange);
@@ -68,8 +68,8 @@ function calculateNavigation(): void {
   const mode = get(viewMode);
 
   if (mode === 'months') {
-    const nextYear = props.viewYear + 1;
-    const previousYear = props.viewYear - 1;
+    const nextYear = viewYear + 1;
+    const previousYear = viewYear - 1;
 
     set(canGoToNext, !isDefined(maxDate) || nextYear <= get(maxDate).getFullYear());
     set(canGoToPrev, !isDefined(minDate) || previousYear >= get(minDate).getFullYear());
@@ -90,7 +90,7 @@ function calculateNavigation(): void {
 
 function calculateMonthsInRange(): void {
   const { minDate, maxDate } = calendarState;
-  const currentYear = props.viewYear;
+  const currentYear = viewYear;
   const result = new Array(12).fill(true);
 
   if (isDefined(minDate) || isDefined(maxDate)) {
@@ -111,7 +111,7 @@ function calculateMonthsInRange(): void {
 function calculateYearsInRange(): void {
   const { minDate, maxDate } = calendarState;
   const range = get(yearRange);
-  const currentMonth = props.viewMonth;
+  const currentMonth = viewMonth;
 
   if (!isDefined(minDate) && !isDefined(maxDate)) {
     set(yearsInRange, new Array(range.length).fill(true));
@@ -136,7 +136,7 @@ function toggleSelection(): void {
 function selectMonth(month: number): void {
   if (!get(monthsInRange)[month])
     return;
-  emit('select', { month, year: props.viewYear });
+  emit('select', { month, year: viewYear });
   set(modelValue, false);
 }
 
@@ -145,15 +145,15 @@ function selectYear(year: number): void {
   if (yearIndex === -1 || !get(yearsInRange)[yearIndex])
     return;
 
-  emit('select', { month: props.viewMonth, year });
+  emit('select', { month: viewMonth, year });
   set(viewMode, 'months');
 }
 
 function handleNext(): void {
   if (get(viewMode) === 'months') {
-    const nextYear = props.viewYear + 1;
+    const nextYear = viewYear + 1;
     // Emit directly - navigation is already constrained by canGoToNext
-    emit('select', { month: props.viewMonth, year: nextYear });
+    emit('select', { month: viewMonth, year: nextYear });
   }
   else {
     const lastYearInRange = get(startYear) + 11;
@@ -163,9 +163,9 @@ function handleNext(): void {
 
 function handlePrev(): void {
   if (get(viewMode) === 'months') {
-    const previousYear = props.viewYear - 1;
+    const previousYear = viewYear - 1;
     // Emit directly - navigation is already constrained by canGoToPrev
-    emit('select', { month: props.viewMonth, year: previousYear });
+    emit('select', { month: viewMonth, year: previousYear });
   }
   else {
     const firstYearInRange = get(startYear);
@@ -194,7 +194,7 @@ watch(viewMode, () => {
 });
 
 watch(
-  () => props.viewYear,
+  () => viewYear,
   () => {
     calculateTitle();
     calculateNavigation();
@@ -204,7 +204,7 @@ watch(
 );
 
 watch(
-  () => props.viewMonth,
+  () => viewMonth,
   () => {
     calculateYearsInRange();
   },

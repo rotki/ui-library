@@ -41,6 +41,8 @@ const {
   size = 32,
 } = defineProps<Props>();
 
+defineSlots<Record<string, never>>();
+
 const currentValue = computed<number>(() => Math.max(0, Math.min(value ?? 100, 100)));
 
 const label = computed<string>(() => `${Math.floor(get(currentValue))}%`);

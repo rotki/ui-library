@@ -11,8 +11,8 @@ export function usePrependAppendWidth(
   append: Readonly<ShallowRef<HTMLDivElement | null>>,
   offset: number = 0,
 ): PrependAppendWidth {
-  const prependWidth = ref<string>('0px');
-  const appendWidth = ref<string>('0px');
+  const prependWidth = shallowRef<string>('0px');
+  const appendWidth = shallowRef<string>('0px');
 
   useResizeObserver(prepend, (entries) => {
     const [entry] = entries;

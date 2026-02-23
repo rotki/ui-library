@@ -1,8 +1,11 @@
 import type { ComputedRef, MaybeRef, Ref, TemplateRef } from 'vue';
 
 export interface UseAutoCompleteFocusOptions {
+  /** Whether custom (free-text) values are allowed. */
   customValue: MaybeRef<boolean>;
+  /** Whether to apply the current value as the search text when focused. */
   shouldApplyValueAsSearch: MaybeRef<boolean>;
+  /** Whether the autocomplete is disabled. */
   disabled: MaybeRef<boolean>;
 }
 

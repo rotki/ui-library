@@ -17,7 +17,7 @@ defineOptions({
 
 const isMenuOpen = defineModel<boolean>('menu-open', { required: true });
 
-const props = defineProps<{
+const { viewMonth, viewYear } = defineProps<{
   title: string;
   viewMonth: number;
   viewYear: number;
@@ -39,7 +39,7 @@ const canGoToNext = computed<boolean>(() => {
     return true;
   }
 
-  const date = new Date(props.viewYear, props.viewMonth);
+  const date = new Date(viewYear, viewMonth);
   return date.getTime() < get(maxDate).getTime();
 });
 
@@ -49,7 +49,7 @@ const canGoToPrev = computed<boolean>(() => {
     return true;
   }
 
-  const date = new Date(props.viewYear, props.viewMonth);
+  const date = new Date(viewYear, viewMonth);
   return date.getTime() > get(minDate).getTime();
 });
 

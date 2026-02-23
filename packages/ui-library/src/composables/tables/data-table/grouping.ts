@@ -8,6 +8,7 @@ import {
 import { assert } from '@/utils/assert';
 
 export interface UseTableGroupingOptions<T extends object, IdType extends keyof T> {
+  /** The property on each row used as the unique row identifier. */
   rowAttr: IdType;
 }
 

@@ -214,14 +214,18 @@ export function useElementDrag(handler: (x: number, y: number) => any) {
   function onMouseDown(e: MouseEvent): void {
     e.preventDefault();
 
-    window.addEventListener('mousemove', handleClick);
-    window.addEventListener('mouseup', handleMouseUp);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('mousemove', handleClick);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
   }
 
   function handleMouseUp(): void {
     cancelRaf();
-    window.removeEventListener('mousemove', handleClick);
-    window.removeEventListener('mouseup', handleMouseUp);
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('mousemove', handleClick);
+      window.removeEventListener('mouseup', handleMouseUp);
+    }
   }
 
   onUnmounted(() => {

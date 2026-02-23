@@ -52,17 +52,17 @@ interface UsePopperReturn {
 
 export function usePopper(
   options: Ref<PopperOptions>,
-  disabled: Ref<boolean> = ref(false),
-  openDelay: Ref<number> = ref(0),
-  closeDelay: Ref<number> = ref(0),
+  disabled: Ref<boolean> = shallowRef(false),
+  openDelay: Ref<number> = shallowRef(0),
+  closeDelay: Ref<number> = shallowRef(0),
   virtualReference?: Ref<Element | VirtualElement>,
 ): UsePopperReturn {
   const reference = ref<HTMLElement>();
   const popper = ref<MaybeElement>();
   const instance = ref<Instance>();
-  const open = ref<boolean>(false);
-  const popperEnter = ref<boolean>(false);
-  const leavePending = ref<boolean>(false);
+  const open = shallowRef<boolean>(false);
+  const popperEnter = shallowRef<boolean>(false);
+  const leavePending = shallowRef<boolean>(false);
 
   const openTimeoutManager = useTimeoutManager();
   const closeTimeoutManager = useTimeoutManager();

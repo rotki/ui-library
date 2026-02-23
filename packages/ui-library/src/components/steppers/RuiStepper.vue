@@ -30,6 +30,10 @@ const {
   keepActiveVisible = true,
 } = defineProps<Props>();
 
+defineSlots<{
+  icon?: (props: { state: StepperState | undefined; index: number }) => any;
+}>();
+
 const wrapperRef = useTemplateRef<HTMLDivElement>('wrapperRef');
 
 // automatically set step state to stepper.

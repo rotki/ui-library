@@ -63,12 +63,20 @@ export function useDropdownOptionProperty<TValue, TItem>({
   };
 }
 
+function toSelectedArray<TItem>(val: TItem | TItem[] | undefined): TItem[] {
+  if (Array.isArray(val))
+    return val;
+  if (val !== null && val !== undefined)
+    return [val];
+  return [];
+}
+
 export function useDropdownMenu<TValue, TItem>({
   appendWidth,
   autoFocus,
   autoSelectFirst,
   dense,
-  disabled = ref(false),
+  disabled = shallowRef(false),
   getIdentifier: externalGetIdentifier,
   getText: externalGetText,
   hideSelected,
@@ -93,7 +101,7 @@ export function useDropdownMenu<TValue, TItem>({
 
   const activeIdentifiers = computed<Set<any>>(() => {
     const val = get(value);
-    const selected: TItem[] = Array.isArray(val) ? val : (val !== null && val !== undefined) ? [val] : [];
+    const selected: TItem[] = toSelectedArray(val);
     const identifiers = new Set<any>();
     for (const item of selected) {
       identifiers.add(getIdentifier(item));
@@ -120,7 +128,7 @@ export function useDropdownMenu<TValue, TItem>({
 
   const renderedData = useArrayMap(list, ({ data, index: _index }) => ({ _index, item: data }));
 
-  const isOpen = externalIsOpen ?? ref<boolean>(false);
+  const isOpen = externalIsOpen ?? shallowRef<boolean>(false);
 
   const valueKey = computed(() => {
     const selected = get(value);
@@ -175,7 +183,7 @@ export function useDropdownMenu<TValue, TItem>({
 
   function itemIndexInValue(item: TItem): number {
     const val = get(value);
-    const selected: TItem[] = Array.isArray(val) ? val : (val !== null && val !== undefined) ? [val] : [];
+    const selected: TItem[] = toSelectedArray(val);
 
     if (selected.length === 0)
       return -1;

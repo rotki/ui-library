@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { SideNavLink } from '@/types';
 
-const props = defineProps<{
+const { navigation } = defineProps<{
   navigation: Array<{
     title: string;
     links: SideNavLink[];
@@ -10,9 +10,8 @@ const props = defineProps<{
 
 const route = useRoute();
 
-const { navigation } = toRefs(props);
 const links = computed<SideNavLink[]>(() =>
-  get(navigation).flatMap(section => section.links),
+  navigation.flatMap(section => section.links),
 );
 const currentPage = computed<SideNavLink | undefined>(() =>
   get(links).find(link => link.to === route.path),

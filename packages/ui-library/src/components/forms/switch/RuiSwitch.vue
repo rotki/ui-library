@@ -35,6 +35,10 @@ const {
   required = false,
 } = defineProps<Props>();
 
+defineSlots<{
+  default?: () => any;
+}>();
+
 const { hasError, hasSuccess } = useFormTextDetail(
   toRef(() => errorMessages),
   toRef(() => successMessages),

@@ -806,7 +806,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     // Now there should be exactly one more emission from typing "9"
     modelValue = wrapper.emitted('update:modelValue');
     assert(modelValue);
-    expect(modelValue.length).toBe(emissionsAfterZero + 1);
+    expect(modelValue).toHaveLength(emissionsAfterZero + 1);
 
     const lastEmittedValue = modelValue.at(-1)?.[0];
     assert(lastEmittedValue instanceof Date);

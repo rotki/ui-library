@@ -86,13 +86,17 @@ function click(): void {
     v-bind="$attrs"
   >
     <template
-      v-for="(_, name) in slots"
-      #[name]="slotData"
+      v-if="slots.prepend"
+      #prepend
     >
-      <slot
-        :name="name"
-        v-bind="slotData"
-      />
+      <slot name="prepend" />
+    </template>
+    <slot />
+    <template
+      v-if="slots.append"
+      #append
+    >
+      <slot name="append" />
     </template>
   </RuiButton>
   <RuiButton
@@ -108,13 +112,17 @@ function click(): void {
     @click="click()"
   >
     <template
-      v-for="(_, name) in slots"
-      #[name]="slotData"
+      v-if="slots.prepend"
+      #prepend
     >
-      <slot
-        :name="name"
-        v-bind="slotData"
-      />
+      <slot name="prepend" />
+    </template>
+    <slot />
+    <template
+      v-if="slots.append"
+      #append
+    >
+      <slot name="append" />
     </template>
   </RuiButton>
   <RouterLink
@@ -149,13 +157,17 @@ function click(): void {
       "
     >
       <template
-        v-for="(_, name) in slots"
-        #[name]="slotData"
+        v-if="slots.prepend"
+        #prepend
       >
-        <slot
-          :name="name"
-          v-bind="slotData"
-        />
+        <slot name="prepend" />
+      </template>
+      <slot />
+      <template
+        v-if="slots.append"
+        #append
+      >
+        <slot name="append" />
       </template>
     </RuiButton>
   </RouterLink>

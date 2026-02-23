@@ -14,7 +14,7 @@ defineOptions({
 
 const model = defineModel<Date | undefined>();
 
-const props = defineProps<{
+const { viewMonth, viewYear } = defineProps<{
   viewMonth: number;
   viewYear: number;
 }>();
@@ -73,8 +73,8 @@ function createDayData(
 
 // Pre-calculation functions using VueUse get/set
 function calculateCalendarDays(): void {
-  const firstDayOfMonth = new Date(props.viewYear, props.viewMonth, 1);
-  const lastDayOfMonth = new Date(props.viewYear, props.viewMonth + 1, 0);
+  const firstDayOfMonth = new Date(viewYear, viewMonth, 1);
+  const lastDayOfMonth = new Date(viewYear, viewMonth + 1, 0);
   const daysInMonth = lastDayOfMonth.getDate();
   const startingDayOfWeek = firstDayOfMonth.getDay();
 
@@ -87,16 +87,16 @@ function calculateCalendarDays(): void {
 
   // Previous month days
   if (startingDayOfWeek > 0) {
-    const prevMonthLastDay = new Date(props.viewYear, props.viewMonth, 0).getDate();
+    const prevMonthLastDay = new Date(viewYear, viewMonth, 0).getDate();
     for (let i = startingDayOfWeek - 1; i >= 0; i--) {
-      const date = new Date(props.viewYear, props.viewMonth - 1, prevMonthLastDay - i, 12, 0, 0, 0);
+      const date = new Date(viewYear, viewMonth - 1, prevMonthLastDay - i, 12, 0, 0, 0);
       result.push(createDayData(date, false, modelValue, maxDateValue, minDateValue));
     }
   }
 
   // Current month days
   for (let i = 1; i <= daysInMonth; i++) {
-    const date = new Date(props.viewYear, props.viewMonth, i, 12, 0, 0, 0);
+    const date = new Date(viewYear, viewMonth, i, 12, 0, 0, 0);
     result.push(createDayData(date, true, modelValue, maxDateValue, minDateValue));
   }
 
@@ -104,7 +104,7 @@ function calculateCalendarDays(): void {
   const totalDaysSoFar = result.length;
   const daysToAdd = 42 - totalDaysSoFar;
   for (let i = 1; i <= daysToAdd; i++) {
-    const date = new Date(props.viewYear, props.viewMonth + 1, i, 12, 0, 0, 0);
+    const date = new Date(viewYear, viewMonth + 1, i, 12, 0, 0, 0);
     result.push(createDayData(date, false, modelValue, maxDateValue, minDateValue));
   }
 
@@ -158,7 +158,7 @@ function selectDate(dayData: { date: Date; isInRange: boolean; isSelected: boole
 calculateCalendarDays();
 
 // Watchers for recalculation only when needed
-watch([() => props.viewMonth, () => props.viewYear], () => {
+watch([() => viewMonth, () => viewYear], () => {
   calculateCalendarDays();
 });
 

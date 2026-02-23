@@ -43,6 +43,12 @@ const emit = defineEmits<{
   'update:modelValue': [value?: T];
 }>();
 
+const slots = defineSlots<{
+  prepend?: () => any;
+  append?: () => any;
+  default?: () => any;
+}>();
+
 const btnValue = computed<T | undefined>(() => modelValue);
 
 const usedElevation = computed<number | string>(() => {
@@ -92,20 +98,14 @@ const spinnerSize = computed<number>(() => {
     v-bind="$attrs"
     @click="emit('update:modelValue', btnValue)"
   >
-    <slot
-      v-if="$slots.prepend"
-      name="prepend"
-    />
+    <slot name="prepend" />
     <span
-      v-if="$slots.default"
+      v-if="slots.default"
       :class="$style.label"
     >
       <slot />
     </span>
-    <slot
-      v-if="$slots.append"
-      name="append"
-    />
+    <slot name="append" />
     <RuiProgress
       v-if="loading"
       circular

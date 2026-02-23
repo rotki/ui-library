@@ -7,16 +7,21 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = defineProps<{
+const { items, itemClass, getItemClass: getItemClassFn, getItemDataCy } = defineProps<{
   items: T[];
   itemClass?: StaticClassProps | StaticClassProps[];
   getItemClass?: (item: T, index: number) => StaticClassProps;
   getItemDataCy?: (item: T, index: number) => string;
 }>();
 
+defineSlots<{
+  title?: () => any;
+  item?: (props: { item: T; index: number }) => any;
+}>();
+
 function getItemClass(item: T, index: number): StaticClassProps | StaticClassProps[] | undefined {
-  const dynamicClass = props.getItemClass?.(item, index);
-  const staticClass = props.itemClass;
+  const dynamicClass = getItemClassFn?.(item, index);
+  const staticClass = itemClass;
 
   if (!dynamicClass) {
     return staticClass;

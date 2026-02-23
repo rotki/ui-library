@@ -4,6 +4,11 @@ import { objectOmit, objectPick } from '@vueuse/shared';
 defineOptions({
   inheritAttrs: false,
 });
+
+defineSlots<{
+  title?: () => any;
+  default?: () => any;
+}>();
 </script>
 
 <template>

@@ -41,13 +41,13 @@ export interface RuiOptions {
 }
 
 export function createRui(options: RuiOptions = {}) {
-  const { theme } = options;
+  const { theme, defaults: defaultOptions } = options;
 
   const defaults = Object.freeze({
     icons: createIconDefaults({
-      registeredIcons: options.theme?.icons,
+      registeredIcons: theme?.icons,
     }),
-    table: createTableDefaults(options.defaults?.table),
+    table: createTableDefaults(defaultOptions?.table),
   });
 
   const install = (app: App) => {

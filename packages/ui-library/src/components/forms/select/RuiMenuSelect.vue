@@ -67,6 +67,26 @@ const {
   required = false,
 } = defineProps<Props<TValue, TItem>>();
 
+defineSlots<{
+  'activator'?: (props: {
+    disabled: boolean;
+    value: TItem | undefined;
+    variant: string;
+    readOnly: boolean;
+    attrs: Record<string, unknown>;
+    open: boolean;
+    hasError: boolean;
+    hasSuccess: boolean;
+  }) => any;
+  'activator.label'?: (props: { value: TItem | undefined }) => any;
+  'selection.prepend'?: (props: { item: TItem }) => any;
+  'selection'?: (props: { item: TItem }) => any;
+  'item.prepend'?: (props: { disabled: boolean; item: TItem; active: boolean }) => any;
+  'item'?: (props: { disabled: boolean; item: TItem; active: boolean }) => any;
+  'item.append'?: (props: { disabled: boolean; item: TItem; active: boolean }) => any;
+  'no-data'?: () => any;
+}>();
+
 const menuRef = useTemplateRef<HTMLDivElement>('menuRef');
 const activator = useTemplateRef<HTMLDivElement>('activator');
 const { focused } = useFocus(activator);

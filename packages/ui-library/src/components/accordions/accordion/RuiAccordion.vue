@@ -26,6 +26,11 @@ const emit = defineEmits<{
   click: [];
 }>();
 
+defineSlots<{
+  header?: (props: { open: boolean }) => any;
+  default?: () => any;
+}>();
+
 const inner = useTemplateRef<HTMLDivElement>('inner');
 
 const triggerId = useId();

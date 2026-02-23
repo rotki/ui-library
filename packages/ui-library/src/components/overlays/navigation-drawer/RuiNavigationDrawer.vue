@@ -35,6 +35,11 @@ const emit = defineEmits<{
   closed: [];
 }>();
 
+defineSlots<{
+  activator?: (props: { open: boolean; attrs: { onClick: () => void } }) => any;
+  default?: (props: { attrs: { onClick: () => void }; close: () => void }) => any;
+}>();
+
 const internalValue = ref<boolean>(false);
 const isOpen = ref<boolean>(false);
 const content = useTemplateRef<MaybeElement>('content');

@@ -794,22 +794,11 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const ungroupButton = wrapper.find('tr[data-id="row-group"] button:has([class*=lu-trash])');
-      if (ungroupButton.exists()) {
-        await ungroupButton.trigger('click');
-        expect(onUpdateGroup).toHaveBeenCalledWith(undefined);
-        expect(onUpdateCollapsed).toHaveBeenCalledWith([]);
-      }
-      else {
-        const buttons = wrapper.findAll('tr[data-id="row-group"] button');
-        for (const btn of buttons) {
-          if (btn.html().includes('trash')) {
-            await btn.trigger('click');
-            expect(onUpdateGroup).toHaveBeenCalled();
-            break;
-          }
-        }
-      }
+      const ungroupButton = wrapper.find('tr[data-id="row-group"] [data-cy="group-ungroup-button"]');
+      expect(ungroupButton.exists()).toBe(true);
+      await ungroupButton.trigger('click');
+      expect(onUpdateGroup).toHaveBeenCalledWith(undefined);
+      expect(onUpdateCollapsed).toHaveBeenCalledWith([]);
     });
   });
 
@@ -977,7 +966,7 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(paginator.find('div[data-cy=table-pagination] div[class*=navigation]').exists()).toBeTruthy();
 
     const navButtons = paginator.findAllComponents(RuiButton);
-    expect(navButtons.length).toBe(4);
+    expect(navButtons).toHaveLength(4);
 
     expect(navButtons.filter(b => b.attributes('disabled') === '')).toHaveLength(2);
     expect(navButtons.filter(b => b.attributes('disabled') === undefined)).toHaveLength(2);
@@ -994,8 +983,8 @@ describe('components/tables/RuiDataTable.vue', () => {
 
     await nextTick();
 
-    expect(limits.vm.modelValue).toStrictEqual(5);
-    expect(limits.find('[data-id="activator"] span').text()).toStrictEqual('5');
+    expect(limits.vm.modelValue).toBe(5);
+    expect(limits.find('[data-id="activator"] span').text()).toBe('5');
     expect(limits.find('input[type=hidden]').element).toHaveProperty('value', '5');
     expect(navButtons.filter(b => b.attributes('disabled') === '')).toHaveLength(2);
     expect(navButtons.filter(b => b.attributes('disabled') === undefined)).toHaveLength(2);
@@ -1004,20 +993,20 @@ describe('components/tables/RuiDataTable.vue', () => {
 
     await nextTick();
 
-    expect(ranges.props().modelValue).toStrictEqual(2);
-    expect(ranges.find('[data-id="activator"] span').text()).toStrictEqual('6 - 10');
+    expect(ranges.props().modelValue).toBe(2);
+    expect(ranges.find('[data-id="activator"] span').text()).toBe('6 - 10');
     expect(ranges.find('input[type=hidden]').element).toHaveProperty('value', '2');
 
     limits.vm.$emit('update:modelValue', 10);
 
     await nextTick();
 
-    expect(limits.props().modelValue).toStrictEqual(10);
-    expect(limits.find('[data-id="activator"] span').text()).toStrictEqual('10');
+    expect(limits.props().modelValue).toBe(10);
+    expect(limits.find('[data-id="activator"] span').text()).toBe('10');
     expect(limits.find('input[type=hidden]').element).toHaveProperty('value', '10');
 
-    expect(ranges.props().modelValue).toStrictEqual(1);
-    expect(ranges.find('[data-id="activator"] span').text()).toStrictEqual('1 - 10');
+    expect(ranges.props().modelValue).toBe(1);
+    expect(ranges.find('[data-id="activator"] span').text()).toBe('1 - 10');
     expect(ranges.find('input[type=hidden]').element).toHaveProperty('value', '1');
   });
 
@@ -1169,19 +1158,10 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const copyButton = wrapper.find('tr[data-id="row-group"] button:has([class*=lu-copy])');
-      if (copyButton.exists()) {
-        await copyButton.trigger('click');
-        expect(onCopyGroup).toHaveBeenCalled();
-      }
-      else {
-        const buttons = wrapper.findAll('tr[data-id="row-group"] button');
-        const copyBtn = buttons[1];
-        if (copyBtn) {
-          await copyBtn.trigger('click');
-          expect(onCopyGroup).toHaveBeenCalled();
-        }
-      }
+      const copyButton = wrapper.find('tr[data-id="row-group"] [data-cy="group-copy-button"]');
+      expect(copyButton.exists()).toBe(true);
+      await copyButton.trigger('click');
+      expect(onCopyGroup).toHaveBeenCalled();
     });
   });
 

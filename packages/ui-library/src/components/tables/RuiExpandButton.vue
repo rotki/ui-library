@@ -13,6 +13,10 @@ defineOptions({
 });
 
 const { expanded, icon = 'lu-chevron-down' } = defineProps<Props>();
+
+defineSlots<{
+  default?: () => any;
+}>();
 </script>
 
 <template>

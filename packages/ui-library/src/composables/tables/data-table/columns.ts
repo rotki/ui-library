@@ -7,12 +7,19 @@ import type {
 import { isHeaderSlot } from '@/composables/tables/data-table/types';
 
 export interface UseTableColumnsOptions<T extends object, IdType extends keyof T> {
+  /** Column definitions for the table. When omitted, columns are inferred from row data. */
   cols: MaybeRefOrGetter<TableColumn<T>[] | undefined>;
+  /** The property on each column definition used as the column identifier. */
   columnAttr: keyof TableColumn<T>;
+  /** The data rows to display in the table. */
   rows: MaybeRefOrGetter<T[]>;
+  /** Whether row expansion is enabled. */
   expandable: ComputedRef<boolean>;
+  /** The keys currently used for grouping rows. */
   groupKeys: ComputedRef<TableRowKey<T>[]>;
+  /** The currently selected row identifiers. */
   selectedData: Ref<T[IdType][] | undefined>;
+  /** Template slots provided to the table component. */
   slots: Record<string, any>;
 }
 
@@ -26,13 +33,13 @@ export interface UseTableColumnsReturn<T extends object> {
 export function useTableColumns<T extends object, IdType extends keyof T>(
   options: UseTableColumnsOptions<T, IdType>,
 ): UseTableColumnsReturn<T> {
-  const { columnAttr, expandable, groupKeys, selectedData, slots } = options;
+  const { cols, columnAttr, expandable, groupKeys, rows, selectedData, slots } = options;
 
   const getKeys = <O extends object>(t: O): TableRowKey<O>[] => Object.keys(t) as TableRowKey<O>[];
 
   const columns = computed<TableColumn<T>[]>(() => {
-    const currentCols = toValue(options.cols);
-    const currentRows = toValue(options.rows);
+    const currentCols = toValue(cols);
+    const currentRows = toValue(rows);
     const data =
       currentCols ??
       getKeys(currentRows[0] ?? {}).map(

@@ -1,7 +1,13 @@
+shellEmulator: true
+
+trustPolicy: no-downgrade
+
 packages:
   - 'packages/*'
   - 'apps/*'
 
+overrides:
+  jiti: ^2.6.1
 ignoredBuiltDependencies:
   - vue-demi
 

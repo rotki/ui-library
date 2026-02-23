@@ -43,6 +43,11 @@ const emit = defineEmits<{
   'click': [e: MouseEvent];
 }>();
 
+defineSlots<{
+  prepend?: () => any;
+  default?: () => any;
+}>();
+
 const style = computed<Partial<StyleValue>>(() => {
   const style: Partial<StyleValue> = {};
   if (bgColor)

@@ -2,15 +2,10 @@
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { StepperState } from '@/types/stepper';
 
-withDefaults(
-  defineProps<{
-    state?: StepperState;
-    index: number;
-  }>(),
-  {
-    state: StepperState.inactive,
-  },
-);
+const { state = StepperState.inactive } = defineProps<{
+  state?: StepperState;
+  index: number;
+}>();
 </script>
 
 <template>

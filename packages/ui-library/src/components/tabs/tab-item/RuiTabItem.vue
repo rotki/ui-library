@@ -11,6 +11,10 @@ defineOptions({
 });
 
 const { active = false, eager = false, reverse = false } = defineProps<Props>();
+
+defineSlots<{
+  default?: () => any;
+}>();
 </script>
 
 <template>

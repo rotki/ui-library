@@ -3,8 +3,11 @@ import { get, set } from '@vueuse/shared';
 import { assert } from '@/utils/assert';
 
 export interface UseAutoCompleteValueOptions<TItem> {
+  /** The property used as the unique identifier for each item. */
   keyAttr?: MaybeRef<keyof TItem | undefined>;
+  /** Whether to return the full item object instead of just the key. */
   returnObject?: MaybeRef<boolean>;
+  /** Whether custom (free-text) values are allowed. */
   customValue?: MaybeRef<boolean>;
 }
 

@@ -34,6 +34,11 @@ const emit = defineEmits<{
   close: [];
 }>();
 
+defineSlots<{
+  title?: () => any;
+  default?: () => any;
+}>();
+
 const usedIcon = computed<RuiIcons | undefined>(() => {
   if (icon)
     return icon;

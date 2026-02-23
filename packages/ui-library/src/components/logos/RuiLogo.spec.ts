@@ -75,8 +75,7 @@ describe('components/logos/RuiLogo.vue', () => {
     // When logo is set but sources haven't loaded yet, decoding is true
     // and the placeholder div should have role="img" and aria-label
     const placeholder = wrapper.find('div[role=img]');
-    if (placeholder.exists()) {
-      expect(placeholder.attributes('aria-label')).toBe('rotki');
-    }
+    expect(placeholder.exists()).toBe(true);
+    expect(placeholder.attributes('aria-label')).toBe('rotki');
   });
 });

@@ -9,6 +9,12 @@ defineOptions({
 });
 
 const { dense = false } = defineProps<Props>();
+
+defineSlots<{
+  prepend?: () => any;
+  header?: () => any;
+  subheader?: () => any;
+}>();
 </script>
 
 <template>
