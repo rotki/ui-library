@@ -2,7 +2,7 @@
 import { isClient } from '@vueuse/shared';
 import { useSSRContext } from 'vue';
 import fallback from '@/components/logos/logo.svg';
-import { transformCase } from '@/utils/helpers';
+import { getLogoSources } from '@/components/logos/use-logo-sources';
 
 export interface ExternalLinks {
   drawer?: string;
@@ -60,17 +60,11 @@ async function fetchSources(): Promise<void> {
     return;
 
   set(pendingSources, true);
-  try {
-    const { data } = await useFetch<string>(
-      `https://raw.githubusercontent.com/rotki/data/${branch}/constants/asset-mappings.json`,
-    );
+  const links = await getLogoSources(branch);
 
-    const links = transformCase(JSON.parse(get(data) ?? 'null')?.logo, 'camelCase');
+  if (links)
+    set(externalSources, links);
 
-    if (links)
-      set(externalSources, links);
-  }
-  catch {}
   set(pendingSources, false);
 }
 
