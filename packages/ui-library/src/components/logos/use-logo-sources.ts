@@ -16,11 +16,15 @@ function isExternalLinks(value: unknown): value is ExternalLinks {
 
 async function fetchSourcesFromNetwork(branch: string): Promise<ExternalLinks | undefined> {
   try {
-    const { data } = await useFetch<string>(
+    const response = await fetch(
       `${ASSET_MAPPINGS_URL}/${branch}/constants/asset-mappings.json`,
     );
 
-    const links = transformCase(JSON.parse(get(data) ?? 'null')?.logo, 'camelCase');
+    if (!response.ok)
+      return undefined;
+
+    const json = await response.json();
+    const links = transformCase(json?.logo, 'camelCase');
     if (isExternalLinks(links))
       return links;
 
