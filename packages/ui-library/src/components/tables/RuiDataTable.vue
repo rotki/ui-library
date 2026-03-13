@@ -33,7 +33,7 @@ export interface Props<T, K extends keyof T> {
   /**
    * list of items for each row
    */
-  rows: T[];
+  rows: readonly T[];
   /**
    * the attribute used to identify each row uniquely for selection, usually `id`
    */
@@ -107,7 +107,7 @@ export interface Props<T, K extends keyof T> {
    */
   globalItemsPerPage?: boolean;
   groupExpandButtonPosition?: 'start' | 'end';
-  disabledRows?: T[];
+  disabledRows?: readonly T[];
   multiPageSelect?: boolean;
   itemClass?: ((item: T) => string) | string;
 }

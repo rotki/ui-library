@@ -7,7 +7,7 @@ const SORT_COLLATOR = new Intl.Collator(undefined, { sensitivity: 'accent', usag
 
 export interface UseTableSortOptions<T extends object> {
   /** The data rows to sort. */
-  rows: MaybeRefOrGetter<T[]>;
+  rows: MaybeRefOrGetter<readonly T[]>;
   /** The current search query used to filter rows before sorting. */
   search: MaybeRefOrGetter<string>;
   /** Whether sorting is managed externally (e.g. server-side). */
@@ -81,7 +81,7 @@ export function useTableSort<T extends object>(
     const currentRows = toValue(rows);
     const query = toValue(search)?.toLocaleLowerCase();
     if (!query)
-      return currentRows;
+      return [...currentRows];
 
     return currentRows.filter(row =>
       getKeys(row).some(key => `${row[key]}`.toLocaleLowerCase().includes(query)),

@@ -9,7 +9,7 @@ export interface UseTableSelectionOptions<T extends object, IdType extends keyof
   /** Whether selection persists across pages. */
   multiPageSelect: boolean;
   /** Rows that cannot be selected or deselected by the user. */
-  disabledRows: MaybeRefOrGetter<T[] | undefined>;
+  disabledRows: MaybeRefOrGetter<readonly T[] | undefined>;
 }
 
 export interface UseTableSelectionDeps<T extends object, IdType extends keyof T> {

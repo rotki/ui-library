@@ -12,7 +12,7 @@ export interface UseTableColumnsOptions<T extends object, IdType extends keyof T
   /** The property on each column definition used as the column identifier. */
   columnAttr: keyof TableColumn<T>;
   /** The data rows to display in the table. */
-  rows: MaybeRefOrGetter<T[]>;
+  rows: MaybeRefOrGetter<readonly T[]>;
   /** Whether row expansion is enabled. */
   expandable: ComputedRef<boolean>;
   /** The keys currently used for grouping rows. */

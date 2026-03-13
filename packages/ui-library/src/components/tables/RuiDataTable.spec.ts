@@ -1,3 +1,4 @@
+import type { DeepReadonly } from 'vue';
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -2022,6 +2023,104 @@ describe('components/tables/RuiDataTable.vue', () => {
 
       // Selection should be cleared
       expect(wrapper.props().modelValue).toHaveLength(0);
+    });
+  });
+
+  describe('readonly and DeepReadonly rows', () => {
+    const readonlyData: readonly User[] = Object.freeze([
+      { id: 1, name: 'Alice', title: 'Engineer', email: 'alice@example.com' },
+      { id: 2, name: 'Bob', title: 'Designer', email: 'bob@example.com' },
+      { id: 3, name: 'Charlie', title: 'Manager', email: 'charlie@example.com' },
+    ]) as readonly User[];
+
+    it('should render with readonly rows', () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          rowAttr: 'id',
+          rows: readonlyData,
+        },
+      });
+
+      expect(wrapper.find('table tbody').exists()).toBeTruthy();
+      expect(wrapper.findAll('table tbody tr')).toHaveLength(3);
+    });
+
+    it('should render with DeepReadonly rows', () => {
+      const deepReadonlyData: DeepReadonly<User[]> = readonlyData as DeepReadonly<User[]>;
+
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          rowAttr: 'id',
+          rows: deepReadonlyData,
+        },
+      });
+
+      expect(wrapper.find('table tbody').exists()).toBeTruthy();
+      expect(wrapper.findAll('table tbody tr')).toHaveLength(3);
+    });
+
+    it('should support sorting with readonly rows', async () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          rowAttr: 'id',
+          rows: readonlyData,
+          sort: { column: 'name', direction: 'asc' },
+        },
+      });
+
+      const firstRowCells = wrapper.findAll('table tbody tr:first-child td');
+      expect(firstRowCells[1]?.text()).toBe('Alice');
+    });
+
+    it('should support search with readonly rows', async () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          rowAttr: 'id',
+          rows: readonlyData,
+          search: 'Bob',
+        },
+      });
+
+      const rows = wrapper.findAll('table tbody tr');
+      expect(rows).toHaveLength(1);
+      expect(rows[0]?.text()).toContain('Bob');
+    });
+
+    it('should support selection with readonly rows', async () => {
+      wrapper = createWrapper({
+        props: {
+          'cols': columns,
+          'modelValue': [],
+          'onUpdate:modelValue': (e: any) => wrapper.setProps({ modelValue: e }),
+          'rowAttr': 'id',
+          'rows': readonlyData,
+        },
+      });
+
+      const checkboxes = wrapper.findAll('table tbody tr input[type="checkbox"]');
+      expect(checkboxes.length).toBeGreaterThan(0);
+      await checkboxes[0]?.setValue(true);
+      expect(wrapper.props().modelValue).toHaveLength(1);
+    });
+
+    it('should support disabledRows with readonly arrays', () => {
+      const disabledRows: readonly User[] = [readonlyData[0]!] as readonly User[];
+
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          disabledRows,
+          modelValue: [1],
+          rowAttr: 'id',
+          rows: readonlyData,
+        },
+      });
+
+      expect(wrapper.find('table tbody').exists()).toBeTruthy();
     });
   });
 });
