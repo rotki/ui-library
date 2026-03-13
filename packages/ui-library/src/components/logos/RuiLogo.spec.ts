@@ -78,4 +78,28 @@ describe('components/logos/RuiLogo.vue', () => {
     expect(placeholder.exists()).toBe(true);
     expect(placeholder.attributes('aria-label')).toBe('rotki');
   });
+
+  it('should render custom image directly when src prop is provided', () => {
+    wrapper = createWrapper({
+      props: {
+        src: '/staging/logo.svg',
+      },
+    });
+
+    const img = wrapper.find('img[data-image=custom]');
+    expect(img.exists()).toBeTruthy();
+    expect(img.attributes('src')).toBe('/staging/logo.svg');
+  });
+
+  it('should not show decoding placeholder when src is provided with logo', () => {
+    wrapper = createWrapper({
+      props: {
+        src: '/staging/logo.svg',
+        logo: 'website',
+      },
+    });
+
+    expect(wrapper.find('div[role=img]').exists()).toBe(false);
+    expect(wrapper.find('img[data-image=custom]').exists()).toBeTruthy();
+  });
 });

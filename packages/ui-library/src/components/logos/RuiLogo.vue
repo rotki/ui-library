@@ -19,17 +19,18 @@ export interface Props {
   logo?: keyof ExternalLinks;
   size?: string | number; // in rems
   uniqueKey?: string | number;
+  src?: string;
 }
 
 defineOptions({
   name: 'RuiLogo',
 });
 
-const { text = false, branch = 'develop', logo, size = 3, uniqueKey } = defineProps<Props>();
+const { text = false, branch = 'develop', logo, size = 3, uniqueKey, src } = defineProps<Props>();
 
 const customImageRef = useTemplateRef<HTMLImageElement>('customImageRef');
 const error = ref<boolean>(false);
-const decoding = ref<boolean>(!!logo);
+const decoding = ref<boolean>(!!logo && !src);
 const pendingSources = ref<boolean>(false);
 const appName = 'rotki';
 const emptyLinks: ExternalLinks = {
@@ -41,6 +42,9 @@ const emptyLinks: ExternalLinks = {
 const externalSources = ref<ExternalLinks>(emptyLinks);
 
 const externalSource = computed<string | undefined>(() => {
+  if (src)
+    return src;
+
   const sources = get(externalSources);
   if (!logo || !sources[logo]) {
     set(decoding, get(pendingSources));
@@ -56,7 +60,7 @@ const externalSource = computed<string | undefined>(() => {
 });
 
 async function fetchSources(): Promise<void> {
-  if (!logo)
+  if (!logo || src)
     return;
 
   set(pendingSources, true);
