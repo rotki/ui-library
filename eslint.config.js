@@ -29,4 +29,9 @@ export default rotki({
   rules: {
     'max-lines': 'off',
   },
+}, {
+  files: ['pnpm-workspace.yaml'],
+  rules: {
+    'pnpm/yaml-enforce-settings': 'off',
+  },
 });
