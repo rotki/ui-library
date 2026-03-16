@@ -1,132 +1,207 @@
-import type { MaybeRef, ShallowRef } from 'vue';
-import { assert } from '@/utils/assert';
+import type { MaybeRefOrGetter, Ref, ShallowRef } from 'vue';
 
 export interface UseStickyTableHeaderRefs {
   table: Readonly<ShallowRef<HTMLTableElement | null>>;
   tableScroller: Readonly<ShallowRef<HTMLElement | null>>;
 }
 
+interface StickyElements {
+  head: HTMLElement;
+  theadClone: HTMLElement;
+  root: HTMLTableElement;
+}
+
+interface UseStickyTableHeaderReturn {
+  stick: Readonly<Ref<boolean>>;
+}
+
+const SELECTORS = {
+  head: ':scope > thead[data-id=head-main]',
+  headClone: ':scope > thead[data-id=head-clone]',
+  row: ':scope > tbody > tr:not([hidden])',
+  th: ':scope > th',
+} as const;
+
+const BORDER_PRECISION = -0.5;
+
+function queryHeadRow(root: HTMLTableElement, selector: string): HTMLTableRowElement | null {
+  return root.querySelector(`${selector} > tr`);
+}
+
+function queryColumns(row: HTMLTableRowElement | null): HTMLElement[] {
+  if (!row)
+    return [];
+  return Array.from(row.querySelectorAll<HTMLElement>(SELECTORS.th));
+}
+
+function clearColumnWidths(columns: HTMLElement[]): void {
+  for (const column of columns)
+    column.style.width = '';
+}
+
+function readColumnWidths(columns: HTMLElement[]): number[] {
+  return columns.map(col => col.getBoundingClientRect().width);
+}
+
+function applyColumnWidths(columns: HTMLElement[], widths: number[]): void {
+  for (const [i, column] of columns.entries()) {
+    const width = widths[i];
+    if (width !== undefined)
+      column.style.width = `${width}px`;
+  }
+}
+
+function positionHeadAtRest(head: HTMLElement): void {
+  head.style.left = `${BORDER_PRECISION}px`;
+  head.style.top = '0';
+}
+
+interface StuckPosition {
+  clonedRect: DOMRect;
+  tableRect: DOMRect;
+  lastRowHeight: number;
+  top: number;
+}
+
+function positionHeadStuck(head: HTMLElement, { clonedRect, lastRowHeight, tableRect, top }: StuckPosition): void {
+  head.style.left = `${clonedRect.left + BORDER_PRECISION}px`;
+
+  const isNearBottom = tableRect.bottom <= lastRowHeight + clonedRect.height + top;
+  head.style.top = isNearBottom
+    ? `${tableRect.bottom - lastRowHeight - clonedRect.height}px`
+    : `${top}px`;
+}
+
+function isInStickyRange(tableRect: DOMRect, top: number): boolean {
+  return tableRect.top <= top && tableRect.bottom > top;
+}
+
+function getLastRowHeight(root: HTMLTableElement): number | undefined {
+  const rows = root.querySelectorAll(SELECTORS.row);
+  if (rows.length <= 1)
+    return undefined;
+  return rows.item(rows.length - 1)?.getBoundingClientRect().height ?? 0;
+}
+
 /**
  * Setup sticky table header
  */
 export function useStickyTableHeader(
-  sticky: MaybeRef<boolean> = shallowRef(false),
-  offsetTop: MaybeRef<number | undefined>,
-  refs: UseStickyTableHeaderRefs,
-) {
-  const { table, tableScroller } = refs;
+  sticky: MaybeRefOrGetter<boolean> = shallowRef(false),
+  offsetTop: MaybeRefOrGetter<number | undefined>,
+  tableRefs: UseStickyTableHeaderRefs,
+): UseStickyTableHeaderReturn {
+  const { table, tableScroller } = tableRefs;
   const stick = shallowRef<boolean>(false);
-  const borderPrecision = -0.5;
-  const selectors = {
-    head: ':scope > thead[data-id=head-main]',
-    headClone: ':scope > thead[data-id=head-clone]',
-    row: ':scope > tbody > tr:not([hidden])',
-    th: ':scope > th',
-  };
 
-  const watchCellWidth = (): void => {
-    const root = get(table);
+  let resizeCleanups: (() => void)[] = [];
+  let syncOuterRafId: number | null = null;
+  let syncInnerRafId: number | null = null;
+  let rafId: number | null = null;
 
-    if (!get(sticky) || !root)
-      return;
+  function cleanupResizeObservers(): void {
+    for (const cleanup of resizeCleanups)
+      cleanup();
+    resizeCleanups = [];
+  }
 
-    const theadClone: HTMLHeadElement | null = root.querySelector(`${selectors.headClone} > tr`);
+  function cancelPendingSync(): void {
+    if (syncOuterRafId !== null)
+      cancelAnimationFrame(syncOuterRafId);
+    if (syncInnerRafId !== null)
+      cancelAnimationFrame(syncInnerRafId);
+    syncOuterRafId = null;
+    syncInnerRafId = null;
+  }
 
-    const head: HTMLHeadElement | null = root.querySelector(`${selectors.head} > tr`);
+  function scheduleSyncWidths(cloneColumns: HTMLElement[], mainColumns: HTMLElement[]): void {
+    cancelPendingSync();
 
-    let resizeCleanups: (() => void)[] = [];
+    syncOuterRafId = requestAnimationFrame(() => {
+      syncOuterRafId = null;
+      clearColumnWidths(mainColumns);
 
-    const observeChildTh = (): void => {
-      resizeCleanups.forEach(cleanup => cleanup());
-      resizeCleanups = [];
-
-      const columns: NodeListOf<HTMLElement> | undefined = head?.querySelectorAll(selectors.th);
-
-      const clonedColumns: NodeListOf<HTMLElement> | undefined = theadClone?.querySelectorAll(
-        selectors.th,
-      );
-
-      clonedColumns?.forEach((th: HTMLElement, i: number) => {
-        const { stop } = useResizeObserver(th, (entries) => {
-          const entry = entries[0];
-          assert(entry);
-          const cellRect = entry.target.getBoundingClientRect();
-          const column = columns?.item(i);
-          if (column)
-            column.style.width = `${cellRect.width}px`;
-        });
-        resizeCleanups.push(stop);
+      // Wait one frame for the clone to settle to its natural width after clearing
+      syncInnerRafId = requestAnimationFrame(() => {
+        syncInnerRafId = null;
+        applyColumnWidths(mainColumns, readColumnWidths(cloneColumns));
       });
-    };
+    });
+  }
 
-    useMutationObserver(
-      theadClone,
-      (mutationsList) => {
-        for (const mutation of mutationsList) {
-          if (mutation.type === 'childList' || mutation.type === 'attributes')
-            observeChildTh();
-        }
-      },
-      {
-        attributes: true,
-        childList: true,
-        subtree: true,
-      },
-    );
+  function observeColumnResizes(cloneColumns: HTMLElement[], mainColumns: HTMLElement[]): void {
+    cleanupResizeObservers();
 
-    observeChildTh();
-  };
+    for (const th of cloneColumns) {
+      const { stop } = useResizeObserver(th, () => {
+        scheduleSyncWidths(cloneColumns, mainColumns);
+      });
+      resizeCleanups.push(stop);
+    }
+  }
 
-  const toggleStickyClass = (): void => {
+  function watchCellWidth(): void {
     const root = get(table);
-
-    if (!get(sticky) || !root)
+    if (!toValue(sticky) || !root)
       return;
 
-    const rect = root.getBoundingClientRect();
-    const theadClone: HTMLHeadElement | null = root.querySelector(selectors.headClone);
+    const cloneRow = queryHeadRow(root, SELECTORS.headClone);
+    const mainRow = queryHeadRow(root, SELECTORS.head);
+    const cloneColumns = queryColumns(cloneRow);
+    const mainColumns = queryColumns(mainRow);
 
-    const clonedRect: DOMRect | undefined = theadClone?.getBoundingClientRect();
+    useMutationObserver(cloneRow, (mutations) => {
+      const hasRelevantMutation = mutations.some(
+        m => m.type === 'childList' || m.type === 'attributes',
+      );
+      if (hasRelevantMutation)
+        observeColumnResizes(queryColumns(cloneRow), queryColumns(mainRow));
+    }, { attributes: true, childList: true, subtree: true });
 
-    const head: HTMLHeadElement | null = root.querySelector(selectors.head);
+    observeColumnResizes(cloneColumns, mainColumns);
+  }
 
-    if (!clonedRect || !head || !theadClone)
+  function queryStickyElements(): StickyElements | undefined {
+    const root = get(table);
+    if (!toValue(sticky) || !root)
+      return undefined;
+
+    const theadClone = root.querySelector<HTMLElement>(SELECTORS.headClone);
+    const head = root.querySelector<HTMLElement>(SELECTORS.head);
+    if (!theadClone || !head)
+      return undefined;
+
+    return { head, root, theadClone };
+  }
+
+  function toggleStickyClass(): void {
+    const elements = queryStickyElements();
+    if (!elements)
       return;
 
-    const { height: theadHeight, left: theadLeft, width: theadWidth } = clonedRect;
+    const { head, root, theadClone } = elements;
+    const clonedRect = theadClone.getBoundingClientRect();
+    const tableRect = root.getBoundingClientRect();
+    const top = toValue(offsetTop) ?? 0;
 
-    const { bottom: tableBottom, top: tableTop } = rect;
-    const top = get(offsetTop) ?? 0;
+    head.style.width = `${clonedRect.width}px`;
 
-    head.style.width = `${theadWidth}px`;
-
-    const rows = root.querySelectorAll(selectors.row);
-    if (rows.length <= 1) {
+    const lastRowHeight = getLastRowHeight(root);
+    if (lastRowHeight === undefined) {
       set(stick, false);
-      head.style.left = `${borderPrecision}px`;
-      head.style.top = '0';
+      positionHeadAtRest(head);
       return;
     }
 
-    const lastRowRect: DOMRect | undefined = rows.item(rows.length - 1)?.getBoundingClientRect();
-
-    if (tableTop <= top && tableBottom > top) {
+    if (isInStickyRange(tableRect, top)) {
       set(stick, true);
-      head.style.left = `${theadLeft + borderPrecision}px`;
-
-      const lastRowHeight = lastRowRect?.height ?? 0;
-      if (tableBottom <= lastRowHeight + theadHeight + top)
-        head.style.top = `${tableBottom - lastRowHeight - theadHeight}px`;
-      else head.style.top = `${top}px`;
+      positionHeadStuck(head, { clonedRect, lastRowHeight, tableRect, top });
     }
     else {
       set(stick, false);
-      head.style.left = `${borderPrecision}px`;
-      head.style.top = '0';
+      positionHeadAtRest(head);
     }
-  };
-
-  let rafId: number | null = null;
+  }
 
   function throttledToggleStickyClass(): void {
     if (rafId !== null)
@@ -146,6 +221,6 @@ export function useStickyTableHeader(
   });
 
   return {
-    stick,
+    stick: readonly(stick),
   };
 }

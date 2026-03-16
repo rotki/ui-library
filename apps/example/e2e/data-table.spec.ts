@@ -253,6 +253,40 @@ test.describe('data tables - pagination', () => {
     const thead = table.locator('table thead[data-id="head-main"]');
     await expect(thead).toHaveClass(/sticky__header/);
   });
+
+  test('should produce consistent header widths after resize cycle', async ({ page }) => {
+    const container = page.locator('[data-cy=table-pagination-sticky]');
+    const table = container.locator('[data-cy=table]');
+    await expect(table).toBeVisible();
+
+    const mainCells = table.locator('table thead[data-id="head-main"] > tr > th');
+
+    async function getColumnWidths(): Promise<number[]> {
+      return mainCells.evaluateAll(cells =>
+        cells.map(cell => cell.getBoundingClientRect().width),
+      );
+    }
+
+    // Capture widths at initial size
+    const originalViewport = page.viewportSize();
+    expect(originalViewport).toBeTruthy();
+    const initialWidths = await getColumnWidths();
+
+    // Resize to a different width
+    await page.setViewportSize({ width: 800, height: originalViewport!.height });
+    await page.waitForTimeout(200);
+
+    // Resize back to original
+    await page.setViewportSize({ width: originalViewport!.width, height: originalViewport!.height });
+    await page.waitForTimeout(200);
+
+    const restoredWidths = await getColumnWidths();
+
+    // Widths should match within 1px tolerance (sub-pixel rounding)
+    for (const [i, initialWidth] of initialWidths.entries()) {
+      expect(Math.abs(initialWidth - restoredWidths[i]!)).toBeLessThanOrEqual(1);
+    }
+  });
 });
 
 test.describe('data tables - search', () => {

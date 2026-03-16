@@ -190,7 +190,7 @@ const table = useTemplateRef<HTMLTableElement>('table');
 const tableScroller = useTemplateRef<HTMLElement>('tableScroller');
 
 const { stick } = useStickyTableHeader(
-  toRef(() => stickyHeader),
+  () => stickyHeader,
   stickyHeaderOffset,
   { table, tableScroller },
 );
