@@ -344,7 +344,7 @@ When the dependency installed on the main project, it will run the `prepare` scr
 
 ### Generating the library icons
 
-We use remix-icons. You need to run this script to scrap the svgs data from remix-icons. (This script runs automatically on `prepare`. Run this in case the icons aren't generated properly)
+We use [Lucide](https://lucide.dev/) icons as the base icon set. Brand icons (Discord, Reddit, X/Twitter, etc.) in the `src/custom-icons/` directory are sourced from [Simple Icons](https://simpleicons.org/). You need to run this script to generate the icon data from SVGs. (This script runs automatically on `prepare`. Run this in case the icons aren't generated properly)
 
 ```
 pnpm run generate:icons
