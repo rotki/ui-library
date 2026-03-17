@@ -26,14 +26,27 @@ describe('components/logos/RuiLogo.vue', () => {
     expect(content.includes('>rotki<')).toBeTruthy();
   });
 
-  it('should render properly with logo prop defined', async () => {
+  it('should render fallback and custom image when logo prop defined', async () => {
     const content = await createWrapper({
       props: {
         logo: 'website',
       },
     });
+    // Should have both fallback (visible) and custom (hidden) images
     expect(content.includes('img')).toBeTruthy();
+    expect(content.includes('data-image="fallback"')).toBeTruthy();
     expect(content.includes('data-image="custom"')).toBeTruthy();
     expect(content.includes('>rotki<')).toBeFalsy();
+  });
+
+  it('should render only custom image when src prop defined', async () => {
+    const content = await createWrapper({
+      props: {
+        src: '/staging/logo.svg',
+      },
+    });
+    expect(content.includes('img')).toBeTruthy();
+    expect(content.includes('data-image="custom"')).toBeTruthy();
+    expect(content.includes('data-image="fallback"')).toBeFalsy();
   });
 });

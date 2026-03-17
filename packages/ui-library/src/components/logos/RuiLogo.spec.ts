@@ -25,6 +25,12 @@ describe('components/logos/RuiLogo.vue', () => {
     expect(wrapper.find('div').find('img').exists()).toBeTruthy();
   });
 
+  it('should show fallback immediately', () => {
+    wrapper = createWrapper();
+    const fallback = wrapper.find('img[data-image=fallback]');
+    expect(fallback.exists()).toBeTruthy();
+  });
+
   it('should pass text props', async () => {
     wrapper = createWrapper();
     expect(wrapper.find('div').text()).toBe('');
@@ -42,6 +48,14 @@ describe('components/logos/RuiLogo.vue', () => {
     expect(wrapper.find('img[data-image=custom]').exists()).toBeTruthy();
     await wrapper.setProps({ uniqueKey: '10' });
     expect(wrapper.find('img[data-image=custom][src*="?key=10"]').exists()).toBeTruthy();
+  });
+
+  it('should show fallback while logo prop is loading', async () => {
+    wrapper = createWrapper({ props: { logo: 'website' } });
+
+    // Fallback should be visible immediately while custom image loads
+    const fallback = wrapper.find('img[data-image=fallback]');
+    expect(fallback.exists()).toBeTruthy();
   });
 
   it('should render fallback image with alt text', () => {
@@ -68,17 +82,6 @@ describe('components/logos/RuiLogo.vue', () => {
     expect(wrapper.find('div').attributes('style')).toContain('height: 3rem');
   });
 
-  it('should have aria-label on loading placeholder when decoding', async () => {
-    wrapper = createWrapper();
-    await wrapper.setProps({ logo: 'website' });
-
-    // When logo is set but sources haven't loaded yet, decoding is true
-    // and the placeholder div should have role="img" and aria-label
-    const placeholder = wrapper.find('div[role=img]');
-    expect(placeholder.exists()).toBe(true);
-    expect(placeholder.attributes('aria-label')).toBe('rotki');
-  });
-
   it('should render custom image directly when src prop is provided', () => {
     wrapper = createWrapper({
       props: {
@@ -91,15 +94,14 @@ describe('components/logos/RuiLogo.vue', () => {
     expect(img.attributes('src')).toBe('/staging/logo.svg');
   });
 
-  it('should not show decoding placeholder when src is provided with logo', () => {
+  it('should not show fallback when src is provided', () => {
     wrapper = createWrapper({
       props: {
         src: '/staging/logo.svg',
-        logo: 'website',
       },
     });
 
-    expect(wrapper.find('div[role=img]').exists()).toBe(false);
+    expect(wrapper.find('img[data-image=fallback]').exists()).toBeFalsy();
     expect(wrapper.find('img[data-image=custom]').exists()).toBeTruthy();
   });
 });
