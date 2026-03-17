@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw';
 import { afterEach, describe, expect, it } from 'vitest';
 import { server } from '../../../tests/mocks/server';
-import { clearLogoSourcesCache, getLogoSources } from './use-logo-sources';
+import { clearLogoSourcesCache, getCachedLogoSources, getLogoSources, getVerifiedLogoUrl, setVerifiedLogoUrl } from './use-logo-sources';
 
 describe('use-logo-sources', () => {
   afterEach(() => {
@@ -121,5 +121,54 @@ describe('use-logo-sources', () => {
     const result = await getLogoSources('develop');
 
     expect(result).toBeUndefined();
+  });
+
+  it('should persist fetched sources to sessionStorage', async () => {
+    await getLogoSources('develop');
+
+    const cached = getCachedLogoSources('develop');
+    expect(cached).toBeDefined();
+    expect(cached?.website).toBe('website-logo.svg');
+  });
+
+  it('should return cached sources synchronously from sessionStorage', async () => {
+    // First fetch populates sessionStorage
+    await getLogoSources('develop');
+    // Clear in-memory cache but keep sessionStorage
+    clearLogoSourcesCache();
+
+    // Re-populate sessionStorage for the test (clearLogoSourcesCache clears it too)
+    sessionStorage.setItem('rui-logo-sources:develop', JSON.stringify({ website: 'cached.svg' }));
+
+    const cached = getCachedLogoSources('develop');
+    expect(cached).toBeDefined();
+    expect(cached?.website).toBe('cached.svg');
+  });
+
+  it('should return undefined from getCachedLogoSources when nothing is cached', () => {
+    const cached = getCachedLogoSources('nonexistent');
+    expect(cached).toBeUndefined();
+  });
+
+  it('should store and retrieve verified logo URLs', () => {
+    setVerifiedLogoUrl('develop', 'website', 'https://example.com/logo.svg');
+
+    const url = getVerifiedLogoUrl('develop', 'website');
+    expect(url).toBe('https://example.com/logo.svg');
+  });
+
+  it('should return undefined for unverified logo URLs', () => {
+    const url = getVerifiedLogoUrl('develop', 'website');
+    expect(url).toBeUndefined();
+  });
+
+  it('should clear sessionStorage entries on cache clear', async () => {
+    await getLogoSources('develop');
+    setVerifiedLogoUrl('develop', 'website', 'https://example.com/logo.svg');
+
+    clearLogoSourcesCache();
+
+    expect(getCachedLogoSources('develop')).toBeUndefined();
+    expect(getVerifiedLogoUrl('develop', 'website')).toBeUndefined();
   });
 });

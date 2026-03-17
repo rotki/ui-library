@@ -39,7 +39,7 @@ describe('components/logos/RuiLogo.vue', () => {
     expect(content.includes('>rotki<')).toBeFalsy();
   });
 
-  it('should render only custom image when src prop defined', async () => {
+  it('should render fallback hidden and custom image when src prop defined', async () => {
     const content = await createWrapper({
       props: {
         src: '/staging/logo.svg',
@@ -47,6 +47,8 @@ describe('components/logos/RuiLogo.vue', () => {
     });
     expect(content.includes('img')).toBeTruthy();
     expect(content.includes('data-image="custom"')).toBeTruthy();
-    expect(content.includes('data-image="fallback"')).toBeFalsy();
+    // Fallback is always in DOM but hidden (opacity-0) when custom is shown
+    expect(content.includes('data-image="fallback"')).toBeTruthy();
+    expect(content.includes('opacity-0')).toBeTruthy();
   });
 });

@@ -94,14 +94,16 @@ describe('components/logos/RuiLogo.vue', () => {
     expect(img.attributes('src')).toBe('/staging/logo.svg');
   });
 
-  it('should not show fallback when src is provided', () => {
+  it('should hide fallback when src is provided', () => {
     wrapper = createWrapper({
       props: {
         src: '/staging/logo.svg',
       },
     });
 
-    expect(wrapper.find('img[data-image=fallback]').exists()).toBeFalsy();
+    const fallbackImg = wrapper.find('img[data-image=fallback]');
+    expect(fallbackImg.exists()).toBeTruthy();
+    expect(fallbackImg.classes()).toContain('opacity-0');
     expect(wrapper.find('img[data-image=custom]').exists()).toBeTruthy();
   });
 });

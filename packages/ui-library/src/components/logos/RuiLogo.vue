@@ -2,7 +2,7 @@
 import { isClient } from '@vueuse/shared';
 import { useSSRContext } from 'vue';
 import fallback from '@/components/logos/logo.svg';
-import { getLogoSources } from '@/components/logos/use-logo-sources';
+import { getCachedLogoSources, getLogoSources, getVerifiedLogoUrl, removeVerifiedLogoUrl, setVerifiedLogoUrl } from '@/components/logos/use-logo-sources';
 
 export interface ExternalLinks {
   drawer?: string;
@@ -42,11 +42,14 @@ const externalSources = ref<ExternalLinks>(emptyLinks());
 
 const customImageRef = useTemplateRef<HTMLImageElement>('customImageRef');
 
-const externalSource = computed<string | undefined>(() => {
-  if (src)
-    return src;
+// Synchronously hydrate from sessionStorage so the URL is available immediately on refresh
+if (isClient && logo && !src) {
+  const cached = getCachedLogoSources(branch);
+  if (cached)
+    set(externalSources, cached);
+}
 
-  const sources = get(externalSources);
+function buildExternalUrl(sources: ExternalLinks): string | undefined {
   if (!logo || !sources[logo])
     return undefined;
 
@@ -56,9 +59,48 @@ const externalSource = computed<string | undefined>(() => {
     return `${url}?key=${uniqueKey}`;
 
   return url;
+}
+
+const externalSource = computed<string | undefined>(() => {
+  if (src)
+    return src;
+
+  return buildExternalUrl(get(externalSources));
 });
 
-const showCustom = computed<boolean>(() => !!src || (get(seasonalReady) && !get(error)));
+const showCustom = computed<boolean>(() => !!src || (!!get(externalSource) && get(seasonalReady) && !get(error)));
+
+// If we have a previously verified URL that matches the current source, trust it immediately
+if (isClient && logo && !src) {
+  const verifiedUrl = getVerifiedLogoUrl(branch, String(logo));
+  const currentUrl = get(externalSource);
+  if (verifiedUrl && currentUrl && verifiedUrl === currentUrl)
+    set(seasonalReady, true);
+}
+
+function preloadImage(url: string): void {
+  if (!isClient)
+    return;
+
+  const existing = document.head.querySelectorAll<HTMLLinkElement>('link[rel="preload"][as="image"]');
+  for (const link of existing) {
+    if (link.href === url)
+      return;
+  }
+
+  const link = document.createElement('link');
+  link.rel = 'preload';
+  link.as = 'image';
+  link.href = url;
+  document.head.appendChild(link);
+}
+
+// Inject a preload hint for the seasonal image so the browser starts fetching early
+if (isClient && logo && !src) {
+  const url = get(externalSource);
+  if (url)
+    preloadImage(url);
+}
 
 async function fetchSources(): Promise<void> {
   if (!logo || src)
@@ -70,13 +112,25 @@ async function fetchSources(): Promise<void> {
     set(externalSources, links);
 }
 
+function onImageError(): void {
+  set(error, true);
+  if (logo)
+    removeVerifiedLogoUrl(branch, String(logo));
+}
+
 function onImageLoaded(): void {
   const img = get(customImageRef);
   if (!img)
     return;
 
   img.decode()
-    .then(() => set(seasonalReady, true))
+    .then(() => {
+      set(seasonalReady, true);
+      // Cache the verified URL so subsequent page loads can trust it immediately
+      const url = get(externalSource);
+      if (url && logo)
+        setVerifiedLogoUrl(branch, String(logo), url);
+    })
     .catch(() => set(error, true));
 }
 
@@ -100,29 +154,32 @@ onServerPrefetch(async () => {
     class="gap-x-4 flex items-center relative"
     :style="{ height: `${size}rem` }"
   >
-    <!-- Fallback: always rendered, hidden when custom image is ready -->
-    <img
-      v-if="!showCustom"
-      :src="fallback"
-      :alt="appName"
-      data-image="fallback"
-      class="h-full"
-      :style="{ width: `${size}rem` }"
-    />
+    <div
+      class="relative"
+      :style="{ width: `${size}rem`, height: `${size}rem` }"
+    >
+      <!-- Fallback: always in DOM, fades out when custom image is ready -->
+      <img
+        :src="fallback"
+        :alt="appName"
+        data-image="fallback"
+        class="absolute inset-0 h-full w-full transition ease-out duration-200"
+        :class="showCustom ? 'opacity-0' : 'opacity-100'"
+      />
 
-    <!-- Custom/seasonal image: rendered off-screen while loading, shown when decoded -->
-    <img
-      v-if="externalSource && !error"
-      ref="customImageRef"
-      :src="externalSource"
-      :alt="appName"
-      data-image="custom"
-      class="h-full transition ease-out duration-200"
-      :class="showCustom ? 'opacity-100' : 'absolute opacity-0 pointer-events-none'"
-      :style="{ width: `${size}rem` }"
-      @error="error = true"
-      @load="onImageLoaded()"
-    />
+      <!-- Custom/seasonal image: fades in when decoded -->
+      <img
+        v-if="externalSource && !error"
+        ref="customImageRef"
+        :src="externalSource"
+        :alt="appName"
+        data-image="custom"
+        class="absolute inset-0 h-full w-full transition ease-out duration-200"
+        :class="showCustom ? 'opacity-100' : 'opacity-0 pointer-events-none'"
+        @error="onImageError()"
+        @load="onImageLoaded()"
+      />
+    </div>
 
     <div
       v-if="text"
