@@ -39,15 +39,14 @@ export default defineConfig({
         const peerDeps = [
           'vue',
           'vue-router',
-          '@vueuse/core',
-          '@vueuse/shared',
-          '@vueuse/math',
           'dayjs',
         ];
 
         // Externalize regular dependencies (installed with the library but not bundled)
         const dependencies = [
           '@popperjs/core',
+          '@vueuse/core',
+          '@vueuse/shared',
           'scule',
           'tinycolor2',
         ];

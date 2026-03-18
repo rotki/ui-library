@@ -105,6 +105,12 @@ importers:
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
+      '@vueuse/core':
+        specifier: 14.2.1
+        version: 14.2.1(vue@3.5.30(typescript@5.9.3))
+      '@vueuse/shared':
+        specifier: 14.2.1
+        version: 14.2.1(vue@3.5.30(typescript@5.9.3))
       dayjs:
         specifier: '>=1.11.13 <12'
         version: 1.11.19
@@ -169,15 +175,6 @@ importers:
       '@vue/tsconfig':
         specifier: 0.9.0
         version: 0.9.0(typescript@5.9.3)(vue@3.5.30(typescript@5.9.3))
-      '@vueuse/core':
-        specifier: 14.2.1
-        version: 14.2.1(vue@3.5.30(typescript@5.9.3))
-      '@vueuse/math':
-        specifier: 14.2.1
-        version: 14.2.1(vue@3.5.30(typescript@5.9.3))
-      '@vueuse/shared':
-        specifier: 14.2.1
-        version: 14.2.1(vue@3.5.30(typescript@5.9.3))
       autoprefixer:
         specifier: 10.4.27
         version: 10.4.27(postcss@8.5.8)
@@ -1837,11 +1834,6 @@ packages:
 
   '@vueuse/core@14.2.1':
     resolution: {integrity: sha512-3vwDzV+GDUNpdegRY6kzpLm4Igptq+GA0QkJ3W61Iv27YWwW/ufSlOfgQIpN6FZRMG0mkaz4gglJRtq5SeJyIQ==}
-    peerDependencies:
-      vue: ^3.5.0
-
-  '@vueuse/math@14.2.1':
-    resolution: {integrity: sha512-WV4WTm4GBeILnIAOePQNI1UbYv/HjDx1P+0MSXxFyBy3r8I9xVYn6xqBMLkCbXfAVmkr1sA/G5ILM2K8VDtIbA==}
     peerDependencies:
       vue: ^3.5.0
 
@@ -4528,8 +4520,8 @@ packages:
   vue-component-type-helpers@2.2.12:
     resolution: {integrity: sha512-YbGqHZ5/eW4SnkPNR44mKVc6ZKQoRs/Rux1sxC6rdwXb4qpbOSYfDr9DsTHolOTGmIKgM9j141mZbBeg05R1pw==}
 
-  vue-component-type-helpers@3.2.5:
-    resolution: {integrity: sha512-tkvNr+bU8+xD/onAThIe7CHFvOJ/BO6XCOrxMzeytJq40nTfpGDJuVjyCM8ccGZKfAbGk2YfuZyDMXM56qheZQ==}
+  vue-component-type-helpers@3.2.6:
+    resolution: {integrity: sha512-O02tnvIfOQVmnvoWwuSydwRoHjZVt8UEBR+2p4rT35p8GAy5VTlWP8o5qXfJR/GWCN0nVZoYWsVUvx2jwgdBmQ==}
 
   vue-docgen-api@4.79.2:
     resolution: {integrity: sha512-n9ENAcs+40awPZMsas7STqjkZiVlIjxIKgiJr5rSohDP0/JCrD9VtlzNojafsA1MChm/hz2h3PDtUedx3lbgfA==}
@@ -5786,7 +5778,7 @@ snapshots:
       storybook: 10.2.17(@testing-library/dom@10.4.1)(prettier@3.8.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       type-fest: 2.19.0
       vue: 3.5.30(typescript@5.9.3)
-      vue-component-type-helpers: 3.2.5
+      vue-component-type-helpers: 3.2.6
 
   '@stylistic/eslint-plugin@5.8.0(eslint@9.39.4(jiti@2.6.1))':
     dependencies:
@@ -6479,11 +6471,6 @@ snapshots:
     dependencies:
       '@types/web-bluetooth': 0.0.21
       '@vueuse/metadata': 14.2.1
-      '@vueuse/shared': 14.2.1(vue@3.5.30(typescript@5.9.3))
-      vue: 3.5.30(typescript@5.9.3)
-
-  '@vueuse/math@14.2.1(vue@3.5.30(typescript@5.9.3))':
-    dependencies:
       '@vueuse/shared': 14.2.1(vue@3.5.30(typescript@5.9.3))
       vue: 3.5.30(typescript@5.9.3)
 
@@ -9361,7 +9348,7 @@ snapshots:
 
   vue-component-type-helpers@2.2.12: {}
 
-  vue-component-type-helpers@3.2.5: {}
+  vue-component-type-helpers@3.2.6: {}
 
   vue-docgen-api@4.79.2(vue@3.5.30(typescript@5.9.3)):
     dependencies:
