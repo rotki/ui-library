@@ -145,16 +145,16 @@ const {
   updateInternalSearch,
   textValueToProperValue,
 } = useAutoCompleteSearch<TItem>(
-  toRef(() => options),
+  () => options,
   searchInputModel,
   {
-    keyAttr: toRef(() => keyAttr),
-    textAttr: toRef(() => textAttr),
-    noFilter: toRef(() => noFilter),
-    filter: toRef(() => filter),
-    customValue: toRef(() => customValue),
-    hideCustomValue: toRef(() => hideCustomValue),
-    returnObject: toRef(() => returnObject),
+    keyAttr: () => keyAttr,
+    textAttr: () => textAttr,
+    noFilter: () => noFilter,
+    filter: () => filter,
+    customValue: () => customValue,
+    hideCustomValue: () => hideCustomValue,
+    returnObject: () => returnObject,
   },
 );
 
@@ -169,11 +169,11 @@ const shouldApplyValueAsSearch = computed<boolean>(
 
 const { value, setSelected } = useAutoCompleteValue<AutoCompleteModelValue<TValue>, TItem>(
   modelValue,
-  toRef(() => options),
+  () => options,
   {
-    keyAttr: toRef(() => keyAttr),
-    returnObject: toRef(() => returnObject),
-    customValue: toRef(() => customValue),
+    keyAttr: () => keyAttr,
+    returnObject: () => returnObject,
+    customValue: () => customValue,
   },
   {
     getIdentifier,
@@ -204,7 +204,7 @@ const {
   keyAttr,
   textAttr,
   options: filteredOptions,
-  dense: toRef(() => dense),
+  dense: () => dense,
   value,
   menuRef,
   setValue,
@@ -224,8 +224,8 @@ const {
   setValueFocus,
 } = useAutoCompleteKeyboardNavigation<TItem>(
   {
-    chips: toRef(() => chips),
-    customValue: toRef(() => customValue),
+    chips: () => chips,
+    customValue: () => customValue,
     multiple,
   },
   {
@@ -252,8 +252,8 @@ const {
   setInputFocus: focusSetInputFocus,
 } = useAutoCompleteFocus(
   {
-    customValue: toRef(() => customValue),
-    disabled: toRef(() => disabled),
+    customValue: () => customValue,
+    disabled: () => disabled,
     shouldApplyValueAsSearch,
   },
   {

@@ -13,8 +13,8 @@ const {
 
 const { formattedErrorMessages, formattedSuccessMessages, hasError, hasSuccess } =
   useFormTextDetail(
-    toRef(() => errorMessages),
-    toRef(() => successMessages),
+    () => errorMessages,
+    () => successMessages,
   );
 </script>
 

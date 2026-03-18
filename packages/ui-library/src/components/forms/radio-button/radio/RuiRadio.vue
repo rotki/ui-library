@@ -43,8 +43,8 @@ defineSlots<{
 }>();
 
 const { hasError, hasSuccess } = useFormTextDetail(
-  toRef(() => errorMessages),
-  toRef(() => successMessages),
+  () => errorMessages,
+  () => successMessages,
 );
 
 const iconSize = computed<number>(() => {

@@ -1,4 +1,4 @@
-import type { ComputedRef, MaybeRef } from 'vue';
+import type { ComputedRef, MaybeRefOrGetter } from 'vue';
 
 export interface FormTextDetailReturn {
   formattedErrorMessages: ComputedRef<string[]>;
@@ -9,11 +9,11 @@ export interface FormTextDetailReturn {
 }
 
 export function useFormTextDetail(
-  errorMessages: MaybeRef<string | string[]>,
-  successMessages: MaybeRef<string | string[]>,
+  errorMessages: MaybeRefOrGetter<string | string[]>,
+  successMessages: MaybeRefOrGetter<string | string[]>,
 ): FormTextDetailReturn {
   const formattedErrorMessages = computed<string[]>(() => {
-    let errorMessagesVal = get(errorMessages);
+    let errorMessagesVal = toValue(errorMessages);
     if (typeof errorMessagesVal === 'string')
       errorMessagesVal = [errorMessagesVal];
 
@@ -21,7 +21,7 @@ export function useFormTextDetail(
   });
 
   const formattedSuccessMessages = computed<string[]>(() => {
-    let successMessagesVal = get(successMessages);
+    let successMessagesVal = toValue(successMessages);
     if (typeof successMessagesVal === 'string')
       successMessagesVal = [successMessagesVal];
 

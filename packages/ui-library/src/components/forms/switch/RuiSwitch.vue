@@ -40,8 +40,8 @@ defineSlots<{
 }>();
 
 const { hasError, hasSuccess } = useFormTextDetail(
-  toRef(() => errorMessages),
-  toRef(() => successMessages),
+  () => errorMessages,
+  () => successMessages,
 );
 
 function input(event: Event): void {

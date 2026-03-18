@@ -44,10 +44,10 @@ const {
   onPopperLeave,
   updatePopper,
 } = usePopper(
-  toRef(() => popper),
-  toRef(() => disabled),
-  toRef(() => openDelay),
-  toRef(() => closeDelay),
+  () => popper,
+  () => disabled,
+  () => openDelay,
+  () => closeDelay,
 );
 
 defineExpose({

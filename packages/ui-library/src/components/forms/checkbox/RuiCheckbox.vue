@@ -46,8 +46,8 @@ defineSlots<{
 const el = useTemplateRef<HTMLInputElement>('el');
 
 const { hasError, hasSuccess } = useFormTextDetail(
-  toRef(() => errorMessages),
-  toRef(() => successMessages),
+  () => errorMessages,
+  () => successMessages,
 );
 
 const internalModelValue = computed<boolean>({

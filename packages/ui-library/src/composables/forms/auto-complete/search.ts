@@ -1,22 +1,22 @@
-import type { MaybeRef, Ref } from 'vue';
+import type { MaybeRefOrGetter, Ref } from 'vue';
 import { get, set } from '@vueuse/shared';
 import { getTextToken } from '@/utils/helpers';
 
 export interface UseAutoCompleteSearchOptions<TItem> {
   /** The property used as the unique identifier for each item. */
-  keyAttr?: MaybeRef<keyof TItem | undefined>;
+  keyAttr?: MaybeRefOrGetter<keyof TItem | undefined>;
   /** The property used to display text for each item. */
-  textAttr?: MaybeRef<keyof TItem | undefined>;
+  textAttr?: MaybeRefOrGetter<keyof TItem | undefined>;
   /** Whether to disable client-side filtering of options. */
-  noFilter?: MaybeRef<boolean>;
+  noFilter?: MaybeRefOrGetter<boolean>;
   /** Custom filter function to match items against the search query. */
-  filter?: MaybeRef<((item: TItem, queryText: string) => boolean) | undefined>;
+  filter?: MaybeRefOrGetter<((item: TItem, queryText: string) => boolean) | undefined>;
   /** Whether custom (free-text) values are allowed. */
-  customValue?: MaybeRef<boolean>;
+  customValue?: MaybeRefOrGetter<boolean>;
   /** Whether to hide the custom value option from the dropdown. */
-  hideCustomValue?: MaybeRef<boolean>;
+  hideCustomValue?: MaybeRefOrGetter<boolean>;
   /** Whether to return the full item object instead of just the key. */
-  returnObject?: MaybeRef<boolean>;
+  returnObject?: MaybeRefOrGetter<boolean>;
 }
 
 export interface UseAutoCompleteSearchReturn<TItem> {
@@ -29,7 +29,7 @@ export interface UseAutoCompleteSearchReturn<TItem> {
 }
 
 export function useAutoCompleteSearch<TItem>(
-  options: MaybeRef<TItem[]>,
+  options: MaybeRefOrGetter<TItem[]>,
   searchModel: Ref<string>,
   opts: UseAutoCompleteSearchOptions<TItem>,
 ): UseAutoCompleteSearchReturn<TItem> {
@@ -54,15 +54,15 @@ export function useAutoCompleteSearch<TItem>(
 
   const filteredOptions = computed<TItem[]>(() => {
     const search = get(debouncedInternalSearch);
-    const optionsValue = get(options);
+    const optionsValue = toValue(options);
 
-    const noFilter = get(opts.noFilter);
+    const noFilter = toValue(opts.noFilter);
     if (noFilter || !search || get(justOpened))
       return optionsValue;
 
-    const keyAttr = get(opts.keyAttr);
-    const textAttr = get(opts.textAttr);
-    const filter = get(opts.filter);
+    const keyAttr = toValue(opts.keyAttr);
+    const textAttr = toValue(opts.textAttr);
+    const filter = toValue(opts.filter);
 
     // Cache the search token once
     const searchToken = getCachedTextToken(search);
@@ -81,8 +81,8 @@ export function useAutoCompleteSearch<TItem>(
 
     const filtered = optionsValue.filter(item => usedFilter(item, search));
 
-    const customValue = get(opts.customValue);
-    const hideCustomValue = get(opts.hideCustomValue);
+    const customValue = toValue(opts.customValue);
+    const hideCustomValue = toValue(opts.hideCustomValue);
     if (!customValue || hideCustomValue || !search) {
       return filtered;
     }
@@ -103,7 +103,7 @@ export function useAutoCompleteSearch<TItem>(
 
     return [textValueToProperValue(search, {
       keyAttr,
-      returnObject: get(opts.returnObject),
+      returnObject: toValue(opts.returnObject),
       textAttr,
     }), ...filtered];
   });
@@ -143,9 +143,9 @@ export function useAutoCompleteSearch<TItem>(
     internalSearch,
     justOpened,
     textValueToProperValue: (val: any, returnObjectOverride: boolean = false) => textValueToProperValue(val, {
-      keyAttr: get(opts.keyAttr),
-      returnObject: returnObjectOverride || get(opts.returnObject),
-      textAttr: get(opts.textAttr),
+      keyAttr: toValue(opts.keyAttr),
+      returnObject: returnObjectOverride || toValue(opts.returnObject),
+      textAttr: toValue(opts.textAttr),
     }),
     updateInternalSearch,
   };

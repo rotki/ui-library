@@ -78,17 +78,17 @@ const {
   onPopperLeave,
   updatePopper,
 } = usePopper(
-  toRef(() => popper),
-  toRef(() => disabled),
-  toRef(() => openDelay),
-  toRef(() => closeDelay),
+  () => popper,
+  () => disabled,
+  () => openDelay,
+  () => closeDelay,
 );
 
 const { width } = useElementSize(activator);
 
 const { hasError, hasSuccess } = useFormTextDetail(
-  toRef(() => errorMessages),
-  toRef(() => successMessages),
+  () => errorMessages,
+  () => successMessages,
 );
 
 const baseMenuAttrs = computed<{ onMouseover?: () => void; onMouseleave?: () => void }>(() => {

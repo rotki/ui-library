@@ -76,8 +76,8 @@ const { prependWidth, appendWidth } = usePrependAppendWidth(prepend, append);
 const { width } = useElementBounding(innerWrapper);
 
 const { hasError, hasSuccess, hasMessages } = useFormTextDetail(
-  toRef(() => errorMessages),
-  toRef(() => successMessages),
+  () => errorMessages,
+  () => successMessages,
 );
 
 const { focused } = useFocus(inputRef);

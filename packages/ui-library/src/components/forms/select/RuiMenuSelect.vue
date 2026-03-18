@@ -125,12 +125,12 @@ const {
   itemHeight: itemHeight ?? (dense ? 30 : 48),
   keyAttr,
   textAttr,
-  options: toRef(() => options),
+  options: () => options,
   autoFocus: true,
-  dense: toRef(() => dense),
+  dense: () => dense,
   value,
   menuRef,
-  disabled: toRef(() => disabled),
+  disabled: () => disabled,
   autoSelectFirst,
 });
 

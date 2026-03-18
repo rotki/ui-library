@@ -88,8 +88,8 @@ const focusedDebounced = refDebounced(focused, 500);
 const showClearIcon = computed<boolean>(() => clearable && !!get(modelValue) && !disabled && !readonly);
 
 const { hasError, hasSuccess, hasMessages } = useFormTextDetail(
-  toRef(() => errorMessages),
-  toRef(() => successMessages),
+  () => errorMessages,
+  () => successMessages,
 );
 
 const labelWithQuote = useLabelWithQuote(

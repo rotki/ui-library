@@ -1,4 +1,4 @@
-import type { Ref, TemplateRef } from 'vue';
+import type { MaybeRefOrGetter, Ref, TemplateRef } from 'vue';
 
 export type KeyOfType<T, V> = T extends string | number | boolean | symbol | null | undefined
   ? never
@@ -14,9 +14,9 @@ export interface DropdownItemAttr<TValue, TItem> {
 }
 
 export interface DropdownOptions<TValue, TItem> {
-  options: Ref<TItem[]>;
-  dense?: Ref<boolean>;
-  disabled?: Ref<boolean>;
+  options: MaybeRefOrGetter<TItem[]>;
+  dense?: MaybeRefOrGetter<boolean>;
+  disabled?: MaybeRefOrGetter<boolean>;
   value: Ref<TItem | TItem[] | undefined>;
   menuRef: Ref<HTMLElement> | TemplateRef<HTMLElement>;
   keyAttr?: KeyOfType<TItem, TValue extends Array<infer U> ? U : TValue>;
@@ -76,7 +76,7 @@ export function useDropdownMenu<TValue, TItem>({
   autoFocus,
   autoSelectFirst,
   dense,
-  disabled = shallowRef(false),
+  disabled = false,
   getIdentifier: externalGetIdentifier,
   getText: externalGetText,
   hideSelected,
@@ -114,7 +114,7 @@ export function useDropdownMenu<TValue, TItem>({
   }
 
   const options = computed<TItem[]>(() => {
-    const options = get(allOptions);
+    const options = toValue(allOptions);
     if (!hideSelected)
       return options;
 
@@ -162,7 +162,7 @@ export function useDropdownMenu<TValue, TItem>({
     const { min, max } = get(optionWidthBounds);
     const maxWidth = 30;
     const paddingX = 1.5;
-    const fontMultiplier = get(dense) ? 12 : 13;
+    const fontMultiplier = toValue(dense) ? 12 : 13;
     const difference = max - min;
 
     function computeValue(width: number): string {
@@ -246,7 +246,7 @@ export function useDropdownMenu<TValue, TItem>({
     });
   }
 
-  watch([isOpen, disabled], async ([open, _]) => {
+  watch([isOpen, () => toValue(disabled)], async ([open, _]) => {
     await updateOpen(open);
   });
 

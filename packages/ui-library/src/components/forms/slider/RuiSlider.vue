@@ -56,8 +56,8 @@ const {
 const outer = useTemplateRef<HTMLDivElement>('outer');
 
 const { hasError, hasSuccess } = useFormTextDetail(
-  toRef(() => errorMessages),
-  toRef(() => successMessages),
+  () => errorMessages,
+  () => successMessages,
 );
 const { width, height } = useElementBounding(outer);
 

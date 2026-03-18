@@ -7,7 +7,7 @@ import {
   type VirtualElement,
 } from '@popperjs/core';
 import { type MaybeElement, unrefElement } from '@vueuse/core';
-import { onMounted, type Ref, ref, watchEffect } from 'vue';
+import { type MaybeRefOrGetter, onMounted, type Ref, ref, watchEffect } from 'vue';
 import { useTimeoutManager } from './timeout-manager';
 
 export interface PopperOptions {
@@ -51,11 +51,11 @@ interface UsePopperReturn {
 }
 
 export function usePopper(
-  options: Ref<PopperOptions>,
-  disabled: Ref<boolean> = shallowRef(false),
-  openDelay: Ref<number> = shallowRef(0),
-  closeDelay: Ref<number> = shallowRef(0),
-  virtualReference?: Ref<Element | VirtualElement>,
+  options: MaybeRefOrGetter<PopperOptions>,
+  disabled: MaybeRefOrGetter<boolean> = false,
+  openDelay: MaybeRefOrGetter<number> = 0,
+  closeDelay: MaybeRefOrGetter<number> = 0,
+  virtualReference?: MaybeRefOrGetter<Element | VirtualElement | undefined>,
 ): UsePopperReturn {
   const reference = ref<HTMLElement>();
   const popper = ref<MaybeElement>();
@@ -76,7 +76,7 @@ export function usePopper(
   };
 
   const onOpen = (immediate: boolean = false): void => {
-    if (get(disabled))
+    if (toValue(disabled))
       return;
 
     closeTimeoutManager.clear();
@@ -89,13 +89,13 @@ export function usePopper(
         () => {
           set(open, true);
         },
-        immediate ? 0 : get(openDelay),
+        immediate ? 0 : toValue(openDelay),
       );
     }
   };
 
   const onClose = (immediate: boolean = false): void => {
-    if (get(disabled))
+    if (toValue(disabled))
       return;
 
     openTimeoutManager.clear();
@@ -108,7 +108,7 @@ export function usePopper(
 
           set(open, false);
         },
-        immediate ? 0 : get(closeDelay),
+        immediate ? 0 : toValue(closeDelay),
       );
     }
   };
@@ -127,7 +127,7 @@ export function usePopper(
       overflowPadding = DEFAULT_POPPER_OPTIONS.overflowPadding,
       resize = DEFAULT_POPPER_OPTIONS.resize,
       scroll = DEFAULT_POPPER_OPTIONS.scroll,
-    } = get(options);
+    } = toValue(options);
 
     return [
       {
@@ -181,7 +181,7 @@ export function usePopper(
     const {
       placement = DEFAULT_POPPER_OPTIONS.placement,
       strategy = DEFAULT_POPPER_OPTIONS.strategy,
-    } = get(options);
+    } = toValue(options);
 
     return {
       modifiers: get(modifiers),
@@ -194,12 +194,12 @@ export function usePopper(
     popperEl: HTMLElement;
     referenceEl: Element | VirtualElement;
   } | null {
-    if (!get(popper) || (!get(reference) && !get(virtualReference))) {
+    if (!get(popper) || (!get(reference) && !toValue(virtualReference))) {
       return null;
     }
 
     const popperEl = unrefElement(popper);
-    const referenceEl = get(virtualReference) || unrefElement(reference);
+    const referenceEl = toValue(virtualReference) || unrefElement(reference);
 
     if (!(popperEl instanceof HTMLElement) || !referenceEl) {
       return null;

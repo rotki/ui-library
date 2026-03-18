@@ -1,12 +1,12 @@
-import type { ComputedRef, MaybeRef, Ref, TemplateRef } from 'vue';
+import type { ComputedRef, MaybeRefOrGetter, Ref, TemplateRef } from 'vue';
 
 export interface UseAutoCompleteFocusOptions {
   /** Whether custom (free-text) values are allowed. */
-  customValue: MaybeRef<boolean>;
+  customValue: MaybeRefOrGetter<boolean>;
   /** Whether to apply the current value as the search text when focused. */
-  shouldApplyValueAsSearch: MaybeRef<boolean>;
+  shouldApplyValueAsSearch: MaybeRefOrGetter<boolean>;
   /** Whether the autocomplete is disabled. */
-  disabled: MaybeRef<boolean>;
+  disabled: MaybeRefOrGetter<boolean>;
 }
 
 export interface UseAutoCompleteFocusDeps {
@@ -41,8 +41,8 @@ export function useAutoCompleteFocus(
 
   const inputClass = computed<string>(() => {
     const isFocused = get(anyFocused);
-    const isDisabled = get(options.disabled);
-    const shouldApply = get(options.shouldApplyValueAsSearch);
+    const isDisabled = toValue(options.disabled);
+    const shouldApply = toValue(options.shouldApplyValueAsSearch);
     const hasSearch = get(deps.internalSearch);
 
     if ((!isFocused || isDisabled) && !shouldApply)
@@ -69,7 +69,7 @@ export function useAutoCompleteFocus(
   function onInputFocused(): void {
     set(deps.focusedValueIndex, -1);
 
-    const shouldApply = get(options.shouldApplyValueAsSearch);
+    const shouldApply = toValue(options.shouldApplyValueAsSearch);
     if (shouldApply) {
       const textInput = get(deps.textInput);
       textInput?.select();
@@ -86,7 +86,7 @@ export function useAutoCompleteFocus(
   let pendingCustomSearch = '';
 
   watch(anyFocused, (focused) => {
-    if (!focused && get(options.customValue)) {
+    if (!focused && toValue(options.customValue)) {
       pendingCustomSearch = get(deps.internalSearch);
     }
   });
@@ -99,7 +99,7 @@ export function useAutoCompleteFocus(
       if (!focused) {
         set(deps.isOpen, false);
 
-        const customValue = get(options.customValue);
+        const customValue = toValue(options.customValue);
         const searchToUse = pendingCustomSearch;
         pendingCustomSearch = '';
 
@@ -108,7 +108,7 @@ export function useAutoCompleteFocus(
           deps.setSearchAsValue();
         }
 
-        const shouldApply = get(options.shouldApplyValueAsSearch);
+        const shouldApply = toValue(options.shouldApplyValueAsSearch);
         if (!shouldApply) {
           deps.updateInternalSearch();
         }

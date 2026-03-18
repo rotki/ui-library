@@ -1,13 +1,13 @@
-import type { MaybeRef, Ref, TemplateRef } from 'vue';
+import type { MaybeRefOrGetter, Ref, TemplateRef } from 'vue';
 import { get, set } from '@vueuse/shared';
 
 export interface UseAutoCompleteKeyboardNavigationOptions {
   /** Whether multiple items can be selected. */
-  multiple: MaybeRef<boolean>;
+  multiple: MaybeRefOrGetter<boolean>;
   /** Whether custom (free-text) values are allowed. */
-  customValue: MaybeRef<boolean>;
+  customValue: MaybeRefOrGetter<boolean>;
   /** Whether selected values are displayed as chips. */
-  chips: MaybeRef<boolean>;
+  chips: MaybeRefOrGetter<boolean>;
 }
 
 export interface UseAutoCompleteKeyboardNavigationDeps<TItem> {
@@ -46,7 +46,7 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
   }
 
   function moveSelectedValueHighlight(event: KeyboardEvent, next: boolean): void {
-    const multiple = get(options.multiple);
+    const multiple = toValue(options.multiple);
     const internalSearchValue = get(deps.internalSearch);
 
     if (!multiple || internalSearchValue.length > 0)
@@ -78,8 +78,8 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
     const filteredOptions = get(deps.filteredOptions);
     const highlightedIndex = get(deps.highlightedIndex);
     const isOpen = get(deps.isOpen);
-    const customValue = get(options.customValue);
-    const multiple = get(options.multiple);
+    const customValue = toValue(options.customValue);
+    const multiple = toValue(options.multiple);
     const value = get(deps.value);
     const internalSearch = get(deps.internalSearch);
 
@@ -135,7 +135,7 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
     const isOpen = get(deps.isOpen);
     const filteredOptions = get(deps.filteredOptions);
     const highlightedIndex = get(deps.highlightedIndex);
-    const multiple = get(options.multiple);
+    const multiple = toValue(options.multiple);
 
     if (isOpen && filteredOptions.length > 0 && highlightedIndex > -1 && !multiple) {
       deps.applyHighlighted();
@@ -147,11 +147,11 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
     const internalSearch = get(deps.internalSearch);
     const value = get(deps.value);
     const total = value.length;
-    const multiple = get(options.multiple);
+    const multiple = toValue(options.multiple);
 
     if (!internalSearch && total > 0) {
       if (multiple) {
-        if (get(options.chips)) {
+        if (toValue(options.chips)) {
           set(focusedValueIndex, total - 1);
         }
         else {
@@ -174,7 +174,7 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
 
   // Watch focused value index to handle chip focus
   watch(focusedValueIndex, async (index) => {
-    const multiple = get(options.multiple);
+    const multiple = toValue(options.multiple);
     if (index === -1 || !multiple)
       return;
 

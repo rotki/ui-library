@@ -10,7 +10,7 @@ const { color } = defineProps<{
   color: string;
 }>();
 
-const { copy, copied } = useClipboard({ source: toRef(() => color) });
+const { copy, copied } = useClipboard({ source: () => color });
 </script>
 
 <template>

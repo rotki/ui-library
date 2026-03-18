@@ -1,14 +1,14 @@
-import type { ComputedRef, MaybeRef, Ref } from 'vue';
+import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue';
 import { get, set } from '@vueuse/shared';
 import { assert } from '@/utils/assert';
 
 export interface UseAutoCompleteValueOptions<TItem> {
   /** The property used as the unique identifier for each item. */
-  keyAttr?: MaybeRef<keyof TItem | undefined>;
+  keyAttr?: MaybeRefOrGetter<keyof TItem | undefined>;
   /** Whether to return the full item object instead of just the key. */
-  returnObject?: MaybeRef<boolean>;
+  returnObject?: MaybeRefOrGetter<boolean>;
   /** Whether custom (free-text) values are allowed. */
-  customValue?: MaybeRef<boolean>;
+  customValue?: MaybeRefOrGetter<boolean>;
 }
 
 export interface UseAutoCompleteValueReturn<TItem> {
@@ -20,22 +20,22 @@ export interface UseAutoCompleteValueDeps<TItem> {
   getIdentifier: (item: TItem) => any;
   getText: (item: TItem) => string | undefined;
   textValueToProperValue: (val: any, returnObject?: boolean) => TItem;
-  shouldApplyValueAsSearch: MaybeRef<boolean>;
-  isOpen: MaybeRef<boolean>;
-  multiple: MaybeRef<boolean>;
+  shouldApplyValueAsSearch: MaybeRefOrGetter<boolean>;
+  isOpen: MaybeRefOrGetter<boolean>;
+  multiple: MaybeRefOrGetter<boolean>;
   updateInternalSearch: (value?: string) => void;
 }
 
 export function useAutoCompleteValue<TValue, TItem>(
   modelValue: Ref<TValue | undefined>,
-  options: MaybeRef<TItem[]>,
+  options: MaybeRefOrGetter<TItem[]>,
   opts: UseAutoCompleteValueOptions<TItem>,
   deps: UseAutoCompleteValueDeps<TItem>,
 ): UseAutoCompleteValueReturn<TItem> {
   // Create maps for O(1) lookup performance
   const optionsMap = computed<Map<any, TItem>>(() => {
     const map = new Map<any, TItem>();
-    const optionsData = get(options);
+    const optionsData = toValue(options);
     for (const item of optionsData) {
       map.set(deps.getIdentifier(item), item);
     }
@@ -132,11 +132,11 @@ export function useAutoCompleteValue<TValue, TItem>(
   }
 
   function setSelected(selected: TItem[]): void {
-    const keyAttr = get(opts.keyAttr);
-    const returnObject = get(opts.returnObject);
+    const keyAttr = toValue(opts.keyAttr);
+    const returnObject = toValue(opts.returnObject);
     const selection = keyAttr && !returnObject ? selected.map(item => item[keyAttr]) : selected;
 
-    if (get(deps.multiple))
+    if (toValue(deps.multiple))
       return onUpdateModelValue(selection as TValue);
 
     if (selection.length === 0)
@@ -148,9 +148,9 @@ export function useAutoCompleteValue<TValue, TItem>(
   const value = computed<TItem[]>({
     get: () => {
       const modelValueData = get(modelValue);
-      const keyAttr = get(opts.keyAttr);
-      const returnObject = get(opts.returnObject) ?? false;
-      const customValue = get(opts.customValue) ?? false;
+      const keyAttr = toValue(opts.keyAttr);
+      const returnObject = toValue(opts.returnObject) ?? false;
+      const customValue = toValue(opts.customValue) ?? false;
       const optionsMapData = get(optionsMap);
 
       if (keyAttr && returnObject)
@@ -164,12 +164,12 @@ export function useAutoCompleteValue<TValue, TItem>(
   });
 
   // Sync search text when menu is closed and value changes
-  watch([modelValue, () => get(deps.isOpen)], () => {
-    if (get(deps.isOpen) || !get(deps.shouldApplyValueAsSearch))
+  watch([modelValue, () => toValue(deps.isOpen)], () => {
+    if (toValue(deps.isOpen) || !toValue(deps.shouldApplyValueAsSearch))
       return;
 
     const currentValue = get(value);
-    if (get(deps.multiple) || currentValue.length === 0) {
+    if (toValue(deps.multiple) || currentValue.length === 0) {
       deps.updateInternalSearch();
     }
     else {
