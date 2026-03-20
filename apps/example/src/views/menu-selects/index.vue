@@ -31,7 +31,7 @@ const sections = [
 </script>
 
 <template>
-  <div data-cy="menu-selects-index">
+  <div data-id="menu-selects-index">
     <h2 class="text-2xl font-bold mb-6">
       Menu Selects
     </h2>
@@ -46,7 +46,7 @@ const sections = [
         <RuiCard
           variant="outlined"
           class="h-full hover:border-primary transition-colors cursor-pointer"
-          :data-cy="`link-${section.route}`"
+          :data-id="`link-${section.route}`"
         >
           <template #header>
             <div class="flex items-center gap-2">

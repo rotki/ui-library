@@ -6,7 +6,7 @@ test.describe('forms/Switch', () => {
   });
 
   test('checks for switches', async ({ page }) => {
-    await expect(page.locator('h2[data-cy=switches]')).toContainText('Switches');
+    await expect(page.locator('h2[data-id=switches]')).toContainText('Switches');
 
     const firstSwitch = page.locator('input[type="checkbox"]').first();
     const secondSwitch = page.locator('input[type="checkbox"]').nth(1);

@@ -165,7 +165,7 @@ describe('components/forms/select/RuiSimpleSelect.vue', () => {
   it('should pass attrs to wrapper div', () => {
     wrapper = createWrapper({
       attrs: {
-        'data-cy': 'test',
+        'data-id': 'test',
       },
       props: {
         modelValue: 'Option 0',
@@ -173,6 +173,6 @@ describe('components/forms/select/RuiSimpleSelect.vue', () => {
       },
     });
 
-    expect(wrapper.attributes('data-cy')).toBe('test');
+    expect(wrapper.attributes('data-id')).toBe('test');
   });
 });

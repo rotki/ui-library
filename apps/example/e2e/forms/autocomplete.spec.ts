@@ -6,19 +6,19 @@ test.describe('auto-complete - index', () => {
   });
 
   test('should render navigation links', async ({ page }) => {
-    await expect(page.locator('[data-cy=auto-completes-index]')).toBeVisible();
-    await expect(page.locator('[data-cy="link-/auto-completes/basic"]')).toBeVisible();
-    await expect(page.locator('[data-cy="link-/auto-completes/selection"]')).toBeVisible();
-    await expect(page.locator('[data-cy="link-/auto-completes/search"]')).toBeVisible();
-    await expect(page.locator('[data-cy="link-/auto-completes/readonly"]')).toBeVisible();
-    await expect(page.locator('[data-cy="link-/auto-completes/custom"]')).toBeVisible();
-    await expect(page.locator('[data-cy="link-/auto-completes/keyboard"]')).toBeVisible();
-    await expect(page.locator('[data-cy="link-/auto-completes/advanced"]')).toBeVisible();
+    await expect(page.locator('[data-id=auto-completes-index]')).toBeVisible();
+    await expect(page.locator('[data-id="link-/auto-completes/basic"]')).toBeVisible();
+    await expect(page.locator('[data-id="link-/auto-completes/selection"]')).toBeVisible();
+    await expect(page.locator('[data-id="link-/auto-completes/search"]')).toBeVisible();
+    await expect(page.locator('[data-id="link-/auto-completes/readonly"]')).toBeVisible();
+    await expect(page.locator('[data-id="link-/auto-completes/custom"]')).toBeVisible();
+    await expect(page.locator('[data-id="link-/auto-completes/keyboard"]')).toBeVisible();
+    await expect(page.locator('[data-id="link-/auto-completes/advanced"]')).toBeVisible();
   });
 
   test('should navigate to sub-routes', async ({ page }) => {
-    await page.locator('[data-cy="link-/auto-completes/basic"]').click();
-    await expect(page.locator('[data-cy=auto-completes-basic]')).toBeVisible();
+    await page.locator('[data-id="link-/auto-completes/basic"]').click();
+    await expect(page.locator('[data-id=auto-completes-basic]')).toBeVisible();
   });
 });
 
@@ -32,26 +32,26 @@ test.describe('auto-complete - basic', () => {
   });
 
   test('should render default variant with pre-selected value', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-basic-default]');
+    const ac = page.locator('[data-id=ac-basic-default]');
     await expect(ac).toBeVisible();
     await expect(ac.locator('input')).toHaveValue('Germany');
   });
 
   test('should render outlined variant', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-basic-outlined]');
+    const ac = page.locator('[data-id=ac-basic-outlined]');
     await expect(ac).toBeVisible();
     await expect(ac.locator('fieldset')).toBeVisible();
     await expect(ac.locator('input')).toHaveValue('Germany');
   });
 
   test('should render dense variant', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-basic-dense]');
+    const ac = page.locator('[data-id=ac-basic-dense]');
     await expect(ac).toBeVisible();
     await expect(ac.locator('input')).toHaveValue('Germany');
   });
 
   test('should not open menu when disabled', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-basic-disabled]');
+    const ac = page.locator('[data-id=ac-basic-disabled]');
     const activator = ac.locator('[data-id=activator]');
     await expect(activator).toHaveAttribute('aria-disabled', 'true');
     await activator.click({ force: true });
@@ -59,37 +59,37 @@ test.describe('auto-complete - basic', () => {
   });
 
   test('should show loading indicator', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-basic-loading]');
+    const ac = page.locator('[data-id=ac-basic-loading]');
     const activator = ac.locator('[data-id=activator]');
     await expect(activator).toHaveAttribute('aria-busy', 'true');
   });
 
   test('should display error messages', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-basic-error]');
+    const ac = page.locator('[data-id=ac-basic-error]');
     await expect(ac).toContainText('This field is required');
     await expect(ac.locator('input')).toHaveAttribute('aria-invalid', 'true');
   });
 
   test('should display success messages', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-basic-success]');
+    const ac = page.locator('[data-id=ac-basic-success]');
     await expect(ac).toContainText('Looks good!');
   });
 
   test('should hide details when hideDetails is set', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-basic-hide-details]');
+    const ac = page.locator('[data-id=ac-basic-hide-details]');
     await expect(ac).toBeVisible();
     await expect(ac).not.toContainText('This field is required');
   });
 
   test('should show required indicator', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-basic-required]');
+    const ac = page.locator('[data-id=ac-basic-required]');
     const activator = ac.locator('[data-id=activator]');
     await expect(activator).toHaveAttribute('aria-required', 'true');
     await expect(activator).toContainText('\uFE61');
   });
 
   test('should display hint text', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-basic-hint]');
+    const ac = page.locator('[data-id=ac-basic-hint]');
     await expect(ac).toBeVisible();
     await expect(ac).toContainText('Select your country');
   });
@@ -105,7 +105,7 @@ test.describe('auto-complete - selection', () => {
   });
 
   test('should open menu and select single value', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-select-single]');
+    const ac = page.locator('[data-id=ac-select-single]');
     const activator = ac.locator('[data-id=activator]');
 
     await expect(activator).toHaveAttribute('aria-expanded', 'false');
@@ -119,7 +119,7 @@ test.describe('auto-complete - selection', () => {
   });
 
   test('should clear value with clear button', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-select-single-preselected]');
+    const ac = page.locator('[data-id=ac-select-single-preselected]');
     await expect(ac.locator('input')).toHaveValue('Lorem');
 
     const activator = ac.locator('[data-id=activator]');
@@ -129,7 +129,7 @@ test.describe('auto-complete - selection', () => {
   });
 
   test('should select multiple values as chips', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-select-multi]');
+    const ac = page.locator('[data-id=ac-select-multi]');
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
@@ -145,7 +145,7 @@ test.describe('auto-complete - selection', () => {
   });
 
   test('should remove chip by clicking close', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-select-multi-preselected]');
+    const ac = page.locator('[data-id=ac-select-multi-preselected]');
     const chips = ac.locator('[data-id=activator] [data-value]');
     await expect(chips).toHaveCount(2);
 
@@ -155,7 +155,7 @@ test.describe('auto-complete - selection', () => {
   });
 
   test('should auto-select first option on open', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-select-auto-first]');
+    const ac = page.locator('[data-id=ac-select-auto-first]');
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
@@ -166,7 +166,7 @@ test.describe('auto-complete - selection', () => {
   });
 
   test('should hide selected items from dropdown', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-select-hide-selected]');
+    const ac = page.locator('[data-id=ac-select-hide-selected]');
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
@@ -182,7 +182,7 @@ test.describe('auto-complete - selection', () => {
   });
 
   test('should navigate options with keyboard', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-select-single]');
+    const ac = page.locator('[data-id=ac-select-single]');
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
@@ -200,7 +200,7 @@ test.describe('auto-complete - selection', () => {
   });
 
   test('should select with Tab in single mode', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-select-single]');
+    const ac = page.locator('[data-id=ac-select-single]');
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
@@ -224,7 +224,7 @@ test.describe('auto-complete - search', () => {
   });
 
   test('should filter options by typing', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-search-filter]');
+    const ac = page.locator('[data-id=ac-search-filter]');
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
@@ -241,7 +241,7 @@ test.describe('auto-complete - search', () => {
   });
 
   test('should not filter when noFilter is set', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-search-no-filter]');
+    const ac = page.locator('[data-id=ac-search-no-filter]');
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
@@ -256,7 +256,7 @@ test.describe('auto-complete - search', () => {
   });
 
   test('should allow custom value entry', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-search-custom-value]');
+    const ac = page.locator('[data-id=ac-search-custom-value]');
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
@@ -267,7 +267,7 @@ test.describe('auto-complete - search', () => {
   });
 
   test('should hide custom value option from menu', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-search-custom-hide]');
+    const ac = page.locator('[data-id=ac-search-custom-hide]');
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
@@ -279,7 +279,7 @@ test.describe('auto-complete - search', () => {
   });
 
   test('should show no-data message when no matches', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-search-no-data]');
+    const ac = page.locator('[data-id=ac-search-no-data]');
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
@@ -290,7 +290,7 @@ test.describe('auto-complete - search', () => {
   });
 
   test('should hide no-data when hideNoData is set', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-search-hide-no-data]');
+    const ac = page.locator('[data-id=ac-search-hide-no-data]');
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
@@ -300,7 +300,7 @@ test.describe('auto-complete - search', () => {
   });
 
   test('should show placeholder only when focused', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-search-placeholder]');
+    const ac = page.locator('[data-id=ac-search-placeholder]');
     const input = ac.locator('input');
 
     // Before focus, placeholder should be empty
@@ -322,7 +322,7 @@ test.describe('auto-complete - readonly', () => {
   });
 
   test('should not open menu when read-only', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-readonly-default]');
+    const ac = page.locator('[data-id=ac-readonly-default]');
     const activator = ac.locator('[data-id=activator]');
     await expect(activator).toHaveAttribute('aria-readonly', 'true');
     await activator.click({ force: true });
@@ -330,12 +330,12 @@ test.describe('auto-complete - readonly', () => {
   });
 
   test('should display pre-selected value', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-readonly-default]');
+    const ac = page.locator('[data-id=ac-readonly-default]');
     await expect(ac.locator('input')).toHaveValue('Lorem');
   });
 
   test('should display read-only chips', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-readonly-multi]');
+    const ac = page.locator('[data-id=ac-readonly-multi]');
     const chips = ac.locator('[data-id=activator] [data-value]');
     await expect(chips).toHaveCount(2);
   });
@@ -351,8 +351,8 @@ test.describe('auto-complete - custom slots', () => {
   });
 
   test('should open menu via custom activator button', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-custom-activator]');
-    const button = ac.locator('[data-cy=activator]');
+    const ac = page.locator('[data-id=ac-custom-activator]');
+    const button = ac.locator('[data-id=activator]');
 
     await expect(button).toBeVisible();
     await expect(button).toContainText('Choose Option');
@@ -362,7 +362,7 @@ test.describe('auto-complete - custom slots', () => {
   });
 
   test('should render custom item append content', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-custom-item]');
+    const ac = page.locator('[data-id=ac-custom-item]');
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
@@ -390,7 +390,7 @@ test.describe('auto-complete - keyboard', () => {
   });
 
   test('should remove last value with Backspace in non-chips multi mode', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-kb-multi-no-chips]');
+    const ac = page.locator('[data-id=ac-kb-multi-no-chips]');
     const activator = ac.locator('[data-id=activator]');
 
     // Verify initial state: 3 items selected (Lorem, Ipsum, Dolor)
@@ -409,7 +409,7 @@ test.describe('auto-complete - keyboard', () => {
   });
 
   test('should focus chip on first Backspace, then delete on second', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-kb-multi-chips]');
+    const ac = page.locator('[data-id=ac-kb-multi-chips]');
     const activator = ac.locator('[data-id=activator]');
     const chips = activator.locator('[data-value]');
 
@@ -430,7 +430,7 @@ test.describe('auto-complete - keyboard', () => {
   });
 
   test('should navigate between chips with arrow keys', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-kb-chip-nav]');
+    const ac = page.locator('[data-id=ac-kb-chip-nav]');
     const activator = ac.locator('[data-id=activator]');
     const chips = activator.locator('[data-value]');
 
@@ -454,7 +454,7 @@ test.describe('auto-complete - keyboard', () => {
   });
 
   test('should close menu with Escape', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-kb-escape]');
+    const ac = page.locator('[data-id=ac-kb-escape]');
     const activator = ac.locator('[data-id=activator]');
 
     // Open the menu
@@ -467,8 +467,8 @@ test.describe('auto-complete - keyboard', () => {
   });
 
   test('should submit form on Enter when menu is closed and value is set', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-kb-form-submit]');
-    const form = page.locator('[data-cy=ac-kb-form]');
+    const ac = page.locator('[data-id=ac-kb-form-submit]');
+    const form = page.locator('[data-id=ac-kb-form]');
 
     // Value is preselected ('Lorem'), verify it
     await expect(ac.locator('input')).toHaveValue('Lorem');
@@ -483,11 +483,11 @@ test.describe('auto-complete - keyboard', () => {
 
     // Press Enter - should submit the form
     await ac.locator('input').press('Enter');
-    await expect(form.locator('[data-cy=form-submitted]')).toBeVisible();
+    await expect(form.locator('[data-id=form-submitted]')).toBeVisible();
   });
 
   test('should highlight selected item when re-opening menu', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-kb-reopen]');
+    const ac = page.locator('[data-id=ac-kb-reopen]');
     const activator = ac.locator('[data-id=activator]');
 
     // Open and select an item
@@ -523,7 +523,7 @@ test.describe('auto-complete - advanced', () => {
   });
 
   test('should work with return-object mode', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-adv-return-object]');
+    const ac = page.locator('[data-id=ac-adv-return-object]');
     const activator = ac.locator('[data-id=activator]');
 
     // Open and select an item
@@ -536,12 +536,12 @@ test.describe('auto-complete - advanced', () => {
   });
 
   test('should display pre-selected return-object value', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-adv-return-object-pre]');
+    const ac = page.locator('[data-id=ac-adv-return-object-pre]');
     await expect(ac.locator('input')).toHaveValue('Germany');
   });
 
   test('should render filled variant', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-adv-filled]');
+    const ac = page.locator('[data-id=ac-adv-filled]');
     await expect(ac).toBeVisible();
 
     // Filled variant should be functional - open and select
@@ -554,8 +554,8 @@ test.describe('auto-complete - advanced', () => {
   });
 
   test('should handle falsy modelValue like 0 correctly', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-adv-falsy]');
-    const display = page.locator('[data-cy=ac-adv-falsy-display]');
+    const ac = page.locator('[data-id=ac-adv-falsy]');
+    const display = page.locator('[data-id=ac-adv-falsy-display]');
 
     // Value is preselected as 0, should display "Zero"
     await expect(ac.locator('input')).toHaveValue('Zero');
@@ -580,8 +580,8 @@ test.describe('auto-complete - advanced', () => {
   });
 
   test('should sync search input model', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-adv-search-input]');
-    const display = page.locator('[data-cy=ac-adv-search-display]');
+    const ac = page.locator('[data-id=ac-adv-search-input]');
+    const display = page.locator('[data-id=ac-adv-search-display]');
 
     // Initially search should be empty
     await expect(display).toContainText('Search: ""');
@@ -597,7 +597,7 @@ test.describe('auto-complete - advanced', () => {
   });
 
   test('should clear all values in multi-select with clear button', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-adv-multi-clear]');
+    const ac = page.locator('[data-id=ac-adv-multi-clear]');
     const activator = ac.locator('[data-id=activator]');
     const chips = activator.locator('[data-value]');
 
@@ -613,14 +613,14 @@ test.describe('auto-complete - advanced', () => {
   });
 
   test('should set custom value on blur', async ({ page }) => {
-    const ac = page.locator('[data-cy=ac-adv-custom-blur]');
+    const ac = page.locator('[data-id=ac-adv-custom-blur]');
 
     // Focus and type a custom value
     await ac.locator('[data-id=activator]').click();
     await ac.locator('input').fill('MyCustomBlur');
 
     // Click somewhere else to blur
-    await page.locator('[data-cy=auto-completes-advanced] h2').click();
+    await page.locator('[data-id=auto-completes-advanced] h2').click();
 
     // The custom value should be set
     await expect(ac.locator('input')).toHaveValue('MyCustomBlur');

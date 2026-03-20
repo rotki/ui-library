@@ -32,7 +32,7 @@ test.describe('progress indicators', () => {
   });
 
   test('should render all progress variants', async ({ page }) => {
-    await expect(page.locator('h2[data-cy=progress]')).toContainText('Progress');
+    await expect(page.locator('h2[data-id=progress]')).toContainText('Progress');
 
     const determinateProgress = page.locator('div[class*=progress][class*=determinate]').first();
     const indeterminateProgress = page.locator('div[class*=progress][class*=indeterminate]').first();

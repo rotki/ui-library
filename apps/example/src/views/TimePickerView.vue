@@ -18,7 +18,7 @@ const timePickers = ref<RuiTimePickerProps[]>([
 </script>
 
 <template>
-  <ComponentView data-cy="timepickers">
+  <ComponentView data-id="timepickers">
     <template #title>
       Time Pickers
     </template>
@@ -27,7 +27,7 @@ const timePickers = ref<RuiTimePickerProps[]>([
         v-for="(field, i) in timePickers"
         :key="i"
         v-model="field.modelValue"
-        :data-cy="`timepicker-${i}`"
+        :data-id="`timepicker-${i}`"
         v-bind="objectOmit(field, ['modelValue'])"
       />
     </div>

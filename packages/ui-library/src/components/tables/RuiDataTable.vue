@@ -331,7 +331,7 @@ onMounted(() => {
       :dense="dense"
       :loading="loading"
       :disable-per-page="disablePerPage"
-      data-cy="table-pagination"
+      data-id="table-pagination"
       @update:model-value="onPaginate()"
     />
     <div
@@ -442,7 +442,7 @@ onMounted(() => {
                         size="sm"
                         variant="text"
                         icon
-                        data-cy="group-copy-button"
+                        data-id="group-copy-button"
                         @click="onCopyGroup({ key: groupKey, value: row.group })"
                       >
                         <RuiIcon
@@ -460,7 +460,7 @@ onMounted(() => {
                           size="sm"
                           variant="text"
                           icon
-                          data-cy="group-ungroup-button"
+                          data-id="group-ungroup-button"
                           @click="onUngroup()"
                         >
                           <RuiIcon
@@ -498,7 +498,7 @@ onMounted(() => {
                   rowspan="1"
                 >
                   <RuiCheckbox
-                    :data-cy="`table-toggle-check-${index}`"
+                    :data-id="`table-toggle-check-${index}`"
                     :model-value="isSelected(row[rowAttr])"
                     :disabled="isDisabledRow(row[rowAttr])"
                     :size="dense ? 'sm' : undefined"
@@ -647,7 +647,7 @@ onMounted(() => {
       :dense="dense"
       :loading="loading"
       :disable-per-page="disablePerPage"
-      data-cy="table-pagination"
+      data-id="table-pagination"
       @update:model-value="onPaginate()"
     />
   </div>

@@ -26,7 +26,7 @@ const customBlurValue = ref<string>();
 </script>
 
 <template>
-  <div data-cy="auto-completes-advanced">
+  <div data-id="auto-completes-advanced">
     <h2 class="text-2xl font-bold mb-6">
       Advanced
     </h2>
@@ -40,7 +40,7 @@ const customBlurValue = ref<string>();
           key-attr="id"
           text-attr="label"
           label="Return Object"
-          data-cy="ac-adv-return-object"
+          data-id="ac-adv-return-object"
         />
       </div>
 
@@ -52,7 +52,7 @@ const customBlurValue = ref<string>();
           key-attr="id"
           text-attr="label"
           label="Return Object (pre-selected)"
-          data-cy="ac-adv-return-object-pre"
+          data-id="ac-adv-return-object-pre"
         />
       </div>
 
@@ -62,7 +62,7 @@ const customBlurValue = ref<string>();
           variant="filled"
           :options="primitiveOptions"
           label="Filled Variant"
-          data-cy="ac-adv-filled"
+          data-id="ac-adv-filled"
         />
       </div>
 
@@ -72,7 +72,7 @@ const customBlurValue = ref<string>();
           variant="outlined"
           :options="primitiveOptions"
           label="Outlined (comparison)"
-          data-cy="ac-adv-outlined"
+          data-id="ac-adv-outlined"
         />
       </div>
 
@@ -83,10 +83,10 @@ const customBlurValue = ref<string>();
           key-attr="id"
           text-attr="label"
           label="Falsy Value (0)"
-          data-cy="ac-adv-falsy"
+          data-id="ac-adv-falsy"
         />
         <div
-          data-cy="ac-adv-falsy-display"
+          data-id="ac-adv-falsy-display"
           class="mt-2 text-sm"
         >
           Model: {{ falsyValue === undefined ? 'undefined' : falsyValue }}
@@ -99,10 +99,10 @@ const customBlurValue = ref<string>();
           v-model:search-input="searchInputText"
           :options="primitiveOptions"
           label="Search Input Model"
-          data-cy="ac-adv-search-input"
+          data-id="ac-adv-search-input"
         />
         <div
-          data-cy="ac-adv-search-display"
+          data-id="ac-adv-search-display"
           class="mt-2 text-sm"
         >
           Search: "{{ searchInputText }}"
@@ -116,7 +116,7 @@ const customBlurValue = ref<string>();
           clearable
           :options="primitiveOptions"
           label="Multi Clear"
-          data-cy="ac-adv-multi-clear"
+          data-id="ac-adv-multi-clear"
         />
       </div>
 
@@ -126,7 +126,7 @@ const customBlurValue = ref<string>();
           custom-value
           :options="primitiveOptions"
           label="Custom Value on Blur"
-          data-cy="ac-adv-custom-blur"
+          data-id="ac-adv-custom-blur"
         />
       </div>
     </div>

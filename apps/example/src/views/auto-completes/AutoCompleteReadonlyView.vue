@@ -9,7 +9,7 @@ const readonlyMulti = ref<string[]>(['Lorem', 'Ipsum']);
 </script>
 
 <template>
-  <div data-cy="auto-completes-readonly">
+  <div data-id="auto-completes-readonly">
     <h2 class="text-2xl font-bold mb-6">
       Read-only
     </h2>
@@ -21,7 +21,7 @@ const readonlyMulti = ref<string[]>(['Lorem', 'Ipsum']);
           read-only
           :options="primitiveOptions"
           label="Read-only Default"
-          data-cy="ac-readonly-default"
+          data-id="ac-readonly-default"
         />
       </div>
 
@@ -32,7 +32,7 @@ const readonlyMulti = ref<string[]>(['Lorem', 'Ipsum']);
           variant="outlined"
           :options="primitiveOptions"
           label="Read-only Outlined"
-          data-cy="ac-readonly-outlined"
+          data-id="ac-readonly-outlined"
         />
       </div>
 
@@ -43,7 +43,7 @@ const readonlyMulti = ref<string[]>(['Lorem', 'Ipsum']);
           chips
           :options="primitiveOptions"
           label="Read-only Multi"
-          data-cy="ac-readonly-multi"
+          data-id="ac-readonly-multi"
         />
       </div>
     </div>

@@ -44,7 +44,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <ComponentView data-cy="switches">
+  <ComponentView data-id="switches">
     <template #title>
       Switches
     </template>

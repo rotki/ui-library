@@ -29,7 +29,7 @@ function toggleRow(row: BaseUser, expanded: ExtendedUser[]): void {
 </script>
 
 <template>
-  <div data-cy="data-tables-expandable">
+  <div data-id="data-tables-expandable">
     <h2 class="text-2xl font-bold mb-6">
       Expandable Rows
     </h2>
@@ -38,7 +38,7 @@ function toggleRow(row: BaseUser, expanded: ExtendedUser[]): void {
       <!-- Multiple expandable -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-expandable-multiple"
+        data-id="table-expandable-multiple"
       >
         <h4>Multiple Expandable</h4>
         <p class="text-sm text-rui-text-secondary">
@@ -51,7 +51,7 @@ function toggleRow(row: BaseUser, expanded: ExtendedUser[]): void {
           row-attr="id"
           outlined
           sticky-header
-          data-cy="table"
+          data-id="table"
         >
           <template #item.action>
             <RuiButton
@@ -66,7 +66,7 @@ function toggleRow(row: BaseUser, expanded: ExtendedUser[]): void {
             </RuiButton>
           </template>
           <template #expanded-item>
-            <RuiCard data-cy="expanded-content">
+            <RuiCard data-id="expanded-content">
               <template #header>
                 Expanded content
               </template>
@@ -79,7 +79,7 @@ function toggleRow(row: BaseUser, expanded: ExtendedUser[]): void {
       <!-- Single expandable -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-expandable-single"
+        data-id="table-expandable-single"
       >
         <h4>Single Expandable</h4>
         <p class="text-sm text-rui-text-secondary">
@@ -92,7 +92,7 @@ function toggleRow(row: BaseUser, expanded: ExtendedUser[]): void {
           row-attr="id"
           outlined
           single-expand
-          data-cy="table"
+          data-id="table"
         >
           <template #item.action>
             <RuiButton
@@ -107,7 +107,7 @@ function toggleRow(row: BaseUser, expanded: ExtendedUser[]): void {
             </RuiButton>
           </template>
           <template #expanded-item>
-            <RuiCard data-cy="expanded-content">
+            <RuiCard data-id="expanded-content">
               <template #header>
                 Expanded content
               </template>
@@ -120,7 +120,7 @@ function toggleRow(row: BaseUser, expanded: ExtendedUser[]): void {
       <!-- Custom expand control -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-expandable-custom"
+        data-id="table-expandable-custom"
       >
         <h4>Custom Expand Control</h4>
         <p class="text-sm text-rui-text-secondary">
@@ -133,7 +133,7 @@ function toggleRow(row: BaseUser, expanded: ExtendedUser[]): void {
           row-attr="id"
           outlined
           single-expand
-          data-cy="table"
+          data-id="table"
         >
           <template #item.expand="{ row }">
             <RuiTableRowExpander
@@ -155,7 +155,7 @@ function toggleRow(row: BaseUser, expanded: ExtendedUser[]): void {
             </RuiButton>
           </template>
           <template #expanded-item>
-            <RuiCard data-cy="expanded-content">
+            <RuiCard data-id="expanded-content">
               <template #header>
                 Expanded content
               </template>

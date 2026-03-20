@@ -8,7 +8,7 @@ const readonlyOutlined = ref<string>('Lorem');
 </script>
 
 <template>
-  <div data-cy="menu-selects-readonly">
+  <div data-id="menu-selects-readonly">
     <h2 class="text-2xl font-bold mb-6">
       Menu Selects: Read-only
     </h2>
@@ -20,7 +20,7 @@ const readonlyOutlined = ref<string>('Lorem');
           v-model="readonlyDefault"
           :options="primitiveOptions"
           read-only
-          data-cy="ms-readonly-default"
+          data-id="ms-readonly-default"
         />
       </div>
 
@@ -31,7 +31,7 @@ const readonlyOutlined = ref<string>('Lorem');
           :options="primitiveOptions"
           read-only
           variant="outlined"
-          data-cy="ms-readonly-outlined"
+          data-id="ms-readonly-outlined"
         />
       </div>
     </div>

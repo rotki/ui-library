@@ -19,7 +19,7 @@ const bottomSheets = ref<BottomSheetData[]>([
 </script>
 
 <template>
-  <ComponentView data-cy="bottom-sheets">
+  <ComponentView data-id="bottom-sheets">
     <template #title>
       Bottom Sheets
     </template>
@@ -30,11 +30,11 @@ const bottomSheets = ref<BottomSheetData[]>([
         :key="i"
         v-bind="bottomSheet"
         width="900px"
-        :data-cy="`bottom-sheet-${i}`"
+        :data-id="`bottom-sheet-${i}`"
       >
         <template #activator="{ attrs }">
           <RuiButton
-            data-cy="activator"
+            data-id="activator"
             v-bind="attrs"
           >
             {{ bottomSheet.label }}
@@ -57,7 +57,7 @@ const bottomSheets = ref<BottomSheetData[]>([
               <div class="border-t border-default py-4">
                 <div class="flex gap-2 w-full justify-end">
                   <RuiButton
-                    data-cy="close"
+                    data-id="close"
                     variant="outlined"
                     color="primary"
                     @click="close()"

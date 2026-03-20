@@ -257,14 +257,14 @@ const customTypeRadioGroup = ref<
 </script>
 
 <template>
-  <ComponentView data-cy="radio-buttons">
+  <ComponentView data-id="radio-buttons">
     <template #title>
       Radio Buttons
     </template>
 
     <div
       class="grid gap-4 grid-cols-6 mb-14"
-      data-cy="radio-wrapper"
+      data-id="radio-wrapper"
     >
       <RuiRadio
         v-for="(radio, j) in radios"
@@ -282,13 +282,13 @@ const customTypeRadioGroup = ref<
     </div>
     <h2
       class="text-h4 mb-6"
-      data-cy="radio-group-buttons"
+      data-id="radio-group-buttons"
     >
       Radio Groups
     </h2>
     <div
       class="grid gap-8"
-      data-cy="radio-group-wrapper"
+      data-id="radio-group-wrapper"
     >
       <RuiRadioGroup
         v-for="(radioGroup, i) in radioGroups"

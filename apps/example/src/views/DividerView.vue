@@ -4,7 +4,7 @@ import ComponentView from '@/components/ComponentView.vue';
 </script>
 
 <template>
-  <ComponentView data-cy="dividers">
+  <ComponentView data-id="dividers">
     <template #title>
       Dividers
     </template>
@@ -16,7 +16,7 @@ import ComponentView from '@/components/ComponentView.vue';
         </h3>
         <div
           class="p-4 border rounded"
-          data-cy="divider-horizontal"
+          data-id="divider-horizontal"
         >
           <p>Content above</p>
           <RuiDivider class="my-4" />
@@ -30,7 +30,7 @@ import ComponentView from '@/components/ComponentView.vue';
         </h3>
         <div
           class="flex items-center gap-4 p-4 border rounded h-20"
-          data-cy="divider-vertical"
+          data-id="divider-vertical"
         >
           <span>Left</span>
           <RuiDivider

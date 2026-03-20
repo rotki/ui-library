@@ -99,7 +99,7 @@ describe('components/tables/RuiDataTable.vue', () => {
       },
       slots: {
         'expanded-item': {
-          template: '<div data-cy="expanded-content">Expanded content</div>',
+          template: '<div data-id="expanded-content">Expanded content</div>',
         },
       },
     });
@@ -113,15 +113,15 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(wrapper.find('div div[class*=_navigation_] button[disabled]').exists()).toBeTruthy();
 
     expect(wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"]').exists()).toBeTruthy();
-    expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeFalsy();
+    expect(wrapper.find('tbody tr:nth-child(2) div[data-id=expanded-content]').exists()).toBeFalsy();
 
     await wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"]').trigger('click');
 
     expect(wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"][aria-expanded="true"]').exists()).toBeTruthy();
-    expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeTruthy();
-    expect(wrapper.find('div[data-cy=table-pagination] div[class*=limit]').exists()).toBeTruthy();
-    expect(wrapper.find('div[data-cy=table-pagination] div[class*=ranges]').exists()).toBeTruthy();
-    expect(wrapper.find('div[data-cy=table-pagination] div[class*=navigation]').exists()).toBeTruthy();
+    expect(wrapper.find('tbody tr:nth-child(2) div[data-id=expanded-content]').exists()).toBeTruthy();
+    expect(wrapper.find('div[data-id=table-pagination] div[class*=limit]').exists()).toBeTruthy();
+    expect(wrapper.find('div[data-id=table-pagination] div[class*=ranges]').exists()).toBeTruthy();
+    expect(wrapper.find('div[data-id=table-pagination] div[class*=navigation]').exists()).toBeTruthy();
   });
 
   it('should multiple expand toggles correctly', async () => {
@@ -136,25 +136,25 @@ describe('components/tables/RuiDataTable.vue', () => {
       },
       slots: {
         'expanded-item': {
-          template: '<div data-cy="expanded-content">Expanded content</div>',
+          template: '<div data-id="expanded-content">Expanded content</div>',
         },
       },
     });
 
     expect(wrapper.props().expanded).toHaveLength(0);
-    expect(wrapper.find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]').exists()).toBeFalsy();
+    expect(wrapper.find('tbody tr[hidden]:nth-child(2) div[data-id=expanded-content]').exists()).toBeFalsy();
 
     await wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"]').trigger('click');
 
     expect(wrapper.props().expanded).toHaveLength(1);
     expect(wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"][aria-expanded="true"]').exists()).toBeTruthy();
-    expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeTruthy();
+    expect(wrapper.find('tbody tr:nth-child(2) div[data-id=expanded-content]').exists()).toBeTruthy();
 
     await wrapper.find('tbody tr:nth-child(3) button[data-id="expand-button"]').trigger('click');
 
     expect(wrapper.props().expanded).toHaveLength(2);
     expect(wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"][aria-expanded="true"]').exists()).toBeTruthy();
-    expect(wrapper.find('tbody tr:nth-child(4) div[data-cy=expanded-content]').exists()).toBeTruthy();
+    expect(wrapper.find('tbody tr:nth-child(4) div[data-id=expanded-content]').exists()).toBeTruthy();
   });
 
   it('should selection toggles correctly', async () => {
@@ -169,19 +169,19 @@ describe('components/tables/RuiDataTable.vue', () => {
     });
 
     expect(wrapper.props().modelValue).toHaveLength(0);
-    expect(wrapper.find('thead tr [data-cy=table-toggle-check-all] input').exists()).toBeTruthy();
+    expect(wrapper.find('thead tr [data-id=table-toggle-check-all] input').exists()).toBeTruthy();
 
-    await wrapper.find('thead tr [data-cy=table-toggle-check-all] input').setValue(true);
+    await wrapper.find('thead tr [data-id=table-toggle-check-all] input').setValue(true);
 
     expect(wrapper.props().modelValue).toHaveLength(10);
-    expect(wrapper.find('tr [data-cy*=table-toggle-check-] span[class*=checkbox][class*=checked]').exists()).toBeTruthy();
-    expect(wrapper.findAll('tr [data-cy*=table-toggle-check-] span[class*=checkbox][class*=checked]')).toHaveLength(11);
+    expect(wrapper.find('tr [data-id*=table-toggle-check-] span[class*=checkbox][class*=checked]').exists()).toBeTruthy();
+    expect(wrapper.findAll('tr [data-id*=table-toggle-check-] span[class*=checkbox][class*=checked]')).toHaveLength(11);
 
-    await wrapper.find('thead tr [data-cy=table-toggle-check-all] input').setValue(false);
+    await wrapper.find('thead tr [data-id=table-toggle-check-all] input').setValue(false);
 
     expect(wrapper.props().modelValue).toHaveLength(0);
 
-    await wrapper.find('tr [data-cy=table-toggle-check-0] input').setValue(true);
+    await wrapper.find('tr [data-id=table-toggle-check-0] input').setValue(true);
 
     expect(wrapper.props().modelValue).toHaveLength(1);
   });
@@ -199,34 +199,34 @@ describe('components/tables/RuiDataTable.vue', () => {
       },
       slots: {
         'expanded-item': {
-          template: '<div data-cy="expanded-content">Expanded content</div>',
+          template: '<div data-id="expanded-content">Expanded content</div>',
         },
       },
     });
 
     expect(wrapper.props().expanded).toHaveLength(0);
-    expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeFalsy();
+    expect(wrapper.find('tbody tr:nth-child(2) div[data-id=expanded-content]').exists()).toBeFalsy();
 
     await wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"]').trigger('click');
 
     expect(wrapper.props().expanded).toHaveLength(1);
     expect(wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"][aria-expanded="true"]').exists()).toBeTruthy();
-    expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeTruthy();
+    expect(wrapper.find('tbody tr:nth-child(2) div[data-id=expanded-content]').exists()).toBeTruthy();
 
     await wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"]').trigger('click');
 
     expect(wrapper.props().expanded).toHaveLength(0);
-    expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeFalsy();
+    expect(wrapper.find('tbody tr:nth-child(2) div[data-id=expanded-content]').exists()).toBeFalsy();
 
     await wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"]').trigger('click');
 
-    expect(wrapper.find('tbody tr:nth-child(2) div[data-cy=expanded-content]').exists()).toBeTruthy();
+    expect(wrapper.find('tbody tr:nth-child(2) div[data-id=expanded-content]').exists()).toBeTruthy();
 
     await wrapper.find('tbody tr:nth-child(3) button[data-id="expand-button"]').trigger('click');
 
     expect(wrapper.props().expanded).toHaveLength(1);
     expect(wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"][aria-expanded="true"]').exists()).toBeFalsy();
-    expect(wrapper.find('tbody tr:nth-child(4) div[data-cy=expanded-content]').exists()).toBeFalsy();
+    expect(wrapper.find('tbody tr:nth-child(4) div[data-id=expanded-content]').exists()).toBeFalsy();
   });
 
   it('should sticky header behaves as expected', async () => {
@@ -675,7 +675,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const headerCheckbox = wrapper.find('thead [data-cy=table-toggle-check-all]');
+      const headerCheckbox = wrapper.find('thead [data-id=table-toggle-check-all]');
       expect(headerCheckbox.find('span[class*=_checked_]').exists()).toBeTruthy();
     });
 
@@ -690,7 +690,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const headerCheckbox = wrapper.find('thead [data-cy=table-toggle-check-all]');
+      const headerCheckbox = wrapper.find('thead [data-id=table-toggle-check-all]');
       expect(headerCheckbox.find('span[class*=_checked_]').exists()).toBeFalsy();
     });
   });
@@ -773,7 +773,7 @@ describe('components/tables/RuiDataTable.vue', () => {
 
       expect(wrapper.props().modelValue).toHaveLength(10);
 
-      await wrapper.find('thead tr [data-cy=table-toggle-check-all] input').setValue(false);
+      await wrapper.find('thead tr [data-id=table-toggle-check-all] input').setValue(false);
 
       expect(wrapper.props().modelValue).toHaveLength(0);
     });
@@ -795,7 +795,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const ungroupButton = wrapper.find('tr[data-id="row-group"] [data-cy="group-ungroup-button"]');
+      const ungroupButton = wrapper.find('tr[data-id="row-group"] [data-id="group-ungroup-button"]');
       expect(ungroupButton.exists()).toBe(true);
       await ungroupButton.trigger('click');
       expect(onUpdateGroup).toHaveBeenCalledWith(undefined);
@@ -962,9 +962,9 @@ describe('components/tables/RuiDataTable.vue', () => {
 
     const paginator = wrapper.findComponent(RuiTablePagination);
     expect(paginator.exists()).toBeTruthy();
-    expect(paginator.find('div[data-cy=table-pagination] div[class*=limit]').exists()).toBeTruthy();
-    expect(paginator.find('div[data-cy=table-pagination] div[class*=ranges]').exists()).toBeTruthy();
-    expect(paginator.find('div[data-cy=table-pagination] div[class*=navigation]').exists()).toBeTruthy();
+    expect(paginator.find('div[data-id=table-pagination] div[class*=limit]').exists()).toBeTruthy();
+    expect(paginator.find('div[data-id=table-pagination] div[class*=ranges]').exists()).toBeTruthy();
+    expect(paginator.find('div[data-id=table-pagination] div[class*=navigation]').exists()).toBeTruthy();
 
     const navButtons = paginator.findAllComponents(RuiButton);
     expect(navButtons).toHaveLength(4);
@@ -1026,7 +1026,7 @@ describe('components/tables/RuiDataTable.vue', () => {
 
     // Verify pagination is after the scroller (footer position)
     const wrapperEl = wrapper.find('[data-id="table-wrapper"]').element;
-    const pagination = wrapper.find('[data-cy="table-pagination"]').element;
+    const pagination = wrapper.find('[data-id="table-pagination"]').element;
     const scroller = wrapper.find('[data-id="table-scroller"]').element;
     const children = Array.from(wrapperEl.children);
     expect(children.indexOf(pagination)).toBeGreaterThan(children.indexOf(scroller));
@@ -1047,7 +1047,7 @@ describe('components/tables/RuiDataTable.vue', () => {
 
     // Verify pagination is before the scroller (header position)
     const wrapperEl = wrapper.find('[data-id="table-wrapper"]').element;
-    const pagination = wrapper.find('[data-cy="table-pagination"]').element;
+    const pagination = wrapper.find('[data-id="table-pagination"]').element;
     const scroller = wrapper.find('[data-id="table-scroller"]').element;
     const children = Array.from(wrapperEl.children);
     expect(children.indexOf(pagination)).toBeLessThan(children.indexOf(scroller));
@@ -1159,7 +1159,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const copyButton = wrapper.find('tr[data-id="row-group"] [data-cy="group-copy-button"]');
+      const copyButton = wrapper.find('tr[data-id="row-group"] [data-id="group-copy-button"]');
       expect(copyButton.exists()).toBe(true);
       await copyButton.trigger('click');
       expect(onCopyGroup).toHaveBeenCalled();
@@ -1180,10 +1180,10 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const firstRowCheckbox = wrapper.find('tr [data-cy=table-toggle-check-0] input');
+      const firstRowCheckbox = wrapper.find('tr [data-id=table-toggle-check-0] input');
       expect(firstRowCheckbox.attributes('disabled')).toBeDefined();
 
-      await wrapper.find('thead tr [data-cy=table-toggle-check-all] input').setValue(true);
+      await wrapper.find('thead tr [data-id=table-toggle-check-all] input').setValue(true);
 
       expect(wrapper.props().modelValue).toHaveLength(9);
       expect(wrapper.props().modelValue).not.toContain(disabledRow!.id);
@@ -1202,7 +1202,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      await wrapper.find('thead tr [data-cy=table-toggle-check-all] input').setValue(false);
+      await wrapper.find('thead tr [data-id=table-toggle-check-all] input').setValue(false);
 
       expect(wrapper.props().modelValue).toContain(disabledRow!.id);
     });
@@ -1221,14 +1221,14 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      await wrapper.find('thead tr [data-cy=table-toggle-check-all] input').setValue(true);
+      await wrapper.find('thead tr [data-id=table-toggle-check-all] input').setValue(true);
       expect(wrapper.props().modelValue).toHaveLength(10);
 
       await wrapper.setProps({ pagination: { limit: 10, page: 2, total: 50 } });
 
       expect(wrapper.props().modelValue).toHaveLength(10);
 
-      await wrapper.find('thead tr [data-cy=table-toggle-check-all] input').setValue(true);
+      await wrapper.find('thead tr [data-id=table-toggle-check-all] input').setValue(true);
 
       expect(wrapper.props().modelValue).toHaveLength(20);
     });
@@ -1247,7 +1247,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      await wrapper.find('thead tr [data-cy=table-toggle-check-all] input').setValue(true);
+      await wrapper.find('thead tr [data-id=table-toggle-check-all] input').setValue(true);
       expect(wrapper.props().modelValue).toHaveLength(10);
 
       const paginator = wrapper.findComponent(RuiTablePagination);
@@ -1343,12 +1343,12 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
         slots: {
           'item.name': `<template #item.name="{ row, column, index }">
-            <span data-cy="custom-name">{{ row.name }} - {{ column.key }} - {{ index }}</span>
+            <span data-id="custom-name">{{ row.name }} - {{ column.key }} - {{ index }}</span>
           </template>`,
         },
       });
 
-      const customCell = wrapper.find('[data-cy=custom-name]');
+      const customCell = wrapper.find('[data-id=custom-name]');
       expect(customCell.exists()).toBeTruthy();
       expect(customCell.text()).toContain('Lindsay Walton 0');
       expect(customCell.text()).toContain('name');
@@ -1364,12 +1364,12 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
         slots: {
           'header.name': `<template #header.name="{ column }">
-            <span data-cy="custom-header">Custom: {{ column.label }}</span>
+            <span data-id="custom-header">Custom: {{ column.label }}</span>
           </template>`,
         },
       });
 
-      const customHeader = wrapper.find('[data-cy=custom-header]');
+      const customHeader = wrapper.find('[data-id=custom-header]');
       expect(customHeader.exists()).toBeTruthy();
       expect(customHeader.text()).toBe('Custom: Full name');
     });
@@ -1383,12 +1383,12 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
         slots: {
           'body.prepend': `<template #body.prepend="{ colspan }">
-            <tr data-cy="prepend-row"><td :colspan="colspan">Prepended content</td></tr>
+            <tr data-id="prepend-row"><td :colspan="colspan">Prepended content</td></tr>
           </template>`,
         },
       });
 
-      const prependRow = wrapper.find('[data-cy=prepend-row]');
+      const prependRow = wrapper.find('[data-id=prepend-row]');
       expect(prependRow.exists()).toBeTruthy();
       expect(prependRow.text()).toBe('Prepended content');
     });
@@ -1402,12 +1402,12 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
         slots: {
           'body.append': `<template #body.append="{ colspan }">
-            <tr data-cy="append-row"><td :colspan="colspan">Appended content</td></tr>
+            <tr data-id="append-row"><td :colspan="colspan">Appended content</td></tr>
           </template>`,
         },
       });
 
-      const appendRow = wrapper.find('[data-cy=append-row]');
+      const appendRow = wrapper.find('[data-id=append-row]');
       expect(appendRow.exists()).toBeTruthy();
       expect(appendRow.text()).toBe('Appended content');
     });
@@ -1420,11 +1420,11 @@ describe('components/tables/RuiDataTable.vue', () => {
           rows: [],
         },
         slots: {
-          'no-data': '<div data-cy="custom-no-data">Custom empty state</div>',
+          'no-data': '<div data-id="custom-no-data">Custom empty state</div>',
         },
       });
 
-      const customNoData = wrapper.find('[data-cy=custom-no-data]');
+      const customNoData = wrapper.find('[data-id=custom-no-data]');
       expect(customNoData.exists()).toBeTruthy();
       expect(customNoData.text()).toBe('Custom empty state');
     });
@@ -1460,11 +1460,11 @@ describe('components/tables/RuiDataTable.vue', () => {
           rows: [],
         },
         slots: {
-          'empty-description': '<span data-cy="custom-description">Custom description content</span>',
+          'empty-description': '<span data-id="custom-description">Custom description content</span>',
         },
       });
 
-      const customDescription = wrapper.find('[data-cy=custom-description]');
+      const customDescription = wrapper.find('[data-id=custom-description]');
       expect(customDescription.exists()).toBeTruthy();
       expect(customDescription.text()).toBe('Custom description content');
     });
@@ -1477,11 +1477,11 @@ describe('components/tables/RuiDataTable.vue', () => {
           rows: data.slice(0, 3),
         },
         slots: {
-          tfoot: '<tr data-cy="custom-tfoot"><td>Footer content</td></tr>',
+          tfoot: '<tr data-id="custom-tfoot"><td>Footer content</td></tr>',
         },
       });
 
-      const customTfoot = wrapper.find('tfoot [data-cy=custom-tfoot]');
+      const customTfoot = wrapper.find('tfoot [data-id=custom-tfoot]');
       expect(customTfoot.exists()).toBeTruthy();
       expect(customTfoot.text()).toBe('Footer content');
     });

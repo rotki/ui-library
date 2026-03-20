@@ -6,7 +6,7 @@ test.describe('loaders', () => {
   });
 
   test('should render text and heading skeleton loaders', async ({ page }) => {
-    await expect(page.locator('h2[data-cy=skeleton-loader]')).toContainText('Skeleton Loader');
+    await expect(page.locator('h2[data-id=skeleton-loader]')).toContainText('Skeleton Loader');
 
     const defaultSkeleton = page.locator('div[class*=skeleton_text]').first();
     const headingSkeleton = page.locator('div[class*=skeleton_heading]').first();

@@ -22,6 +22,7 @@ export default defineConfig({
     ['list'],
   ],
   use: {
+    testIdAttribute: 'data-id',
     baseURL,
     trace: 'on-first-retry',
     video: process.env.CI ? 'on-first-retry' : 'off',

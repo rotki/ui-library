@@ -22,7 +22,7 @@ onBeforeMount(() => {
 <template>
   <ComponentGroup
     :items="multipleToggleButtons"
-    data-cy="multiple-toggleable-button-groups"
+    data-id="multiple-toggleable-button-groups"
     class="grid gap-4 grid-rows-2 grid-cols-2 justify-items-start"
   >
     <template #title>

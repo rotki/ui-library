@@ -24,7 +24,7 @@ onBeforeMount(() => {
 
 <template>
   <ComponentGroup
-    data-cy="button-groups"
+    data-id="button-groups"
     class="grid gap-4 grid-rows-2 grid-cols-2 justify-items-start mb-14"
     :items="buttonGroups"
   >

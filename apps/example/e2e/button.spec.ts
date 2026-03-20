@@ -6,9 +6,9 @@ test.describe('buttons', () => {
   });
 
   test('should render buttons and handle click events', async ({ page }) => {
-    await expect(page.locator('h2[data-cy=buttons]')).toContainText('Buttons');
+    await expect(page.locator('h2[data-id=buttons]')).toContainText('Buttons');
 
-    const content = page.locator('[data-cy=content]');
+    const content = page.locator('[data-id=content]');
     const primaryButton = content.locator('button[class*=_primary_]').first();
     const disabledButton = content.locator('button[disabled]').first();
 

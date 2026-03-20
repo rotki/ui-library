@@ -57,9 +57,9 @@ describe('components/divider/RuiDivider.vue', () => {
   it('should pass attrs to root element', () => {
     wrapper = createWrapper({
       attrs: {
-        'data-cy': 'test-divider',
+        'data-id': 'test-divider',
       },
     });
-    expect(wrapper.attributes('data-cy')).toBe('test-divider');
+    expect(wrapper.attributes('data-id')).toBe('test-divider');
   });
 });

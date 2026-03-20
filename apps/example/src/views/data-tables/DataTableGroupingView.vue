@@ -41,7 +41,7 @@ function onCopyGroup(data: GroupData<ExtendedUser>): void {
 </script>
 
 <template>
-  <div data-cy="data-tables-grouping">
+  <div data-id="data-tables-grouping">
     <h2 class="text-2xl font-bold mb-6">
       Row Grouping
     </h2>
@@ -50,7 +50,7 @@ function onCopyGroup(data: GroupData<ExtendedUser>): void {
       <!-- Basic grouping -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-grouping-basic"
+        data-id="table-grouping-basic"
       >
         <h4>Basic Grouping</h4>
         <p class="text-sm text-rui-text-secondary">
@@ -59,7 +59,7 @@ function onCopyGroup(data: GroupData<ExtendedUser>): void {
         <p
           v-if="lastCopiedGroup"
           class="text-sm text-rui-text-secondary"
-          data-cy="last-copied-group"
+          data-id="last-copied-group"
         >
           Last copied: {{ lastCopiedGroup }}
         </p>
@@ -70,7 +70,7 @@ function onCopyGroup(data: GroupData<ExtendedUser>): void {
           :cols="fixedColumns"
           row-attr="id"
           outlined
-          data-cy="table"
+          data-id="table"
           @copy:group="onCopyGroup($event)"
         >
           <template #item.action>
@@ -91,7 +91,7 @@ function onCopyGroup(data: GroupData<ExtendedUser>): void {
       <!-- Grouping with expand button at end -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-grouping-expand-end"
+        data-id="table-grouping-expand-end"
       >
         <h4>Grouping with Expand Button at End</h4>
         <p class="text-sm text-rui-text-secondary">
@@ -106,7 +106,7 @@ function onCopyGroup(data: GroupData<ExtendedUser>): void {
           row-attr="id"
           outlined
           group-expand-button-position="end"
-          data-cy="table"
+          data-id="table"
         >
           <template #item.action>
             <RuiButton

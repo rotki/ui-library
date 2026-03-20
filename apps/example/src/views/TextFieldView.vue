@@ -276,7 +276,7 @@ const revealableTextFields = ref<RevealableTextFieldData[]>([
 </script>
 
 <template>
-  <ComponentView data-cy="text-fields">
+  <ComponentView data-id="text-fields">
     <template #title>
       Text Fields
     </template>
@@ -306,7 +306,7 @@ const revealableTextFields = ref<RevealableTextFieldData[]>([
     </div>
     <h2
       class="text-h4 mb-6 mt-14"
-      data-cy="text-fields"
+      data-id="text-fields"
     >
       Revealable Text Fields
     </h2>

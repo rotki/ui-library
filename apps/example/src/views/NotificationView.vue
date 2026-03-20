@@ -16,14 +16,14 @@ const options = ['light', 'dark'];
 </script>
 
 <template>
-  <ComponentView data-cy="notification">
+  <ComponentView data-id="notification">
     <template #title>
       Notification
     </template>
 
     <div>
       <RuiButton
-        data-cy="visibility-toggle"
+        data-id="visibility-toggle"
         @click="visible = !visible"
       >
         {{ visible ? 'Hide' : 'Show' }}
@@ -34,7 +34,7 @@ const options = ['light', 'dark'];
         variant="outlined"
         label="timeout"
         class="mt-4"
-        data-cy="timeout"
+        data-id="timeout"
       />
       <RuiMenuSelect
         v-model="theme"
@@ -42,7 +42,7 @@ const options = ['light', 'dark'];
         label="theme"
         variant="outlined"
         clearable
-        data-cy="menu"
+        data-id="menu"
       />
     </div>
 
@@ -53,7 +53,7 @@ const options = ['light', 'dark'];
     >
       <div
         class="m-4"
-        data-cy="notification-content"
+        data-id="notification-content"
       >
         This is a notification
       </div>

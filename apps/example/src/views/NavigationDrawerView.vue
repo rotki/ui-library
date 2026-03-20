@@ -23,7 +23,7 @@ const navigationDrawers = ref<NavigationDrawerItem[]>([
 </script>
 
 <template>
-  <ComponentView data-cy="navigation-drawers">
+  <ComponentView data-id="navigation-drawers">
     <template #title>
       Navigation Drawers
     </template>
@@ -32,7 +32,7 @@ const navigationDrawers = ref<NavigationDrawerItem[]>([
       <div
         v-for="(navigationDrawer, i) in navigationDrawers"
         :key="i"
-        :data-cy="`navigation-drawer-${i}`"
+        :data-id="`navigation-drawer-${i}`"
       >
         <RuiNavigationDrawer
           v-bind="navigationDrawer"
@@ -42,7 +42,7 @@ const navigationDrawers = ref<NavigationDrawerItem[]>([
           <template #activator="{ attrs }">
             <RuiButton
               color="primary"
-              data-cy="activator"
+              data-id="activator"
               v-bind="attrs"
             >
               {{ navigationDrawer.label }}

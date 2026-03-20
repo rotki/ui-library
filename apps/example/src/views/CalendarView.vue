@@ -14,7 +14,7 @@ const calendars = ref<CalendarData[]>([
 </script>
 
 <template>
-  <ComponentView data-cy="calendars">
+  <ComponentView data-id="calendars">
     <template #title>
       Calendar
     </template>

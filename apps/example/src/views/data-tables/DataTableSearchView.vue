@@ -19,7 +19,7 @@ const pagination = ref<TablePaginationData>({
 </script>
 
 <template>
-  <div data-cy="data-tables-search">
+  <div data-id="data-tables-search">
     <h2 class="text-2xl font-bold mb-6">
       Search
     </h2>
@@ -28,7 +28,7 @@ const pagination = ref<TablePaginationData>({
       <!-- Basic search -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-search-basic"
+        data-id="table-search-basic"
       >
         <h4>Basic Search</h4>
         <RuiTextField
@@ -39,7 +39,7 @@ const pagination = ref<TablePaginationData>({
           variant="outlined"
           color="primary"
           hide-details
-          data-cy="search-input"
+          data-id="search-input"
         />
         <RuiDataTable
           :rows="fixedRows"
@@ -47,7 +47,7 @@ const pagination = ref<TablePaginationData>({
           :search="search"
           row-attr="id"
           outlined
-          data-cy="table"
+          data-id="table"
         >
           <template #item.action>
             <RuiButton
@@ -67,7 +67,7 @@ const pagination = ref<TablePaginationData>({
       <!-- Search with pagination -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-search-pagination"
+        data-id="table-search-pagination"
       >
         <h4>Search with Pagination</h4>
         <RuiTextField
@@ -78,7 +78,7 @@ const pagination = ref<TablePaginationData>({
           variant="outlined"
           color="primary"
           hide-details
-          data-cy="search-input"
+          data-id="search-input"
         />
         <RuiDataTable
           v-model:pagination="pagination"
@@ -87,7 +87,7 @@ const pagination = ref<TablePaginationData>({
           :search="searchWithPagination"
           row-attr="id"
           outlined
-          data-cy="table"
+          data-id="table"
         >
           <template #item.action>
             <RuiButton

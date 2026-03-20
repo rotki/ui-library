@@ -18,7 +18,7 @@ function getDisplayText(value?: SelectOption | SelectOption[]): string {
 </script>
 
 <template>
-  <div data-cy="auto-completes-custom">
+  <div data-id="auto-completes-custom">
     <h2 class="text-2xl font-bold mb-6">
       Custom Slots
     </h2>
@@ -31,14 +31,14 @@ function getDisplayText(value?: SelectOption | SelectOption[]): string {
           key-attr="id"
           text-attr="label"
           label="Custom Activator"
-          data-cy="ac-custom-activator"
+          data-id="ac-custom-activator"
         >
           <template #activator="{ attrs, disabled, open, value }">
             <RuiButton
               class="!rounded-md border"
               variant="list"
               :disabled="disabled"
-              v-bind="{ ...attrs, 'data-cy': 'activator' }"
+              v-bind="{ ...attrs, 'data-id': 'activator' }"
             >
               {{ getDisplayText(value) }}
               <template #append>
@@ -62,7 +62,7 @@ function getDisplayText(value?: SelectOption | SelectOption[]): string {
           text-attr="label"
           :append-width="1.5"
           label="Custom Item"
-          data-cy="ac-custom-item"
+          data-id="ac-custom-item"
         >
           <template #item.append="{ active }">
             <RuiIcon

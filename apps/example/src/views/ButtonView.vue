@@ -7,7 +7,7 @@ import ComponentView from '@/components/ComponentView.vue';
 </script>
 
 <template>
-  <ComponentView data-cy="buttons">
+  <ComponentView data-id="buttons">
     <template #title>
       Buttons
     </template>

@@ -8,7 +8,7 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
 </script>
 
 <template>
-  <div data-cy="data-tables-basic">
+  <div data-id="data-tables-basic">
     <h2 class="text-2xl font-bold mb-6">
       Basic Tables
     </h2>
@@ -17,7 +17,7 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
       <!-- With Column definitions -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-columns-defined"
+        data-id="table-columns-defined"
       >
         <h4>With Column definitions</h4>
         <RuiDataTable
@@ -25,7 +25,7 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
           :cols="fixedColumns"
           row-attr="id"
           hide-default-footer
-          data-cy="table"
+          data-id="table"
         >
           <template #item.action>
             <RuiButton
@@ -45,20 +45,20 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
       <!-- No Column definitions (auto-generated) -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-auto-columns"
+        data-id="table-auto-columns"
       >
         <h4>No Column definitions (auto-generated)</h4>
         <RuiDataTable
           :rows="fixedRows"
           row-attr="id"
-          data-cy="table"
+          data-id="table"
         />
       </div>
 
       <!-- Outlined -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-outlined"
+        data-id="table-outlined"
       >
         <h4>Outlined</h4>
         <RuiDataTable
@@ -66,7 +66,7 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
           :cols="fixedColumns"
           row-attr="id"
           outlined
-          data-cy="table"
+          data-id="table"
         >
           <template #item.action>
             <RuiButton
@@ -86,7 +86,7 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
       <!-- Dense -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-dense"
+        data-id="table-dense"
       >
         <h4>Dense</h4>
         <RuiDataTable
@@ -95,7 +95,7 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
           row-attr="id"
           outlined
           dense
-          data-cy="table"
+          data-id="table"
         >
           <template #item.action>
             <RuiButton
@@ -115,7 +115,7 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
       <!-- Striped -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-striped"
+        data-id="table-striped"
       >
         <h4>Striped</h4>
         <RuiDataTable
@@ -124,7 +124,7 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
           row-attr="id"
           outlined
           striped
-          data-cy="table"
+          data-id="table"
         >
           <template #item.action>
             <RuiButton

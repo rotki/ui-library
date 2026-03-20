@@ -6,7 +6,7 @@ test.describe('Logo', () => {
   });
 
   test('should render fallback image', async ({ page }) => {
-    const wrapper = page.locator('[data-cy=logo-default]');
+    const wrapper = page.locator('[data-id=logo-default]');
     const img = wrapper.locator('img[data-image=fallback]');
 
     await expect(img).toBeVisible();
@@ -14,7 +14,7 @@ test.describe('Logo', () => {
   });
 
   test('should render with text', async ({ page }) => {
-    const wrapper = page.locator('[data-cy=logo-text]');
+    const wrapper = page.locator('[data-id=logo-text]');
     const img = wrapper.locator('img[data-image=fallback]');
 
     await expect(img).toBeVisible();
@@ -22,14 +22,14 @@ test.describe('Logo', () => {
   });
 
   test('should apply custom size', async ({ page }) => {
-    const wrapper = page.locator('[data-cy=logo-size]');
+    const wrapper = page.locator('[data-id=logo-size]');
     const container = wrapper.locator('div').first();
 
     await expect(container).toHaveCSS('height', '80px'); // 5rem = 80px
   });
 
   test('should apply small size', async ({ page }) => {
-    const wrapper = page.locator('[data-cy=logo-small]');
+    const wrapper = page.locator('[data-id=logo-small]');
     const container = wrapper.locator('div').first();
 
     await expect(container).toHaveCSS('height', '24px'); // 1.5rem = 24px

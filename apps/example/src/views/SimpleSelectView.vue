@@ -14,7 +14,7 @@ const numberValue = ref<number>(10);
 </script>
 
 <template>
-  <ComponentView data-cy="simple-selects">
+  <ComponentView data-id="simple-selects">
     <template #title>
       Simple Selects
     </template>
@@ -28,7 +28,7 @@ const numberValue = ref<number>(10);
           v-model="defaultValue"
           :options="stringOptions"
           label="Default select"
-          data-cy="ss-default"
+          data-id="ss-default"
         />
       </div>
 
@@ -41,7 +41,7 @@ const numberValue = ref<number>(10);
           :options="stringOptions"
           label="Outlined select"
           variant="outlined"
-          data-cy="ss-outlined"
+          data-id="ss-outlined"
         />
       </div>
 
@@ -54,7 +54,7 @@ const numberValue = ref<number>(10);
           :options="stringOptions"
           label="Disabled select"
           disabled
-          data-cy="ss-disabled"
+          data-id="ss-disabled"
         />
       </div>
 
@@ -68,7 +68,7 @@ const numberValue = ref<number>(10);
           label="Disabled outlined select"
           disabled
           variant="outlined"
-          data-cy="ss-disabled-outlined"
+          data-id="ss-disabled-outlined"
         />
       </div>
 
@@ -81,7 +81,7 @@ const numberValue = ref<number>(10);
           :options="stringOptions"
           label="Country select"
           name="country"
-          data-cy="ss-named"
+          data-id="ss-named"
         />
       </div>
 
@@ -93,7 +93,7 @@ const numberValue = ref<number>(10);
           v-model="numberValue"
           :options="numberOptions"
           label="Number select"
-          data-cy="ss-number-options"
+          data-id="ss-number-options"
         />
       </div>
     </div>

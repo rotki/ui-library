@@ -12,7 +12,7 @@ const timePickers = ref<RuiDateTimePickerProps[]>([{
 </script>
 
 <template>
-  <ComponentView data-cy="timepickers">
+  <ComponentView data-id="timepickers">
     <template #title>
       DateTime Pickers
     </template>

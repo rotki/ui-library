@@ -4,7 +4,7 @@ import ComponentView from '@/components/ComponentView.vue';
 </script>
 
 <template>
-  <ComponentView data-cy="logos">
+  <ComponentView data-id="logos">
     <template #title>
       Logos
     </template>
@@ -14,7 +14,7 @@ import ComponentView from '@/components/ComponentView.vue';
         <h3 class="text-subtitle-1 mb-2">
           Default (Fallback)
         </h3>
-        <div data-cy="logo-default">
+        <div data-id="logo-default">
           <RuiLogo />
         </div>
       </div>
@@ -23,7 +23,7 @@ import ComponentView from '@/components/ComponentView.vue';
         <h3 class="text-subtitle-1 mb-2">
           With Text
         </h3>
-        <div data-cy="logo-text">
+        <div data-id="logo-text">
           <RuiLogo text />
         </div>
       </div>
@@ -32,7 +32,7 @@ import ComponentView from '@/components/ComponentView.vue';
         <h3 class="text-subtitle-1 mb-2">
           Custom Size (5rem)
         </h3>
-        <div data-cy="logo-size">
+        <div data-id="logo-size">
           <RuiLogo :size="5" />
         </div>
       </div>
@@ -41,7 +41,7 @@ import ComponentView from '@/components/ComponentView.vue';
         <h3 class="text-subtitle-1 mb-2">
           Small Size (1.5rem)
         </h3>
-        <div data-cy="logo-small">
+        <div data-id="logo-small">
           <RuiLogo :size="1.5" />
         </div>
       </div>

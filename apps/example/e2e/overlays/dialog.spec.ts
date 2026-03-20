@@ -11,12 +11,12 @@ test.describe('dialog', () => {
   });
 
   test('check persistent dialog', async ({ page }) => {
-    await expect(page.locator('h2[data-cy=dialogs]')).toContainText('Dialogs');
+    await expect(page.locator('h2[data-id=dialogs]')).toContainText('Dialogs');
 
-    const defaultDialog = page.locator('div[data-cy=dialog-0]');
+    const defaultDialog = page.locator('div[data-id=dialog-0]');
 
     // open dialog
-    const activator = defaultDialog.locator('[data-cy=activator]');
+    const activator = defaultDialog.locator('[data-id=activator]');
     await activator.click();
     await expect(page.locator('div[role=dialog]')).toBeVisible();
 
@@ -29,57 +29,57 @@ test.describe('dialog', () => {
     await expect(page.locator('div[role=dialog]')).toBeVisible();
 
     // close the dialog
-    await page.locator('button[data-cy=close]').click();
+    await page.locator('button[data-id=close]').click();
     await expect(page.locator('div[role=dialog]')).toHaveCount(0);
   });
 
   test('should have aria-modal attribute when open', async ({ page }) => {
-    const defaultDialog = page.locator('div[data-cy=dialog-0]');
+    const defaultDialog = page.locator('div[data-id=dialog-0]');
 
-    const activator = defaultDialog.locator('[data-cy=activator]');
+    const activator = defaultDialog.locator('[data-id=activator]');
     await activator.click();
 
     const dialog = page.locator('div[role=dialog]');
     await expect(dialog).toBeVisible();
     await expect(dialog).toHaveAttribute('aria-modal', 'true');
 
-    await page.locator('button[data-cy=close]').click();
+    await page.locator('button[data-id=close]').click();
     await expect(dialog).toHaveCount(0);
   });
 
   test('should have aria-label attribute when provided', async ({ page }) => {
-    const defaultDialog = page.locator('div[data-cy=dialog-0]');
+    const defaultDialog = page.locator('div[data-id=dialog-0]');
 
-    const activator = defaultDialog.locator('[data-cy=activator]');
+    const activator = defaultDialog.locator('[data-id=activator]');
     await activator.click();
 
     const dialog = page.locator('div[role=dialog]');
     await expect(dialog).toBeVisible();
     await expect(dialog).toHaveAttribute('aria-label', 'Persistent dialog');
 
-    await page.locator('button[data-cy=close]').click();
+    await page.locator('button[data-id=close]').click();
     await expect(dialog).toHaveCount(0);
   });
 
   test('should display content inside dialog', async ({ page }) => {
-    const defaultDialog = page.locator('div[data-cy=dialog-0]');
+    const defaultDialog = page.locator('div[data-id=dialog-0]');
 
-    const activator = defaultDialog.locator('[data-cy=activator]');
+    const activator = defaultDialog.locator('[data-id=activator]');
     await activator.click();
 
     const dialog = page.locator('div[role=dialog]');
     await expect(dialog).toBeVisible();
     await expect(dialog).toContainText('Contents 0');
 
-    await page.locator('button[data-cy=close]').click();
+    await page.locator('button[data-id=close]').click();
     await expect(dialog).toHaveCount(0);
   });
 
   test('check non-persistent dialog', async ({ page }) => {
-    const defaultDialog = page.locator('div[data-cy=dialog-1]');
+    const defaultDialog = page.locator('div[data-id=dialog-1]');
 
     // open dialog
-    const activator = defaultDialog.locator('[data-cy=activator]');
+    const activator = defaultDialog.locator('[data-id=activator]');
     await activator.click();
     await expect(page.locator('div[role=dialog]')).toBeVisible();
 

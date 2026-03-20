@@ -157,7 +157,7 @@ function getSortDirection(key: TableColumn<T>['key']): 'asc' | 'desc' | undefine
           :model-value="isAllSelected"
           :size="dense ? 'sm' : undefined"
           color="primary"
-          data-cy="table-toggle-check-all"
+          data-id="table-toggle-check-all"
           hide-details
           @update:model-value="onToggleAll($event)"
         />

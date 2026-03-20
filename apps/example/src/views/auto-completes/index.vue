@@ -49,9 +49,9 @@ const sections = [
 </script>
 
 <template>
-  <div data-cy="auto-completes-index">
+  <div data-id="auto-completes-index">
     <h2
-      data-cy="auto-completes"
+      data-id="auto-completes"
       class="text-2xl font-bold mb-6"
     >
       Auto Completes
@@ -67,7 +67,7 @@ const sections = [
         <RuiCard
           variant="outlined"
           class="h-full hover:border-primary transition-colors cursor-pointer"
-          :data-cy="`link-${section.route}`"
+          :data-id="`link-${section.route}`"
         >
           <template #header>
             <div class="flex items-center gap-2">

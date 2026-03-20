@@ -13,41 +13,41 @@ test.describe('navigation drawer', () => {
   });
 
   test('check non-persistent navigation-drawer', async ({ page }) => {
-    await expect(page.locator('h2[data-cy=navigation-drawers]')).toContainText('Navigation Drawers');
+    await expect(page.locator('h2[data-id=navigation-drawers]')).toContainText('Navigation Drawers');
 
-    const defaultDrawer = page.locator('div[data-cy=navigation-drawer-0]');
+    const defaultDrawer = page.locator('div[data-id=navigation-drawer-0]');
 
     // open drawer
-    const activator = defaultDrawer.locator('[data-cy=activator]');
+    const activator = defaultDrawer.locator('[data-id=activator]');
     await activator.click();
     // Wait for the aside element with visible class to appear (drawer is open)
     await expect(page.locator('aside[class*=_visible]')).toBeVisible();
 
     // should close the drawer by clicking outside (temporary drawer uses onClickOutside)
     // clicking on h2 closes the drawer since it's outside the aside content
-    await page.locator('h2[data-cy=navigation-drawers]').click();
+    await page.locator('h2[data-id=navigation-drawers]').click();
     // After closing, there should be no visible drawer (no aside with _visible class)
     await expect(page.locator('aside[class*=_visible]')).toHaveCount(0);
   });
 
   test('check persistent drawer', async ({ page }) => {
-    const defaultDrawer = page.locator('div[data-cy=navigation-drawer-2]');
+    const defaultDrawer = page.locator('div[data-id=navigation-drawer-2]');
 
     // open drawer
-    const activator = defaultDrawer.locator('[data-cy=activator]');
+    const activator = defaultDrawer.locator('[data-id=activator]');
     await activator.click();
     // Wait for the aside element with visible class to appear
     await expect(page.locator('aside[class*=_visible]')).toBeVisible();
 
     // should not close the drawer when clicking elsewhere (temporary: false)
-    await page.locator('h2[data-cy=navigation-drawers]').click();
+    await page.locator('h2[data-id=navigation-drawers]').click();
     // The drawer should still be visible
     await expect(page.locator('aside[class*=_visible]')).toBeVisible();
   });
 
   test('should render drawer on left by default', async ({ page }) => {
-    const defaultDrawer = page.locator('div[data-cy=navigation-drawer-0]');
-    await defaultDrawer.locator('[data-cy=activator]').click();
+    const defaultDrawer = page.locator('div[data-id=navigation-drawer-0]');
+    await defaultDrawer.locator('[data-id=activator]').click();
 
     const aside = page.locator('aside[class*=_visible]');
     await expect(aside).toBeVisible();
@@ -56,8 +56,8 @@ test.describe('navigation drawer', () => {
   });
 
   test('should render drawer on right with position="right"', async ({ page }) => {
-    const rightDrawer = page.locator('div[data-cy=navigation-drawer-1]');
-    await rightDrawer.locator('[data-cy=activator]').click();
+    const rightDrawer = page.locator('div[data-id=navigation-drawer-1]');
+    await rightDrawer.locator('[data-id=activator]').click();
 
     const aside = page.locator('aside[class*=_visible]');
     await expect(aside).toBeVisible();
@@ -66,8 +66,8 @@ test.describe('navigation drawer', () => {
   });
 
   test('should show overlay when overlay prop is true', async ({ page }) => {
-    const overlayDrawer = page.locator('div[data-cy=navigation-drawer-3]');
-    await overlayDrawer.locator('[data-cy=activator]').click();
+    const overlayDrawer = page.locator('div[data-id=navigation-drawer-3]');
+    await overlayDrawer.locator('[data-id=activator]').click();
 
     const aside = page.locator('aside[class*=_visible]');
     await expect(aside).toBeVisible();
@@ -82,8 +82,8 @@ test.describe('navigation drawer', () => {
   });
 
   test('should have aria-label on drawer', async ({ page }) => {
-    const defaultDrawer = page.locator('div[data-cy=navigation-drawer-0]');
-    await defaultDrawer.locator('[data-cy=activator]').click();
+    const defaultDrawer = page.locator('div[data-id=navigation-drawer-0]');
+    await defaultDrawer.locator('[data-id=activator]').click();
 
     const aside = page.locator('aside[class*=_visible]');
     await expect(aside).toBeVisible();

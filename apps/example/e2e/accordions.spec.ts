@@ -6,10 +6,10 @@ test.describe('accordions', () => {
   });
 
   test('should render accordions and handle expansion', async ({ page }) => {
-    await expect(page.locator('h2[data-cy=accordions]')).toContainText('Accordions');
+    await expect(page.locator('h2[data-id=accordions]')).toContainText('Accordions');
 
-    const wrapper = page.locator('[data-cy=wrapper-0]');
-    const accordions = wrapper.locator('[data-cy=accordions]');
+    const wrapper = page.locator('[data-id=wrapper-0]');
+    const accordions = wrapper.locator('[data-id=accordions]');
 
     await expect(accordions.locator('> *')).toHaveCount(2);
 
@@ -22,8 +22,8 @@ test.describe('accordions', () => {
   });
 
   test('should allow multiple accordions to be open when multiple prop is set', async ({ page }) => {
-    const wrapper = page.locator('[data-cy=wrapper-1]');
-    const accordions = wrapper.locator('[data-cy=accordions]');
+    const wrapper = page.locator('[data-id=wrapper-1]');
+    const accordions = wrapper.locator('[data-id=accordions]');
 
     await expect(accordions.locator('> *')).toHaveCount(2);
 
@@ -41,8 +41,8 @@ test.describe('accordions', () => {
   });
 
   test('should toggle aria-expanded on click', async ({ page }) => {
-    const wrapper = page.locator('[data-cy=wrapper-0]');
-    const accordions = wrapper.locator('[data-cy=accordions]');
+    const wrapper = page.locator('[data-id=wrapper-0]');
+    const accordions = wrapper.locator('[data-id=accordions]');
     const trigger = accordions.locator('div:first-child [data-accordion-trigger]');
 
     await expect(trigger).toHaveAttribute('aria-expanded', 'false');
@@ -56,8 +56,8 @@ test.describe('accordions', () => {
   });
 
   test('should collapse accordion when clicking expanded header', async ({ page }) => {
-    const wrapper = page.locator('[data-cy=wrapper-0]');
-    const accordions = wrapper.locator('[data-cy=accordions]');
+    const wrapper = page.locator('[data-id=wrapper-0]');
+    const accordions = wrapper.locator('[data-id=accordions]');
     const trigger = accordions.locator('div:first-child [data-accordion-trigger]');
 
     await trigger.click();
@@ -71,8 +71,8 @@ test.describe('accordions', () => {
   });
 
   test('should have data-state attribute on accordion', async ({ page }) => {
-    const wrapper = page.locator('[data-cy=wrapper-0]');
-    const accordions = wrapper.locator('[data-cy=accordions]');
+    const wrapper = page.locator('[data-id=wrapper-0]');
+    const accordions = wrapper.locator('[data-id=accordions]');
     const accordion = accordions.locator('> [data-accordion]').first();
 
     await expect(accordion).toHaveAttribute('data-state', 'closed');
@@ -82,8 +82,8 @@ test.describe('accordions', () => {
   });
 
   test('should have role="button" and aria-controls on trigger', async ({ page }) => {
-    const wrapper = page.locator('[data-cy=wrapper-0]');
-    const trigger = wrapper.locator('[data-cy=accordions] div:first-child [data-accordion-trigger]');
+    const wrapper = page.locator('[data-id=wrapper-0]');
+    const trigger = wrapper.locator('[data-id=accordions] div:first-child [data-accordion-trigger]');
 
     await expect(trigger).toHaveAttribute('role', 'button');
     await expect(trigger).toHaveAttribute('tabindex', '0');
@@ -91,8 +91,8 @@ test.describe('accordions', () => {
   });
 
   test('should have role="region" on content with aria-labelledby', async ({ page }) => {
-    const wrapper = page.locator('[data-cy=wrapper-0]');
-    const accordions = wrapper.locator('[data-cy=accordions]');
+    const wrapper = page.locator('[data-id=wrapper-0]');
+    const accordions = wrapper.locator('[data-id=accordions]');
     const trigger = accordions.locator('div:first-child [data-accordion-trigger]');
 
     // Open accordion to reveal content

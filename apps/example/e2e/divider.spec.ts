@@ -6,7 +6,7 @@ test.describe('Divider', () => {
   });
 
   test('should render horizontal divider by default', async ({ page }) => {
-    const wrapper = page.locator('[data-cy=divider-horizontal]');
+    const wrapper = page.locator('[data-id=divider-horizontal]');
     const divider = wrapper.locator('[role=separator]');
 
     await expect(divider).toBeVisible();
@@ -14,7 +14,7 @@ test.describe('Divider', () => {
   });
 
   test('should render vertical divider', async ({ page }) => {
-    const wrapper = page.locator('[data-cy=divider-vertical]');
+    const wrapper = page.locator('[data-id=divider-vertical]');
     const divider = wrapper.locator('[role=separator]');
 
     await expect(divider).toBeVisible();

@@ -39,7 +39,7 @@ const paginationSticky = ref<TablePaginationData>({
 </script>
 
 <template>
-  <div data-cy="data-tables-pagination">
+  <div data-id="data-tables-pagination">
     <h2 class="text-2xl font-bold mb-6">
       Pagination
     </h2>
@@ -48,7 +48,7 @@ const paginationSticky = ref<TablePaginationData>({
       <!-- Basic pagination -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-pagination-basic"
+        data-id="table-pagination-basic"
       >
         <h4>Basic Pagination</h4>
         <p class="text-sm text-rui-text-secondary">
@@ -60,7 +60,7 @@ const paginationSticky = ref<TablePaginationData>({
           :cols="fixedColumns"
           row-attr="id"
           outlined
-          data-cy="table"
+          data-id="table"
         >
           <template #item.action>
             <RuiButton
@@ -80,7 +80,7 @@ const paginationSticky = ref<TablePaginationData>({
       <!-- Pagination without per-page selector -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-pagination-no-per-page"
+        data-id="table-pagination-no-per-page"
       >
         <h4>Pagination (disabled per-page selector)</h4>
         <RuiDataTable
@@ -90,7 +90,7 @@ const paginationSticky = ref<TablePaginationData>({
           row-attr="id"
           outlined
           disable-per-page
-          data-cy="table"
+          data-id="table"
         >
           <template #item.action>
             <RuiButton
@@ -110,7 +110,7 @@ const paginationSticky = ref<TablePaginationData>({
       <!-- Hide header pagination -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-pagination-hide-header"
+        data-id="table-pagination-hide-header"
       >
         <h4>Hide Header Pagination</h4>
         <p class="text-sm text-rui-text-secondary">
@@ -123,7 +123,7 @@ const paginationSticky = ref<TablePaginationData>({
           row-attr="id"
           outlined
           hide-default-header
-          data-cy="table"
+          data-id="table"
         >
           <template #item.action>
             <RuiButton
@@ -143,7 +143,7 @@ const paginationSticky = ref<TablePaginationData>({
       <!-- Hide footer pagination -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-pagination-hide-footer"
+        data-id="table-pagination-hide-footer"
       >
         <h4>Hide Footer Pagination</h4>
         <p class="text-sm text-rui-text-secondary">
@@ -156,7 +156,7 @@ const paginationSticky = ref<TablePaginationData>({
           row-attr="id"
           outlined
           hide-default-footer
-          data-cy="table"
+          data-id="table"
         >
           <template #item.action>
             <RuiButton
@@ -176,7 +176,7 @@ const paginationSticky = ref<TablePaginationData>({
       <!-- Sticky header -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-pagination-sticky"
+        data-id="table-pagination-sticky"
       >
         <h4>Sticky Header</h4>
         <p class="text-sm text-rui-text-secondary">
@@ -190,7 +190,7 @@ const paginationSticky = ref<TablePaginationData>({
             row-attr="id"
             outlined
             sticky-header
-            data-cy="table"
+            data-id="table"
           >
             <template #item.action>
               <RuiButton

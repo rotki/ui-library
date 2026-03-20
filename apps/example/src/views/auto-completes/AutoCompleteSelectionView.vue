@@ -12,7 +12,7 @@ const hideSelectedValue = ref<string[]>([]);
 </script>
 
 <template>
-  <div data-cy="auto-completes-selection">
+  <div data-id="auto-completes-selection">
     <h2 class="text-2xl font-bold mb-6">
       Selection
     </h2>
@@ -23,7 +23,7 @@ const hideSelectedValue = ref<string[]>([]);
           v-model="singleValue"
           :options="primitiveOptions"
           label="Single Select"
-          data-cy="ac-select-single"
+          data-id="ac-select-single"
         />
       </div>
 
@@ -33,7 +33,7 @@ const hideSelectedValue = ref<string[]>([]);
           clearable
           :options="primitiveOptions"
           label="Single Pre-selected"
-          data-cy="ac-select-single-preselected"
+          data-id="ac-select-single-preselected"
         />
       </div>
 
@@ -43,7 +43,7 @@ const hideSelectedValue = ref<string[]>([]);
           chips
           :options="primitiveOptions"
           label="Multi Select"
-          data-cy="ac-select-multi"
+          data-id="ac-select-multi"
         />
       </div>
 
@@ -53,7 +53,7 @@ const hideSelectedValue = ref<string[]>([]);
           chips
           :options="primitiveOptions"
           label="Multi Pre-selected"
-          data-cy="ac-select-multi-preselected"
+          data-id="ac-select-multi-preselected"
         />
       </div>
 
@@ -63,7 +63,7 @@ const hideSelectedValue = ref<string[]>([]);
           auto-select-first
           :options="primitiveOptions"
           label="Auto Select First"
-          data-cy="ac-select-auto-first"
+          data-id="ac-select-auto-first"
         />
       </div>
 
@@ -74,7 +74,7 @@ const hideSelectedValue = ref<string[]>([]);
           hide-selected
           :options="primitiveOptions"
           label="Hide Selected"
-          data-cy="ac-select-hide-selected"
+          data-id="ac-select-hide-selected"
         />
       </div>
     </div>

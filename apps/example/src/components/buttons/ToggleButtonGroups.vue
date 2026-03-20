@@ -28,7 +28,7 @@ onBeforeMount(() => {
   <ComponentGroup
     :items="toggleButtons"
     class="grid gap-4 grid-rows-2 grid-cols-2 justify-items-start mb-14"
-    data-cy="toggleable-button-groups"
+    data-id="toggleable-button-groups"
   >
     <template #title>
       Toggleable Button Groups

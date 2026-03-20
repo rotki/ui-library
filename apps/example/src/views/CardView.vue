@@ -494,7 +494,7 @@ const sections = ref<CardData[]>([
 </script>
 
 <template>
-  <ComponentView data-cy="cards">
+  <ComponentView data-id="cards">
     <template #title>
       Cards
     </template>
@@ -520,7 +520,7 @@ const sections = ref<CardData[]>([
                 'actions',
               ])
             "
-            :data-cy="`card-${i}-${j}`"
+            :data-id="`card-${i}-${j}`"
           >
             <template
               v-if="card.image"
@@ -574,7 +574,7 @@ const sections = ref<CardData[]>([
                 v-for="(action, k) in card.actions"
                 v-bind="objectOmit(action, ['clicks', 'text'])"
                 :key="k"
-                :data-cy="`card-action-${k}`"
+                :data-id="`card-action-${k}`"
                 @click="action.clicks++"
               >
                 {{ action.text }}

@@ -176,14 +176,14 @@ test.describe('component name', () => {
   });
 
   test('should do something', async ({ page }) => {
-    await expect(page.locator('[data-cy=element]')).toBeVisible();
+    await expect(page.locator('[data-id=element]')).toBeVisible();
   });
 });
 ```
 
 **Locator strategy** (in order of preference):
 
-1. `[data-cy=...]` - Test-specific data attributes (preferred)
+1. `[data-id=...]` - Test-specific data attributes (preferred)
 2. `[role=...]` - ARIA roles for accessibility
 3. `[data-id=...]` - Component identifiers
 4. `[class*=_name_]` - CSS module classes (last resort)

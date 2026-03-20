@@ -52,7 +52,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <ComponentView data-cy="checkboxes">
+  <ComponentView data-id="checkboxes">
     <template #title>
       Checkboxes
     </template>

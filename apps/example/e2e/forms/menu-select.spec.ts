@@ -6,16 +6,16 @@ test.describe('menu-select - index', () => {
   });
 
   test('should render navigation links', async ({ page }) => {
-    await expect(page.locator('[data-cy=menu-selects-index]')).toBeVisible();
-    await expect(page.locator('[data-cy="link-/menu-selects/basic"]')).toBeVisible();
-    await expect(page.locator('[data-cy="link-/menu-selects/selection"]')).toBeVisible();
-    await expect(page.locator('[data-cy="link-/menu-selects/readonly"]')).toBeVisible();
-    await expect(page.locator('[data-cy="link-/menu-selects/custom"]')).toBeVisible();
+    await expect(page.locator('[data-id=menu-selects-index]')).toBeVisible();
+    await expect(page.locator('[data-id="link-/menu-selects/basic"]')).toBeVisible();
+    await expect(page.locator('[data-id="link-/menu-selects/selection"]')).toBeVisible();
+    await expect(page.locator('[data-id="link-/menu-selects/readonly"]')).toBeVisible();
+    await expect(page.locator('[data-id="link-/menu-selects/custom"]')).toBeVisible();
   });
 
   test('should navigate to sub-routes', async ({ page }) => {
-    await page.locator('[data-cy="link-/menu-selects/basic"]').click();
-    await expect(page.locator('[data-cy=menu-selects-basic]')).toBeVisible();
+    await page.locator('[data-id="link-/menu-selects/basic"]').click();
+    await expect(page.locator('[data-id=menu-selects-basic]')).toBeVisible();
   });
 });
 
@@ -29,26 +29,26 @@ test.describe('menu-select - basic', () => {
   });
 
   test('should render default variant with pre-selected value', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-basic-default]');
+    const ms = page.locator('[data-id=ms-basic-default]');
     await expect(ms).toBeVisible();
     await expect(ms.locator('[data-id=activator]')).toContainText('Germany');
   });
 
   test('should render outlined variant', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-basic-outlined]');
+    const ms = page.locator('[data-id=ms-basic-outlined]');
     await expect(ms).toBeVisible();
     await expect(ms.locator('fieldset')).toBeVisible();
     await expect(ms.locator('[data-id=activator]')).toContainText('Germany');
   });
 
   test('should render dense variant', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-basic-dense]');
+    const ms = page.locator('[data-id=ms-basic-dense]');
     await expect(ms).toBeVisible();
     await expect(ms.locator('[data-id=activator]')).toContainText('Germany');
   });
 
   test('should not open menu when disabled', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-basic-disabled]');
+    const ms = page.locator('[data-id=ms-basic-disabled]');
     const activator = ms.locator('[data-id=activator]');
     await expect(activator).toHaveAttribute('aria-disabled', 'true');
     await activator.click({ force: true });
@@ -56,37 +56,37 @@ test.describe('menu-select - basic', () => {
   });
 
   test('should show loading indicator', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-basic-loading]');
+    const ms = page.locator('[data-id=ms-basic-loading]');
     const activator = ms.locator('[data-id=activator]');
     await expect(activator).toHaveAttribute('aria-busy', 'true');
   });
 
   test('should display error messages', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-basic-error]');
+    const ms = page.locator('[data-id=ms-basic-error]');
     await expect(ms).toContainText('This field is required');
     await expect(ms.locator('[data-id=activator]')).toHaveAttribute('aria-invalid', 'true');
   });
 
   test('should display success messages', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-basic-success]');
+    const ms = page.locator('[data-id=ms-basic-success]');
     await expect(ms).toContainText('Looks good!');
   });
 
   test('should hide details when hideDetails is set', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-basic-hide-details]');
+    const ms = page.locator('[data-id=ms-basic-hide-details]');
     await expect(ms).toBeVisible();
     await expect(ms).not.toContainText('This field is required');
   });
 
   test('should show required indicator', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-basic-required]');
+    const ms = page.locator('[data-id=ms-basic-required]');
     const activator = ms.locator('[data-id=activator]');
     await expect(activator).toHaveAttribute('aria-required', 'true');
     await expect(activator).toContainText('\uFE61');
   });
 
   test('should display hint text', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-basic-hint]');
+    const ms = page.locator('[data-id=ms-basic-hint]');
     await expect(ms).toBeVisible();
     await expect(ms).toContainText('Pick a country');
   });
@@ -102,7 +102,7 @@ test.describe('menu-select - selection', () => {
   });
 
   test('should open menu and select value', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-select-single]');
+    const ms = page.locator('[data-id=ms-select-single]');
     const activator = ms.locator('[data-id=activator]');
 
     await expect(activator).toHaveAttribute('aria-expanded', 'false');
@@ -116,7 +116,7 @@ test.describe('menu-select - selection', () => {
   });
 
   test('should clear value with clear button', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-select-preselected]');
+    const ms = page.locator('[data-id=ms-select-preselected]');
     const activator = ms.locator('[data-id=activator]');
     await expect(activator).toContainText('Lorem');
 
@@ -126,7 +126,7 @@ test.describe('menu-select - selection', () => {
   });
 
   test('should auto-select first option on open', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-select-auto-first]');
+    const ms = page.locator('[data-id=ms-select-auto-first]');
     const activator = ms.locator('[data-id=activator]');
 
     await activator.click();
@@ -137,7 +137,7 @@ test.describe('menu-select - selection', () => {
   });
 
   test('should navigate options with keyboard', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-select-auto-first]');
+    const ms = page.locator('[data-id=ms-select-auto-first]');
     const activator = ms.locator('[data-id=activator]');
 
     await activator.click();
@@ -163,7 +163,7 @@ test.describe('menu-select - selection', () => {
   });
 
   test('should show no-data message when options empty', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-select-no-data]');
+    const ms = page.locator('[data-id=ms-select-no-data]');
     const activator = ms.locator('[data-id=activator]');
 
     await activator.click();
@@ -173,7 +173,7 @@ test.describe('menu-select - selection', () => {
   });
 
   test('should hide no-data when hideNoData is set', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-select-hide-no-data]');
+    const ms = page.locator('[data-id=ms-select-hide-no-data]');
     const activator = ms.locator('[data-id=activator]');
 
     await activator.click();
@@ -186,7 +186,7 @@ test.describe('menu-select - selection', () => {
   });
 
   test('should show aria-selected on active option', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-select-single]');
+    const ms = page.locator('[data-id=ms-select-single]');
     const activator = ms.locator('[data-id=activator]');
 
     // Select an item first
@@ -215,7 +215,7 @@ test.describe('menu-select - readonly', () => {
   });
 
   test('should not open menu when read-only', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-readonly-default]');
+    const ms = page.locator('[data-id=ms-readonly-default]');
     const activator = ms.locator('[data-id=activator]');
     await expect(activator).toHaveAttribute('aria-readonly', 'true');
     await activator.click({ force: true });
@@ -223,7 +223,7 @@ test.describe('menu-select - readonly', () => {
   });
 
   test('should display pre-selected value', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-readonly-default]');
+    const ms = page.locator('[data-id=ms-readonly-default]');
     await expect(ms.locator('[data-id=activator]')).toContainText('Lorem');
   });
 });
@@ -238,8 +238,8 @@ test.describe('menu-select - custom slots', () => {
   });
 
   test('should open menu via custom activator button', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-custom-activator]');
-    const button = ms.locator('[data-cy=activator]');
+    const ms = page.locator('[data-id=ms-custom-activator]');
+    const button = ms.locator('[data-id=activator]');
 
     await expect(button).toBeVisible();
     await expect(button).toContainText('Choose option');
@@ -249,7 +249,7 @@ test.describe('menu-select - custom slots', () => {
   });
 
   test('should render custom selection display', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-custom-selection]');
+    const ms = page.locator('[data-id=ms-custom-selection]');
     const activator = ms.locator('[data-id=activator]');
 
     await activator.click();
@@ -261,7 +261,7 @@ test.describe('menu-select - custom slots', () => {
   });
 
   test('should render custom item append content', async ({ page }) => {
-    const ms = page.locator('[data-cy=ms-custom-item]');
+    const ms = page.locator('[data-id=ms-custom-item]');
     const activator = ms.locator('[data-id=activator]');
 
     // Select first item
@@ -274,6 +274,6 @@ test.describe('menu-select - custom slots', () => {
     await expect(page.locator('div[role=menu]')).toBeVisible();
 
     const activeButton = page.locator('div[role=menu] button[aria-selected=true]');
-    await expect(activeButton.locator('[data-cy=check-icon]')).toBeVisible();
+    await expect(activeButton.locator('[data-id=check-icon]')).toBeVisible();
   });
 });

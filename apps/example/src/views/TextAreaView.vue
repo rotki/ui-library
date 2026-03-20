@@ -225,7 +225,7 @@ const textAreas = ref<TextAreaData[]>([
 </script>
 
 <template>
-  <ComponentView data-cy="text-fields">
+  <ComponentView data-id="text-fields">
     <template #title>
       Text Fields
     </template>

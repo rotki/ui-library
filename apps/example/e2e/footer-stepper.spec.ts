@@ -4,11 +4,11 @@ test.describe('footer steppers', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/steppers');
     // Wait for footer steppers section to be visible
-    await expect(page.locator('h2[data-cy=footer-steppers]')).toBeVisible();
+    await expect(page.locator('h2[data-id=footer-steppers]')).toBeVisible();
   });
 
   test('should render footer stepper variants', async ({ page }) => {
-    await expect(page.locator('h2[data-cy=footer-steppers]')).toContainText('Footer Steppers');
+    await expect(page.locator('h2[data-id=footer-steppers]')).toContainText('Footer Steppers');
 
     // Footer steppers are rendered after the h2 element, select from page directly
     // The class names are CSS module scoped: _footer-stepper_xxx _numeric_xxx
@@ -42,7 +42,7 @@ test.describe('footer steppers', () => {
   });
 
   test('should navigate forward and backward with buttons', async ({ page }) => {
-    const stepper = page.locator('[data-cy=footer-stepper-0]');
+    const stepper = page.locator('[data-id=footer-stepper-0]');
     await expect(stepper.locator('span[class*=_numeric_]')).toContainText('1/5');
 
     // Back should be disabled on first page
@@ -62,20 +62,20 @@ test.describe('footer steppers', () => {
   });
 
   test('should have role="navigation" and aria-label on root', async ({ page }) => {
-    const stepper = page.locator('[data-cy=footer-stepper-0]');
+    const stepper = page.locator('[data-id=footer-stepper-0]');
     await expect(stepper).toHaveAttribute('role', 'navigation');
     await expect(stepper).toHaveAttribute('aria-label', 'Step navigation');
   });
 
   test('should have aria-label on navigation buttons', async ({ page }) => {
-    const stepper = page.locator('[data-cy=footer-stepper-0]');
+    const stepper = page.locator('[data-id=footer-stepper-0]');
     await expect(stepper.locator('button[aria-label=Previous]')).toBeVisible();
     await expect(stepper.locator('button[aria-label=Next]')).toBeVisible();
   });
 
   test('should have aria-current="step" on active bullet', async ({ page }) => {
     // Footer stepper at index 1 is bullet variant with value=2
-    const stepper = page.locator('[data-cy=footer-stepper-1]');
+    const stepper = page.locator('[data-id=footer-stepper-1]');
     const activeBullet = stepper.locator('[aria-current=step]');
     await expect(activeBullet).toHaveCount(1);
 
@@ -87,7 +87,7 @@ test.describe('footer steppers', () => {
 
   test('should hide buttons when hideButtons is true', async ({ page }) => {
     // Footer stepper at index 2 has hideButtons=true
-    const stepper = page.locator('[data-cy=footer-stepper-2]');
+    const stepper = page.locator('[data-id=footer-stepper-2]');
     await expect(stepper.locator('button')).toHaveCount(0);
   });
 });

@@ -30,7 +30,7 @@ const sortDisplay = computed<string>(() => {
 </script>
 
 <template>
-  <div data-cy="data-tables-sorting">
+  <div data-id="data-tables-sorting">
     <h2 class="text-2xl font-bold mb-6">
       Sorting
     </h2>
@@ -39,7 +39,7 @@ const sortDisplay = computed<string>(() => {
       <!-- Single column sort -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-single-sort"
+        data-id="table-single-sort"
       >
         <h4>Single Column Sort</h4>
         <p class="text-sm text-rui-text-secondary">
@@ -51,7 +51,7 @@ const sortDisplay = computed<string>(() => {
           :cols="columns"
           row-attr="id"
           outlined
-          data-cy="table"
+          data-id="table"
         >
           <template #item.action>
             <RuiButton
@@ -71,7 +71,7 @@ const sortDisplay = computed<string>(() => {
       <!-- Multi column sort -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-multi-sort"
+        data-id="table-multi-sort"
       >
         <h4>Multi Column Sort</h4>
         <p class="text-sm text-rui-text-secondary">
@@ -83,7 +83,7 @@ const sortDisplay = computed<string>(() => {
           :cols="columns"
           row-attr="id"
           outlined
-          data-cy="table"
+          data-id="table"
         >
           <template #item.action>
             <RuiButton

@@ -62,7 +62,7 @@ const textFields = ref<SliderData[]>([
 </script>
 
 <template>
-  <ComponentView data-cy="sliders">
+  <ComponentView data-id="sliders">
     <template #title>
       Sliders
     </template>
@@ -73,7 +73,7 @@ const textFields = ref<SliderData[]>([
         :key="i"
         v-model="field.value"
         :label="field.label"
-        :data-cy="`slider-${i}`"
+        :data-id="`slider-${i}`"
         v-bind="field"
       />
     </div>

@@ -35,7 +35,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <ComponentView data-cy="skeleton-loader">
+  <ComponentView data-id="skeleton-loader">
     <template #title>
       Skeleton Loader
     </template>

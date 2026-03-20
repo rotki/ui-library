@@ -46,7 +46,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <ComponentView data-cy="tabs">
+  <ComponentView data-id="tabs">
     <template #title>
       Tabs
     </template>
@@ -55,13 +55,13 @@ onBeforeMount(() => {
       :items="tabs"
       item-class="flex mb-6 gap-x-6"
       :get-item-class="item => item.vertical ? 'flex-row' : 'flex-col'"
-      :get-item-data-cy="(_, i) => `wrapper-${i}`"
+      :get-item-data-id="(_, i) => `wrapper-${i}`"
     >
       <template #item="{ item }">
         <RuiTabs
           v-bind="item"
           v-model="item.modelValue"
-          data-cy="tabs"
+          data-id="tabs"
         >
           <RuiTab>
             <template #prepend>
@@ -87,7 +87,7 @@ onBeforeMount(() => {
         </RuiTabs>
         <RuiTabItems
           v-model="item.modelValue"
-          data-cy="tab-items"
+          data-id="tab-items"
         >
           <RuiTabItem
             v-for="n in 4"

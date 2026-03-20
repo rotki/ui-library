@@ -347,7 +347,7 @@ const footerSteppers = ref<FooterStepperData[]>([
 </script>
 
 <template>
-  <ComponentView data-cy="steppers">
+  <ComponentView data-id="steppers">
     <template #title>
       Steppers
     </template>
@@ -355,13 +355,13 @@ const footerSteppers = ref<FooterStepperData[]>([
     <RuiStepper
       v-for="(stepper, i) in steppers"
       :key="i"
-      :data-cy="`stepper-${i}`"
+      :data-id="`stepper-${i}`"
       class="mb-6"
       v-bind="stepper"
     />
     <h2
       class="text-h4 mb-6 mt-14"
-      data-cy="footer-steppers"
+      data-id="footer-steppers"
     >
       Footer Steppers
     </h2>
@@ -369,7 +369,7 @@ const footerSteppers = ref<FooterStepperData[]>([
       v-for="(stepper, i) in footerSteppers"
       :key="i"
       v-model="stepper.value"
-      :data-cy="`footer-stepper-${i}`"
+      :data-id="`footer-stepper-${i}`"
       class="mb-6"
       v-bind="stepper"
     />

@@ -125,7 +125,7 @@ const menus = ref<SimpleMenu[]>([
 </script>
 
 <template>
-  <ComponentView data-cy="menus">
+  <ComponentView data-id="menus">
     <template #title>
       Menus
     </template>
@@ -138,14 +138,14 @@ const menus = ref<SimpleMenu[]>([
       >
         <RuiMenu
           v-bind="objectOmit(menu, ['buttonColor'])"
-          :data-cy="`menu-${i}`"
+          :data-id="`menu-${i}`"
           :open-delay="10"
         >
           <template #activator="{ attrs, disabled }">
             <RuiButton
               :color="menu.buttonColor"
               :disabled="disabled"
-              v-bind="{ ...attrs, 'data-cy': 'activator' }"
+              v-bind="{ ...attrs, 'data-id': 'activator' }"
             >
               {{ menu.buttonText }}
             </RuiButton>

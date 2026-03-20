@@ -80,12 +80,12 @@ describe('components/tables/RuiExpandButton.vue', () => {
         expanded: false,
       },
       slots: {
-        default: '<span data-cy="custom-icon">Custom</span>',
+        default: '<span data-id="custom-icon">Custom</span>',
       },
     });
 
-    expect(wrapper.find('[data-cy=custom-icon]').exists()).toBeTruthy();
-    expect(wrapper.find('[data-cy=custom-icon]').text()).toBe('Custom');
+    expect(wrapper.find('[data-id=custom-icon]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=custom-icon]').text()).toBe('Custom');
   });
 
   it('should pass through additional attributes', () => {

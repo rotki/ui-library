@@ -58,7 +58,7 @@ const groups = computed<{ name: string; value: string | number | boolean }[][]>(
 </script>
 
 <template>
-  <ComponentView data-cy="breakpoint">
+  <ComponentView data-id="breakpoint">
     <template #title>
       Breakpoint
     </template>

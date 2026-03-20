@@ -7,11 +7,11 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const { items, itemClass, getItemClass: getItemClassFn, getItemDataCy } = defineProps<{
+const { items, itemClass, getItemClass: getItemClassFn, getItemDataId } = defineProps<{
   items: T[];
   itemClass?: StaticClassProps | StaticClassProps[];
   getItemClass?: (item: T, index: number) => StaticClassProps;
-  getItemDataCy?: (item: T, index: number) => string;
+  getItemDataId?: (item: T, index: number) => string;
 }>();
 
 defineSlots<{
@@ -39,16 +39,16 @@ function getItemClass(item: T, index: number): StaticClassProps | StaticClassPro
   <h4
     v-if="$slots.title"
     class="text-h4 mb-6 mt-14"
-    v-bind="objectPick($attrs, ['data-cy'])"
+    v-bind="objectPick($attrs, ['data-id'])"
   >
     <slot name="title" />
   </h4>
-  <div v-bind="objectOmit($attrs, ['data-cy'])">
+  <div v-bind="objectOmit($attrs, ['data-id'])">
     <div
       v-for="(item, i) in items"
       :key="i"
       :class="getItemClass(item, i)"
-      :data-cy="getItemDataCy?.(item, i)"
+      :data-id="getItemDataId?.(item, i)"
     >
       <slot
         name="item"

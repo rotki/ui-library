@@ -6,9 +6,9 @@ test.describe('badge', () => {
   });
 
   test('checks for and trigger badge', async ({ page }) => {
-    await expect(page.locator('h2[data-cy=badges]')).toContainText('Badges');
+    await expect(page.locator('h2[data-id=badges]')).toContainText('Badges');
 
-    const defaultBadge = page.locator('div[data-cy=badge-0]');
+    const defaultBadge = page.locator('div[data-id=badge-0]');
     await expect(defaultBadge.locator('div[role=status]')).toBeVisible();
 
     await defaultBadge.locator('> button').click();
@@ -18,7 +18,7 @@ test.describe('badge', () => {
   });
 
   test('should have correct ARIA attributes on badge', async ({ page }) => {
-    const badge = page.locator('div[data-cy=badge-0] div[role=status]');
+    const badge = page.locator('div[data-id=badge-0] div[role=status]');
     await expect(badge).toBeVisible();
     await expect(badge).toHaveAttribute('aria-live', 'polite');
     await expect(badge).toHaveAttribute('aria-atomic', 'true');
@@ -26,7 +26,7 @@ test.describe('badge', () => {
   });
 
   test('should render dot badge variant', async ({ page }) => {
-    const dotBadge = page.locator('div[data-cy=badge-84] div[role=status]');
+    const dotBadge = page.locator('div[data-id=badge-84] div[role=status]');
     await expect(dotBadge).toBeVisible();
     // Dot badge should not have content span
     await expect(dotBadge.locator('span')).toHaveCount(0);
@@ -35,13 +35,13 @@ test.describe('badge', () => {
   test('should render different color variants', async ({ page }) => {
     // badge-0 = default, badge-1 = primary, badge-2 = secondary, badge-3 = error
     for (const index of [0, 1, 2, 3, 4, 5, 6]) {
-      const badge = page.locator(`div[data-cy=badge-${index}] div[role=status]`);
+      const badge = page.locator(`div[data-id=badge-${index}] div[role=status]`);
       await expect(badge).toBeVisible();
     }
   });
 
   test('checks for and trigger dot badge', async ({ page }) => {
-    const dotBadge = page.locator('div[data-cy=badge-84]');
+    const dotBadge = page.locator('div[data-id=badge-84]');
     await expect(dotBadge.locator('div[role=status]')).toBeVisible();
 
     await dotBadge.locator('> button').click();

@@ -19,7 +19,7 @@ const logos = ref<(LogoProps & { name: string })[]>([
 </script>
 
 <template>
-  <ComponentView data-cy="icons">
+  <ComponentView data-id="icons">
     <template #title>
       Icons
     </template>
@@ -34,7 +34,7 @@ const logos = ref<(LogoProps & { name: string })[]>([
 
     <h2
       class="text-h4 mb-6"
-      data-cy="logos"
+      data-id="logos"
     >
       rotki Logo
     </h2>

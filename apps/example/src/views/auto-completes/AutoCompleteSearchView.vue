@@ -15,7 +15,7 @@ const placeholderValue = ref<string>();
 </script>
 
 <template>
-  <div data-cy="auto-completes-search">
+  <div data-id="auto-completes-search">
     <h2 class="text-2xl font-bold mb-6">
       Search
     </h2>
@@ -28,7 +28,7 @@ const placeholderValue = ref<string>();
           key-attr="id"
           text-attr="label"
           label="Filter (type to search)"
-          data-cy="ac-search-filter"
+          data-id="ac-search-filter"
         />
       </div>
 
@@ -38,7 +38,7 @@ const placeholderValue = ref<string>();
           no-filter
           :options="primitiveOptions"
           label="No Filter"
-          data-cy="ac-search-no-filter"
+          data-id="ac-search-no-filter"
         />
       </div>
 
@@ -48,7 +48,7 @@ const placeholderValue = ref<string>();
           custom-value
           :options="primitiveOptions"
           label="Custom Value"
-          data-cy="ac-search-custom-value"
+          data-id="ac-search-custom-value"
         />
       </div>
 
@@ -59,7 +59,7 @@ const placeholderValue = ref<string>();
           hide-custom-value
           :options="primitiveOptions"
           label="Custom Value (hidden)"
-          data-cy="ac-search-custom-hide"
+          data-id="ac-search-custom-hide"
         />
       </div>
 
@@ -69,7 +69,7 @@ const placeholderValue = ref<string>();
           :options="primitiveOptions"
           no-data-text="Nothing found"
           label="No Data Text"
-          data-cy="ac-search-no-data"
+          data-id="ac-search-no-data"
         />
       </div>
 
@@ -79,7 +79,7 @@ const placeholderValue = ref<string>();
           hide-no-data
           :options="primitiveOptions"
           label="Hide No Data"
-          data-cy="ac-search-hide-no-data"
+          data-id="ac-search-hide-no-data"
         />
       </div>
 
@@ -89,7 +89,7 @@ const placeholderValue = ref<string>();
           :options="primitiveOptions"
           placeholder="Type here..."
           label="With Placeholder"
-          data-cy="ac-search-placeholder"
+          data-id="ac-search-placeholder"
         />
       </div>
     </div>

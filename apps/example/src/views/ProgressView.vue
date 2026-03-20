@@ -139,7 +139,7 @@ const progress = ref<ProgressProps[]>([
 </script>
 
 <template>
-  <ComponentView data-cy="progress">
+  <ComponentView data-id="progress">
     <template #title>
       Progress
     </template>

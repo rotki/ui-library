@@ -162,17 +162,16 @@ test.describe('component name', () => {
   });
 
   test('should do something', async ({ page }) => {
-    await expect(page.locator('[data-cy=element]')).toBeVisible();
+    await expect(page.getByTestId('element')).toBeVisible();
   });
 });
 ```
 
 **Locator Best Practices (in order of preference):**
 
-1. `[data-cy=...]` - Test-specific attributes (preferred)
+1. `page.getByTestId('...')` - Uses `data-id` attribute (preferred, configured via `testIdAttribute` in playwright config)
 2. `[role=...]` - ARIA roles for accessibility testing
-3. `[data-id=...]` - Component-specific identifiers
-4. `[class*=_component_]` - CSS module classes (last resort for internal state)
+3. `[class*=_component_]` - CSS module classes (last resort for internal state)
 
 **Avoid:**
 

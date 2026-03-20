@@ -58,7 +58,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <ComponentView data-cy="badges">
+  <ComponentView data-id="badges">
     <template #title>
       Badges
     </template>
@@ -71,7 +71,7 @@ onBeforeMount(() => {
       >
         <RuiBadge
           v-bind="badge"
-          :data-cy="`badge-${i}`"
+          :data-id="`badge-${i}`"
         >
           <RuiButton @click="badge.modelValue = !badge.modelValue">
             Badge

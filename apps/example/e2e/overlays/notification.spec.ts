@@ -11,55 +11,55 @@ test.describe('notifications', () => {
   });
 
   test('should toggle visibility through button', async ({ page }) => {
-    await expect(page.locator('[data-cy="notification-content"]')).toHaveCount(0);
-    await page.locator('[data-cy="visibility-toggle"]').click();
-    await expect(page.locator('[data-cy="notification-content"]')).toBeVisible();
-    await expect(page.locator('[data-cy="notification-content"]')).toContainText('This is a notification');
-    await page.locator('[data-cy="visibility-toggle"]').click();
-    await expect(page.locator('[data-cy="notification-content"]')).toHaveCount(0);
+    await expect(page.locator('[data-id="notification-content"]')).toHaveCount(0);
+    await page.locator('[data-id="visibility-toggle"]').click();
+    await expect(page.locator('[data-id="notification-content"]')).toBeVisible();
+    await expect(page.locator('[data-id="notification-content"]')).toContainText('This is a notification');
+    await page.locator('[data-id="visibility-toggle"]').click();
+    await expect(page.locator('[data-id="notification-content"]')).toHaveCount(0);
   });
 
   test('should have role="alert" and aria-live="polite"', async ({ page }) => {
-    await page.locator('[data-cy="visibility-toggle"]').click();
+    await page.locator('[data-id="visibility-toggle"]').click();
     const notification = page.locator('[role="alert"]');
     await expect(notification).toBeVisible();
     await expect(notification).toHaveAttribute('aria-live', 'polite');
   });
 
   test('should contain notification text content', async ({ page }) => {
-    await page.locator('[data-cy="visibility-toggle"]').click();
+    await page.locator('[data-id="visibility-toggle"]').click();
     const notification = page.locator('[role="alert"]');
     await expect(notification).toBeVisible();
     await expect(notification).toContainText('This is a notification');
   });
 
   test('should dismiss by click', async ({ page }) => {
-    await expect(page.locator('[data-cy="notification-content"]')).toHaveCount(0);
-    await page.locator('[data-cy="visibility-toggle"]').click();
-    await expect(page.locator('[data-cy="notification-content"]')).toBeVisible();
-    await page.locator('[data-cy="notification-content"]').click();
-    await expect(page.locator('[data-cy="notification-content"]')).toHaveCount(0);
+    await expect(page.locator('[data-id="notification-content"]')).toHaveCount(0);
+    await page.locator('[data-id="visibility-toggle"]').click();
+    await expect(page.locator('[data-id="notification-content"]')).toBeVisible();
+    await page.locator('[data-id="notification-content"]').click();
+    await expect(page.locator('[data-id="notification-content"]')).toHaveCount(0);
   });
 
   test('should not dismiss by click when timeout is negative', async ({ page }) => {
-    const timeoutInput = page.locator('[data-cy="timeout"] input');
+    const timeoutInput = page.locator('[data-id="timeout"] input');
     await timeoutInput.clear();
     await timeoutInput.fill('-1');
-    await expect(page.locator('[data-cy="notification-content"]')).toHaveCount(0);
-    await page.locator('[data-cy="visibility-toggle"]').click();
-    await expect(page.locator('[data-cy="notification-content"]')).toBeVisible();
-    await page.locator('[data-cy="notification-content"]').click();
-    await expect(page.locator('[data-cy="notification-content"]')).toBeVisible();
+    await expect(page.locator('[data-id="notification-content"]')).toHaveCount(0);
+    await page.locator('[data-id="visibility-toggle"]').click();
+    await expect(page.locator('[data-id="notification-content"]')).toBeVisible();
+    await page.locator('[data-id="notification-content"]').click();
+    await expect(page.locator('[data-id="notification-content"]')).toBeVisible();
   });
 
   test('should auto dismiss on timeout', async ({ page }) => {
-    const timeoutInput = page.locator('[data-cy="timeout"] input');
+    const timeoutInput = page.locator('[data-id="timeout"] input');
     await timeoutInput.clear();
     await timeoutInput.fill('100');
-    await expect(page.locator('[data-cy="notification-content"]')).toHaveCount(0);
-    await page.locator('[data-cy="visibility-toggle"]').click();
-    await expect(page.locator('[data-cy="notification-content"]')).toBeVisible();
+    await expect(page.locator('[data-id="notification-content"]')).toHaveCount(0);
+    await page.locator('[data-id="visibility-toggle"]').click();
+    await expect(page.locator('[data-id="notification-content"]')).toBeVisible();
     // Wait for the notification to auto-dismiss after 100ms timeout
-    await expect(page.locator('[data-cy="notification-content"]')).toHaveCount(0, { timeout: 5000 });
+    await expect(page.locator('[data-id="notification-content"]')).toHaveCount(0, { timeout: 5000 });
   });
 });

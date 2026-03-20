@@ -18,7 +18,7 @@ const hintValue = ref<number>();
 </script>
 
 <template>
-  <div data-cy="auto-completes-basic">
+  <div data-id="auto-completes-basic">
     <h2 class="text-2xl font-bold mb-6">
       Basic
     </h2>
@@ -32,7 +32,7 @@ const hintValue = ref<number>();
           key-attr="id"
           text-attr="label"
           label="Default"
-          data-cy="ac-basic-default"
+          data-id="ac-basic-default"
         />
       </div>
 
@@ -45,7 +45,7 @@ const hintValue = ref<number>();
           key-attr="id"
           text-attr="label"
           label="Outlined"
-          data-cy="ac-basic-outlined"
+          data-id="ac-basic-outlined"
         />
       </div>
 
@@ -58,7 +58,7 @@ const hintValue = ref<number>();
           key-attr="id"
           text-attr="label"
           label="Dense"
-          data-cy="ac-basic-dense"
+          data-id="ac-basic-dense"
         />
       </div>
 
@@ -70,7 +70,7 @@ const hintValue = ref<number>();
           key-attr="id"
           text-attr="label"
           label="Disabled"
-          data-cy="ac-basic-disabled"
+          data-id="ac-basic-disabled"
         />
       </div>
 
@@ -83,7 +83,7 @@ const hintValue = ref<number>();
           key-attr="id"
           text-attr="label"
           label="Disabled Outlined"
-          data-cy="ac-basic-disabled-outlined"
+          data-id="ac-basic-disabled-outlined"
         />
       </div>
 
@@ -95,7 +95,7 @@ const hintValue = ref<number>();
           key-attr="id"
           text-attr="label"
           label="Loading"
-          data-cy="ac-basic-loading"
+          data-id="ac-basic-loading"
         />
       </div>
 
@@ -107,7 +107,7 @@ const hintValue = ref<number>();
           key-attr="id"
           text-attr="label"
           label="With Error"
-          data-cy="ac-basic-error"
+          data-id="ac-basic-error"
         />
       </div>
 
@@ -119,7 +119,7 @@ const hintValue = ref<number>();
           key-attr="id"
           text-attr="label"
           label="With Success"
-          data-cy="ac-basic-success"
+          data-id="ac-basic-success"
         />
       </div>
 
@@ -132,7 +132,7 @@ const hintValue = ref<number>();
           key-attr="id"
           text-attr="label"
           label="Hide Details"
-          data-cy="ac-basic-hide-details"
+          data-id="ac-basic-hide-details"
         />
       </div>
 
@@ -145,7 +145,7 @@ const hintValue = ref<number>();
           key-attr="id"
           text-attr="label"
           label="Required"
-          data-cy="ac-basic-required"
+          data-id="ac-basic-required"
         />
       </div>
 
@@ -157,7 +157,7 @@ const hintValue = ref<number>();
           text-attr="label"
           hint="Select your country"
           label="With Hint"
-          data-cy="ac-basic-hint"
+          data-id="ac-basic-hint"
         />
       </div>
     </div>

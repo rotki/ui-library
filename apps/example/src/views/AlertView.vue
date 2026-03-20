@@ -42,7 +42,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <ComponentView data-cy="alerts">
+  <ComponentView data-id="alerts">
     <template #title>
       Alerts
     </template>

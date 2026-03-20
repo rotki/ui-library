@@ -12,15 +12,15 @@ defineSlots<{
 </script>
 
 <template>
-  <div v-bind="objectOmit($attrs, ['data-cy'])">
+  <div v-bind="objectOmit($attrs, ['data-id'])">
     <h2
       class="text-h4 mb-6"
-      v-bind="objectPick($attrs, ['data-cy'])"
+      v-bind="objectPick($attrs, ['data-id'])"
     >
       <slot name="title" />
     </h2>
 
-    <div data-cy="content">
+    <div data-id="content">
       <slot />
     </div>
   </div>

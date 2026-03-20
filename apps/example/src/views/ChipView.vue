@@ -61,7 +61,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <ComponentView data-cy="chips">
+  <ComponentView data-id="chips">
     <template #title>
       Chips
     </template>
@@ -72,7 +72,7 @@ onBeforeMount(() => {
     >
       <template #item="{ item, index }">
         <RuiChip
-          :data-cy="`chip-${index}`"
+          :data-id="`chip-${index}`"
           v-bind="item"
           @click:close="onRemove(index)"
         >
@@ -86,7 +86,7 @@ onBeforeMount(() => {
 
     <ComponentGroup
       :items="chips"
-      data-cy="chip"
+      data-id="chip"
       class="grid gap-6 grid-cols-7"
     >
       <template #title>
@@ -94,7 +94,7 @@ onBeforeMount(() => {
       </template>
       <template #item="{ item, index }">
         <RuiChip
-          :data-cy="`pre-chip-${index}`"
+          :data-id="`pre-chip-${index}`"
           v-bind="item"
           @click:close="onRemove(`pre-${index}`)"
         >

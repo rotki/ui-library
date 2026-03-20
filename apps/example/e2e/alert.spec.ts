@@ -6,7 +6,7 @@ test.describe('alerts', () => {
   });
 
   test('checks for alerts and alert text', async ({ page }) => {
-    await expect(page.locator('h2[data-cy=alerts]')).toContainText('Alerts');
+    await expect(page.locator('h2[data-id=alerts]')).toContainText('Alerts');
 
     // Find alerts that have action buttons and close buttons using native locators
     // Instead of finding button first and traversing up with XPath, find alert first

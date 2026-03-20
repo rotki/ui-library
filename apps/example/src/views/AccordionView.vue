@@ -21,14 +21,14 @@ const accordions = ref<AccordionItem[]>([
 </script>
 
 <template>
-  <ComponentView data-cy="accordions">
+  <ComponentView data-id="accordions">
     <template #title>
       Accordions
     </template>
 
     <div
       class="grid gap-4 grid-cols-2 mb-14"
-      data-cy="accordions-wrapper"
+      data-id="accordions-wrapper"
     >
       <template
         v-for="(accordion, i) in accordions"
@@ -36,7 +36,7 @@ const accordions = ref<AccordionItem[]>([
       >
         <div
           class="flex flex-col gap-3"
-          :data-cy="`wrapper-${i}`"
+          :data-id="`wrapper-${i}`"
         >
           <div>
             {{ accordion.label }}
@@ -44,7 +44,7 @@ const accordions = ref<AccordionItem[]>([
           <RuiAccordions
             v-model="accordion.modelValue"
             v-bind="accordion"
-            data-cy="accordions"
+            data-id="accordions"
           >
             <RuiAccordion header-class="py-4 border-y border-default">
               <template #header>

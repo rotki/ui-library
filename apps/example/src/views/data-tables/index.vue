@@ -55,9 +55,9 @@ const sections = [
 </script>
 
 <template>
-  <div data-cy="data-tables-index">
+  <div data-id="data-tables-index">
     <h2
-      data-cy="datatables"
+      data-id="datatables"
       class="text-2xl font-bold mb-6"
     >
       Data Tables
@@ -73,7 +73,7 @@ const sections = [
         <RuiCard
           variant="outlined"
           class="h-full hover:border-primary transition-colors cursor-pointer"
-          :data-cy="`link-${section.route}`"
+          :data-id="`link-${section.route}`"
         >
           <template #header>
             <div class="flex items-center gap-2">

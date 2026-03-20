@@ -17,7 +17,7 @@ function onFormSubmit(): void {
 </script>
 
 <template>
-  <div data-cy="auto-completes-keyboard">
+  <div data-id="auto-completes-keyboard">
     <h2 class="text-2xl font-bold mb-6">
       Keyboard
     </h2>
@@ -28,7 +28,7 @@ function onFormSubmit(): void {
           v-model="multiNonChipsValue"
           :options="primitiveOptions"
           label="Multi Non-Chips (Backspace)"
-          data-cy="ac-kb-multi-no-chips"
+          data-id="ac-kb-multi-no-chips"
         />
       </div>
 
@@ -38,7 +38,7 @@ function onFormSubmit(): void {
           chips
           :options="primitiveOptions"
           label="Multi Chips (Backspace)"
-          data-cy="ac-kb-multi-chips"
+          data-id="ac-kb-multi-chips"
         />
       </div>
 
@@ -48,7 +48,7 @@ function onFormSubmit(): void {
           chips
           :options="primitiveOptions"
           label="Chip Navigation (Arrows)"
-          data-cy="ac-kb-chip-nav"
+          data-id="ac-kb-chip-nav"
         />
       </div>
 
@@ -57,24 +57,24 @@ function onFormSubmit(): void {
           v-model="escapeValue"
           :options="primitiveOptions"
           label="Escape to Close"
-          data-cy="ac-kb-escape"
+          data-id="ac-kb-escape"
         />
       </div>
 
       <div class="py-4">
         <form
-          data-cy="ac-kb-form"
+          data-id="ac-kb-form"
           @submit.prevent="onFormSubmit()"
         >
           <RuiAutoComplete
             v-model="formValue"
             :options="primitiveOptions"
             label="Form Submit (Enter)"
-            data-cy="ac-kb-form-submit"
+            data-id="ac-kb-form-submit"
           />
           <div
             v-if="formSubmitted"
-            data-cy="form-submitted"
+            data-id="form-submitted"
             class="mt-2 text-green-600"
           >
             Form submitted!
@@ -87,7 +87,7 @@ function onFormSubmit(): void {
           v-model="reopenValue"
           :options="primitiveOptions"
           label="Re-open Highlight"
-          data-cy="ac-kb-reopen"
+          data-id="ac-kb-reopen"
         />
       </div>
     </div>

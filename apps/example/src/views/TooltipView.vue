@@ -84,7 +84,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <ComponentView data-cy="tooltips">
+  <ComponentView data-id="tooltips">
     <template #title>
       Tooltips
     </template>
@@ -96,7 +96,7 @@ onBeforeMount(() => {
       <template #item="{ item, index }">
         <RuiTooltip
           v-bind="objectOmit(item, ['buttonColor'])"
-          :data-cy="`tooltip-${index}`"
+          :data-id="`tooltip-${index}`"
         >
           <template #activator>
             <RuiButton
@@ -114,7 +114,7 @@ onBeforeMount(() => {
     <ComponentGroup
       class="flex space-x-4"
       :items="tooltips.slice(0, 4)"
-      data-cy="tooltips"
+      data-id="tooltips"
     >
       <template #title>
         Full width content
@@ -125,7 +125,7 @@ onBeforeMount(() => {
           :key="index"
           v-bind="objectOmit(item, ['buttonColor'])"
           class="w-full"
-          :data-cy="`tooltip-full-${index}`"
+          :data-id="`tooltip-full-${index}`"
         >
           <template #activator>
             <RuiButton

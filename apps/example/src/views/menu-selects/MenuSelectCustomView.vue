@@ -10,7 +10,7 @@ const customItemValue = ref<number>();
 </script>
 
 <template>
-  <div data-cy="menu-selects-custom">
+  <div data-id="menu-selects-custom">
     <h2 class="text-2xl font-bold mb-6">
       Menu Selects: Custom Slots
     </h2>
@@ -23,14 +23,14 @@ const customItemValue = ref<number>();
           :options="options"
           key-attr="id"
           text-attr="label"
-          data-cy="ms-custom-activator"
+          data-id="ms-custom-activator"
         >
           <template #activator="{ attrs, disabled, open, value }">
             <RuiButton
               class="!rounded-md border"
               variant="list"
               :disabled="disabled"
-              v-bind="{ ...attrs, 'data-cy': 'activator' }"
+              v-bind="{ ...attrs, 'data-id': 'activator' }"
             >
               {{ value ? value.label : 'Choose option' }}
               <template #append>
@@ -55,7 +55,7 @@ const customItemValue = ref<number>();
           text-attr="label"
           clearable
           variant="outlined"
-          data-cy="ms-custom-selection"
+          data-id="ms-custom-selection"
         >
           <template #selection="{ item }">
             {{ item.id }} | {{ item.label }}
@@ -71,7 +71,7 @@ const customItemValue = ref<number>();
           key-attr="id"
           text-attr="label"
           :append-width="1.5"
-          data-cy="ms-custom-item"
+          data-id="ms-custom-item"
         >
           <template #item.append="{ active }">
             <RuiIcon
@@ -79,7 +79,7 @@ const customItemValue = ref<number>();
               class="transition"
               name="lu-check"
               size="24"
-              data-cy="check-icon"
+              data-id="check-icon"
             />
           </template>
         </RuiMenuSelect>

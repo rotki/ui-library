@@ -19,7 +19,7 @@ const dialogs = ref<DialogData[]>([
 </script>
 
 <template>
-  <ComponentView data-cy="dialogs">
+  <ComponentView data-id="dialogs">
     <template #title>
       Dialogs
     </template>
@@ -30,11 +30,11 @@ const dialogs = ref<DialogData[]>([
         :key="i"
         v-bind="dialog"
         width="900px"
-        :data-cy="`dialog-${i}`"
+        :data-id="`dialog-${i}`"
       >
         <template #activator="{ attrs }">
           <RuiButton
-            data-cy="activator"
+            data-id="activator"
             v-bind="attrs"
           >
             {{ dialog.label }}
@@ -57,7 +57,7 @@ const dialogs = ref<DialogData[]>([
               <div class="border-t border-default py-4">
                 <div class="flex gap-2 w-full justify-end">
                   <RuiButton
-                    data-cy="close"
+                    data-id="close"
                     variant="outlined"
                     color="primary"
                     @click="close()"

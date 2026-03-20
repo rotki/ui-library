@@ -11,7 +11,7 @@ const hideNoDataValue = ref<string>();
 </script>
 
 <template>
-  <div data-cy="menu-selects-selection">
+  <div data-id="menu-selects-selection">
     <h2 class="text-2xl font-bold mb-6">
       Menu Selects: Selection
     </h2>
@@ -22,7 +22,7 @@ const hideNoDataValue = ref<string>();
         <RuiMenuSelect
           v-model="singleValue"
           :options="primitiveOptions"
-          data-cy="ms-select-single"
+          data-id="ms-select-single"
         />
       </div>
 
@@ -32,7 +32,7 @@ const hideNoDataValue = ref<string>();
           v-model="preselectedValue"
           :options="primitiveOptions"
           clearable
-          data-cy="ms-select-preselected"
+          data-id="ms-select-preselected"
         />
       </div>
 
@@ -42,7 +42,7 @@ const hideNoDataValue = ref<string>();
           v-model="autoFirstValue"
           :options="primitiveOptions"
           auto-select-first
-          data-cy="ms-select-auto-first"
+          data-id="ms-select-auto-first"
         />
       </div>
 
@@ -52,7 +52,7 @@ const hideNoDataValue = ref<string>();
           v-model="noDataValue"
           :options="[]"
           no-data-text="Nothing found"
-          data-cy="ms-select-no-data"
+          data-id="ms-select-no-data"
         />
       </div>
 
@@ -62,7 +62,7 @@ const hideNoDataValue = ref<string>();
           v-model="hideNoDataValue"
           :options="[]"
           hide-no-data
-          data-cy="ms-select-hide-no-data"
+          data-id="ms-select-hide-no-data"
         />
       </div>
     </div>

@@ -8,7 +8,7 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
 </script>
 
 <template>
-  <div data-cy="data-tables-empty">
+  <div data-id="data-tables-empty">
     <h2 class="text-2xl font-bold mb-6">
       Empty &amp; Loading States
     </h2>
@@ -17,7 +17,7 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
       <!-- Empty table -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-empty"
+        data-id="table-empty"
       >
         <h4>Empty Table</h4>
         <RuiDataTable
@@ -30,14 +30,14 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
           row-attr="id"
           outlined
           rounded="sm"
-          data-cy="table"
+          data-id="table"
         />
       </div>
 
       <!-- Empty table with action slot -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-empty-action"
+        data-id="table-empty-action"
       >
         <h4>Empty Table with Action</h4>
         <RuiDataTable
@@ -47,7 +47,7 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
           row-attr="id"
           outlined
           rounded="md"
-          data-cy="table"
+          data-id="table"
         >
           <template #empty-description>
             <div class="flex space-x-1 items-center">
@@ -72,7 +72,7 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
       <!-- Loading without data -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-loading-empty"
+        data-id="table-loading-empty"
       >
         <h4>Loading without Data</h4>
         <RuiDataTable
@@ -82,14 +82,14 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
           outlined
           rounded="lg"
           loading
-          data-cy="table"
+          data-id="table"
         />
       </div>
 
       <!-- Loading with data -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-loading-data"
+        data-id="table-loading-data"
       >
         <h4>Loading with Data</h4>
         <RuiDataTable
@@ -98,7 +98,7 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
           row-attr="id"
           outlined
           loading
-          data-cy="table"
+          data-id="table"
         >
           <template #item.action>
             <RuiButton

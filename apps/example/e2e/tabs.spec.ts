@@ -6,16 +6,16 @@ test.describe('tabs', () => {
   });
 
   test('should render tabs and handle navigation', async ({ page }) => {
-    await expect(page.locator('h2[data-cy=tabs]')).toContainText('Tabs');
+    await expect(page.locator('h2[data-id=tabs]')).toContainText('Tabs');
 
-    const wrapper = page.locator('[data-cy=wrapper-0]');
-    const tablist = wrapper.locator('[data-cy=tabs] [role=tablist]');
+    const wrapper = page.locator('[data-id=wrapper-0]');
+    const tablist = wrapper.locator('[data-id=tabs] [role=tablist]');
 
     await expect(tablist.locator('> *')).toHaveCount(6);
     await expect(tablist.locator('button:first-child')).toHaveClass(/active-tab/);
     await expect(tablist.locator('button:nth-child(2)')).toBeDisabled();
 
-    const tabcontent = wrapper.locator('[data-cy=tab-items]');
+    const tabcontent = wrapper.locator('[data-id=tab-items]');
     await expect(tabcontent).toHaveText('Tab 1 Content');
 
     // Click third tab
@@ -30,20 +30,20 @@ test.describe('tabs', () => {
   });
 
   test('should have role="tablist" on tab container', async ({ page }) => {
-    const wrapper = page.locator('[data-cy=wrapper-0]');
-    const tablist = wrapper.locator('[data-cy=tabs] [role=tablist]');
+    const wrapper = page.locator('[data-id=wrapper-0]');
+    const tablist = wrapper.locator('[data-id=tabs] [role=tablist]');
     await expect(tablist).toBeVisible();
   });
 
   test('should have role="tab" on each tab button', async ({ page }) => {
-    const wrapper = page.locator('[data-cy=wrapper-0]');
-    const tabs = wrapper.locator('[data-cy=tabs] [role=tab]');
+    const wrapper = page.locator('[data-id=wrapper-0]');
+    const tabs = wrapper.locator('[data-id=tabs] [role=tab]');
     await expect(tabs).toHaveCount(6);
   });
 
   test('should have aria-selected on active tab', async ({ page }) => {
-    const wrapper = page.locator('[data-cy=wrapper-0]');
-    const tablist = wrapper.locator('[data-cy=tabs] [role=tablist]');
+    const wrapper = page.locator('[data-id=wrapper-0]');
+    const tablist = wrapper.locator('[data-id=tabs] [role=tablist]');
 
     // First tab is active by default
     await expect(tablist.locator('[role=tab]:first-child')).toHaveAttribute('aria-selected', 'true');
@@ -56,25 +56,25 @@ test.describe('tabs', () => {
   });
 
   test('should have role="tabpanel" on tab content items', async ({ page }) => {
-    const wrapper = page.locator('[data-cy=wrapper-0]');
-    const panels = wrapper.locator('[data-cy=tab-items] [role=tabpanel]');
+    const wrapper = page.locator('[data-id=wrapper-0]');
+    const panels = wrapper.locator('[data-id=tab-items] [role=tabpanel]');
     await expect(panels.first()).toBeVisible();
   });
 
   test('should render vertical tabs', async ({ page }) => {
     // wrapper-1 is the first vertical tab set (primary color, vertical=true)
-    const wrapper = page.locator('[data-cy=wrapper-1]');
-    const tablist = wrapper.locator('[data-cy=tabs] [role=tablist]');
+    const wrapper = page.locator('[data-id=wrapper-1]');
+    const tablist = wrapper.locator('[data-id=tabs] [role=tablist]');
     await expect(tablist).toBeVisible();
 
-    const tabs = wrapper.locator('[data-cy=tabs] [role=tab]');
+    const tabs = wrapper.locator('[data-id=tabs] [role=tab]');
     await expect(tabs).toHaveCount(6);
   });
 
   test('should switch content when clicking different tabs', async ({ page }) => {
-    const wrapper = page.locator('[data-cy=wrapper-0]');
-    const tablist = wrapper.locator('[data-cy=tabs] [role=tablist]');
-    const tabcontent = wrapper.locator('[data-cy=tab-items]');
+    const wrapper = page.locator('[data-id=wrapper-0]');
+    const tablist = wrapper.locator('[data-id=tabs] [role=tablist]');
+    const tabcontent = wrapper.locator('[data-id=tab-items]');
 
     await expect(tabcontent).toHaveText('Tab 1 Content');
 

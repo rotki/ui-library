@@ -21,7 +21,7 @@ const disabledRows = fixedRows.slice(0, 3);
 </script>
 
 <template>
-  <div data-cy="data-tables-selection">
+  <div data-id="data-tables-selection">
     <h2 class="text-2xl font-bold mb-6">
       Selection
     </h2>
@@ -30,7 +30,7 @@ const disabledRows = fixedRows.slice(0, 3);
       <!-- Basic selection -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-selection-basic"
+        data-id="table-selection-basic"
       >
         <h4>Basic Selection</h4>
         <p class="text-sm text-rui-text-secondary">
@@ -42,7 +42,7 @@ const disabledRows = fixedRows.slice(0, 3);
           :cols="fixedColumns"
           row-attr="id"
           outlined
-          data-cy="table"
+          data-id="table"
         >
           <template #item.action>
             <RuiButton
@@ -62,7 +62,7 @@ const disabledRows = fixedRows.slice(0, 3);
       <!-- Multi-page selection -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-selection-multi-page"
+        data-id="table-selection-multi-page"
       >
         <h4>Multi-page Selection</h4>
         <p class="text-sm text-rui-text-secondary">
@@ -76,7 +76,7 @@ const disabledRows = fixedRows.slice(0, 3);
           row-attr="id"
           outlined
           multi-page-select
-          data-cy="table"
+          data-id="table"
         >
           <template #item.action>
             <RuiButton
@@ -96,7 +96,7 @@ const disabledRows = fixedRows.slice(0, 3);
       <!-- Selection with disabled rows -->
       <div
         class="flex flex-col space-y-3"
-        data-cy="table-selection-disabled"
+        data-id="table-selection-disabled"
       >
         <h4>Selection with Disabled Rows</h4>
         <p class="text-sm text-rui-text-secondary">
@@ -109,7 +109,7 @@ const disabledRows = fixedRows.slice(0, 3);
           :disabled-rows="disabledRows"
           row-attr="id"
           outlined
-          data-cy="table"
+          data-id="table"
         >
           <template #item.action>
             <RuiButton

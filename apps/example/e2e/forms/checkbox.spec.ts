@@ -6,7 +6,7 @@ test.describe('forms/Checkbox', () => {
   });
 
   test('checks for checkboxes', async ({ page }) => {
-    await expect(page.locator('h2[data-cy=checkboxes]')).toContainText('Checkboxes');
+    await expect(page.locator('h2[data-id=checkboxes]')).toContainText('Checkboxes');
 
     const firstCheckbox = page.locator('input[type="checkbox"]').first();
     const secondCheckbox = page.locator('input[type="checkbox"]').nth(1);

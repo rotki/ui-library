@@ -18,7 +18,7 @@ const hintValue = ref<number>();
 </script>
 
 <template>
-  <div data-cy="menu-selects-basic">
+  <div data-id="menu-selects-basic">
     <h2 class="text-2xl font-bold mb-6">
       Menu Selects: Basic
     </h2>
@@ -31,7 +31,7 @@ const hintValue = ref<number>();
           :options="options"
           key-attr="id"
           text-attr="label"
-          data-cy="ms-basic-default"
+          data-id="ms-basic-default"
         />
       </div>
 
@@ -43,7 +43,7 @@ const hintValue = ref<number>();
           key-attr="id"
           text-attr="label"
           variant="outlined"
-          data-cy="ms-basic-outlined"
+          data-id="ms-basic-outlined"
         />
       </div>
 
@@ -55,7 +55,7 @@ const hintValue = ref<number>();
           key-attr="id"
           text-attr="label"
           dense
-          data-cy="ms-basic-dense"
+          data-id="ms-basic-dense"
         />
       </div>
 
@@ -67,7 +67,7 @@ const hintValue = ref<number>();
           key-attr="id"
           text-attr="label"
           disabled
-          data-cy="ms-basic-disabled"
+          data-id="ms-basic-disabled"
         />
       </div>
 
@@ -80,7 +80,7 @@ const hintValue = ref<number>();
           text-attr="label"
           disabled
           variant="outlined"
-          data-cy="ms-basic-disabled-outlined"
+          data-id="ms-basic-disabled-outlined"
         />
       </div>
 
@@ -92,7 +92,7 @@ const hintValue = ref<number>();
           key-attr="id"
           text-attr="label"
           loading
-          data-cy="ms-basic-loading"
+          data-id="ms-basic-loading"
         />
       </div>
 
@@ -104,7 +104,7 @@ const hintValue = ref<number>();
           key-attr="id"
           text-attr="label"
           :error-messages="['This field is required']"
-          data-cy="ms-basic-error"
+          data-id="ms-basic-error"
         />
       </div>
 
@@ -116,7 +116,7 @@ const hintValue = ref<number>();
           key-attr="id"
           text-attr="label"
           :success-messages="['Looks good!']"
-          data-cy="ms-basic-success"
+          data-id="ms-basic-success"
         />
       </div>
 
@@ -129,7 +129,7 @@ const hintValue = ref<number>();
           text-attr="label"
           hide-details
           :error-messages="['This field is required']"
-          data-cy="ms-basic-hide-details"
+          data-id="ms-basic-hide-details"
         />
       </div>
 
@@ -142,7 +142,7 @@ const hintValue = ref<number>();
           text-attr="label"
           required
           variant="outlined"
-          data-cy="ms-basic-required"
+          data-id="ms-basic-required"
         />
       </div>
 
@@ -154,7 +154,7 @@ const hintValue = ref<number>();
           key-attr="id"
           text-attr="label"
           hint="Pick a country"
-          data-cy="ms-basic-hint"
+          data-id="ms-basic-hint"
         />
       </div>
     </div>

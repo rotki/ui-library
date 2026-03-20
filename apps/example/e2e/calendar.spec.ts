@@ -6,7 +6,7 @@ test.describe('calendars', () => {
   });
 
   test('should render calendar with selected date', async ({ page }) => {
-    await expect(page.locator('h2[data-cy=calendars]')).toContainText('Calendar');
+    await expect(page.locator('h2[data-id=calendars]')).toContainText('Calendar');
 
     await expect(page.locator('[data-id="2023-01-02"]')).toHaveClass(/bg-rui-primary/);
     await expect(page.locator('[data-id="2023-01-02"]')).toHaveClass(/text-white/);
