@@ -2332,8 +2332,8 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       await wrapper.find('[data-id=activator]').trigger('click');
       await vi.runOnlyPendingTimersAsync();
 
-      // Verify menu is open using the menu-content role attribute
-      expect(wrapper.find('[role="menu-content"]').exists()).toBe(true);
+      // Verify menu is open using the content data attribute
+      expect(wrapper.find('[data-id="content"]').exists()).toBe(true);
 
       // Click the arrow icon to close the menu
       const arrowWrapper = wrapper.find('[data-id=append]');
@@ -2341,8 +2341,8 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       await arrowWrapper.trigger('click');
       await vi.runOnlyPendingTimersAsync();
 
-      // Menu should be closed - menu-content should not exist
-      expect(wrapper.find('[role="menu-content"]').exists()).toBe(false);
+      // Menu should be closed - content should not exist
+      expect(wrapper.find('[data-id="content"]').exists()).toBe(false);
     });
   });
 

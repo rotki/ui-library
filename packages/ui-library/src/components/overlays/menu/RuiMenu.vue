@@ -1,12 +1,18 @@
 <script setup lang="ts">
+import type { VueClassValue } from '@/types/class-value';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { type PopperOptions, usePopper } from '@/composables/popper';
 import { useFormTextDetail } from '@/utils/form-text-detail';
+import { cn, tv } from '@/utils/tv';
+
+interface BaseMenuAttrs { onMouseover?: () => void; onMouseleave?: () => void }
+
+interface MenuAttrs extends BaseMenuAttrs { onClick?: () => void }
 
 export interface RuiMenuClassNames {
-  root?: string;
-  wrapper?: string;
-  menu?: string;
+  root?: VueClassValue;
+  wrapper?: VueClassValue;
+  menu?: VueClassValue;
 }
 
 export interface MenuProps {
@@ -81,6 +87,7 @@ const {
   popper: menu,
   open,
   popperEnter,
+  currentPlacement,
   leavePending,
   onLeavePending,
   onOpen,
@@ -101,7 +108,36 @@ const { hasError, hasSuccess } = useFormTextDetail(
   () => successMessages,
 );
 
-const baseMenuAttrs = computed<{ onMouseover?: () => void; onMouseleave?: () => void }>(() => {
+const menuStyles = tv({
+  slots: {
+    wrapper: 'relative inline-flex max-w-full',
+    popper: 'w-max z-[9999]',
+    content: 'rounded overflow-hidden shadow-8 bg-white dark:bg-[#2E2E2E] text-rui-text focus:outline-none',
+    details: 'pt-1',
+  },
+  variants: {
+    fullWidth: {
+      true: { wrapper: 'w-full' },
+    },
+    strategy: {
+      fixed: { popper: 'fixed' },
+      absolute: { popper: 'absolute' },
+    },
+    dense: {
+      true: { details: 'px-2' },
+      false: { details: 'px-4' },
+    },
+  },
+  defaultVariants: { fullWidth: false, strategy: 'absolute', dense: false },
+});
+
+const ui = computed<ReturnType<typeof menuStyles>>(() => menuStyles({
+  fullWidth,
+  strategy: popper?.strategy === 'fixed' ? 'fixed' : 'absolute',
+  dense,
+}));
+
+const baseMenuAttrs = computed<BaseMenuAttrs>(() => {
   if (disabled)
     return {};
 
@@ -115,32 +151,41 @@ const baseMenuAttrs = computed<{ onMouseover?: () => void; onMouseleave?: () => 
       if (openOnHover && !clickVal)
         onClose();
     },
-  };
+  } satisfies BaseMenuAttrs;
 });
 
-const menuAttrs = computed<{
-  onMouseover?: () => void;
-  onMouseleave?: () => void;
-  onClick?: () => void;
-}>(() => {
+const menuAttrs = computed<MenuAttrs>(() => {
   if (disabled)
     return {};
 
   return { ...get(baseMenuAttrs), onClick: checkClick };
 });
 
+function focusOnContent() {
+  const content = get(menuContent);
+  if (!content)
+    return;
+
+  // Focus on the menu container itself
+  content.focus();
+}
+
 function focusMenu(): void {
   if (disableAutoFocus)
     return;
 
-  nextTick(() => {
-    const content = get(menuContent);
-    if (!content)
-      return;
+  nextTick(() => focusOnContent());
+}
 
-    // Focus on the menu container itself
-    content.focus();
-  });
+function focusOnActivator() {
+  const activatorEl = get(activator);
+  if (!activatorEl) {
+    return;
+  }
+  const focusableEl = activatorEl.querySelector<HTMLElement>(FOCUSABLE_ELEMENTS_SELECTOR);
+  if (focusableEl) {
+    focusableEl.focus();
+  }
 }
 
 function onLeave(event?: KeyboardEvent): void {
@@ -151,17 +196,11 @@ function onLeave(event?: KeyboardEvent): void {
   event?.stopPropagation();
 
   // Return focus to activator when menu closes
-  if (!disableAutoFocus) {
-    nextTick(() => {
-      const activatorEl = get(activator);
-      if (activatorEl) {
-        const focusableEl = activatorEl.querySelector<HTMLElement>(FOCUSABLE_ELEMENTS_SELECTOR);
-        if (focusableEl) {
-          focusableEl.focus();
-        }
-      }
-    });
+  if (disableAutoFocus) {
+    return;
   }
+
+  nextTick(() => focusOnActivator());
 }
 
 function checkClick(): void {
@@ -195,24 +234,20 @@ watch(open, (open) => {
   }
 });
 
-onClickOutside(
-  menu,
-  () => {
-    if (get(open) && !persistent)
-      onLeave();
-  },
-  { ignore: [activator] },
-);
+onClickOutside(menu, () => {
+  if (get(open) && !persistent)
+    onLeave();
+}, { ignore: [activator] });
 </script>
 
 <template>
   <div
+    :class="classNames?.root"
     @keydown.esc.stop="onLeave()"
-    @keydown.tab="!disableAutoFocus && open ? undefined : null"
   >
     <div
       ref="activator"
-      :class="[$style.wrapper, classNames?.wrapper ?? wrapperClass, { 'w-full': fullWidth }]"
+      :class="ui.wrapper({ class: cn(classNames?.wrapper) ?? cn(wrapperClass as VueClassValue) })"
       :data-menu-disabled="disabled"
       aria-haspopup="true"
       :aria-expanded="open"
@@ -229,8 +264,9 @@ onClickOutside(
       <div
         v-if="popperEnter"
         ref="menu"
-        :class="[$style.menu, classNames?.menu ?? menuClass, $style[`menu__${popper?.strategy ?? 'absolute'}`]]"
+        :class="ui.popper({ class: cn(classNames?.menu) ?? cn(menuClass as VueClassValue) })"
         role="menu"
+        :data-placement="currentPlacement"
         @click="closeOnContentClick ? onLeave() : undefined"
         @keydown.esc.stop="onLeave()"
       >
@@ -249,8 +285,8 @@ onClickOutside(
             v-if="open"
             ref="menuContent"
             key="menu"
-            role="menu-content"
-            :class="$style.base"
+            data-id="content"
+            :class="ui.content()"
             tabindex="-1"
             v-bind="baseMenuAttrs"
           >
@@ -261,46 +297,10 @@ onClickOutside(
     </Teleport>
     <RuiFormTextDetail
       v-if="showDetails"
-      class="pt-1"
-      :class="[dense ? 'px-2' : 'px-4']"
+      :class="ui.details()"
       :error-messages="errorMessages"
       :success-messages="successMessages"
       :hint="hint"
     />
   </div>
 </template>
-
-<style lang="scss" module>
-.wrapper {
-  @apply relative inline-flex max-w-full;
-}
-
-.menu {
-  @apply w-max transform transition-opacity delay-0 z-[9999];
-
-  &__fixed {
-    @apply fixed;
-  }
-
-  &__absolute {
-    @apply absolute;
-  }
-
-  .base {
-    @apply rounded overflow-hidden shadow-8;
-    @apply bg-white text-rui-text;
-
-    &:focus {
-      @apply outline-none;
-    }
-  }
-}
-
-:global(.dark) {
-  .menu {
-    .base {
-      @apply bg-[#2E2E2E];
-    }
-  }
-}
-</style>

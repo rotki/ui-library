@@ -2,8 +2,8 @@ import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
-import { assertExists, cleanupElements, expectToHaveClass, queryBody, queryByRole } from '~/tests/helpers/dom-helpers';
-import { CLASS_PATTERNS, DATA_ATTRIBUTE_SELECTORS } from '~/tests/helpers/selectors';
+import { assertExists, cleanupElements, queryBody, queryByDataId, queryByRole } from '~/tests/helpers/dom-helpers';
+import { DATA_ATTRIBUTE_SELECTORS } from '~/tests/helpers/selectors';
 
 const text = 'This is menu';
 
@@ -47,8 +47,7 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
     let menu = queryByRole<HTMLDivElement>('menu');
 
     expect(menu).toBeTruthy();
-    expectToHaveClass(menu, CLASS_PATTERNS.MENU);
-    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeTruthy();
 
     // Click the content shouldn't close the menu
     menu?.click();
@@ -57,8 +56,7 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
     menu = queryByRole<HTMLDivElement>('menu');
 
     expect(menu).toBeTruthy();
-    expectToHaveClass(menu, CLASS_PATTERNS.MENU);
-    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeTruthy();
     expect(document.body.innerHTML).toMatch(new RegExp(text));
 
     // Click outside should close the menu
@@ -91,7 +89,7 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
     let menu = queryByRole('menu');
 
     expect(menu).toBeFalsy();
-    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeFalsy();
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeFalsy();
     await wrapper.setProps({ disabled: false });
 
     await wrapper.find('#trigger').trigger('click');
@@ -100,8 +98,7 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
     menu = queryByRole('menu');
 
     expect(menu).toBeTruthy();
-    expectToHaveClass(menu, CLASS_PATTERNS.MENU);
-    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeTruthy();
     expect(document.body.innerHTML).toMatch(new RegExp(text));
   });
 
@@ -121,8 +118,7 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
     const menu = queryByRole('menu');
 
     expect(menu).toBeTruthy();
-    expectToHaveClass(menu, CLASS_PATTERNS.MENU);
-    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeTruthy();
 
     // Content should not be visible yet (openDelay is 400ms)
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
@@ -149,8 +145,7 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
     let menu = queryByRole('menu');
 
     expect(menu).toBeTruthy();
-    expectToHaveClass(menu, CLASS_PATTERNS.MENU);
-    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeTruthy();
     expect(document.body.innerHTML).toMatch(new RegExp(text));
 
     await wrapper.find('#trigger').trigger('click');
@@ -158,8 +153,7 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
     menu = queryByRole('menu');
 
     expect(menu).toBeTruthy();
-    expectToHaveClass(menu, CLASS_PATTERNS.MENU);
-    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeTruthy();
     expect(document.body.innerHTML).toMatch(new RegExp(text));
 
     await vi.runAllTimersAsync();
@@ -186,22 +180,20 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
       let menu = queryByRole('menu');
 
       expect(menu).toBeTruthy();
-      expectToHaveClass(menu, CLASS_PATTERNS.MENU);
-      expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
+      expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeTruthy();
       expect(document.body.innerHTML).toMatch(new RegExp(text));
 
       await wrapper.find('#trigger').trigger('mouseleave');
 
       menu = queryByRole('menu');
-      const menuContent = queryByRole('menu-content');
+      const menuContent = queryByDataId('content');
       assertExists(menuContent);
 
       // Trigger mouseover on the content to simulate hovering over the menu content
       await menuContent.dispatchEvent(new MouseEvent('mouseover'));
 
       expect(menu).toBeTruthy();
-      expectToHaveClass(menu, CLASS_PATTERNS.MENU);
-      expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
+      expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeTruthy();
       expect(document.body.innerHTML).toMatch(new RegExp(text));
 
       await vi.runAllTimersAsync();
@@ -232,8 +224,7 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
       let menu = queryByRole('menu');
 
       expect(menu).toBeTruthy();
-      expectToHaveClass(menu, CLASS_PATTERNS.MENU);
-      expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
+      expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeTruthy();
       expect(document.body.innerHTML).toMatch(new RegExp(text));
 
       await wrapper.find('#trigger').trigger('click');
@@ -242,7 +233,7 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
       menu = queryByRole('menu');
       expect(menu).toBeTruthy();
 
-      expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
+      expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeTruthy();
       expect(document.body.innerHTML).toMatch(new RegExp(text));
 
       await wrapper.find('#trigger').trigger('mouseleave');
@@ -251,7 +242,7 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
       menu = queryByRole('menu');
       expect(menu).toBeTruthy();
 
-      expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
+      expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeTruthy();
       expect(document.body.innerHTML).toMatch(new RegExp(text));
 
       await wrapper.find('#trigger').trigger('click');
@@ -325,7 +316,7 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
     await vi.runAllTimersAsync();
 
     // Menu content should be focused
-    const menuContent = queryByRole<HTMLElement>('menu-content');
+    const menuContent = queryByDataId<HTMLElement>('content');
     assertExists(menuContent);
     expect(document.activeElement).toBe(menuContent);
   });
@@ -343,8 +334,7 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
     const menu = queryByRole<HTMLDivElement>('menu');
 
     expect(menu).toBeTruthy();
-    expectToHaveClass(menu, CLASS_PATTERNS.MENU);
-    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeTruthy();
     expect(document.body.innerHTML).toMatch(new RegExp(text));
 
     // Click the content should close the menu
