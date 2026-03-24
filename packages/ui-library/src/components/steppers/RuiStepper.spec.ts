@@ -2,7 +2,6 @@ import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiStepper from '@/components/steppers/RuiStepper.vue';
 import { StepperOrientation, StepperState, type StepperStep } from '@/types/stepper';
-import { expectToHaveClass } from '~/tests/helpers/dom-helpers';
 
 function createWrapper(
   options: ComponentMountingOptions<typeof RuiStepper>,
@@ -25,7 +24,7 @@ describe('components/steppers/RuiStepper.vue', () => {
 
   it('should render properly', () => {
     wrapper = createWrapper({ props: { steps } });
-    expectToHaveClass(wrapper.element, /_stepper_/);
+    expect(wrapper.element.getAttribute('role')).toBe('list');
   });
 
   it('should have role="list" and aria-label on root', () => {
@@ -66,13 +65,13 @@ describe('components/steppers/RuiStepper.vue', () => {
 
     const items = wrapper.findAll('[role="listitem"]');
     expect(items).toHaveLength(7);
-    expectToHaveClass(items[0]!.element, /_inactive_/);
-    expectToHaveClass(items[1]!.element, /_active_/);
-    expectToHaveClass(items[2]!.element, /_done_/);
-    expectToHaveClass(items[3]!.element, /_error_/);
-    expectToHaveClass(items[4]!.element, /_warning_/);
-    expectToHaveClass(items[5]!.element, /_info_/);
-    expectToHaveClass(items[6]!.element, /_success_/);
+    expect(items[0]!.attributes('data-state')).toBe(StepperState.inactive);
+    expect(items[1]!.attributes('data-state')).toBe(StepperState.active);
+    expect(items[2]!.attributes('data-state')).toBe(StepperState.done);
+    expect(items[3]!.attributes('data-state')).toBe(StepperState.error);
+    expect(items[4]!.attributes('data-state')).toBe(StepperState.warning);
+    expect(items[5]!.attributes('data-state')).toBe(StepperState.info);
+    expect(items[6]!.attributes('data-state')).toBe(StepperState.success);
   });
 
   it('should auto-assign step states when step prop is provided', () => {
@@ -85,10 +84,10 @@ describe('components/steppers/RuiStepper.vue', () => {
     wrapper = createWrapper({ props: { steps: plainSteps, step: 2 } });
 
     const items = wrapper.findAll('[role="listitem"]');
-    expectToHaveClass(items[0]!.element, /_done_/);
-    expectToHaveClass(items[1]!.element, /_active_/);
+    expect(items[0]!.attributes('data-state')).toBe(StepperState.done);
+    expect(items[1]!.attributes('data-state')).toBe(StepperState.active);
     expect(items[1]!.attributes('aria-current')).toBe('step');
-    expectToHaveClass(items[2]!.element, /_inactive_/);
+    expect(items[2]!.attributes('data-state')).toBe(StepperState.inactive);
   });
 
   it('should render vertical orientation', () => {
@@ -96,7 +95,7 @@ describe('components/steppers/RuiStepper.vue', () => {
       props: { steps, orientation: StepperOrientation.vertical },
     });
 
-    expectToHaveClass(wrapper.element, /_vertical_/);
+    expect(wrapper.element.getAttribute('data-orientation')).toBe(StepperOrientation.vertical);
   });
 
   it('should render custom stepper variant', () => {
@@ -104,7 +103,7 @@ describe('components/steppers/RuiStepper.vue', () => {
       props: { steps, custom: true },
     });
 
-    expectToHaveClass(wrapper.element, /_custom_/);
+    expect(wrapper.element.getAttribute('data-custom')).toBe('true');
   });
 
   it('should apply titleClass and subtitleClass when custom', () => {
@@ -118,7 +117,7 @@ describe('components/steppers/RuiStepper.vue', () => {
     });
 
     const firstStep = wrapper.findAll('[role="listitem"]')[0]!;
-    const label = firstStep.find('div[class*=label]');
+    const label = firstStep.find('[data-id=stepper-label]');
     const spans = label.findAll('span');
     expect(spans[0]!.classes()).toContain('text-rui-primary');
     expect(spans[1]!.classes()).toContain('text-rui-info');
@@ -141,12 +140,12 @@ describe('components/steppers/RuiStepper.vue', () => {
     wrapper = createWrapper({
       props: { steps },
     });
-    expectToHaveClass(wrapper.element, /_horizontal_/);
+    expect(wrapper.element.getAttribute('data-orientation')).toBe(StepperOrientation.horizontal);
 
     await wrapper.setProps({ orientation: StepperOrientation.vertical });
-    expectToHaveClass(wrapper.element, /_vertical_/);
+    expect(wrapper.element.getAttribute('data-orientation')).toBe(StepperOrientation.vertical);
 
     await wrapper.setProps({ iconTop: true });
-    expectToHaveClass(wrapper.element, /_icon-top_/);
+    expect(wrapper.element.getAttribute('data-icon-top')).toBe('true');
   });
 });

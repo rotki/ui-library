@@ -10,8 +10,8 @@ test.describe('steppers', () => {
 
     const horizontalStepper = page.locator('[data-id=stepper-0]');
 
-    await expect(horizontalStepper.locator('div[class*=_step][class*=_inactive]')).toContainText('Inactive');
-    await expect(horizontalStepper.locator('div[class*=_step][class*=_success]')).toContainText('Success');
+    await expect(horizontalStepper.locator('[data-state=inactive]')).toContainText('Inactive');
+    await expect(horizontalStepper.locator('[data-state=success]')).toContainText('Success');
   });
 
   test('should have role="list" and aria-label on stepper', async ({ page }) => {

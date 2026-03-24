@@ -1,13 +1,15 @@
 <script lang="ts" setup>
+import type { VueClassValue } from '@/types/class-value';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import RuiStepperCustomIcon from '@/components/steppers/RuiStepperCustomIcon.vue';
 import RuiStepperIcon from '@/components/steppers/RuiStepperIcon.vue';
 import { StepperOrientation, StepperState, type StepperStep } from '@/types/stepper';
+import { tv } from '@/utils/tv';
 
 export interface RuiStepperClassNames {
-  root?: string;
-  title?: string;
-  subtitle?: string;
+  root?: VueClassValue;
+  title?: VueClassValue;
+  subtitle?: VueClassValue;
 }
 
 export interface Props {
@@ -46,12 +48,102 @@ defineSlots<{
 
 const wrapperRef = useTemplateRef<HTMLDivElement>('wrapperRef');
 
+const stepper = tv({
+  slots: {
+    root: 'flex no-scrollbar overflow-auto',
+    step: 'flex items-center px-6 relative',
+    title: '',
+    subtitle: '',
+    label: 'flex flex-col items-start text-left ml-2',
+    divider: 'border-rui-grey-400',
+  },
+  variants: {
+    orientation: {
+      [StepperOrientation.horizontal]: {
+        root: 'whitespace-nowrap lg:whitespace-normal',
+        step: '',
+        divider: 'block max-w-full min-w-[1rem] h-0 max-h-0 self-center -mx-4 my-0 border-t [flex:1_1_0]',
+      },
+      [StepperOrientation.vertical]: {
+        root: 'flex-col inline-flex',
+        step: 'px-0 py-6',
+        divider: 'block min-h-[3rem] min-w-0 max-h-full h-full self-start -my-4 mx-3 border-l',
+      },
+    },
+    state: {
+      [StepperState.inactive]: {
+        step: 'text-rui-text-disabled',
+        title: 'text-rui-text-secondary',
+        subtitle: 'text-rui-text',
+      },
+      [StepperState.active]: {
+        step: 'text-rui-text',
+        title: '',
+        subtitle: 'text-rui-text-secondary',
+      },
+      [StepperState.done]: {
+        step: 'text-rui-text',
+        title: '',
+        subtitle: 'text-rui-text-secondary',
+      },
+      [StepperState.error]: {
+        step: 'text-rui-error',
+        title: '',
+        subtitle: '',
+      },
+      [StepperState.warning]: {
+        step: 'text-rui-warning',
+        title: '',
+        subtitle: '',
+      },
+      [StepperState.info]: {
+        step: 'text-rui-info',
+        title: '',
+        subtitle: '',
+      },
+      [StepperState.success]: {
+        step: 'text-rui-success',
+        title: '',
+        subtitle: '',
+      },
+    },
+    iconTop: {
+      true: {
+        step: 'flex-col',
+        label: 'ml-0 mt-4 items-center text-center',
+      },
+    },
+    custom: {
+      true: {},
+      false: {},
+    },
+  },
+  compoundVariants: [
+    { custom: true, state: StepperState.inactive, class: { step: 'text-rui-text' } },
+    { orientation: StepperOrientation.vertical, custom: true, class: { divider: 'mx-5' } },
+    { orientation: StepperOrientation.vertical, iconTop: true, class: { divider: 'self-center mx-auto' } },
+  ],
+  defaultVariants: {
+    state: StepperState.inactive,
+    orientation: StepperOrientation.horizontal,
+    custom: false,
+  },
+});
+
+// Shared UI for layout props (no per-item state)
+const ui = computed<ReturnType<typeof stepper>>(() => stepper({ orientation, custom, iconTop }));
+
+// Per-item UI that includes the step's state
+function stepUi(state: StepperState): ReturnType<typeof stepper> {
+  return stepper({ orientation, custom, iconTop, state });
+}
+
 // automatically set step state to stepper.
 const renderedStep = computed<StepperStep[]>(() => {
   if (step === undefined)
     return steps;
 
-  return steps.map((text, index) => {
+  return steps.map((item, index) => {
     let stepStatus: StepperState = StepperState.inactive;
 
     if (index + 1 === step)
@@ -61,31 +153,33 @@ const renderedStep = computed<StepperStep[]>(() => {
       stepStatus = StepperState.done;
 
     return {
-      ...text,
+      ...item,
       state: stepStatus,
     };
   });
 });
 
-watch(
-  () => step,
-  () => {
-    if (!keepActiveVisible || orientation !== StepperOrientation.horizontal) {
+function resolveState(state: StepperState | undefined): StepperState {
+  return state ?? StepperState.inactive;
+}
+
+watch(() => step, () => {
+  if (!keepActiveVisible || orientation !== StepperOrientation.horizontal) {
+    return;
+  }
+
+  nextTick(() => {
+    const elem = get(wrapperRef);
+    if (!elem) {
       return;
     }
-
-    nextTick(() => {
-      const elem = get(wrapperRef);
-      if (elem) {
-        const activeStep = elem.querySelector('.active-step');
-        activeStep?.scrollIntoView?.({
-          behavior: 'smooth',
-          inline: 'center',
-        });
-      }
+    const activeStep = elem.querySelector('[data-active]');
+    activeStep?.scrollIntoView?.({
+      behavior: 'smooth',
+      inline: 'center',
     });
-  },
-);
+  });
+});
 </script>
 
 <template>
@@ -93,12 +187,10 @@ watch(
     ref="wrapperRef"
     role="list"
     aria-label="Progress steps"
-    :class="[
-      $style.stepper,
-      $style[orientation ?? ''],
-      { [$style['icon-top']]: iconTop, [$style.custom]: custom },
-    ]"
-    class="no-scrollbar overflow-auto"
+    :class="ui.root()"
+    :data-orientation="orientation"
+    :data-icon-top="iconTop || undefined"
+    :data-custom="custom || undefined"
   >
     <template
       v-for="({ title, description, state, loading }, index) in renderedStep"
@@ -106,18 +198,14 @@ watch(
     >
       <hr
         v-if="index > 0"
-        :class="$style.divider"
+        :class="ui.divider()"
       />
       <div
         role="listitem"
         :aria-current="state === StepperState.active ? 'step' : undefined"
-        :class="[
-          $style.step,
-          $style[state ?? StepperState.inactive],
-          {
-            'active-step': state === StepperState.active,
-          },
-        ]"
+        :data-state="resolveState(state)"
+        :data-active="state === StepperState.active || undefined"
+        :class="stepUi(resolveState(state)).step()"
       >
         <slot
           name="icon"
@@ -147,18 +235,19 @@ watch(
         </slot>
         <div
           v-if="title || description"
-          :class="$style.label"
+          :class="ui.label()"
+          data-id="stepper-label"
         >
           <span
             v-if="title"
-            :class="[$style.title, { [classNames?.title ?? titleClass]: custom }]"
+            :class="[stepUi(resolveState(state)).title(), custom && (classNames?.title ?? titleClass)]"
             class="text-subtitle-2"
           >
             {{ title }}
           </span>
           <span
             v-if="description"
-            :class="[$style.subtitle, { [classNames?.subtitle ?? subtitleClass]: custom }]"
+            :class="[stepUi(resolveState(state)).subtitle(), custom && (classNames?.subtitle ?? subtitleClass)]"
             class="text-caption"
           >
             {{ description }}
@@ -168,104 +257,3 @@ watch(
     </template>
   </div>
 </template>
-
-<style lang="scss" module>
-$colors: 'error', 'warning', 'info', 'success';
-.stepper {
-  @apply flex;
-
-  &.horizontal {
-    @apply whitespace-nowrap lg:whitespace-normal;
-  }
-
-  &.vertical {
-    @apply flex-col inline-flex;
-
-    .step {
-      @apply px-0 py-6;
-    }
-
-    .divider {
-      @apply block min-h-[3rem] min-w-0 max-h-full h-full self-start -my-4 mx-3 border-l border-rui-grey-400;
-    }
-
-    &.custom {
-      .divider {
-        @apply mx-5;
-      }
-    }
-
-    &.icon-top {
-      .divider {
-        @apply self-center mx-auto;
-      }
-    }
-  }
-
-  .step {
-    @apply flex items-center px-6 relative;
-
-    .indicator {
-      @apply inline-flex items-center justify-center rounded-full h-6 w-6 min-w-[1.5rem];
-    }
-
-    .label {
-      @apply flex flex-col items-start text-left ml-2;
-    }
-
-    &.inactive {
-      @apply text-rui-text-disabled;
-
-      .title {
-        @apply text-rui-text-secondary;
-      }
-
-      .subtitle {
-        @apply text-rui-text;
-      }
-    }
-
-    &.active,
-    &.done {
-      @apply text-rui-text;
-
-      .subtitle {
-        @apply text-rui-text-secondary;
-      }
-    }
-
-    @each $color in $colors {
-      &.#{$color} {
-        @apply text-rui-#{$color};
-      }
-    }
-  }
-
-  &.icon-top {
-    .step {
-      @apply flex-col;
-
-      .label {
-        @apply ml-0 mt-4 items-center text-center;
-      }
-    }
-  }
-
-  .divider {
-    @apply block max-w-full min-w-[1rem] h-0 max-h-0 self-center -mx-4 my-0 border-t border-rui-grey-400;
-    flex: 1 1 0;
-  }
-
-  &.custom {
-    .step {
-      .divider {
-        @apply border-rui-primary-lighter;
-      }
-
-      &.inactive {
-        @apply text-rui-text;
-      }
-    }
-  }
-}
-</style>
