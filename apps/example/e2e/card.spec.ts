@@ -9,8 +9,8 @@ test.describe('cards', () => {
     await expect(page.locator('h2[data-id=cards]')).toContainText('Cards');
 
     const card = page.locator('div[data-id=card-0-0]');
-    await expect(card.locator('h5[class*=_header_]')).toBeVisible();
-    await expect(card.locator('p[class*=_subheader_]')).toBeVisible();
+    await expect(card.locator('[data-id=header]')).toBeVisible();
+    await expect(card.locator('[data-id=subheader]')).toBeVisible();
     await expect(card.locator('div[class*=_content_]')).toBeVisible();
     await expect(card.locator('div[class*=_footer_]')).toBeVisible();
     await expect(card.locator('button[data-id=card-action-0]')).toBeVisible();

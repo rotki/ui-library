@@ -54,8 +54,10 @@ describe('components/cards/RuiCard.vue', () => {
       },
     });
 
-    expect(wrapper.find('h5[class*=_header_]').exists()).toBeTruthy();
-    expect(wrapper.find('p[class*=_subheader_]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=header]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=header]').text()).toBe('Card Title');
+    expect(wrapper.find('[data-id=subheader]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=subheader]').text()).toBe('Card Subtitle');
   });
 
   it('should render image slot', () => {
@@ -77,7 +79,8 @@ describe('components/cards/RuiCard.vue', () => {
       },
     });
 
-    expect(wrapper.find('div[class*=_prepend_]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=prepend]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=prepend]').text()).toBe('Icon');
   });
 
   it('should render footer slot', () => {
@@ -167,12 +170,12 @@ describe('components/cards/RuiCard.vue', () => {
       },
     });
 
-    expect(wrapper.find('div[class*=_image_').exists()).toBeTruthy();
-    expect(wrapper.find('div[class*=_prepend_').exists()).toBeTruthy();
-    expect(wrapper.find('h5[class*=_header_').exists()).toBeTruthy();
-    expect(wrapper.find('p[class*=_subheader_').exists()).toBeTruthy();
-    expect(wrapper.find('div[class*=_content_').exists()).toBeTruthy();
-    expect(wrapper.find('div[class*=_footer_').exists()).toBeTruthy();
+    expect(wrapper.find('div[class*=_image_]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=prepend]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=header]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=subheader]').exists()).toBeTruthy();
+    expect(wrapper.find('div[class*=_content_]').exists()).toBeTruthy();
+    expect(wrapper.find('div[class*=_footer_]').exists()).toBeTruthy();
 
     await wrapper.setProps({
       dense: true,
