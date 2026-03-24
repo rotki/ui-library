@@ -59,7 +59,7 @@ describe('components/tables/RuiExpandButton.vue', () => {
       },
     });
 
-    const icon = wrapper.find('[class*=_tr__expander_button_icon]');
+    const icon = wrapper.find('svg');
     expect(icon.exists()).toBeTruthy();
   });
 

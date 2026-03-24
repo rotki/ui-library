@@ -21,12 +21,7 @@ defineSlots<{
 
 <template>
   <RuiButton
-    :class="[
-      $style.tr__expander_button,
-      {
-        [$style.tr__expander_button_open ?? '']: expanded,
-      },
-    ]"
+    class="relative"
     :aria-expanded="expanded"
     data-id="expand-button"
     icon
@@ -36,25 +31,10 @@ defineSlots<{
   >
     <slot>
       <RuiIcon
-        :class="$style.tr__expander_button_icon"
+        class="transition"
+        :class="{ 'rotate-180': expanded }"
         :name="icon"
       />
     </slot>
   </RuiButton>
 </template>
-
-<style lang="scss" module>
-.tr__expander {
-  &_button {
-    @apply relative;
-
-    &_icon {
-      @apply transition rotate-0;
-    }
-
-    &_open .tr__expander_button_icon {
-      @apply rotate-180;
-    }
-  }
-}
-</style>
