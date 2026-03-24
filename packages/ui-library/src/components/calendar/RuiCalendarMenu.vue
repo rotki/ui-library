@@ -9,6 +9,7 @@ import {
 } from '@/components/calendar/state';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
+import { tv } from '@/utils/tv';
 import RuiButton from '../buttons/button/RuiButton.vue';
 
 defineOptions({
@@ -35,6 +36,24 @@ const startYear = ref<number>(viewYear - 6);
 // Pre-calculated constants
 const months = getShortMonthNames();
 const calendarState = inject<RuiCalendarState>(CalendarStateSymbol) as RuiCalendarState;
+
+const navButtonClass = 'p-1 rounded-full text-gray-500 hover:text-rui-primary hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-rui-primary';
+
+const cellButton = tv({
+  base: 'h-9 w-full flex items-center justify-center text-sm font-medium rounded-md transition-colors duration-150 ease-in-out border-none outline-none cursor-pointer focus:ring-2 focus:ring-rui-primary focus:ring-opacity-50',
+  variants: {
+    selected: {
+      true: 'bg-rui-primary text-white hover:bg-rui-primary-darker active:bg-rui-primary-darker dark:bg-rui-primary dark:text-white dark:hover:bg-rui-primary-darker',
+    },
+    inRange: {
+      true: 'text-gray-700 bg-transparent hover:bg-gray-100 active:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700 dark:active:bg-gray-600',
+      false: 'opacity-50 cursor-not-allowed bg-transparent hover:bg-transparent active:bg-transparent dark:hover:bg-transparent dark:active:bg-transparent pointer-events-none text-gray-400 dark:text-gray-600',
+    },
+    selectedOutOfRange: {
+      true: 'bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400',
+    },
+  },
+});
 
 // Pre-calculated arrays for performance - using refs for better control
 const yearRange = ref<number[]>([]);
@@ -217,11 +236,11 @@ watch(
     :anchor-el="anchorEl"
     placement="bottom-start"
   >
-    <div class="menu-container">
-      <div class="menu-header">
+    <div class="w-64 shadow-lg overflow-hidden">
+      <div class="flex items-center justify-center p-1 font-medium text-gray-800 dark:text-gray-200 border-b border-rui-grey-200 dark:border-rui-grey-800 cursor-pointer hover:bg-rui-grey-100 dark:hover:bg-rui-grey-800">
         <RuiButton
           type="button"
-          class="nav-button"
+          :class="navButtonClass"
           icon
           :disabled="!get(canGoToPrev)"
           variant="text"
@@ -242,7 +261,7 @@ watch(
 
         <RuiButton
           type="button"
-          class="nav-button"
+          :class="navButtonClass"
           icon
           :disabled="!get(canGoToNext)"
           variant="text"
@@ -257,25 +276,17 @@ watch(
 
       <div
         v-if="viewMode === 'months'"
-        class="month-grid"
+        class="grid grid-cols-3 gap-1 p-2"
       >
         <button
           v-for="(month, index) in months"
           :key="month"
           type="button"
-          class="h-9 w-full flex items-center justify-center text-sm font-medium rounded-md transition-colors duration-150 ease-in-out border-none outline-none cursor-pointer focus:ring-2 focus:ring-rui-primary focus:ring-opacity-50"
-          :class="[
-            {
-              'bg-rui-primary text-white hover:bg-rui-primary-darker active:bg-rui-primary-darker dark:bg-rui-primary dark:text-white dark:hover:bg-rui-primary-darker':
-                index === viewMonth && get(monthsInRange)[index],
-              'bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400':
-                index === viewMonth && !get(monthsInRange)[index],
-              'text-gray-700 bg-transparent hover:bg-gray-100 active:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700 dark:active:bg-gray-600':
-                index !== viewMonth && get(monthsInRange)[index],
-              'opacity-50 cursor-not-allowed bg-transparent hover:bg-transparent active:bg-transparent dark:hover:bg-transparent dark:active:bg-transparent pointer-events-none text-gray-400 dark:text-gray-600':
-                !get(monthsInRange)[index],
-            },
-          ]"
+          :class="cellButton({
+            selected: index === viewMonth && get(monthsInRange)[index],
+            selectedOutOfRange: index === viewMonth && !get(monthsInRange)[index],
+            inRange: index !== viewMonth ? get(monthsInRange)[index] : undefined,
+          })"
           :disabled="!get(monthsInRange)[index]"
           @click.stop="selectMonth(index)"
         >
@@ -285,25 +296,17 @@ watch(
 
       <div
         v-else-if="viewMode === 'years'"
-        class="year-grid"
+        class="grid grid-cols-3 gap-1 p-2"
       >
         <button
           v-for="(year, index) in yearRange"
           :key="year"
           type="button"
-          class="h-9 w-full flex items-center justify-center text-sm font-medium rounded-md transition-colors duration-150 ease-in-out border-none outline-none cursor-pointer focus:ring-2 focus:ring-rui-primary focus:ring-opacity-50"
-          :class="[
-            {
-              'bg-rui-primary text-white hover:bg-rui-primary-darker active:bg-rui-primary-darker dark:bg-rui-primary dark:text-white dark:hover:bg-rui-primary-darker':
-                year === viewYear && get(yearsInRange)[index],
-              'bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400':
-                year === viewYear && !get(yearsInRange)[index],
-              'text-gray-700 bg-transparent hover:bg-gray-100 active:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700 dark:active:bg-gray-600':
-                year !== viewYear && get(yearsInRange)[index],
-              'opacity-50 cursor-not-allowed bg-transparent hover:bg-transparent active:bg-transparent dark:hover:bg-transparent dark:active:bg-transparent pointer-events-none text-gray-400 dark:text-gray-600':
-                !get(yearsInRange)[index],
-            },
-          ]"
+          :class="cellButton({
+            selected: year === viewYear && get(yearsInRange)[index],
+            selectedOutOfRange: year === viewYear && !get(yearsInRange)[index],
+            inRange: year !== viewYear ? get(yearsInRange)[index] : undefined,
+          })"
           :disabled="!get(yearsInRange)[index]"
           @click.stop="selectYear(year)"
         >
@@ -313,22 +316,3 @@ watch(
     </div>
   </RuiMenu>
 </template>
-
-<style scoped>
-.menu-container {
-  @apply w-64 shadow-lg overflow-hidden;
-}
-
-.menu-header {
-  @apply flex items-center justify-center p-1 font-medium text-gray-800 dark:text-gray-200;
-  @apply border-b border-rui-grey-200 dark:border-rui-grey-800 cursor-pointer hover:bg-rui-grey-100 dark:hover:bg-rui-grey-800;
-}
-
-.month-grid {
-  @apply grid grid-cols-3 gap-1 p-2;
-}
-
-.year-grid {
-  @apply grid grid-cols-3 gap-1 p-2;
-}
-</style>
