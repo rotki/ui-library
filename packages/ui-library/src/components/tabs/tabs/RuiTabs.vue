@@ -1,19 +1,30 @@
 <script lang="ts" setup>
-import type { Props as TabProps } from '@/components/tabs/tab/RuiTab.vue';
 import type { ContextColorsType } from '@/consts/colors';
-import { throttleFilter } from '@vueuse/shared';
-import { Fragment, getCurrentInstance, isVNode, type VNode } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { Fragment, isVNode, type VNode } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
+import { type TabAlignment, type TabIndicatorPosition, TabLayout } from '@/components/tabs/tab-props';
+import { useTabRouting } from '@/components/tabs/tabs/use-tab-routing';
+import { useTabScroll } from '@/components/tabs/tabs/use-tab-scroll';
+import { tv } from '@/utils/tv';
+
+type ChildNode = VNode & { props: Record<string, any> };
+
+interface ResolvedTabProps {
+  value?: string | number;
+  to?: unknown;
+  link?: boolean;
+  exact?: boolean;
+  exactPath?: boolean;
+}
 
 export interface Props {
   color?: ContextColorsType;
   vertical?: boolean;
   disabled?: boolean;
   grow?: boolean;
-  align?: 'start' | 'center' | 'end';
-  indicatorPosition?: 'start' | 'end';
+  align?: TabAlignment;
+  indicatorPosition?: TabIndicatorPosition;
 }
 
 defineOptions({
@@ -34,22 +45,58 @@ const {
 const internalModelValue = ref<string | number>();
 const bar = useTemplateRef<HTMLDivElement>('bar');
 const wrapper = useTemplateRef<HTMLDivElement>('wrapper');
-const showArrows: Ref<boolean> = ref(false);
 
-const slots = useSlots();
-const hasRouter = !!getCurrentInstance()?.appContext.config.globalProperties.$router;
-const route = hasRouter ? useRoute() : undefined;
-const router = hasRouter ? useRouter() : undefined;
-const { width, height } = useElementSize(bar);
-const { width: wrapperWidth, height: wrapperHeight } = useElementSize(wrapper);
-const { arrivedState, x, y } = useScroll(bar, { behavior: 'smooth' });
-const { top, bottom, left, right } = toRefs(arrivedState);
-
-useResizeObserver(bar, () => {
-  keepActiveTabVisible();
+const tabs = tv({
+  slots: {
+    root: '',
+    arrow: '',
+    bar: 'no-scrollbar max-h-full overflow-auto',
+    wrapper: 'h-full inline-flex max-w-none',
+  },
+  variants: {
+    layout: {
+      [TabLayout.horizontal]: {
+        root: 'flex h-fit',
+        arrow: 'h-[2.625rem] w-10',
+        bar: 'h-[2.625rem]',
+        wrapper: '',
+      },
+      [TabLayout.vertical]: {
+        root: 'inline-flex flex-col',
+        arrow: 'min-h-[2.625rem] w-full',
+        bar: '',
+        wrapper: 'flex-col h-auto',
+      },
+    },
+    wide: {
+      true: {
+        bar: 'w-full',
+        wrapper: 'min-w-full',
+      },
+    },
+  },
+  defaultVariants: { layout: TabLayout.horizontal },
 });
 
-const children = computed<(VNode & { props: Record<string, any> })[]>(() => {
+const slots = useSlots();
+
+const {
+  showArrows,
+  prevArrowDisabled,
+  nextArrowDisabled,
+  onPrevSliderClick,
+  onNextSliderClick,
+  keepActiveTabVisible,
+} = useTabScroll({ bar, wrapper, vertical: () => vertical });
+
+const { resolveRoute, isPathMatch } = useTabRouting({
+  onRouteChange: () => applyNewValue(true),
+});
+
+const layout = computed<TabLayout>(() => vertical ? TabLayout.vertical : TabLayout.horizontal);
+const ui = computed<ReturnType<typeof tabs>>(() => tabs({ layout: get(layout), wide: vertical || grow }));
+
+const children = computed<ChildNode[]>(() => {
   const slotContent = slots.default?.() ?? [];
 
   const tabs = getChildrenTabs(slotContent);
@@ -63,6 +110,7 @@ const children = computed<(VNode & { props: Record<string, any> })[]>(() => {
     align,
     indicatorPosition,
   };
+
   return tabs.map((tab, index) => {
     let tabValue = tab.props?.value ?? index;
     if (tab.props?.link !== false && tab.props?.to)
@@ -81,31 +129,15 @@ const children = computed<(VNode & { props: Record<string, any> })[]>(() => {
   });
 });
 
-const prevArrowDisabled = computed<boolean>(() => {
-  if (!vertical)
-    return get(left);
-
-  return get(top);
-});
-
-const nextArrowDisabled = computed<boolean>(() => {
-  if (!vertical)
-    return get(right);
-
-  return get(bottom);
-});
-
 // When using dynamic content with v-for the slot content can contain fragment,
 // Go through the fragment and always return RuiTab only
 function getChildrenTabs(children: VNode[]): VNode[] {
-  return children
-    .flatMap((item) => {
-      if (item.type === Fragment && Array.isArray(item.children) && item.children.length > 0)
-        return getChildrenTabs(item.children.filter(isVNode));
+  return children.flatMap((item) => {
+    if (item.type === Fragment && Array.isArray(item.children) && item.children.length > 0)
+      return getChildrenTabs(item.children.filter(isVNode));
 
-      return [item];
-    })
-    .flat();
+    return [item];
+  }).flat();
 }
 
 function updateModelValue(newModelValue: string | number): void {
@@ -113,147 +145,46 @@ function updateModelValue(newModelValue: string | number): void {
   set(internalModelValue, newModelValue);
 }
 
-function isPathMatch(
-  path: string,
-  { exactPath, exact }: { exactPath?: boolean; exact?: boolean },
-): boolean {
-  if (!route)
-    return false;
-
-  const currentRoute = route.fullPath;
-
-  if (exactPath)
-    return currentRoute === path;
-
-  const routeWithoutQueryParams = new URL(path, window.location.origin).pathname;
-
-  if (exact)
-    return currentRoute === routeWithoutQueryParams;
-
-  return currentRoute.startsWith(routeWithoutQueryParams);
+function getTabRouteProps(props: Record<string, unknown>): ResolvedTabProps {
+  return {
+    value: typeof props.value === 'string' || typeof props.value === 'number' ? props.value : undefined,
+    to: props.to ?? undefined,
+    link: typeof props.link === 'boolean' ? props.link : undefined,
+    exact: typeof props.exact === 'boolean' ? props.exact : undefined,
+    exactPath: typeof props.exactPath === 'boolean' ? props.exactPath : undefined,
+  };
 }
 
-function keepActiveTabVisible(): void {
-  nextTick(() => {
-    if (!get(showArrows))
-      return;
+function resolveActiveValue(onlyLink: boolean): string | number | undefined {
+  const enabledChildren = get(children).filter(child => !child.props?.disabled);
+  if (enabledChildren.length === 0)
+    return undefined;
 
-    const elem = get(wrapper);
-    const barElem = get(bar);
-    if (elem) {
-      const activeTab = (elem.querySelector('.active-tab') ??
-        elem.querySelector('.active-tab-link')) as HTMLElement;
+  let result: string | number = get(modelValue) || 0;
+  enabledChildren.forEach((child, index) => {
+    const tabProps = getTabRouteProps(child.props);
+    if (!onlyLink && index === 0 && tabProps.value)
+      result = tabProps.value;
 
-      if (!activeTab || !barElem)
-        return;
+    const fullPath = resolveRoute(tabProps.to);
 
-      const childLeft = activeTab.offsetLeft - elem.offsetLeft;
-      const childTop = activeTab.offsetTop - elem.offsetTop;
-      const childWidth = activeTab.offsetWidth;
-      const childHeight = activeTab.offsetHeight;
-      const parentScrollLeft = barElem.scrollLeft;
-      const parentScrollTop = barElem.scrollTop;
-      const parentWidth = barElem.offsetWidth;
-      const parentHeight = barElem.offsetHeight;
-
-      const scrollLeft = Math.max(
-        Math.min(parentScrollLeft, childLeft),
-        childLeft + childWidth - parentWidth,
-      );
-
-      const scrollTop = Math.max(
-        Math.min(parentScrollTop, childTop),
-        childTop + childHeight - parentHeight,
-      );
-
-      barElem.scrollTo({
-        left: scrollLeft,
-        top: scrollTop,
-        behavior: 'smooth',
-      });
-    }
+    if (tabProps.link !== false && fullPath && isPathMatch(fullPath, tabProps))
+      result = fullPath;
   });
+  return result;
 }
 
 function applyNewValue(onlyLink = false): void {
-  const enabledChildren = get(children).filter(child => !child.props?.disabled);
-  if (enabledChildren.length > 0) {
-    let newModelValue: string | number = get(modelValue) || 0;
-    enabledChildren.forEach((child, index) => {
-      const props = child.props as TabProps;
-      if (!onlyLink && index === 0 && props.value)
-        newModelValue = props.value;
+  const value = resolveActiveValue(onlyLink);
+  if (value !== undefined)
+    updateModelValue(value);
 
-      const to = props.to && router ? router.resolve(props.to) : undefined;
-
-      if (props.link !== false && to && isPathMatch(to.fullPath, props))
-        newModelValue = to.fullPath;
-    });
-    updateModelValue(newModelValue);
-  }
   keepActiveTabVisible();
 }
 
-function onPrevSliderClick(): void {
-  if (!vertical)
-    set(x, get(x) - get(width));
-  else set(y, get(y) - get(height));
-}
-
-function onNextSliderClick(): void {
-  if (!vertical)
-    set(x, get(x) + get(width));
-  else set(y, get(y) + get(height));
-}
-
-const { trigger: triggerHorizontal, stop: stopHorizontal } = watchTriggerable(
-  [wrapperWidth, width],
-  ([ww, w]) => {
-    if (w > 0)
-      set(showArrows, ww > w);
-  },
-  {
-    eventFilter: throttleFilter(50),
-  },
-);
-
-const { trigger: triggerVertical, stop: stopVertical } = watchTriggerable(
-  [wrapperHeight, height],
-  ([wh, h]) => {
-    if (h > 0)
-      set(showArrows, wh > h);
-  },
-  {
-    eventFilter: throttleFilter(500),
-  },
-);
-
-watchImmediate(
-  () => vertical,
-  (vertical) => {
-    if (vertical) {
-      triggerVertical();
-      stopHorizontal();
-    }
-    else {
-      triggerHorizontal();
-      stopVertical();
-    }
-  },
-);
-
-if (route) {
-  watch(route, () => {
-    applyNewValue(true);
-  });
-}
-
-watchImmediate(
-  () => get(modelValue),
-  (modelValue) => {
-    set(internalModelValue, modelValue);
-  },
-);
+watchImmediate(() => get(modelValue), (modelValue) => {
+  set(internalModelValue, modelValue);
+});
 
 watch(internalModelValue, () => {
   keepActiveTabVisible();
@@ -268,10 +199,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <div :class="[$style.tabs, { [$style['tabs--vertical'] ?? '']: vertical }]">
+  <div
+    :class="ui.root()"
+    :data-vertical="vertical || undefined"
+  >
     <div
       v-if="showArrows"
-      :class="[$style.arrow, { [$style['arrow--vertical'] ?? '']: vertical }]"
+      :class="ui.arrow()"
     >
       <RuiButton
         class="w-full h-full !rounded-none"
@@ -285,21 +219,13 @@ onMounted(() => {
     </div>
     <div
       ref="bar"
-      class="no-scrollbar"
-      :class="[
-        $style['tabs-bar'],
-        { [$style['tabs-bar--vertical'] ?? '']: vertical },
-        { [$style['tabs-bar--grow'] ?? '']: grow },
-      ]"
+      :class="ui.bar()"
     >
       <div
         ref="wrapper"
         role="tablist"
-        :class="[
-          $style['tabs-wrapper'],
-          { [$style['tabs-wrapper--vertical'] ?? '']: vertical },
-          { [$style['tabs-wrapper--grow'] ?? '']: grow },
-        ]"
+        data-id="tabs-wrapper"
+        :class="ui.wrapper()"
       >
         <Component
           :is="child"
@@ -311,7 +237,7 @@ onMounted(() => {
     </div>
     <div
       v-if="showArrows"
-      :class="[$style.arrow, { [$style['arrow--vertical'] ?? '']: vertical }]"
+      :class="ui.arrow()"
     >
       <RuiButton
         class="w-full h-full !rounded-none"
@@ -325,43 +251,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-<style lang="scss" module>
-.tabs {
-  @apply flex h-[2.625rem];
-
-  &--vertical {
-    @apply h-auto max-h-full flex-col;
-  }
-
-  &-bar {
-    @apply max-h-full overflow-auto;
-
-    &--vertical,
-    &--grow {
-      @apply w-full;
-    }
-  }
-
-  &-wrapper {
-    @apply h-full inline-flex max-w-none;
-
-    &--vertical {
-      @apply flex-col h-auto;
-    }
-
-    &--vertical,
-    &--grow {
-      @apply min-w-full;
-    }
-  }
-}
-
-.arrow {
-  @apply h-full w-10;
-
-  &--vertical {
-    @apply min-h-[2.625rem] w-full h-auto;
-  }
-}
-</style>

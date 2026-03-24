@@ -2,13 +2,7 @@ import { type ComponentMountingOptions, mount, RouterLinkStub } from '@vue/test-
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import RuiTab from '@/components/tabs/tab/RuiTab.vue';
 import RuiTabs from '@/components/tabs/tabs/RuiTabs.vue';
-import {
-  assertExists,
-  expectNotToHaveClass,
-  expectToHaveClass,
-  expectWrapperNotToHaveClass,
-  expectWrapperToHaveClass,
-} from '~/tests/helpers/dom-helpers';
+import { assertExists, expectToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
 vi.mock('vue-router', () => ({
   useRoute: vi.fn().mockImplementation(() => ref()),
@@ -53,7 +47,7 @@ describe('components/tabs/tabs/RuiTabs.vue', () => {
 
     await nextTick();
 
-    const buttons = wrapper.findAll('div[class*=_tabs-wrapper] > button');
+    const buttons = wrapper.findAll('[data-id=tabs-wrapper] > button');
 
     expect(buttons).toHaveLength(4);
     const button0 = buttons[0];
@@ -64,28 +58,25 @@ describe('components/tabs/tabs/RuiTabs.vue', () => {
   it('should pass vertical props', async () => {
     wrapper = createWrapper();
 
-    expectNotToHaveClass(wrapper.element, /_tabs--vertical_/);
+    expect(wrapper.element.getAttribute('data-vertical')).toBeNull();
 
     await wrapper.setProps({
       vertical: true,
     });
     await nextTick();
-    expectToHaveClass(wrapper.element, /_tabs--vertical_/);
+    expect(wrapper.element.getAttribute('data-vertical')).toBe('true');
 
-    expectWrapperToHaveClass(wrapper, 'div[class*=_tabs-wrapper] > button', /_tab--vertical_/);
+    expectWrapperToHaveClass(wrapper, '[data-id=tabs-wrapper] > button', /_tab--vertical_/);
   });
 
   it('should pass grow props', async () => {
     wrapper = createWrapper();
 
-    expectWrapperNotToHaveClass(wrapper, 'div[class*=tabs-bar]', /_tabs-bar--grow/);
-
     await wrapper.setProps({
       grow: true,
     });
-    expectWrapperToHaveClass(wrapper, 'div[class*=tabs-bar]', /_tabs-bar--grow/);
 
-    expectWrapperToHaveClass(wrapper, 'div[class*=_tabs-wrapper] > button', /_tab--grow/);
+    expectWrapperToHaveClass(wrapper, '[data-id=tabs-wrapper] > button', /_tab--grow/);
   });
 
   it('should pass disabled props', async () => {
@@ -134,7 +125,7 @@ describe('components/tabs/tabs/RuiTabs.vue', () => {
     });
 
     await nextTick();
-    let buttons = wrapper.findAll('div[class*=_tabs-wrapper] > button');
+    let buttons = wrapper.findAll('[data-id=tabs-wrapper] > button');
 
     expect(buttons).toHaveLength(4);
     const button0 = buttons[0];
@@ -147,14 +138,14 @@ describe('components/tabs/tabs/RuiTabs.vue', () => {
     await nextTick();
     expect(get(modelValue)).toBe(1);
 
-    buttons = wrapper.findAll('div[class*=_tabs-wrapper] > button');
+    buttons = wrapper.findAll('[data-id=tabs-wrapper] > button');
     const button2 = buttons[2];
     assertExists(button2);
     await button2.trigger('click');
     await nextTick();
     expect(get(modelValue)).toBe(2);
 
-    buttons = wrapper.findAll('div[class*=_tabs-wrapper] > button');
+    buttons = wrapper.findAll('[data-id=tabs-wrapper] > button');
     const button3 = buttons[3];
     assertExists(button3);
     await button3.trigger('click');
@@ -167,7 +158,7 @@ describe('components/tabs/tabs/RuiTabs.vue', () => {
 
     await nextTick();
 
-    const buttons = wrapper.findAll('div[class*=_tabs-wrapper] > button');
+    const buttons = wrapper.findAll('[data-id=tabs-wrapper] > button');
 
     expect(buttons).toHaveLength(4);
     const button0 = buttons[0];
