@@ -166,7 +166,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
         },
       });
 
-      const prevButton = wrapper.findAll('button[class*="nav-button"]')[0];
+      const prevButton = wrapper.find('[data-id="nav-prev"]');
       await prevButton?.trigger('click');
 
       expect(wrapper.text()).toContain('January 2023');
@@ -180,7 +180,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
         },
       });
 
-      const nextButton = wrapper.findAll('button[class*="nav-button"]')[1];
+      const nextButton = wrapper.find('[data-id="nav-next"]');
       await nextButton?.trigger('click');
 
       expect(wrapper.text()).toContain('February 2023');
@@ -195,7 +195,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
       });
 
       // Navigate to next month (should go to January 2024)
-      const nextButton = wrapper.findAll('button[class*="nav-button"]')[1];
+      const nextButton = wrapper.find('[data-id="nav-next"]');
       await nextButton?.trigger('click');
 
       expect(wrapper.text()).toContain('January 2024');
@@ -204,7 +204,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
     it('should emit update:pages event when navigating', async () => {
       wrapper = createWrapper();
 
-      const nextButton = wrapper.findAll('button[class*="nav-button"]')[1];
+      const nextButton = wrapper.find('[data-id="nav-next"]');
       await nextButton?.trigger('click');
 
       const pagesEmission = wrapper.emitted('update:pages');
@@ -219,7 +219,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
     it('should open month/year selection menu when title is clicked', async () => {
       wrapper = createWrapper();
 
-      const titleElement = wrapper.find('.header-title');
+      const titleElement = wrapper.find('[data-id="header-title"]');
       await titleElement.trigger('click');
 
       const emitted = wrapper.emitted('update:menu-open');
@@ -345,7 +345,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
       });
 
       // Open the month/year selection menu
-      const titleElement = wrapper.find('.header-title');
+      const titleElement = wrapper.find('[data-id="header-title"]');
       await titleElement.trigger('click');
       await nextTick();
 
@@ -368,7 +368,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
       });
 
       // Open the month/year selection menu
-      const titleElement = wrapper.find('.header-title');
+      const titleElement = wrapper.find('[data-id="header-title"]');
       await titleElement.trigger('click');
       await nextTick();
 
@@ -401,7 +401,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
       });
 
       // Open the month/year selection menu
-      const titleElement = wrapper.find('.header-title');
+      const titleElement = wrapper.find('[data-id="header-title"]');
       await titleElement.trigger('click');
       await nextTick();
 
@@ -667,7 +667,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
     it('should handle rapid navigation clicks', async () => {
       wrapper = createWrapper();
 
-      const nextButton = wrapper.findAll('button[class*="nav-button"]')[1];
+      const nextButton = wrapper.find('[data-id="nav-next"]');
 
       // Rapidly click next button
       await nextButton?.trigger('click');

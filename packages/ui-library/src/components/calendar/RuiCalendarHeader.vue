@@ -33,6 +33,8 @@ const anchorEl = ref<HTMLElement>();
 
 const calendarState = inject<RuiCalendarState>(CalendarStateSymbol) as RuiCalendarState;
 
+const navButtonClass = 'p-1 rounded-full text-gray-500 hover:text-rui-primary hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-rui-primary';
+
 const canGoToNext = computed<boolean>(() => {
   const { maxDate } = calendarState;
   if (!isDefined(maxDate)) {
@@ -64,11 +66,12 @@ function handleDateSelection(selection: MonthYearSelection): void {
 </script>
 
 <template>
-  <div class="calendar-header">
+  <div class="flex items-center justify-between px-4 py-3">
     <RuiButton
       type="button"
-      class="nav-button"
+      :class="navButtonClass"
       icon
+      data-id="nav-prev"
       :disabled="!canGoToPrev"
       variant="text"
       @click.stop="emit('prev-month')"
@@ -80,7 +83,8 @@ function handleDateSelection(selection: MonthYearSelection): void {
     </RuiButton>
 
     <h3
-      class="header-title"
+      class="font-medium text-gray-800 dark:text-gray-200 flex items-center cursor-pointer pl-8"
+      data-id="header-title"
       @click.stop="handleTitleClick($event)"
     >
       {{ title }}
@@ -101,9 +105,10 @@ function handleDateSelection(selection: MonthYearSelection): void {
 
     <RuiButton
       type="button"
-      class="nav-button"
+      :class="navButtonClass"
       variant="text"
       icon
+      data-id="nav-next"
       :disabled="!canGoToNext"
       @click.stop="emit('next-month')"
     >
@@ -114,18 +119,3 @@ function handleDateSelection(selection: MonthYearSelection): void {
     </RuiButton>
   </div>
 </template>
-
-<style scoped>
-.calendar-header {
-  @apply flex items-center justify-between px-4 py-3;
-}
-
-.header-title {
-  @apply font-medium text-gray-800 dark:text-gray-200 flex items-center cursor-pointer pl-8;
-}
-
-.nav-button {
-  @apply p-1 rounded-full text-gray-500 hover:text-rui-primary hover:bg-gray-100;
-  @apply dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-rui-primary;
-}
-</style>
