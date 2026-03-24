@@ -2,7 +2,6 @@ import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCard from '@/components/cards/RuiCard.vue';
-import { expectNotToHaveClass, expectToHaveClass } from '~/tests/helpers/dom-helpers';
 
 function createWrapper(
   options: ComponentMountingOptions<typeof RuiCard>,
@@ -21,18 +20,15 @@ describe('components/cards/RuiCard.vue', () => {
     wrapper = createWrapper({});
 
     expect(wrapper.exists()).toBeTruthy();
-    expectToHaveClass(wrapper.element, /_card_/);
-    expectToHaveClass(wrapper.element, /_outlined_/);
-    expectToHaveClass(wrapper.element, /shadow-0/);
-    expectNotToHaveClass(wrapper.element, /_dense_/);
-    expectNotToHaveClass(wrapper.element, /_divide_/);
+    expect(wrapper.classes()).toContain('border');
+    expect(wrapper.classes()).toContain('shadow-0');
 
-    expect(wrapper.find('div[class*=_image_').exists()).toBeFalsy();
-    expect(wrapper.find('h5[class*=_prepend_').exists()).toBeFalsy();
-    expect(wrapper.find('h5[class*=_header_').exists()).toBeFalsy();
-    expect(wrapper.find('p[class*=_subheader_').exists()).toBeFalsy();
-    expect(wrapper.find('div[class*=_content_').exists()).toBeFalsy();
-    expect(wrapper.find('div[class*=_footer_').exists()).toBeFalsy();
+    expect(wrapper.find('[data-id=card-image]').exists()).toBeFalsy();
+    expect(wrapper.find('[data-id=prepend]').exists()).toBeFalsy();
+    expect(wrapper.find('[data-id=header]').exists()).toBeFalsy();
+    expect(wrapper.find('[data-id=subheader]').exists()).toBeFalsy();
+    expect(wrapper.find('[data-id=card-content]').exists()).toBeFalsy();
+    expect(wrapper.find('[data-id=card-footer]').exists()).toBeFalsy();
   });
 
   it('should render default slot content', () => {
@@ -42,8 +38,8 @@ describe('components/cards/RuiCard.vue', () => {
       },
     });
 
-    expect(wrapper.find('div[class*=_content_]').exists()).toBeTruthy();
-    expect(wrapper.find('div[class*=_content_] p').text()).toBe('Card content');
+    expect(wrapper.find('[data-id=card-content]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=card-content] p').text()).toBe('Card content');
   });
 
   it('should render header and subheader slots', () => {
@@ -67,8 +63,8 @@ describe('components/cards/RuiCard.vue', () => {
       },
     });
 
-    expect(wrapper.find('div[class*=_image_]').exists()).toBeTruthy();
-    expect(wrapper.find('div[class*=_image_] img').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=card-image]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=card-image] img').exists()).toBeTruthy();
   });
 
   it('should render prepend slot', () => {
@@ -90,8 +86,8 @@ describe('components/cards/RuiCard.vue', () => {
       },
     });
 
-    expect(wrapper.find('div[class*=_footer_]').exists()).toBeTruthy();
-    expect(wrapper.find('div[class*=_footer_] button').text()).toBe('Action');
+    expect(wrapper.find('[data-id=card-footer]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=card-footer] button').text()).toBe('Action');
   });
 
   it('should apply variant classes', async () => {
@@ -101,10 +97,10 @@ describe('components/cards/RuiCard.vue', () => {
       },
     });
 
-    expectToHaveClass(wrapper.element, /_outlined_/);
+    expect(wrapper.classes()).toContain('border');
 
     await wrapper.setProps({ variant: 'flat' });
-    expectNotToHaveClass(wrapper.element, /_outlined_/);
+    expect(wrapper.classes()).not.toContain('border');
   });
 
   it('should apply rounded classes', async () => {
@@ -114,14 +110,14 @@ describe('components/cards/RuiCard.vue', () => {
       },
     });
 
-    expectToHaveClass(wrapper.element, /_rounded__md_/);
+    expect(wrapper.classes()).toContain('rounded-[.5rem]');
 
     await wrapper.setProps({ rounded: 'sm' });
-    expectToHaveClass(wrapper.element, /_rounded__sm_/);
-    expectNotToHaveClass(wrapper.element, /_rounded__md_/);
+    expect(wrapper.classes()).toContain('rounded-[.25rem]');
+    expect(wrapper.classes()).not.toContain('rounded-[.5rem]');
 
     await wrapper.setProps({ rounded: 'lg' });
-    expectToHaveClass(wrapper.element, /_rounded__lg_/);
+    expect(wrapper.classes()).toContain('rounded-[1rem]');
   });
 
   it('should apply dense class', async () => {
@@ -129,12 +125,15 @@ describe('components/cards/RuiCard.vue', () => {
       props: {
         dense: false,
       },
+      slots: {
+        default: 'content',
+      },
     });
 
-    expectNotToHaveClass(wrapper.element, /_dense_/);
+    expect(wrapper.find('[data-id=card-content]').classes()).toContain('p-4');
 
     await wrapper.setProps({ dense: true });
-    expectToHaveClass(wrapper.element, /_dense_/);
+    expect(wrapper.find('[data-id=card-content]').classes()).toContain('p-3');
   });
 
   it('should apply divide class', async () => {
@@ -144,10 +143,10 @@ describe('components/cards/RuiCard.vue', () => {
       },
     });
 
-    expectNotToHaveClass(wrapper.element, /_divide_/);
+    expect(wrapper.classes()).not.toContain('divide-y');
 
     await wrapper.setProps({ divide: true });
-    expectToHaveClass(wrapper.element, /_divide_/);
+    expect(wrapper.classes()).toContain('divide-y');
   });
 
   it('should react to props changes', async () => {
@@ -170,12 +169,12 @@ describe('components/cards/RuiCard.vue', () => {
       },
     });
 
-    expect(wrapper.find('div[class*=_image_]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=card-image]').exists()).toBeTruthy();
     expect(wrapper.find('[data-id=prepend]').exists()).toBeTruthy();
     expect(wrapper.find('[data-id=header]').exists()).toBeTruthy();
     expect(wrapper.find('[data-id=subheader]').exists()).toBeTruthy();
-    expect(wrapper.find('div[class*=_content_]').exists()).toBeTruthy();
-    expect(wrapper.find('div[class*=_footer_]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=card-content]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=card-footer]').exists()).toBeTruthy();
 
     await wrapper.setProps({
       dense: true,
@@ -184,11 +183,9 @@ describe('components/cards/RuiCard.vue', () => {
       variant: 'flat',
     });
 
-    expectNotToHaveClass(wrapper.element, /_outlined_/);
-    expectNotToHaveClass(wrapper.element, /shadow-0/);
-    expectToHaveClass(wrapper.element, /_card_/);
-    expectToHaveClass(wrapper.element, /shadow-2/);
-    expectToHaveClass(wrapper.element, /_dense_/);
-    expectToHaveClass(wrapper.element, /_divide_/);
+    expect(wrapper.classes()).not.toContain('border');
+    expect(wrapper.classes()).not.toContain('shadow-0');
+    expect(wrapper.classes()).toContain('shadow-2');
+    expect(wrapper.classes()).toContain('divide-y');
   });
 });

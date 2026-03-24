@@ -1,12 +1,14 @@
 <script setup lang="ts">
+import type { VueClassValue } from '@/types/class-value';
 import { computed } from 'vue';
 import RuiCardHeader from '@/components/cards/RuiCardHeader.vue';
+import { cn, tv } from '@/utils/tv';
 
 export interface RuiCardClassNames {
-  root?: string;
-  content?: string;
-  footer?: string;
-  image?: string;
+  root?: VueClassValue;
+  content?: VueClassValue;
+  footer?: VueClassValue;
+  image?: VueClassValue;
 }
 
 export interface Props {
@@ -30,7 +32,7 @@ const {
   divide = false,
   dense = false,
   elevation = 0,
-  variant = 'outlined',
+  variant: cardVariant = 'outlined',
   rounded = 'md',
   noPadding = false,
   classNames,
@@ -47,28 +49,59 @@ const slots = defineSlots<{
   'footer'?: () => any;
 }>();
 
+const card = tv({
+  slots: {
+    root: 'flex flex-col h-full w-full bg-white dark:bg-[#1E1E1E]',
+    image: 'overflow-hidden',
+    content: 'text-body-1 text-rui-light-text dark:text-rui-dark-text overflow-y-auto',
+    footer: 'flex space-x-2 items-center justify-start mt-auto',
+  },
+  variants: {
+    variant: {
+      flat: { root: '' },
+      outlined: { root: 'border border-black/[0.12] dark:border-white/[0.12]' },
+    },
+    rounded: {
+      sm: { root: 'rounded-[.25rem]', image: 'rounded-t-[.25rem]' },
+      md: { root: 'rounded-[.5rem]', image: 'rounded-t-[.5rem]' },
+      lg: { root: 'rounded-[1rem]', image: 'rounded-t-[1rem]' },
+    },
+    divide: {
+      true: { root: 'divide-y divide-black/[0.12] dark:divide-white/[0.12]' },
+    },
+    padding: {
+      none: { content: 'p-0' },
+      dense: { content: 'p-3' },
+      normal: { content: 'p-4' },
+    },
+    dense: {
+      true: { footer: 'py-1' },
+      false: { footer: 'p-4 pt-2' },
+    },
+  },
+  defaultVariants: { variant: 'outlined', rounded: 'md', padding: 'normal', dense: false },
+});
+
 const hasHeadContent = computed<boolean>(() => !!slots.header || !!slots.subheader);
+
+const contentPadding = computed<'none' | 'dense' | 'normal'>(() => {
+  if (noPadding)
+    return 'none';
+  return dense ? 'dense' : 'normal';
+});
+
+const ui = computed<ReturnType<typeof card>>(() => card({ variant: cardVariant, rounded, divide, dense, padding: contentPadding.value }));
 </script>
 
 <template>
   <div
-    :class="[
-      $style.card,
-      `shadow-${elevation}`,
-      $style[`rounded__${rounded}`],
-      {
-        [$style.outlined]: variant === 'outlined',
-        [$style.dense]: dense,
-        [$style.divide]: divide,
-        [$style['no-padding']]: noPadding,
-      },
-      classNames?.root,
-    ]"
+    :class="ui.root({ class: [`shadow-${elevation}`, cn(classNames?.root)] })"
     v-bind="$attrs"
   >
     <div
       v-if="slots.image"
-      :class="[$style.image, classNames?.image]"
+      data-id="card-image"
+      :class="ui.image({ class: cn(classNames?.image) })"
     >
       <slot name="image" />
     </div>
@@ -99,102 +132,17 @@ const hasHeadContent = computed<boolean>(() => !!slots.header || !!slots.subhead
     </slot>
     <div
       v-if="slots.default"
-      :class="[$style.content, classNames?.content ?? contentClass]"
+      data-id="card-content"
+      :class="ui.content({ class: cn(classNames?.content) ?? contentClass })"
     >
       <slot />
     </div>
     <div
       v-if="slots.footer"
-      :class="[$style.footer, classNames?.footer]"
+      data-id="card-footer"
+      :class="ui.footer({ class: cn(classNames?.footer) })"
     >
       <slot name="footer" />
     </div>
   </div>
 </template>
-
-<style lang="scss" module>
-.card {
-  @apply flex flex-col h-full w-full bg-white;
-  &.rounded__sm {
-    @apply rounded-[.25rem];
-
-    .image {
-      @apply rounded-t-[.25rem];
-    }
-  }
-
-  &.rounded__md {
-    @apply rounded-[.5rem];
-
-    .image {
-      @apply rounded-t-[.5rem];
-    }
-  }
-
-  &.rounded__lg {
-    @apply rounded-[1rem];
-
-    .image {
-      @apply rounded-t-[1rem];
-    }
-  }
-
-  .image {
-    @apply overflow-hidden;
-  }
-
-  .content {
-    @apply p-4 text-body-1 text-rui-light-text overflow-y-auto;
-  }
-
-  .footer {
-    @apply p-4 pt-2 flex space-x-2 items-center justify-start mt-auto;
-  }
-
-  &.flat {
-    @apply border-none;
-  }
-
-  &.outlined {
-    @apply border border-black/[0.12];
-  }
-
-  &.divide {
-    @apply divide-y divide-black/[0.12];
-  }
-
-  &.dense {
-    > .content {
-      @apply p-3;
-    }
-
-    > .footer {
-      @apply py-1 flex space-x-2;
-    }
-  }
-
-  &.no-padding {
-    > .content {
-      @apply p-0;
-    }
-  }
-}
-
-:global(.dark) {
-  .card {
-    @apply bg-[#1E1E1E];
-
-    .content {
-      @apply text-rui-dark-text;
-    }
-
-    &.outlined {
-      @apply border-white/[0.12];
-    }
-
-    &.divide {
-      @apply divide-white/[0.12];
-    }
-  }
-}
-</style>
