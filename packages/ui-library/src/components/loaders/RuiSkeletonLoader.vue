@@ -2,18 +2,11 @@
 import RuiSkeletonBase, {
   type Props as SkeletonBaseProps,
 } from '@/components/loaders/RuiSkeletonBase.vue';
+import { SkeletonType } from '@/components/loaders/skeleton-type';
+import { tv } from '@/utils/tv';
 
 export interface Props extends SkeletonBaseProps {
-  type?:
-    | 'text'
-    | 'paragraph'
-    | 'heading'
-    | 'article'
-    | 'button'
-    | 'icon'
-    | 'avatar'
-    | 'thumbnail'
-    | 'custom';
+  type?: SkeletonType;
 }
 
 defineOptions({
@@ -21,90 +14,58 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const { type = 'text', rounded } = defineProps<Props>();
+const { type = SkeletonType.TEXT, rounded } = defineProps<Props>();
+
+const multiLineTypes: SkeletonType[] = [SkeletonType.PARAGRAPH, SkeletonType.ARTICLE];
+
+const skeletonType = tv({
+  variants: {
+    type: {
+      [SkeletonType.CUSTOM]: 'box-border',
+      [SkeletonType.TEXT]: 'w-full h-4 rounded-md',
+      [SkeletonType.HEADING]: 'w-full h-6 rounded-md',
+      [SkeletonType.BUTTON]: 'w-full max-w-[6rem] h-[2.25rem] rounded-md',
+      [SkeletonType.ICON]: 'w-6 h-6 rounded-full',
+      [SkeletonType.AVATAR]: 'w-10 h-10 rounded-full',
+      [SkeletonType.THUMBNAIL]: 'w-14 h-14 rounded-sm',
+      [SkeletonType.PARAGRAPH]: 'flex flex-col gap-2',
+      [SkeletonType.ARTICLE]: 'flex flex-col gap-2',
+    },
+  },
+});
+
+const ui = computed<string>(() => skeletonType({ type }));
+const isMultiLine = computed<boolean>(() => multiLineTypes.includes(type));
 </script>
 
 <template>
   <RuiSkeletonBase
-    v-if="!['paragraph', 'article'].includes(type)"
-    :class="$style[`skeleton_${type}`]"
+    v-if="!isMultiLine"
+    :class="ui"
     :rounded="rounded"
     v-bind="$attrs"
   />
   <div
     v-else
-    :class="$style[`skeleton_${type}`]"
+    :class="ui"
     v-bind="$attrs"
   >
     <RuiSkeletonBase
-      v-if="type === 'article'"
-      :class="$style.skeleton_heading"
+      v-if="type === SkeletonType.ARTICLE"
+      class="w-full h-6 rounded-md mb-1"
       :rounded="rounded"
     />
     <RuiSkeletonBase
-      :class="$style.skeleton_text"
+      class="w-full h-3 rounded-md"
       :rounded="rounded"
     />
     <RuiSkeletonBase
-      :class="$style.skeleton_text"
+      class="w-full h-3 rounded-md max-w-[80%]"
       :rounded="rounded"
     />
     <RuiSkeletonBase
-      :class="$style.skeleton_text"
+      class="w-full h-3 rounded-md max-w-[90%]"
       :rounded="rounded"
     />
   </div>
 </template>
-
-<style lang="scss" module>
-.skeleton {
-  &_custom {
-    @apply box-border;
-  }
-
-  &_text {
-    @apply w-full h-4 rounded-md;
-  }
-
-  &_heading {
-    @apply w-full h-6 rounded-md;
-  }
-
-  &_button {
-    @apply w-full max-w-[6rem] h-[2.25rem] rounded-md;
-  }
-
-  &_icon {
-    @apply w-6 h-6 rounded-full;
-  }
-
-  &_avatar {
-    @apply w-10 h-10 rounded-full;
-  }
-
-  &_thumbnail {
-    @apply w-14 h-14 rounded-sm;
-  }
-
-  &_paragraph,
-  &_article {
-    @apply flex flex-col gap-2;
-
-    .skeleton_heading {
-      @apply mb-1;
-    }
-
-    .skeleton_text {
-      @apply h-3;
-
-      &:nth-child(2) {
-        @apply max-w-[80%];
-      }
-
-      &:last-child {
-        @apply max-w-[90%];
-      }
-    }
-  }
-}
-</style>

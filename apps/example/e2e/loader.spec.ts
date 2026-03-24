@@ -8,39 +8,38 @@ test.describe('loaders', () => {
   test('should render text and heading skeleton loaders', async ({ page }) => {
     await expect(page.locator('h2[data-id=skeleton-loader]')).toContainText('Skeleton Loader');
 
-    const defaultSkeleton = page.locator('div[class*=skeleton_text]').first();
-    const headingSkeleton = page.locator('div[class*=skeleton_heading]').first();
+    const defaultSkeleton = page.locator('div[role=alert].h-4').first();
+    const headingSkeleton = page.locator('div[role=alert].h-6').first();
 
-    await expect(defaultSkeleton).toHaveAttribute('role', 'alert');
-    await expect(headingSkeleton).toHaveAttribute('role', 'alert');
+    await expect(defaultSkeleton).toBeVisible();
+    await expect(headingSkeleton).toBeVisible();
   });
 
   test('should render paragraph skeleton loader', async ({ page }) => {
-    const paragraphSkeleton = page.locator('div[class*=skeleton_paragraph]').first();
+    const paragraphWrapper = page.locator('div.flex.flex-col.gap-2').first();
 
-    await expect(paragraphSkeleton.locator('div[class*=skeleton_text]').first()).toHaveAttribute('role', 'alert');
-    await expect(paragraphSkeleton).toHaveClass(/skeleton_paragraph/);
+    await expect(paragraphWrapper.locator('div[role=alert]').first()).toBeVisible();
   });
 
   test('should render article skeleton loader', async ({ page }) => {
-    const articleSkeleton = page.locator('div[class*=skeleton_article]').first();
+    // Article has a heading (h-6 with mb-1) + 3 text lines (h-3)
+    const articleWrapper = page.locator('div.flex.flex-col.gap-2').nth(1);
 
-    await expect(articleSkeleton.locator('div[class*=skeleton_heading]')).toHaveAttribute('role', 'alert');
-    await expect(articleSkeleton.locator('div[class*=skeleton_text]').first()).toHaveAttribute('role', 'alert');
-    await expect(articleSkeleton).toHaveClass(/skeleton_article/);
+    await expect(articleWrapper.locator('div[role=alert]').first()).toBeVisible();
+    const allElements = articleWrapper.locator('div[role=alert]');
+    await expect(allElements).toHaveCount(4);
   });
 
   test('should render icon, avatar, thumbnail, and custom skeleton loaders', async ({ page }) => {
-    const iconSkeleton = page.locator('div[class*=skeleton_icon]').first();
-    const avatarSkeleton = page.locator('div[class*=skeleton_avatar]').first();
-    const thumbnailSkeleton = page.locator('div[class*=skeleton_thumbnail]').first();
-    const customSkeleton = page.locator('div[class*=skeleton_custom]').first();
+    const iconSkeleton = page.locator('div[role=alert].w-6.h-6').first();
+    const avatarSkeleton = page.locator('div[role=alert].w-10.h-10').first();
+    const thumbnailSkeleton = page.locator('div[role=alert].w-14.h-14').first();
+    const customSkeleton = page.locator('div[role=alert].w-20').first();
 
-    await expect(iconSkeleton).toHaveAttribute('role', 'alert');
-    await expect(avatarSkeleton).toHaveAttribute('role', 'alert');
-    await expect(thumbnailSkeleton).toHaveAttribute('role', 'alert');
-    await expect(customSkeleton).toHaveAttribute('role', 'alert');
-    await expect(customSkeleton).toHaveClass(/w-20/);
+    await expect(iconSkeleton).toBeVisible();
+    await expect(avatarSkeleton).toBeVisible();
+    await expect(thumbnailSkeleton).toBeVisible();
+    await expect(customSkeleton).toBeVisible();
     await expect(customSkeleton).toHaveClass(/h-20/);
   });
 });
