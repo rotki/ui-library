@@ -13,7 +13,6 @@ const slots = useSlots();
 const reverse = ref<boolean>(false);
 const currIndex = ref<number>(-1);
 const activeIndex = ref<number>(-1);
-const wrapper = useTemplateRef<HTMLDivElement>('wrapper');
 const inner = useTemplateRef<HTMLDivElement>('inner');
 
 const { height: innerHeight } = useElementSize(inner);
@@ -72,8 +71,8 @@ watch(currIndex, (index) => {
 
 <template>
   <div
-    ref="wrapper"
-    :class="$style.tabs"
+    class="grow transition-all overflow-hidden"
+    :style="{ height: `${innerHeight}px` }"
     v-bind="$attrs"
   >
     <div ref="inner">
@@ -87,10 +86,3 @@ watch(currIndex, (index) => {
     </div>
   </div>
 </template>
-
-<style lang="scss" module>
-.tabs {
-  @apply grow transition-all overflow-hidden;
-  height: calc(v-bind(innerHeight) * 1px);
-}
-</style>
