@@ -1,4 +1,5 @@
 <script lang="ts" setup generic="TValue, TItem">
+import type { VueClassValue } from '@/types/class-value';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
@@ -6,6 +7,13 @@ import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { type KeyOfType, useDropdownMenu } from '@/composables/dropdown-menu';
 import { useLabelWithQuote } from '@/composables/forms/use-label-with-quote';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
+
+export interface RuiMenuSelectClassNames {
+  root?: VueClassValue;
+  label?: VueClassValue;
+  menu?: VueClassValue;
+  option?: VueClassValue;
+}
 
 export interface Props<TValue, TItem> {
   options: TItem[];
@@ -18,8 +26,12 @@ export interface Props<TValue, TItem> {
   clearable?: boolean;
   label?: string;
   menuOptions?: MenuProps;
+  classNames?: RuiMenuSelectClassNames;
+  /** @deprecated Use `classNames.label` instead */
   labelClass?: string;
+  /** @deprecated Use `classNames.menu` instead */
   menuClass?: string;
+  /** @deprecated Use `classNames.option` instead */
   optionClass?: string;
   prependWidth?: number; // in rem
   appendWidth?: number; // in rem
@@ -52,6 +64,7 @@ const {
   hideDetails = false,
   label = 'Select',
   menuOptions,
+  classNames,
   labelClass,
   menuClass,
   variant = 'default',
@@ -195,7 +208,7 @@ function clear(): void {
           class="group"
           :class="[
             $style.activator,
-            labelClass,
+            classNames?.label ?? labelClass,
             {
               [$style.disabled]: disabled,
               [$style.readonly]: readOnly,
@@ -301,7 +314,7 @@ function clear(): void {
     <template #default="{ width }">
       <div
         v-if="options.length > 0"
-        :class="[$style.menu, menuClass]"
+        :class="[$style.menu, classNames?.menu ?? menuClass]"
         :style="{ width: `${width}px`, minWidth: menuWidth }"
         v-bind="virtualContainerProps"
         @scroll="containerProps.onScroll"
@@ -353,7 +366,7 @@ function clear(): void {
         v-else-if="!hideNoData"
         data-id="no-data"
         :style="{ width: `${width}px`, minWidth: menuWidth }"
-        :class="menuClass"
+        :class="classNames?.menu ?? menuClass"
       >
         <slot name="no-data">
           <div class="p-4">

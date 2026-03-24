@@ -1,11 +1,21 @@
 <script lang="ts" setup>
+import type { VueClassValue } from '@/types/class-value';
 import Icon from '@/components/icons/RuiIcon.vue';
+
+export interface RuiAccordionClassNames {
+  root?: VueClassValue;
+  header?: VueClassValue;
+  content?: VueClassValue;
+}
 
 export interface AccordionProps {
   open?: boolean;
   eager?: boolean;
   headerGrow?: boolean;
+  classNames?: RuiAccordionClassNames;
+  /** @deprecated Use `classNames.header` instead */
   headerClass?: string;
+  /** @deprecated Use `classNames.content` instead */
   contentClass?: string;
 }
 
@@ -18,6 +28,7 @@ const {
   open = false,
   eager = false,
   headerGrow = false,
+  classNames,
   headerClass = '',
   contentClass = '',
 } = defineProps<AccordionProps>();
@@ -62,7 +73,7 @@ function onKeydown(event: KeyboardEvent): void {
       v-if="$slots.header"
       :id="triggerId"
       class="flex gap-2 items-center cursor-pointer outline-none focus-visible:bg-rui-primary/10 rounded"
-      :class="[headerClass, { 'w-full': headerGrow }]"
+      :class="[classNames?.header ?? headerClass, { 'w-full': headerGrow }]"
       role="button"
       tabindex="0"
       :aria-expanded="open"
@@ -87,7 +98,7 @@ function onKeydown(event: KeyboardEvent): void {
       v-if="open || eager"
       :id="contentId"
       class="grow transition-all overflow-hidden w-full"
-      :class="contentClass"
+      :class="classNames?.content ?? contentClass"
       :style="{ height: contentHeight }"
       role="region"
       :aria-labelledby="triggerId"

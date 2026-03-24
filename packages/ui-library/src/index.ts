@@ -21,6 +21,10 @@ export { translationKeys } from '@/i18n/keys';
 
 export * from '@/icons';
 
+export { StepperState };
+
+export type { VueClassValue } from '@/types/class-value';
+
 export {
   type InitThemeOptions,
   type ThemeConfig,
@@ -28,8 +32,6 @@ export {
   type ThemeData,
   ThemeMode,
 } from '@/types/theme';
-
-export { StepperState };
 
 export { createBlockie } from '@/utils/blockie';
 

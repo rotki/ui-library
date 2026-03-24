@@ -2,6 +2,13 @@
 import { computed } from 'vue';
 import RuiCardHeader from '@/components/cards/RuiCardHeader.vue';
 
+export interface RuiCardClassNames {
+  root?: string;
+  content?: string;
+  footer?: string;
+  image?: string;
+}
+
 export interface Props {
   dense?: boolean;
   divide?: boolean;
@@ -9,6 +16,8 @@ export interface Props {
   variant?: 'flat' | 'outlined';
   rounded?: 'sm' | 'md' | 'lg';
   noPadding?: boolean;
+  classNames?: RuiCardClassNames;
+  /** @deprecated Use `classNames.content` instead */
   contentClass?: string;
 }
 
@@ -24,6 +33,7 @@ const {
   variant = 'outlined',
   rounded = 'md',
   noPadding = false,
+  classNames,
   contentClass = '',
 } = defineProps<Props>();
 
@@ -52,12 +62,13 @@ const hasHeadContent = computed<boolean>(() => !!slots.header || !!slots.subhead
         [$style.divide]: divide,
         [$style['no-padding']]: noPadding,
       },
+      classNames?.root,
     ]"
     v-bind="$attrs"
   >
     <div
       v-if="slots.image"
-      :class="$style.image"
+      :class="[$style.image, classNames?.image]"
     >
       <slot name="image" />
     </div>
@@ -88,13 +99,13 @@ const hasHeadContent = computed<boolean>(() => !!slots.header || !!slots.subhead
     </slot>
     <div
       v-if="slots.default"
-      :class="[$style.content, contentClass]"
+      :class="[$style.content, classNames?.content ?? contentClass]"
     >
       <slot />
     </div>
     <div
       v-if="slots.footer"
-      :class="$style.footer"
+      :class="[$style.footer, classNames?.footer]"
     >
       <slot name="footer" />
     </div>

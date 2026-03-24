@@ -4,12 +4,21 @@ import RuiStepperCustomIcon from '@/components/steppers/RuiStepperCustomIcon.vue
 import RuiStepperIcon from '@/components/steppers/RuiStepperIcon.vue';
 import { StepperOrientation, StepperState, type StepperStep } from '@/types/stepper';
 
+export interface RuiStepperClassNames {
+  root?: string;
+  title?: string;
+  subtitle?: string;
+}
+
 export interface Props {
   step?: number;
   steps: StepperStep[];
   iconTop?: boolean;
   custom?: boolean;
+  classNames?: RuiStepperClassNames;
+  /** @deprecated Use `classNames.title` instead */
   titleClass?: string;
+  /** @deprecated Use `classNames.subtitle` instead */
   subtitleClass?: string;
   orientation?: StepperOrientation;
   keepActiveVisible?: boolean;
@@ -24,6 +33,7 @@ const {
   steps,
   iconTop = false,
   custom = false,
+  classNames,
   titleClass = '',
   subtitleClass = '',
   orientation = StepperOrientation.horizontal,
@@ -141,14 +151,14 @@ watch(
         >
           <span
             v-if="title"
-            :class="[$style.title, { [titleClass]: custom }]"
+            :class="[$style.title, { [classNames?.title ?? titleClass]: custom }]"
             class="text-subtitle-2"
           >
             {{ title }}
           </span>
           <span
             v-if="description"
-            :class="[$style.subtitle, { [subtitleClass]: custom }]"
+            :class="[$style.subtitle, { [classNames?.subtitle ?? subtitleClass]: custom }]"
             class="text-caption"
           >
             {{ description }}

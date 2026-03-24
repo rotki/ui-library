@@ -1,11 +1,18 @@
 <script setup lang="ts">
 import { getNonRootAttrs, getRootAttrs, transformPropsUnit } from '@/utils/helpers';
 
+export interface RuiDialogClassNames {
+  root?: string;
+  content?: string;
+}
+
 export interface DialogProps {
   persistent?: boolean;
   width?: string | number;
   maxWidth?: string | number;
   bottomSheet?: boolean;
+  classNames?: RuiDialogClassNames;
+  /** @deprecated Use `classNames.content` instead */
   contentClass?: string | string[] | Record<string, boolean>;
   zIndex?: string | number;
   ariaLabel?: string;
@@ -23,6 +30,7 @@ const {
   width = '98%',
   maxWidth,
   bottomSheet = false,
+  classNames,
   contentClass = '',
   zIndex = 9999,
   ariaLabel,
@@ -177,7 +185,7 @@ watch(contentRef, (contentRef) => {
     <Teleport to="body">
       <div
         v-if="isOpen || internalValue"
-        :class="$style.wrapper"
+        :class="[$style.wrapper, classNames?.root]"
         :style="{ zIndex }"
         role="dialog"
         aria-modal="true"
@@ -208,7 +216,7 @@ watch(contentRef, (contentRef) => {
             data-id="content"
             :style="style"
             tabindex="0"
-            :class="[$style.content, contentClass, { [$style.center]: !bottomSheet }]"
+            :class="[$style.content, classNames?.content ?? contentClass, { [$style.center]: !bottomSheet }]"
           >
             <slot v-bind="{ isOpen, close }" />
           </div>

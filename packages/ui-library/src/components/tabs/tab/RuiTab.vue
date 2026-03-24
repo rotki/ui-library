@@ -3,12 +3,19 @@ import type { ContextColorsType } from '@/consts/colors';
 import { type RouteLocationRaw, RouterLink } from 'vue-router';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 
+export interface RuiTabClassNames {
+  root?: string;
+  active?: string;
+}
+
 export interface Props {
   color?: ContextColorsType;
   disabled?: boolean;
   grow?: boolean;
   value?: number | string;
   active?: boolean;
+  classNames?: RuiTabClassNames;
+  /** @deprecated Use `classNames.active` instead */
   activeClass?: string;
   link?: boolean;
   target?: string;
@@ -31,6 +38,7 @@ const {
   grow = false,
   value = useId(),
   active = false,
+  classNames,
   activeClass = '',
   link = false,
   to = '',
@@ -62,7 +70,7 @@ const tabClass = computed<(string | undefined | Record<string, string | boolean>
   css[`tab-indicator--${indicatorPosition}`],
   {
     [css['tab--grow'] ?? '']: grow,
-    [`${css['tab--active']} active-tab ${activeClass}`]: active,
+    [`${css['tab--active']} active-tab ${classNames?.active ?? activeClass}`]: active,
     [css['tab--disabled'] ?? '']: disabled,
     [css['tab--vertical'] ?? '']: vertical,
   },

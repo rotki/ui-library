@@ -1,4 +1,5 @@
 <script lang="ts" setup generic="TValue, TItem">
+import type { VueClassValue } from '@/types/class-value';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiChip from '@/components/chips/RuiChip.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
@@ -22,6 +23,12 @@ import { isEqual } from '@/utils/is-equal';
 export type AutoCompleteModelValue<TValue> =
   TValue extends Array<infer U> ? U[] : TValue | undefined;
 
+export interface RuiAutoCompleteClassNames {
+  root?: VueClassValue;
+  label?: VueClassValue;
+  menu?: VueClassValue;
+}
+
 export interface AutoCompleteProps<TValue, TItem> {
   options?: TItem[];
   keyAttr?: KeyOfType<TItem, TValue extends Array<infer U> ? U : TValue>;
@@ -33,7 +40,10 @@ export interface AutoCompleteProps<TValue, TItem> {
   clearable?: boolean;
   label?: string;
   menuOptions?: MenuProps;
+  classNames?: RuiAutoCompleteClassNames;
+  /** @deprecated Use `classNames.label` instead */
   labelClass?: string;
+  /** @deprecated Use `classNames.menu` instead */
   menuClass?: string;
   prependWidth?: number; // in rem
   appendWidth?: number; // in rem
@@ -79,6 +89,7 @@ const {
   chips = false,
   label = 'Select',
   menuOptions,
+  classNames,
   labelClass,
   menuClass,
   variant = 'default',
@@ -449,7 +460,7 @@ defineExpose({
           class="group"
           :class="[
             $style.activator,
-            labelClass,
+            classNames?.label ?? labelClass,
             {
               [$style.disabled]: disabled,
               [$style.readonly]: readOnly,
@@ -630,7 +641,7 @@ defineExpose({
       <div ref="menuWrapperRef">
         <div
           v-if="optionsWithSelectedHidden.length > 0"
-          :class="[$style.menu, menuClass]"
+          :class="[$style.menu, classNames?.menu ?? menuClass]"
           :style="{ width: `${width}px`, minWidth: menuWidth, minHeight: `${menuMinHeight}px` }"
           v-bind="virtualContainerProps"
           @scroll="containerProps.onScroll"
@@ -682,7 +693,7 @@ defineExpose({
         <div
           v-else-if="!hideNoData"
           :style="{ width: `${width}px`, minWidth: menuWidth }"
-          :class="menuClass"
+          :class="classNames?.menu ?? menuClass"
         >
           <slot name="no-data">
             <div

@@ -1,8 +1,15 @@
 <script setup lang="ts">
 import type { ContextColorsType } from '@/consts/colors';
+import type { VueClassValue } from '@/types/class-value';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
+
+export interface RuiSliderClassNames {
+  root?: VueClassValue;
+  slider?: VueClassValue;
+  tick?: VueClassValue;
+}
 
 export interface Props {
   min?: number;
@@ -20,7 +27,10 @@ export interface Props {
   errorMessages?: string | string[];
   successMessages?: string | string[];
   hideDetails?: boolean;
+  classNames?: RuiSliderClassNames;
+  /** @deprecated Use `classNames.slider` instead */
   sliderClass?: string;
+  /** @deprecated Use `classNames.tick` instead */
   tickClass?: string;
   required?: boolean;
 }
@@ -48,6 +58,7 @@ const {
   errorMessages = [],
   successMessages = [],
   hideDetails = false,
+  classNames,
   sliderClass = '',
   tickClass = '',
   required = false,
@@ -130,7 +141,7 @@ const tickSizeInPx = computed<string>(() => `${tickSize}px`);
           />
           <div :class="$style.slider">
             <div :class="$style.slider__inner">
-              <div :class="[$style.slider__container, sliderClass]">
+              <div :class="[$style.slider__container, classNames?.slider ?? sliderClass]">
                 <div
                   v-if="!hideTrack"
                   :class="$style.slider__container__track"
@@ -144,11 +155,11 @@ const tickSizeInPx = computed<string>(() => `${tickSize}px`);
                     :key="i"
                     :class="
                       hideTrack
-                        ? [tickClass]
-                        : {
-                          [$style.highlighted]: i - 1 <= ticksData[0],
-                          [tickClass]: i - 1 > ticksData[0],
-                        }
+                        ? [classNames?.tick ?? tickClass]
+                        : [
+                          i - 1 <= ticksData[0] && $style.highlighted,
+                          i - 1 > ticksData[0] && (classNames?.tick ?? tickClass),
+                        ]
                     "
                   />
                 </div>

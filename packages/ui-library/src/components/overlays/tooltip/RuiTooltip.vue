@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { type PopperOptions, usePopper } from '@/composables/popper';
 
+export interface RuiTooltipClassNames {
+  root?: string;
+  tooltip?: string;
+}
+
 export interface Props {
   text?: string | null;
   disabled?: boolean;
@@ -9,6 +14,8 @@ export interface Props {
   closeDelay?: number;
   persistOnTooltipHover?: boolean;
   popper?: PopperOptions;
+  classNames?: RuiTooltipClassNames;
+  /** @deprecated Use `classNames.tooltip` instead */
   tooltipClass?: string;
 }
 
@@ -24,6 +31,7 @@ const {
   closeDelay = 500,
   persistOnTooltipHover = false,
   popper = {},
+  classNames,
   tooltipClass = '',
 } = defineProps<Props>();
 
@@ -83,7 +91,7 @@ defineExpose({
         ref="tooltip"
         :class="[
           $style.tooltip,
-          tooltipClass,
+          classNames?.tooltip ?? tooltipClass,
           $style[`tooltip__${popper?.strategy ?? 'absolute'}`],
         ]"
         role="tooltip"

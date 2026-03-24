@@ -3,6 +3,12 @@ import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { type PopperOptions, usePopper } from '@/composables/popper';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 
+export interface RuiMenuClassNames {
+  root?: string;
+  wrapper?: string;
+  menu?: string;
+}
+
 export interface MenuProps {
   openOnHover?: boolean;
   fullWidth?: boolean;
@@ -10,7 +16,10 @@ export interface MenuProps {
   openDelay?: number;
   closeDelay?: number;
   popper?: PopperOptions;
+  classNames?: RuiMenuClassNames;
+  /** @deprecated Use `classNames.wrapper` instead */
   wrapperClass?: string | object | string[];
+  /** @deprecated Use `classNames.menu` instead */
   menuClass?: string | object | string[];
   closeOnContentClick?: boolean;
   persistOnActivatorClick?: boolean;
@@ -36,6 +45,7 @@ const {
   openDelay = 0,
   closeDelay = 0,
   popper = {},
+  classNames,
   wrapperClass = '',
   menuClass = '',
   closeOnContentClick = false,
@@ -202,7 +212,7 @@ onClickOutside(
   >
     <div
       ref="activator"
-      :class="[$style.wrapper, wrapperClass, { 'w-full': fullWidth }]"
+      :class="[$style.wrapper, classNames?.wrapper ?? wrapperClass, { 'w-full': fullWidth }]"
       :data-menu-disabled="disabled"
       aria-haspopup="true"
       :aria-expanded="open"
@@ -219,7 +229,7 @@ onClickOutside(
       <div
         v-if="popperEnter"
         ref="menu"
-        :class="[$style.menu, menuClass, $style[`menu__${popper?.strategy ?? 'absolute'}`]]"
+        :class="[$style.menu, classNames?.menu ?? menuClass, $style[`menu__${popper?.strategy ?? 'absolute'}`]]"
         role="menu"
         @click="closeOnContentClick ? onLeave() : undefined"
         @keydown.esc.stop="onLeave()"

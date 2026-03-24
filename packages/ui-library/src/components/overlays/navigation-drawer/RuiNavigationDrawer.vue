@@ -2,6 +2,11 @@
 import type { MaybeElement } from '@vueuse/core';
 import { getRootAttrs, transformPropsUnit } from '@/utils/helpers';
 
+export interface RuiNavigationDrawerClassNames {
+  root?: string;
+  content?: string;
+}
+
 export interface NavigationDrawerProps {
   temporary?: boolean;
   stateless?: boolean;
@@ -9,6 +14,8 @@ export interface NavigationDrawerProps {
   miniVariant?: boolean;
   overlay?: boolean;
   position?: 'left' | 'right';
+  classNames?: RuiNavigationDrawerClassNames;
+  /** @deprecated Use `classNames.content` instead */
   contentClass?: string | object | string[];
   ariaLabel?: string;
 }
@@ -27,6 +34,7 @@ const {
   miniVariant = false,
   overlay = false,
   position = 'left',
+  classNames,
   contentClass = '',
   ariaLabel,
 } = defineProps<NavigationDrawerProps>();
@@ -168,7 +176,7 @@ onBeforeUnmount(() => {
         :style="style"
         :class="[
           $style.content,
-          contentClass,
+          classNames?.content ?? contentClass,
           {
             [$style.visible]: isOpen && internalValue,
             [$style[position]]: position,
@@ -176,6 +184,7 @@ onBeforeUnmount(() => {
             [$style.temporary]: temporary,
             [$style['with-overlay']]: overlay,
           },
+          classNames?.root,
         ]"
         :aria-label="ariaLabel"
         :aria-hidden="miniVariant && !(isOpen && internalValue) ? 'true' : undefined"

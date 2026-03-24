@@ -2,8 +2,14 @@
 import type { StyleValue } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
+import type { VueClassValue } from '@/types/class-value';
 import { objectOmit } from '@vueuse/shared';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
+
+export interface RuiChipClassNames {
+  root?: VueClassValue;
+  content?: VueClassValue;
+}
 
 export interface Props {
   tile?: boolean;
@@ -16,6 +22,8 @@ export interface Props {
   closeIcon?: RuiIcons;
   bgColor?: string;
   textColor?: string;
+  classNames?: RuiChipClassNames;
+  /** @deprecated Use `classNames.content` instead */
   contentClass?: string;
 }
 
@@ -35,6 +43,7 @@ const {
   closeIcon = 'lu-circle-x',
   bgColor = undefined,
   textColor = undefined,
+  classNames,
   contentClass = '',
 } = defineProps<Props>();
 
@@ -79,6 +88,7 @@ function click(e: MouseEvent): void {
         [$style.tile]: tile,
         [$style.readonly]: !clickable,
       },
+      classNames?.root,
     ]"
     :style="style"
     role="button"
@@ -92,7 +102,7 @@ function click(e: MouseEvent): void {
     >
       <slot name="prepend" />
     </div>
-    <span :class="[$style.chip__label, contentClass]">
+    <span :class="[$style.chip__label, classNames?.content ?? contentClass]">
       <slot />
     </span>
     <button
