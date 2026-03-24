@@ -21,7 +21,7 @@ function createWrapper(
       default: `
         <div>
           ${text}
-          
+
           <RuiButton id="close" @click="close()" />
         </div>
       `,
@@ -46,7 +46,7 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
   it('should render properly', async () => {
     wrapper = createWrapper();
     await vi.runAllTimersAsync();
-    let drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
+    let drawer = queryBody<HTMLDivElement>('aside[data-visible]');
 
     expect(drawer).toBeFalsy();
 
@@ -54,7 +54,7 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
     await wrapper.find('#trigger').trigger('click');
     await vi.runAllTimersAsync();
 
-    drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
+    drawer = queryBody<HTMLDivElement>('aside[data-visible]');
 
     assertExists(drawer);
 
@@ -65,7 +65,7 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
 
     await vi.runAllTimersAsync();
 
-    drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
+    drawer = queryBody<HTMLDivElement>('aside[data-visible]');
 
     expect(drawer).toBeFalsy();
   });
@@ -78,7 +78,7 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
     await wrapper.find('#trigger').trigger('click');
     await vi.runAllTimersAsync();
 
-    let drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
+    let drawer = queryBody<HTMLDivElement>('aside[data-visible]');
     assertExists(drawer);
 
     expect(drawer.style.width).toBe('360px');
@@ -88,7 +88,7 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
       width: '500',
     });
 
-    drawer = queryBody<HTMLDivElement>('aside[class*=_visible_][class*=_right_]');
+    drawer = queryBody<HTMLDivElement>('aside[data-visible][data-position=right]');
 
     assertExists(drawer);
     expect(drawer.style.width).toBe('500px');
@@ -102,14 +102,14 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
     await wrapper.find('#trigger').trigger('click');
     await vi.runAllTimersAsync();
 
-    let drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
+    let drawer = queryBody<HTMLDivElement>('aside[data-visible]');
     expect(drawer).toBeTruthy();
 
     // Click outside should not close the drawer
     document.body.click();
     await vi.runAllTimersAsync();
 
-    drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
+    drawer = queryBody<HTMLDivElement>('aside[data-visible]');
 
     expect(drawer).toBeTruthy();
   });
@@ -126,14 +126,14 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
     await wrapper.find('#trigger').trigger('click');
     await vi.runAllTimersAsync();
 
-    let drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
+    let drawer = queryBody<HTMLDivElement>('aside[data-visible]');
     expect(drawer).toBeTruthy();
 
     // Click outside should not close the drawer
     document.body.click();
     await vi.runAllTimersAsync();
 
-    drawer = queryBody<HTMLDivElement>('aside[class*=_visible_]');
+    drawer = queryBody<HTMLDivElement>('aside[data-visible]');
 
     expect(drawer).toBeFalsy();
   });
@@ -147,29 +147,29 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
     await vi.runAllTimersAsync();
 
     // Drawer element should not be in the DOM initially
-    let drawerElement = queryBody<HTMLDivElement>('aside[class*=_content_]');
+    let drawerElement = queryBody<HTMLDivElement>('aside[data-id=drawer-content]');
     expect(drawerElement).toBeFalsy();
 
     // Open drawer by setting modelValue to true (simulates parent v-model update)
     await wrapper.setProps({ modelValue: true });
     await vi.runAllTimersAsync();
 
-    drawerElement = queryBody<HTMLDivElement>('aside[class*=_content_]');
+    drawerElement = queryBody<HTMLDivElement>('aside[data-id=drawer-content]');
     assertExists(drawerElement);
-    // Should have visible class when fully open
-    expect(drawerElement.className).toMatch(/_visible_/);
+    // Should have visible attribute when fully open
+    expect(drawerElement.hasAttribute('data-visible')).toBe(true);
 
     // Close drawer by setting modelValue to false (simulates parent v-if + v-model)
     await wrapper.setProps({ modelValue: false });
 
     // Drawer element should still be in the DOM immediately after closing (transition in progress)
-    drawerElement = queryBody<HTMLDivElement>('aside[class*=_content_]');
+    drawerElement = queryBody<HTMLDivElement>('aside[data-id=drawer-content]');
     expect(drawerElement).toBeTruthy();
 
     // After timers complete, drawer element should be fully removed from the DOM
     await vi.runAllTimersAsync();
 
-    drawerElement = queryBody<HTMLDivElement>('aside[class*=_content_]');
+    drawerElement = queryBody<HTMLDivElement>('aside[data-id=drawer-content]');
     expect(drawerElement).toBeFalsy();
   });
 
@@ -180,7 +180,7 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
     await wrapper.find('#trigger').trigger('click');
     await vi.runAllTimersAsync();
 
-    const drawer = queryBody<HTMLElement>('aside[class*=_visible_]');
+    const drawer = queryBody<HTMLElement>('aside[data-visible]');
     assertExists(drawer);
     expect(drawer.tagName).toBe('ASIDE');
   });
@@ -196,7 +196,7 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
     await wrapper.find('#trigger').trigger('click');
     await vi.runAllTimersAsync();
 
-    const drawer = queryBody<HTMLElement>('aside[class*=_visible_]');
+    const drawer = queryBody<HTMLElement>('aside[data-visible]');
     assertExists(drawer);
     expect(drawer.getAttribute('aria-label')).toBe('Main navigation');
   });
@@ -210,7 +210,7 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
     });
     await vi.runAllTimersAsync();
 
-    const drawer = queryBody<HTMLElement>('aside[class*=_content_]');
+    const drawer = queryBody<HTMLElement>('aside[data-id=drawer-content]');
     assertExists(drawer);
     expect(drawer.getAttribute('aria-hidden')).toBe('true');
 
@@ -218,7 +218,7 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
     await wrapper.setProps({ modelValue: true });
     await vi.runAllTimersAsync();
 
-    const openDrawer = queryBody<HTMLElement>('aside[class*=_visible_]');
+    const openDrawer = queryBody<HTMLElement>('aside[data-visible]');
     assertExists(openDrawer);
     expect(openDrawer.getAttribute('aria-hidden')).toBeNull();
   });
@@ -230,7 +230,7 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
     await wrapper.find('#trigger').trigger('click');
     await vi.runAllTimersAsync();
 
-    const drawer = queryBody<HTMLElement>('aside[class*=_visible_][class*=_left_]');
+    const drawer = queryBody<HTMLElement>('aside[data-visible][data-position=left]');
     assertExists(drawer);
   });
 
@@ -244,31 +244,31 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
     await vi.runAllTimersAsync();
 
     // Drawer element should be in the DOM even when modelValue is false (mini collapsed state)
-    let drawerElement = queryBody<HTMLDivElement>('aside[class*=_content_]');
+    let drawerElement = queryBody<HTMLDivElement>('aside[data-id=drawer-content]');
     assertExists(drawerElement);
-    // Should have mini class but not visible class
-    expect(drawerElement.className).toMatch(/_mini_/);
-    expect(drawerElement.className).not.toMatch(/_visible_/);
+    // Should have mini attribute but not visible attribute
+    expect(drawerElement.hasAttribute('data-mini')).toBe(true);
+    expect(drawerElement.hasAttribute('data-visible')).toBe(false);
 
     // Open drawer by setting modelValue to true
     await wrapper.setProps({ modelValue: true });
     await vi.runAllTimersAsync();
 
-    drawerElement = queryBody<HTMLDivElement>('aside[class*=_content_]');
+    drawerElement = queryBody<HTMLDivElement>('aside[data-id=drawer-content]');
     assertExists(drawerElement);
-    // Should have both mini and visible classes (full width)
-    expect(drawerElement.className).toMatch(/_mini_/);
-    expect(drawerElement.className).toMatch(/_visible_/);
+    // Should have both mini and visible attributes (full width)
+    expect(drawerElement.hasAttribute('data-mini')).toBe(true);
+    expect(drawerElement.hasAttribute('data-visible')).toBe(true);
 
     // Close drawer by setting modelValue to false
     await wrapper.setProps({ modelValue: false });
     await vi.runAllTimersAsync();
 
     // Drawer element should still be in the DOM (collapsed to mini width)
-    drawerElement = queryBody<HTMLDivElement>('aside[class*=_content_]');
+    drawerElement = queryBody<HTMLDivElement>('aside[data-id=drawer-content]');
     assertExists(drawerElement);
-    // Should have mini class but not visible class
-    expect(drawerElement.className).toMatch(/_mini_/);
-    expect(drawerElement.className).not.toMatch(/_visible_/);
+    // Should have mini attribute but not visible attribute
+    expect(drawerElement.hasAttribute('data-mini')).toBe(true);
+    expect(drawerElement.hasAttribute('data-visible')).toBe(false);
   });
 });

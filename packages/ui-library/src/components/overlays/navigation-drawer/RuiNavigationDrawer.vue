@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import type { MaybeElement } from '@vueuse/core';
+import type { VueClassValue } from '@/types/class-value';
+import { useTimeoutManager } from '@/composables/timeout-manager';
 import { getRootAttrs, transformPropsUnit } from '@/utils/helpers';
+import { tv } from '@/utils/tv';
 
 export interface RuiNavigationDrawerClassNames {
-  root?: string;
-  content?: string;
+  root?: VueClassValue;
+  content?: VueClassValue;
 }
 
 export interface NavigationDrawerProps {
@@ -48,102 +51,81 @@ defineSlots<{
   default?: (props: { attrs: { onClick: () => void }; close: () => void }) => any;
 }>();
 
-const internalValue = ref<boolean>(false);
-const isOpen = ref<boolean>(false);
+const transitioning = ref<boolean>(false);
 const content = useTemplateRef<MaybeElement>('content');
+const leaveTimeout = useTimeoutManager();
+const clickOutsideTimeout = useTimeoutManager();
+
+const alive = computed<boolean>(() => get(modelValue) || get(transitioning) || miniVariant);
 
 const style = computed<{ width: string | undefined }>(() => ({
   width: transformPropsUnit(width),
 }));
 
-const activatorAttrs = computed<{ onClick: () => void }>(() => ({
-  onClick: () => {
-    const newValue = !get(internalValue);
-    set(internalValue, newValue);
-    onUpdateModelValue(newValue);
+const activatorAttrs: { onClick: () => void } = {
+  onClick: toggle,
+};
+
+const drawer = tv({
+  base: 'transition-[transform,width] duration-200 ease-in-out top-0 h-full fixed text-rui-text bg-white dark:bg-[#363636]',
+  variants: {
+    position: {
+      left: 'left-0',
+      right: 'right-0',
+    },
+    visible: {
+      true: 'translate-x-0',
+      false: '',
+    },
+    mini: {
+      true: 'translate-x-0',
+      false: '',
+    },
+    withOverlay: {
+      true: 'z-[10000]',
+      false: 'z-[7]',
+    },
   },
-}));
+  compoundVariants: [
+    { position: 'left', visible: false, mini: false, class: '-translate-x-full' },
+    { position: 'right', visible: false, mini: false, class: 'translate-x-full' },
+    { mini: true, visible: false, class: '!w-14' },
+  ],
+  defaultVariants: { position: 'left', visible: false, mini: false, withOverlay: false },
+});
 
-function onUpdateModelValue(value: boolean): void {
-  set(modelValue, value);
+const ui = computed<string>(() => drawer({ position, visible: modelValue.value, mini: miniVariant, withOverlay: overlay }));
 
-  if (!value)
-    emit('closed');
+function toggle(): void {
+  set(modelValue, !get(modelValue));
 }
 
 function close(): void {
-  set(isOpen, false);
+  set(modelValue, false);
 }
 
-watch(
-  modelValue,
-  (value) => {
-    nextTick(() => {
-      set(internalValue, value);
-    });
-  },
-  { immediate: true },
-);
-
-let internalValueTimeoutId: ReturnType<typeof setTimeout> | undefined;
-let isOpenTimeoutId: ReturnType<typeof setTimeout> | undefined;
-let clickOutsideTimeoutId: ReturnType<typeof setTimeout> | undefined;
-
-watch(internalValue, (value) => {
-  if (internalValueTimeoutId !== undefined) {
-    clearTimeout(internalValueTimeoutId);
-    internalValueTimeoutId = undefined;
+function onLeaveComplete(): void {
+  leaveTimeout.clear();
+  if (get(transitioning)) {
+    set(transitioning, false);
+    emit('closed');
   }
-  if (value) {
-    window.requestAnimationFrame(() => {
-      set(isOpen, value);
-    });
-  }
-  else {
-    internalValueTimeoutId = setTimeout(() => {
-      set(isOpen, value);
-      internalValueTimeoutId = undefined;
-    }, 150);
+}
+
+watch(modelValue, (value) => {
+  if (!value) {
+    set(transitioning, true);
+    // Match CSS transition duration (200ms) + buffer
+    leaveTimeout.create(onLeaveComplete, 250);
   }
 });
 
-watch(isOpen, (isOpen) => {
-  if (isOpenTimeoutId !== undefined) {
-    clearTimeout(isOpenTimeoutId);
-    isOpenTimeoutId = undefined;
-  }
-  if (isOpen) {
-    onUpdateModelValue(isOpen);
-    set(internalValue, isOpen);
-  }
-  else {
-    isOpenTimeoutId = setTimeout(() => {
-      onUpdateModelValue(isOpen);
-      set(internalValue, isOpen);
-      isOpenTimeoutId = undefined;
-    }, 150);
-  }
-});
-
+// Debounce prevents activator click from immediately triggering close
+// (click bubbles to body → onClickOutside fires in the same tick)
 onClickOutside(content, () => {
-  if (get(isOpen) && temporary && !stateless) {
-    if (clickOutsideTimeoutId !== undefined)
-      clearTimeout(clickOutsideTimeoutId);
-
-    clickOutsideTimeoutId = setTimeout(() => {
-      close();
-      clickOutsideTimeoutId = undefined;
-    }, 50);
+  if (get(modelValue) && temporary && !stateless) {
+    clickOutsideTimeout.create(close, 50);
   }
-});
-
-onBeforeUnmount(() => {
-  if (internalValueTimeoutId !== undefined)
-    clearTimeout(internalValueTimeoutId);
-  if (isOpenTimeoutId !== undefined)
-    clearTimeout(isOpenTimeoutId);
-  if (clickOutsideTimeoutId !== undefined)
-    clearTimeout(clickOutsideTimeoutId);
 });
 </script>
 
@@ -151,43 +133,41 @@ onBeforeUnmount(() => {
   <div>
     <slot
       name="activator"
-      v-bind="{ open: internalValue, attrs: activatorAttrs }"
+      v-bind="{ open: modelValue, attrs: activatorAttrs }"
     />
     <Teleport to="body">
       <Transition
         v-if="overlay"
         enter-from-class="opacity-0"
-        enter-active-class="ease-out duration-150"
+        enter-active-class="transition-opacity ease-out duration-200"
         enter-to-class="opacity-100"
         leave-from-class="opacity-100"
-        leave-active-class="ease-in duration-150"
+        leave-active-class="transition-opacity ease-in duration-200"
         leave-to-class="opacity-0"
       >
         <div
-          v-if="isOpen && internalValue"
+          v-if="modelValue"
           data-id="overlay"
-          :class="$style.overlay"
+          class="absolute inset-0 backdrop-blur bg-rui-grey-500/50 dark:bg-black/50 z-[10000]"
           @click.stop="close()"
         />
       </Transition>
       <aside
-        v-if="isOpen || internalValue || miniVariant"
+        v-if="alive"
         ref="content"
+        data-id="drawer-content"
         :style="style"
+        :data-visible="modelValue || undefined"
+        :data-position="position"
+        :data-mini="miniVariant || undefined"
         :class="[
-          $style.content,
+          ui,
+          temporary && modelValue && 'shadow-5',
           classNames?.content ?? contentClass,
-          {
-            [$style.visible]: isOpen && internalValue,
-            [$style[position]]: position,
-            [$style.mini]: miniVariant,
-            [$style.temporary]: temporary,
-            [$style['with-overlay']]: overlay,
-          },
           classNames?.root,
         ]"
         :aria-label="ariaLabel"
-        :aria-hidden="miniVariant && !(isOpen && internalValue) ? 'true' : undefined"
+        :aria-hidden="miniVariant && !modelValue ? 'true' : undefined"
         v-bind="getRootAttrs($attrs)"
       >
         <slot v-bind="{ attrs: activatorAttrs, close }" />
@@ -195,53 +175,3 @@ onBeforeUnmount(() => {
     </Teleport>
   </div>
 </template>
-
-<style lang="scss" module>
-.overlay {
-  @apply absolute top-0 left-0 w-full h-full backdrop-blur bg-rui-grey-500/[0.5] z-[10000];
-}
-
-.content {
-  @apply transition-all duration-150 ease-in-out top-0 h-full fixed text-rui-text bg-white z-[7];
-
-  &.left {
-    @apply -translate-x-full left-0;
-  }
-
-  &.right {
-    @apply translate-x-full right-0;
-  }
-
-  &.with-overlay {
-    @apply z-[10000];
-  }
-
-  &.visible {
-    @apply translate-x-0;
-  }
-
-  &.temporary {
-    &.visible {
-      @apply shadow-5;
-    }
-  }
-
-  &.mini {
-    @apply translate-x-0;
-
-    &:not(.visible) {
-      @apply w-14 #{!important};
-    }
-  }
-}
-
-:global(.dark) {
-  .overlay {
-    @apply bg-black/[0.5];
-  }
-
-  .content {
-    @apply bg-[#363636];
-  }
-}
-</style>
