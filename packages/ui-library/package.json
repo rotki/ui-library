@@ -111,6 +111,8 @@
     "@vueuse/core": "14.2.1",
     "@vueuse/shared": "14.2.1",
     "scule": "1.3.0",
+    "tailwind-merge": "2.6.1",
+    "tailwind-variants": "0.3.1",
     "tinycolor2": "1.6.0"
   },
   "devDependencies": {
@@ -138,6 +140,7 @@
     "fast-glob": "3.3.3",
     "fast-xml-parser": "5.5.4",
     "fs-extra": "11.3.4",
+    "happy-dom": "^20.8.4",
     "jsdom": "28.1.0",
     "lucide": "0.577.0",
     "msw": "2.12.10",

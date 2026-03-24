@@ -33,6 +33,10 @@ export { StepperState };
 
 export { createBlockie } from '@/utils/blockie';
 
+export { cn, tv } from '@/utils/tv';
+
+export type { VariantProps } from 'tailwind-variants';
+
 export interface RuiOptions {
   theme?: InitThemeOptions;
   defaults?: {

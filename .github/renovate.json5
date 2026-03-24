@@ -15,6 +15,16 @@
       "allowedVersions": "/^(3)\\./",
       "groupName": "tailwindcss",
       "matchPackageNames": ["tailwindcss"]
+    },
+    {
+      "allowedVersions": "/^(0)\\./",
+      "groupName": "tailwind-variants",
+      "matchPackageNames": ["tailwind-variants"]
+    },
+    {
+      "allowedVersions": "/^(2)\\./",
+      "groupName": "tailwind-merge",
+      "matchPackageNames": ["tailwind-merge"]
     }
   ]
 }

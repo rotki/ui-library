@@ -69,6 +69,27 @@ const adaptiveTextColorsCombination = {
   },
 };
 
+const surfaceColorsCombination = Object.fromEntries(
+  ['light', 'dark'].map(theme => [
+    theme,
+    {
+      surface: {
+        DEFAULT: `rgba(var(--rui-${theme}-surface-primary), <alpha-value>)`,
+        secondary: `rgba(var(--rui-${theme}-surface-secondary), <alpha-value>)`,
+        overlay: `rgba(var(--rui-${theme}-surface-overlay), <alpha-value>)`,
+      },
+    },
+  ]),
+);
+
+const adaptiveSurfaceColorsCombination = {
+  surface: {
+    DEFAULT: `rgba(var(--rui-surface-primary), <alpha-value>)`,
+    secondary: `rgba(var(--rui-surface-secondary), <alpha-value>)`,
+    overlay: `rgba(var(--rui-surface-overlay), <alpha-value>)`,
+  },
+};
+
 const themePlugin = plugin(
   ({ addBase, addUtilities, addVariant, matchUtilities }) => {
     // Adaptive theme variable aliases
@@ -82,6 +103,9 @@ const themePlugin = plugin(
         ['--rui-text-primary', `var(--rui-${theme}-text-primary)`],
         ['--rui-text-secondary', `var(--rui-${theme}-text-secondary)`],
         ['--rui-text-disabled', `var(--rui-${theme}-text-disabled)`],
+        ['--rui-surface-primary', `var(--rui-${theme}-surface-primary)`],
+        ['--rui-surface-secondary', `var(--rui-${theme}-surface-secondary)`],
+        ['--rui-surface-overlay', `var(--rui-${theme}-surface-overlay)`],
       ]);
 
     addBase({
@@ -199,13 +223,16 @@ const themePlugin = plugin(
             dark: {
               ...contextColorsCombination.dark,
               ...textColorsCombination.dark,
+              ...surfaceColorsCombination.dark,
             },
             light: {
               ...contextColorsCombination.light,
               ...textColorsCombination.light,
+              ...surfaceColorsCombination.light,
             },
             ...adaptiveContextColorCombination,
             ...adaptiveTextColorsCombination,
+            ...adaptiveSurfaceColorsCombination,
           },
         },
       },
