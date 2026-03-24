@@ -1,11 +1,15 @@
 <script lang="ts" setup>
+import type { RouteLocationRaw } from 'vue-router';
 import type { ContextColorsType } from '@/consts/colors';
-import { type RouteLocationRaw, RouterLink } from 'vue-router';
+import type { VueClassValue } from '@/types/class-value';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import { TabAlignment, TabIndicatorPosition, TabLayout } from '@/components/tabs/tab-props';
+import { useTabLink } from '@/components/tabs/tab/use-tab-link';
+import { tv } from '@/utils/tv';
 
 export interface RuiTabClassNames {
-  root?: string;
-  active?: string;
+  root?: VueClassValue;
+  active?: VueClassValue;
 }
 
 export interface Props {
@@ -21,10 +25,11 @@ export interface Props {
   target?: string;
   to?: RouteLocationRaw;
   exact?: boolean;
+  /** @deprecated No longer used — vue-router's `useLink` handles route matching internally */
   exactPath?: boolean;
   vertical?: boolean;
-  align?: 'start' | 'center' | 'end';
-  indicatorPosition?: 'start' | 'end';
+  align?: TabAlignment;
+  indicatorPosition?: TabIndicatorPosition;
 }
 
 defineOptions({
@@ -44,10 +49,9 @@ const {
   to = '',
   target = '_self',
   exact = false,
-  exactPath = false,
   vertical = false,
-  align = 'center',
-  indicatorPosition = 'end',
+  align = TabAlignment.center,
+  indicatorPosition = TabIndicatorPosition.end,
 } = defineProps<Props>();
 
 const emit = defineEmits<{
@@ -60,38 +64,84 @@ const slots = defineSlots<{
   append?: (props?: object) => any;
 }>();
 
-const css = useCssModule();
-
-const isSelf = computed<boolean>(() => target === '_self');
-
-const tabClass = computed<(string | undefined | Record<string, string | boolean>)[]>(() => [
-  css.tab,
-  css[`tab--${align}`],
-  css[`tab-indicator--${indicatorPosition}`],
-  {
-    [css['tab--grow'] ?? '']: grow,
-    [`${css['tab--active']} active-tab ${classNames?.active ?? activeClass}`]: active,
-    [css['tab--disabled'] ?? '']: disabled,
-    [css['tab--vertical'] ?? '']: vertical,
+const tab = tv({
+  base: 'min-w-[5.625rem] max-w-[22.5rem] flex items-center rounded-none cursor-pointer relative whitespace-nowrap shrink-0 !px-4',
+  variants: {
+    layout: {
+      [TabLayout.horizontal]: '',
+      [TabLayout.vertical]: '!h-[2.625rem] w-full max-w-none',
+    },
+    align: {
+      start: 'justify-start text-left rtl:justify-end rtl:text-right',
+      center: 'justify-center text-center',
+      end: 'justify-end text-right rtl:justify-start rtl:text-left',
+    },
+    grow: {
+      true: 'grow max-w-none',
+    },
+    disabled: {
+      true: 'cursor-not-allowed',
+    },
+    active: {
+      true: '',
+      false: '',
+    },
+    indicatorPosition: {
+      start: '',
+      end: '',
+    },
   },
-]);
+  compoundVariants: [
+    // Horizontal active indicator (bottom/top border)
+    { active: true, layout: TabLayout.horizontal, indicatorPosition: 'end', class: `after:content-[''] after:absolute after:border-current after:h-0 after:w-full after:bottom-0 after:left-0 after:border-b-2` },
+    { active: true, layout: TabLayout.horizontal, indicatorPosition: 'start', class: `after:content-[''] after:absolute after:border-current after:h-0 after:w-full after:top-0 after:left-0 after:border-b-2` },
+    // Vertical active indicator (right/left border)
+    { active: true, layout: TabLayout.vertical, indicatorPosition: 'end', class: `after:content-[''] after:absolute after:border-current after:h-full after:w-0 after:right-0 after:left-auto after:border-r-2` },
+    { active: true, layout: TabLayout.vertical, indicatorPosition: 'start', class: `after:content-[''] after:absolute after:border-current after:h-full after:w-0 after:left-0 after:right-auto after:border-r-2` },
+  ],
+  defaultVariants: { layout: TabLayout.horizontal, align: 'center', indicatorPosition: 'end', active: false },
+});
 
-function click(): void {
+const { isRouteActive, href: linkHref, navigate, isLink } = useTabLink({
+  link: () => link,
+  to: () => to,
+  exact: () => exact,
+});
+
+const layout = computed<TabLayout>(() => vertical ? TabLayout.vertical : TabLayout.horizontal);
+const isSelf = computed<boolean>(() => target === '_self');
+const isEffectivelyActive = computed<boolean>(() => active || get(isRouteActive));
+
+function onClick(event?: MouseEvent): void {
   emit('click', value);
+  if (navigate && get(isSelf) && event)
+    navigate(event);
 }
 </script>
 
 <template>
   <RuiButton
-    v-if="disabled"
-    variant="text"
-    disabled
-    :class="tabClass"
-    hide-focus-indicator
-    tabindex="-1"
+    :class="[
+      tab({ layout, align, indicatorPosition, grow, disabled, active: isEffectivelyActive }),
+      isEffectivelyActive && (classNames?.active ?? activeClass),
+    ]"
+    :data-active-tab="isEffectivelyActive || undefined"
+    :data-align="align"
+    :data-indicator-position="indicatorPosition"
+    :data-vertical="vertical || undefined"
+    :color="isEffectivelyActive ? color : undefined"
+    :disabled="disabled"
+    :href="isLink && !isSelf ? linkHref : undefined"
+    :target="isLink ? target : undefined"
+    :tag="isLink ? 'a' : undefined"
+    :no-outline="isLink"
     role="tab"
-    :aria-selected="active"
+    :aria-selected="isEffectivelyActive"
+    tabindex="-1"
+    hide-focus-indicator
+    variant="text"
     v-bind="$attrs"
+    @click="disabled ? undefined : onClick($event)"
   >
     <template
       v-if="slots.prepend"
@@ -107,132 +157,4 @@ function click(): void {
       <slot name="append" />
     </template>
   </RuiButton>
-  <RuiButton
-    v-else-if="!link"
-    :class="tabClass"
-    :color="active ? color : undefined"
-    role="tab"
-    :aria-selected="active"
-    v-bind="$attrs"
-    tabindex="-1"
-    hide-focus-indicator
-    variant="text"
-    @click="click()"
-  >
-    <template
-      v-if="slots.prepend"
-      #prepend
-    >
-      <slot name="prepend" />
-    </template>
-    <slot />
-    <template
-      v-if="slots.append"
-      #append
-    >
-      <slot name="append" />
-    </template>
-  </RuiButton>
-  <RouterLink
-    v-else
-    #default="{ href, navigate, isActive, isExactActive }"
-    :to="to"
-    :exact="exact"
-    :exact-path="exactPath"
-    custom
-  >
-    <RuiButton
-      :class="[
-        ...tabClass,
-        {
-          [`${css['tab--active']} active-tab-link`]: exact ? isExactActive : isActive,
-        },
-      ]"
-      :color="active || (exact ? isExactActive : isActive) ? color : undefined"
-      :href="isSelf ? undefined : href"
-      :target="target"
-      role="tab"
-      :aria-selected="active || (exact ? isExactActive : isActive)"
-      no-outline
-      tag="a"
-      hide-focus-indicator
-      tabindex="-1"
-      v-bind="$attrs"
-      variant="text"
-      @click="
-        click();
-        isSelf ? navigate($event) : undefined;
-      "
-    >
-      <template
-        v-if="slots.prepend"
-        #prepend
-      >
-        <slot name="prepend" />
-      </template>
-      <slot />
-      <template
-        v-if="slots.append"
-        #append
-      >
-        <slot name="append" />
-      </template>
-    </RuiButton>
-  </RouterLink>
 </template>
-
-<style lang="scss" module>
-.tab {
-  @apply h-full min-w-[90px] max-w-[360px] flex items-center rounded-none cursor-pointer relative whitespace-nowrap shrink-0;
-  @apply px-4 #{!important};
-
-  &--vertical {
-    @apply h-[2.625rem] w-full max-w-none;
-  }
-
-  &--grow {
-    @apply grow max-w-none;
-  }
-
-  &--active {
-    &:after {
-      content: '';
-      @apply absolute h-0 w-full bottom-0 left-0 border-b-2 border-current;
-    }
-
-    &.tab-indicator--start {
-      &:after {
-        @apply top-0 bottom-auto;
-      }
-    }
-
-    &.tab--vertical {
-      &:after {
-        @apply h-full w-0 right-0 left-auto border-b-0 border-r-2;
-      }
-
-      &.tab-indicator--start {
-        &:after {
-          @apply left-0 right-auto;
-        }
-      }
-    }
-  }
-
-  &--disabled {
-    @apply cursor-not-allowed;
-  }
-
-  &--start {
-    @apply justify-start text-left rtl:justify-end rtl:text-right;
-  }
-
-  &--center {
-    @apply justify-center text-center;
-  }
-
-  &--end {
-    @apply justify-end text-right rtl:justify-start rtl:text-left;
-  }
-}
-</style>

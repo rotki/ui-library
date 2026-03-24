@@ -12,7 +12,7 @@ test.describe('tabs', () => {
     const tablist = wrapper.locator('[data-id=tabs] [role=tablist]');
 
     await expect(tablist.locator('> *')).toHaveCount(6);
-    await expect(tablist.locator('button:first-child')).toHaveClass(/active-tab/);
+    await expect(tablist.locator('button:first-child')).toHaveAttribute('data-active-tab', 'true');
     await expect(tablist.locator('button:nth-child(2)')).toBeDisabled();
 
     const tabcontent = wrapper.locator('[data-id=tab-items]');

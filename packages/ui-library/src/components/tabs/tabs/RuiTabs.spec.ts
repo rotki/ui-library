@@ -1,13 +1,20 @@
-import { type ComponentMountingOptions, mount, RouterLinkStub } from '@vue/test-utils';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import RuiTab from '@/components/tabs/tab/RuiTab.vue';
 import RuiTabs from '@/components/tabs/tabs/RuiTabs.vue';
-import { assertExists, expectToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
+import { assertExists } from '~/tests/helpers/dom-helpers';
 
 vi.mock('vue-router', () => ({
-  useRoute: vi.fn().mockImplementation(() => ref()),
+  useRoute: vi.fn().mockImplementation(() => reactive({ fullPath: '/' })),
   useRouter: vi.fn().mockImplementation(() => ({
     resolve: vi.fn(),
+  })),
+  useLink: vi.fn().mockImplementation(() => ({
+    href: ref('/'),
+    isActive: ref(false),
+    isExactActive: ref(false),
+    navigate: vi.fn(),
+    route: ref({ fullPath: '/' }),
   })),
 }));
 
@@ -19,7 +26,6 @@ function createWrapper(
     ...options,
     global: {
       stubs: {
-        RouterLink: RouterLinkStub,
         RuiTab,
       },
     },
@@ -52,7 +58,7 @@ describe('components/tabs/tabs/RuiTabs.vue', () => {
     expect(buttons).toHaveLength(4);
     const button0 = buttons[0];
     assertExists(button0);
-    expectToHaveClass(button0.element, /active-tab/);
+    expect(button0.attributes('data-active-tab')).toBe('true');
   });
 
   it('should pass vertical props', async () => {
@@ -66,7 +72,7 @@ describe('components/tabs/tabs/RuiTabs.vue', () => {
     await nextTick();
     expect(wrapper.element.getAttribute('data-vertical')).toBe('true');
 
-    expectWrapperToHaveClass(wrapper, '[data-id=tabs-wrapper] > button', /_tab--vertical_/);
+    expect(wrapper.find('[data-id=tabs-wrapper] > button').attributes('data-vertical')).toBe('true');
   });
 
   it('should pass grow props', async () => {
@@ -76,7 +82,7 @@ describe('components/tabs/tabs/RuiTabs.vue', () => {
       grow: true,
     });
 
-    expectWrapperToHaveClass(wrapper, '[data-id=tabs-wrapper] > button', /_tab--grow/);
+    expect(wrapper.find('[data-id=tabs-wrapper] > button').classes()).toContain('grow');
   });
 
   it('should pass disabled props', async () => {
@@ -94,25 +100,25 @@ describe('components/tabs/tabs/RuiTabs.vue', () => {
   it('should pass align props', async () => {
     wrapper = createWrapper();
 
-    expectWrapperToHaveClass(wrapper, 'button', /_tab--center_/);
+    expect(wrapper.find('button').attributes('data-align')).toBe('center');
 
     await wrapper.setProps({ align: 'start' });
-    expectWrapperToHaveClass(wrapper, 'button', /_tab--start_/);
+    expect(wrapper.find('button').attributes('data-align')).toBe('start');
 
     await wrapper.setProps({ align: 'end' });
-    expectWrapperToHaveClass(wrapper, 'button', /_tab--end_/);
+    expect(wrapper.find('button').attributes('data-align')).toBe('end');
   });
 
   it('should pass indicatorPosition props', async () => {
     wrapper = createWrapper({});
 
-    expectWrapperToHaveClass(wrapper, 'button', /_tab-indicator--end_/);
+    expect(wrapper.find('button').attributes('data-indicator-position')).toBe('end');
 
     await wrapper.setProps({ indicatorPosition: 'start' });
-    expectWrapperToHaveClass(wrapper, 'button', /_tab-indicator--start_/);
+    expect(wrapper.find('button').attributes('data-indicator-position')).toBe('start');
 
     await wrapper.setProps({ indicatorPosition: 'end' });
-    expectWrapperToHaveClass(wrapper, 'button', /_tab-indicator--end_/);
+    expect(wrapper.find('button').attributes('data-indicator-position')).toBe('end');
   });
 
   it('should change modelValue when tab is clicked', async () => {
@@ -130,7 +136,7 @@ describe('components/tabs/tabs/RuiTabs.vue', () => {
     expect(buttons).toHaveLength(4);
     const button0 = buttons[0];
     assertExists(button0);
-    expectToHaveClass(button0.element, /active-tab/);
+    expect(button0.attributes('data-active-tab')).toBe('true');
 
     const button1 = buttons[1];
     assertExists(button1);
@@ -163,7 +169,7 @@ describe('components/tabs/tabs/RuiTabs.vue', () => {
     expect(buttons).toHaveLength(4);
     const button0 = buttons[0];
     assertExists(button0);
-    expectToHaveClass(button0.element, /active-tab/);
+    expect(button0.attributes('data-active-tab')).toBe('true');
   });
 
   it('should have role="tablist" on tab container', () => {

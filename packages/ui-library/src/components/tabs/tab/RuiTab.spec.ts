@@ -1,15 +1,27 @@
-import { type ComponentMountingOptions, mount, RouterLinkStub } from '@vue/test-utils';
-import { afterEach, describe, expect, it } from 'vitest';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import RuiTab from '@/components/tabs/tab/RuiTab.vue';
-import { expectToHaveClass, expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
+import { expectToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
+
+vi.mock('vue-router', () => ({
+  useLink: vi.fn().mockImplementation(() => ({
+    href: ref('/tabs'),
+    isActive: ref(false),
+    isExactActive: ref(false),
+    navigate: vi.fn(),
+    route: ref({ fullPath: '/tabs' }),
+  })),
+}));
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiTab>) {
   return mount(RuiTab, {
     ...options,
     global: {
-      stubs: {
-        RouterLink: RouterLinkStub,
-      },
+      plugins: [{
+        install(app) {
+          Object.defineProperty(app.config.globalProperties, '$router', { value: true });
+        },
+      }],
     },
     props: { tabValue: 'tab-1', ...options?.props },
   });
@@ -71,48 +83,48 @@ describe('components/tabs/tab/RuiTab.vue', () => {
   it('should pass grow props', async () => {
     wrapper = createWrapper({});
 
-    expectWrapperNotToHaveClass(wrapper, 'button', /--grow_/);
+    expect(wrapper.find('button').classes()).not.toContain('grow');
 
     await wrapper.setProps({ grow: true });
-    expectWrapperToHaveClass(wrapper, 'button', /--grow_/);
+    expect(wrapper.find('button').classes()).toContain('grow');
   });
 
   it('should pass align props', async () => {
     wrapper = createWrapper({});
 
-    expectWrapperToHaveClass(wrapper, 'button', /_tab--center_/);
+    expect(wrapper.find('button').attributes('data-align')).toBe('center');
 
     await wrapper.setProps({ align: 'start' });
-    expectWrapperToHaveClass(wrapper, 'button', /_tab--start_/);
+    expect(wrapper.find('button').attributes('data-align')).toBe('start');
 
     await wrapper.setProps({ align: 'end' });
-    expectWrapperToHaveClass(wrapper, 'button', /_tab--end_/);
+    expect(wrapper.find('button').attributes('data-align')).toBe('end');
   });
 
   it('should pass indicatorPosition props', async () => {
     wrapper = createWrapper({});
 
-    expectWrapperToHaveClass(wrapper, 'button', /_tab-indicator--end_/);
+    expect(wrapper.find('button').attributes('data-indicator-position')).toBe('end');
 
     await wrapper.setProps({ indicatorPosition: 'start' });
-    expectWrapperToHaveClass(wrapper, 'button', /_tab-indicator--start_/);
+    expect(wrapper.find('button').attributes('data-indicator-position')).toBe('start');
 
     await wrapper.setProps({ indicatorPosition: 'end' });
-    expectWrapperToHaveClass(wrapper, 'button', /_tab-indicator--end_/);
+    expect(wrapper.find('button').attributes('data-indicator-position')).toBe('end');
   });
 
   it('should tab as link', async () => {
     wrapper = createWrapper({
       props: {
         exact: true,
-        exactPath: true,
         link: true,
         to: '/tabs',
       },
     });
 
     let elem = wrapper.find('a');
-    expectToHaveClass(elem.element, /_tab_/);
+    expect(elem.exists()).toBeTruthy();
+    expect(elem.attributes('role')).toBe('tab');
     expect(elem.attributes().target).toMatch('_self');
     expect(elem.attributes().href).toBeUndefined();
 
