@@ -66,7 +66,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
         },
       });
 
-      expect(wrapper.find('button[class*="bg-rui-primary"]').exists()).toBeTruthy();
+      expect(wrapper.find('button[data-selected]').exists()).toBeTruthy();
     });
 
     it('should render correct month title', () => {
@@ -116,7 +116,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
       await nextTick();
 
       // Check that the new date is visually selected
-      expect(wrapper.find('button[class*="bg-rui-primary"]').exists()).toBeTruthy();
+      expect(wrapper.find('button[data-selected]').exists()).toBeTruthy();
     });
 
     it('should clear selection when allowEmpty is true and selected date is clicked', async () => {
@@ -128,7 +128,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
         },
       });
 
-      const selectedButton = wrapper.find('button[class*="bg-rui-primary"]');
+      const selectedButton = wrapper.find('button[data-selected]');
       await selectedButton.trigger('click');
 
       const emitted = wrapper.emitted('update:modelValue');
@@ -148,7 +148,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
         },
       });
 
-      const selectedButton = wrapper.find('button[class*="bg-rui-primary"]');
+      const selectedButton = wrapper.find('button[data-selected]');
       await selectedButton.trigger('click');
 
       // Should not emit undefined when allowEmpty is false
@@ -497,7 +497,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
       wrapper = createWrapper();
 
       // Look for today's date with special styling
-      const todayButton = wrapper.find('button[class*="today-indicator"]');
+      const todayButton = wrapper.find('button[data-today]');
       expect(todayButton.exists()).toBeTruthy();
     });
 
@@ -509,11 +509,11 @@ describe('components/calendar/RuiCalendar.vue', () => {
       });
 
       // When today is selected, it should have selected styling, not today indicator
-      const selectedButton = wrapper.find('button[class*="bg-rui-primary"]');
+      const selectedButton = wrapper.find('button[data-selected]');
       expect(selectedButton.exists()).toBeTruthy();
 
       // Should not have both selected and today indicator classes
-      const todayIndicator = wrapper.find('button[class*="today-indicator"]');
+      const todayIndicator = wrapper.find('button[data-today]');
       expect(todayIndicator.exists()).toBeFalsy();
     });
   });
@@ -523,25 +523,35 @@ describe('components/calendar/RuiCalendar.vue', () => {
       wrapper = createWrapper();
 
       // Look for days that are not in current month (should be grayed out)
-      const grayedDays = wrapper.findAll('button[class*="text-gray-400"]');
+      const grayedDays = wrapper.findAll('button[type="button"]:not([data-current-month])');
       expect(grayedDays.length).toBeGreaterThan(0);
     });
 
     it('should allow selection of previous/next month days when in range', async () => {
+      // Use February 2023 — starts on Wednesday, so Jan 29-31 appear as prev-month days
       wrapper = createWrapper({
         props: {
-          maxDate: new Date(2023, 1, 5), // February 5, 2023
-          minDate: new Date(2022, 11, 25), // December 25, 2022
+          modelValue: new Date(2023, 1, 15), // February 15, 2023
+          maxDate: new Date(2023, 2, 15), // March 15, 2023
+          minDate: new Date(2023, 0, 25), // January 25, 2023
         },
       });
 
-      // Find a day from previous month that should be selectable
-      const prevMonthDays = wrapper.findAll('button[class*="text-gray-400"]:not([disabled])');
+      // Previous month: Jan 29 should be in range and not disabled
+      const jan29 = wrapper.find('[data-id="2023-01-29"]');
+      expect(jan29.exists()).toBeTruthy();
+      expect(jan29.attributes('disabled')).toBeUndefined();
+      expect(jan29.attributes('data-current-month')).toBeUndefined();
 
-      expect(prevMonthDays.length).toBeGreaterThan(0);
-      const firstPrevMonthDay = prevMonthDays[0];
-      assert(firstPrevMonthDay);
-      await firstPrevMonthDay.trigger('click');
+      // Next month: Mar 1 should be in range and not disabled
+      const mar1 = wrapper.find('[data-id="2023-03-01"]');
+      expect(mar1.exists()).toBeTruthy();
+      expect(mar1.attributes('disabled')).toBeUndefined();
+      expect(mar1.attributes('data-current-month')).toBeUndefined();
+
+      // Click a non-current-month day and verify it emits
+      await jan29.trigger('click');
+      await nextTick();
       expect(wrapper.emitted('update:modelValue')).toBeTruthy();
     });
   });

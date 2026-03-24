@@ -6,6 +6,7 @@ import {
   getDaysOfWeek,
   type RuiCalendarState,
 } from '@/components/calendar/state';
+import { tv } from '@/utils/tv';
 
 defineOptions({
   name: 'RuiCalendarGrid',
@@ -30,6 +31,31 @@ function createDateKey(date: Date): string {
 const daysOfWeek = getDaysOfWeek();
 const today = new Date();
 const todayKey = createDateKey(today);
+
+const dayButton = tv({
+  base: 'h-9 w-full flex items-center justify-center text-sm rounded-full mx-auto max-w-[2.25rem] transition-colors duration-150 ease-in-out border-none outline-none cursor-pointer focus:ring-2 focus:ring-rui-primary focus:ring-opacity-50',
+  variants: {
+    selected: {
+      true: 'bg-rui-primary text-white hover:bg-rui-primary/90 dark:hover:bg-rui-primary/90',
+    },
+    currentMonth: {
+      true: 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700',
+      false: 'text-gray-400 dark:text-gray-600',
+    },
+    inRange: {
+      false: 'opacity-50 cursor-not-allowed hover:bg-transparent',
+    },
+    today: {
+      true: `relative after:content-[''] after:absolute after:size-1 after:rounded-full after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:bg-rui-primary`,
+    },
+  },
+  compoundVariants: [
+    {
+      selected: true,
+      class: 'text-white dark:text-white',
+    },
+  ],
+});
 
 // Pre-calculated arrays for performance - using refs for better control
 const calendarDays = ref<
@@ -175,35 +201,32 @@ watch(
 </script>
 
 <template>
-  <div class="calendar-grid">
-    <div class="calendar-weekdays">
+  <div class="w-full p-2 pt-0">
+    <div class="grid grid-cols-7 pb-2">
       <span
         v-for="day in daysOfWeek"
         :key="day"
-        class="weekday-label"
+        class="py-2 text-xs font-medium text-center text-gray-500 dark:text-gray-400"
       >
         {{ day }}
       </span>
     </div>
 
-    <div class="calendar-days">
+    <div class="grid grid-cols-7 gap-0.5">
       <button
         v-for="dayData in get(calendarDays)"
         :key="dayData.key"
         type="button"
         :data-id="dayData.key"
-        class="h-9 w-full flex items-center justify-center text-sm rounded-full mx-auto max-w-[2.25rem] transition-colors duration-150 ease-in-out border-none outline-none cursor-pointer focus:ring-2 focus:ring-rui-primary focus:ring-opacity-50"
-        :class="[
-          {
-            'bg-rui-primary text-white hover:bg-rui-primary/90 dark:hover:bg-rui-primary/90':
-              dayData.isSelected,
-            'text-gray-400 dark:text-gray-600': !dayData.isCurrentMonth && !dayData.isSelected,
-            'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700':
-              dayData.isCurrentMonth && !dayData.isSelected && dayData.isInRange,
-            'opacity-50 cursor-not-allowed hover:bg-transparent': !dayData.isInRange,
-            'today-indicator': dayData.isToday && !dayData.isSelected,
-          },
-        ]"
+        :data-current-month="dayData.isCurrentMonth || undefined"
+        :data-selected="dayData.isSelected || undefined"
+        :data-today="(dayData.isToday && !dayData.isSelected) || undefined"
+        :class="dayButton({
+          selected: dayData.isSelected,
+          currentMonth: !dayData.isSelected && dayData.isCurrentMonth,
+          inRange: dayData.isInRange,
+          today: dayData.isToday && !dayData.isSelected,
+        })"
         :disabled="!dayData.isInRange"
         @click.stop="selectDate(dayData)"
       >
@@ -212,30 +235,3 @@ watch(
     </div>
   </div>
 </template>
-
-<style scoped>
-.calendar-grid {
-  @apply w-full p-2 pt-0;
-}
-
-.calendar-weekdays {
-  @apply grid grid-cols-7 pb-2;
-}
-
-.weekday-label {
-  @apply py-2 text-xs font-medium text-center text-gray-500 dark:text-gray-400;
-}
-
-.calendar-days {
-  @apply grid grid-cols-7 gap-0.5;
-}
-
-.today-indicator {
-  @apply relative;
-
-  &:after {
-    content: '';
-    @apply absolute size-1 rounded-full bottom-1 left-1/2 transform -translate-x-1/2 bg-rui-primary;
-  }
-}
-</style>
