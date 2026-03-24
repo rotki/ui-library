@@ -165,11 +165,11 @@ describe('components/overlays/badge/RuiBadge.vue', () => {
 
     expect(wrapper.find('span[class*=_content_]').exists()).toBeTruthy();
     expect(wrapper.find('div[role=status]').exists()).toBeTruthy();
-    expect(wrapper.find('svg[class*=_rui-icon_]').exists()).toBeFalsy();
+    expect(wrapper.find('svg[aria-hidden]').exists()).toBeFalsy();
 
     await wrapper.setProps({ icon: 'lu-star' });
 
-    expect(wrapper.find('svg[class*=_rui-icon_]').exists()).toBeTruthy();
+    expect(wrapper.find('svg[aria-hidden]').exists()).toBeTruthy();
     expectWrapperToHaveClass(wrapper, 'div[role=status]', /_rounded__full_/);
     expectWrapperNotToHaveClass(wrapper, 'div[role=status]', /_rounded__sm_/);
 

@@ -2,6 +2,7 @@
 import type { ContextColorsType } from '@/consts/colors';
 import { useIcons } from '@/composables/icons';
 import { isRuiIcon, type RuiIcons } from '@/icons';
+import { tv } from '@/utils/tv';
 
 export interface Props {
   name: RuiIcons;
@@ -17,9 +18,26 @@ const { name, size = 24, color } = defineProps<Props>();
 
 const { registeredIcons } = useIcons();
 
+type SvgComponent = [tag: string, attrs: Record<string, string>];
+
+const iconStyles = tv({
+  variants: {
+    color: {
+      primary: 'text-rui-primary',
+      secondary: 'text-rui-secondary',
+      error: 'text-rui-error',
+      warning: 'text-rui-warning',
+      info: 'text-rui-info',
+      success: 'text-rui-success',
+    },
+  },
+});
+
+const ui = computed<string>(() => iconStyles({ color }));
+
 const isFill = computed<boolean>(() => name.endsWith('-fill'));
 
-const components = computed<[string, Record<string, string>][] | undefined>(() => {
+const components = computed<SvgComponent[] | undefined>(() => {
   if (!isRuiIcon(name)) {
     console.warn(`icon ${name} must be a valid RuiIcon`);
   }
@@ -37,7 +55,7 @@ const components = computed<[string, Record<string, string>][] | undefined>(() =
 <template>
   <svg
     aria-hidden="true"
-    :class="[$style['rui-icon'], $style[color ?? '']]"
+    :class="ui"
     :height="size"
     :width="size"
     viewBox="0 0 24 24"
@@ -58,15 +76,3 @@ const components = computed<[string, Record<string, string>][] | undefined>(() =
     />
   </svg>
 </template>
-
-<style lang="scss" module>
-@use '@/styles/colors.scss' as c;
-
-.rui-icon {
-  @each $color in c.$context-colors {
-    &.#{$color} {
-      @apply text-rui-#{$color};
-    }
-  }
-}
-</style>

@@ -20,12 +20,7 @@ describe('components/icons/RuiIcon.vue', () => {
         name: 'lu-circle-arrow-down',
       },
     });
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_rui-icon_/)]),
-    );
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_primary_/)]),
-    );
+    expect(wrapper.classes()).toContain('text-rui-primary');
   });
 
   it('should have aria-hidden="true" on svg', () => {
@@ -61,19 +56,13 @@ describe('components/icons/RuiIcon.vue', () => {
       },
     });
 
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_primary_/)]),
-    );
+    expect(wrapper.classes()).toContain('text-rui-primary');
 
     await wrapper.setProps({ color: 'secondary' });
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_secondary_/)]),
-    );
+    expect(wrapper.classes()).toContain('text-rui-secondary');
 
     await wrapper.setProps({ color: 'error' });
-    expect(wrapper.classes()).toEqual(
-      expect.arrayContaining([expect.stringMatching(/_error_/)]),
-    );
+    expect(wrapper.classes()).toContain('text-rui-error');
   });
 
   it('should use default size of 24', () => {

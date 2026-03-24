@@ -31,8 +31,6 @@ export {
   textColorMap,
 } from '@/composables/colors/common';
 
-export { getIconColorClass } from '@/composables/colors/icon';
-
 export { getSliderColorClasses, getSliderValidationClass } from '@/composables/colors/slider';
 
 export type { SliderColorClasses } from '@/composables/colors/slider';
