@@ -12,9 +12,13 @@ export const ROLE_SELECTORS = {
 
 export const DATA_ATTRIBUTE_SELECTORS = {
   ACTIVATOR: '[data-id="activator"]',
+  PLACEMENT_BOTTOM: '[data-placement="bottom"]',
+  PLACEMENT_TOP: '[data-placement="top"]',
+  /** @deprecated Use PLACEMENT_BOTTOM — will be removed when menu migrates */
   POPPER_PLACEMENT_BOTTOM: '[data-popper-placement="bottom"]',
+  /** @deprecated Use PLACEMENT_TOP — will be removed when menu migrates */
   POPPER_PLACEMENT_TOP: '[data-popper-placement="top"]',
-  POPPER_ARROW: '[data-popper-arrow]',
+  ARROW: '[data-id="arrow"]',
 } as const;
 
 export const ELEMENT_SELECTORS = {

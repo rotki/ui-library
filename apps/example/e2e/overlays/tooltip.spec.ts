@@ -1,10 +1,12 @@
 import { expect, test } from '@playwright/test';
 
+const tooltipContent = 'div[role=tooltip] [data-id=content]';
+
 test.describe('tooltip', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/tooltips');
     // Ensure no tooltips are open at the start of each test
-    await expect(page.locator('div[role=tooltip-content]')).toHaveCount(0);
+    await expect(page.locator(tooltipContent)).toHaveCount(0);
   });
 
   test.afterEach(async ({ page }) => {
@@ -23,7 +25,7 @@ test.describe('tooltip', () => {
 
     // Move mouse away
     await page.mouse.move(0, 0);
-    await expect(page.locator('div[role=tooltip-content]')).toHaveCount(0);
+    await expect(page.locator(tooltipContent)).toHaveCount(0);
   });
 
   test('checks for and trigger arrow tooltip', async ({ page }) => {
@@ -34,12 +36,12 @@ test.describe('tooltip', () => {
 
     const tooltip = page.locator('div[role=tooltip]');
     await expect(tooltip).toBeVisible();
-    await expect(tooltip.locator('span[data-popper-arrow]')).toBeVisible();
+    await expect(tooltip.getByTestId('arrow')).toBeVisible();
 
     // Move mouse away
     await page.mouse.move(0, 0);
-    await expect(page.locator('div[role=tooltip-content]')).toHaveCount(0);
-    await expect(page.locator('span[data-popper-arrow]')).toHaveCount(0);
+    await expect(page.locator(tooltipContent)).toHaveCount(0);
+    await expect(page.getByTestId('arrow')).toHaveCount(0);
   });
 
   test('disabled should not trigger tooltip', async ({ page }) => {
@@ -51,14 +53,14 @@ test.describe('tooltip', () => {
     // Move mouse to a safe area first
     await page.mouse.move(0, 0);
     // Wait for any open tooltips to close
-    await expect(page.locator('div[role=tooltip-content]')).toHaveCount(0, { timeout: 2000 });
+    await expect(page.locator(tooltipContent)).toHaveCount(0, { timeout: 2000 });
 
     await expect(disabledTooltip.locator('#activator')).toBeVisible();
     await disabledTooltip.locator('#activator').hover();
 
     // Verify no tooltip appears for disabled - use assertion with timeout instead of waitForTimeout
     // The tooltip would normally appear quickly if enabled, so we check it stays at 0
-    await expect(page.locator('div[role=tooltip-content]')).toHaveCount(0, { timeout: 1000 });
+    await expect(page.locator(tooltipContent)).toHaveCount(0, { timeout: 1000 });
   });
 
   test('should show tooltip on keyboard focus', async ({ page }) => {
@@ -68,11 +70,11 @@ test.describe('tooltip', () => {
     // Focus the activator via keyboard (tab)
     await activator.focus();
     await expect(page.locator('div[role=tooltip]')).toBeVisible();
-    await expect(page.locator('div[role=tooltip-content]')).toBeVisible();
+    await expect(page.locator(tooltipContent)).toBeVisible();
 
     // Blur should close the tooltip
     await activator.blur();
-    await expect(page.locator('div[role=tooltip-content]')).toHaveCount(0);
+    await expect(page.locator(tooltipContent)).toHaveCount(0);
   });
 
   test('should have aria-describedby linking activator to tooltip', async ({ page }) => {

@@ -23,6 +23,8 @@ export default {
   darkMode: ['class', '[data-theme="dark"]'],
   content: [
     './src/**/*.vue',
+    './src/**/!(*spec|*stories).ts',
+    '!./src/__test__/**',
     ...(!isDevelopment
       ? []
       : ['./src/stories/themes/*.mdx', './src/**/*.stories.ts']),

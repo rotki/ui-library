@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import type { VueClassValue } from '@/types/class-value';
 import { type PopperOptions, usePopper } from '@/composables/popper';
+import { tooltipStyles } from './tooltip-styles';
 
 export interface RuiTooltipClassNames {
-  root?: string;
-  tooltip?: string;
+  root?: VueClassValue;
+  tooltip?: VueClassValue;
 }
 
 export interface Props {
@@ -47,6 +49,7 @@ const {
   popper: tooltip,
   open,
   popperEnter,
+  currentPlacement,
   onOpen,
   onClose,
   onPopperLeave,
@@ -58,6 +61,19 @@ const {
   () => closeDelay,
 );
 
+type PlacementSide = 'top' | 'bottom' | 'left' | 'right';
+
+const placementSide = computed<PlacementSide>(() => {
+  const placement = get(currentPlacement);
+  if (placement.startsWith('top'))
+    return 'top';
+  if (placement.startsWith('left'))
+    return 'left';
+  if (placement.startsWith('right'))
+    return 'right';
+  return 'bottom';
+});
+
 defineExpose({
   onOpen,
   onClose,
@@ -67,7 +83,7 @@ defineExpose({
 <template>
   <div
     ref="activator"
-    :class="$style.wrapper"
+    class="relative inline-flex"
     :data-tooltip-disabled="disabled"
     :aria-describedby="!disabled && open ? tooltipId : undefined"
     @mouseover="onOpen()"
@@ -89,12 +105,13 @@ defineExpose({
         v-if="popperEnter"
         :id="tooltipId"
         ref="tooltip"
+        class="w-max z-[9999]"
         :class="[
-          $style.tooltip,
           classNames?.tooltip ?? tooltipClass,
-          $style[`tooltip__${popper?.strategy ?? 'absolute'}`],
+          popper?.strategy === 'fixed' ? 'fixed' : 'absolute',
         ]"
         role="tooltip"
+        :data-placement="currentPlacement"
       >
         <TransitionGroup
           enter-active-class="transition ease-out duration-200"
@@ -109,8 +126,8 @@ defineExpose({
           <div
             v-if="open"
             key="tooltip"
-            :class="$style.base"
-            role="tooltip-content"
+            class="px-2 py-1 text-xs font-normal bg-rui-grey-700/90 text-white rounded shadow"
+            data-id="content"
             @mouseover="persistOnTooltipHover && onOpen()"
             @mouseleave="persistOnTooltipHover && onClose()"
           >
@@ -120,83 +137,14 @@ defineExpose({
           </div>
           <span
             v-if="!hideArrow"
-            :class="[$style.arrow, { [$style.arrow__open ?? '']: open }]"
-            data-popper-arrow
-          />
+            key="arrow"
+            :class="tooltipStyles({ open, side: placementSide }).arrow()"
+            data-id="arrow"
+          >
+            <span :class="tooltipStyles({ open, side: placementSide }).diamond()" />
+          </span>
         </TransitionGroup>
       </div>
     </Teleport>
   </div>
 </template>
-
-<style lang="scss" module>
-$arrowSize: 0.625rem;
-.wrapper {
-  @apply relative inline-flex;
-}
-
-.tooltip {
-  @apply w-max transform transition-opacity delay-0 z-[9999];
-
-  &__fixed {
-    @apply fixed;
-  }
-
-  &__absolute {
-    @apply absolute;
-  }
-
-  .base {
-    @apply px-2 py-1 text-xs font-normal;
-    @apply bg-rui-grey-700/90 text-white rounded shadow;
-  }
-
-  .arrow {
-    @apply w-2.5 h-2.5 transition-opacity opacity-0;
-
-    &__open {
-      @apply opacity-100;
-    }
-
-    &::before {
-      @apply block border-[0.3125rem] origin-center;
-      @apply border-l-transparent border-b-transparent border-t-rui-grey-700/90 border-r-rui-grey-700/90;
-
-      content: '';
-      border-radius: 0 0.125rem 0 0;
-    }
-  }
-
-  &[data-popper-placement*='bottom'] .arrow {
-    top: calc(0.5px - #{$arrowSize} / 2);
-
-    &::before {
-      @apply -rotate-45;
-    }
-  }
-
-  &[data-popper-placement*='top'] .arrow {
-    bottom: calc(0.5px - #{$arrowSize} / 2);
-
-    &::before {
-      @apply rotate-[135deg];
-    }
-  }
-
-  &[data-popper-placement*='left'] .arrow {
-    right: calc(0.5px - #{$arrowSize} / 2);
-
-    &::before {
-      @apply rotate-45;
-    }
-  }
-
-  &[data-popper-placement*='right'] .arrow {
-    left: calc(0.5px - #{$arrowSize} / 2);
-
-    &::before {
-      @apply -rotate-[135deg];
-    }
-  }
-}
-</style>

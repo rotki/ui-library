@@ -2,8 +2,8 @@ import { type ComponentMountingOptions, flushPromises, mount, type VueWrapper } 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
-import { cleanupElements, expectToHaveClass, queryBody, queryByRole } from '~/tests/helpers/dom-helpers';
-import { CLASS_PATTERNS, DATA_ATTRIBUTE_SELECTORS } from '~/tests/helpers/selectors';
+import { cleanupElements, queryBody, queryByRole } from '~/tests/helpers/dom-helpers';
+import { DATA_ATTRIBUTE_SELECTORS } from '~/tests/helpers/selectors';
 
 function createWrapper(
   options?: ComponentMountingOptions<typeof RuiTooltip>,
@@ -50,9 +50,9 @@ describe('components/overlays/tooltip/RuiTooltip.vue', () => {
     const tooltip = queryByRole<HTMLDivElement>('tooltip');
 
     expect(tooltip).toBeTruthy();
-    expectToHaveClass(tooltip, CLASS_PATTERNS.TOOLTIP);
-    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
-    expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.POPPER_ARROW)).toBeTruthy();
+    expect(tooltip?.getAttribute('role')).toBe('tooltip');
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeTruthy();
+    expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.ARROW)).toBeTruthy();
   });
 
   it('should pass props correctly', () => {
@@ -79,8 +79,8 @@ describe('components/overlays/tooltip/RuiTooltip.vue', () => {
     let tooltip = queryByRole<HTMLDivElement>('tooltip');
 
     expect(tooltip).toBeFalsy();
-    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeFalsy();
-    expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.POPPER_ARROW)).toBeFalsy();
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeFalsy();
+    expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.ARROW)).toBeFalsy();
     await wrapper.setProps({ disabled: false });
 
     await wrapper.trigger('mouseover');
@@ -88,9 +88,9 @@ describe('components/overlays/tooltip/RuiTooltip.vue', () => {
     tooltip = queryByRole<HTMLDivElement>('tooltip');
 
     expect(tooltip).toBeTruthy();
-    expectToHaveClass(tooltip, CLASS_PATTERNS.TOOLTIP);
-    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
-    expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.POPPER_ARROW)).toBeTruthy();
+    expect(tooltip?.getAttribute('role')).toBe('tooltip');
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeTruthy();
+    expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.ARROW)).toBeTruthy();
   });
 
   it('should tooltip only appears after `openDelay` timeout', async () => {
@@ -107,9 +107,9 @@ describe('components/overlays/tooltip/RuiTooltip.vue', () => {
     const tooltip = queryByRole<HTMLDivElement>('tooltip');
 
     expect(tooltip).toBeTruthy();
-    expectToHaveClass(tooltip, CLASS_PATTERNS.TOOLTIP);
-    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
-    expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.POPPER_ARROW)).toBeTruthy();
+    expect(tooltip?.getAttribute('role')).toBe('tooltip');
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeTruthy();
+    expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.ARROW)).toBeTruthy();
 
     // Tooltip shouldn't appear if the mouseleave happens before the timer ends.
     vi.advanceTimersByTime(100);
@@ -146,18 +146,18 @@ describe('components/overlays/tooltip/RuiTooltip.vue', () => {
     let tooltip = queryByRole<HTMLDivElement>('tooltip');
 
     expect(tooltip).toBeTruthy();
-    expectToHaveClass(tooltip, CLASS_PATTERNS.TOOLTIP);
-    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
-    expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.POPPER_ARROW)).toBeTruthy();
+    expect(tooltip?.getAttribute('role')).toBe('tooltip');
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeTruthy();
+    expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.ARROW)).toBeTruthy();
 
     await wrapper.trigger('mouseleave');
 
     tooltip = queryByRole<HTMLDivElement>('tooltip');
 
     expect(tooltip).toBeTruthy();
-    expectToHaveClass(tooltip, CLASS_PATTERNS.TOOLTIP);
-    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.POPPER_PLACEMENT_BOTTOM)).toBeTruthy();
-    expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.POPPER_ARROW)).toBeTruthy();
+    expect(tooltip?.getAttribute('role')).toBe('tooltip');
+    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeTruthy();
+    expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.ARROW)).toBeTruthy();
     expect(document.body.innerHTML).toMatch(new RegExp(text));
 
     vi.advanceTimersByTime(600);
@@ -182,7 +182,7 @@ describe('components/overlays/tooltip/RuiTooltip.vue', () => {
 
     const tooltip = queryByRole<HTMLDivElement>('tooltip');
     expect(tooltip).toBeTruthy();
-    expectToHaveClass(tooltip, CLASS_PATTERNS.TOOLTIP);
+    expect(tooltip?.getAttribute('role')).toBe('tooltip');
     expect(document.body.innerHTML).toMatch(new RegExp(text));
 
     // Blur should close the tooltip

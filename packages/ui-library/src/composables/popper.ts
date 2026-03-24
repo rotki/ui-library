@@ -37,6 +37,7 @@ export const DEFAULT_POPPER_OPTIONS: PopperOptions = {
 };
 
 interface UsePopperReturn {
+  currentPlacement: Readonly<Ref<Placement>>;
   instance: Ref<Instance | undefined>;
   leavePending: Ref<boolean>;
   onClose: (immediate?: boolean) => void;
@@ -73,6 +74,7 @@ export function usePopper(
 
   const updatePopper = async (): Promise<void> => {
     await get(instance)?.update();
+    syncPlacement();
   };
 
   const onOpen = (immediate: boolean = false): void => {
@@ -167,6 +169,7 @@ export function usePopper(
       {
         name: 'arrow',
         options: {
+          element: '[data-id="arrow"]',
           padding: 4,
         },
       },
@@ -221,18 +224,30 @@ export function usePopper(
     onInvalidate(value.destroy);
   }
 
+  const currentPlacement = ref<Placement>(toValue(options).placement ?? DEFAULT_POPPER_OPTIONS.placement!);
+
+  function syncPlacement(): void {
+    const inst = get(instance);
+    if (inst)
+      set(currentPlacement, inst.state.placement);
+  }
+
   useResizeObserver([reference, popper], async () => {
-    if (isDefined(instance))
+    if (isDefined(instance)) {
       await get(instance).update();
+      syncPlacement();
+    }
   });
 
   onMounted(() => {
     watchEffect((onInvalidate) => {
       initializePopper(onInvalidate);
+      syncPlacement();
     });
   });
 
   return {
+    currentPlacement: readonly(currentPlacement),
     instance,
     leavePending,
     onClose,
