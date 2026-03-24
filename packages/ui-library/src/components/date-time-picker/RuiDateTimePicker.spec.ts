@@ -1132,6 +1132,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       await vi.runOnlyPendingTimersAsync();
       await wrapper.find('[data-id=activator]').trigger('click');
       await vi.runOnlyPendingTimersAsync();
+      const expectedSeconds = new Date().getSeconds();
       await wrapper.find('[data-id=set-now]').trigger('click');
       await vi.runOnlyPendingTimersAsync();
 
@@ -1140,7 +1141,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
 
       const lastEmittedValue = modelValue?.at(-1)?.[0];
       assert(lastEmittedValue instanceof Date);
-      expect(lastEmittedValue.getSeconds()).toBe(fixedDate.getSeconds());
+      expect(lastEmittedValue.getSeconds()).toBe(expectedSeconds);
     });
 
     it('should emit milliseconds with millisecond accuracy', async () => {

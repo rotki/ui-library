@@ -53,9 +53,9 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
     await vi.runAllTimersAsync();
 
     // UI reflected
-    expect(wrapper.find('.rui-color-board').attributes('style')).toBe('background-color: rgb(255, 0, 0);');
+    expect(wrapper.find('.rui-color-board').attributes('style')).toMatch(/background-color: (rgb\(255, 0, 0\)|#ff0000);/);
     expect(wrapper.find('.rui-color-board div[class*=_cursor_]').attributes('style')).toBe('top: 0%; left: 100%;');
-    expect(wrapper.find('[data-id="color-display"]').attributes('style')).toBe('background: rgb(255, 0, 0);');
+    expect(wrapper.find('[data-id="color-display"]').attributes('style')).toMatch(/background: (rgb\(255, 0, 0\)|#ff0000);/);
     expect(wrapper.find('.rui-color-hue div[class*=_cursor_]').attributes('style')).toBe('left: calc(0% + 8px);');
     // Hex input value reflected
     expect(wrapper.find<HTMLInputElement>('input').element.value).toBe('ff0000');
@@ -74,9 +74,9 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
     await vi.runAllTimersAsync();
 
     // UI reflected
-    expect(wrapper.find('.rui-color-board').attributes('style')).toBe('background-color: rgb(0, 255, 255);');
+    expect(wrapper.find('.rui-color-board').attributes('style')).toMatch(/background-color: (rgb\(0, 255, 255\)|#00ffff);/);
     expect(wrapper.find('.rui-color-board div[class*=_cursor_]').attributes('style')).toBe('top: 0%; left: 50%;');
-    expect(wrapper.find('[data-id="color-display"]').attributes('style')).toBe('background: rgb(128, 255, 255);');
+    expect(wrapper.find('[data-id="color-display"]').attributes('style')).toMatch(/background: (rgb\(128, 255, 255\)|#80ffff);/);
 
     // middle position, then substract by (half thumb size / element width defined on the useElementBounding);
     const percentagePosition = roundTwoDecimal(50 - ((16 / 2) / 300 * 100));
@@ -106,9 +106,9 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
     await vi.runAllTimersAsync();
 
     // UI reflected
-    expect(wrapper.find('.rui-color-board').attributes('style')).toBe('background-color: rgb(255, 0, 0);');
+    expect(wrapper.find('.rui-color-board').attributes('style')).toMatch(/background-color: (rgb\(255, 0, 0\)|#ff0000);/);
     expect(wrapper.find('.rui-color-board div[class*=_cursor_]').attributes('style')).toBe('top: 0%; left: 100%;');
-    expect(wrapper.find('[data-id="color-display"]').attributes('style')).toBe('background: rgb(255, 0, 0);');
+    expect(wrapper.find('[data-id="color-display"]').attributes('style')).toMatch(/background: (rgb\(255, 0, 0\)|#ff0000);/);
     expect(wrapper.find('.rui-color-hue div[class*=_cursor_]').attributes('style')).toBe('left: calc(0% + 8px);');
     expect(wrapper.emitted('update:modelValue')!.at(-1)![0]).toBe('ff0000');
 
@@ -134,10 +134,10 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
     await vi.runAllTimersAsync();
 
     // UI reflected
-    expect(wrapper.find('.rui-color-board').attributes('style')).toBe('background-color: rgb(0, 255, 255);');
+    expect(wrapper.find('.rui-color-board').attributes('style')).toMatch(/background-color: (rgb\(0, 255, 255\)|#00ffff);/);
     expect(wrapper.find('.rui-color-board div[class*=_cursor_]').attributes('style')).toBe('top: 0%; left: 50%;');
 
-    expect(wrapper.find('[data-id="color-display"]').attributes('style')).toBe('background: rgb(128, 255, 255);');
+    expect(wrapper.find('[data-id="color-display"]').attributes('style')).toMatch(/background: (rgb\(128, 255, 255\)|#80ffff);/);
 
     // middle position, then substract by (half thumb size / element width defined on the useElementBounding);
     const percentagePosition = roundTwoDecimal(50 - ((16 / 2) / 300 * 100));
@@ -187,8 +187,8 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
     await vi.runAllTimersAsync();
 
     // Selected color: hsv(360, 100, 100) => rgb(255, 0, 0);
-    expect(wrapper.find('.rui-color-board').attributes('style')).toBe('background-color: rgb(255, 0, 0);');
-    expect(wrapper.find('[data-id="color-display"]').attributes('style')).toBe('background: rgb(255, 0, 0);');
+    expect(wrapper.find('.rui-color-board').attributes('style')).toMatch(/background-color: (rgb\(255, 0, 0\)|#ff0000);/);
+    expect(wrapper.find('[data-id="color-display"]').attributes('style')).toMatch(/background: (rgb\(255, 0, 0\)|#ff0000);/);
     expect(wrapper.find<HTMLInputElement>('input').element.value).toBe('ff0000');
 
     // end position, then substract by (thumb size / element width defined on the useElementBounding);
@@ -204,7 +204,7 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
     await vi.runAllTimersAsync();
 
     // Selected color: hsv(360, 50, 50) => rgb(128, 64, 64);
-    expect(wrapper.find('[data-id="color-display"]').attributes('style')).toBe('background: rgb(128, 64, 64);');
+    expect(wrapper.find('[data-id="color-display"]').attributes('style')).toMatch(/background: (rgb\(128, 64, 64\)|#804040);/);
     expect(wrapper.find<HTMLInputElement>('input').element.value).toBe('804040');
     expect(wrapper.find('.rui-color-board div[class*=_cursor_]').attributes('style')).toBe('top: 50%; left: 50%;');
 

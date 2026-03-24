@@ -31,7 +31,7 @@ const vitestConfig = defineConfig({
             TZ: 'UTC',
           },
           globals: true,
-          environment: 'jsdom',
+          environment: 'happy-dom',
           setupFiles: ['./tests/setup-files/setup.ts'],
           exclude: [...configDefaults.exclude, '**/*.stories.ts'],
           typecheck: {
