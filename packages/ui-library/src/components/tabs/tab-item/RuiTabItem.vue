@@ -10,7 +10,7 @@ defineOptions({
   name: 'RuiTabItem',
 });
 
-const { active = false, eager = false, reverse = false } = defineProps<Props>();
+const { active = false, value, eager = false, reverse = false } = defineProps<Props>();
 
 defineSlots<{
   default?: () => any;
@@ -20,7 +20,9 @@ defineSlots<{
 <template>
   <div
     role="tabpanel"
-    :class="[$style.tab, { 'active-tab-item': active }]"
+    class="w-full"
+    :data-value="value"
+    :data-active="active || undefined"
   >
     <Transition
       :enter-from-class="`opacity-0 ${reverse ? '-translate-x-8' : 'translate-x-8'}`"
@@ -47,9 +49,3 @@ defineSlots<{
     </div>
   </div>
 </template>
-
-<style lang="scss" module>
-.tab {
-  @apply w-full;
-}
-</style>

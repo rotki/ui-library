@@ -21,7 +21,7 @@ test.describe('tabs', () => {
     // Click third tab
     await tablist.locator('button:nth-child(3)').click();
     await expect(tabcontent.locator('> div > div:nth-child(3)')).toBeVisible();
-    await expect(tabcontent.locator('> div > div:nth-child(3)')).toHaveClass(/active-tab-item/);
+    await expect(tabcontent.locator('> div > div:nth-child(3)')).toHaveAttribute('data-active', 'true');
     await expect(tabcontent).toHaveText('Tab 3 Content');
 
     // Click last tab should redirect to stepper page
