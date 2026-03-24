@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import RuiIcon from '@/components/icons/RuiIcon.vue';
+import { tv } from '@/utils/tv';
 
 export interface Props {
   options: string[] | number[];
@@ -16,17 +17,37 @@ defineOptions({
 
 const modelValue = defineModel<string | number>({ required: true });
 
-const { options, disabled = false, label, name = '', variant = 'default' } = defineProps<Props>();
+const { options, disabled = false, label, name = '', variant: selectVariant = 'default' } = defineProps<Props>();
+
+const selectClass = tv({
+  base: [
+    'outline-none focus:outline-none appearance-none cursor-pointer pl-2 py-1 pr-8 rounded',
+    'm-0 w-full transition [font:inherit]',
+    'bg-white hover:bg-gray-50',
+    'dark:bg-transparent dark:hover:bg-white/10 dark:text-rui-text-disabled',
+    'disabled:bg-black/[.12] disabled:text-rui-text-disabled disabled:active:text-rui-text-disabled disabled:cursor-default',
+    'dark:disabled:bg-white/10',
+  ].join(' '),
+  variants: {
+    variant: {
+      default: '',
+      outlined: 'border border-rui-text-disabled disabled:border-transparent dark:border-rui-text-disabled',
+    },
+  },
+  defaultVariants: { variant: 'default' },
+});
+
+const ui = computed<string>(() => selectClass({ variant: selectVariant }));
 </script>
 
 <template>
   <div
-    :class="$style.wrapper"
+    class="relative inline-flex"
     v-bind="$attrs"
   >
     <select
       v-model="modelValue"
-      :class="[$style.select, $style[variant ?? 'default'], { [$style.disabled ?? '']: disabled }]"
+      :class="ui"
       :name="name"
       :disabled="disabled"
       :aria-label="label"
@@ -41,63 +62,14 @@ const { options, disabled = false, label, name = '', variant = 'default' } = def
       </option>
     </select>
     <span
-      :class="$style.icon__wrapper"
+      class="flex items-center justify-end absolute right-1 top-px bottom-0 pointer-events-none"
       aria-hidden="true"
     >
       <RuiIcon
-        :class="$style.icon"
+        class="text-rui-text-disabled pointer-events-none"
         name="lu-chevron-down"
         size="16"
       />
     </span>
   </div>
 </template>
-
-<style module lang="scss">
-.wrapper {
-  @apply relative inline-flex;
-
-  .select {
-    @apply outline-none focus:outline-none appearance-none cursor-pointer pl-2 py-1 pr-8 rounded;
-    @apply m-0 w-full bg-white hover:bg-gray-50 transition;
-    @apply disabled:bg-black/[.12] disabled:text-rui-text-disabled disabled:active:text-rui-text-disabled disabled:cursor-default;
-
-    font-family: inherit;
-    font-size: inherit;
-    line-height: inherit;
-
-    &::-ms-expand {
-      display: none;
-    }
-
-    &.outlined {
-      @apply border border-rui-text-disabled disabled:border-transparent;
-    }
-  }
-
-  .icon {
-    @apply text-rui-text-disabled pointer-events-none;
-
-    &__wrapper {
-      @apply flex items-center justify-end;
-      @apply absolute right-1 top-px bottom-0 pointer-events-none;
-    }
-  }
-}
-
-:global(.dark) {
-  .wrapper {
-    .select {
-      @apply bg-transparent hover:bg-white/10 disabled:bg-white/10 text-rui-text-disabled;
-
-      &.outlined {
-        @apply border border-rui-text-disabled;
-      }
-    }
-
-    .icon {
-      @apply text-rui-text-disabled;
-    }
-  }
-}
-</style>

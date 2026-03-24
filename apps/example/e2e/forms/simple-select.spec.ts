@@ -19,7 +19,7 @@ test.describe('forms/SimpleSelect', () => {
 
     await expect(select).toBeVisible();
     await expect(select).toHaveValue('Option 1');
-    await expect(select).toHaveClass(/outlined/);
+    await expect(select).toHaveClass(/border/);
   });
 
   test('should change value on select', async ({ page }) => {
@@ -43,7 +43,7 @@ test.describe('forms/SimpleSelect', () => {
     const select = wrapper.locator('[data-id=select]');
 
     await expect(select).toBeDisabled();
-    await expect(select).toHaveClass(/outlined/);
+    await expect(select).toHaveClass(/border/);
   });
 
   test('should have name attribute', async ({ page }) => {

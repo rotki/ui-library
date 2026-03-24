@@ -1,7 +1,6 @@
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiSimpleSelect from '@/components/forms/select/RuiSimpleSelect.vue';
-import { expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
 function createWrapper(
   options?: ComponentMountingOptions<typeof RuiSimpleSelect>,
@@ -33,7 +32,7 @@ describe('components/forms/select/RuiSimpleSelect.vue', () => {
       },
     });
 
-    expectWrapperToHaveClass(wrapper, 'select', /_select_/);
+    expect(wrapper.find('select').exists()).toBeTruthy();
     expect(wrapper.find('span > svg').exists()).toBeTruthy();
   });
 
@@ -71,7 +70,7 @@ describe('components/forms/select/RuiSimpleSelect.vue', () => {
       },
     });
 
-    expectWrapperToHaveClass(wrapper, 'select', /_outlined_/);
+    expect(wrapper.find('select').classes()).toContain('border');
   });
 
   it('should render chevron icon', () => {
