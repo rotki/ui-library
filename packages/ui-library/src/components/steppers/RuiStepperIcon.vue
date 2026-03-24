@@ -1,78 +1,76 @@
 <script lang="ts" setup>
+import type { RuiIcons } from '@/icons';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { StepperState } from '@/types/stepper';
+import { tv } from '@/utils/tv';
+
+interface StateIconProps {
+  name: RuiIcons;
+  class?: string;
+  size?: number;
+}
 
 const { state = StepperState.inactive, index } = defineProps<{
   state?: StepperState;
   index: number;
 }>();
+
+const stateIconMap: Partial<Record<StepperState, StateIconProps>> = {
+  [StepperState.done]: { name: 'lu-check', class: 'text-rui-dark-text dark:text-rui-light-text', size: 20 },
+  [StepperState.success]: { name: 'lu-circle-check' },
+  [StepperState.error]: { name: 'lu-circle-alert' },
+  [StepperState.warning]: { name: 'lu-triangle-alert' },
+  [StepperState.info]: { name: 'lu-info' },
+};
+
+const stepperIcon = tv({
+  slots: {
+    indicator: 'inline-flex items-center justify-center rounded-full h-6 w-6',
+    label: 'text-rui-dark-text',
+  },
+  variants: {
+    state: {
+      [StepperState.inactive]: {
+        indicator: 'bg-current text-xs',
+        label: 'dark:text-rui-light-text-secondary',
+      },
+      [StepperState.active]: {
+        indicator: 'bg-rui-primary text-xs',
+        label: 'dark:text-rui-light-text',
+      },
+      [StepperState.done]: {
+        indicator: 'bg-rui-primary text-xs',
+        label: 'dark:text-rui-light-text',
+      },
+      [StepperState.error]: {},
+      [StepperState.warning]: {},
+      [StepperState.info]: {},
+      [StepperState.success]: {},
+    },
+  },
+  defaultVariants: { state: StepperState.inactive },
+});
+
+const ui = computed<ReturnType<typeof stepperIcon>>(() => stepperIcon({ state }));
+
+const showLabel = computed<boolean>(() => state === StepperState.inactive || state === StepperState.active);
+
+const iconProps = computed<StateIconProps | undefined>(() => stateIconMap[state]);
 </script>
 
 <template>
-  <span :class="[$style.indicator, $style[state]]">
+  <span :class="ui.indicator()">
     <span
-      v-if="state === StepperState.inactive || state === StepperState.active"
-      :class="$style.text"
+      v-if="showLabel"
+      :class="ui.label()"
     >
       {{ index }}
     </span>
     <RuiIcon
-      v-else-if="state === StepperState.done"
-      :class="$style.text"
-      :size="20"
-      name="lu-check"
-    />
-    <RuiIcon
-      v-else-if="state === StepperState.success"
-      name="lu-circle-check"
-    />
-    <RuiIcon
-      v-else-if="state === StepperState.error"
-      name="lu-circle-alert"
-    />
-    <RuiIcon
-      v-else-if="state === StepperState.warning"
-      name="lu-triangle-alert"
-    />
-    <RuiIcon
-      v-else-if="state === StepperState.info"
-      name="lu-info"
+      v-else-if="iconProps"
+      :name="iconProps.name"
+      :class="iconProps.class"
+      :size="iconProps.size"
     />
   </span>
 </template>
-
-<style lang="scss" module>
-.indicator {
-  @apply inline-flex items-center justify-center rounded-full h-6 w-6;
-
-  .text {
-    @apply text-rui-dark-text;
-  }
-
-  &.inactive {
-    @apply bg-current text-xs;
-  }
-
-  &.active,
-  &.done {
-    @apply bg-rui-primary rounded-full text-xs;
-  }
-}
-
-:global(.dark) {
-  .indicator {
-    &.inactive {
-      .text {
-        @apply text-rui-light-text-secondary;
-      }
-    }
-
-    &.active,
-    &.done {
-      .text {
-        @apply text-rui-light-text;
-      }
-    }
-  }
-}
-</style>
