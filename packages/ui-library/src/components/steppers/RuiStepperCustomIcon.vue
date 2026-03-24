@@ -1,18 +1,34 @@
 <script lang="ts" setup>
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { StepperState } from '@/types/stepper';
+import { tv } from '@/utils/tv';
+
+type IndicatorState = typeof StepperState.inactive | typeof StepperState.active;
 
 const { state = StepperState.inactive } = defineProps<{
   state?: StepperState;
   index: number;
 }>();
+
+const stepperCustomIcon = tv({
+  base: 'inline-flex items-center justify-center rounded-full h-10 w-10 shrink-0 border border-rui-primary',
+  variants: {
+    state: {
+      [StepperState.inactive]: 'text-xs bg-white dark:bg-rui-primary dark:text-white dark:border-white',
+      [StepperState.active]: 'text-white bg-rui-primary dark:bg-white dark:text-rui-primary',
+    },
+  },
+  defaultVariants: { state: StepperState.active },
+});
+
+const indicatorState = computed<IndicatorState>(() => state === StepperState.inactive ? StepperState.inactive : StepperState.active);
 </script>
 
 <template>
-  <span :class="[$style.indicator, $style[state]]">
+  <span :class="stepperCustomIcon({ state: indicatorState })">
     <span
       v-if="state === StepperState.inactive"
-      :class="$style.text"
+      class="text-rui-primary dark:text-white"
     >
       {{ index }}
     </span>
@@ -23,43 +39,11 @@ const { state = StepperState.inactive } = defineProps<{
     />
     <RuiIcon
       v-else-if="state === StepperState.done"
-      :class="$style.text"
       :size="20"
       name="lu-check"
     />
-    <span
-      v-else
-      :class="$style.text"
-    >
+    <span v-else>
       {{ index }}
     </span>
   </span>
 </template>
-
-<style lang="scss" module>
-.indicator {
-  @apply inline-flex items-center justify-center rounded-full h-10 w-10 shrink-0 border text-white bg-rui-primary border-rui-primary;
-
-  &.inactive {
-    @apply text-xs bg-white;
-
-    .text {
-      @apply text-rui-primary;
-    }
-  }
-}
-
-:global(.dark) {
-  .indicator {
-    @apply bg-white text-rui-primary;
-
-    &.inactive {
-      @apply text-white border-white bg-rui-primary;
-
-      .text {
-        @apply text-white;
-      }
-    }
-  }
-}
-</style>
