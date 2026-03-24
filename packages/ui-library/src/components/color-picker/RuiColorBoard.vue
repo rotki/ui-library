@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { clamp } from '@vueuse/shared';
-import { Color, useElementDrag } from './utils';
+import tinycolor from 'tinycolor2';
+import { type Color, useElementDrag } from './utils';
 
 defineOptions({
   name: 'RuiColorBoard',
@@ -26,9 +27,7 @@ const state = reactive({
 const cursorTop = ref<number>(0);
 const cursorLeft = ref<number>(0);
 
-const instance = getCurrentInstance();
-
-const { handleClick, onMouseDown } = useElementDrag(emitColor);
+const { handleClick, onMouseDown, onTouchStart } = useElementDrag(emitColor);
 
 const cursorStyle = computed<{ top: string; left: string }>(() => ({
   top: `${get(cursorTop) * 100}%`,
@@ -36,7 +35,7 @@ const cursorStyle = computed<{ top: string; left: string }>(() => ({
 }));
 
 function hueToHex(hue: number): string {
-  return new Color({ h: hue, s: 1, v: 1 }).hexString;
+  return tinycolor({ h: hue, s: 1, v: 1 }).toHexString();
 }
 
 function updatePosition(): void {
@@ -45,15 +44,11 @@ function updatePosition(): void {
 }
 
 function emitColor(x: number, y: number): void {
-  if (!instance)
+  const el = get(wrapper);
+  if (!el)
     return;
 
-  const el = instance.vnode.el;
-  const rect = el?.getBoundingClientRect();
-
-  if (!rect)
-    return;
-
+  const rect = el.getBoundingClientRect();
   const { width, height, left, top } = rect;
   let calculatedX = x - left;
   let calculatedY = y - top;
@@ -73,15 +68,14 @@ function emitColor(x: number, y: number): void {
   emit('update:board', { saturation, brightness });
 }
 
-whenever(
-  () => color,
-  (value) => {
-    state.hexString = hueToHex(value.hue);
-    state.saturation = value.saturation;
-    state.brightness = value.brightness;
+watch(
+  () => [color.hue, color.saturation, color.brightness] as const,
+  ([hue, saturation, brightness]) => {
+    state.hexString = hueToHex(hue);
+    state.saturation = saturation;
+    state.brightness = brightness;
     updatePosition();
   },
-  { deep: true },
 );
 
 onMounted(() => {
@@ -95,46 +89,20 @@ onMounted(() => {
     role="slider"
     aria-label="Color saturation and brightness"
     :aria-valuetext="`Saturation ${Math.round(state.saturation * 100)}%, Brightness ${Math.round(state.brightness * 100)}%`"
-    class="rui-color-board"
-    :class="$style.saturation"
+    data-id="color-board"
+    class="relative w-full h-40 overflow-hidden cursor-pointer"
     v-bind="$attrs"
     :style="{ backgroundColor: state.hexString }"
     @click="handleClick($event)"
     @mousedown="onMouseDown($event)"
+    @touchstart="onTouchStart($event)"
   >
-    <div :class="$style.saturation__white" />
-    <div :class="$style.saturation__black" />
+    <div class="absolute inset-0 to-transparent bg-gradient-to-r from-white" />
+    <div class="absolute inset-0 to-transparent bg-gradient-to-t from-black" />
     <div
-      :class="$style.cursor"
+      data-id="cursor"
+      class="absolute w-5 h-5 -translate-x-1/2 -translate-y-1/2 border-2 border-white shadow rounded-full after:content-[''] after:absolute after:inset-0 after:rounded-full after:border-2 after:border-black/15"
       :style="cursorStyle"
     />
   </div>
 </template>
-
-<style lang="scss" module>
-.saturation {
-  @apply relative w-full h-40 overflow-hidden cursor-pointer;
-
-  &__white,
-  &__black {
-    @apply absolute top-0 left-0 right-0 bottom-0 to-transparent;
-  }
-
-  &__black {
-    @apply bg-gradient-to-t from-black;
-  }
-
-  &__white {
-    @apply bg-gradient-to-r from-white;
-  }
-}
-
-.cursor {
-  @apply absolute w-5 h-5 transform -translate-x-1/2 -translate-y-1/2 border-2 border-white shadow rounded-full;
-
-  &:after {
-    content: '';
-    @apply absolute w-full h-full rounded-full border-2 border-black/15;
-  }
-}
-</style>

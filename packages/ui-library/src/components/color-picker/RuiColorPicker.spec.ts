@@ -38,10 +38,10 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
   it('should render properly', () => {
     wrapper = createWrapper();
 
-    expect(wrapper.find('.rui-color-board').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id="color-board"]').exists()).toBeTruthy();
     expect(wrapper.find('[data-id="color-display"]').exists()).toBeTruthy();
-    expect(wrapper.find('.rui-color-hue').exists()).toBeTruthy();
-    expect(wrapper.find('.rui-color-input').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id="color-hue"]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id="color-input"]').exists()).toBeTruthy();
   });
 
   it('should ui reflects the initial value', async () => {
@@ -53,10 +53,10 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
     await vi.runAllTimersAsync();
 
     // UI reflected
-    expect(wrapper.find('.rui-color-board').attributes('style')).toMatch(/background-color: (rgb\(255, 0, 0\)|#ff0000);/);
-    expect(wrapper.find('.rui-color-board div[class*=_cursor_]').attributes('style')).toBe('top: 0%; left: 100%;');
+    expect(wrapper.find('[data-id="color-board"]').attributes('style')).toMatch(/background-color: (rgb\(255, 0, 0\)|#ff0000);/);
+    expect(wrapper.find('[data-id="color-board"] [data-id="cursor"]').attributes('style')).toBe('top: 0%; left: 100%;');
     expect(wrapper.find('[data-id="color-display"]').attributes('style')).toMatch(/background: (rgb\(255, 0, 0\)|#ff0000);/);
-    expect(wrapper.find('.rui-color-hue div[class*=_cursor_]').attributes('style')).toBe('left: calc(0% + 8px);');
+    expect(wrapper.find('[data-id="color-hue"] [data-id="cursor"]').attributes('style')).toBe('left: calc(0% + 8px);');
     // Hex input value reflected
     expect(wrapper.find<HTMLInputElement>('input').element.value).toBe('ff0000');
 
@@ -74,13 +74,13 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
     await vi.runAllTimersAsync();
 
     // UI reflected
-    expect(wrapper.find('.rui-color-board').attributes('style')).toMatch(/background-color: (rgb\(0, 255, 255\)|#00ffff);/);
-    expect(wrapper.find('.rui-color-board div[class*=_cursor_]').attributes('style')).toBe('top: 0%; left: 50%;');
+    expect(wrapper.find('[data-id="color-board"]').attributes('style')).toMatch(/background-color: (rgb\(0, 255, 255\)|#00ffff);/);
+    expect(wrapper.find('[data-id="color-board"] [data-id="cursor"]').attributes('style')).toBe('top: 0%; left: 50%;');
     expect(wrapper.find('[data-id="color-display"]').attributes('style')).toMatch(/background: (rgb\(128, 255, 255\)|#80ffff);/);
 
     // middle position, then substract by (half thumb size / element width defined on the useElementBounding);
     const percentagePosition = roundTwoDecimal(50 - ((16 / 2) / 300 * 100));
-    expect(wrapper.find('.rui-color-hue div[class*=_cursor_]').attributes('style')).toBe(
+    expect(wrapper.find('[data-id="color-hue"] [data-id="cursor"]').attributes('style')).toBe(
       `left: calc(${percentagePosition}% + 8px);`,
     );
 
@@ -106,10 +106,10 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
     await vi.runAllTimersAsync();
 
     // UI reflected
-    expect(wrapper.find('.rui-color-board').attributes('style')).toMatch(/background-color: (rgb\(255, 0, 0\)|#ff0000);/);
-    expect(wrapper.find('.rui-color-board div[class*=_cursor_]').attributes('style')).toBe('top: 0%; left: 100%;');
+    expect(wrapper.find('[data-id="color-board"]').attributes('style')).toMatch(/background-color: (rgb\(255, 0, 0\)|#ff0000);/);
+    expect(wrapper.find('[data-id="color-board"] [data-id="cursor"]').attributes('style')).toBe('top: 0%; left: 100%;');
     expect(wrapper.find('[data-id="color-display"]').attributes('style')).toMatch(/background: (rgb\(255, 0, 0\)|#ff0000);/);
-    expect(wrapper.find('.rui-color-hue div[class*=_cursor_]').attributes('style')).toBe('left: calc(0% + 8px);');
+    expect(wrapper.find('[data-id="color-hue"] [data-id="cursor"]').attributes('style')).toBe('left: calc(0% + 8px);');
     expect(wrapper.emitted('update:modelValue')!.at(-1)![0]).toBe('ff0000');
 
     // Change input type to RGB
@@ -134,14 +134,14 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
     await vi.runAllTimersAsync();
 
     // UI reflected
-    expect(wrapper.find('.rui-color-board').attributes('style')).toMatch(/background-color: (rgb\(0, 255, 255\)|#00ffff);/);
-    expect(wrapper.find('.rui-color-board div[class*=_cursor_]').attributes('style')).toBe('top: 0%; left: 50%;');
+    expect(wrapper.find('[data-id="color-board"]').attributes('style')).toMatch(/background-color: (rgb\(0, 255, 255\)|#00ffff);/);
+    expect(wrapper.find('[data-id="color-board"] [data-id="cursor"]').attributes('style')).toBe('top: 0%; left: 50%;');
 
     expect(wrapper.find('[data-id="color-display"]').attributes('style')).toMatch(/background: (rgb\(128, 255, 255\)|#80ffff);/);
 
     // middle position, then substract by (half thumb size / element width defined on the useElementBounding);
     const percentagePosition = roundTwoDecimal(50 - ((16 / 2) / 300 * 100));
-    expect(wrapper.find('.rui-color-hue div[class*=_cursor_]').attributes('style')).toBe(
+    expect(wrapper.find('[data-id="color-hue"] [data-id="cursor"]').attributes('style')).toBe(
       `left: calc(${percentagePosition}% + 8px);`,
     );
 
@@ -155,7 +155,7 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
   it('should have role="application" and aria-label on root', () => {
     wrapper = createWrapper();
 
-    const root = wrapper.find('.rui-color-picker');
+    const root = wrapper.find('[data-id="color-picker"]');
     expect(root.attributes('role')).toBe('application');
     expect(root.attributes('aria-label')).toBe('Color picker');
   });
@@ -163,7 +163,7 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
   it('should have role="slider" and aria-label on color board', () => {
     wrapper = createWrapper();
 
-    const board = wrapper.find('.rui-color-board');
+    const board = wrapper.find('[data-id="color-board"]');
     expect(board.attributes('role')).toBe('slider');
     expect(board.attributes('aria-label')).toBe('Color saturation and brightness');
   });
@@ -171,7 +171,7 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
   it('should have role="slider" and aria attributes on hue bar', () => {
     wrapper = createWrapper();
 
-    const hue = wrapper.find('.rui-color-hue');
+    const hue = wrapper.find('[data-id="color-hue"]');
     expect(hue.attributes('role')).toBe('slider');
     expect(hue.attributes('aria-label')).toBe('Hue');
     expect(hue.attributes('aria-valuemin')).toBe('0');
@@ -183,30 +183,30 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
     await vi.runAllTimersAsync();
 
     // Drag hue to the end (color red)
-    await wrapper.find('.rui-color-hue > div').trigger('click', { clientX: 1000, clientY: 0 });
+    await wrapper.find('[data-id="color-hue"] > div').trigger('click', { clientX: 1000, clientY: 0 });
     await vi.runAllTimersAsync();
 
     // Selected color: hsv(360, 100, 100) => rgb(255, 0, 0);
-    expect(wrapper.find('.rui-color-board').attributes('style')).toMatch(/background-color: (rgb\(255, 0, 0\)|#ff0000);/);
+    expect(wrapper.find('[data-id="color-board"]').attributes('style')).toMatch(/background-color: (rgb\(255, 0, 0\)|#ff0000);/);
     expect(wrapper.find('[data-id="color-display"]').attributes('style')).toMatch(/background: (rgb\(255, 0, 0\)|#ff0000);/);
     expect(wrapper.find<HTMLInputElement>('input').element.value).toBe('ff0000');
 
     // end position, then substract by (thumb size / element width defined on the useElementBounding);
     const percentagePosition = roundTwoDecimal(100 - (16 / 300 * 100));
-    expect(wrapper.find('.rui-color-hue div[class*=_cursor_]').attributes('style')).toBe(
+    expect(wrapper.find('[data-id="color-hue"] [data-id="cursor"]').attributes('style')).toBe(
       `left: calc(${percentagePosition}% + 8px);`,
     );
 
     expect(wrapper.emitted('update:modelValue')!.at(-1)![0]).toBe('ff0000');
 
     // Drag board to the middle
-    await wrapper.find('.rui-color-board').trigger('click', { clientX: 150, clientY: 100 });
+    await wrapper.find('[data-id="color-board"]').trigger('click', { clientX: 150, clientY: 100 });
     await vi.runAllTimersAsync();
 
     // Selected color: hsv(360, 50, 50) => rgb(128, 64, 64);
     expect(wrapper.find('[data-id="color-display"]').attributes('style')).toMatch(/background: (rgb\(128, 64, 64\)|#804040);/);
     expect(wrapper.find<HTMLInputElement>('input').element.value).toBe('804040');
-    expect(wrapper.find('.rui-color-board div[class*=_cursor_]').attributes('style')).toBe('top: 50%; left: 50%;');
+    expect(wrapper.find('[data-id="color-board"] [data-id="cursor"]').attributes('style')).toBe('top: 50%; left: 50%;');
 
     expect(wrapper.emitted('update:modelValue')!.at(-1)![0]).toBe('804040');
   });

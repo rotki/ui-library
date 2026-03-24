@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Color } from './utils';
+import type { Color, ColorFormat } from './utils';
 import { clamp } from '@vueuse/shared';
 import tinycolor from 'tinycolor2';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
@@ -13,14 +13,28 @@ defineOptions({
 
 const modelValue = defineModel<Color>({ required: true });
 
-const inputType = ref<'hex' | 'rgb'>('hex');
+const MAX_RGB = 255;
+const VALID_HEX_LENGTHS = [3, 4, 6];
+const DEFAULT_HEX = '000000';
+
+const inputType = ref<ColorFormat>('hex');
 const state = reactive({
   color: get(modelValue),
   hex: get(modelValue).hex,
   rgb: get(modelValue).rgb,
 });
 
-const onBlurChange = useDebounceFn((inputType: string, event: Event, key?: number) => {
+function applyRgbValue(value: string, key: number): void {
+  if (!state.rgb || !state.color)
+    return;
+
+  const clamped = clamp(Number(value), 0, MAX_RGB);
+  state.rgb[key] = clamped;
+  const [r, g, b] = state.rgb;
+  state.color.hex = tinycolor({ r, g, b }).toHex();
+}
+
+const onBlurChange = useDebounceFn((format: ColorFormat, event: Event, key?: number) => {
   if (!state.color)
     return;
 
@@ -29,38 +43,30 @@ const onBlurChange = useDebounceFn((inputType: string, event: Event, key?: numbe
     return;
 
   const value = target.value;
-  if (inputType === 'hex') {
-    const _hex = value.replace('#', '');
-    if (tinycolor(_hex).isValid() && [3, 4, 6].includes(_hex.length))
-      state.color.hex = _hex;
-    else state.color.hex = '000000';
+  if (format === 'hex') {
+    const hex = value.replace('#', '');
+    if (tinycolor(hex).isValid() && VALID_HEX_LENGTHS.includes(hex.length))
+      state.color.hex = hex;
+    else state.color.hex = DEFAULT_HEX;
   }
-  else if (key !== undefined && state.rgb && state.color) {
-    let valueInNumber = Number(value);
-    valueInNumber = clamp(valueInNumber, 0, 255);
+  else if (key !== undefined) {
+    applyRgbValue(value, key);
+  }
 
-    state.rgb[key] = valueInNumber;
-    const [r, g, b] = state.rgb;
-    state.color.hex = tinycolor({ r, g, b }).toHex();
-  }
+  set(modelValue, state.color);
 }, 100);
 
-const onInputChange = useDebounceFn((inputType: string, value: string, key?: number) => {
+const onInputChange = useDebounceFn((format: ColorFormat, value: string, key?: number) => {
   if (!value)
     return;
 
-  if (inputType === 'hex') {
-    const _hex = value.replace('#', '');
-    if (tinycolor(_hex).isValid() && state.color && _hex.length === 6)
-      state.color.hex = _hex;
+  if (format === 'hex') {
+    const hex = value.replace('#', '');
+    if (tinycolor(hex).isValid() && state.color && hex.length === 6)
+      state.color.hex = hex;
   }
-  else if (key !== undefined && state.rgb && state.color) {
-    let valueInNumber = Number(value);
-    valueInNumber = clamp(valueInNumber, 0, 255);
-
-    state.rgb[key] = valueInNumber;
-    const [r, g, b] = state.rgb;
-    state.color.hex = tinycolor({ r, g, b }).toHex();
+  else if (key !== undefined) {
+    applyRgbValue(value, key);
   }
 
   set(modelValue, state.color);
@@ -70,20 +76,24 @@ function onInputTypeChange(): void {
   set(inputType, get(inputType) === 'rgb' ? 'hex' : 'rgb');
 }
 
-whenever(
-  modelValue,
-  (value) => {
-    state.color = value;
-    state.hex = state.color.hex;
-    state.rgb = state.color.rgb;
+watch(
+  () => {
+    const color = get(modelValue);
+    return [color.hex, ...color.rgb] as const;
   },
-  { deep: true },
+  () => {
+    const color = get(modelValue);
+    state.color = color;
+    state.hex = color.hex;
+    state.rgb = color.rgb;
+  },
 );
 </script>
 
 <template>
   <div
-    class="rui-color-input flex justify-center gap-2"
+    data-id="color-input"
+    class="flex justify-center gap-2"
     v-bind="$attrs"
   >
     <div class="flex flex-col items-center gap-1 w-[16rem]">

@@ -52,12 +52,12 @@ test.describe('color pickers', () => {
     await expect(picker).toHaveAttribute('aria-label', 'Color picker');
 
     // Color board should have slider role
-    const board = picker.locator('.rui-color-board');
+    const board = picker.locator('[data-id="color-board"]');
     await expect(board).toHaveAttribute('role', 'slider');
     await expect(board).toHaveAttribute('aria-label', 'Color saturation and brightness');
 
     // Hue bar should have slider role
-    const hue = picker.locator('.rui-color-hue');
+    const hue = picker.locator('[data-id="color-hue"]');
     await expect(hue).toHaveAttribute('role', 'slider');
     await expect(hue).toHaveAttribute('aria-label', 'Hue');
   });

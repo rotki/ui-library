@@ -59,5 +59,12 @@ export default {
         ]
       : []),
   ],
+  theme: {
+    extend: {
+      backgroundImage: {
+        'hue-spectrum': 'linear-gradient(to right, red 0%, yellow 16.66%, lime 33.33%, cyan 50%, blue 66.66%, magenta 83.33%, red 100%)',
+      },
+    },
+  },
   plugins: [themePlugin],
 } satisfies Config;

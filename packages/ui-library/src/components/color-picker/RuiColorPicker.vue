@@ -49,7 +49,8 @@ watch(
   <div
     role="application"
     aria-label="Color picker"
-    class="rui-color-picker relative select-none bg-initial"
+    data-id="color-picker"
+    class="relative select-none bg-initial"
     v-bind="$attrs"
   >
     <RuiColorBoard

@@ -2,6 +2,12 @@
 import { clamp } from '@vueuse/shared';
 import { roundTwoDecimal, useElementDrag } from './utils';
 
+interface Limit {
+  lowerLimit: number;
+  upperLimit: number;
+  availableWidth: number;
+}
+
 defineOptions({
   name: 'RuiColorHue',
   inheritAttrs: false,
@@ -11,23 +17,18 @@ const modelValue = defineModel<number>({ required: true });
 
 const barElement = useTemplateRef<HTMLElement>('barElement');
 
-const cursorWidth = 16;
+const MAX_HUE = 360;
+const CURSOR_WIDTH = 16;
 const cursorLeft = ref<string>('');
 
-const instance = getCurrentInstance();
-
-const { handleClick, onMouseDown } = useElementDrag(emitHue);
+const { handleClick, onMouseDown, onTouchStart } = useElementDrag(emitHue);
 
 const cursorStyle = computed<{ left: string }>(() => ({
   left: get(cursorLeft),
 }));
 
-function getLimit(width: number): {
-  lowerLimit: number;
-  upperLimit: number;
-  availableWidth: number;
-} {
-  const lowerLimit = cursorWidth / 2;
+function getLimit(width: number): Limit {
+  const lowerLimit = CURSOR_WIDTH / 2;
   const upperLimit = width - lowerLimit;
   const availableWidth = upperLimit - lowerLimit;
 
@@ -35,45 +36,37 @@ function getLimit(width: number): {
 }
 
 function updatePosition(): void {
-  set(cursorLeft, getCursorLeft().toString());
+  set(cursorLeft, getCursorLeft());
 }
 
-function getCursorLeft(): number | string {
-  if (!instance)
-    return 0;
+function getCursorLeft(): string {
+  const el = get(barElement);
+  if (!el)
+    return '0';
 
-  const el = instance.vnode.el;
-  const rect = el?.getBoundingClientRect();
-
-  if (!rect)
-    return 0;
-
+  const rect = el.getBoundingClientRect();
   const actualWidth = rect.width;
   const { lowerLimit, availableWidth } = getLimit(actualWidth);
 
   const hueVal = get(modelValue);
-  const usedHue = hueVal === 360 ? 360 : hueVal % 360;
+  const usedHue = hueVal === MAX_HUE ? MAX_HUE : hueVal % MAX_HUE;
 
-  const percentage = roundTwoDecimal((usedHue / 360) * (availableWidth / actualWidth) * 100);
+  const percentage = roundTwoDecimal((usedHue / MAX_HUE) * (availableWidth / actualWidth) * 100);
   return `calc(${percentage}% + ${lowerLimit}px)`;
 }
 
 function emitHue(x: number): void {
-  if (!instance)
+  const el = get(barElement);
+  if (!el)
     return;
 
-  const el = instance.vnode.el;
-  const rect = el?.getBoundingClientRect();
-
-  if (!rect)
-    return;
-
+  const rect = el.getBoundingClientRect();
   let calculatedX = x - rect.left;
 
   const { lowerLimit, upperLimit, availableWidth } = getLimit(rect.width);
   calculatedX = clamp(calculatedX, lowerLimit, upperLimit);
 
-  set(modelValue, Math.round(((calculatedX - lowerLimit) / availableWidth) * 360));
+  set(modelValue, Math.round(((calculatedX - lowerLimit) / availableWidth) * MAX_HUE));
 }
 
 watch(modelValue, () => {
@@ -93,36 +86,17 @@ onMounted(() => {
     :aria-valuenow="modelValue"
     aria-valuemin="0"
     aria-valuemax="360"
-    :class="$style.bar"
-    class="rui-color-hue"
+    data-id="color-hue"
+    class="relative w-full h-3.5 rounded-full cursor-pointer bg-hue-spectrum"
     v-bind="$attrs"
     @click="handleClick($event)"
     @mousedown="onMouseDown($event)"
+    @touchstart="onTouchStart($event)"
   >
     <div
-      :class="$style.cursor"
+      data-id="cursor"
+      class="absolute w-4 h-4 transform top-1/2 -translate-x-1/2 -translate-y-1/2 shadow-2 bg-white rounded-full"
       :style="cursorStyle"
     />
   </div>
 </template>
-
-<style lang="scss" module>
-.bar {
-  @apply relative w-full h-3.5 rounded-full cursor-pointer;
-
-  background: linear-gradient(
-    to right,
-    rgb(255, 0, 0) 0%,
-    rgb(255, 255, 0) 16.66%,
-    rgb(0, 255, 0) 33.33%,
-    rgb(0, 255, 255) 50%,
-    rgb(0, 0, 255) 66.66%,
-    rgb(255, 0, 255) 83.33%,
-    rgb(255, 0, 0) 100%
-  );
-}
-
-.cursor {
-  @apply absolute w-4 h-4 transform top-1/2 -translate-x-1/2 -translate-y-1/2 shadow-2 bg-white rounded-full;
-}
-</style>

@@ -17,7 +17,7 @@ const { copy, copied } = useClipboard({ source: () => color });
   <RuiTooltip
     :popper="{ placement: 'top' }"
     :close-delay="400"
-    tooltip-class="text-center"
+    :class-names="{ tooltip: 'text-center' }"
     v-bind="$attrs"
   >
     <template #activator>

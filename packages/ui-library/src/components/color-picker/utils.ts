@@ -2,7 +2,10 @@ import tinycolor, { type ColorInput } from 'tinycolor2';
 
 export type ColorFormat = 'rgb' | 'hex';
 
-export function roundTwoDecimal(num: number) {
+const MAX_HUE = 360;
+const ALPHA_SCALE = 100;
+
+export function roundTwoDecimal(num: number): number {
   return Math.round(num * 100) / 100;
 }
 
@@ -20,55 +23,64 @@ export class Color {
   saturationValue = 0;
   brightnessValue = 0;
 
-  // HSL
-  hslSaturationValue = 0;
-  lightnessValue = 0;
-
   constructor(input?: ColorInput) {
     this.instance = tinycolor(input);
 
     this.initRgb();
     this.initHsb();
-    this.initLightness();
     this.initAlpha();
   }
 
-  initAlpha = () => {
+  initAlpha(): void {
     const initAlpha = this.instance.getAlpha();
-    this.alphaValue = Math.min(1, initAlpha) * 100;
-  };
+    this.alphaValue = Math.min(1, initAlpha) * ALPHA_SCALE;
+  }
 
-  initLightness = () => {
-    const { l, s } = this.instance.toHsl();
-    this.hslSaturationValue = roundTwoDecimal(s);
-    this.lightnessValue = roundTwoDecimal(l);
-  };
-
-  initRgb = () => {
+  initRgb(): void {
     const { b, g, r } = this.instance.toRgb();
 
     this.redValue = roundTwoDecimal(r);
     this.greenValue = roundTwoDecimal(g);
     this.blueValue = roundTwoDecimal(b);
-  };
+  }
 
-  initHsb = () => {
+  initHsb(): void {
     const { h, s, v } = this.instance.toHsv();
 
-    this.hueValue = Math.min(360, Math.ceil(h));
+    this.hueValue = Math.min(MAX_HUE, Math.ceil(h));
     this.saturationValue = roundTwoDecimal(s);
     this.brightnessValue = roundTwoDecimal(v);
-  };
+  }
 
-  toString(format?: ColorFormat) {
+  updateFromHsv(h: number, s: number, v: number): void {
+    this.instance = tinycolor({
+      a: this.alphaValue / ALPHA_SCALE,
+      h: roundTwoDecimal(h),
+      s: roundTwoDecimal(s),
+      v: roundTwoDecimal(v),
+    });
+    this.initRgb();
+  }
+
+  updateFromRgb(r: number, g: number, b: number): void {
+    this.instance = tinycolor({
+      a: this.alphaValue / ALPHA_SCALE,
+      r: roundTwoDecimal(r),
+      g: roundTwoDecimal(g),
+      b: roundTwoDecimal(b),
+    });
+    this.initHsb();
+  }
+
+  toString(format?: ColorFormat): string {
     return this.instance.toString(format);
   }
 
-  get hexString() {
+  get hexString(): string {
     return this.instance.toHexString();
-  };
+  }
 
-  get hex() {
+  get hex(): string {
     return this.instance.toHex();
   }
 
@@ -77,7 +89,6 @@ export class Color {
     this.initHsb();
     this.initRgb();
     this.initAlpha();
-    this.initLightness();
   }
 
   set hue(value: number) {
@@ -85,104 +96,56 @@ export class Color {
       this.saturationValue = 1;
       this.brightnessValue = 1;
     }
-    this.instance = tinycolor({
-      a: this.alphaValue / 100,
-      h: roundTwoDecimal(value),
-      s: this.saturation,
-      v: this.brightness,
-    });
-
-    this.initRgb();
-    this.initLightness();
+    this.updateFromHsv(value, this.saturation, this.brightness);
     this.hueValue = roundTwoDecimal(value);
   }
 
-  get hue() {
+  get hue(): number {
     return this.hueValue;
   }
 
   set saturation(value: number) {
-    this.instance = tinycolor({
-      a: this.alphaValue / 100,
-      h: this.hue,
-      s: roundTwoDecimal(value),
-      v: this.brightness,
-    });
-
-    this.initRgb();
-    this.initLightness();
+    this.updateFromHsv(this.hue, value, this.brightness);
     this.saturationValue = roundTwoDecimal(value);
   }
 
-  get saturation() {
+  get saturation(): number {
     return this.saturationValue;
   }
 
   set brightness(value: number) {
-    this.instance = tinycolor({
-      a: this.alphaValue / 100,
-      h: this.hue,
-      s: this.saturation,
-      v: roundTwoDecimal(value),
-    });
-
-    this.initRgb();
-    this.initLightness();
+    this.updateFromHsv(this.hue, this.saturation, value);
     this.brightnessValue = roundTwoDecimal(value);
   }
 
-  get brightness() {
+  get brightness(): number {
     return this.brightnessValue;
   }
 
   set red(value: number) {
-    const rgb = this.instance.toRgb();
-    this.instance = tinycolor({
-      ...rgb,
-      a: this.alphaValue / 100,
-      r: roundTwoDecimal(value),
-    });
-
-    this.initHsb();
-    this.initLightness();
+    this.updateFromRgb(value, this.green, this.blue);
     this.redValue = roundTwoDecimal(value);
   }
 
-  get red() {
+  get red(): number {
     return this.redValue;
   }
 
   set green(value: number) {
-    const rgb = this.instance.toRgb();
-    this.instance = tinycolor({
-      ...rgb,
-      a: this.alphaValue / 100,
-      g: roundTwoDecimal(value),
-    });
-
-    this.initHsb();
-    this.initLightness();
+    this.updateFromRgb(this.red, value, this.blue);
     this.greenValue = roundTwoDecimal(value);
   }
 
-  get green() {
+  get green(): number {
     return this.greenValue;
   }
 
   set blue(value: number) {
-    const rgb = this.instance.toRgb();
-    this.instance = tinycolor({
-      ...rgb,
-      a: this.alphaValue / 100,
-      b: roundTwoDecimal(value),
-    });
-
-    this.initHsb();
-    this.initLightness();
+    this.updateFromRgb(this.red, this.green, value);
     this.blueValue = roundTwoDecimal(value);
   }
 
-  get blue() {
+  get blue(): number {
     return this.blueValue;
   }
 
@@ -191,7 +154,15 @@ export class Color {
   }
 }
 
-export function useElementDrag(handler: (x: number, y: number) => any) {
+type DragHandler = (x: number, y: number) => void;
+
+interface DragEvents {
+  handleClick: (e: { clientX: number; clientY: number }) => void;
+  onMouseDown: (e: MouseEvent) => void;
+  onTouchStart: (e: TouchEvent) => void;
+}
+
+export function useElementDrag(handler: DragHandler): DragEvents {
   let rafId: number | null = null;
 
   function handleClick(e: { clientX: number; clientY: number }): void {
@@ -204,10 +175,27 @@ export function useElementDrag(handler: (x: number, y: number) => any) {
     });
   }
 
+  function handleTouchMove(e: TouchEvent): void {
+    e.preventDefault();
+    const touch = e.touches[0];
+    if (touch)
+      handleClick(touch);
+  }
+
   function cancelRaf(): void {
     if (rafId !== null) {
       cancelAnimationFrame(rafId);
       rafId = null;
+    }
+  }
+
+  function cleanup(): void {
+    cancelRaf();
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('mousemove', handleClick);
+      window.removeEventListener('mouseup', cleanup);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', cleanup);
     }
   }
 
@@ -216,24 +204,29 @@ export function useElementDrag(handler: (x: number, y: number) => any) {
 
     if (typeof window !== 'undefined') {
       window.addEventListener('mousemove', handleClick);
-      window.addEventListener('mouseup', handleMouseUp);
+      window.addEventListener('mouseup', cleanup);
     }
   }
 
-  function handleMouseUp(): void {
-    cancelRaf();
+  function onTouchStart(e: TouchEvent): void {
+    e.preventDefault();
+    const touch = e.touches[0];
+    if (touch)
+      handleClick(touch);
+
     if (typeof window !== 'undefined') {
-      window.removeEventListener('mousemove', handleClick);
-      window.removeEventListener('mouseup', handleMouseUp);
+      window.addEventListener('touchmove', handleTouchMove, { passive: false });
+      window.addEventListener('touchend', cleanup);
     }
   }
 
   onUnmounted(() => {
-    handleMouseUp();
+    cleanup();
   });
 
   return {
     handleClick,
     onMouseDown,
+    onTouchStart,
   };
 }
