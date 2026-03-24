@@ -1,7 +1,6 @@
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiRadioGroup from '@/components/forms/radio-button/radio-group/RuiRadioGroup.vue';
-import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
 function createWrapper(
   options?: ComponentMountingOptions<typeof RuiRadioGroup>,
@@ -30,10 +29,13 @@ describe('components/forms/radio-button/radio-group/RuiRadioGroup.vue', () => {
 
   it('should pass inline props', async () => {
     wrapper = createWrapper();
-    expectWrapperNotToHaveClass(wrapper, 'div[class*=wrapper]', /inline/);
+    const radioWrapper = wrapper.findAll('div[role=radiogroup] > div')[0];
+    expect(radioWrapper?.classes()).not.toContain('flex');
 
     await wrapper.setProps({ inline: true });
-    expectWrapperToHaveClass(wrapper, 'div[class*=wrapper]', /inline/);
+    const updatedWrapper = wrapper.findAll('div[role=radiogroup] > div')[0];
+    expect(updatedWrapper?.classes()).toContain('flex');
+    expect(updatedWrapper?.classes()).toContain('space-x-6');
   });
 
   it('should pass hint props', async () => {
@@ -42,8 +44,9 @@ describe('components/forms/radio-button/radio-group/RuiRadioGroup.vue', () => {
 
     const hint = 'RadioGroup Hints';
     await wrapper.setProps({ hint });
-    expectWrapperToHaveClass(wrapper, '.details > div', /text-rui-text-secondary/);
-    expect(wrapper.find('.details > div').text()).toBe(hint);
+    const hintEl = wrapper.find('.details > div');
+    expect(hintEl.classes()).toEqual(expect.arrayContaining([expect.stringContaining('text-rui-text-secondary')]));
+    expect(hintEl.text()).toBe(hint);
   });
 
   it('should pass hint errorMessages', async () => {
@@ -52,8 +55,9 @@ describe('components/forms/radio-button/radio-group/RuiRadioGroup.vue', () => {
 
     const errorMessage = 'RadioGroup Error Message';
     await wrapper.setProps({ errorMessages: [errorMessage] });
-    expectWrapperToHaveClass(wrapper, '.details > div', /text-rui-error/);
-    expect(wrapper.find('.details > div').text()).toBe(errorMessage);
+    const errorEl = wrapper.find('.details > div');
+    expect(errorEl.classes()).toEqual(expect.arrayContaining([expect.stringContaining('text-rui-error')]));
+    expect(errorEl.text()).toBe(errorMessage);
   });
 
   it('should pass hideDetails', () => {

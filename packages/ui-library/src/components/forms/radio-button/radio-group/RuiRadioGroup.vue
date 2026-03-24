@@ -76,7 +76,7 @@ const children = computed<VNode[]>(() => {
         ﹡
       </span>
     </div>
-    <div :class="[$style.wrapper, { [$style.wrapper__inline ?? '']: inline }]">
+    <div :class="{ 'flex space-x-6': inline }">
       <Component
         :is="child"
         v-for="(child, i) in children"
@@ -97,11 +97,3 @@ const children = computed<VNode[]>(() => {
     />
   </div>
 </template>
-
-<style lang="scss" module>
-.wrapper {
-  &__inline {
-    @apply flex space-x-6;
-  }
-}
-</style>
