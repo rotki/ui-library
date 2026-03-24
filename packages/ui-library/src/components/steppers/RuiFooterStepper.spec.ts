@@ -1,7 +1,6 @@
 import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiFooterStepper from '@/components/steppers/RuiFooterStepper.vue';
-import { expectToHaveClass } from '~/tests/helpers/dom-helpers';
 
 function createWrapper(
   options: ComponentMountingOptions<typeof RuiFooterStepper>,
@@ -23,8 +22,8 @@ describe('components/steppers/RuiFooterStepper.vue', () => {
         pages: 5,
       },
     });
-    expectToHaveClass(wrapper.element, /_footer-stepper_/);
-    expectToHaveClass(wrapper.element, /_numeric_/);
+    expect(wrapper.element.getAttribute('data-variant')).toBe('numeric');
+    expect(wrapper.find('[data-id=numeric]').exists()).toBeTruthy();
   });
 
   it('should have role="navigation" and aria-label on root', () => {
@@ -61,7 +60,7 @@ describe('components/steppers/RuiFooterStepper.vue', () => {
       },
     });
 
-    expect(wrapper.find('span[class*=numeric]').text()).toBe('3/5');
+    expect(wrapper.find('[data-id=numeric]').text()).toBe('3/5');
   });
 
   it('should emit update:modelValue on next and back click', async () => {
@@ -109,7 +108,7 @@ describe('components/steppers/RuiFooterStepper.vue', () => {
       },
     });
 
-    const bullets = wrapper.findAll('div[class*=bullets] span');
+    const bullets = wrapper.findAll('[data-id=bullets] span');
     expect(bullets).toHaveLength(5);
     expect(bullets[1]!.attributes('aria-current')).toBe('step');
     expect(bullets[0]!.attributes('aria-current')).toBeUndefined();
@@ -124,7 +123,7 @@ describe('components/steppers/RuiFooterStepper.vue', () => {
       },
     });
 
-    const pills = wrapper.findAll('div[class*=pills] span');
+    const pills = wrapper.findAll('[data-id=pills] span');
     expect(pills).toHaveLength(5);
     expect(pills[3]!.attributes('aria-current')).toBe('step');
     expect(pills[0]!.attributes('aria-current')).toBeUndefined();
@@ -153,12 +152,12 @@ describe('components/steppers/RuiFooterStepper.vue', () => {
     });
 
     await wrapper.setProps({ variant: 'progress' });
-    expectToHaveClass(wrapper.element, /_progress_/);
+    expect(wrapper.element.getAttribute('data-variant')).toBe('progress');
 
     const next = wrapper.find('button ~ button span[class*=_label] span');
     expect(next.exists()).toBeTruthy();
 
     await wrapper.setProps({ variant: 'pill' });
-    expectToHaveClass(wrapper.element, /_pill_/);
+    expect(wrapper.element.getAttribute('data-variant')).toBe('pill');
   });
 });

@@ -2,10 +2,12 @@
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
+import { FooterStepperVariant } from '@/components/steppers/footer-stepper-variant';
+import { tv } from '@/utils/tv';
 
 export interface Props {
   pages: number;
-  variant?: 'numeric' | 'bullet' | 'progress' | 'pill';
+  variant?: FooterStepperVariant;
   arrowButtons?: boolean;
   hideButtons?: boolean;
 }
@@ -18,24 +20,42 @@ const modelValue = defineModel<number>({ default: 1 });
 
 const {
   pages,
-  variant = 'numeric',
+  variant: variantProp = FooterStepperVariant.numeric,
   arrowButtons = false,
   hideButtons = false,
 } = defineProps<Props>();
+
+const footerStepper = {
+  arrowButton: '!bg-white !disabled:bg-white/60 dark:!disabled:bg-[rgb(50,50,50)]',
+  bullet: tv({
+    base: 'rounded-full h-2 w-2 bg-black/[0.26] dark:bg-white/30 transition-colors cursor-pointer hover:bg-rui-grey-300 dark:hover:bg-rui-grey-400',
+    variants: {
+      active: {
+        true: 'bg-rui-primary dark:bg-rui-primary hover:bg-rui-primary dark:hover:bg-rui-primary',
+      },
+    },
+  }),
+  pill: tv({
+    base: 'rounded-full h-2 w-full bg-rui-grey-200 dark:bg-rui-grey-300 transition-colors',
+    variants: {
+      active: {
+        true: 'bg-rui-primary dark:bg-rui-primary',
+      },
+    },
+  }),
+};
 
 function onChange(delta: number): void {
   set(modelValue, get(modelValue) + delta);
 }
 
 function onPrev(): void {
-  const value = get(modelValue);
-  if (value)
+  if (get(modelValue) > 1)
     onChange(-1);
 }
 
 function onNext(): void {
-  const value = get(modelValue);
-  if (value < pages)
+  if (get(modelValue) < pages)
     onChange(1);
 }
 
@@ -48,15 +68,19 @@ function onClick(index: number): void {
   <div
     role="navigation"
     aria-label="Step navigation"
-    :class="[$style['footer-stepper'], $style[variant ?? '']]"
+    class="flex items-center justify-between gap-x-4 transition-all duration-150"
+    :data-variant="variantProp"
   >
-    <template v-if="variant === 'pill'">
-      <div :class="$style.pills">
+    <template v-if="variantProp === FooterStepperVariant.pill">
+      <div
+        data-id="pills"
+        class="flex w-full gap-x-3"
+      >
         <span
           v-for="i in pages"
           :key="i"
           :aria-current="modelValue === i ? 'step' : undefined"
-          :class="[$style.pill, { [$style.active]: modelValue === i }]"
+          :class="footerStepper.pill({ active: modelValue === i })"
         />
       </div>
     </template>
@@ -64,7 +88,7 @@ function onClick(index: number): void {
       <RuiButton
         v-if="!hideButtons"
         aria-label="Previous"
-        :class="{ [$style.arrow__button]: arrowButtons }"
+        :class="arrowButtons ? footerStepper.arrowButton : undefined"
         :disabled="modelValue <= 1"
         :icon="arrowButtons"
         :variant="arrowButtons ? 'outlined' : 'text'"
@@ -88,33 +112,35 @@ function onClick(index: number): void {
         />
       </RuiButton>
       <span
-        v-if="variant === 'numeric'"
-        :class="$style.numeric"
+        v-if="variantProp === FooterStepperVariant.numeric"
+        data-id="numeric"
+        class="text-rui-text"
       >
         {{ modelValue }}/{{ pages }}
       </span>
       <div
-        v-else-if="variant === 'bullet'"
-        :class="$style.bullets"
+        v-else-if="variantProp === FooterStepperVariant.bullet"
+        data-id="bullets"
+        class="flex gap-x-1"
       >
         <span
           v-for="i in pages"
           :key="i"
           :aria-current="modelValue === i ? 'step' : undefined"
-          :class="[$style.bullet, { [$style.active]: modelValue === i }]"
+          :class="footerStepper.bullet({ active: modelValue === i })"
           @click="onClick(i)"
         />
       </div>
       <RuiProgress
-        v-else-if="variant === 'progress'"
-        :class="$style.progress"
+        v-else-if="variantProp === FooterStepperVariant.progress"
+        class="max-w-[60%]"
         color="primary"
         :value="(modelValue / pages) * 100"
       />
       <RuiButton
         v-if="!hideButtons"
         aria-label="Next"
-        :class="{ [$style.arrow__button]: arrowButtons }"
+        :class="arrowButtons ? footerStepper.arrowButton : undefined"
         :disabled="modelValue >= pages"
         :icon="arrowButtons"
         :variant="arrowButtons ? 'outlined' : 'text'"
@@ -140,97 +166,3 @@ function onClick(index: number): void {
     </template>
   </div>
 </template>
-
-<style lang="scss" module>
-.footer-stepper {
-  @apply flex items-center justify-between gap-x-4 transition-all duration-150;
-
-  .numeric {
-    @apply text-rui-text;
-  }
-
-  .bullets,
-  .pills {
-    @apply flex;
-
-    .bullet,
-    .pill {
-      @apply rounded-full h-2 bg-black/[0.26] transition-colors;
-
-      &.active {
-        @apply bg-rui-primary;
-      }
-    }
-
-    .bullet {
-      @apply hover:bg-rui-grey-300 cursor-pointer;
-
-      &.active {
-        @apply hover:bg-rui-primary;
-      }
-    }
-
-    .pill {
-      @apply bg-rui-grey-200;
-    }
-  }
-
-  .bullets {
-    @apply gap-x-1;
-
-    .bullet {
-      @apply w-2;
-    }
-  }
-
-  .pills {
-    @apply w-full gap-x-3;
-
-    .pill {
-      @apply w-full;
-    }
-  }
-
-  .progress {
-    @apply max-w-[60%];
-  }
-
-  .arrow__button {
-    @apply bg-white disabled:bg-white/60 #{!important};
-  }
-}
-
-:global(.dark) {
-  .footer-stepper {
-    .bullets,
-    .pills {
-      .bullet,
-      .pill {
-        @apply bg-rui-grey-300;
-
-        &.active {
-          @apply bg-rui-primary;
-        }
-      }
-
-      .bullet {
-        @apply hover:bg-rui-grey-400;
-
-        &.active {
-          @apply hover:bg-rui-primary;
-        }
-      }
-    }
-
-    .bullets {
-      .bullet {
-        @apply bg-white/30;
-      }
-    }
-
-    .arrow__button {
-      @apply disabled:bg-[rgb(50,50,50)] #{!important};
-    }
-  }
-}
-</style>
