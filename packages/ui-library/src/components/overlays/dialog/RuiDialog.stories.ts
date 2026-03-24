@@ -22,7 +22,7 @@ function render(args: ComponentPropsAndSlots<typeof RuiDialog>) {
           </RuiButton>
         </template>
         <template #default="{ close }">
-          <RuiCard no-padding>
+          <RuiCard no-padding :class="{ '!rounded-b-none': args.bottomSheet }">
             <template #header>
               Header
             </template>
@@ -61,6 +61,7 @@ const meta = preview.meta({
     width: '98%',
   },
   argTypes: {
+    bottomSheet: { control: 'boolean' },
     maxWidth: { control: 'text' },
     persistent: { control: 'boolean' },
     width: { control: 'text' },
@@ -104,6 +105,24 @@ export const Persistent = meta.story({
     await userEvent.keyboard('{Escape}');
     await expect(body.getByText('Contents')).toBeVisible();
     // Close button should still work
+    const closeButton = body.getByRole('button', { name: 'Close' });
+    await userEvent.click(closeButton);
+    await waitFor(() => expect(body.queryByRole('dialog')).toBeNull());
+  },
+});
+
+export const BottomSheet = meta.story({
+  args: {
+    bottomSheet: true,
+  },
+  async play({ canvas, userEvent }) {
+    const activator = canvas.getByRole('button', { name: 'Click me!' });
+    await userEvent.click(activator);
+    const body = within(document.body);
+    await waitFor(() => expect(body.getByText('Contents')).toBeVisible());
+    // Verify bottom sheet positioning via data attribute
+    const content = document.querySelector('[data-id=content]');
+    expect(content).toHaveAttribute('data-bottom-sheet', 'true');
     const closeButton = body.getByRole('button', { name: 'Close' });
     await userEvent.click(closeButton);
     await waitFor(() => expect(body.queryByRole('dialog')).toBeNull());

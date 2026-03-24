@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import type { VueClassValue } from '@/types/class-value';
+import { useTimeoutManager } from '@/composables/timeout-manager';
 import { getNonRootAttrs, getRootAttrs, transformPropsUnit } from '@/utils/helpers';
+import { cn, tv } from '@/utils/tv';
 
 export interface RuiDialogClassNames {
-  root?: string;
-  content?: string;
+  root?: VueClassValue;
+  content?: VueClassValue;
 }
 
 export interface DialogProps {
@@ -47,54 +50,67 @@ defineSlots<{
   default?: (props: { isOpen: boolean; close: () => void }) => any;
 }>();
 
-const internalValue = ref<boolean>(false);
-const isOpen = ref<boolean>(false);
+const transitioning = ref<boolean>(false);
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef');
+
+const leaveTimeout = useTimeoutManager();
+
+const alive = computed<boolean>(() => get(modelValue) || get(transitioning));
 
 const style = computed<{ width: string | undefined; maxWidth: string | undefined }>(() => ({
   width: transformPropsUnit(width),
   maxWidth: transformPropsUnit(maxWidth),
 }));
 
-const dialogAttrs = computed<{ onClick: () => void }>(() => ({
-  onClick: () => {
-    const newValue = !get(internalValue);
-    set(internalValue, newValue);
-    onUpdateModelValue(newValue);
+const dialog = tv({
+  slots: {
+    root: 'fixed inset-0',
+    overlay: 'absolute inset-0 backdrop-blur bg-rui-grey-500/50 dark:bg-black/50',
+    content: 'absolute left-1/2 bottom-0 -translate-x-1/2 outline-none overflow-y-auto max-h-[90vh]',
   },
-}));
+  variants: {
+    bottomSheet: {
+      true: { content: '' },
+      false: { content: 'top-1/2 -translate-y-1/2 bottom-auto' },
+    },
+  },
+  defaultVariants: { bottomSheet: false },
+});
+
+const ui = computed<ReturnType<typeof dialog>>(() => dialog({ bottomSheet }));
+
+const dialogAttrs: { onClick: () => void } = {
+  onClick: toggle,
+};
 
 const contentTransition = computed<Record<string, string>>(() => {
   if (!bottomSheet) {
     return {
-      enterFromClass: 'opacity-0 scale-75',
-      enterActiveClass: 'ease-out duration-150',
+      enterFromClass: 'opacity-0 scale-95',
+      enterActiveClass: 'transition-all ease-out duration-200',
       enterToClass: 'opacity-100 scale-100',
       leaveFromClass: 'opacity-100 scale-100',
-      leaveActiveClass: 'ease-in duration-100',
-      leaveToClass: 'opacity-0 scale-75',
+      leaveActiveClass: 'transition-all ease-in duration-150',
+      leaveToClass: 'opacity-0 scale-95',
     };
   }
 
   return {
     enterFromClass: 'translate-y-full',
-    enterActiveClass: 'ease-out duration-150',
+    enterActiveClass: 'transition-transform ease-out duration-300',
     enterToClass: 'translate-y-0',
     leaveFromClass: 'translate-y-0',
-    leaveActiveClass: 'ease-in duration-100',
+    leaveActiveClass: 'transition-transform ease-in duration-200',
     leaveToClass: 'translate-y-full',
   };
 });
 
-function onUpdateModelValue(value: boolean): void {
-  set(modelValue, value);
-
-  if (!value)
-    emit('closed');
+function toggle(): void {
+  set(modelValue, !get(modelValue));
 }
 
 function close(): void {
-  set(isOpen, false);
+  set(modelValue, false);
 }
 
 function onEscClick(): void {
@@ -111,67 +127,28 @@ function onClickOutside(): void {
   emit('click:outside');
 }
 
-watch(
-  modelValue,
-  (value) => {
-    nextTick(() => {
-      set(internalValue, value);
-    });
-  },
-  { immediate: true },
-);
-
-let internalValueTimeoutId: ReturnType<typeof setTimeout> | undefined;
-let isOpenTimeoutId: ReturnType<typeof setTimeout> | undefined;
-
-watch(internalValue, (value) => {
-  if (internalValueTimeoutId !== undefined) {
-    clearTimeout(internalValueTimeoutId);
-    internalValueTimeoutId = undefined;
+function onLeaveComplete(): void {
+  leaveTimeout.clear();
+  if (get(transitioning)) {
+    set(transitioning, false);
+    emit('closed');
   }
-  if (value) {
-    nextTick(() => {
-      set(isOpen, value);
-    });
+}
+
+watch(modelValue, (value) => {
+  if (!value) {
+    set(transitioning, true);
+    // Safety fallback if transitionend is not detected
+    leaveTimeout.create(onLeaveComplete, 400);
+  }
+});
+
+watch(contentRef, (ref) => {
+  if (ref) {
+    nextTick(() => ref.focus());
   }
   else {
-    internalValueTimeoutId = setTimeout(() => {
-      set(isOpen, value);
-      internalValueTimeoutId = undefined;
-    }, 100);
-  }
-});
-
-watch(isOpen, (isOpen) => {
-  if (isOpenTimeoutId !== undefined) {
-    clearTimeout(isOpenTimeoutId);
-    isOpenTimeoutId = undefined;
-  }
-  if (isOpen) {
-    onUpdateModelValue(isOpen);
-    set(internalValue, isOpen);
-  }
-  else {
-    isOpenTimeoutId = setTimeout(() => {
-      onUpdateModelValue(isOpen);
-      set(internalValue, isOpen);
-      isOpenTimeoutId = undefined;
-    }, 100);
-  }
-});
-
-onBeforeUnmount(() => {
-  if (internalValueTimeoutId !== undefined)
-    clearTimeout(internalValueTimeoutId);
-  if (isOpenTimeoutId !== undefined)
-    clearTimeout(isOpenTimeoutId);
-});
-
-watch(contentRef, (contentRef) => {
-  if (contentRef) {
-    nextTick(() => {
-      contentRef.focus();
-    });
+    onLeaveComplete();
   }
 });
 </script>
@@ -180,12 +157,12 @@ watch(contentRef, (contentRef) => {
   <div v-bind="getRootAttrs($attrs)">
     <slot
       name="activator"
-      v-bind="{ attrs: dialogAttrs, isOpen }"
+      v-bind="{ attrs: dialogAttrs, isOpen: modelValue }"
     />
     <Teleport to="body">
       <div
-        v-if="isOpen || internalValue"
-        :class="[$style.wrapper, classNames?.root]"
+        v-if="alive"
+        :class="ui.root({ class: cn(classNames?.root) })"
         :style="{ zIndex }"
         role="dialog"
         aria-modal="true"
@@ -196,56 +173,36 @@ watch(contentRef, (contentRef) => {
       >
         <Transition
           enter-from-class="opacity-0"
-          enter-active-class="ease-out duration-150"
+          enter-active-class="transition-opacity ease-out duration-200"
           enter-to-class="opacity-100"
           leave-from-class="opacity-100"
-          leave-active-class="ease-in duration-100"
+          leave-active-class="transition-opacity ease-in duration-150"
           leave-to-class="opacity-0"
         >
           <div
-            v-if="isOpen && internalValue"
+            v-if="modelValue"
             data-id="overlay"
-            :class="$style.overlay"
+            :class="ui.overlay()"
             @click.stop="onClickOutside()"
           />
         </Transition>
-        <Transition v-bind="contentTransition">
+        <Transition
+          v-bind="contentTransition"
+          @after-leave="onLeaveComplete()"
+        >
           <div
-            v-if="isOpen && internalValue"
+            v-if="modelValue"
             ref="contentRef"
             data-id="content"
             :style="style"
             tabindex="0"
-            :class="[$style.content, classNames?.content ?? contentClass, { [$style.center]: !bottomSheet }]"
+            :data-bottom-sheet="bottomSheet || undefined"
+            :class="ui.content({ class: cn(classNames?.content) ?? cn(contentClass) })"
           >
-            <slot v-bind="{ isOpen, close }" />
+            <slot v-bind="{ isOpen: modelValue, close }" />
           </div>
         </Transition>
       </div>
     </Teleport>
   </div>
 </template>
-
-<style lang="scss" module>
-.wrapper {
-  @apply fixed w-full h-full top-0 left-0;
-}
-
-.overlay {
-  @apply absolute top-0 left-0 w-full h-full backdrop-blur bg-rui-grey-500/[0.5];
-}
-
-.content {
-  @apply absolute left-1/2 bottom-0 transform -translate-x-1/2 outline-none overflow-y-auto max-h-[90vh];
-
-  &.center {
-    @apply top-1/2 -translate-y-1/2 bottom-auto;
-  }
-}
-
-:global(.dark) {
-  .overlay {
-    @apply bg-black/[0.5];
-  }
-}
-</style>

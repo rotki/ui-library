@@ -24,8 +24,8 @@ test.describe('bottom-sheet', () => {
     await page.keyboard.press('Escape');
     await expect(page.locator('div[role=dialog]')).toBeVisible();
 
-    // should not close the bottom sheet
-    await page.locator('div[role=dialog] [data-id=overlay]').click({ force: true });
+    // should not close the bottom sheet (click overlay area not covered by content)
+    await page.locator('div[role=dialog] [data-id=overlay]').click({ force: true, position: { x: 10, y: 10 } });
     await expect(page.locator('div[role=dialog]')).toBeVisible();
 
     // close the bottom sheet
@@ -49,8 +49,8 @@ test.describe('bottom-sheet', () => {
     await activator.click();
     await expect(page.locator('div[role=dialog]')).toBeVisible();
 
-    // should close the bottom sheet too
-    await page.locator('div[role=dialog] [data-id=overlay]').click({ force: true });
+    // should close the bottom sheet too (click overlay area not covered by content)
+    await page.locator('div[role=dialog] [data-id=overlay]').click({ force: true, position: { x: 10, y: 10 } });
     await expect(page.locator('div[role=dialog]')).toHaveCount(0);
   });
 

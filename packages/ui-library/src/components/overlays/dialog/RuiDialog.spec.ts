@@ -57,7 +57,7 @@ describe('components/overlays/dialog/RuiDialog.vue', () => {
 
     assertExists(dialog);
     expect(dialog.querySelector('[data-id=content]')).toBeTruthy();
-    expect(dialog.querySelector('div[class*=_center_]')).toBeTruthy();
+    expect(dialog.querySelector('[data-id=content]:not([data-bottom-sheet])')).toBeTruthy();
 
     // Click the button that call close function
     const closeButton = dialog.querySelector<HTMLButtonElement>('#close');

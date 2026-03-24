@@ -41,7 +41,10 @@ const bottomSheets = ref<BottomSheetData[]>([
           </RuiButton>
         </template>
         <template #default="{ close }">
-          <RuiCard no-padding>
+          <RuiCard
+            no-padding
+            class="!rounded-b-none"
+          >
             <template #header>
               Header
             </template>
