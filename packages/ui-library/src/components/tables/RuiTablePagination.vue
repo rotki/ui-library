@@ -2,15 +2,11 @@
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiMenuSelect from '@/components/forms/select/RuiMenuSelect.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
+import { type TablePaginationData, usePaginationNavigation } from '@/components/tables/use-pagination-navigation';
 import { useTable } from '@/composables/defaults/table';
-import { formatInteger } from '@/utils/helpers';
+import { tv } from '@/utils/tv';
 
-export interface TablePaginationData {
-  page: number;
-  total: number;
-  limit: number;
-  limits?: number[];
-}
+export type { TablePaginationData };
 
 export interface Props {
   dense?: boolean;
@@ -22,106 +18,50 @@ const modelValue = defineModel<TablePaginationData>({ required: true });
 
 const { dense = false, loading = false, disablePerPage = false } = defineProps<Props>();
 
+const paginationStyles = tv({
+  slots: {
+    wrapper: 'relative flex flex-wrap items-center justify-end gap-x-4 gap-y-0',
+    limit: 'flex items-center space-x-2 text-caption',
+    ranges: 'flex items-center space-x-2 text-caption pr-2',
+    sectionLabel: 'text-rui-text-secondary whitespace-nowrap py-3',
+    indicator: 'text-rui-text text-caption whitespace-nowrap',
+    navigation: 'flex items-center',
+  },
+  variants: {
+    dense: {
+      true: {
+        wrapper: 'gap-x-2',
+      },
+    },
+  },
+});
+
+const ui = computed<ReturnType<typeof paginationStyles>>(() => paginationStyles({ dense }));
+
 const tableDefaults = useTable();
 
-const limits = computed<{ limit: number }[]>(() =>
-  (get(modelValue).limits ?? get(tableDefaults.limits)).map(limit => ({ limit })),
-);
-
-const currentLimit = computed<number>({
-  get: () => get(modelValue).limit,
-  set: limit =>
-    set(modelValue, {
-      ...get(modelValue),
-      limit: Number(limit),
-      page: 1,
-    }),
-});
-
-const pages = computed<number>(() => {
-  const { limit, total } = get(modelValue);
-  if (!total)
-    return 0;
-
-  return Math.ceil(total / limit);
-});
-
-const ranges = computed<{ page: number; text: string }[]>(() => {
-  const segments = [];
-
-  for (let page = 1; page <= get(pages); page++) segments.push({ page, text: pageRangeText(page) });
-
-  return segments;
-});
-
-const indicatorText = computed<string>(() => {
-  const { total } = get(modelValue);
-  return `${!total ? '0 ' : ''}of ${formatInteger(total)}`;
-});
-
-const currentRange = computed<number>({
-  get: () => get(modelValue).page,
-  set: page =>
-    set(modelValue, {
-      ...get(modelValue),
-      page,
-    }),
-});
-
-const hasPrev = computed<boolean>(() => get(modelValue).page > 1);
-const hasNext = computed<boolean>(() => get(pages) > get(modelValue).page);
-
-function goToPage(page: number): void {
-  set(modelValue, {
-    ...get(modelValue),
-    page,
-  });
-}
-
-function pageRangeText(page: number): string {
-  const { limit, total } = get(modelValue);
-  return `${formatInteger((page - 1) * limit + 1)} - ${formatInteger(
-    Math.min(page * limit, total),
-  )}`;
-}
-
-function onNavigate(delta: number): void {
-  goToPage(get(modelValue).page + delta);
-}
-
-function onPrev(): void {
-  if (!get(hasPrev))
-    return;
-
-  onNavigate(-1);
-}
-
-function onNext(): void {
-  if (!get(hasNext))
-    return;
-
-  onNavigate(1);
-}
-
-function onFirst(): void {
-  if (!get(hasPrev))
-    return;
-
-  goToPage(1);
-}
-
-function onLast(): void {
-  if (!get(hasNext))
-    return;
-
-  goToPage(get(pages));
-}
+const {
+  limits,
+  currentLimit,
+  ranges,
+  indicatorText,
+  currentRange,
+  hasPrev,
+  hasNext,
+  onPrev,
+  onNext,
+  onFirst,
+  onLast,
+} = usePaginationNavigation(modelValue, tableDefaults);
 </script>
 
 <template>
-  <div :class="[$style.wrapper, { [$style['wrapper-dense'] ?? '']: dense }]">
-    <div :class="$style.limit">
-      <span :class="$style.limit__text">Rows per page:</span>
+  <div :class="ui.wrapper()">
+    <div
+      :class="ui.limit()"
+      data-id="table-pagination-limit-section"
+    >
+      <span :class="ui.sectionLabel()">Rows per page:</span>
       <RuiMenuSelect
         v-model="currentLimit"
         :options="limits"
@@ -135,8 +75,11 @@ function onLast(): void {
         data-id="table-pagination-limit"
       />
     </div>
-    <div :class="$style.ranges">
-      <span :class="$style.ranges__text">Items #</span>
+    <div
+      :class="ui.ranges()"
+      data-id="table-pagination-ranges-section"
+    >
+      <span :class="ui.sectionLabel()">Items #</span>
       <RuiMenuSelect
         v-if="ranges.length > 0"
         v-model="currentRange"
@@ -150,12 +93,12 @@ function onLast(): void {
         dense
         data-id="table-pagination-ranges"
       />
-      <span :class="$style.indicator">
+      <span :class="ui.indicator()">
         {{ indicatorText }}
       </span>
     </div>
     <div
-      :class="$style.navigation"
+      :class="ui.navigation()"
       data-id="table-pagination-navigation"
     >
       <RuiButton
@@ -201,37 +144,3 @@ function onLast(): void {
     </div>
   </div>
 </template>
-
-<style module lang="scss">
-.wrapper {
-  @apply relative flex flex-wrap items-center justify-end gap-x-4 gap-y-0;
-
-  .limit {
-    @apply flex items-center space-x-2 text-caption;
-
-    &__text {
-      @apply text-rui-text-secondary whitespace-nowrap py-3;
-    }
-  }
-
-  .ranges {
-    @apply flex items-center space-x-2 text-caption pr-2;
-
-    &__text {
-      @apply text-rui-text-secondary whitespace-nowrap py-3;
-    }
-  }
-
-  .indicator {
-    @apply text-rui-text text-caption whitespace-nowrap;
-  }
-
-  .navigation {
-    @apply flex items-center;
-  }
-
-  &-dense {
-    @apply gap-x-2;
-  }
-}
-</style>

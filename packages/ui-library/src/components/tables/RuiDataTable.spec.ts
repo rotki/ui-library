@@ -107,10 +107,10 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(wrapper.find('table tbody td[class*=_checkbox_]').exists()).toBeTruthy();
     expect(wrapper.find('table tbody td[class*=_align__start_]').exists()).toBeTruthy();
     expect(wrapper.find('table tbody td[class*=_align__start_]').exists()).toBeTruthy();
-    expect(wrapper.find('div div[class*=_limit_]').exists()).toBeTruthy();
-    expect(wrapper.find('div div[class*=_limit_]').exists()).toBeTruthy();
-    expect(wrapper.find('div div[class*=_navigation_]').exists()).toBeTruthy();
-    expect(wrapper.find('div div[class*=_navigation_] button[disabled]').exists()).toBeTruthy();
+    expect(wrapper.find('div[data-id=table-pagination-limit-section]').exists()).toBeTruthy();
+    expect(wrapper.find('div[data-id=table-pagination-ranges-section]').exists()).toBeTruthy();
+    expect(wrapper.find('div[data-id=table-pagination-navigation]').exists()).toBeTruthy();
+    expect(wrapper.find('div[data-id=table-pagination-navigation] button[disabled]').exists()).toBeTruthy();
 
     expect(wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"]').exists()).toBeTruthy();
     expect(wrapper.find('tbody tr:nth-child(2) div[data-id=expanded-content]').exists()).toBeFalsy();
@@ -119,9 +119,9 @@ describe('components/tables/RuiDataTable.vue', () => {
 
     expect(wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"][aria-expanded="true"]').exists()).toBeTruthy();
     expect(wrapper.find('tbody tr:nth-child(2) div[data-id=expanded-content]').exists()).toBeTruthy();
-    expect(wrapper.find('div[data-id=table-pagination] div[class*=limit]').exists()).toBeTruthy();
-    expect(wrapper.find('div[data-id=table-pagination] div[class*=ranges]').exists()).toBeTruthy();
-    expect(wrapper.find('div[data-id=table-pagination] div[class*=navigation]').exists()).toBeTruthy();
+    expect(wrapper.find('div[data-id=table-pagination-limit-section]').exists()).toBeTruthy();
+    expect(wrapper.find('div[data-id=table-pagination-ranges-section]').exists()).toBeTruthy();
+    expect(wrapper.find('div[data-id=table-pagination-navigation]').exists()).toBeTruthy();
   });
 
   it('should multiple expand toggles correctly', async () => {
@@ -962,9 +962,9 @@ describe('components/tables/RuiDataTable.vue', () => {
 
     const paginator = wrapper.findComponent(RuiTablePagination);
     expect(paginator.exists()).toBeTruthy();
-    expect(paginator.find('div[data-id=table-pagination] div[class*=limit]').exists()).toBeTruthy();
-    expect(paginator.find('div[data-id=table-pagination] div[class*=ranges]').exists()).toBeTruthy();
-    expect(paginator.find('div[data-id=table-pagination] div[class*=navigation]').exists()).toBeTruthy();
+    expect(paginator.find('div[data-id=table-pagination-limit-section]').exists()).toBeTruthy();
+    expect(paginator.find('div[data-id=table-pagination-ranges-section]').exists()).toBeTruthy();
+    expect(paginator.find('div[data-id=table-pagination-navigation]').exists()).toBeTruthy();
 
     const navButtons = paginator.findAllComponents(RuiButton);
     expect(navButtons).toHaveLength(4);
