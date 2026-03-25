@@ -12,8 +12,17 @@ import type { VueClassValue } from '@/types/class-value';
 import { createTV } from 'tailwind-variants';
 import { normalizeClass } from 'vue';
 
+const isAny: (v: string) => boolean = () => true;
+
 export const tv = /* @__PURE__ */ createTV({
-  twMerge: true,
+  twMergeConfig: {
+    classGroups: {
+      'bg-tint': [{ 'bg-tint': [isAny] }],
+      'bg-shade': [{ 'bg-shade': [isAny] }],
+      'text-tint': [{ 'text-tint': [isAny] }],
+      'text-shade': [{ 'text-shade': [isAny] }],
+    },
+  },
 });
 
 /**

@@ -1,7 +1,6 @@
 import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import RuiAlert from '@/components/alerts/RuiAlert.vue';
-import { expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiAlert>): VueWrapper<InstanceType<typeof RuiAlert>> {
   return mount(RuiAlert, { ...options, global: { stubs: ['rui-icon'] } });
@@ -26,30 +25,30 @@ describe('components/alerts/RuiAlert.vue', () => {
 
   it('should pass type props', async () => {
     wrapper = createWrapper({ props: { title: 'Title' } });
-    expectWrapperToHaveClass(wrapper, 'div[class*=alert]', /_primary_/);
+    expect(wrapper.find('[data-type=primary]').exists()).toBeTruthy();
 
     await wrapper.setProps({ type: 'error' });
-    expectWrapperToHaveClass(wrapper, 'div[class*=alert]', /_error_/);
+    expect(wrapper.find('[data-type=error]').exists()).toBeTruthy();
 
     await wrapper.setProps({ type: 'warning' });
-    expectWrapperToHaveClass(wrapper, 'div[class*=alert]', /_warning_/);
+    expect(wrapper.find('[data-type=warning]').exists()).toBeTruthy();
 
     await wrapper.setProps({ type: 'info' });
-    expectWrapperToHaveClass(wrapper, 'div[class*=alert]', /_info_/);
+    expect(wrapper.find('[data-type=info]').exists()).toBeTruthy();
 
     await wrapper.setProps({ type: 'success' });
-    expectWrapperToHaveClass(wrapper, 'div[class*=alert]', /_success_/);
+    expect(wrapper.find('[data-type=success]').exists()).toBeTruthy();
   });
 
   it('should pass variant props', async () => {
     wrapper = createWrapper({ props: { title: 'Title' } });
-    expectWrapperToHaveClass(wrapper, 'div[class*=alert]', /_default_/);
+    expect(wrapper.find('[data-variant=default]').exists()).toBeTruthy();
 
     await wrapper.setProps({ variant: 'filled' });
-    expectWrapperToHaveClass(wrapper, 'div[class*=alert]', /_filled_/);
+    expect(wrapper.find('[data-variant=filled]').exists()).toBeTruthy();
 
     await wrapper.setProps({ variant: 'outlined' });
-    expectWrapperToHaveClass(wrapper, 'div[class*=alert]', /_outlined_/);
+    expect(wrapper.find('[data-variant=outlined]').exists()).toBeTruthy();
   });
 
   it('should pass correct icon', async () => {
@@ -80,22 +79,22 @@ describe('components/alerts/RuiAlert.vue', () => {
 
   it('should pass action text and the callback', async () => {
     wrapper = createWrapper({ props: { title: 'Title' } });
-    expect(wrapper.find('[class*=action]').exists()).toBeFalsy();
+    expect(wrapper.find('[data-id=alert-action]').exists()).toBeFalsy();
 
     await wrapper.setProps({ actionText: 'Action' });
-    expect(wrapper.find('[class*=action]').exists()).toBeTruthy();
-    await wrapper.find('[class*=action]').trigger('click');
+    expect(wrapper.find('[data-id=alert-action]').exists()).toBeTruthy();
+    await wrapper.find('[data-id=alert-action]').trigger('click');
 
     expect(wrapper.emitted('action')).toBeTruthy();
   });
 
   it('should pass the close button callback', async () => {
     wrapper = createWrapper({ props: { title: 'Title' } });
-    expect(wrapper.find('[class*=close]').exists()).toBeFalsy();
+    expect(wrapper.find('[data-id=alert-close]').exists()).toBeFalsy();
 
     await wrapper.setProps({ closeable: true });
-    expect(wrapper.find('[class*=close]').exists()).toBeTruthy();
-    await wrapper.find('[class*=close]').trigger('click');
+    expect(wrapper.find('[data-id=alert-close]').exists()).toBeTruthy();
+    await wrapper.find('[data-id=alert-close]').trigger('click');
 
     expect(wrapper.emitted('close')).toBeTruthy();
   });

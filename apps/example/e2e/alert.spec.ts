@@ -8,13 +8,11 @@ test.describe('alerts', () => {
   test('checks for alerts and alert text', async ({ page }) => {
     await expect(page.locator('h2[data-id=alerts]')).toContainText('Alerts');
 
-    // Find alerts that have action buttons and close buttons using native locators
-    // Instead of finding button first and traversing up with XPath, find alert first
-    const actionAlert = page.locator('div[class*=_alert_]').filter({ has: page.locator('button[class*=_action_]') }).first();
-    const closeAlert = page.locator('div[class*=_alert_]').filter({ has: page.locator('button[class*=_close_]') }).first();
+    const actionAlert = page.locator('[data-type]').filter({ has: page.locator('[data-id=alert-action]') }).first();
+    const closeAlert = page.locator('[data-type]').filter({ has: page.locator('[data-id=alert-close]') }).first();
 
-    const actionButton = actionAlert.locator('button[class*=_action_]');
-    const closeButton = closeAlert.locator('button[class*=_close_]');
+    const actionButton = actionAlert.locator('[data-id=alert-action]');
+    const closeButton = closeAlert.locator('[data-id=alert-close]');
 
     await expect(actionAlert).toContainText('primary (0)');
 
