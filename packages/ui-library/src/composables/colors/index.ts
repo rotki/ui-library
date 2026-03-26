@@ -6,10 +6,6 @@ export { getButtonColorClasses } from '@/composables/colors/button';
 
 export type { ButtonColorClasses } from '@/composables/colors/button';
 
-export { getButtonGroupColorClasses } from '@/composables/colors/button-group';
-
-export type { ButtonGroupColorClasses } from '@/composables/colors/button-group';
-
 export { getCheckControlColorClasses } from '@/composables/colors/checkbox';
 
 export type { CheckControlColorClasses } from '@/composables/colors/checkbox';

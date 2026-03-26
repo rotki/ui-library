@@ -30,9 +30,9 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
 
   it('should pass vertical props', async () => {
     wrapper = createWrapper();
-    expectNotToHaveClass(wrapper.element, /vertical/);
+    expectNotToHaveClass(wrapper.element, /flex-col/);
     await wrapper.setProps({ vertical: true });
-    expectToHaveClass(wrapper.element, /vertical/);
+    expectToHaveClass(wrapper.element, /flex-col/);
   });
 
   it('should pass color props', async () => {
@@ -41,36 +41,37 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
         color: 'primary',
       },
     });
-    expectToHaveClass(wrapper.element, /_primary_/);
+    expectToHaveClass(wrapper.element, /divide-rui-primary/);
     expectWrapperToHaveClass(wrapper, 'button', /_primary_/);
 
     await wrapper.setProps({ color: 'secondary' });
-    expectToHaveClass(wrapper.element, /_secondary_/);
+    expectToHaveClass(wrapper.element, /divide-rui-secondary/);
     expectWrapperToHaveClass(wrapper, 'button', /_secondary_/);
 
     await wrapper.setProps({ color: 'error' });
-    expectToHaveClass(wrapper.element, /_error_/);
+    expectToHaveClass(wrapper.element, /divide-rui-error/);
     expectWrapperToHaveClass(wrapper, 'button', /_error_/);
 
     await wrapper.setProps({ color: 'success' });
-    expectToHaveClass(wrapper.element, /_success_/);
+    expectToHaveClass(wrapper.element, /divide-rui-success/);
     expectWrapperToHaveClass(wrapper, 'button', /_success_/);
   });
 
   it('should pass variant props', async () => {
     wrapper = createWrapper();
-    expectNotToHaveClass(wrapper.element, /_outlined_/);
+    expectNotToHaveClass(wrapper.element, /outline-rui-text/);
     await wrapper.setProps({ variant: 'outlined' });
-    expectToHaveClass(wrapper.element, /_outlined_/);
+    expectToHaveClass(wrapper.element, /outline-rui-text/);
     expectWrapperToHaveClass(wrapper, 'button', /_outlined_/);
     await wrapper.setProps({ variant: 'text' });
-    expectToHaveClass(wrapper.element, /_text_/);
+    expectNotToHaveClass(wrapper.element, /outline-rui-text/);
     expectWrapperToHaveClass(wrapper, 'button', /_text_/);
   });
 
   it('should pass size props', async () => {
     wrapper = createWrapper();
 
+    // size is passed through to child RuiButton, check via button CSS modules
     expectWrapperNotToHaveClass(wrapper, 'button', /_sm_/);
     expectWrapperNotToHaveClass(wrapper, 'button', /_lg_/);
     await wrapper.setProps({ size: 'sm' });
@@ -200,16 +201,13 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
     expect(wrapper.props('modelValue')).toEqual([2]);
 
     await wrapper.setProps({ gap: 'md' });
-    expectToHaveClass(wrapper.element, /_separated_/);
-    expectToHaveClass(wrapper.element, /_separated__md/);
+    expectToHaveClass(wrapper.element, /gap-4/);
 
     await wrapper.setProps({ gap: 'sm' });
-    expectToHaveClass(wrapper.element, /_separated_/);
-    expectToHaveClass(wrapper.element, /_separated__sm/);
+    expectToHaveClass(wrapper.element, /gap-2/);
 
     await wrapper.setProps({ gap: 'lg' });
-    expectToHaveClass(wrapper.element, /_separated_/);
-    expectToHaveClass(wrapper.element, /_separated__lg/);
+    expectToHaveClass(wrapper.element, /gap-6/);
   });
 
   it('should handle disabled button group', async () => {
