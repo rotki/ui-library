@@ -1,7 +1,7 @@
 import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiChip from '@/components/chips/RuiChip.vue';
-import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
+import { expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiChip>): VueWrapper<InstanceType<typeof RuiChip>> {
   return mount(RuiChip, { ...options, global: { stubs: ['rui-icon'] } });
@@ -25,8 +25,8 @@ describe('components/chips/RuiChip.vue', () => {
       },
     });
 
-    expect(wrapper.find('span[class*=_label]').text()).toContain(label);
-    expect(wrapper.find('span[class*=_label]').classes()).toContain('content-class');
+    expect(wrapper.find('span').text()).toContain(label);
+    expect(wrapper.find('span').classes()).toContain('content-class');
   });
 
   it('should show close icon', async () => {
@@ -84,7 +84,7 @@ describe('components/chips/RuiChip.vue', () => {
     });
 
     expect(wrapper.find('button').exists()).toBeTruthy();
-    expect(wrapper.find('span[class*=_label]').text()).toContain('Closeable');
+    expect(wrapper.find('span').text()).toContain('Closeable');
   });
 
   it('should emit click:close event on close button click', async () => {
@@ -99,24 +99,24 @@ describe('components/chips/RuiChip.vue', () => {
     expect(wrapper.emitted('click:close')).toHaveLength(1);
   });
 
-  it('should apply disabled class when disabled', () => {
+  it('should apply disabled state', () => {
     wrapper = createWrapper({
       props: {
         disabled: true,
       },
     });
 
-    expectWrapperToHaveClass(wrapper, 'div[role=button]', /_disabled_/);
+    expectWrapperToHaveClass(wrapper, 'div[role=button]', /opacity-40/);
   });
 
-  it('should apply readonly class when not clickable', () => {
+  it('should apply readonly state when not clickable', () => {
     wrapper = createWrapper({
       props: {
         clickable: false,
       },
     });
 
-    expectWrapperToHaveClass(wrapper, 'div[role=button]', /_readonly_/);
+    expectWrapperToHaveClass(wrapper, 'div[role=button]', /cursor-default/);
   });
 
   it('should apply size classes', async () => {
@@ -126,11 +126,11 @@ describe('components/chips/RuiChip.vue', () => {
       },
     });
 
-    expectWrapperToHaveClass(wrapper, 'div[role=button]', /_md_/);
+    const chip = wrapper.find('div[role=button]');
+    expect(chip.classes()).toContain('min-h-[2.26rem]');
 
     await wrapper.setProps({ size: 'sm' });
-    expectWrapperToHaveClass(wrapper, 'div[role=button]', /_sm_/);
-    expectWrapperNotToHaveClass(wrapper, 'div[role=button]', /_md_/);
+    expect(chip.classes()).not.toContain('min-h-[2.26rem]');
   });
 
   it('should apply color classes', async () => {
@@ -140,25 +140,28 @@ describe('components/chips/RuiChip.vue', () => {
       },
     });
 
-    expectWrapperToHaveClass(wrapper, 'div[role=button]', /_primary_/);
+    const chip = wrapper.find('div[role=button]');
+    expect(chip.classes()).toContain('bg-rui-primary');
 
     await wrapper.setProps({ color: 'error' });
-    expectWrapperToHaveClass(wrapper, 'div[role=button]', /_error_/);
-    expectWrapperNotToHaveClass(wrapper, 'div[role=button]', /_primary_/);
+    expect(chip.classes()).toContain('bg-rui-error');
+    expect(chip.classes()).not.toContain('bg-rui-primary');
   });
 
   it('should apply variant classes', async () => {
     wrapper = createWrapper({
       props: {
         variant: 'filled',
+        color: 'primary',
       },
     });
 
-    expectWrapperToHaveClass(wrapper, 'div[role=button]', /_filled_/);
+    const chip = wrapper.find('div[role=button]');
+    expect(chip.attributes('data-variant')).toBe('filled');
 
     await wrapper.setProps({ variant: 'outlined' });
-    expectWrapperToHaveClass(wrapper, 'div[role=button]', /_outlined_/);
-    expectWrapperNotToHaveClass(wrapper, 'div[role=button]', /_filled_/);
+    expect(chip.attributes('data-variant')).toBe('outlined');
+    expect(chip.classes()).toContain('border');
   });
 
   it('should not emit click event for non-clickable chip', async () => {

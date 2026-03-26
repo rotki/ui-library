@@ -2,10 +2,6 @@ export { getButtonColorClasses } from '@/composables/colors/button';
 
 export type { ButtonColorClasses } from '@/composables/colors/button';
 
-export { getChipColorClasses } from '@/composables/colors/chip';
-
-export type { ChipColorClasses } from '@/composables/colors/chip';
-
 export {
   afterBorderColorMap,
   beforeBgColorMap,
