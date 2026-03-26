@@ -31,7 +31,7 @@ function render(args: BadgeStoryArgs) {
       return { args, badgeArgs, modelValue };
     },
     template: `
-      <div class="text-center p-4">
+      <div class="text-center p-8">
         <RuiBadge v-bind="badgeArgs" v-model="modelValue">
           <template v-if="args.text" #badge>
             {{ args.text }}
@@ -163,6 +163,65 @@ export const DotBottomLeft = meta.story({
     dot: true,
     left: true,
     placement: 'bottom',
+  },
+});
+
+export const Colors = meta.story({
+  render(args: BadgeStoryArgs) {
+    return {
+      components: { RuiBadge, RuiButton },
+      setup: () => ({ args, colors: ['default', ...contextColors] }),
+      template: `
+        <div class="flex flex-wrap gap-8 p-8">
+          <RuiBadge v-for="color in colors" :key="color" :color="color" text="1">
+            <RuiButton>{{ color }}</RuiButton>
+          </RuiBadge>
+        </div>`,
+    };
+  },
+});
+
+export const Sizes = meta.story({
+  render(args: BadgeStoryArgs) {
+    return {
+      components: { RuiBadge, RuiButton },
+      setup: () => ({ args, sizes: ['sm', 'md', 'lg'] as const }),
+      template: `
+        <div class="flex flex-wrap gap-8 p-8">
+          <RuiBadge v-for="size in sizes" :key="size" :size="size" text="1">
+            <RuiButton>{{ size }}</RuiButton>
+          </RuiBadge>
+        </div>`,
+    };
+  },
+});
+
+export const Rounded = meta.story({
+  render(args: BadgeStoryArgs) {
+    return {
+      components: { RuiBadge, RuiButton },
+      setup: () => ({ args, options: ['full', 'sm', 'md', 'lg'] as const }),
+      template: `
+        <div class="flex flex-wrap gap-8 p-8">
+          <RuiBadge v-for="r in options" :key="r" :rounded="r" text="1">
+            <RuiButton>{{ r }}</RuiButton>
+          </RuiBadge>
+        </div>`,
+    };
+  },
+});
+
+export const WithIcon = meta.story({
+  args: {
+    icon: 'lu-star',
+    text: null,
+  },
+});
+
+export const WithIconAndText = meta.story({
+  args: {
+    icon: 'lu-star',
+    text: 'New',
   },
 });
 

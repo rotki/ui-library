@@ -2,7 +2,6 @@ import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiBadge from '@/components/overlays/badge/RuiBadge.vue';
-import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiBadge>): VueWrapper<InstanceType<typeof RuiBadge>> {
   return mount(RuiBadge, {
@@ -35,13 +34,12 @@ describe('components/overlays/badge/RuiBadge.vue', () => {
 
     await wrapper.setProps({ modelValue: true });
 
-    expect(wrapper.find('div[role=status]').exists()).toBeTruthy();
-
-    expectWrapperToHaveClass(wrapper, 'div[role=status]', /_badge_/);
-    expectWrapperToHaveClass(wrapper, 'div[role=status]', /_placement__top_/);
-    expectWrapperToHaveClass(wrapper, 'div[role=status]', /_rounded__full_/);
-    expectWrapperToHaveClass(wrapper, 'div[role=status]', /_size__md_/);
-    expectWrapperToHaveClass(wrapper, 'div[role=status]', /_primary_/);
+    const badge = wrapper.find('div[role=status]');
+    expect(badge.exists()).toBeTruthy();
+    expect(badge.attributes('data-placement')).toBe('top');
+    expect(badge.classes()).toContain('rounded-full');
+    expect(badge.classes()).toContain('min-h-6');
+    expect(badge.classes()).toContain('bg-rui-primary');
   });
 
   it('should have correct ARIA attributes', () => {
@@ -67,26 +65,24 @@ describe('components/overlays/badge/RuiBadge.vue', () => {
 
     const badge = wrapper.find('div[role=status]');
     expect(badge.exists()).toBeTruthy();
-    expectWrapperToHaveClass(wrapper, 'div[role=status]', /_dot_/);
-    expect(wrapper.find('span[class*=_content_]').exists()).toBeFalsy();
+    expect(badge.attributes('data-dot')).toBe('true');
+    expect(badge.find('span').exists()).toBeFalsy();
   });
 
-  it('should apply placement classes', async () => {
+  it('should apply placement via data attribute', async () => {
     wrapper = createWrapper({
       props: {
         text: '1',
       },
     });
 
-    expectWrapperToHaveClass(wrapper, 'div[role=status]', /_placement__top_/);
+    expect(wrapper.find('div[role=status]').attributes('data-placement')).toBe('top');
 
     await wrapper.setProps({ placement: 'bottom' });
-    expectWrapperToHaveClass(wrapper, 'div[role=status]', /_placement__bottom_/);
-    expectWrapperNotToHaveClass(wrapper, 'div[role=status]', /_placement__top_/);
+    expect(wrapper.find('div[role=status]').attributes('data-placement')).toBe('bottom');
 
     await wrapper.setProps({ placement: 'center' });
-    expectWrapperToHaveClass(wrapper, 'div[role=status]', /_placement__center_/);
-    expectWrapperNotToHaveClass(wrapper, 'div[role=status]', /_placement__bottom_/);
+    expect(wrapper.find('div[role=status]').attributes('data-placement')).toBe('center');
   });
 
   it('should apply color classes', async () => {
@@ -97,14 +93,15 @@ describe('components/overlays/badge/RuiBadge.vue', () => {
       },
     });
 
-    expectWrapperToHaveClass(wrapper, 'div[role=status]', /_primary_/);
+    const badge = wrapper.find('div[role=status]');
+    expect(badge.classes()).toContain('bg-rui-primary');
 
     await wrapper.setProps({ color: 'secondary' });
-    expectWrapperToHaveClass(wrapper, 'div[role=status]', /_secondary_/);
-    expectWrapperNotToHaveClass(wrapper, 'div[role=status]', /_primary_/);
+    expect(badge.classes()).toContain('bg-rui-secondary');
+    expect(badge.classes()).not.toContain('bg-rui-primary');
 
     await wrapper.setProps({ color: 'error' });
-    expectWrapperToHaveClass(wrapper, 'div[role=status]', /_error_/);
+    expect(badge.classes()).toContain('bg-rui-error');
   });
 
   it('should apply rounded classes', async () => {
@@ -114,13 +111,14 @@ describe('components/overlays/badge/RuiBadge.vue', () => {
       },
     });
 
-    expectWrapperToHaveClass(wrapper, 'div[role=status]', /_rounded__full_/);
+    const badge = wrapper.find('div[role=status]');
+    expect(badge.classes()).toContain('rounded-full');
 
     await wrapper.setProps({ rounded: 'sm' });
-    expectWrapperToHaveClass(wrapper, 'div[role=status]', /_rounded__sm_/);
+    expect(badge.classes()).toContain('rounded-sm');
 
     await wrapper.setProps({ rounded: 'lg' });
-    expectWrapperToHaveClass(wrapper, 'div[role=status]', /_rounded__lg_/);
+    expect(badge.classes()).toContain('rounded-lg');
   });
 
   it('should be hidden when modelValue is false', async () => {
@@ -148,7 +146,7 @@ describe('components/overlays/badge/RuiBadge.vue', () => {
       },
     });
 
-    expectWrapperToHaveClass(wrapper, 'div[role=status]', /_left_/);
+    expect(wrapper.find('div[role=status]').attributes('data-left')).toBe('true');
   });
 
   it('should pass props correctly', async () => {
@@ -163,19 +161,20 @@ describe('components/overlays/badge/RuiBadge.vue', () => {
 
     await wrapper.setProps({ modelValue: true });
 
-    expect(wrapper.find('span[class*=_content_]').exists()).toBeTruthy();
-    expect(wrapper.find('div[role=status]').exists()).toBeTruthy();
+    const badge = wrapper.find('div[role=status]');
+    expect(badge.find('span').exists()).toBeTruthy();
+    expect(badge.exists()).toBeTruthy();
     expect(wrapper.find('svg[aria-hidden]').exists()).toBeFalsy();
 
     await wrapper.setProps({ icon: 'lu-star' });
 
     expect(wrapper.find('svg[aria-hidden]').exists()).toBeTruthy();
-    expectWrapperToHaveClass(wrapper, 'div[role=status]', /_rounded__full_/);
-    expectWrapperNotToHaveClass(wrapper, 'div[role=status]', /_rounded__sm_/);
+    expect(badge.classes()).toContain('rounded-full');
+    expect(badge.classes()).not.toContain('rounded-sm');
 
     await wrapper.setProps({ rounded: 'sm' });
 
-    expectWrapperToHaveClass(wrapper, 'div[role=status]', /_rounded__sm_/);
-    expectWrapperNotToHaveClass(wrapper, 'div[role=status]', /_rounded__full_/);
+    expect(badge.classes()).toContain('rounded-sm');
+    expect(badge.classes()).not.toContain('rounded-full');
   });
 });

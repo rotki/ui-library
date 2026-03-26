@@ -2,6 +2,10 @@
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
+import { BadgePlacement, BadgeRounded, BadgeSize } from '@/components/overlays/badge/badge-props';
+import { tv } from '@/utils/tv';
+
+type PosConfig = [left: number, right: string, edge: string, center: number];
 
 export interface Props {
   text?: string | null;
@@ -11,9 +15,9 @@ export interface Props {
   left?: boolean;
   offsetX?: string | number;
   offsetY?: string | number;
-  placement?: 'top' | 'center' | 'bottom';
-  size?: 'sm' | 'md' | 'lg';
-  rounded?: 'sm' | 'md' | 'lg' | 'full';
+  placement?: BadgePlacement;
+  size?: BadgeSize;
+  rounded?: BadgeRounded;
   color?: 'default' | ContextColorsType;
 }
 
@@ -26,10 +30,10 @@ const {
   icon = null,
   modelValue = true,
   dot = false,
-  placement = 'top',
+  placement = BadgePlacement.top,
   left = false,
-  size = 'md',
-  rounded = 'full',
+  size = BadgeSize.md,
+  rounded = BadgeRounded.full,
   color = 'primary',
   offsetX = 0,
   offsetY = 0,
@@ -41,15 +45,96 @@ const slots = defineSlots<{
   icon?: () => any;
 }>();
 
-const hasIcon = computed<boolean>(() => !!icon || !!slots.icon);
+const badgeStyles = tv({
+  slots: {
+    wrapper: 'relative inline-block',
+    badge: 'flex items-center justify-center text-xs font-medium absolute bg-transparent text-rui-light-text dark:text-rui-text',
+    content: 'flex items-center px-1',
+  },
+  variants: {
+    color: {
+      default: {},
+      primary: { badge: 'text-white bg-rui-primary' },
+      secondary: { badge: 'text-white bg-rui-secondary' },
+      error: { badge: 'text-white bg-rui-error' },
+      warning: { badge: 'text-white bg-rui-warning' },
+      info: { badge: 'text-white bg-rui-info' },
+      success: { badge: 'text-white bg-rui-success' },
+    },
+    size: {
+      sm: { badge: 'min-h-5 min-w-5' },
+      md: { badge: 'min-h-6 min-w-6' },
+      lg: { badge: 'min-h-7 min-w-7' },
+    },
+    rounded: {
+      sm: { badge: 'rounded-sm' },
+      md: { badge: 'rounded-md' },
+      lg: { badge: 'rounded-lg' },
+      full: { badge: 'rounded-full' },
+    },
+    dot: {
+      true: {},
+    },
+  },
+  compoundVariants: [
+    // Dot default color
+    { dot: true, color: 'default', class: { badge: 'bg-gray-500' } },
+
+    // Dot sizes (smaller than normal badge)
+    { dot: true, size: 'sm', class: { badge: 'min-w-1.5 min-h-1.5' } },
+    { dot: true, size: 'md', class: { badge: 'min-w-2 min-h-2' } },
+    { dot: true, size: 'lg', class: { badge: 'min-w-2.5 min-h-2.5' } },
+  ],
+  compoundSlots: [
+    // Dark mode: warning/success/info keep light text on colored bg
+    { slots: ['badge'], color: ['warning', 'success', 'info'], class: 'dark:text-rui-light-text' },
+  ],
+  defaultVariants: {
+    color: 'primary',
+    size: 'md',
+    rounded: 'full',
+    dot: false,
+  },
+});
 
 const hasText = computed<boolean>(() => !!text || !!slots.badge);
 
-const hasIconAndText = computed<boolean>(() => get(hasIcon) && get(hasText));
+const hasIconAndText = computed<boolean>(() => (!!icon || !!slots.icon) && get(hasText));
+
+const ui = computed<ReturnType<typeof badgeStyles>>(() => badgeStyles({
+  color,
+  size,
+  rounded,
+  dot,
+}));
+
+// Position configs: [leftOffset, rightBase, edgeBase, centerOffset] (rem / calc expressions)
+const DOT_POS: PosConfig = [-0.65, '100% + 0.125rem', '100% + 0.25rem', 0.25];
+const BADGE_POS: Record<BadgeSize, PosConfig> = {
+  sm: [-0.95, '100% - 0.5rem', '100% - 0.5rem', 0.65],
+  md: [-1.05, '100% - 0.5rem', '100% - 0.5rem', 0.75],
+  lg: [-1.15, '100% - 0.5rem', '100% - 0.5rem', 0.85],
+};
+
+const positionStyle = computed<Record<string, string>>(() => {
+  const ox = Number(offsetX) * 0.0625;
+  const oy = Number(offsetY) * 0.0625;
+  const [l, r, edge, center] = dot ? DOT_POS : BADGE_POS[size];
+
+  const horizontal = `calc(${left ? `${l}rem` : r} + ${ox}rem)`;
+  const vertical = placement === 'center'
+    ? `calc(50% - ${center}rem - ${oy}rem)`
+    : `calc(${edge} - ${oy}rem)`;
+
+  return {
+    left: horizontal,
+    [placement === 'top' ? 'bottom' : 'top']: vertical,
+  };
+});
 </script>
 
 <template>
-  <div :class="$style.wrapper">
+  <div :class="ui.wrapper()">
     <slot />
     <Transition
       appear
@@ -62,14 +147,11 @@ const hasIconAndText = computed<boolean>(() => get(hasIcon) && get(hasText));
     >
       <div
         v-if="modelValue"
-        :class="[
-          $style.badge,
-          $style[color ?? 'primary'],
-          $style[`placement__${placement}`],
-          $style[`rounded__${rounded}`],
-          $style[`size__${size}`],
-          { [$style.left]: left, [$style.dot]: dot },
-        ]"
+        :class="ui.badge()"
+        :style="positionStyle"
+        :data-placement="placement"
+        :data-dot="dot || undefined"
+        :data-left="left || undefined"
         aria-atomic="true"
         aria-label="Badge"
         aria-live="polite"
@@ -77,17 +159,10 @@ const hasIconAndText = computed<boolean>(() => get(hasIcon) && get(hasText));
       >
         <span
           v-if="!dot"
-          :class="[
-            $style.content,
-            {
-              [$style.text_icon]: hasIconAndText,
-            },
-          ]"
+          :class="ui.content({ class: hasIconAndText ? 'px-2' : undefined })"
         >
           <slot name="badge">
-            <span>
-              {{ text }}
-            </span>
+            {{ text }}
           </slot>
           <slot name="icon">
             <RuiIcon
@@ -102,138 +177,3 @@ const hasIconAndText = computed<boolean>(() => get(hasIcon) && get(hasText));
     </Transition>
   </div>
 </template>
-
-<style lang="scss" module>
-@use '@/styles/colors.scss' as c;
-@use 'sass:list';
-
-$borders: full, sm, md, lg;
-$sizes: sm, md, lg;
-
-.wrapper {
-  @apply relative inline-block;
-
-  .badge {
-    @apply flex items-center justify-center text-xs font-medium absolute;
-    @apply bg-transparent text-rui-light-text;
-
-    left: calc(100% - 0.5rem + v-bind(offsetX) * 0.0625rem);
-
-    .content {
-      @apply flex items-center px-1;
-
-      &.text_icon {
-        @apply px-2;
-      }
-    }
-
-    @each $color in c.$context-colors {
-      &.#{$color} {
-        @apply text-white bg-rui-#{$color};
-      }
-    }
-
-    @each $border in $borders {
-      &.rounded__#{$border} {
-        @apply rounded-#{$border};
-      }
-    }
-
-    &.size__sm {
-      @apply min-h-[1.25rem] min-w-[1.25rem];
-
-      &.left {
-        left: calc(-0.95rem + v-bind(offsetX) * 0.0625rem);
-      }
-
-      &.placement__center {
-        top: calc(50% - 0.65rem - v-bind(offsetY) * 0.0625rem);
-      }
-    }
-
-    &.size__md {
-      @apply min-h-[1.5rem] min-w-[1.5rem];
-
-      &.left {
-        left: calc(-1.05rem + v-bind(offsetX) * 0.0625rem);
-      }
-
-      &.placement__center {
-        top: calc(50% - 0.75rem - v-bind(offsetY) * 0.0625rem);
-      }
-    }
-
-    &.size__lg {
-      @apply min-h-[1.75rem] min-w-[1.75rem];
-
-      &.left {
-        left: calc(-1.15rem + v-bind(offsetX) * 0.0625rem);
-      }
-
-      &.placement__center {
-        top: calc(50% - 0.85rem - v-bind(offsetY) * 0.0625rem);
-      }
-    }
-
-    &.placement__top {
-      bottom: calc(100% - 0.5rem - v-bind(offsetY) * 0.0625rem);
-    }
-
-    &.placement__bottom {
-      top: calc(100% - 0.5rem - v-bind(offsetY) * 0.0625rem);
-    }
-
-    &.dot {
-      left: calc(100% + 0.125rem + v-bind(offsetX) * 0.0625rem);
-
-      &.default {
-        @apply bg-gray-500;
-      }
-
-      &.size__sm {
-        @apply min-w-[0.375rem] min-h-[0.375rem];
-      }
-
-      &.size__md {
-        @apply min-w-[0.5rem] min-h-[0.5rem];
-      }
-
-      &.size__lg {
-        @apply min-w-[0.625rem] min-h-[0.625rem];
-      }
-
-      &.left {
-        left: calc(-0.65rem + v-bind(offsetX) * 0.0625rem);
-      }
-
-      &.placement__top {
-        bottom: calc(100% + 0.25rem - v-bind(offsetY) * 0.0625rem);
-      }
-
-      &.placement__center {
-        top: calc(50% - 0.25rem - v-bind(offsetY) * 0.0625rem);
-      }
-
-      &.placement__bottom {
-        top: calc(100% + 0.25rem - v-bind(offsetY) * 0.0625rem);
-      }
-    }
-  }
-}
-
-:global(.dark) {
-  .wrapper {
-    .badge {
-      @apply text-rui-text;
-
-      @each $color in c.$context-colors {
-        @if list.index((warning, success, info), $color) {
-          &.#{$color} {
-            @apply text-rui-light-text;
-          }
-        }
-      }
-    }
-  }
-}
-</style>

@@ -1,7 +1,3 @@
-export { getBadgeColorClasses } from '@/composables/colors/badge';
-
-export type { BadgeColorClasses } from '@/composables/colors/badge';
-
 export { getButtonColorClasses } from '@/composables/colors/button';
 
 export type { ButtonColorClasses } from '@/composables/colors/button';
