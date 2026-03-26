@@ -19,10 +19,6 @@ export { getSliderColorClasses, getSliderValidationClass } from '@/composables/c
 
 export type { SliderColorClasses } from '@/composables/colors/slider';
 
-export { getSwitchColorClasses } from '@/composables/colors/switch';
-
-export type { SwitchColorClasses } from '@/composables/colors/switch';
-
 export { getTextInputColorClasses, getTextInputValidationClasses } from '@/composables/colors/text-input';
 
 export type { TextInputColorClasses, TextInputValidationClasses } from '@/composables/colors/text-input';
