@@ -43,9 +43,10 @@ describe('components/calendar/RuiCalendar.vue', () => {
     it('should render properly with default props', () => {
       wrapper = createWrapper();
 
-      expect(wrapper.find('.rui-calendar').exists()).toBeTruthy();
-      expect(wrapper.find('.rui-calendar').classes()).toContain('bordered');
-      expect(wrapper.find('.rui-calendar').classes()).not.toContain('dark');
+      const root = wrapper.find('div');
+      expect(root.exists()).toBeTruthy();
+      expect(root.classes()).toContain('rounded-md');
+      expect(root.classes()).toContain('border');
     });
 
     it('should render borderless when prop is set', () => {
@@ -55,7 +56,9 @@ describe('components/calendar/RuiCalendar.vue', () => {
         },
       });
 
-      expect(wrapper.find('.rui-calendar').classes()).not.toContain('bordered');
+      const root = wrapper.find('div');
+      expect(root.classes()).not.toContain('rounded-md');
+      expect(root.classes()).not.toContain('border');
     });
 
     it('should render with initial model value', () => {

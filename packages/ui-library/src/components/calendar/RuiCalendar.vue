@@ -7,6 +7,7 @@ import {
   type RuiCalendarState,
 } from '@/components/calendar/state';
 import { useRotkiTheme } from '@/composables/theme';
+import { tv } from '@/utils/tv';
 import RuiCalendarGrid from './RuiCalendarGrid.vue';
 import RuiCalendarHeader from './RuiCalendarHeader.vue';
 
@@ -37,6 +38,17 @@ const viewMonth = ref<number>(get(currentDate).getMonth());
 const viewYear = ref<number>(get(currentDate).getFullYear());
 
 const { isDark } = useRotkiTheme();
+
+const calendarStyles = tv({
+  base: 'w-[18.75rem] bg-white dark:bg-rui-grey-900 overflow-hidden',
+  variants: {
+    bordered: {
+      true: 'rounded-md shadow-sm border border-rui-grey-200 dark:border-rui-grey-800',
+    },
+  },
+});
+
+const ui = computed<string>(() => calendarStyles({ bordered: !borderless }));
 
 const monthTitle = computed<string>(() => {
   const date = new Date(get(viewYear), get(viewMonth));
@@ -99,7 +111,7 @@ function selectMonth(selection: MonthYearSelection): void {
   }
 }
 
-watch([selectedDate], ([date]) => {
+watch(selectedDate, (date) => {
   if (!date && !allowEmpty)
     return;
 
@@ -140,10 +152,7 @@ defineExpose({
 </script>
 
 <template>
-  <div
-    class="rui-calendar"
-    :class="{ dark: isDark, bordered: !borderless }"
-  >
+  <div :class="ui">
     <RuiCalendarHeader
       v-model:menu-open="isMenuOpen"
       :title="monthTitle"
@@ -161,21 +170,3 @@ defineExpose({
     />
   </div>
 </template>
-
-<style lang="scss">
-.rui-calendar {
-  @apply w-[18.75rem] bg-white overflow-hidden;
-
-  &.bordered {
-    @apply rounded-md shadow-sm border border-rui-grey-200;
-  }
-
-  &.dark {
-    @apply bg-rui-grey-900;
-
-    &.bordered {
-      @apply border-rui-grey-800;
-    }
-  }
-}
-</style>
