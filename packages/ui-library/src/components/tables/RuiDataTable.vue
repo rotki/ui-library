@@ -4,7 +4,9 @@ import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
+import { dataTableStyles, getAlignClass } from '@/components/tables/data-table-styles';
 import RuiExpandButton from '@/components/tables/RuiExpandButton.vue';
+import RuiTableEmptyState from '@/components/tables/RuiTableEmptyState.vue';
 import RuiTableHead, {
   type GroupData,
   type TableColumn,
@@ -14,8 +16,6 @@ import RuiTableHead, {
 import RuiTablePagination, {
   type TablePaginationData,
 } from '@/components/tables/RuiTablePagination.vue';
-import noDataPlaceholder from '@/components/tables/table_no_data_placeholder.svg';
-import noDataPlaceholderDark from '@/components/tables/table_no_data_placeholder_dark.svg';
 import { useTable } from '@/composables/defaults/table';
 import { useStickyTableHeader } from '@/composables/sticky-header';
 import { useTableColumns } from '@/composables/tables/data-table/columns';
@@ -25,7 +25,6 @@ import { useTablePagination } from '@/composables/tables/data-table/pagination';
 import { useTableSelection } from '@/composables/tables/data-table/selection';
 import { useTableSort } from '@/composables/tables/data-table/sort';
 import { type GroupHeader, isRow } from '@/composables/tables/data-table/types';
-import { useRotkiTheme } from '@/composables/theme';
 
 export type { GroupedTableRow, GroupHeader, TableOptions } from '@/composables/tables/data-table/types';
 
@@ -180,8 +179,6 @@ const slots = defineSlots<Partial<
 
 const tableDefaults = useTable();
 
-const { isDark } = useRotkiTheme();
-
 const stickyHeaderOffset = computed<number | undefined>(() =>
   stickyOffset !== undefined ? stickyOffset : get(tableDefaults.stickyOffset),
 );
@@ -318,11 +315,18 @@ watch(sorted, (items) => {
 onMounted(() => {
   setInternalTotal(get(sorted));
 });
+
+const ui = computed<ReturnType<typeof dataTableStyles>>(() => dataTableStyles({
+  outlined,
+  rounded,
+  dense,
+  striped,
+}));
 </script>
 
 <template>
   <div
-    :class="[$style.wrapper, $style[`rounded__${rounded}`], { [$style.outlined]: outlined }]"
+    :class="ui.wrapper()"
     data-id="table-wrapper"
   >
     <RuiTablePagination
@@ -336,12 +340,12 @@ onMounted(() => {
     />
     <div
       ref="tableScroller"
-      :class="$style.scroller"
+      :class="ui.scroller()"
       data-id="table-scroller"
     >
       <table
         ref="table"
-        :class="[$style.table, { [$style.dense]: dense }]"
+        :class="ui.table()"
         :aria-busy="loading"
       >
         <RuiTableHead
@@ -398,7 +402,7 @@ onMounted(() => {
             />
           </template>
         </RuiTableHead>
-        <tbody :class="[$style.tbody, { [$style['tbody--striped'] ?? '']: striped }]">
+        <tbody :class="ui.tbody()">
           <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
           <slot
             v-if="slots['body.prepend']"
@@ -409,7 +413,7 @@ onMounted(() => {
             <tr
               v-if="!isRow(row)"
               :key="`row-${index}`"
-              :class="[$style.tr, $style.tr__group]"
+              :class="[ui.tr({ rowVariant: 'group' })]"
               data-id="row-group"
             >
               <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
@@ -421,7 +425,7 @@ onMounted(() => {
                 :toggle="() => onToggleExpandGroup(row.group, row.identifier)"
               >
                 <td
-                  :class="[$style.td]"
+                  :class="[ui.td()]"
                   class="!p-2"
                   :colspan="colspan"
                 >
@@ -484,8 +488,7 @@ onMounted(() => {
               <tr
                 :key="`row-${index}`"
                 :class="[
-                  $style.tr,
-                  { [$style.tr__selected ?? '']: isSelected(row[rowAttr]) },
+                  ui.tr({ rowVariant: isSelected(row[rowAttr]) ? 'selected' : undefined }),
                   typeof itemClass === 'string' ? itemClass : itemClass(row),
                 ]"
                 :aria-selected="selectedData ? isSelected(row[rowAttr]) : undefined"
@@ -493,7 +496,7 @@ onMounted(() => {
               >
                 <td
                   v-if="selectedData"
-                  :class="$style.checkbox"
+                  :class="ui.checkbox()"
                   colspan="1"
                   rowspan="1"
                 >
@@ -514,9 +517,8 @@ onMounted(() => {
                   v-for="(column, subIndex) in columns"
                   :key="subIndex"
                   :class="[
-                    $style.td,
+                    ui.td({ class: getAlignClass(column.align) }),
                     column.cellClass,
-                    $style[`align__${column.align ?? 'start'}`],
                   ]"
                   :colspan="column.colspan ?? 1"
                   :rowspan="column.rowspan ?? 1"
@@ -549,12 +551,12 @@ onMounted(() => {
               <tr
                 v-if="expandable && isExpanded(row[rowAttr])"
                 :key="`row-expand-${index}`"
-                :class="[$style.tr, $style.tr__expandable]"
+                :class="ui.tr({ rowVariant: 'expandable' })"
                 data-id="row-expanded"
               >
                 <td
                   :colspan="colspan"
-                  :class="[$style.td]"
+                  :class="[ui.td()]"
                 >
                   <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
                   <slot
@@ -568,20 +570,22 @@ onMounted(() => {
           </template>
           <tr v-if="loading && noData">
             <td
-              :class="$style.tbody__loader"
+              :class="ui.tbodyLoader()"
               :colspan="colspan"
               data-id="tbody-loader"
             >
-              <RuiProgress
-                color="primary"
-                variant="indeterminate"
-                circular
-              />
+              <div :class="ui.tbodyLoaderContent()">
+                <RuiProgress
+                  color="primary"
+                  variant="indeterminate"
+                  circular
+                />
+              </div>
             </td>
           </tr>
           <tr
             v-if="noData && empty && !loading"
-            :class="[$style.tr, $style.tr__empty]"
+            :class="ui.tr({ rowVariant: 'empty' })"
             data-id="row-empty"
           >
             <Transition
@@ -594,36 +598,23 @@ onMounted(() => {
               leave-to-class="opacity-0 translate-y-1"
             >
               <td
-                :class="$style.td"
+                :class="ui.td()"
                 :colspan="colspan"
               >
                 <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
                 <slot name="no-data">
-                  <div :class="$style.empty">
-                    <img
-                      :src="isDark ? noDataPlaceholderDark : noDataPlaceholder"
-                      :alt="empty.label"
-                      class="h-32"
-                    />
-                    <p
-                      v-if="empty.label"
-                      :class="$style.empty__label"
-                      data-id="empty-label"
-                    >
-                      {{ empty.label }}
-                    </p>
-
+                  <RuiTableEmptyState
+                    :label="empty.label"
+                    :description="empty.description"
+                  >
                     <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
-                    <slot name="empty-description">
-                      <p
-                        v-if="empty.description"
-                        :class="$style.empty__description"
-                        data-id="empty-description"
-                      >
-                        {{ empty.description }}
-                      </p>
-                    </slot>
-                  </div>
+                    <template
+                      v-if="slots['empty-description']"
+                      #description
+                    >
+                      <slot name="empty-description" />
+                    </template>
+                  </RuiTableEmptyState>
                 </slot>
               </td>
             </Transition>
@@ -652,153 +643,3 @@ onMounted(() => {
     />
   </div>
 </template>
-
-<style module lang="scss">
-.wrapper {
-  @apply relative divide-y divide-black/[0.12] overflow-hidden;
-  &.outlined {
-    @apply border border-black/[0.12];
-  }
-
-  &.rounded__sm {
-    @apply rounded-[.25rem];
-  }
-  &.rounded__md {
-    @apply rounded-[.75rem];
-  }
-  &.rounded__lg {
-    @apply rounded-[1rem];
-  }
-
-  .scroller {
-    @apply overflow-x-auto overflow-y-hidden;
-    clip-path: inset(0 0 0 0);
-  }
-
-  .table {
-    @apply min-w-full table-fixed divide-y divide-black/[0.12] whitespace-nowrap mx-auto my-0 max-w-fit relative border-black/[0.12];
-
-    .tbody {
-      @apply divide-y divide-black/[0.12];
-
-      &--striped {
-        > .tr {
-          &:nth-child(even) {
-            @apply bg-rui-grey-50;
-          }
-        }
-      }
-
-      > .tr {
-        @apply hover:bg-black/[0.04];
-
-        &__selected {
-          @apply bg-rui-primary/[0.08];
-        }
-
-        &__empty {
-          @apply hover:bg-transparent;
-        }
-
-        &__expandable {
-          @apply bg-[#f9fafb] hover:bg-[#f9fafb];
-        }
-
-        &__group {
-          @apply bg-black/[0.02];
-        }
-
-        .td {
-          @apply p-4 text-rui-text text-body-2;
-          text-wrap: initial;
-
-          &.align__start {
-            @apply text-left rtl:text-right;
-          }
-
-          &.align__center {
-            @apply text-center;
-          }
-
-          &.align__end {
-            @apply text-right rtl:text-left;
-          }
-
-          .empty {
-            @apply flex flex-col gap-3 items-center justify-center flex-1 min-h-56 my-4;
-
-            &__label {
-              @apply text-body-1 leading-none font-bold text-center text-current pb-0 mb-0;
-            }
-
-            &__description {
-              @apply text-body-2 text-center text-rui-text-secondary pb-0 mb-0;
-            }
-          }
-        }
-      }
-
-      &__loader {
-        @apply py-8 text-center min-h-56;
-      }
-    }
-
-    .checkbox {
-      @apply px-2 w-[3.625rem] max-w-[3.625rem];
-      label {
-        @apply ml-0;
-      }
-    }
-
-    &.dense {
-      .tbody {
-        .td {
-          @apply py-[0.38rem];
-        }
-      }
-    }
-  }
-}
-
-:global(.dark) {
-  .wrapper {
-    @apply divide-white/[0.12];
-
-    &.outlined {
-      @apply border-white/[0.12];
-    }
-
-    .table {
-      @apply divide-white/[0.12] border-white/[0.12];
-
-      .tbody {
-        @apply divide-white/[0.12];
-
-        &--striped {
-          > .tr {
-            &:nth-child(even) {
-              @apply bg-rui-grey-900;
-            }
-          }
-        }
-
-        > .tr {
-          @apply hover:bg-white/[0.04];
-
-          &__selected {
-            @apply bg-rui-dark-primary/[0.08];
-          }
-
-          &__expandable {
-            @apply bg-[#121212] hover:bg-[#121212];
-          }
-
-          &__group {
-            @apply bg-white/[0.02];
-          }
-        }
-      }
-    }
-  }
-}
-</style>

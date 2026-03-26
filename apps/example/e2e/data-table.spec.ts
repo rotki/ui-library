@@ -30,19 +30,20 @@ test.describe('data tables - basic', () => {
   test('should render outlined table', async ({ page }) => {
     const wrapper = page.locator('[data-id=table-outlined] [data-id=table]');
     await expect(wrapper).toBeVisible();
-    await expect(wrapper).toHaveClass(/_outlined_/);
+    await expect(wrapper).toHaveClass(/border/);
   });
 
   test('should render dense table', async ({ page }) => {
-    const table = page.locator('[data-id=table-dense] [data-id=table] table');
-    await expect(table).toBeVisible();
-    await expect(table).toHaveClass(/_dense_/);
+    // Dense applies py-[0.38rem] on td cells
+    const td = page.locator('[data-id=table-dense] [data-id=table] tbody td').first();
+    await expect(td).toBeVisible();
+    await expect(td).toHaveClass(/py-/);
   });
 
   test('should render striped table', async ({ page }) => {
     const tbody = page.locator('[data-id=table-striped] [data-id=table] tbody');
     await expect(tbody).toBeVisible();
-    await expect(tbody).toHaveClass(/_tbody--striped_/);
+    await expect(tbody).toHaveClass(/even:/);
   });
 });
 

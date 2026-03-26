@@ -77,7 +77,7 @@ describe('components/tables/RuiDataTable.vue', () => {
       },
     });
 
-    expectWrapperToHaveClass(wrapper, 'table', /_table_/);
+    expectWrapperToHaveClass(wrapper, 'table', /min-w-full/);
     expect(wrapper.find('table thead').exists()).toBeTruthy();
     expect(wrapper.find('table tbody').exists()).toBeTruthy();
   });
@@ -1497,7 +1497,8 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      expectWrapperToHaveClass(wrapper, 'tbody', /_tbody--striped_/);
+      const tbody = wrapper.find('tbody');
+      expect(tbody.classes()).toContain('even:[&>tr]:bg-rui-grey-50');
     });
 
     it('should apply rounded variants to wrapper', () => {
@@ -1510,7 +1511,8 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      expectWrapperToHaveClass(wrapper, 'div[class*=_wrapper_]', /_rounded__sm_/);
+      const wrapperEl = wrapper.find('div[data-id="table-wrapper"]');
+      expect(wrapperEl.classes()).toContain('rounded-[.25rem]');
     });
 
     it('should apply rounded lg variant to wrapper', () => {
@@ -1523,7 +1525,8 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      expectWrapperToHaveClass(wrapper, 'div[class*=_wrapper_]', /_rounded__lg_/);
+      const wrapperEl = wrapper.find('div[data-id="table-wrapper"]');
+      expect(wrapperEl.classes()).toContain('rounded-[1rem]');
     });
 
     it('should apply itemClass as string to rows', () => {
@@ -1693,7 +1696,8 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      expectWrapperToHaveClass(wrapper, 'table', /_dense_/);
+      const td = wrapper.find('tbody td');
+      expect(td.classes()).toContain('py-[0.38rem]');
     });
 
     it('should not apply dense styling when dense is false', () => {
@@ -1706,8 +1710,8 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const table = wrapper.find('table');
-      expect(table.classes().some(c => c.includes('_dense_'))).toBeFalsy();
+      const td = wrapper.find('tbody td');
+      expect(td.classes().some(c => c.includes('py-[0.38rem]'))).toBeFalsy();
     });
   });
 
@@ -1722,7 +1726,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      expectWrapperToHaveClass(wrapper, 'div[class*=_wrapper_]', /_outlined_/);
+      expectWrapperToHaveClass(wrapper, 'div[data-id="table-wrapper"]', /\bborder\b/);
     });
   });
 
@@ -1847,7 +1851,7 @@ describe('components/tables/RuiDataTable.vue', () => {
       });
 
       const idCell = wrapper.find('tbody tr:first-child td:first-child');
-      expect(idCell.classes().some(c => c.includes('_align__center_'))).toBeTruthy();
+      expect(idCell.classes().some(c => c.includes('text-center'))).toBeTruthy();
     });
 
     it('should not render sort button for non-sortable columns', async () => {
@@ -1958,10 +1962,10 @@ describe('components/tables/RuiDataTable.vue', () => {
       });
 
       const firstRow = wrapper.find('tbody tr:first-child');
-      expect(firstRow.classes().some(c => c.includes('_tr__selected_'))).toBeTruthy();
+      expect(firstRow.classes().some(c => c.includes('bg-rui-primary/[0.08]'))).toBeTruthy();
 
       const secondRow = wrapper.find('tbody tr:nth-child(2)');
-      expect(secondRow.classes().some(c => c.includes('_tr__selected_'))).toBeFalsy();
+      expect(secondRow.classes().some(c => c.includes('bg-rui-primary/[0.08]'))).toBeFalsy();
     });
   });
 
