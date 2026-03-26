@@ -1,11 +1,14 @@
 import type { ComputedRef, MaybeRefOrGetter } from 'vue';
 
+export type ValidationState = 'error' | 'success' | undefined;
+
 export interface FormTextDetailReturn {
   formattedErrorMessages: ComputedRef<string[]>;
   formattedSuccessMessages: ComputedRef<string[]>;
   hasError: ComputedRef<boolean>;
   hasMessages: ComputedRef<boolean>;
   hasSuccess: ComputedRef<boolean>;
+  validation: ComputedRef<ValidationState>;
 }
 
 export function useFormTextDetail(
@@ -29,9 +32,16 @@ export function useFormTextDetail(
   });
 
   const hasError = computed<boolean>(() => get(formattedErrorMessages).length > 0);
-
   const hasSuccess = computed<boolean>(() => get(formattedSuccessMessages).length > 0);
   const hasMessages = computed<boolean>(() => get(hasError) || get(hasSuccess));
+
+  const validation = computed<ValidationState>(() => {
+    if (get(hasError))
+      return 'error';
+    if (get(hasSuccess))
+      return 'success';
+    return undefined;
+  });
 
   return {
     formattedErrorMessages,
@@ -39,5 +49,6 @@ export function useFormTextDetail(
     hasError,
     hasMessages,
     hasSuccess,
+    validation,
   };
 }

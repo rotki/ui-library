@@ -24,19 +24,19 @@ describe('components/forms/checkbox/RuiCheckbox.vue', () => {
       },
     });
     expect(wrapper.text()).toContain(label);
-    expectWrapperToHaveClass(wrapper, 'label > span', /_checkbox_/);
+    expectWrapperToHaveClass(wrapper, 'label > span', /text-rui-text-secondary/);
   });
 
   it('should pass disabled props', async () => {
     wrapper = createWrapper();
     expect(wrapper.find('input').attributes('disabled')).toBeUndefined();
-    expectWrapperNotToHaveClass(wrapper, 'label', /_disabled_/);
+    expectWrapperNotToHaveClass(wrapper, 'label', /cursor-not-allowed/);
     await wrapper.setProps({ disabled: true });
     expect(wrapper.find('input').attributes('disabled')).toBeDefined();
-    expectWrapperToHaveClass(wrapper, 'label', /_disabled_/);
+    expectWrapperToHaveClass(wrapper, 'label', /cursor-not-allowed/);
     await wrapper.setProps({ disabled: false });
     expect(wrapper.find('input').attributes('disabled')).toBeUndefined();
-    expectWrapperNotToHaveClass(wrapper, 'label', /_disabled_/);
+    expectWrapperNotToHaveClass(wrapper, 'label', /cursor-not-allowed/);
   });
 
   it('should render icon correctly', async () => {
@@ -54,24 +54,24 @@ describe('components/forms/checkbox/RuiCheckbox.vue', () => {
 
   it('should pass color props', async () => {
     wrapper = createWrapper({ props: { color: 'primary' } });
-    expectWrapperToHaveClass(wrapper, 'label > span', /_primary_/);
+    expectWrapperToHaveClass(wrapper, 'label > span', /before:bg-rui-primary/);
 
     await wrapper.setProps({ color: 'secondary' });
-    expectWrapperToHaveClass(wrapper, 'label > span', /_secondary_/);
+    expectWrapperToHaveClass(wrapper, 'label > span', /before:bg-rui-secondary/);
 
     await wrapper.setProps({ color: 'error' });
-    expectWrapperToHaveClass(wrapper, 'label > span', /_error_/);
+    expectWrapperToHaveClass(wrapper, 'label > span', /before:bg-rui-error/);
 
     await wrapper.setProps({ color: 'success' });
-    expectWrapperToHaveClass(wrapper, 'label > span', /_success_/);
+    expectWrapperToHaveClass(wrapper, 'label > span', /before:bg-rui-success/);
   });
 
   it('should pass size props', async () => {
     wrapper = createWrapper({ props: { size: 'sm' } });
-    expectWrapperToHaveClass(wrapper, 'label > span', /_sm_/);
+    expectWrapperToHaveClass(wrapper, 'label > span', /2\.375rem/);
 
     await wrapper.setProps({ size: 'lg' });
-    expectWrapperToHaveClass(wrapper, 'label > span', /_lg_/);
+    expectWrapperToHaveClass(wrapper, 'label > span', /2\.875rem/);
   });
 
   it('should pass hint props', async () => {

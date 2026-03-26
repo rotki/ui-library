@@ -174,8 +174,8 @@ describe('components/tables/RuiDataTable.vue', () => {
     await wrapper.find('thead tr [data-id=table-toggle-check-all] input').setValue(true);
 
     expect(wrapper.props().modelValue).toHaveLength(10);
-    expect(wrapper.find('tr [data-id*=table-toggle-check-] span[class*=checkbox][class*=checked]').exists()).toBeTruthy();
-    expect(wrapper.findAll('tr [data-id*=table-toggle-check-] span[class*=checkbox][class*=checked]')).toHaveLength(11);
+    expect(wrapper.find('tr [data-id*=table-toggle-check-] label[data-checked]').exists()).toBeTruthy();
+    expect(wrapper.findAll('tr [data-id*=table-toggle-check-] label[data-checked]')).toHaveLength(11);
 
     await wrapper.find('thead tr [data-id=table-toggle-check-all] input').setValue(false);
 
@@ -676,7 +676,7 @@ describe('components/tables/RuiDataTable.vue', () => {
       });
 
       const headerCheckbox = wrapper.find('thead [data-id=table-toggle-check-all]');
-      expect(headerCheckbox.find('span[class*=_checked_]').exists()).toBeTruthy();
+      expect(headerCheckbox.find('label[data-checked]').exists()).toBeTruthy();
     });
 
     it('should not be indeterminate when no rows are selected', async () => {
@@ -691,7 +691,7 @@ describe('components/tables/RuiDataTable.vue', () => {
       });
 
       const headerCheckbox = wrapper.find('thead [data-id=table-toggle-check-all]');
-      expect(headerCheckbox.find('span[class*=_checked_]').exists()).toBeFalsy();
+      expect(headerCheckbox.find('label[data-checked]').exists()).toBeFalsy();
     });
   });
 

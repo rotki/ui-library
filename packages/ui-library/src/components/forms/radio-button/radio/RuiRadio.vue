@@ -1,5 +1,6 @@
 <script lang="ts" setup generic="TValue">
 import type { ContextColorsType } from '@/consts/colors';
+import { checkControlStyles, getCheckControlIconSize } from '@/components/forms/check-control-styles';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { useFormTextDetail } from '@/utils/form-text-detail';
@@ -42,26 +43,26 @@ defineSlots<{
   default?: () => any;
 }>();
 
-const { hasError, hasSuccess } = useFormTextDetail(
+const { hasError, validation } = useFormTextDetail(
   () => errorMessages,
   () => successMessages,
 );
 
-const iconSize = computed<number>(() => {
-  if (size === 'lg')
-    return 28;
-
-  if (size === 'sm')
-    return 20;
-
-  return 24;
-});
-
 const selected = computed<boolean>(() => get(modelValue) === value);
 
+const ui = computed<ReturnType<typeof checkControlStyles>>(() => checkControlStyles({
+  size,
+  disabled,
+  checked: get(selected),
+  validation: get(validation),
+  color,
+}));
+
+const iconSize = computed<number>(() => getCheckControlIconSize(size));
+
 function input(event: Event): void {
-  const checked = (event.target as HTMLInputElement).checked;
-  if (checked)
+  const target = event.target;
+  if (target instanceof HTMLInputElement && target.checked)
     set(modelValue, value);
 }
 </script>
@@ -69,39 +70,22 @@ function input(event: Event): void {
 <template>
   <div v-bind="getRootAttrs($attrs)">
     <label
-      :class="[
-        $style.wrapper,
-        $style[size ?? ''],
-        {
-          [$style.disabled]: disabled,
-          [$style['with-error']]: hasError,
-        },
-      ]"
+      :class="ui.wrapper()"
+      :data-disabled="disabled || undefined"
+      :data-checked="selected || undefined"
       :data-error="hasError ? '' : undefined"
     >
       <input
         :checked="selected"
         type="radio"
-        :class="$style.input"
+        :class="ui.input()"
         :disabled="disabled"
         :aria-invalid="hasError"
         v-bind="getNonRootAttrs($attrs)"
         :value="value"
         @input="input($event)"
       />
-      <div
-        :class="[
-          $style.radio,
-          $style[color ?? ''],
-          $style[size ?? ''],
-          {
-            [$style.checked]: selected,
-            [$style.disabled]: disabled,
-            [$style['with-error']]: hasError,
-            [$style['with-success']]: hasSuccess && !hasError,
-          },
-        ]"
-      >
+      <div :class="ui.control()">
         <RuiIcon
           v-if="selected"
           name="lu-radio-button-fill"
@@ -114,8 +98,8 @@ function input(event: Event): void {
         />
       </div>
       <div
-        :class="$style.label"
-        class="text-body-1"
+        v-if="label || $slots.default"
+        :class="ui.label()"
       >
         <slot>{{ label }}</slot>
         <span
@@ -134,114 +118,3 @@ function input(event: Event): void {
     />
   </div>
 </template>
-
-<style lang="scss" module>
-@use '@/styles/colors.scss' as c;
-
-.wrapper {
-  @apply relative flex items-start cursor-pointer -ml-[9px];
-
-  &.disabled {
-    @apply cursor-not-allowed;
-
-    .radio {
-      @apply opacity-50;
-
-      &:before {
-        content: none !important;
-      }
-    }
-
-    .label {
-      @apply text-rui-text-disabled;
-    }
-  }
-
-  .input {
-    @apply appearance-none w-[1px] h-[1px] absolute z-[2] outline-none select-none;
-
-    &:focus {
-      + .radio {
-        &:before {
-          @apply opacity-15;
-        }
-      }
-    }
-  }
-
-  .radio {
-    @apply relative text-rui-text-secondary p-[9px];
-
-    &:before {
-      content: '';
-      @apply absolute top-1/2 left-1/2 block h-[42px] w-[42px] -translate-y-1/2 -translate-x-1/2 rounded-full opacity-0 transition-opacity;
-      @apply bg-black dark:bg-white;
-    }
-
-    &.with-error {
-      @apply text-rui-error #{!important};
-    }
-
-    &.with-success {
-      @apply text-rui-success #{!important};
-    }
-
-    &:hover {
-      &:before {
-        @apply opacity-5;
-      }
-    }
-
-    &:active {
-      &:before {
-        @apply opacity-30;
-      }
-    }
-
-    &.lg {
-      &:before {
-        @apply h-[46px] w-[46px];
-      }
-    }
-
-    &.sm {
-      &:before {
-        @apply h-[38px] w-[38px];
-      }
-    }
-
-    @each $color in c.$context-colors {
-      &.#{$color} {
-        @apply before:bg-rui-#{$color};
-        &.checked {
-          @apply text-rui-#{$color};
-        }
-      }
-    }
-  }
-
-  .label {
-    @apply flex-1 text-rui-text;
-
-    &:not(:empty) {
-      @apply mt-[9px] mb-1;
-    }
-  }
-
-  &.sm {
-    .label {
-      &:not(:empty) {
-        @apply mt-[7px];
-      }
-    }
-  }
-
-  &.lg {
-    .label {
-      &:not(:empty) {
-        @apply mt-[11px];
-      }
-    }
-  }
-}
-</style>

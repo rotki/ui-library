@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { ContextColorsType } from '@/consts/colors';
 import { objectPick } from '@vueuse/shared';
+import { checkControlStyles, getCheckControlIconSize } from '@/components/forms/check-control-styles';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { useFormTextDetail } from '@/utils/form-text-detail';
@@ -45,10 +46,18 @@ defineSlots<{
 
 const el = useTemplateRef<HTMLInputElement>('el');
 
-const { hasError, hasSuccess } = useFormTextDetail(
+const { hasError, validation } = useFormTextDetail(
   () => errorMessages,
   () => successMessages,
 );
+
+const ui = computed<ReturnType<typeof checkControlStyles>>(() => checkControlStyles({
+  size,
+  disabled,
+  checked: get(modelValue) || get(indeterminate),
+  validation: get(validation),
+  color,
+}));
 
 const internalModelValue = computed<boolean>({
   get: () => get(modelValue),
@@ -59,24 +68,15 @@ const internalModelValue = computed<boolean>({
   },
 });
 
-const iconSize = computed<number>(() => {
-  if (size === 'lg')
-    return 28;
-
-  if (size === 'sm')
-    return 20;
-
-  return 24;
-});
+const iconSize = computed<number>(() => getCheckControlIconSize(size));
 
 watch(indeterminate, (val) => {
   const input = get(el);
-  if (input) {
-    input.checked = !val;
-    if (val)
-      input.value = 'off';
-    else input.value = 'on';
+  if (!input) {
+    return;
   }
+  input.checked = !val;
+  input.value = val ? 'off' : 'on';
 });
 
 watch(internalModelValue, (val) => {
@@ -89,39 +89,22 @@ watch(internalModelValue, (val) => {
 <template>
   <div v-bind="getRootAttrs($attrs)">
     <label
-      :class="[
-        $style.wrapper,
-        $style[size ?? ''],
-        {
-          [$style.disabled]: disabled,
-          [$style['with-error']]: hasError,
-        },
-      ]"
+      :class="ui.wrapper()"
       v-bind="objectPick($attrs, ['onClick'])"
+      :data-disabled="disabled || undefined"
+      :data-checked="modelValue || indeterminate || undefined"
       :data-error="hasError ? '' : undefined"
     >
       <input
         ref="el"
         v-model="internalModelValue"
         type="checkbox"
-        :class="$style.input"
+        :class="ui.input()"
         :disabled="disabled"
         :aria-invalid="hasError"
         v-bind="getNonRootAttrs($attrs, ['onInput', 'onClick'])"
       />
-      <span
-        :class="[
-          $style.checkbox,
-          $style[color ?? ''],
-          $style[size ?? ''],
-          {
-            [$style.checked]: modelValue || indeterminate,
-            [$style.disabled]: disabled,
-            [$style['with-error']]: hasError,
-            [$style['with-success']]: hasSuccess && !hasError,
-          },
-        ]"
-      >
+      <span :class="ui.control()">
         <RuiIcon
           v-if="indeterminate"
           name="lu-checkbox-indeterminate-fill"
@@ -140,8 +123,7 @@ watch(internalModelValue, (val) => {
       </span>
       <span
         v-if="label || $slots.default"
-        :class="$style.label"
-        class="text-body-1"
+        :class="ui.label()"
       >
         <slot>{{ label }}</slot>
         <span
@@ -160,114 +142,3 @@ watch(internalModelValue, (val) => {
     />
   </div>
 </template>
-
-<style lang="scss" module>
-@use '@/styles/colors.scss' as c;
-
-.wrapper {
-  @apply relative flex items-start cursor-pointer -ml-[9px];
-
-  &.disabled {
-    @apply cursor-not-allowed;
-
-    .checkbox {
-      @apply opacity-50;
-
-      &:before {
-        content: none !important;
-      }
-    }
-
-    .label {
-      @apply text-rui-text-disabled;
-    }
-  }
-
-  .input {
-    @apply appearance-none w-[1px] h-[1px] absolute z-[2] outline-none select-none;
-
-    &:focus {
-      + .checkbox {
-        &:before {
-          @apply opacity-15;
-        }
-      }
-    }
-  }
-
-  .checkbox {
-    @apply relative text-rui-text-secondary p-[9px];
-
-    &:before {
-      content: '';
-      @apply absolute top-1/2 left-1/2 block h-[42px] w-[42px] -translate-y-1/2 -translate-x-1/2 rounded-full opacity-0 transition-opacity;
-      @apply bg-black dark:bg-white;
-    }
-
-    &.with-error {
-      @apply text-rui-error #{!important};
-    }
-
-    &.with-success {
-      @apply text-rui-success #{!important};
-    }
-
-    &:hover {
-      &:before {
-        @apply opacity-5;
-      }
-    }
-
-    &:active {
-      &:before {
-        @apply opacity-30;
-      }
-    }
-
-    &.lg {
-      &:before {
-        @apply h-[46px] w-[46px];
-      }
-    }
-
-    &.sm {
-      &:before {
-        @apply h-[38px] w-[38px];
-      }
-    }
-
-    @each $color in c.$context-colors {
-      &.#{$color} {
-        @apply before:bg-rui-#{$color};
-        &.checked {
-          @apply text-rui-#{$color};
-        }
-      }
-    }
-  }
-
-  .label {
-    @apply flex-1 text-rui-text;
-
-    &:not(:empty) {
-      @apply mt-[9px] mb-1;
-    }
-  }
-
-  &.sm {
-    .label {
-      &:not(:empty) {
-        @apply mt-[7px];
-      }
-    }
-  }
-
-  &.lg {
-    .label {
-      &:not(:empty) {
-        @apply mt-[11px];
-      }
-    }
-  }
-}
-</style>

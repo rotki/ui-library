@@ -25,7 +25,7 @@ describe('components/forms/radio-button/radio/RuiRadio.vue', () => {
       },
     });
     expect(wrapper.text()).toContain(label);
-    expectWrapperToHaveClass(wrapper, 'label > div', /_radio_/);
+    expectWrapperToHaveClass(wrapper, 'label > div', /text-rui-text-secondary/);
   });
 
   it('should pass disabled props', async () => {
@@ -35,13 +35,13 @@ describe('components/forms/radio-button/radio/RuiRadio.vue', () => {
       },
     });
     expect(wrapper.find('input').attributes('disabled')).toBeUndefined();
-    expectWrapperNotToHaveClass(wrapper, 'label', /_disabled_/);
+    expectWrapperNotToHaveClass(wrapper, 'label', /cursor-not-allowed/);
     await wrapper.setProps({ disabled: true });
     expect(wrapper.find('input').attributes('disabled')).toBeDefined();
-    expectWrapperToHaveClass(wrapper, 'label', /_disabled_/);
+    expectWrapperToHaveClass(wrapper, 'label', /cursor-not-allowed/);
     await wrapper.setProps({ disabled: false });
     expect(wrapper.find('input').attributes('disabled')).toBeUndefined();
-    expectWrapperNotToHaveClass(wrapper, 'label', /_disabled_/);
+    expectWrapperNotToHaveClass(wrapper, 'label', /cursor-not-allowed/);
   });
 
   it('should render icon correctly', async () => {
@@ -64,24 +64,24 @@ describe('components/forms/radio-button/radio/RuiRadio.vue', () => {
     wrapper = createWrapper({
       props: { color: 'primary', value: 'value' },
     });
-    expectWrapperToHaveClass(wrapper, 'label > div', /_primary_/);
+    expectWrapperToHaveClass(wrapper, 'label > div', /before:bg-rui-primary/);
 
     await wrapper.setProps({ color: 'secondary' });
-    expectWrapperToHaveClass(wrapper, 'label > div', /_secondary_/);
+    expectWrapperToHaveClass(wrapper, 'label > div', /before:bg-rui-secondary/);
 
     await wrapper.setProps({ color: 'error' });
-    expectWrapperToHaveClass(wrapper, 'label > div', /_error_/);
+    expectWrapperToHaveClass(wrapper, 'label > div', /before:bg-rui-error/);
 
     await wrapper.setProps({ color: 'success' });
-    expectWrapperToHaveClass(wrapper, 'label > div', /_success_/);
+    expectWrapperToHaveClass(wrapper, 'label > div', /before:bg-rui-success/);
   });
 
   it('should pass size props', async () => {
     wrapper = createWrapper({ props: { size: 'sm', value: 'value' } });
-    expectWrapperToHaveClass(wrapper, 'label > div', /_sm_/);
+    expectWrapperToHaveClass(wrapper, 'label > div', /2\.375rem/);
 
     await wrapper.setProps({ size: 'lg' });
-    expectWrapperToHaveClass(wrapper, 'label > div', /_lg_/);
+    expectWrapperToHaveClass(wrapper, 'label > div', /2\.875rem/);
   });
 
   it('should pass hint props', async () => {
