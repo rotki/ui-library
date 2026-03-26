@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { ContextColorsType } from '@/consts/colors';
 import type { VueClassValue } from '@/types/class-value';
+import { HIGHLIGHT_COLOR_MAP, HIGHLIGHT_DEFAULT, SliderInteraction, sliderStyles } from '@/components/forms/slider/slider-styles';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
+import { cn } from '@/utils/tv';
 
 export interface RuiSliderClassNames {
   root?: VueClassValue;
@@ -64,54 +66,105 @@ const {
   required = false,
 } = defineProps<Props>();
 
+const BIG_TICK_THRESHOLD = 4;
+
+const isHovered = ref<boolean>(false);
+const isFocused = ref<boolean>(false);
+const isActive = ref<boolean>(false);
+
 const outer = useTemplateRef<HTMLDivElement>('outer');
 
-const { hasError, hasSuccess } = useFormTextDetail(
+const { hasError, validation } = useFormTextDetail(
   () => errorMessages,
   () => successMessages,
 );
+
 const { width, height } = useElementBounding(outer);
 
-const ticksData = computed<[number, number]>(() => {
-  const range = max - min;
-  const total = range / step;
-  const current = Math.round((get(modelValue) - min) / step);
+const bigTick = computed<boolean>(() => tickSize > BIG_TICK_THRESHOLD);
 
-  return [current, total];
+useEventListener(document, 'mouseup', () => set(isActive, false));
+
+const interaction = computed<SliderInteraction>(() => {
+  if (disabled)
+    return SliderInteraction.idle;
+  if (get(isActive))
+    return SliderInteraction.active;
+  if (get(isFocused))
+    return SliderInteraction.focus;
+  if (get(isHovered))
+    return SliderInteraction.hover;
+  return SliderInteraction.idle;
 });
 
+// Layout ui: stable props only (not interaction), used for wrapper/label/outer/inner/input
+const ui = computed<ReturnType<typeof sliderStyles>>(() => sliderStyles({
+  disabled,
+  vertical,
+  validation: get(validation),
+  color,
+  bigTick: get(bigTick),
+}));
+
+// Track ui: includes interaction state, used for slider/thumb/ticks (changes on hover/focus/active)
+const trackUi = computed<ReturnType<typeof sliderStyles>>(() => sliderStyles({
+  disabled,
+  vertical,
+  interaction: get(interaction),
+  color,
+  bigTick: get(bigTick),
+}));
+
+const totalTicks = computed<number>(() => (max - min) / step);
+
+const currentTick = computed<number>(() => Math.round((get(modelValue) - min) / step));
+
 const trackWidth = computed<string>(() => {
-  const [current, total] = get(ticksData);
-  const percentage = Math.min(100, Math.max(0, Math.round((current / total) * 100)));
+  const percentage = Math.min(100, Math.max(0, Math.round((get(currentTick) / get(totalTicks)) * 100)));
   return `${percentage}%`;
 });
 
-const sliderWidth = computed<string>(() => `${get(width)}px`);
-const sliderHeight = computed<string>(() => `${get(height)}px`);
-const tickSizeInPx = computed<string>(() => `${tickSize}px`);
+const innerStyle = computed<Record<string, string>>(() => {
+  const w = `${get(width)}px`;
+  const h = `${get(height)}px`;
+  const style: Record<string, string> = { width: vertical ? h : w, height: vertical ? w : h };
+  if (vertical) {
+    style['transform-origin'] = '0 0';
+    style['--tw-translate-y'] = h;
+  }
+  return style;
+});
+
+const tickSizePx = computed<string>(() => `${tickSize}px`);
+
+const ticksStyle = computed<Record<string, string>>(() => {
+  const size = get(tickSizePx);
+  return { margin: `0 calc(${size} / -2)`, width: `calc(100% + ${size})` };
+});
+
+const tickStyle = computed<Record<string, string>>(() => {
+  const size = get(tickSizePx);
+  return { width: size, height: size };
+});
+
+const highlightClass = computed<string>(() => get(bigTick) ? HIGHLIGHT_COLOR_MAP[color] : HIGHLIGHT_DEFAULT);
+
+const tickClassOverride = computed<string | undefined>(() => cn(classNames?.tick) ?? (tickClass || undefined));
+
+function isHighlightedTick(index: number): boolean {
+  return index <= get(currentTick);
+}
 </script>
 
 <template>
   <div v-bind="getRootAttrs($attrs)">
     <label
-      :class="[
-        $style.wrapper,
-        {
-          [$style.disabled ?? '']: disabled,
-          [$style.vertical ?? '']: vertical,
-          [$style[color] ?? '']: color,
-          [$style['hide-track'] ?? '']: hideTrack,
-          [$style['big-tick'] ?? '']: tickSize > 4,
-          [$style['with-error'] ?? '']: hasError,
-          [$style['with-success'] ?? '']: hasSuccess && !hasError,
-        },
-      ]"
+      :class="ui.wrapper()"
       :data-error="hasError ? '' : undefined"
     >
       <div
         v-if="label"
-        :class="$style.label"
-        class="text-body-1"
+        :class="ui.label()"
       >
         {{ label }}
         <span
@@ -123,12 +176,15 @@ const tickSizeInPx = computed<string>(() => `${tickSize}px`);
       </div>
       <div
         ref="outer"
-        :class="$style.outer"
+        :class="ui.outer()"
       >
-        <div :class="$style.inner">
+        <div
+          :class="ui.inner()"
+          :style="innerStyle"
+        >
           <input
             v-model="modelValue"
-            :class="$style.input"
+            :class="ui.input()"
             type="range"
             :max="max"
             :min="min"
@@ -138,36 +194,54 @@ const tickSizeInPx = computed<string>(() => `${tickSize}px`);
             :aria-label="label || undefined"
             :aria-valuetext="String(modelValue)"
             v-bind="getNonRootAttrs($attrs)"
+            @mouseenter="isHovered = true"
+            @mouseleave="isHovered = false"
+            @focus="isFocused = true"
+            @blur="isFocused = false"
+            @mousedown="isActive = true"
+            @mouseup="isActive = false"
           />
-          <div :class="$style.slider">
-            <div :class="$style.slider__inner">
-              <div :class="[$style.slider__container, classNames?.slider ?? sliderClass]">
+          <div :class="trackUi.slider()">
+            <div :class="trackUi.sliderInner()">
+              <div :class="trackUi.container({ class: cn(classNames?.slider) ?? sliderClass })">
                 <div
                   v-if="!hideTrack"
-                  :class="$style.slider__container__track"
+                  :class="trackUi.track()"
+                  :style="{ width: trackWidth }"
+                  data-id="slider-track"
                 />
                 <div
                   v-if="showTicks && !disabled"
-                  :class="$style.slider__ticks"
+                  :class="trackUi.ticks()"
+                  :style="ticksStyle"
+                  data-id="slider-ticks"
                 >
                   <span
-                    v-for="i in ticksData[1] + 1"
+                    v-for="i in totalTicks + 1"
                     :key="i"
-                    :class="
+                    :class="[
+                      trackUi.tick(),
                       hideTrack
-                        ? [classNames?.tick ?? tickClass]
+                        ? tickClassOverride
                         : [
-                          i - 1 <= ticksData[0] && $style.highlighted,
-                          i - 1 > ticksData[0] && (classNames?.tick ?? tickClass),
-                        ]
-                    "
+                          isHighlightedTick(i - 1) && highlightClass,
+                          !isHighlightedTick(i - 1) && tickClassOverride,
+                        ],
+                    ]"
+                    :style="tickStyle"
                   />
                 </div>
               </div>
-              <div :class="$style.slider__thumb" />
+              <div
+                :class="[trackUi.thumb(), trackUi.thumbRipple()]"
+                :style="{ left: trackWidth }"
+                data-id="slider-thumb"
+              />
               <div
                 v-if="showThumbLabel && !disabled"
-                :class="$style.slider__thumb_label"
+                :class="trackUi.thumbLabel()"
+                :style="{ left: trackWidth }"
+                data-id="slider-thumb-label"
               >
                 {{ modelValue }}
               </div>
@@ -185,268 +259,3 @@ const tickSizeInPx = computed<string>(() => `${tickSize}px`);
     />
   </div>
 </template>
-
-<style lang="scss" module>
-@use '@/styles/colors.scss' as c;
-
-:global(.dark) {
-  .wrapper {
-    &.disabled {
-      .inner {
-        .slider {
-          &__container {
-            @apply bg-rui-grey-800 #{!important};
-
-            &__track {
-              @apply bg-rui-grey-700 #{!important};
-            }
-          }
-
-          &__thumb {
-            @apply bg-rui-grey-700 #{!important};
-          }
-        }
-      }
-    }
-
-    .inner {
-      .slider {
-        &__ticks {
-          span {
-            &.highlighted {
-              @apply bg-[#121212];
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-.wrapper {
-  @apply flex items-start gap-3;
-
-  &.disabled {
-    .label {
-      @apply text-rui-text-disabled;
-    }
-    .inner {
-      .slider {
-        &__container {
-          @apply bg-rui-grey-300 #{!important};
-
-          &__track {
-            @apply bg-rui-grey-400 #{!important};
-          }
-        }
-
-        &__thumb {
-          @apply bg-rui-grey-400 #{!important};
-        }
-      }
-    }
-  }
-
-  @each $color in c.$context-colors {
-    &.#{$color},
-    &.with-#{$color} {
-      .inner {
-        .slider {
-          &__container {
-            @apply bg-rui-#{$color} bg-opacity-40;
-
-            &__track {
-              @apply bg-rui-#{$color};
-            }
-          }
-
-          &__thumb {
-            @apply bg-rui-#{$color};
-
-            &:before {
-              @apply bg-rui-#{$color};
-            }
-          }
-
-          &__ticks {
-            span {
-              @apply bg-rui-#{$color};
-            }
-          }
-        }
-      }
-
-      &.big-tick {
-        .inner {
-          .slider {
-            &__ticks {
-              span {
-                @apply bg-rui-#{$color}-lighter;
-
-                &.highlighted {
-                  @apply bg-rui-#{$color};
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  @each $color in ('error', 'success') {
-    &.with-#{$color} {
-      .label {
-        @apply text-rui-#{$color};
-      }
-    }
-  }
-
-  &.vertical {
-    @apply flex-col-reverse items-center h-full;
-
-    .label {
-      @apply mb-2 text-center;
-    }
-
-    .outer {
-      @apply min-w-0 min-h-[120px] w-8;
-    }
-
-    .inner {
-      width: v-bind(sliderHeight);
-      height: v-bind(sliderWidth);
-      @apply -rotate-90;
-      transform-origin: 0 0;
-      --tw-translate-y: v-bind(sliderHeight);
-
-      .slider {
-        &__thumb {
-          &_label {
-            @apply mt-6;
-            @apply rotate-90 translate-x-0;
-            transform-origin: 0 50%;
-          }
-        }
-      }
-    }
-  }
-
-  .label {
-    @apply mt-1 text-rui-text;
-  }
-
-  .outer {
-    @apply relative h-8 flex-1 min-w-[120px];
-  }
-
-  .inner {
-    width: v-bind(sliderWidth);
-    height: v-bind(sliderHeight);
-    @apply relative;
-
-    .input {
-      @apply h-full w-full opacity-0 cursor-pointer;
-
-      &:not(:disabled) {
-        &:hover {
-          ~ .slider {
-            .slider {
-              &__thumb {
-                &:before {
-                  @apply scale-100;
-                }
-              }
-            }
-          }
-        }
-
-        &:focus {
-          ~ .slider {
-            .slider {
-              &__thumb {
-                &:before {
-                  @apply scale-100 opacity-15;
-                }
-              }
-            }
-          }
-        }
-
-        &:active {
-          ~ .slider {
-            .slider {
-              &__thumb {
-                &:before {
-                  @apply scale-100 opacity-30;
-                }
-
-                &_label {
-                  @apply opacity-100 visible;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    .slider {
-      @apply absolute h-full w-full top-0 px-2 pointer-events-none;
-
-      &__inner {
-        @apply relative h-full w-full cursor-pointer;
-      }
-
-      &__container {
-        @apply absolute top-1/2 transform -translate-y-1/2;
-        @apply w-full h-1 rounded-full;
-
-        &__track {
-          width: v-bind(trackWidth);
-          @apply transition-all ease-linear duration-75 delay-0;
-          @apply h-full rounded-full;
-        }
-      }
-
-      &__ticks {
-        @apply h-full absolute top-0;
-        @apply flex justify-between items-center;
-        margin: 0 calc(v-bind(tickSizeInPx) / -2);
-        width: calc(100% + v-bind(tickSizeInPx));
-
-        span {
-          @apply rounded-full;
-          width: calc(v-bind(tickSizeInPx));
-          height: calc(v-bind(tickSizeInPx));
-
-          &.highlighted {
-            @apply bg-rui-grey-100;
-          }
-        }
-      }
-
-      &__thumb {
-        @apply absolute top-1/2 transition-all ease-linear duration-75 delay-0 transform -translate-y-1/2 -translate-x-1/2;
-        @apply w-3 h-3 rounded-full shadow-2;
-        left: v-bind(trackWidth);
-
-        &:before {
-          @apply w-8 h-8 rounded-full absolute top-1/2 left-1/2;
-          @apply opacity-10;
-          @apply transition transform -translate-x-1/2 -translate-y-1/2 scale-0;
-          content: '';
-        }
-
-        &_label {
-          left: v-bind(trackWidth);
-          @apply invisible opacity-0;
-          @apply absolute -mt-7 transition-all ease-linear duration-75 delay-0 transform -translate-x-1/2;
-          @apply px-2 py-1 text-xs font-normal;
-          @apply bg-rui-grey-700/90 text-white rounded shadow;
-        }
-      }
-    }
-  }
-}
-</style>

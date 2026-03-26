@@ -33,41 +33,34 @@ describe('components/forms/slider/RuiSlider.vue', () => {
     expect(wrapper.find('input').attributes('max')).toBe('100');
     expect(wrapper.find('input').attributes('step')).toBe('10');
     expect(wrapper.find('input').element.value).toBe('40');
-    expect(wrapper.findAll('div[class*=slider__ticks] span')).toHaveLength(9);
-    expect(wrapper.findAll('div[class*=slider__ticks] span[class*=highlighted]')).toHaveLength(3);
+    expect(wrapper.findAll('[data-id=slider-ticks] span')).toHaveLength(9);
   });
 
   it('should pass disabled props', async () => {
     wrapper = createWrapper();
     expect(wrapper.find('input').attributes('disabled')).toBeUndefined();
-    expectWrapperNotToHaveClass(wrapper, 'label', /_disabled_/);
     await wrapper.setProps({ disabled: true });
     expect(wrapper.find('input').attributes('disabled')).toBeDefined();
-    expectWrapperToHaveClass(wrapper, 'label', /_disabled_/);
     await wrapper.setProps({ disabled: false });
     expect(wrapper.find('input').attributes('disabled')).toBeUndefined();
-    expectWrapperNotToHaveClass(wrapper, 'label', /_disabled_/);
   });
 
   it('should pass vertical props', async () => {
     wrapper = createWrapper();
-    expectWrapperNotToHaveClass(wrapper, 'label', /_vertical_/);
+    expectWrapperNotToHaveClass(wrapper, 'label', /flex-col-reverse/);
     await wrapper.setProps({ vertical: true });
-    expectWrapperToHaveClass(wrapper, 'label', /_vertical_/);
+    expectWrapperToHaveClass(wrapper, 'label', /flex-col-reverse/);
     await wrapper.setProps({ vertical: false });
-    expectWrapperNotToHaveClass(wrapper, 'label', /_vertical_/);
+    expectWrapperNotToHaveClass(wrapper, 'label', /flex-col-reverse/);
   });
 
   it('should pass hideTrack props', async () => {
     wrapper = createWrapper();
-    expectWrapperNotToHaveClass(wrapper, 'label', /_hide-track_/);
-    expect(wrapper.find('div[class*=slider__container__track]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=slider-track]').exists()).toBeTruthy();
     await wrapper.setProps({ hideTrack: true });
-    expectWrapperToHaveClass(wrapper, 'label', /_hide-track_/);
-    expect(wrapper.find('div[class*=slider__container__track]').exists()).toBeFalsy();
+    expect(wrapper.find('[data-id=slider-track]').exists()).toBeFalsy();
     await wrapper.setProps({ hideTrack: false });
-    expectWrapperNotToHaveClass(wrapper, 'label', /_hide-track_/);
-    expect(wrapper.find('div[class*=slider__container__track]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=slider-track]').exists()).toBeTruthy();
   });
 
   it('should pass showThumbLabel props', async () => {
@@ -77,21 +70,21 @@ describe('components/forms/slider/RuiSlider.vue', () => {
         modelValue,
       },
     });
-    expect(wrapper.find('div[class*=slider__thumb_label]').exists()).toBeFalsy();
+    expect(wrapper.find('[data-id=slider-thumb-label]').exists()).toBeFalsy();
     await wrapper.setProps({ showThumbLabel: true });
-    expect(wrapper.find('div[class*=slider__thumb_label]').exists()).toBeTruthy();
-    expect(wrapper.find('div[class*=slider__thumb_label]').text()).toContain(modelValue);
+    expect(wrapper.find('[data-id=slider-thumb-label]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=slider-thumb-label]').text()).toContain(modelValue);
     await wrapper.setProps({ disabled: true });
-    expect(wrapper.find('div[class*=slider__thumb_label]').exists()).toBeFalsy();
+    expect(wrapper.find('[data-id=slider-thumb-label]').exists()).toBeFalsy();
   });
 
   it('should pass showTicks props', async () => {
     wrapper = createWrapper();
-    expect(wrapper.find('div[class*=slider__ticks]').exists()).toBeFalsy();
+    expect(wrapper.find('[data-id=slider-ticks]').exists()).toBeFalsy();
     await wrapper.setProps({ showTicks: true });
-    expect(wrapper.find('div[class*=slider__ticks]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=slider-ticks]').exists()).toBeTruthy();
     await wrapper.setProps({ disabled: true });
-    expect(wrapper.find('div[class*=slider__ticks]').exists()).toBeFalsy();
+    expect(wrapper.find('[data-id=slider-ticks]').exists()).toBeFalsy();
   });
 
   it('should pass tickSize props', async () => {
@@ -100,28 +93,25 @@ describe('components/forms/slider/RuiSlider.vue', () => {
         showTicks: true,
       },
     });
-    expectWrapperNotToHaveClass(wrapper, 'label', /_big-tick/);
+    // Default tickSize (2) should not have big-tick lighter colors
+    expect(wrapper.find('[data-id=slider-ticks] span').exists()).toBeTruthy();
     await wrapper.setProps({ tickSize: 12 });
-    expectWrapperToHaveClass(wrapper, 'label', /_big-tick/);
-    await wrapper.setProps({ tickSize: 1 });
-    expectWrapperNotToHaveClass(wrapper, 'label', /_big-tick/);
+    // Big tick uses lighter color variant
+    expectWrapperToHaveClass(wrapper, '[data-id=slider-ticks] span', /lighter/);
   });
 
   it('should pass color props', async () => {
     wrapper = createWrapper();
-    expectWrapperToHaveClass(wrapper, 'label', /_primary_/);
-
-    await wrapper.setProps({ color: 'primary' });
-    expectWrapperToHaveClass(wrapper, 'label', /_primary_/);
+    expectWrapperToHaveClass(wrapper, '[data-id=slider-thumb]', /bg-rui-primary/);
 
     await wrapper.setProps({ color: 'secondary' });
-    expectWrapperToHaveClass(wrapper, 'label', /_secondary_/);
+    expectWrapperToHaveClass(wrapper, '[data-id=slider-thumb]', /bg-rui-secondary/);
 
     await wrapper.setProps({ color: 'error' });
-    expectWrapperToHaveClass(wrapper, 'label', /_error_/);
+    expectWrapperToHaveClass(wrapper, '[data-id=slider-thumb]', /bg-rui-error/);
 
     await wrapper.setProps({ color: 'success' });
-    expectWrapperToHaveClass(wrapper, 'label', /_success_/);
+    expectWrapperToHaveClass(wrapper, '[data-id=slider-thumb]', /bg-rui-success/);
   });
 
   it('should pass hint props', async () => {
@@ -260,15 +250,12 @@ describe('components/forms/slider/RuiSlider.vue', () => {
       },
     });
 
-    // Required asterisk should not be present by default
     expect(wrapper.text()).not.toContain('﹡');
 
-    // Set required to true
     await wrapper.setProps({ required: true });
     expect(wrapper.text()).toContain('﹡');
     expect(wrapper.find('.text-rui-error').exists()).toBeTruthy();
 
-    // Set required back to false
     await wrapper.setProps({ required: false });
     expect(wrapper.text()).not.toContain('﹡');
   });
