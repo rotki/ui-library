@@ -154,7 +154,7 @@ describe('components/steppers/RuiFooterStepper.vue', () => {
     await wrapper.setProps({ variant: 'progress' });
     expect(wrapper.element.getAttribute('data-variant')).toBe('progress');
 
-    const next = wrapper.find('button ~ button span[class*=_label] span');
+    const next = wrapper.find('button ~ button [data-id=btn-label] span');
     expect(next.exists()).toBeTruthy();
 
     await wrapper.setProps({ variant: 'pill' });

@@ -1,7 +1,3 @@
-export { getButtonColorClasses } from '@/composables/colors/button';
-
-export type { ButtonColorClasses } from '@/composables/colors/button';
-
 export {
   afterBorderColorMap,
   beforeBgColorMap,

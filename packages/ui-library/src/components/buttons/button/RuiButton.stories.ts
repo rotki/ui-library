@@ -209,9 +209,17 @@ export const ErrorOutlinedDisabled = meta.story({
 });
 
 export const List = meta.story({
-  args: {
-    label: 'List',
-    variant: 'list',
+  render() {
+    return {
+      components: { RuiButton },
+      template: `
+        <div class="w-64 border border-black/10 dark:border-white/10 rounded-lg overflow-hidden">
+          <RuiButton variant="list">Dashboard</RuiButton>
+          <RuiButton variant="list" active>Settings</RuiButton>
+          <RuiButton variant="list">Profile</RuiButton>
+          <RuiButton variant="list" disabled>Admin</RuiButton>
+        </div>`,
+    };
   },
 });
 

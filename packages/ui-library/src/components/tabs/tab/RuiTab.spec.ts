@@ -1,7 +1,6 @@
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import RuiTab from '@/components/tabs/tab/RuiTab.vue';
-import { expectToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
 vi.mock('vue-router', () => ({
   useLink: vi.fn().mockImplementation(() => ({
@@ -43,7 +42,7 @@ describe('components/tabs/tab/RuiTab.vue', () => {
       },
     });
     const elem = wrapper.find('button');
-    expectToHaveClass(elem.element, /_text_/);
+    expect(elem.attributes('data-variant')).toBe('text');
     expect(elem.text()).toContain('prepend');
     expect(elem.find('span').text()).toContain(label);
   });
@@ -65,19 +64,19 @@ describe('components/tabs/tab/RuiTab.vue', () => {
         color: 'primary',
       },
     });
-    expectWrapperToHaveClass(wrapper, 'button', /_grey_/);
+    expect(wrapper.find('button').attributes('data-color')).toBeUndefined();
 
     await wrapper.setProps({ active: true });
-    expectWrapperToHaveClass(wrapper, 'button', /_primary_/);
+    expect(wrapper.find('button').attributes('data-color')).toBe('primary');
 
     await wrapper.setProps({ color: 'secondary' });
-    expectWrapperToHaveClass(wrapper, 'button', /_secondary_/);
+    expect(wrapper.find('button').attributes('data-color')).toBe('secondary');
 
     await wrapper.setProps({ color: 'error' });
-    expectWrapperToHaveClass(wrapper, 'button', /_error_/);
+    expect(wrapper.find('button').attributes('data-color')).toBe('error');
 
     await wrapper.setProps({ color: 'success' });
-    expectWrapperToHaveClass(wrapper, 'button', /_success_/);
+    expect(wrapper.find('button').attributes('data-color')).toBe('success');
   });
 
   it('should pass grow props', async () => {

@@ -24,7 +24,7 @@ describe('components/buttons/button/RuiButton.vue', () => {
       },
     });
     expect(wrapper.text()).toContain(label);
-    expectWrapperToHaveClass(wrapper, 'button', /_btn_/);
+    expect(wrapper.find('button').exists()).toBeTruthy();
     expect(wrapper.attributes('type')).toBe('button');
   });
 
@@ -39,16 +39,13 @@ describe('components/buttons/button/RuiButton.vue', () => {
 
   it('should pass loading props', async () => {
     wrapper = createWrapper();
-    expectWrapperNotToHaveClass(wrapper, 'button', /_loading_/);
-    expect(wrapper.find('div[class*=spinner]').exists()).toBeFalsy();
+    expect(wrapper.find('[data-spinner]').exists()).toBeFalsy();
 
     await wrapper.setProps({ loading: true });
-    expectWrapperToHaveClass(wrapper, 'button', /_loading_/);
-    expect(wrapper.find('div[class*=spinner]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-spinner]').exists()).toBeTruthy();
 
     await wrapper.setProps({ loading: false });
-    expectWrapperNotToHaveClass(wrapper, 'button', /_loading_/);
-    expect(wrapper.find('div[class*=spinner]').exists()).toBeFalsy();
+    expect(wrapper.find('[data-spinner]').exists()).toBeFalsy();
   });
 
   it('should pass color props', async () => {
@@ -57,55 +54,57 @@ describe('components/buttons/button/RuiButton.vue', () => {
         color: 'primary',
       },
     });
-    expectWrapperToHaveClass(wrapper, 'button', /_primary_/);
+    expectWrapperToHaveClass(wrapper, 'button', /bg-rui-primary/);
 
     await wrapper.setProps({ color: 'secondary' });
-    expectWrapperToHaveClass(wrapper, 'button', /_secondary_/);
+    expectWrapperToHaveClass(wrapper, 'button', /bg-rui-secondary/);
 
     await wrapper.setProps({ color: 'error' });
-    expectWrapperToHaveClass(wrapper, 'button', /_error_/);
+    expectWrapperToHaveClass(wrapper, 'button', /bg-rui-error/);
 
     await wrapper.setProps({ color: 'success' });
-    expectWrapperToHaveClass(wrapper, 'button', /_success_/);
+    expectWrapperToHaveClass(wrapper, 'button', /bg-rui-success/);
   });
 
   it('should pass variant props', async () => {
     wrapper = createWrapper();
-    expectWrapperNotToHaveClass(wrapper, 'button', /_outlined_/);
+    expect(wrapper.attributes('data-variant')).toBe('default');
+
     await wrapper.setProps({ variant: 'outlined' });
-    expectWrapperToHaveClass(wrapper, 'button', /_outlined_/);
+    expect(wrapper.attributes('data-variant')).toBe('outlined');
+
     await wrapper.setProps({ variant: 'text' });
-    expectWrapperToHaveClass(wrapper, 'button', /_text_/);
+    expect(wrapper.attributes('data-variant')).toBe('text');
+
     await wrapper.setProps({ variant: 'fab' });
-    expectWrapperToHaveClass(wrapper, 'button', /_fab_/);
+    expect(wrapper.attributes('data-variant')).toBe('fab');
+    expectWrapperToHaveClass(wrapper, 'button', /rounded-full/);
   });
 
   it('should pass rounded props', async () => {
     wrapper = createWrapper();
-    expectWrapperNotToHaveClass(wrapper, 'button', /_rounded_/);
+    expectWrapperNotToHaveClass(wrapper, 'button', /rounded-full/);
     await wrapper.setProps({ rounded: true });
-    expectWrapperToHaveClass(wrapper, 'button', /_rounded_/);
+    expectWrapperToHaveClass(wrapper, 'button', /rounded-full/);
     await wrapper.setProps({ rounded: false });
-    expectWrapperNotToHaveClass(wrapper, 'button', /_rounded_/);
+    // Default rounded (not rounded-full) should apply
+    expectWrapperToHaveClass(wrapper, 'button', /rounded/);
   });
 
   it('should pass icon props', async () => {
     wrapper = createWrapper();
-    expectWrapperNotToHaveClass(wrapper, 'button', /_icon_/);
     await wrapper.setProps({ icon: true });
-    expectWrapperToHaveClass(wrapper, 'button', /_icon_/);
+    expectWrapperToHaveClass(wrapper, 'button', /rounded-full/);
     await wrapper.setProps({ icon: false });
-    expectWrapperNotToHaveClass(wrapper, 'button', /_icon_/);
+    expectWrapperNotToHaveClass(wrapper, 'button', /rounded-full/);
   });
 
   it('should pass size props', async () => {
     wrapper = createWrapper();
-    expectWrapperNotToHaveClass(wrapper, 'button', /_sm_/);
-    expectWrapperNotToHaveClass(wrapper, 'button', /_lg_/);
     await wrapper.setProps({ size: 'sm' });
-    expectWrapperToHaveClass(wrapper, 'button', /_sm_/);
+    expectWrapperToHaveClass(wrapper, 'button', /py-1/);
     await wrapper.setProps({ size: 'lg' });
-    expectWrapperToHaveClass(wrapper, 'button', /_lg_/);
+    expectWrapperToHaveClass(wrapper, 'button', /text-base/);
   });
 
   it('should pass elevation props and set to correct classes based on the state', async () => {

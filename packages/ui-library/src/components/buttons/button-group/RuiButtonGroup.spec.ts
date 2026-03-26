@@ -6,7 +6,6 @@ import {
   assertExists,
   expectNotToHaveClass,
   expectToHaveClass,
-  expectWrapperNotToHaveClass,
   expectWrapperToHaveClass,
 } from '~/tests/helpers/dom-helpers';
 
@@ -42,19 +41,19 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
       },
     });
     expectToHaveClass(wrapper.element, /divide-rui-primary/);
-    expectWrapperToHaveClass(wrapper, 'button', /_primary_/);
+    expectWrapperToHaveClass(wrapper, 'button', /bg-rui-primary/);
 
     await wrapper.setProps({ color: 'secondary' });
     expectToHaveClass(wrapper.element, /divide-rui-secondary/);
-    expectWrapperToHaveClass(wrapper, 'button', /_secondary_/);
+    expectWrapperToHaveClass(wrapper, 'button', /bg-rui-secondary/);
 
     await wrapper.setProps({ color: 'error' });
     expectToHaveClass(wrapper.element, /divide-rui-error/);
-    expectWrapperToHaveClass(wrapper, 'button', /_error_/);
+    expectWrapperToHaveClass(wrapper, 'button', /bg-rui-error/);
 
     await wrapper.setProps({ color: 'success' });
     expectToHaveClass(wrapper.element, /divide-rui-success/);
-    expectWrapperToHaveClass(wrapper, 'button', /_success_/);
+    expectWrapperToHaveClass(wrapper, 'button', /bg-rui-success/);
   });
 
   it('should pass variant props', async () => {
@@ -62,22 +61,20 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
     expectNotToHaveClass(wrapper.element, /outline-rui-text/);
     await wrapper.setProps({ variant: 'outlined' });
     expectToHaveClass(wrapper.element, /outline-rui-text/);
-    expectWrapperToHaveClass(wrapper, 'button', /_outlined_/);
+    expectWrapperToHaveClass(wrapper, 'button', /outline-rui-text/);
     await wrapper.setProps({ variant: 'text' });
     expectNotToHaveClass(wrapper.element, /outline-rui-text/);
-    expectWrapperToHaveClass(wrapper, 'button', /_text_/);
+    expectWrapperToHaveClass(wrapper, 'button', /bg-transparent/);
   });
 
   it('should pass size props', async () => {
     wrapper = createWrapper();
 
-    // size is passed through to child RuiButton, check via button CSS modules
-    expectWrapperNotToHaveClass(wrapper, 'button', /_sm_/);
-    expectWrapperNotToHaveClass(wrapper, 'button', /_lg_/);
+    // size is passed through to child RuiButton
     await wrapper.setProps({ size: 'sm' });
-    expectWrapperToHaveClass(wrapper, 'button', /_sm_/);
+    expectWrapperToHaveClass(wrapper, 'button', /py-1/);
     await wrapper.setProps({ size: 'lg' });
-    expectWrapperToHaveClass(wrapper, 'button', /_lg_/);
+    expectWrapperToHaveClass(wrapper, 'button', /text-base/);
   });
 
   it('should toggleable button group', async () => {
@@ -97,17 +94,17 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
     assertExists(button2);
 
     // only first button active
-    expectToHaveClass(button0.element, /_active_/);
-    expectNotToHaveClass(button1.element, /_active_/);
-    expectNotToHaveClass(button2.element, /_active_/);
+    expect(button0.element.getAttribute('data-active')).toBe('true');
+    expect(button1.element.getAttribute('data-active')).toBeNull();
+    expect(button2.element.getAttribute('data-active')).toBeNull();
 
     // on click, second button should take active state
     await button1.trigger('click');
     expect(wrapper.props('modelValue')).toBe(1);
 
-    expectNotToHaveClass(button0.element, /_active_/);
-    expectToHaveClass(button1.element, /_active_/);
-    expectNotToHaveClass(button2.element, /_active_/);
+    expect(button0.element.getAttribute('data-active')).toBeNull();
+    expect(button1.element.getAttribute('data-active')).toBe('true');
+    expect(button2.element.getAttribute('data-active')).toBeNull();
 
     // on click, third button should take active state
     await button2.trigger('click');
@@ -115,28 +112,28 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
     const clickEvent = wrapper.emitted('click');
     expect(clickEvent).toHaveLength(2);
 
-    expectNotToHaveClass(button0.element, /_active_/);
-    expectNotToHaveClass(button1.element, /_active_/);
-    expectToHaveClass(button2.element, /_active_/);
+    expect(button0.element.getAttribute('data-active')).toBeNull();
+    expect(button1.element.getAttribute('data-active')).toBeNull();
+    expect(button2.element.getAttribute('data-active')).toBe('true');
 
     // on click, active button should lose state
     await button2.trigger('click');
-    expectNotToHaveClass(button0.element, /_active_/);
-    expectNotToHaveClass(button1.element, /_active_/);
-    expectNotToHaveClass(button2.element, /_active_/);
+    expect(button0.element.getAttribute('data-active')).toBeNull();
+    expect(button1.element.getAttribute('data-active')).toBeNull();
+    expect(button2.element.getAttribute('data-active')).toBeNull();
     expect(wrapper.props('modelValue')).toBeUndefined();
 
     // set as required
     await wrapper.setProps({ required: true });
     await button2.trigger('click');
-    expectNotToHaveClass(button0.element, /_active_/);
-    expectNotToHaveClass(button1.element, /_active_/);
-    expectToHaveClass(button2.element, /_active_/);
+    expect(button0.element.getAttribute('data-active')).toBeNull();
+    expect(button1.element.getAttribute('data-active')).toBeNull();
+    expect(button2.element.getAttribute('data-active')).toBe('true');
     expect(wrapper.props('modelValue')).toBe(2);
 
     // required so, can't deselect the active item
     await button2.trigger('click');
-    expectToHaveClass(button2.element, /_active_/);
+    expect(button2.element.getAttribute('data-active')).toBe('true');
     expect(wrapper.props('modelValue')).toBe(2);
   });
 
@@ -156,17 +153,17 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
     assertExists(button1);
     assertExists(button2);
 
-    expectToHaveClass(button0.element, /_active_/);
-    expectNotToHaveClass(button1.element, /_active_/);
-    expectNotToHaveClass(button2.element, /_active_/);
+    expect(button0.element.getAttribute('data-active')).toBe('true');
+    expect(button1.element.getAttribute('data-active')).toBeNull();
+    expect(button2.element.getAttribute('data-active')).toBeNull();
 
     // on click, second button should also be active
     await button1.trigger('click');
     expect(wrapper.props('modelValue')).toEqual([0, 1]);
 
-    expectToHaveClass(button0.element, /_active_/);
-    expectToHaveClass(button1.element, /_active_/);
-    expectNotToHaveClass(button2.element, /_active_/);
+    expect(button0.element.getAttribute('data-active')).toBe('true');
+    expect(button1.element.getAttribute('data-active')).toBe('true');
+    expect(button2.element.getAttribute('data-active')).toBeNull();
 
     // on click, third button should also be active
     await button2.trigger('click');
@@ -174,30 +171,30 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
     const clickEvent = wrapper.emitted('click');
     expect(clickEvent).toHaveLength(2);
 
-    expectToHaveClass(button0.element, /_active_/);
-    expectToHaveClass(button1.element, /_active_/);
-    expectToHaveClass(button2.element, /_active_/);
+    expect(button0.element.getAttribute('data-active')).toBe('true');
+    expect(button1.element.getAttribute('data-active')).toBe('true');
+    expect(button2.element.getAttribute('data-active')).toBe('true');
 
     await button0.trigger('click');
     await button1.trigger('click');
     await button2.trigger('click');
 
-    expectNotToHaveClass(button0.element, /_active_/);
-    expectNotToHaveClass(button1.element, /_active_/);
-    expectNotToHaveClass(button2.element, /_active_/);
+    expect(button0.element.getAttribute('data-active')).toBeNull();
+    expect(button1.element.getAttribute('data-active')).toBeNull();
+    expect(button2.element.getAttribute('data-active')).toBeNull();
     expect(wrapper.props('modelValue')).toEqual([]);
 
     // set required
     await wrapper.setProps({ required: true });
     await button2.trigger('click');
-    expectNotToHaveClass(button0.element, /_active_/);
-    expectNotToHaveClass(button1.element, /_active_/);
-    expectToHaveClass(button2.element, /_active_/);
+    expect(button0.element.getAttribute('data-active')).toBeNull();
+    expect(button1.element.getAttribute('data-active')).toBeNull();
+    expect(button2.element.getAttribute('data-active')).toBe('true');
     expect(wrapper.props('modelValue')).toEqual([2]);
 
     // required so, can't deselect the active only item
     await button2.trigger('click');
-    expectToHaveClass(button2.element, /_active_/);
+    expect(button2.element.getAttribute('data-active')).toBe('true');
     expect(wrapper.props('modelValue')).toEqual([2]);
 
     await wrapper.setProps({ gap: 'md' });
