@@ -62,7 +62,7 @@ test.describe('forms/RevealableTextField', () => {
     await expect(clearableInput).toHaveValue('some values');
     await clearableInput.focus();
 
-    const clearButton = section.locator('.clear-btn').last();
+    const clearButton = section.locator('[data-id=clear-btn]').last();
     await expect(clearButton).toBeVisible();
   });
 });

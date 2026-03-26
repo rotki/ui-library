@@ -2,10 +2,11 @@
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import { textFieldStyles, type TextFieldVariant } from '@/components/forms/text-field/text-field-styles';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
-import { useLabelWithQuote } from '@/composables/forms/use-label-with-quote';
 import { usePrependAppendWidth } from '@/composables/forms/use-prepend-append-width';
+import { useTimeoutManager } from '@/composables/timeout-manager';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
@@ -13,7 +14,7 @@ export interface TextFieldProps {
   label?: string;
   placeholder?: string;
   disabled?: boolean;
-  variant?: 'default' | 'filled' | 'outlined';
+  variant?: TextFieldVariant;
   color?: ContextColorsType;
   textColor?: ContextColorsType;
   dense?: boolean;
@@ -66,39 +67,82 @@ defineSlots<{
   append?: () => any;
 }>();
 
+const isHovered = ref<boolean>(false);
+const showClearButton = ref<boolean>(false);
+
 const prepend = useTemplateRef<HTMLDivElement>('prepend');
 const append = useTemplateRef<HTMLDivElement>('append');
-const innerWrapper = useTemplateRef<HTMLDivElement>('innerWrapper');
 const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
 
+const { focused } = useFocus(inputRef);
+const { create: delayClearHide } = useTimeoutManager();
 const { prependWidth, appendWidth } = usePrependAppendWidth(prepend, append);
-
-const { width } = useElementBounding(innerWrapper);
-
-const { hasError, hasSuccess, hasMessages } = useFormTextDetail(
+const { hasError, hasSuccess, hasMessages, validation } = useFormTextDetail(
   () => errorMessages,
   () => successMessages,
 );
 
-const { focused } = useFocus(inputRef);
-const focusedDebounced = refDebounced(focused, 500);
+const active = computed<boolean>(() => get(focused) || !!get(modelValue));
 
 const showClearIcon = computed<boolean>(() => clearable && !!get(modelValue) && !disabled && !readonly);
 
-const labelWithQuote = useLabelWithQuote(
-  () => label,
-  () => required,
-);
+const effectiveTextColor = computed<ContextColorsType | undefined>(() => {
+  if (get(hasError))
+    return 'error';
+  if (get(hasSuccess))
+    return 'success';
+  if (textColor && !get(hasMessages))
+    return textColor;
+  return undefined;
+});
+
+const effectiveColor = computed<ContextColorsType | undefined>(() => get(validation) ?? color);
+
+const ui = computed<ReturnType<typeof textFieldStyles>>(() => textFieldStyles({
+  variant,
+  dense,
+  disabled,
+  hovered: get(isHovered),
+  focused: get(focused),
+  active: get(active),
+  noLabel: !label,
+  color: get(effectiveColor),
+  textColor: get(effectiveTextColor),
+  validation: get(validation),
+  showLabel: !!label,
+}));
+
+const labelStyle = computed<Record<string, string>>(() => ({
+  '--prepend-w': get(prependWidth),
+  '--append-w': get(appendWidth),
+}));
+
+const legendText = computed<string>(() => {
+  if (!get(active) || !label)
+    return '';
+  return required ? `${label} ﹡` : label;
+});
 
 function input(event: Event): void {
-  const value = (event.target as HTMLInputElement).value;
-  set(modelValue, value);
+  const target = event.target;
+  if (target instanceof HTMLInputElement) {
+    set(modelValue, target.value);
+  }
 }
 
 function clearIconClicked(): void {
   set(modelValue, '');
   emit('clear');
 }
+
+watch(focused, (value) => {
+  if (value) {
+    set(showClearButton, true);
+  }
+  else {
+    delayClearHide(() => set(showClearButton, false), 500);
+  }
+});
 
 defineExpose({
   setSelectionRange: (start: number, end: number) => {
@@ -112,26 +156,16 @@ defineExpose({
 <template>
   <div v-bind="getRootAttrs($attrs)">
     <div
-      :class="[
-        $style.wrapper,
-        $style[color ?? ''],
-        $style[variant ?? ''],
-        {
-          [$style.dense]: dense,
-          [$style.disabled]: disabled,
-          [$style['no-label']]: !label,
-          [$style['with-error'] ?? '']: hasError,
-          [$style['with-success'] ?? '']: hasSuccess && !hasError,
-          [$style[`text_${textColor}`] ?? '']: textColor && !hasMessages,
-        },
-      ]"
-      :data-error="hasError ? '' : undefined"
+      :class="ui.wrapper()"
+      data-id="wrapper"
+      @mouseenter="isHovered = true"
+      @mouseleave="isHovered = false"
     >
       <div
         v-if="$slots.prepend || prependIcon"
         ref="prepend"
-        class="flex items-center gap-1 shrink-0"
-        :class="$style.prepend"
+        :class="ui.prepend()"
+        data-id="prepend"
       >
         <slot
           v-if="$slots.prepend"
@@ -139,38 +173,37 @@ defineExpose({
         />
         <div
           v-else-if="prependIcon"
-          :class="[$style.icon]"
+          :class="ui.icon()"
         >
           <RuiIcon :name="prependIcon" />
         </div>
       </div>
       <div
-        ref="innerWrapper"
-        class="flex flex-1 overflow-hidden"
+        :class="ui.inputWrapper()"
         @click="emit('focus-input', $event)"
       >
         <input
           ref="inputRef"
           :value="modelValue"
           :placeholder="placeholder || ' '"
-          :class="$style.input"
+          :class="ui.input()"
           :disabled="disabled"
-          :dense="dense"
-          :variant="variant"
           :readonly="readonly"
-          :wrapper-width="width"
           :aria-invalid="hasError"
           v-bind="getNonRootAttrs($attrs)"
           @input="input($event)"
           @blur="emit('blur', $event)"
           @remove="emit('remove', $event)"
         />
-        <label :class="$style.label">
-          <span>
+        <label
+          :class="ui.label()"
+          :style="labelStyle"
+        >
+          <span :class="ui.labelText()">
             {{ label }}
             <span
               v-if="required"
-              class="text-rui-error"
+              :class="ui.required()"
             >
               ﹡
             </span>
@@ -178,25 +211,27 @@ defineExpose({
         </label>
         <fieldset
           v-if="variant === 'outlined'"
-          :class="$style.fieldset"
+          :class="ui.fieldset()"
         >
-          <legend :class="{ [$style.show]: label }" />
+          <legend :class="ui.legend()">
+            {{ legendText }}
+          </legend>
         </fieldset>
       </div>
       <div
         v-if="$slots.append || appendIcon || showClearIcon"
         ref="append"
-        class="flex items-center gap-1 shrink-0"
-        :class="$style.append"
+        :class="ui.append()"
+        data-id="append"
       >
         <RuiButton
           v-if="showClearIcon"
-          :class="{ hidden: !focusedDebounced }"
+          :class="[ui.clearButton(), { hidden: !showClearButton }]"
           variant="text"
           type="button"
           icon
-          class="!p-2 clear-btn"
           color="error"
+          data-id="clear-btn"
           tabindex="-1"
           @click.stop="clearIconClicked()"
         >
@@ -211,7 +246,7 @@ defineExpose({
         />
         <div
           v-else-if="appendIcon"
-          :class="[$style.icon]"
+          :class="ui.icon()"
         >
           <RuiIcon :name="appendIcon" />
         </div>
@@ -219,392 +254,10 @@ defineExpose({
     </div>
     <RuiFormTextDetail
       v-if="!hideDetails"
-      class="pt-1 px-3"
+      :class="ui.details()"
       :error-messages="errorMessages"
       :success-messages="successMessages"
       :hint="hint"
     />
   </div>
 </template>
-
-<style lang="scss" module>
-@use '@/styles/colors.scss' as c;
-
-:global(.dark) {
-  .wrapper {
-    @apply bg-transparent;
-
-    .label {
-      @apply border-white/[0.42];
-
-      &:after {
-        @apply border-white;
-      }
-    }
-
-    .icon {
-      @apply text-white/[0.56];
-    }
-
-    &:hover {
-      .label {
-        @apply border-white;
-      }
-    }
-
-    &.filled {
-      .input {
-        &:focus {
-          + .label {
-            @apply bg-white/[0.13];
-          }
-        }
-      }
-
-      .label {
-        @apply bg-white/[0.09];
-      }
-    }
-
-    &.outlined {
-      .fieldset {
-        @apply border-white/[0.23];
-      }
-
-      &:not(.disabled) {
-        .input {
-          &:hover,
-          &:focus {
-            ~ .fieldset {
-              @apply border-white;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-.wrapper {
-  @apply relative w-full flex items-center pt-3 rounded bg-white;
-
-  .input {
-    @apply leading-6 text-rui-text w-full bg-transparent py-1.5 pr-3 outline-0 outline-none transition-all placeholder:opacity-0 focus:placeholder:opacity-100;
-
-    &:focus {
-      @apply outline-0;
-      + .label {
-        @apply after:scale-x-100;
-      }
-    }
-
-    &:not(:placeholder-shown),
-    &:autofill,
-    &:-webkit-autofill,
-    &[data-has-value='true'],
-    &:focus {
-      + .label {
-        @apply text-xs leading-tight;
-        padding-left: var(--x-padding);
-        padding-right: var(--x-padding);
-      }
-    }
-
-    &:disabled {
-      @apply border-dotted;
-
-      &,
-      + .label {
-        @apply text-rui-text-disabled;
-      }
-
-      ~ .fieldset {
-        @apply border-dotted;
-      }
-    }
-  }
-
-  .label {
-    @apply left-0 text-base leading-[3.75] text-rui-text-secondary pointer-events-none absolute top-0 flex h-full w-full select-none transition-all duration-75 border-b border-black/[0.42];
-
-    --x-padding: 0px;
-    --prepend-width: v-bind(prependWidth);
-    --append-width: v-bind(appendWidth);
-
-    padding-left: calc(var(--x-padding) + var(--prepend-width, 0px));
-    padding-right: calc(var(--x-padding) + var(--append-width, 0px));
-
-    span {
-      @apply truncate transition-all duration-75;
-      content: v-bind(labelWithQuote);
-    }
-
-    &:after {
-      content: '';
-      @apply absolute bottom-0 left-0 block w-full scale-x-0 border-b-2 mb-[-1px] transition-transform duration-300 border-black;
-    }
-  }
-
-  &:hover {
-    .label {
-      @apply border-black;
-    }
-  }
-
-  .icon {
-    @apply text-black/[0.54];
-  }
-
-  .prepend {
-    &:not(:empty) {
-      @apply pr-2;
-    }
-  }
-
-  .append {
-    &:not(:empty) {
-      @apply pl-2;
-    }
-  }
-
-  @each $color in c.$context-colors {
-    &.#{$color} {
-      .input {
-        &:focus {
-          + .label {
-            @apply text-rui-#{$color};
-          }
-        }
-      }
-
-      .label {
-        @apply after:border-rui-#{$color};
-      }
-
-      &.outlined {
-        &:not(.disabled) {
-          .input {
-            &:focus {
-              ~ .fieldset {
-                @apply border-rui-#{$color};
-              }
-            }
-          }
-        }
-      }
-    }
-
-    &.text_#{$color},
-    &.with-#{$color} {
-      .prepend,
-      .append,
-      .input {
-        @apply text-rui-#{$color};
-      }
-
-      &:not(.disabled) .prepend svg,
-      &:not(.disabled) .append svg {
-        @apply text-rui-#{$color};
-      }
-    }
-  }
-
-  @each $color in 'error', 'success' {
-    &.with-#{$color} {
-      .input {
-        @apply border-rui-#{$color} #{!important};
-      }
-
-      .label {
-        @apply text-rui-#{$color} after:border-rui-#{$color} #{!important};
-      }
-
-      .fieldset {
-        @apply border-rui-#{$color} #{!important};
-      }
-    }
-  }
-
-  &.dense {
-    .input {
-      @apply py-1;
-    }
-
-    .label {
-      @apply leading-[3.5];
-    }
-  }
-
-  &.filled,
-  &.outlined {
-    @apply pt-0;
-
-    .prepend {
-      &:not(:empty) {
-        @apply pl-3 pr-0;
-      }
-    }
-
-    .append {
-      &:not(:empty) {
-        @apply pr-3 pl-0;
-      }
-    }
-
-    .input {
-      @apply px-3;
-    }
-
-    .label {
-      @apply leading-[3.5];
-      --x-padding: 0.75rem;
-    }
-  }
-
-  &.filled {
-    .input {
-      @apply py-4;
-
-      &:focus {
-        + .label {
-          @apply bg-black/[0.09];
-        }
-      }
-
-      &:not(:placeholder-shown),
-      &:autofill,
-      &:-webkit-autofill,
-      &[data-has-value='true'],
-      &:focus {
-        + .label {
-          @apply leading-[1.5] pl-4;
-
-          padding-left: calc(var(--x-padding));
-          padding-right: calc(var(--x-padding));
-        }
-      }
-    }
-
-    .label {
-      @apply rounded-t bg-black/[0.06];
-    }
-
-    &.dense {
-      .input {
-        @apply pt-5 pb-1;
-      }
-
-      .label {
-        @apply leading-[3];
-      }
-
-      &:not(:placeholder-shown),
-      &:autofill,
-      &:-webkit-autofill,
-      &[data-has-value='true'],
-      &:focus {
-        + .label {
-          @apply leading-[2.25];
-        }
-      }
-    }
-
-    &.no-label {
-      .input {
-        @apply py-4;
-      }
-
-      &.dense {
-        .input {
-          @apply py-3;
-        }
-      }
-    }
-  }
-
-  &.outlined {
-    .input {
-      @apply py-4 border-b-0;
-
-      &:not(:placeholder-shown),
-      &:autofill,
-      &:-webkit-autofill,
-      &[data-has-value='true'],
-      &:focus {
-        @apply border-t-transparent;
-
-        + .label {
-          @apply leading-[0] pl-4 -mt-3;
-
-          span {
-            @apply pt-3;
-          }
-        }
-
-        ~ .fieldset {
-          legend {
-            &.show {
-              @apply px-2;
-            }
-            &:after {
-              content: v-bind(labelWithQuote);
-            }
-          }
-        }
-      }
-    }
-
-    .fieldset {
-      @apply absolute w-full min-w-0 h-[calc(100%+0.5rem)] top-0 left-0 pointer-events-none rounded border border-black/[0.23] px-2 transition-all -mt-2;
-
-      legend {
-        @apply opacity-0 text-xs max-w-full truncate;
-
-        &:before {
-          content: ' ';
-        }
-
-        &:after {
-          @apply truncate max-w-full leading-[0];
-          content: '\200B';
-        }
-      }
-    }
-
-    &:not(.disabled) {
-      .input {
-        &:hover,
-        &:focus {
-          ~ .fieldset {
-            @apply border border-black;
-          }
-        }
-
-        &:focus {
-          ~ .fieldset {
-            @apply border-2;
-          }
-        }
-      }
-    }
-
-    .label {
-      @apply border-0 border-transparent;
-
-      &:after {
-        content: none !important;
-      }
-    }
-
-    &.dense {
-      .input {
-        @apply py-2;
-      }
-
-      .label {
-        @apply leading-[2.5];
-      }
-    }
-  }
-}
-</style>
