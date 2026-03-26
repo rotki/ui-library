@@ -103,10 +103,9 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       },
     });
-    expect(wrapper.find('table thead th[class*=_checkbox_]').exists()).toBeTruthy();
-    expect(wrapper.find('table tbody td[class*=_checkbox_]').exists()).toBeTruthy();
-    expect(wrapper.find('table tbody td[class*=_align__start_]').exists()).toBeTruthy();
-    expect(wrapper.find('table tbody td[class*=_align__start_]').exists()).toBeTruthy();
+    expect(wrapper.find('table thead th [data-id=table-toggle-check-all]').exists()).toBeTruthy();
+    expect(wrapper.find('table tbody td [data-id*=table-toggle-check-]').exists()).toBeTruthy();
+    expectWrapperToHaveClass(wrapper, 'table tbody td:nth-child(2)', /text-left/);
     expect(wrapper.find('div[data-id=table-pagination-limit-section]').exists()).toBeTruthy();
     expect(wrapper.find('div[data-id=table-pagination-ranges-section]').exists()).toBeTruthy();
     expect(wrapper.find('div[data-id=table-pagination-navigation]').exists()).toBeTruthy();
@@ -1868,11 +1867,11 @@ describe('components/tables/RuiDataTable.vue', () => {
 
       // First column (ID) should not be sortable
       const idHeader = wrapper.find('thead th:first-child');
-      expect(idHeader.classes().some(c => c.includes('_sortable_'))).toBeFalsy();
+      expect(idHeader.attributes('data-id')).not.toBe('column-sortable');
 
       // Second column (Name) should be sortable
       const nameHeader = wrapper.find('thead th:nth-child(2)');
-      expect(nameHeader.classes().some(c => c.includes('_sortable_'))).toBeTruthy();
+      expect(nameHeader.attributes('data-id')).toBe('column-sortable');
     });
 
     it('should apply cellClass to cells', async () => {

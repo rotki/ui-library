@@ -4,6 +4,8 @@ import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiBadge from '@/components/overlays/badge/RuiBadge.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
+import { getAlignClass, getSortButtonAlignClass, SortDirection, TableAlign } from '@/components/tables/table-props';
+import { tv } from '@/utils/tv';
 
 /**
  * Represents a sortable column name for a given type.
@@ -15,8 +17,8 @@ export type TableRowKey<T> = keyof T extends string ? keyof T : never;
 export interface BaseTableColumn<T> {
   key: TableRowKey<T> | string;
   sortable?: boolean;
-  direction?: 'asc' | 'desc';
-  align?: 'start' | 'center' | 'end';
+  direction?: SortDirection;
+  align?: TableAlign;
   class?: string;
   cellClass?: string;
   colspan?: string | number;
@@ -50,7 +52,7 @@ export type TableColumn<T> = SortableTableColumn<T> | NoneSortableTableColumn<T>
 
 export interface SortColumn<T> {
   column?: TableRowKey<T>;
-  direction: 'asc' | 'desc';
+  direction: SortDirection;
 }
 
 export type TableSortData<T> = SortColumn<T> | SortColumn<T>[] | undefined;
@@ -105,19 +107,73 @@ const {
 
 const emit = defineEmits<{
   'select:all': [value: boolean];
-  'sort': [value: { key: TableRowKey<T>; direction?: 'asc' | 'desc' }];
+  'sort': [value: { key: TableRowKey<T>; direction?: SortDirection }];
 }>();
+
+const tableHeadStyles = tv({
+  slots: {
+    thead: 'divide-y divide-black/[0.12] dark:divide-white/[0.12]',
+    checkbox: 'px-2 w-[3.625rem] max-w-[3.625rem] [&_label]:ml-0',
+    th: 'p-4',
+    columnText: 'text-rui-text dark:text-white font-medium text-sm leading-6',
+    sortButton: 'inline-flex group/sort',
+    sortIcon: 'transition opacity-0 rotate-180 group-hover/sort:opacity-60',
+    loaderRow: 'border-none',
+    progress: 'p-0 h-0',
+    progressWrapper: 'h-0 -mt-1',
+  },
+  variants: {
+    position: {
+      default: {},
+      sticky: { thead: 'top-0 z-10 absolute' },
+      fixed: {
+        thead: 'top-0 z-10 fixed',
+        th: 'bg-white dark:bg-[#121212] border-b border-b-black/[0.12] dark:border-b-white/[0.12]',
+      },
+    },
+    dense: {
+      true: { th: 'py-[0.38rem]' },
+    },
+  },
+  defaultVariants: {
+    position: 'default',
+  },
+});
+
+const headerPosition = computed<'default' | 'sticky' | 'fixed'>(() => {
+  if (stickyHeader && stick)
+    return 'fixed';
+  if (stickyHeader)
+    return 'sticky';
+  return 'default';
+});
+
+const ui = computed<ReturnType<typeof tableHeadStyles>>(() => tableHeadStyles({
+  position: get(headerPosition),
+  dense,
+}));
+
+function getSortIconClass(key: TableColumn<T>['key']): string | undefined {
+  if (!isSortedBy(key))
+    return undefined;
+  const direction = getSortDirection(key);
+  return `!opacity-100 ${direction === SortDirection.asc ? '!rotate-180' : '!rotate-0'}`;
+}
 
 function onSort({ key, direction }: TableColumn<T>): void {
   return emit('sort', {
     key: key as TableRowKey<T>,
-    direction: direction ?? 'asc',
+    direction: direction ?? SortDirection.asc,
   });
 }
 
-const onToggleAll = (checked: boolean) => emit('select:all', checked);
+function onToggleAll(checked: boolean) {
+  return emit('select:all', checked);
+}
 
-const isSortedBy = (key: TableColumn<T>['key']) => key in sortedMap;
+function isSortedBy(key: TableColumn<T>['key']): boolean {
+  return key in sortedMap;
+}
 
 function getSortIndex(key: TableColumn<T>['key']): number {
   if (!sortData || !Array.isArray(sortData) || !isSortedBy(key))
@@ -126,7 +182,7 @@ function getSortIndex(key: TableColumn<T>['key']): number {
   return sortData.findIndex(sort => sort.column === key);
 }
 
-function getSortDirection(key: TableColumn<T>['key']): 'asc' | 'desc' | undefined {
+function getSortDirection(key: TableColumn<T>['key']): SortDirection | undefined {
   return sortedMap[key]?.direction;
 }
 </script>
@@ -134,19 +190,12 @@ function getSortDirection(key: TableColumn<T>['key']): 'asc' | 'desc' | undefine
 <template>
   <thead
     :data-id="dataId"
-    :class="[
-      $style.thead,
-      {
-        [$style.sticky__header]: stickyHeader,
-        [$style.stick__top]: stick,
-        [$style.dense]: dense,
-      },
-    ]"
+    :class="ui.thead()"
   >
-    <tr :class="$style.tr">
+    <tr>
       <th
         v-if="selectable"
-        :class="$style.checkbox"
+        :class="ui.checkbox()"
         scope="col"
         colspan="1"
         rowspan="1"
@@ -167,13 +216,9 @@ function getSortDirection(key: TableColumn<T>['key']): 'asc' | 'desc' | undefine
         v-for="column in columns"
         :key="column.key"
         :class="[
-          $style.th,
+          ui.th({ class: getAlignClass(column.align, column.sortable) }),
           column.class,
-          $style[`align__${column.align ?? 'start'}`],
-          {
-            capitalize: !capitalizeHeaders,
-            [$style.sortable]: column.sortable,
-          },
+          { capitalize: !capitalizeHeaders },
         ]"
         scope="col"
         :colspan="column.colspan ?? 1"
@@ -193,19 +238,15 @@ function getSortDirection(key: TableColumn<T>['key']): 'asc' | 'desc' | undefine
             size="sm"
           >
             <RuiButton
-              :class="[
-                $style.sort__button,
-                {
-                  [$style.sort__active ?? '']: isSortedBy(column.key),
-                  [$style[`sort__${getSortDirection(column.key)}`] ?? '']: isSortedBy(column.key),
-                },
-              ]"
+              :class="ui.sortButton({ class: getSortButtonAlignClass(column.align) })"
+              :data-sorted="isSortedBy(column.key) || undefined"
+              :data-direction="getSortDirection(column.key)"
               size="sm"
               variant="text"
               @click="onSort(column)"
             >
               <span
-                :class="$style.column__text"
+                :class="ui.columnText()"
                 data-id="column-text"
               >
                 <slot
@@ -217,11 +258,11 @@ function getSortDirection(key: TableColumn<T>['key']): 'asc' | 'desc' | undefine
               </span>
 
               <template
-                v-if="column.align === 'end'"
+                v-if="column.align === TableAlign.end"
                 #prepend
               >
                 <RuiIcon
-                  :class="$style.sort__icon"
+                  :class="ui.sortIcon({ class: getSortIconClass(column.key) })"
                   name="lu-arrow-down"
                   size="18"
                 />
@@ -229,8 +270,8 @@ function getSortDirection(key: TableColumn<T>['key']): 'asc' | 'desc' | undefine
 
               <template #append>
                 <RuiIcon
-                  v-if="column.align !== 'end'"
-                  :class="$style.sort__icon"
+                  v-if="column.align !== TableAlign.end"
+                  :class="ui.sortIcon({ class: getSortIconClass(column.key) })"
                   name="lu-arrow-down"
                   size="18"
                 />
@@ -239,7 +280,7 @@ function getSortDirection(key: TableColumn<T>['key']): 'asc' | 'desc' | undefine
           </RuiBadge>
           <span
             v-else
-            :class="$style.column__text"
+            :class="ui.columnText()"
             data-id="column-text"
           >
             <slot
@@ -254,15 +295,15 @@ function getSortDirection(key: TableColumn<T>['key']): 'asc' | 'desc' | undefine
     </tr>
     <tr
       v-if="loading"
-      :class="[$style.thead__loader, $style.thead__loader_linear]"
+      :class="ui.loaderRow()"
       data-id="thead-loader"
     >
       <th
-        :class="$style.progress"
+        :class="ui.progress()"
         :colspan="colspan"
         scope="col"
       >
-        <div :class="$style.progress__wrapper">
+        <div :class="ui.progressWrapper()">
           <RuiProgress
             color="primary"
             variant="indeterminate"
@@ -272,145 +313,3 @@ function getSortDirection(key: TableColumn<T>['key']): 'asc' | 'desc' | undefine
     </tr>
   </thead>
 </template>
-
-<style module lang="scss">
-.thead {
-  @apply divide-y divide-black/[0.12];
-
-  &.sticky__header {
-    @apply top-0 z-10 absolute;
-
-    &.stick__top {
-      @apply fixed;
-
-      tr {
-        th {
-          @apply bg-white border-b border-b-black/[0.12];
-        }
-      }
-    }
-  }
-
-  &.dense {
-    .tr {
-      .th {
-        @apply py-[0.38rem];
-      }
-    }
-  }
-
-  .tr {
-    .th {
-      @apply p-4;
-
-      &.align__start {
-        @apply text-left rtl:text-right;
-      }
-
-      &.align__center {
-        @apply text-center;
-      }
-
-      &.align__end {
-        @apply text-right rtl:text-left;
-      }
-
-      &.sortable {
-        &.align__start {
-          @apply pl-3;
-        }
-
-        &.align__center {
-          @apply px-3;
-          .sort__button {
-            @apply ml-6;
-          }
-        }
-
-        &.align__end {
-          @apply pr-3;
-        }
-
-        .sort__button {
-          @apply inline-flex;
-
-          &:hover .sort__icon {
-            @apply opacity-60;
-          }
-
-          &.sort {
-            &__active {
-              .sort__icon {
-                @apply opacity-100;
-              }
-            }
-
-            &__desc {
-              .sort__icon {
-                @apply rotate-0;
-              }
-            }
-
-            &__asc {
-              .sort__icon {
-                @apply rotate-180;
-              }
-            }
-          }
-        }
-
-        .sort__icon {
-          @apply transition opacity-0 rotate-180;
-        }
-      }
-
-      .column__text {
-        @apply text-rui-text font-medium text-sm leading-6;
-      }
-    }
-
-    .checkbox {
-      @apply px-2 w-[3.625rem] max-w-[3.625rem];
-      label {
-        @apply ml-0;
-      }
-    }
-  }
-
-  &__loader {
-    .progress {
-      @apply relative py-8;
-    }
-
-    &_linear {
-      @apply border-none;
-
-      .progress {
-        @apply p-0 h-0;
-      }
-
-      .progress__wrapper {
-        @apply h-0 -mt-1;
-      }
-    }
-  }
-}
-
-:global(.dark) {
-  .thead {
-    @apply divide-y divide-white/[0.12];
-
-    &.sticky__header.stick__top {
-      th {
-        @apply bg-[#121212] border-b border-b-white/[0.12];
-      }
-    }
-
-    .tr {
-      .th {
-        @apply text-white;
-      }
-    }
-  }
-}
-</style>

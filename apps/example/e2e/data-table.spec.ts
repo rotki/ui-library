@@ -251,7 +251,7 @@ test.describe('data tables - pagination', () => {
 
     // The table thead should have sticky class (library uses absolute/fixed positioning for sticky behavior)
     const thead = table.locator('table thead[data-id="head-main"]');
-    await expect(thead).toHaveClass(/sticky__header/);
+    await expect(thead).toHaveClass(/absolute/);
   });
 
   test('should produce consistent header widths after resize cycle', async ({ page }) => {

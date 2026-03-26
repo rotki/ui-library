@@ -34,11 +34,6 @@ function queryColumns(row: HTMLTableRowElement | null): HTMLElement[] {
   return Array.from(row.querySelectorAll<HTMLElement>(SELECTORS.th));
 }
 
-function clearColumnWidths(columns: HTMLElement[]): void {
-  for (const column of columns)
-    column.style.width = '';
-}
-
 function readColumnWidths(columns: HTMLElement[]): number[] {
   return columns.map(col => col.getBoundingClientRect().width);
 }
@@ -95,8 +90,7 @@ export function useStickyTableHeader(
   const stick = shallowRef<boolean>(false);
 
   let resizeCleanups: (() => void)[] = [];
-  let syncOuterRafId: number | null = null;
-  let syncInnerRafId: number | null = null;
+  let syncRafId: number | null = null;
   let rafId: number | null = null;
 
   function cleanupResizeObservers(): void {
@@ -106,26 +100,19 @@ export function useStickyTableHeader(
   }
 
   function cancelPendingSync(): void {
-    if (syncOuterRafId !== null)
-      cancelAnimationFrame(syncOuterRafId);
-    if (syncInnerRafId !== null)
-      cancelAnimationFrame(syncInnerRafId);
-    syncOuterRafId = null;
-    syncInnerRafId = null;
+    if (syncRafId !== null)
+      cancelAnimationFrame(syncRafId);
+    syncRafId = null;
   }
 
   function scheduleSyncWidths(cloneColumns: HTMLElement[], mainColumns: HTMLElement[]): void {
     cancelPendingSync();
 
-    syncOuterRafId = requestAnimationFrame(() => {
-      syncOuterRafId = null;
-      clearColumnWidths(mainColumns);
-
-      // Wait one frame for the clone to settle to its natural width after clearing
-      syncInnerRafId = requestAnimationFrame(() => {
-        syncInnerRafId = null;
-        applyColumnWidths(mainColumns, readColumnWidths(cloneColumns));
-      });
+    // Single-frame sync: the main thead is position absolute/fixed so clearing
+    // its widths is unnecessary — clone widths are independent of main widths.
+    syncRafId = requestAnimationFrame(() => {
+      syncRafId = null;
+      applyColumnWidths(mainColumns, readColumnWidths(cloneColumns));
     });
   }
 
