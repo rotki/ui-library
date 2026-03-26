@@ -137,8 +137,40 @@ export const CircularWithLabel = meta.story({
   args: {
     circular: true,
     showLabel: true,
-    value: 100,
+    value: 75,
     variant: 'determinate',
+  },
+});
+
+export const Colors = meta.story({
+  render(args) {
+    return {
+      components: { Progress: RuiProgress },
+      setup: () => ({ args, colors: ['inherit', ...contextColors] }),
+      template: `
+        <div class="flex flex-col gap-4 p-4 text-black dark:text-white">
+          <div v-for="color in colors" :key="color" class="flex items-center gap-4">
+            <span class="w-20 text-sm">{{ color }}</span>
+            <Progress :color="color" :value="60" class="flex-1" />
+          </div>
+        </div>`,
+    };
+  },
+});
+
+export const CircularColors = meta.story({
+  render(args) {
+    return {
+      components: { Progress: RuiProgress },
+      setup: () => ({ args, colors: ['inherit', ...contextColors] }),
+      template: `
+        <div class="flex flex-wrap gap-6 p-4 text-black dark:text-white">
+          <div v-for="color in colors" :key="color" class="flex flex-col items-center gap-2">
+            <Progress circular :color="color" :value="60" />
+            <span class="text-xs">{{ color }}</span>
+          </div>
+        </div>`,
+    };
   },
 });
 

@@ -28,7 +28,7 @@ test.describe('footer steppers', () => {
 
     await expect(progressStepper.locator('button', { hasText: 'Back' })).toBeVisible();
     await expect(progressStepper.locator('button', { hasText: 'Next' })).toBeVisible();
-    await expect(progressStepper.locator('div[class*=_determinate_]').first()).toBeVisible();
+    await expect(progressStepper.locator('div[role=progressbar]').first()).toBeVisible();
 
     await expect(pillStepper.locator('button span', { hasText: 'Back' })).toHaveCount(0);
     await expect(pillStepper.locator('button span', { hasText: 'Next' })).toHaveCount(0);

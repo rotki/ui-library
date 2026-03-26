@@ -1,7 +1,6 @@
 import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
-import { expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
 function createWrapper(
   options?: ComponentMountingOptions<typeof RuiProgress>,
@@ -22,9 +21,9 @@ describe('components/progress/RuiProgress.vue', () => {
         value: 50,
       },
     });
-    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_progress_/);
-    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_inherit_/);
-    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_determinate_/);
+    const progressbar = wrapper.find('div[role=progressbar]');
+    expect(progressbar.attributes('data-variant')).toBe('determinate');
+    expect(progressbar.attributes('data-color')).toBe('inherit');
   });
 
   it('should pass props correctly', async () => {
@@ -35,14 +34,18 @@ describe('components/progress/RuiProgress.vue', () => {
         variant: 'indeterminate',
       },
     });
-    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_secondary_/);
-    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_indeterminate_/);
+    const progressbar = wrapper.find('div[role=progressbar]');
+    expect(progressbar.attributes('data-color')).toBe('secondary');
+    expect(progressbar.attributes('data-variant')).toBe('indeterminate');
+
     await wrapper.setProps({ color: 'primary' });
-    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_primary_/);
+    expect(progressbar.attributes('data-color')).toBe('primary');
+
     await wrapper.setProps({ color: 'inherit' });
-    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_inherit_/);
+    expect(progressbar.attributes('data-color')).toBe('inherit');
+
     await wrapper.setProps({ circular: true });
-    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_circular_/);
+    expect(wrapper.find('div[role=progressbar] svg').exists()).toBeTruthy();
   });
 
   it('should have role="progressbar" with ARIA value attributes', () => {
@@ -80,8 +83,7 @@ describe('components/progress/RuiProgress.vue', () => {
       },
     });
 
-    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_circular_/);
-    expect(wrapper.find('svg circle').exists()).toBeTruthy();
+    expect(wrapper.find('div[role=progressbar] svg circle').exists()).toBeTruthy();
   });
 
   it('should show label when showLabel is true', () => {
@@ -97,18 +99,18 @@ describe('components/progress/RuiProgress.vue', () => {
 
   it('should pass color props', async () => {
     wrapper = createWrapper({});
-    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_inherit_/);
+    expect(wrapper.find('div[role=progressbar]').attributes('data-color')).toBe('inherit');
 
     await wrapper.setProps({ color: 'primary' });
-    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_primary_/);
+    expect(wrapper.find('div[role=progressbar]').attributes('data-color')).toBe('primary');
 
     await wrapper.setProps({ color: 'secondary' });
-    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_secondary_/);
+    expect(wrapper.find('div[role=progressbar]').attributes('data-color')).toBe('secondary');
 
     await wrapper.setProps({ color: 'error' });
-    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_error_/);
+    expect(wrapper.find('div[role=progressbar]').attributes('data-color')).toBe('error');
 
     await wrapper.setProps({ color: 'success' });
-    expectWrapperToHaveClass(wrapper, 'div[role=progressbar]', /_success_/);
+    expect(wrapper.find('div[role=progressbar]').attributes('data-color')).toBe('success');
   });
 });

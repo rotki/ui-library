@@ -132,8 +132,8 @@ describe('components/steppers/RuiStepper.vue', () => {
     wrapper = createWrapper({ props: { steps: loadingSteps } });
 
     const items = wrapper.findAll('[role="listitem"]');
-    expect(items[0]!.find('[class*=indeterminate]').exists()).toBeTruthy();
-    expect(items[1]!.find('[class*=indeterminate]').exists()).toBeFalsy();
+    expect(items[0]!.find('[data-variant=indeterminate]').exists()).toBeTruthy();
+    expect(items[1]!.find('[data-variant=indeterminate]').exists()).toBeFalsy();
   });
 
   it('should pass props correctly', async () => {

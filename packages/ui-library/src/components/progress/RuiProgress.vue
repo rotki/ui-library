@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import type { ContextColorsType } from '@/consts/colors';
+import { ProgressVariant } from '@/components/progress/progress-props';
+import { tv } from '@/utils/tv';
 
 export interface Props {
   /**
@@ -12,7 +14,7 @@ export interface Props {
    * @example - 0 <= value <= 100
    */
   bufferValue?: number;
-  variant?: 'determinate' | 'indeterminate' | 'buffer';
+  variant?: ProgressVariant;
   color?: ContextColorsType | 'inherit';
   circular?: boolean;
   showLabel?: boolean;
@@ -33,7 +35,7 @@ defineOptions({
 const {
   value = 0,
   bufferValue = 0,
-  variant = 'determinate',
+  variant = ProgressVariant.determinate,
   color = 'inherit',
   circular = false,
   showLabel = false,
@@ -43,319 +45,197 @@ const {
 
 defineSlots<Record<string, never>>();
 
-const currentValue = computed<number>(() => Math.max(0, Math.min(value ?? 100, 100)));
+const CIRCLE_RADIUS = 20;
+const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS; // ~125.66
+
+function clampPercent(val: number | undefined): number {
+  return Math.max(0, Math.min(val ?? 100, 100));
+}
+
+const progressStyles = tv({
+  slots: {
+    wrapper: '',
+    progressbar: 'w-full overflow-hidden relative',
+    rail: 'w-full h-full',
+    bar: 'transition-all duration-150 ease-in-out absolute left-0 top-0 h-full w-full',
+    indeterminateBar: 'absolute left-0 top-0 h-full w-auto transition-transform duration-200 ease-linear origin-left animate-slide-rail',
+    bufferDots: 'absolute h-0 w-[200%] -top-px -left-full border-dashed border-y-[0.2rem] animate-buffer-pulse',
+    bufferRail: 'w-full h-full transition-transform duration-200 ease-linear origin-left',
+    circularContainer: 'inline-block relative',
+    svg: 'block',
+    circle: 'stroke-current',
+    label: 'dark:text-white',
+  },
+  variants: {
+    color: {
+      primary: { circularContainer: 'text-rui-primary' },
+      secondary: { circularContainer: 'text-rui-secondary' },
+      error: { circularContainer: 'text-rui-error' },
+      warning: { circularContainer: 'text-rui-warning' },
+      info: { circularContainer: 'text-rui-info' },
+      success: { circularContainer: 'text-rui-success' },
+      inherit: { circularContainer: 'text-current' },
+    },
+    variant: {
+      [ProgressVariant.determinate]: { svg: '-rotate-90' },
+      [ProgressVariant.indeterminate]: {
+        svg: 'animate-circular-spin',
+        circle: 'animate-collapse-stroke [stroke-dasharray:80px,200px] [stroke-linecap:round]',
+      },
+      [ProgressVariant.buffer]: {},
+    },
+    circular: {
+      true: { wrapper: 'inline-flex' },
+      false: { wrapper: 'w-full' },
+    },
+    hasLabel: {
+      true: { wrapper: 'inline-flex items-center relative' },
+    },
+  },
+  compoundVariants: [
+    // Linear label
+    { circular: false, hasLabel: true, class: { label: 'block text-sm ml-4' } },
+    // Circular label (overlays the circle)
+    { circular: true, hasLabel: true, class: { label: 'absolute inset-0 flex items-center justify-center text-[0.6rem] leading-none' } },
+  ],
+  compoundSlots: [
+    // Rail background (track behind the bar)
+    { slots: ['rail', 'bufferDots'], color: 'primary', class: 'bg-rui-primary/20 border-rui-primary/20' },
+    { slots: ['rail', 'bufferDots'], color: 'secondary', class: 'bg-rui-secondary/20 border-rui-secondary/20' },
+    { slots: ['rail', 'bufferDots'], color: 'error', class: 'bg-rui-error/20 border-rui-error/20' },
+    { slots: ['rail', 'bufferDots'], color: 'warning', class: 'bg-rui-warning/20 border-rui-warning/20' },
+    { slots: ['rail', 'bufferDots'], color: 'info', class: 'bg-rui-info/20 border-rui-info/20' },
+    { slots: ['rail', 'bufferDots'], color: 'success', class: 'bg-rui-success/20 border-rui-success/20' },
+    { slots: ['rail', 'bufferDots'], color: 'inherit', class: 'bg-current opacity-20 border-current' },
+
+    // Bar fill (active progress)
+    { slots: ['bar', 'indeterminateBar'], color: 'primary', class: 'bg-rui-primary' },
+    { slots: ['bar', 'indeterminateBar'], color: 'secondary', class: 'bg-rui-secondary' },
+    { slots: ['bar', 'indeterminateBar'], color: 'error', class: 'bg-rui-error' },
+    { slots: ['bar', 'indeterminateBar'], color: 'warning', class: 'bg-rui-warning' },
+    { slots: ['bar', 'indeterminateBar'], color: 'info', class: 'bg-rui-info' },
+    { slots: ['bar', 'indeterminateBar'], color: 'success', class: 'bg-rui-success' },
+    { slots: ['bar', 'indeterminateBar'], color: 'inherit', class: 'bg-current' },
+  ],
+});
+
+const hasLabel = computed<boolean>(() => showLabel && variant !== ProgressVariant.indeterminate);
+
+const ui = computed<ReturnType<typeof progressStyles>>(() => progressStyles({
+  color,
+  variant,
+  circular,
+  hasLabel: get(hasLabel),
+}));
+
+const currentValue = computed<number>(() => clampPercent(value));
 
 const label = computed<string>(() => `${Math.floor(get(currentValue))}%`);
 
 const progress = computed<number>(() => -100 + get(currentValue));
 
-const valuePercent = computed<string>(() => `${get(progress)}%`);
+const barStyle = computed<Record<string, string>>(() => ({
+  transform: `translateX(${get(progress)}%)`,
+}));
 
-const bufferPercent = computed<string>(
-  () => `${-100 + Math.max(0, Math.min(bufferValue ?? 100, 100))}%`,
-);
+const bufferRailStyle = computed<Record<string, string>>(() => ({
+  transform: `translateX(${-100 + clampPercent(bufferValue)}%)`,
+}));
 
-const circularScaledThickness = computed<number>(() => (+thickness * 32) / +size);
+const linearStyle = computed<Record<string, string>>(() => ({
+  height: `${+thickness}px`,
+}));
 
-const circularViewSize = computed<number>(() => 40 + get(circularScaledThickness));
+const circularSize = computed<Record<string, string>>(() => ({
+  width: `${+size}px`,
+  height: `${+size}px`,
+}));
+
+const circularGeometry = computed<{ scaledThickness: number; viewSize: number }>(() => {
+  const scaledThickness = (+thickness * 32) / +size;
+  return { scaledThickness, viewSize: 40 + scaledThickness };
+});
+
+const circularStrokeStyle = computed<Record<string, string>>(() => ({
+  strokeDasharray: `${CIRCLE_CIRCUMFERENCE}`,
+  strokeDashoffset: `${(get(progress) / 100) * -CIRCLE_CIRCUMFERENCE}`,
+  transition: 'stroke-dashoffset 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+}));
 </script>
 
 <template>
-  <div
-    :class="[
-      $style.wrapper,
-      circular ? 'inline-flex' : 'w-full',
-      { [$style['has-label']]: showLabel && variant !== 'indeterminate' },
-    ]"
-  >
+  <div :class="ui.wrapper()">
+    <!-- Circular progress (not supported for buffer variant) -->
     <div
+      v-if="circular && variant !== ProgressVariant.buffer"
       :aria-valuenow="value"
-      :class="[
-        circular && variant !== 'buffer' ? $style.circular : $style.progress,
-        $style[variant ?? ''],
-        $style[color ?? ''],
-      ]"
+      :class="ui.circularContainer()"
+      :style="circularSize"
+      :data-variant="variant"
+      :data-color="color"
       aria-valuemax="100"
       aria-valuemin="0"
       role="progressbar"
     >
       <svg
-        v-if="circular && variant !== 'buffer'"
-        :viewBox="`0 0 ${circularViewSize} ${circularViewSize}`"
+        :class="ui.svg()"
+        :viewBox="`0 0 ${circularGeometry.viewSize} ${circularGeometry.viewSize}`"
       >
         <circle
           cx="50%"
           cy="50%"
           fill="none"
-          r="20"
-          :stroke-width="circularScaledThickness"
+          :r="CIRCLE_RADIUS"
+          :class="ui.circle()"
+          :style="variant === ProgressVariant.determinate ? circularStrokeStyle : undefined"
+          :stroke-width="circularGeometry.scaledThickness"
         />
       </svg>
-      <template v-else>
-        <div
-          v-if="variant === 'buffer'"
-          :class="$style['buffer-dots']"
-        />
-        <div :class="[$style.rail, { [$style['buffer-rail']]: variant === 'buffer' }]" />
-        <div :class="$style[variant ?? '']" />
-      </template>
+      <div
+        v-if="hasLabel"
+        :class="ui.label()"
+      >
+        {{ label }}
+      </div>
     </div>
+
+    <!-- Linear progress (also used as fallback for circular + buffer) -->
     <div
-      v-if="showLabel && variant !== 'indeterminate'"
-      :class="$style.label"
+      v-else
+      :aria-valuenow="value"
+      :class="ui.progressbar()"
+      :style="linearStyle"
+      :data-variant="variant"
+      :data-color="color"
+      aria-valuemax="100"
+      aria-valuemin="0"
+      role="progressbar"
+    >
+      <div
+        v-if="variant === ProgressVariant.buffer"
+        :class="ui.bufferDots()"
+      />
+      <div
+        :class="variant === ProgressVariant.buffer ? [ui.rail(), ui.bufferRail()] : ui.rail()"
+        :style="variant === ProgressVariant.buffer ? bufferRailStyle : undefined"
+      />
+      <div
+        v-if="variant === ProgressVariant.indeterminate"
+        :class="ui.indeterminateBar()"
+      />
+      <div
+        v-else
+        :class="ui.bar()"
+        :style="barStyle"
+      />
+    </div>
+
+    <!-- Linear label -->
+    <div
+      v-if="hasLabel && !circular"
+      :class="ui.label()"
     >
       {{ label }}
     </div>
   </div>
 </template>
-
-<style lang="scss" module>
-$colors: 'primary', 'secondary';
-
-.wrapper {
-  &.has-label {
-    @apply inline-flex items-center relative;
-
-    .label {
-      @apply block text-sm ml-4;
-    }
-
-    .circular ~ .label {
-      @apply absolute flex items-center justify-center text-[0.625rem] ml-0;
-      width: calc(v-bind(size) * 1px);
-      height: calc(v-bind(size) * 1px);
-    }
-  }
-
-  .progress {
-    @apply w-full overflow-hidden relative;
-    height: calc(v-bind(thickness) * 1px);
-
-    .rail {
-      @apply w-full h-full;
-    }
-
-    .determinate,
-    .buffer {
-      @apply transition-all duration-150 ease-in-out absolute left-0 top-0 h-full w-full;
-      transform: translateX(v-bind(valuePercent));
-    }
-
-    .indeterminate {
-      @apply absolute left-0 top-0 h-full w-auto transition-transform duration-200 ease-linear delay-0 origin-left;
-      animation: 1.6s cubic-bezier(0.65, 0.815, 0.735, 0.395) 0s infinite normal none running slide-rail;
-    }
-
-    .buffer-dots {
-      @apply absolute h-0 w-[200%] -top-px -left-[100%] border-dashed border-y-[0.2rem];
-      animation: 3s ease-in-out 3s infinite normal none running buffer-pulse;
-    }
-
-    .buffer-rail {
-      @apply w-full transition-transform duration-200 ease-linear delay-0 origin-left;
-      transform: translateX(v-bind(bufferPercent));
-    }
-
-    @each $color in $colors {
-      &.#{$color} {
-        .rail {
-          @apply bg-rui-#{$color}/20;
-        }
-
-        .determinate,
-        .indeterminate,
-        .buffer {
-          @apply bg-rui-#{$color};
-        }
-
-        .buffer-dots {
-          @apply border-rui-#{$color}/20;
-        }
-      }
-    }
-
-    &.inherit {
-      .rail {
-        @apply bg-current opacity-20;
-      }
-
-      .determinate,
-      .indeterminate,
-      .buffer {
-        @apply bg-current;
-      }
-
-      .buffer-dots {
-        @apply border-current opacity-20;
-      }
-    }
-  }
-
-  .circular {
-    @apply inline-block;
-    width: calc(v-bind(size) * 1px);
-    height: calc(v-bind(size) * 1px);
-
-    @each $color in $colors {
-      &.#{$color} {
-        @apply text-rui-#{$color};
-      }
-    }
-
-    &.indeterminate {
-      @apply animate-[spin_1.4s_linear_infinite];
-
-      svg {
-        circle {
-          stroke-dasharray: 80px, 200px;
-          stroke-dashoffset: 0;
-          stroke-linecap: round;
-          -webkit-animation: collapse-stroke 1.4s ease-in-out infinite;
-          animation: collapse-stroke 1.4s ease-in-out infinite;
-        }
-      }
-    }
-
-    &.determinate {
-      @apply -rotate-90;
-
-      svg {
-        circle {
-          stroke-dasharray: 126.92;
-          stroke-dashoffset: calc(v-bind(progress) / 100 * -126.92);
-          -webkit-transition: stroke-dashoffset 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-          transition: stroke-dashoffset 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-        }
-      }
-    }
-
-    &.inherit {
-      @apply text-current;
-    }
-
-    svg {
-      @apply block;
-
-      circle {
-        stroke: currentColor;
-      }
-    }
-  }
-}
-
-:global(.dark) {
-  .wrapper {
-    &.has-label {
-      .label {
-        @apply text-white;
-      }
-    }
-  }
-}
-
-@-webkit-keyframes buffer-pulse {
-  0% {
-    opacity: 0.2;
-    left: -100%;
-  }
-  50% {
-    opacity: 1.5;
-    left: -100%;
-  }
-  60% {
-    opacity: 0.4;
-    left: -75%;
-  }
-  100% {
-    opacity: 0.2;
-    left: -100%;
-  }
-}
-
-@keyframes buffer-pulse {
-  0% {
-    opacity: 0.2;
-    left: -100%;
-  }
-  50% {
-    opacity: 1.5;
-    left: -100%;
-  }
-  60% {
-    opacity: 0.4;
-    left: -75%;
-  }
-  100% {
-    opacity: 0.2;
-    left: -100%;
-  }
-}
-
-@-webkit-keyframes slide-rail {
-  0% {
-    left: -35%;
-    right: 100%;
-  }
-
-  60% {
-    left: 100%;
-    right: -90%;
-  }
-
-  100% {
-    left: 100%;
-    right: -90%;
-  }
-}
-
-@keyframes slide-rail {
-  0% {
-    left: -35%;
-    right: 100%;
-  }
-
-  60% {
-    left: 100%;
-    right: -90%;
-  }
-
-  100% {
-    left: 100%;
-    right: -90%;
-  }
-}
-
-@-webkit-keyframes collapse-stroke {
-  0% {
-    stroke-dasharray: 1px, 200px;
-    stroke-dashoffset: 0;
-  }
-
-  50% {
-    stroke-dasharray: 100px, 200px;
-    stroke-dashoffset: -15px;
-  }
-
-  100% {
-    stroke-dasharray: 100px, 200px;
-    stroke-dashoffset: -125px;
-  }
-}
-
-@keyframes collapse-stroke {
-  0% {
-    stroke-dasharray: 1px, 200px;
-    stroke-dashoffset: 0;
-  }
-
-  50% {
-    stroke-dasharray: 100px, 200px;
-    stroke-dashoffset: -15px;
-  }
-
-  100% {
-    stroke-dasharray: 100px, 200px;
-    stroke-dashoffset: -125px;
-  }
-}
-</style>

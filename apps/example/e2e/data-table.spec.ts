@@ -748,7 +748,7 @@ test.describe('data tables - empty states', () => {
 
     // Table should have aria-busy attribute when loading
     await expect(table.locator('table')).toHaveAttribute('aria-busy', 'true');
-    await expect(table.locator('tbody td[data-id="tbody-loader"] div[class*=_circular_]')).toBeVisible();
+    await expect(table.locator('tbody td[data-id="tbody-loader"] div[role=progressbar]:has(svg)')).toBeVisible();
   });
 
   test('should render loading state with data', async ({ page }) => {
