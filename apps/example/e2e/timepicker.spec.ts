@@ -8,8 +8,8 @@ test.describe('timepickers', () => {
   test('should render timepicker with initial values', async ({ page }) => {
     await expect(page.locator('h2[data-id=timepickers]')).toContainText('Time Pickers');
 
-    await expect(page.locator('[class*=_rui-digit_]', { hasText: '08' }).first()).toBeVisible();
-    await expect(page.locator('[class*=_rui-digit_]', { hasText: '20' }).first()).toBeVisible();
+    await expect(page.locator('[role=button][aria-label^="Select"]', { hasText: '08' }).first()).toBeVisible();
+    await expect(page.locator('[role=button][aria-label^="Select"]', { hasText: '20' }).first()).toBeVisible();
     await expect(page.getByText('PM').first()).toBeVisible();
   });
 
@@ -18,8 +18,8 @@ test.describe('timepickers', () => {
     await picker.locator('.rui-hour-06').click();
     await picker.locator('.rui-minute-30').click();
 
-    await expect(picker.locator('[class*=_rui-digit_]', { hasText: '06' })).toBeVisible();
-    await expect(picker.locator('[class*=_rui-digit_]', { hasText: '30' })).toBeVisible();
+    await expect(picker.locator('[role=button][aria-label^="Select"]', { hasText: '06' })).toBeVisible();
+    await expect(picker.locator('[role=button][aria-label^="Select"]', { hasText: '30' })).toBeVisible();
     await expect(picker.getByText('PM')).toBeVisible();
   });
 

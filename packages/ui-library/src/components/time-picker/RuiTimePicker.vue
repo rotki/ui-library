@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, type StyleValue, watch } from 'vue';
+import { timePickerStyles } from '@/components/time-picker/time-picker-styles';
 import { TimeAccuracy } from '@/consts/time-accuracy';
 import { assert } from '@/utils/assert';
 
@@ -19,6 +20,8 @@ const selectedMillisecond = defineModel<number | undefined>('millisecond');
 const editMode = defineModel<TimePickerSelection>('selection', { default: 'hour' });
 
 const { accuracy = TimeAccuracy.MINUTE, borderless = false } = defineProps<RuiTimePickerProps>();
+
+const ui = timePickerStyles();
 
 const FULL_CIRCLE = 360;
 const TWELVE_HOURS = 12;
@@ -412,20 +415,14 @@ onMounted(() => {
   <div
     role="group"
     aria-label="Time picker"
-    :class="{
-      [$style['rui-timepicker']]: true,
-      [$style.bordered]: !borderless,
-    }"
+    :class="ui.root({ bordered: !borderless })"
   >
-    <div :class="$style['rui-digital-display']">
+    <div :class="ui.digitalDisplay()">
       <div class="flex justify-center items-center gap-1">
         <div
           role="button"
           aria-label="Select hours"
-          :class="{
-            [$style['rui-digit']]: true,
-            [$style.active]: editMode === 'hour',
-          }"
+          :class="ui.digit({ active: editMode === 'hour' })"
           @click="editMode = 'hour'"
         >
           {{ formatValue(displayHour) }}
@@ -436,10 +433,7 @@ onMounted(() => {
         <div
           role="button"
           aria-label="Select minutes"
-          :class="{
-            [$style['rui-digit']]: true,
-            [$style.active]: editMode === 'minute',
-          }"
+          :class="ui.digit({ active: editMode === 'minute' })"
           @click="editMode = 'minute'"
         >
           {{ formatValue(selectedMinute) }}
@@ -454,10 +448,7 @@ onMounted(() => {
           v-if="showSecond"
           role="button"
           aria-label="Select seconds"
-          :class="{
-            [$style['rui-digit']]: true,
-            [$style.active]: editMode === 'second',
-          }"
+          :class="ui.digit({ active: editMode === 'second' })"
           @click="editMode = 'second'"
         >
           {{ formatValue(selectedSecond) }}
@@ -474,11 +465,7 @@ onMounted(() => {
           v-if="showMillisecond"
           role="button"
           aria-label="Select milliseconds"
-          class="!text-lg"
-          :class="{
-            [$style.active]: editMode === 'millisecond',
-            [$style['rui-digit']]: true,
-          }"
+          :class="ui.digit({ active: editMode === 'millisecond', class: '!text-lg' })"
           @click="editMode = 'millisecond'"
         >
           {{ formatValue(selectedMillisecond, 3) }}
@@ -500,23 +487,23 @@ onMounted(() => {
       ref="clockFace"
       role="listbox"
       :aria-label="`Select ${editMode}`"
-      :class="$style['rui-clock-face']"
+      :class="ui.clockFace()"
       @mousedown="startDrag($event)"
       @touchstart="startDrag($event)"
     >
       <div
-        :class="$style['rui-center-dot']"
+        :class="ui.centerDot()"
         :style="dotStyle"
       />
 
       <div
-        :class="$style['rui-clock-hand']"
+        :class="ui.clockHand()"
         :style="clockHandStyle"
       />
 
       <div
         v-if="displayClockHandCircle"
-        :class="$style['rui-clock-hand-circle']"
+        :class="ui.clockHandCircle()"
         :style="clockHandCircleStyle"
       />
 
@@ -525,11 +512,10 @@ onMounted(() => {
         :key="`num-${num}`"
         role="option"
         :aria-selected="isSelectedNumber(num)"
-        :class="{
-          [$style['rui-clock-number']]: true,
-          [$style['is-selected']]: isSelectedNumber(num),
-          [`rui-${editMode}-${num.toString().padStart(2, '0')}`]: true,
-        }"
+        :class="[
+          ui.clockNumber({ selected: isSelectedNumber(num) }),
+          `rui-${editMode}-${num.toString().padStart(2, '0')}`,
+        ]"
         :style="numberStyle(num)"
         @click="selectByClick(num)"
       >
@@ -538,63 +524,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-<style lang="scss" module>
-.rui-timepicker {
-  @apply bg-white overflow-hidden text-rui-text p-3;
-
-  &.bordered {
-    @apply rounded-md shadow-sm border border-rui-grey-200;
-  }
-}
-
-.rui-digital-display {
-  @apply mb-2 text-center;
-}
-
-.rui-digit {
-  @apply text-2xl font-semibold cursor-pointer;
-
-  &.active {
-    @apply text-rui-primary;
-  }
-}
-
-.rui-clock-face {
-  @apply relative rounded-full w-64 h-64 mx-auto border border-rui-grey-200;
-}
-
-.rui-center-dot {
-  @apply absolute rounded-full bg-rui-primary w-3 h-3;
-}
-
-.rui-clock-hand {
-  @apply absolute w-[1.5px] bg-rui-primary rounded-full;
-}
-
-.rui-clock-hand-circle {
-  @apply absolute border-2 border-rui-primary;
-}
-
-.rui-clock-number {
-  @apply absolute text-center text-sm font-medium w-8 h-8 flex items-center justify-center hover:bg-rui-primary-lighter cursor-pointer rounded-full;
-
-  &.is-selected {
-    @apply bg-rui-primary text-rui-dark-text dark:text-rui-light-text z-10 font-bold;
-  }
-}
-
-:global(.dark) {
-  .rui-timepicker {
-    @apply bg-rui-grey-900;
-
-    &.bordered {
-      @apply border-rui-grey-800;
-    }
-  }
-
-  .rui-clock-face {
-    @apply border-rui-grey-800;
-  }
-}
-</style>
