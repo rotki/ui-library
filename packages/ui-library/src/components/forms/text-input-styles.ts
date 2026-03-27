@@ -1,5 +1,24 @@
 import { tv } from '@/utils/tv';
 
+export const TextInputVariant = {
+  default: 'default',
+  filled: 'filled',
+  outlined: 'outlined',
+} as const;
+
+export type TextInputVariant = (typeof TextInputVariant)[keyof typeof TextInputVariant];
+
+/**
+ * Shared underline pseudo-element classes for default and filled variants.
+ * Used by TextField and TextArea label slots.
+ */
+export const underlinePseudo = [
+  'border-b border-black/[0.42] dark:border-white/[0.42]',
+  'after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:block after:w-full',
+  'after:scale-x-0 after:border-b-2 after:mb-[-1px] after:transition-transform after:duration-300',
+  'after:border-black dark:after:border-white',
+].join(' ');
+
 /**
  * Shared base tv() for all text-input-family components.
  * Extended by: TextField, TextArea, MenuSelect, AutoComplete, DateTimePicker.

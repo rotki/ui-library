@@ -27,7 +27,7 @@ import RuiMenuSelect, { type Props as MenuSelectProps, type RuiMenuSelectClassNa
 import RuiSimpleSelect, { type Props as SimpleSelectProps } from '@/components/forms/select/RuiSimpleSelect.vue';
 import RuiSlider, { type RuiSliderClassNames, type Props as SliderProps } from '@/components/forms/slider/RuiSlider.vue';
 import RuiSwitch, { type Props as SwitchProps } from '@/components/forms/switch/RuiSwitch.vue';
-import RuiTextArea, { type Props as TextAreaProps } from '@/components/forms/text-area/RuiTextArea.vue';
+import RuiTextArea, { type TextAreaProps } from '@/components/forms/text-area/RuiTextArea.vue';
 import RuiTextField, { type TextFieldProps } from '@/components/forms/text-field/RuiTextField.vue';
 import RuiIcon, { type Props as IconProps } from '@/components/icons/RuiIcon.vue';
 import RuiSkeletonLoader, { type Props as SkeletonLoaderProps } from '@/components/loaders/RuiSkeletonLoader.vue';

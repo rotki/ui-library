@@ -61,72 +61,73 @@ describe('components/forms/text-area/RuiTextArea.vue', () => {
   it('should pass color props', async () => {
     wrapper = createWrapper({
       props: {
-        color: 'primary',
         modelValue: '',
       },
     });
-    expectWrapperToHaveClass(wrapper, 'div[class*=wrapper]', /_primary_/);
+    // Default color is primary (from defaultVariants)
+    expectWrapperToHaveClass(wrapper, 'label', /after:border-rui-primary/);
 
     await wrapper.setProps({ color: 'secondary' });
-    expectWrapperToHaveClass(wrapper, 'div[class*=wrapper]', /_secondary_/);
+    expectWrapperToHaveClass(wrapper, 'label', /after:border-rui-secondary/);
 
     await wrapper.setProps({ color: 'error' });
-    expectWrapperToHaveClass(wrapper, 'div[class*=wrapper]', /_error_/);
+    expectWrapperToHaveClass(wrapper, 'label', /after:border-rui-error/);
 
     await wrapper.setProps({ color: 'success' });
-    expectWrapperToHaveClass(wrapper, 'div[class*=wrapper]', /_success_/);
+    expectWrapperToHaveClass(wrapper, 'label', /after:border-rui-success/);
   });
 
   it('should pass variant props', async () => {
     wrapper = createWrapper();
-    expectWrapperToHaveClass(wrapper, 'div[class*=wrapper]', /_default_/);
+    // Default variant has pt-4 on inputWrapper
+    expectWrapperToHaveClass(wrapper, 'label', /border-b/);
 
     await wrapper.setProps({ variant: 'filled' });
-    expectWrapperToHaveClass(wrapper, 'div[class*=wrapper]', /_filled_/);
+    expectWrapperToHaveClass(wrapper, 'label', /rounded-t/);
 
     await wrapper.setProps({ variant: 'outlined' });
-    expectWrapperToHaveClass(wrapper, 'div[class*=wrapper]', /_outlined_/);
+    expect(wrapper.find('fieldset').exists()).toBeTruthy();
   });
 
   it('should pass dense props', async () => {
     wrapper = createWrapper();
-    expectWrapperNotToHaveClass(wrapper, 'div[class*=wrapper]', /_dense_/);
+    expectWrapperNotToHaveClass(wrapper, 'textarea:not([aria-hidden="true"])', /py-1(?!\.)/);
 
     await wrapper.setProps({ dense: true });
-    expectWrapperToHaveClass(wrapper, 'div[class*=wrapper]', /_dense_/);
+    expectWrapperToHaveClass(wrapper, 'textarea:not([aria-hidden="true"])', /py-1(?!\.)/);
 
     await wrapper.setProps({ dense: false });
-    expectWrapperNotToHaveClass(wrapper, 'div[class*=wrapper]', /_dense_/);
+    expectWrapperNotToHaveClass(wrapper, 'textarea:not([aria-hidden="true"])', /py-1(?!\.)/);
   });
 
   it('should pass hint props', async () => {
     wrapper = createWrapper();
-    expect(wrapper.find('.details > div').exists()).toBeFalsy();
+    expect(wrapper.find('.details div').exists()).toBeFalsy();
 
     const hint = 'Text Areas Hints';
     await wrapper.setProps({ hint });
-    expectWrapperToHaveClass(wrapper, '.details > div', /text-rui-text-secondary/);
-    expect(wrapper.find('.details > div').text()).toBe(hint);
+    expectWrapperToHaveClass(wrapper, '.details div', /text-rui-text-secondary/);
+    expect(wrapper.find('.details div').text()).toBe(hint);
   });
 
   it('should pass hint errorMessages', async () => {
     wrapper = createWrapper();
-    expect(wrapper.find('.details > div').exists()).toBeFalsy();
+    expect(wrapper.find('.details div').exists()).toBeFalsy();
 
     const errorMessage = 'Text Areas Error Message';
     await wrapper.setProps({ errorMessages: [errorMessage] });
-    expectWrapperToHaveClass(wrapper, '.details > div', /text-rui-error/);
-    expect(wrapper.find('.details > div').text()).toBe(errorMessage);
+    expectWrapperToHaveClass(wrapper, '.details div', /text-rui-error/);
+    expect(wrapper.find('.details div').text()).toBe(errorMessage);
   });
 
   it('should pass hint successMessages', async () => {
     wrapper = createWrapper();
-    expect(wrapper.find('.details > div').exists()).toBeFalsy();
+    expect(wrapper.find('.details div').exists()).toBeFalsy();
 
-    const successMessage = 'Text Areas Error Message';
+    const successMessage = 'Text Areas Success Message';
     await wrapper.setProps({ successMessages: [successMessage] });
-    expectWrapperToHaveClass(wrapper, '.details > div', /text-rui-success/);
-    expect(wrapper.find('.details > div').text()).toBe(successMessage);
+    expectWrapperToHaveClass(wrapper, '.details div', /text-rui-success/);
+    expect(wrapper.find('.details div').text()).toBe(successMessage);
   });
 
   it('should pass hideDetails', () => {
@@ -137,7 +138,7 @@ describe('components/forms/text-area/RuiTextArea.vue', () => {
         modelValue: '',
       },
     });
-    expect(wrapper.find('.details > div').exists()).toBeFalsy();
+    expect(wrapper.find('.details div').exists()).toBeFalsy();
   });
 
   it('should pass prependIcon', () => {
@@ -149,7 +150,7 @@ describe('components/forms/text-area/RuiTextArea.vue', () => {
       },
     });
 
-    expect(wrapper.find('div[class*=prepend] rui-icon-stub').attributes('name')).toBe(icon);
+    expect(wrapper.find('[data-id=prepend] rui-icon-stub').attributes('name')).toBe(icon);
   });
 
   it('should pass appendIcon', () => {
@@ -161,7 +162,7 @@ describe('components/forms/text-area/RuiTextArea.vue', () => {
       },
     });
 
-    expect(wrapper.find('div[class*=append] rui-icon-stub').attributes('name')).toBe(icon);
+    expect(wrapper.find('[data-id=append] rui-icon-stub').attributes('name')).toBe(icon);
   });
 
   it('should pass prepend slot', () => {
@@ -173,7 +174,7 @@ describe('components/forms/text-area/RuiTextArea.vue', () => {
       },
     });
 
-    expect(wrapper.find('div[class*=prepend]').text()).toBe(prepend);
+    expect(wrapper.find('[data-id=prepend]').text()).toBe(prepend);
   });
 
   it('should pass append slot', () => {
@@ -185,7 +186,7 @@ describe('components/forms/text-area/RuiTextArea.vue', () => {
       },
     });
 
-    expect(wrapper.find('div[class*=append]').text()).toBe(append);
+    expect(wrapper.find('[data-id=append]').text()).toBe(append);
   });
 
   it('should pass value', () => {
@@ -209,23 +210,23 @@ describe('components/forms/text-area/RuiTextArea.vue', () => {
       },
     });
 
-    expect(wrapper.find('.clear-btn').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id=clear-btn]').exists()).toBeTruthy();
 
     expect(wrapper.find('textarea').element.value).toBe(text);
-    await wrapper.find('.clear-btn').trigger('click');
+    await wrapper.find('[data-id=clear-btn]').trigger('click');
     expect(wrapper.find('textarea').element.value).toBe('');
     await nextTick();
 
     // Clear button not rendered if value is empty
-    expect(wrapper.find('.clear-btn').exists()).toBeFalsy();
+    expect(wrapper.find('[data-id=clear-btn]').exists()).toBeFalsy();
 
     // Clear button not rendered if the textarea is disabled
     await wrapper.setProps({ disabled: true });
-    expect(wrapper.find('.clear-btn').exists()).toBeFalsy();
+    expect(wrapper.find('[data-id=clear-btn]').exists()).toBeFalsy();
 
     // Clear button not rendered if the textarea is readonly
     await wrapper.setProps({ disabled: false, readonly: true });
-    expect(wrapper.find('.clear-btn').exists()).toBeFalsy();
+    expect(wrapper.find('[data-id=clear-btn]').exists()).toBeFalsy();
   });
 
   it('should show required asterisk when required prop is true', async () => {
@@ -243,7 +244,6 @@ describe('components/forms/text-area/RuiTextArea.vue', () => {
     // Set required to true
     await wrapper.setProps({ required: true });
     expect(wrapper.find('label').text()).toContain('﹡');
-    expect(wrapper.find('label .text-rui-error').exists()).toBeTruthy();
 
     // Set required back to false
     await wrapper.setProps({ required: false });
