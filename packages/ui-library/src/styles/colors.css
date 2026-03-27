@@ -292,8 +292,6 @@
   --rui-dark-text-disabled: rgba(255, 255, 255, 0.5);
 }
 
-$context-colors: 'primary', 'secondary', 'error', 'warning', 'info', 'success';
-
 @keyframes bg-tint {
   to {
     background: white;

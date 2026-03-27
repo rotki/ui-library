@@ -4,8 +4,8 @@ import { definePreview, setup } from '@storybook/vue3-vite';
 import { useEffect, useGlobals } from 'storybook/preview-api';
 import { useRotkiTheme } from '@/composables/theme';
 import { RuiPlugin } from './rui';
-import '@/style.scss';
-import './preview.scss';
+import '@/style.css';
+import './preview.css';
 import '@fontsource/roboto/latin.css';
 
 setup((app) => {

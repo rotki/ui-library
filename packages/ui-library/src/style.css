@@ -1,4 +1,4 @@
-@use 'styles/colors.scss';
+@import 'styles/colors.css';
 
 @tailwind base;
 @tailwind components;
