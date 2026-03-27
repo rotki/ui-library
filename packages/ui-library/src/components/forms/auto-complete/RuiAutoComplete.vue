@@ -2,6 +2,7 @@
 import type { VueClassValue } from '@/types/class-value';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiChip from '@/components/chips/RuiChip.vue';
+import { autoCompleteStyles, type AutoCompleteVariant } from '@/components/forms/auto-complete/auto-complete-styles';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
@@ -16,9 +17,10 @@ import {
   useAutoCompleteSearch,
   useAutoCompleteValue,
 } from '@/composables/forms/auto-complete';
-import { useLabelWithQuote } from '@/composables/forms/use-label-with-quote';
+import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs, getTextToken } from '@/utils/helpers';
 import { isEqual } from '@/utils/is-equal';
+import { cn } from '@/utils/tv';
 
 export type AutoCompleteModelValue<TValue> =
   TValue extends Array<infer U> ? U[] : TValue | undefined;
@@ -45,10 +47,10 @@ export interface AutoCompleteProps<TValue, TItem> {
   labelClass?: string;
   /** @deprecated Use `classNames.menu` instead */
   menuClass?: string;
-  prependWidth?: number; // in rem
-  appendWidth?: number; // in rem
-  itemHeight?: number; // in px
-  variant?: 'default' | 'filled' | 'outlined';
+  prependWidth?: number;
+  appendWidth?: number;
+  itemHeight?: number;
+  variant?: AutoCompleteVariant;
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
@@ -286,25 +288,41 @@ const menuMinHeight = computed<number>(
   () => Math.min(5, get(optionsWithSelectedHidden).length) * resolvedItemHeight,
 );
 
+const { hasError, hasSuccess } = useFormTextDetail(
+  () => errorMessages,
+  () => successMessages,
+);
+
 const valueSet = computed<boolean>(() => get(value).length > 0);
 
-const labelWithQuote = useLabelWithQuote(() => label, () => required);
-
 const usedPlaceholder = computed<string>(() => {
-  if (get(searchInputFocused)) {
+  if (get(searchInputFocused))
     return placeholder;
-  }
   return '';
 });
 
 const outlined = computed<boolean>(() => variant === 'outlined');
-
 const float = computed<boolean>(() => (get(isOpen) || get(valueSet) || get(searchInputFocused)) && get(outlined));
 
-const virtualContainerProps = computed<{ style: Record<string, string>; ref: (el: any) => void }>(() => ({
-  style: containerProps.style as any,
-  ref: containerProps.ref as any,
+const legendText = computed<string>(() => {
+  if (!get(float) || !label)
+    return '';
+  return required ? `${label} ﹡` : label;
+});
+
+const ui = computed<ReturnType<typeof autoCompleteStyles>>(() => autoCompleteStyles({
+  filled: variant === 'filled',
+  outlined: get(outlined),
+  float: get(float),
+  opened: get(isOpen),
+  dense,
+  disabled,
+  readonly: readOnly,
+  hasError: get(hasError),
+  hasSuccess: get(hasSuccess) && !get(hasError),
 }));
+
+const highlightedClass = autoCompleteStyles({}).highlighted();
 
 function updateSearchInput(event: Event): void {
   const target = event.target;
@@ -317,10 +335,7 @@ function updateSearchInput(event: Event): void {
   set(justOpened, false);
 }
 
-async function setValue(val: TItem, index?: number, skipRefocused = false): Promise<void> {
-  if (isDefined(index))
-    set(highlightedIndex, index);
-
+async function setValue(val: TItem, skipRefocused = false): Promise<void> {
   const isMultiple = get(multiple);
 
   if (isMultiple) {
@@ -366,7 +381,7 @@ function setSearchAsValue(): void {
     return;
 
   const newValue: TItem = textValueToProperValue(searchToBeValue);
-  setValue(newValue, undefined, true);
+  setValue(newValue, true);
 }
 
 function clear(): void {
@@ -429,50 +444,33 @@ defineExpose({
 <template>
   <RuiMenu
     v-model="isOpen"
-    :class="$style.wrapper"
+    v-bind="{ ...getRootAttrs($attrs), ...menuOptions }"
+    :class="ui.wrapper()"
+    placement="bottom-start"
+    :popper="{ offsetDistance: 2 }"
+    :close-on-content-click="false"
+    :full-width="true"
+    :persist-on-activator-click="true"
+    :menu-class="[
+      { hidden: optionsWithSelectedHidden.length === 0 && customValue && !slots['no-data'] },
+      menuOptions?.menuClass,
+    ]"
+    :error-messages="errorMessages"
+    :success-messages="successMessages"
+    :hint="hint"
+    :dense="dense"
+    :show-details="!hideDetails"
+    :disabled="disabled"
     disable-auto-focus
-    v-bind="{
-      ...getRootAttrs($attrs),
-      placement: 'bottom-start',
-      closeOnContentClick: false,
-      fullWidth: true,
-      persistOnActivatorClick: true,
-      ...menuOptions,
-      menuClass: [
-        { hidden: optionsWithSelectedHidden.length === 0 && customValue && !slots['no-data'] },
-        menuOptions?.menuClass,
-      ],
-      errorMessages,
-      successMessages,
-      hint,
-      dense,
-      showDetails: !hideDetails,
-      disabled,
-    }"
   >
-    <template #activator="{ attrs, open, hasError, hasSuccess }">
+    <template #activator="{ attrs, open, hasError: slotHasError, hasSuccess: slotHasSuccess }">
       <slot
         name="activator"
-        v-bind="{ disabled, value, variant, readOnly, attrs, open, hasError, hasSuccess }"
+        v-bind="{ disabled, value, variant, readOnly, attrs, open, hasError: slotHasError, hasSuccess: slotHasSuccess }"
       >
         <div
           ref="activator"
-          class="group"
-          :class="[
-            $style.activator,
-            classNames?.label ?? labelClass,
-            {
-              [$style.disabled]: disabled,
-              [$style.readonly]: readOnly,
-              [$style.outlined]: outlined,
-              [$style.dense]: dense,
-              [$style.float]: float,
-              [$style.opened]: open,
-              [$style['with-value']]: valueSet,
-              [$style['with-error']]: hasError,
-              [$style['with-success']]: hasSuccess && !hasError,
-            },
-          ]"
+          :class="ui.activator({ class: cn(classNames?.label) ?? labelClass })"
           v-bind="{
             ...getNonRootAttrs($attrs, ['onClick', 'class']),
             ...(readOnly ? {} : attrs),
@@ -484,7 +482,7 @@ defineExpose({
           :aria-required="required || undefined"
           :aria-busy="loading || undefined"
           data-id="activator"
-          :data-error="hasError ? '' : undefined"
+          :aria-invalid="hasError"
           :tabindex="disabled || readOnly ? -1 : 0"
           @click="focusSetInputFocus()"
           @focus="focusOnActivatorFocused()"
@@ -494,15 +492,14 @@ defineExpose({
           @keydown.right="moveSelectedValueHighlight($event, true)"
           @keydown.up.prevent="moveHighlight(true)"
           @keydown.down.prevent="moveHighlight(false)"
+          @keydown.home.prevent="highlightedIndex = 0"
+          @keydown.end.prevent="highlightedIndex = optionsWithSelectedHidden.length - 1"
         >
           <span
             v-if="outlined || (!valueSet && !searchInputFocused)"
             :class="[
-              $style.label,
-              {
-                'absolute': outlined,
-                'pr-2': !valueSet && !open && outlined,
-              },
+              ui.label(),
+              { 'pr-2': !valueSet && !open && outlined },
             ]"
           >
             <slot
@@ -513,12 +510,15 @@ defineExpose({
             </slot>
             <span
               v-if="required"
-              class="text-rui-error"
+              :class="ui.required()"
             >
               ﹡
             </span>
           </span>
-          <div :class="$style.value">
+          <div
+            data-id="value"
+            :class="ui.value()"
+          >
             <template
               v-for="(item, i) in value"
               :key="getIdentifier(item)"
@@ -594,13 +594,10 @@ defineExpose({
             tabindex="-1"
             color="error"
             data-id="clear"
-            class="group-hover:!visible"
             :class="[
-              $style.clear,
+              ui.clear(),
               focusAnyFocused && '!visible',
-              {
-                'mr-2': !dense,
-              },
+              { 'mr-2': !dense },
             ]"
             @click.stop.prevent="clear()"
           >
@@ -611,11 +608,11 @@ defineExpose({
           </RuiButton>
 
           <span
-            :class="$style.icon__wrapper"
+            :class="ui.iconWrapper()"
             @click="arrowClicked($event)"
           >
             <RuiIcon
-              :class="[$style.icon, { 'rotate-180': open }]"
+              :class="ui.icon()"
               :size="dense ? 16 : 24"
               name="lu-chevron-down"
             />
@@ -623,7 +620,7 @@ defineExpose({
 
           <RuiProgress
             v-if="loading"
-            class="absolute left-0 bottom-0 w-full"
+            :class="ui.progress()"
             color="primary"
             thickness="3"
             variant="indeterminate"
@@ -631,9 +628,11 @@ defineExpose({
         </div>
         <fieldset
           v-if="outlined"
-          :class="$style.fieldset"
+          :class="ui.fieldset()"
         >
-          <legend :class="{ 'px-2': float }" />
+          <legend :class="ui.legend()">
+            {{ legendText }}
+          </legend>
         </fieldset>
       </slot>
     </template>
@@ -641,9 +640,9 @@ defineExpose({
       <div ref="menuWrapperRef">
         <div
           v-if="optionsWithSelectedHidden.length > 0"
-          :class="[$style.menu, classNames?.menu ?? menuClass]"
-          :style="{ width: `${width}px`, minWidth: menuWidth, minHeight: `${menuMinHeight}px` }"
-          v-bind="virtualContainerProps"
+          :ref="containerProps.ref"
+          :class="ui.menu({ class: cn(classNames?.menu) ?? menuClass })"
+          :style="[containerProps.style, { width: `${width}px`, minWidth: menuWidth, minHeight: `${menuMinHeight}px` }]"
           @scroll="containerProps.onScroll"
           @keydown.up.prevent="moveHighlight(true)"
           @keydown.down.prevent="moveHighlight(false)"
@@ -660,13 +659,11 @@ defineExpose({
               :size="dense ? 'sm' : undefined"
               tabindex="0"
               variant="list"
+              :data-highlighted="highlightedIndex === _index"
               :class="{
-                highlighted: highlightedIndex === _index,
-                [$style.highlighted]: highlightedIndex === _index,
-                [$style.active]: isActiveItem(item),
+                [highlightedClass]: !isActiveItem(item) && highlightedIndex === _index,
               }"
-              @click="setValue(item, _index)"
-              @mousedown="highlightedIndex = _index"
+              @click="setValue(item)"
             >
               <template #prepend>
                 <slot
@@ -709,224 +706,3 @@ defineExpose({
     </template>
   </RuiMenu>
 </template>
-
-<style lang="scss" module>
-.wrapper {
-  @apply w-full inline-flex flex-col;
-
-  .activator {
-    @apply relative inline-flex items-center w-full;
-    @apply outline-none focus-within:outline-none cursor-pointer min-h-14 pl-3 py-2 pr-8 rounded;
-    @apply m-0 bg-white transition-all text-body-1 text-left hover:border-black;
-
-    &:not(.outlined) {
-      @apply hover:bg-gray-100 focus-within:bg-gray-100;
-    }
-
-    &.dense {
-      @apply py-1.5 min-h-10;
-
-      ~ .fieldset {
-        @apply px-2;
-      }
-    }
-
-    &.disabled {
-      @apply opacity-65 text-rui-text-disabled active:text-rui-text-disabled cursor-default pointer-events-none;
-    }
-
-    &.readonly {
-      @apply opacity-80 pointer-events-none cursor-default bg-gray-50;
-    }
-
-    &.outlined {
-      @apply border-none hover:border-none;
-
-      &:not(.disabled):not(.with-error):not(.with-success) {
-        &.opened,
-        &:focus,
-        &:focus-within {
-          @apply border-rui-primary;
-
-          ~ .fieldset {
-            @apply border-rui-primary #{!important};
-            @apply border-2 #{!important};
-          }
-        }
-      }
-
-      ~ .fieldset {
-        @apply border border-black/[0.23];
-      }
-
-      &:hover {
-        ~ .fieldset {
-          @apply border-black;
-        }
-      }
-
-      &.disabled {
-        ~ .fieldset {
-          @apply border-dotted;
-          @apply border border-black/[0.23] #{!important};
-        }
-      }
-
-      &.with-success {
-        .label {
-          @apply text-rui-success #{!important};
-        }
-
-        ~ .fieldset {
-          @apply border-rui-success #{!important};
-        }
-      }
-
-      &.with-error {
-        .label {
-          @apply text-rui-error #{!important};
-        }
-
-        ~ .fieldset {
-          @apply border-rui-error #{!important};
-        }
-      }
-    }
-
-    .label {
-      @apply text-rui-text-secondary;
-      max-width: calc(100% - 2.5rem);
-    }
-
-    .label,
-    .value {
-      @apply block truncate transition-all duration-75;
-    }
-
-    .value {
-      @apply flex gap-1 flex-wrap flex-1;
-    }
-
-    .clear {
-      @apply ml-auto shrink-0 invisible;
-    }
-
-    .icon {
-      @apply text-rui-text transition;
-
-      &__wrapper {
-        @apply flex items-center justify-end;
-        @apply absolute right-3 top-px bottom-0;
-      }
-    }
-
-    &.float {
-      .label {
-        @apply -translate-y-2 top-0 text-xs px-1;
-      }
-
-      ~ .fieldset {
-        legend {
-          &:after {
-            content: v-bind(labelWithQuote);
-          }
-        }
-      }
-
-      &:not(.disabled) {
-        &.opened,
-        &.opened.with-value,
-        &:focus,
-        &:focus.with-value,
-        &:focus-within,
-        &:focus-within.with-value {
-          .label {
-            @apply text-rui-primary;
-          }
-
-          ~ .fieldset {
-            @apply border-rui-primary;
-            @apply border-2 #{!important};
-          }
-        }
-      }
-    }
-  }
-
-  .fieldset {
-    @apply absolute w-full min-w-0 h-[calc(100%+0.5rem)] top-0 left-0 rounded pointer-events-none px-2 transition-all -mt-2;
-
-    legend {
-      @apply opacity-0 text-xs truncate;
-      max-width: calc(100% - 1rem);
-
-      &:before {
-        content: ' ';
-      }
-
-      &:after {
-        @apply truncate max-w-full leading-[0];
-        content: '\200B';
-      }
-    }
-  }
-}
-
-.menu {
-  @apply overflow-y-auto max-h-60 min-w-[2.5rem];
-}
-
-.highlighted {
-  @apply bg-rui-grey-200 #{!important};
-
-  &.active {
-    @apply bg-rui-grey-300 #{!important};
-  }
-}
-
-:global(.dark) {
-  .wrapper {
-    .activator {
-      @apply bg-transparent text-rui-text;
-
-      &:not(.outlined) {
-        @apply hover:bg-white/10 focus-within:bg-white/10;
-
-        &.disabled {
-          @apply bg-white/10;
-        }
-      }
-
-      &.readonly {
-        @apply bg-white/10;
-      }
-
-      &.outlined {
-        ~ .fieldset {
-          @apply border-white/[0.23];
-        }
-
-        &.disabled {
-          ~ .fieldset {
-            @apply border-white/[0.23] #{!important};
-          }
-        }
-
-        &:hover {
-          ~ .fieldset {
-            @apply border-white;
-          }
-        }
-      }
-    }
-  }
-
-  .highlighted {
-    @apply bg-rui-grey-800 #{!important};
-
-    &.active {
-      @apply bg-rui-grey-700 #{!important};
-    }
-  }
-}
-</style>

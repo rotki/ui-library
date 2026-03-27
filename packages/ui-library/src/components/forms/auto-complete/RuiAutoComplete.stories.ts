@@ -124,8 +124,7 @@ export const OutlinedDisabled = meta.story({
 
 export const OutlinedDense = meta.story({
   args: {
-    dense: false,
-    disabled: true,
+    dense: true,
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',

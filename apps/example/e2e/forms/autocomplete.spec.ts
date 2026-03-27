@@ -162,7 +162,7 @@ test.describe('auto-complete - selection', () => {
     await expect(page.locator('div[role=menu]')).toBeVisible();
 
     const firstButton = page.locator('div[role=menu] button').first();
-    await expect(firstButton).toHaveClass(/highlighted/);
+    await expect(firstButton).toHaveAttribute('data-highlighted', 'true');
   });
 
   test('should hide selected items from dropdown', async ({ page }) => {
@@ -507,7 +507,7 @@ test.describe('auto-complete - keyboard', () => {
     await expect(page.locator('div[role=menu]')).toBeVisible();
 
     // The selected item should be highlighted
-    const highlightedButton = page.locator('div[role=menu] button.highlighted');
+    const highlightedButton = page.locator('div[role=menu] button[data-highlighted="true"]');
     await expect(highlightedButton).toBeVisible();
     await expect(highlightedButton).toHaveAttribute('aria-selected', 'true');
   });

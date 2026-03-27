@@ -60,8 +60,8 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
       },
     });
 
-    expectWrapperToHaveClass(wrapper, 'div[data-id="activator"]', /_activator_/);
-    expect(wrapper.find('div[data-id="activator"] span[class*=label]').exists()).toBeTruthy();
+    expectWrapperToHaveClass(wrapper, 'div[data-id="activator"]', /inline-flex/);
+    expect(wrapper.find('div[data-id="activator"] span').exists()).toBeTruthy();
     expect(wrapper.find('span > svg').exists()).toBeTruthy();
   });
 
@@ -129,7 +129,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     const selectedIndex = 4;
     let highlightedItemButton = queryBody<HTMLButtonElement>(`button:first-child`);
     assertExists(highlightedItemButton);
-    expect(highlightedItemButton.classList).toContain('highlighted');
+    expect(highlightedItemButton.getAttribute('data-highlighted')).toBe('true');
 
     const buttonToSelect = queryBody<HTMLButtonElement>(`button:nth-child(${selectedIndex})`);
     assertExists(buttonToSelect);
@@ -158,13 +158,13 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
 
     highlightedItemButton = queryBody<HTMLButtonElement>(`button:nth-child(${selectedIndex})`);
     assertExists(highlightedItemButton);
-    expect(highlightedItemButton.classList).toContain('highlighted');
+    expect(highlightedItemButton.getAttribute('data-highlighted')).toBe('true');
 
     await wrapper.find('[data-id=activator]').trigger('keydown.down');
 
     highlightedItemButton = queryBody<HTMLButtonElement>(`button:nth-child(${selectedIndex + 1})`);
     assertExists(highlightedItemButton);
-    expect(highlightedItemButton.classList).toContain('highlighted');
+    expect(highlightedItemButton.getAttribute('data-highlighted')).toBe('true');
 
     await wrapper.find('[data-id=activator]').trigger('keydown.up');
     await wrapper.find('[data-id=activator]').trigger('keydown.up');
@@ -173,7 +173,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
 
     highlightedItemButton = queryBody<HTMLButtonElement>(`button:nth-child(${newSelectedIndex})`);
     assertExists(highlightedItemButton);
-    expect(highlightedItemButton.classList).toContain('highlighted');
+    expect(highlightedItemButton.getAttribute('data-highlighted')).toBe('true');
 
     await wrapper.find('[data-id=activator]').trigger('keydown.enter');
     await wrapper.find('[data-id=activator]').trigger('keydown.esc');
@@ -515,18 +515,18 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     });
 
     // Selection wrapper should have flex class by default (multiple mode renders div wrapper)
-    const selectionWrapper = wrapper.find('div[data-id="activator"] div[class*=value] > div.flex');
+    const selectionWrapper = wrapper.find('div[data-id="activator"] div[data-id=value] > div.flex');
     expect(selectionWrapper.exists()).toBe(true);
 
     // Set hideSelectionWrapper to true
     await wrapper.setProps({ hideSelectionWrapper: true });
-    expect(wrapper.find('div[data-id="activator"] div[class*=value] > div.flex').exists()).toBe(false);
-    expect(wrapper.find('div[data-id="activator"] div[class*=value] > div.contents').exists()).toBe(true);
+    expect(wrapper.find('div[data-id="activator"] div[data-id=value] > div.flex').exists()).toBe(false);
+    expect(wrapper.find('div[data-id="activator"] div[data-id=value] > div.contents').exists()).toBe(true);
 
     // Set hideSelectionWrapper back to false
     await wrapper.setProps({ hideSelectionWrapper: false });
-    expect(wrapper.find('div[data-id="activator"] div[class*=value] > div.flex').exists()).toBe(true);
-    expect(wrapper.find('div[data-id="activator"] div[class*=value] > div.contents').exists()).toBe(false);
+    expect(wrapper.find('div[data-id="activator"] div[data-id=value] > div.flex').exists()).toBe(true);
+    expect(wrapper.find('div[data-id="activator"] div[data-id=value] > div.contents').exists()).toBe(false);
   });
 
   it('should show clear button and emit undefined on click', async () => {
