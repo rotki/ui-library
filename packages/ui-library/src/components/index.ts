@@ -23,7 +23,7 @@ import RuiCheckbox, { type Props as CheckboxProps } from '@/components/forms/che
 import RuiRadioGroup, { type Props as RadioGroupProps } from '@/components/forms/radio-button/radio-group/RuiRadioGroup.vue';
 import RuiRadio, { type RadioProps } from '@/components/forms/radio-button/radio/RuiRadio.vue';
 import RuiRevealableTextField, { type Props as RevealableTextFieldProps } from '@/components/forms/revealable-text-field/RuiRevealableTextField.vue';
-import RuiMenuSelect, { type Props as MenuSelectProps, type RuiMenuSelectClassNames } from '@/components/forms/select/RuiMenuSelect.vue';
+import RuiMenuSelect, { type MenuSelectProps, type RuiMenuSelectClassNames } from '@/components/forms/select/RuiMenuSelect.vue';
 import RuiSimpleSelect, { type Props as SimpleSelectProps } from '@/components/forms/select/RuiSimpleSelect.vue';
 import RuiSlider, { type RuiSliderClassNames, type Props as SliderProps } from '@/components/forms/slider/RuiSlider.vue';
 import RuiSwitch, { type Props as SwitchProps } from '@/components/forms/switch/RuiSwitch.vue';

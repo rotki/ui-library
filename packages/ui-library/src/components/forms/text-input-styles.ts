@@ -110,25 +110,36 @@ export const textInputBase = tv({
  * Shared tv() styles for the activator-based components (Group B):
  * MenuSelect, AutoComplete, DateTimePicker.
  *
- * These use a button/div activator instead of an input element,
- * with class-based float state instead of CSS sibling combinators.
+ * IMPORTANT: tv() extend does NOT deduplicate conflicting Tailwind classes.
+ * Never put a class in the base slot that a variant needs to override.
+ *
+ * State-driven via JS refs: `outlined`, `float` (open || hasValue),
+ * `opened`, `disabled`, `readonly`, `dense`.
  */
 export const activatorStyles = tv({
   extend: textInputBase,
   slots: {
+    // Re-declare base slots for type inference
+    fieldset: '',
+    legend: '',
     wrapper: 'w-full inline-flex flex-col',
     activator: [
-      'relative inline-flex items-center w-full',
+      'group relative inline-flex items-center w-full',
       'outline-none focus:outline-none focus-within:outline-none cursor-pointer',
-      'min-h-14 pl-3 py-2 pr-8 rounded',
-      'm-0 bg-white transition-all text-body-1 text-left',
-      'dark:bg-transparent dark:text-rui-text',
+      'min-h-14 pl-4 py-2 pr-8 rounded',
+      'm-0 transition-all text-body-1 text-left',
+      'dark:text-rui-text',
     ].join(' '),
-    label: '-translate-y-2 top-0 text-xs px-1',
-    value: 'block truncate transition-all duration-75',
-    clear: 'ml-auto shrink-0 invisible',
+    label: [
+      'text-rui-text-secondary [max-width:calc(100%-2.5rem)]',
+      'block truncate transition-all duration-75',
+    ].join(' '),
+    value: 'w-full block truncate transition-all duration-75',
+    clear: 'ml-auto shrink-0 invisible group-hover:!visible',
+    progress: 'absolute left-0 bottom-0 w-full',
     icon: 'text-rui-text transition',
     iconWrapper: 'flex items-center justify-end absolute right-3 top-px bottom-0',
+    required: 'text-rui-error',
   },
   variants: {
     dense: {
@@ -146,46 +157,98 @@ export const activatorStyles = tv({
         activator: 'opacity-80 pointer-events-none cursor-default bg-gray-50 dark:bg-white/10',
       },
     },
-    outlined: {
+    filled: {
       true: {
-        activator: 'border-none hover:border-none',
-      },
-      false: {
         activator: [
-          'hover:bg-gray-100 focus-within:bg-gray-100',
-          'dark:hover:bg-white/10 dark:focus-within:bg-white/10',
+          '!rounded-t !rounded-b-none !bg-black/[0.06]',
+          '!hover:bg-black/[0.09] !focus-within:bg-black/[0.09]',
+          'dark:!bg-white/[0.09]',
+          'dark:!hover:bg-white/[0.13] dark:!focus-within:bg-white/[0.13]',
+          underlinePseudo,
         ].join(' '),
       },
     },
+    outlined: {
+      true: {
+        activator: 'bg-white dark:bg-transparent border-none hover:border-none',
+        label: 'absolute',
+        fieldset: '!mt-0 !h-full',
+      },
+      false: {
+        activator: `!rounded-none ${underlinePseudo}`,
+      },
+    },
+    float: {
+      true: {
+        label: '-translate-y-2 top-0 text-xs px-1',
+      },
+    },
+    opened: {
+      true: {
+        icon: 'rotate-180',
+      },
+    },
+    hasError: {
+      true: {},
+    },
+    hasSuccess: {
+      true: {},
+    },
   },
   compoundVariants: [
-    // Focused → label gets primary color (Group B default)
-    { focused: true, class: { label: 'text-rui-primary' } },
+    // Legend padding when label is floated
+    { float: true, class: { legend: 'px-2' } },
+
+    // Non-outlined + opened → underline scales up
+    { outlined: false, opened: true, class: { activator: 'after:scale-x-100 after:border-rui-primary' } },
+
+    // Non-outlined + error → underline color
+    { outlined: false, hasError: true, class: { activator: 'after:scale-x-100 after:!border-rui-error' } },
+
+    // Non-outlined + success → underline color
+    { outlined: false, hasSuccess: true, class: { activator: 'after:scale-x-100 after:!border-rui-success' } },
+
     // Non-outlined + disabled in dark mode
     { outlined: false, disabled: true, class: { activator: 'dark:bg-white/10' } },
+
+    // Filled + disabled
+    { filled: true, disabled: true, class: { activator: 'bg-black/[0.03] dark:bg-white/[0.05]' } },
+
+    // Outlined + hovered → fieldset border
+    { outlined: true, hovered: true, class: { fieldset: 'border-black dark:border-white' } },
+
+    // Outlined + opened/focused → primary border
+    { outlined: true, opened: true, class: {
+      fieldset: '!border-rui-primary !border-2',
+      label: 'text-rui-primary',
+    } },
+
+    // Outlined + error → fieldset + label
+    { outlined: true, hasError: true, class: {
+      fieldset: '!border-rui-error',
+      label: '!text-rui-error',
+    } },
+    // Outlined + success → fieldset + label
+    { outlined: true, hasSuccess: true, class: {
+      fieldset: '!border-rui-success',
+      label: '!text-rui-success',
+    } },
+
+    // Outlined + disabled → dotted fieldset
+    { outlined: true, disabled: true, class: {
+      fieldset: '!border-dotted !border-black/[0.23] dark:!border-white/[0.23]',
+    } },
+
+    // Float + opened → label color
+    { float: true, opened: true, class: { label: 'text-rui-primary' } },
   ],
   defaultVariants: {
+    filled: false,
     outlined: false,
     dense: false,
     disabled: false,
     readonly: false,
-  },
-});
-
-/**
- * Shared tv() styles for dropdown menu items.
- * Used by MenuSelect and AutoComplete.
- */
-export const dropdownMenuStyles = tv({
-  slots: {
-    menu: 'overflow-y-auto max-h-60 min-w-[2.5rem]',
-    highlighted: '!bg-rui-grey-200 dark:!bg-rui-grey-800',
-  },
-  variants: {
-    active: {
-      true: {
-        highlighted: '!bg-rui-grey-300 dark:!bg-rui-grey-700',
-      },
-    },
+    float: false,
+    opened: false,
   },
 });

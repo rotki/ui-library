@@ -133,7 +133,7 @@ test.describe('menu-select - selection', () => {
     await expect(page.locator('div[role=menu]')).toBeVisible();
 
     const firstButton = page.locator('div[role=menu] button').first();
-    await expect(firstButton).toHaveClass(/highlighted/);
+    await expect(firstButton).toHaveAttribute('data-highlighted', 'true');
   });
 
   test('should navigate options with keyboard', async ({ page }) => {
@@ -145,16 +145,16 @@ test.describe('menu-select - selection', () => {
 
     // First item should be highlighted due to autoSelectFirst
     const firstButton = page.locator('div[role=menu] button').first();
-    await expect(firstButton).toHaveClass(/highlighted/);
+    await expect(firstButton).toHaveAttribute('data-highlighted', 'true');
 
     // Navigate down
     await activator.press('ArrowDown');
     const secondButton = page.locator('div[role=menu] button').nth(1);
-    await expect(secondButton).toHaveClass(/highlighted/);
+    await expect(secondButton).toHaveAttribute('data-highlighted', 'true');
 
     // Navigate back up
     await activator.press('ArrowUp');
-    await expect(firstButton).toHaveClass(/highlighted/);
+    await expect(firstButton).toHaveAttribute('data-highlighted', 'true');
 
     // Click the highlighted option to select
     await firstButton.click();

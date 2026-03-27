@@ -114,8 +114,7 @@ export const OutlinedDisabled = meta.story({
 
 export const OutlinedDense = meta.story({
   args: {
-    dense: false,
-    disabled: true,
+    dense: true,
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
@@ -127,6 +126,66 @@ export const OutlinedDisabledDense = meta.story({
   args: {
     dense: true,
     disabled: true,
+    keyAttr: 'id',
+    modelValue: undefined,
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+});
+
+export const Filled = meta.story({
+  args: {
+    keyAttr: 'id',
+    modelValue: undefined,
+    textAttr: 'label',
+    variant: 'filled',
+  },
+});
+
+export const Readonly = meta.story({
+  args: {
+    keyAttr: 'id',
+    modelValue: '3',
+    readOnly: true,
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+});
+
+export const WithErrorMessage = meta.story({
+  args: {
+    errorMessages: ['This field is required'],
+    keyAttr: 'id',
+    modelValue: undefined,
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+});
+
+export const WithSuccessMessage = meta.story({
+  args: {
+    keyAttr: 'id',
+    modelValue: '3',
+    successMessages: ['Selection confirmed'],
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+});
+
+export const WithHint = meta.story({
+  args: {
+    hint: 'Please select a country',
+    keyAttr: 'id',
+    modelValue: undefined,
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+});
+
+export const HideDetails = meta.story({
+  args: {
+    hideDetails: true,
+    hint: 'This hint should not be rendered',
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',

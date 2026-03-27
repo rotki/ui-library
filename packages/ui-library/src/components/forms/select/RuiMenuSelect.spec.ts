@@ -51,8 +51,8 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
       },
     });
 
-    expectWrapperToHaveClass(wrapper, 'button[data-id="activator"]', /_activator_/);
-    expect(wrapper.find('button[data-id="activator"] span[class*=label]').exists()).toBeTruthy();
+    expectWrapperToHaveClass(wrapper, 'button[data-id="activator"]', /inline-flex/);
+    expect(wrapper.find('button[data-id="activator"] span').exists()).toBeTruthy();
     expect(wrapper.find('span > svg').exists()).toBeTruthy();
   });
 
@@ -106,7 +106,7 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
     const selectedIndex = 4;
     let highlightedItemButton = queryMenuButton(1);
     assert(highlightedItemButton);
-    expect(highlightedItemButton.classList).toContain('highlighted');
+    expect(highlightedItemButton.getAttribute('data-highlighted')).toBe('true');
 
     const buttonToSelect = queryMenuButton(selectedIndex);
     buttonToSelect?.click();
@@ -126,13 +126,13 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
 
     highlightedItemButton = queryMenuButton(selectedIndex);
     assert(highlightedItemButton);
-    expect(highlightedItemButton.classList).toContain('highlighted');
+    expect(highlightedItemButton.getAttribute('data-highlighted')).toBe('true');
 
     await wrapper.find('[data-id=activator]').trigger('keydown.down');
 
     highlightedItemButton = queryMenuButton(selectedIndex + 1);
     assert(highlightedItemButton);
-    expect(highlightedItemButton.classList).toContain('highlighted');
+    expect(highlightedItemButton.getAttribute('data-highlighted')).toBe('true');
 
     await wrapper.find('[data-id=activator]').trigger('keydown.up');
     await wrapper.find('[data-id=activator]').trigger('keydown.up');
@@ -141,7 +141,7 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
 
     highlightedItemButton = queryMenuButton(newSelectedIndex);
     assert(highlightedItemButton);
-    expect(highlightedItemButton.classList).toContain('highlighted');
+    expect(highlightedItemButton.getAttribute('data-highlighted')).toBe('true');
 
     highlightedItemButton?.click();
     const updates = wrapper.emitted('update:modelValue');
@@ -349,7 +349,7 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
       },
     });
 
-    expectWrapperToHaveClass(wrapper, 'button[data-id="activator"]', /_dense_/);
+    expectWrapperToHaveClass(wrapper, 'button[data-id="activator"]', /min-h-10/);
   });
 
   it('should render aria-expanded attribute', async () => {

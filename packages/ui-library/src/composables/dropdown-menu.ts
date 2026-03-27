@@ -26,7 +26,6 @@ export interface DropdownOptions<TValue, TItem> {
   itemHeight?: number;
   overscan?: number;
   autoSelectFirst?: boolean;
-  autoFocus?: boolean;
   setValue?: (val: TItem) => void;
   hideSelected?: boolean;
   isOpen?: Ref<boolean>;
@@ -73,7 +72,6 @@ function toSelectedArray<TItem>(val: TItem | TItem[] | undefined): TItem[] {
 
 export function useDropdownMenu<TValue, TItem>({
   appendWidth,
-  autoFocus,
   autoSelectFirst,
   dense,
   disabled = false,
@@ -83,7 +81,7 @@ export function useDropdownMenu<TValue, TItem>({
   isOpen: externalIsOpen,
   itemHeight = 48,
   keyAttr,
-  menuRef,
+  menuRef: _menuRef,
   options: allOptions,
   overscan = 5,
   prependWidth,
@@ -192,74 +190,39 @@ export function useDropdownMenu<TValue, TItem>({
     return selected.findIndex(selectedItem => getIdentifier(selectedItem) === itemId);
   }
 
-  async function adjustScrollByHighlightedIndex(smooth: boolean = false): Promise<void> {
+  function adjustScrollByHighlightedIndex(): void {
     const index = get(highlightedIndex);
-    if (index > -1) {
-      await nextTick(() => {
-        const menuEl = get(menuRef);
-        const container = menuEl?.parentElement;
-        if (container && menuEl) {
-          const highlightedElem = menuEl.getElementsByClassName('highlighted')[0];
+    if (index > -1)
+      scrollTo(index);
+  }
 
-          if (highlightedElem) {
-            highlightedElem.scrollIntoView?.({
-              behavior: smooth ? 'smooth' : 'auto',
-              block: 'nearest',
-            });
-            if (
-              get(autoFocus) &&
-              'focus' in highlightedElem &&
-              typeof highlightedElem.focus === 'function'
-            ) {
-              highlightedElem?.focus();
-            }
-          }
-          else {
-            scrollTo(index);
-            if (get(autoFocus)) {
-              const elem = menuEl.getElementsByClassName('highlighted')[0];
-              if (elem && 'focus' in elem && typeof elem.focus === 'function')
-                elem.focus();
-            }
-          }
-        }
-      });
+  function updateOpen(open: boolean): void {
+    if (!open)
+      return;
+
+    const val = get(value);
+
+    // Set highlighted index to active item
+    if ((Array.isArray(val) && val.length > 0) || (val !== null && val !== undefined)) {
+      const index = get(options).findIndex(isActiveItem);
+      if (index > -1)
+        set(highlightedIndex, index);
     }
+
+    nextTick(() => adjustScrollByHighlightedIndex());
   }
 
-  async function updateOpen(open: boolean): Promise<void> {
-    await nextTick(() => {
-      if (open) {
-        const val = get(value);
-
-        // set highlighted index to active item
-        if ((Array.isArray(val) && val.length > 0) || (val !== null && val !== undefined)) {
-          const index = get(options).findIndex(isActiveItem);
-          if (index > -1)
-            set(highlightedIndex, index);
-        }
-
-        watchOnce(list, async () => {
-          await adjustScrollByHighlightedIndex();
-        });
-      }
-    });
-  }
-
-  watch([isOpen, () => toValue(disabled)], async ([open, _]) => {
-    await updateOpen(open);
+  watch([isOpen, () => toValue(disabled)], ([open, _]) => {
+    updateOpen(open);
   });
 
-  watch(highlightedIndex, async (curr, prev) => {
-    if (curr !== prev)
-      await adjustScrollByHighlightedIndex(true);
-  });
+  watch(highlightedIndex, () => adjustScrollByHighlightedIndex());
 
-  watch(options, async () => {
+  watch(options, () => {
     if (get(highlightedIndex) !== -1) {
       if (get(autoSelectFirst)) {
         set(highlightedIndex, 0);
-        await adjustScrollByHighlightedIndex();
+        adjustScrollByHighlightedIndex();
       }
       else {
         set(highlightedIndex, -1);
