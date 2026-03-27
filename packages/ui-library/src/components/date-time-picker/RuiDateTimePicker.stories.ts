@@ -102,6 +102,70 @@ export const WithMaxNow = meta.story({
   },
 });
 
+export const Filled = meta.story({
+  args: {
+    modelValue: new Date(),
+    variant: 'filled',
+  },
+});
+
+export const Dense = meta.story({
+  args: {
+    dense: true,
+    modelValue: new Date(),
+    variant: 'outlined',
+  },
+});
+
+export const Disabled = meta.story({
+  args: {
+    disabled: true,
+    modelValue: new Date(),
+    variant: 'outlined',
+  },
+});
+
+export const Readonly = meta.story({
+  args: {
+    modelValue: new Date(),
+    readonly: true,
+    variant: 'outlined',
+  },
+});
+
+export const WithErrorMessage = meta.story({
+  args: {
+    errorMessages: ['Date is out of range'],
+    modelValue: new Date(),
+    variant: 'outlined',
+  },
+});
+
+export const WithSuccessMessage = meta.story({
+  args: {
+    modelValue: new Date(),
+    successMessages: ['Date confirmed'],
+    variant: 'outlined',
+  },
+});
+
+export const WithHint = meta.story({
+  args: {
+    hint: 'Select a date and time',
+    modelValue: new Date(),
+    variant: 'outlined',
+  },
+});
+
+export const HideDetails = meta.story({
+  args: {
+    hideDetails: true,
+    hint: 'This hint should not be rendered',
+    modelValue: new Date(),
+    variant: 'outlined',
+  },
+});
+
 export const Required = meta.story({
   args: {
     modelValue: new Date(),

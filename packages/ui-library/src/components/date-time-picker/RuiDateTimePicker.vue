@@ -2,13 +2,14 @@
 import type { DateTimeSegmentType } from '@/components/date-time-picker/types';
 import type { TimePickerSelection } from '@/components/time-picker/RuiTimePicker.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import { dateTimePickerStyles, type DateTimePickerVariant } from '@/components/date-time-picker/date-time-picker-styles';
 import RuiDateTimePickerMenu from '@/components/date-time-picker/RuiDateTimePickerMenu.vue';
 import { useDateTimeSelection } from '@/components/date-time-picker/use-date-time-selection';
 import { useInputHandler } from '@/components/date-time-picker/use-input-handler';
 import { useKeyboardHandler } from '@/components/date-time-picker/use-keyboard-handler';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
-import { useLabelWithQuote } from '@/composables/forms/use-label-with-quote';
+import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
 type DateFormat = 'year-first' | 'month-first' | 'day-first';
@@ -34,7 +35,7 @@ export interface RuiDateTimePickerProps {
   readonly?: boolean;
   dense?: boolean;
   label?: string;
-  variant?: 'default' | 'filled' | 'outlined';
+  variant?: DateTimePickerVariant;
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
@@ -159,9 +160,9 @@ const {
   textInput,
 });
 
-const labelWithQuote = useLabelWithQuote(
-  () => label,
-  () => required,
+const { hasError, hasSuccess } = useFormTextDetail(
+  () => errorMessages,
+  () => successMessages,
 );
 
 const isOutlined = computed<boolean>(() => variant === 'outlined');
@@ -221,14 +222,29 @@ const timeSelection = computed<TimePickerSelection>({
 
 const float = computed<boolean>(() => (get(isOpen) || get(valueSet) || get(searchInputFocused)) && get(isOutlined));
 
+const legendText = computed<string>(() => {
+  if (!get(float) || !label)
+    return '';
+  return required ? `${label} ﹡` : label;
+});
+
+const ui = computed<ReturnType<typeof dateTimePickerStyles>>(() => dateTimePickerStyles({
+  filled: variant === 'filled',
+  outlined: get(isOutlined),
+  float: get(float),
+  opened: get(isOpen),
+  dense,
+  disabled,
+  readonly,
+  hasError: get(hasError),
+  hasSuccess: get(hasSuccess) && !get(hasError),
+}));
+
 const combinedErrorMessages = computed<string[]>(() => {
-  let propErrors: string[];
-  if (errorMessages) {
-    propErrors = Array.isArray(errorMessages) ? errorMessages : [errorMessages];
-  }
-  else {
-    propErrors = Array.isArray(errorMessages) ? errorMessages : [];
-  }
+  if (!errorMessages)
+    return get(internalErrorMessages);
+
+  const propErrors = Array.isArray(errorMessages) ? errorMessages : [errorMessages];
   return [...propErrors, ...get(internalErrorMessages)];
 });
 
@@ -272,7 +288,10 @@ function arrowClicked(event: MouseEvent): void {
 <template>
   <RuiMenu
     v-model="isOpen"
-    :class="$style.wrapper"
+    v-bind="getRootAttrs($attrs)"
+    :class="ui.wrapper()"
+    placement="bottom-start"
+    :popper="{ offsetDistance: 2 }"
     :dense="dense"
     :hint="hint"
     :disabled="disabled"
@@ -281,39 +300,19 @@ function arrowClicked(event: MouseEvent): void {
     :close-on-content-click="false"
     :show-details="!hideDetails"
     :persistent="calendarMenuOpen"
-    :popper="{
-      placement: 'bottom-start',
-    }"
     full-width
     disable-auto-focus
-    v-bind="{
-      ...getRootAttrs($attrs),
-    }"
   >
-    <template #activator="{ attrs, open, hasError, hasSuccess }">
+    <template #activator="{ attrs, open }">
       <div
         ref="activator"
-        class="group"
-        :class="[
-          $style.activator,
-          {
-            [$style.disabled]: disabled,
-            [$style.readonly]: readonly,
-            [$style.outlined]: isOutlined,
-            [$style.dense]: dense,
-            [$style.float]: float,
-            [$style.opened]: open,
-            [$style['with-value']]: valueSet,
-            [$style['with-error']]: hasError,
-            [$style['with-success']]: hasSuccess && !hasError,
-          },
-        ]"
+        :class="ui.activator()"
         v-bind="{
           ...getNonRootAttrs($attrs, ['onClick', 'class']),
           ...(readonly ? {} : attrs),
         }"
         data-id="activator"
-        :data-error="hasError ? '' : undefined"
+        :aria-invalid="hasError"
         :tabindex="disabled || readonly ? -1 : 0"
         @click="setInputFocus()"
       >
@@ -321,32 +320,29 @@ function arrowClicked(event: MouseEvent): void {
           v-if="isOutlined && (searchInputFocused || open || valueSet)"
           data-id="label"
           :class="[
-            $style.label,
-            {
-              'absolute': isOutlined,
-              'pr-2': !valueSet && !open && isOutlined,
-            },
+            ui.label(),
+            { 'pr-2': !valueSet && !open && isOutlined },
           ]"
         >
           {{ label }}
           <span
             v-if="required"
             data-id="required-indicator"
-            class="text-rui-error"
+            :class="ui.required()"
           >
             ﹡
           </span>
         </span>
 
-        <span :class="[$style.icon__wrapper, $style.icon__prepend]">
+        <span :class="ui.iconPrepend()">
           <RuiIcon
-            :class="[$style.icon]"
+            class="text-rui-text-secondary transition"
             :size="dense ? 16 : 24"
             name="lu-calendar-days"
           />
         </span>
 
-        <div :class="$style.value">
+        <div :class="ui.value()">
           <input
             ref="textInput"
             :disabled="disabled"
@@ -375,13 +371,10 @@ function arrowClicked(event: MouseEvent): void {
           size="sm"
           tabindex="-1"
           color="error"
-          class="group-hover:!visible"
           :class="[
-            $style.clear,
+            ui.clear(),
             anyFocused && '!visible',
-            {
-              'mr-2': !dense,
-            },
+            { 'mr-2': !dense },
           ]"
           @click.stop.prevent="clear()"
         >
@@ -392,12 +385,12 @@ function arrowClicked(event: MouseEvent): void {
         </RuiButton>
 
         <span
-          :class="[$style.icon__wrapper, $style.icon__append]"
+          :class="ui.iconWrapper()"
           data-id="append"
           @click="arrowClicked($event)"
         >
           <RuiIcon
-            :class="[$style.icon, { 'rotate-180': open }]"
+            :class="ui.icon()"
             :size="dense ? 16 : 24"
             name="lu-chevron-down"
           />
@@ -405,9 +398,11 @@ function arrowClicked(event: MouseEvent): void {
       </div>
       <fieldset
         v-if="isOutlined"
-        :class="$style.fieldset"
+        :class="ui.fieldset()"
       >
-        <legend :class="{ 'px-2': float }" />
+        <legend :class="ui.legend()">
+          {{ legendText }}
+        </legend>
       </fieldset>
     </template>
     <template #default>
@@ -432,228 +427,3 @@ function arrowClicked(event: MouseEvent): void {
     </template>
   </RuiMenu>
 </template>
-
-<style lang="scss" module>
-.wrapper {
-  @apply w-full inline-flex flex-col;
-
-  .activator {
-    @apply relative inline-flex items-center w-full;
-    @apply outline-none focus-within:outline-none cursor-pointer min-h-14 pl-3 py-2 pr-8 rounded;
-    @apply m-0 bg-white transition-all text-body-1 text-left hover:border-black;
-
-    &:not(.outlined) {
-      @apply hover:bg-gray-100 focus-within:bg-gray-100;
-    }
-
-    &.dense {
-      @apply py-1.5 min-h-10;
-
-      ~ .fieldset {
-        @apply px-2;
-      }
-    }
-
-    &.disabled {
-      @apply opacity-65 text-rui-text-disabled active:text-rui-text-disabled cursor-default pointer-events-none;
-    }
-
-    &.readonly {
-      @apply opacity-80 pointer-events-none cursor-default bg-gray-50;
-    }
-
-    &.outlined {
-      @apply border-none hover:border-none;
-
-      &.opened,
-      &:focus,
-      &:focus-within {
-        @apply border-rui-primary;
-
-        ~ .fieldset {
-          @apply border-rui-primary #{!important};
-          @apply border-2 #{!important};
-        }
-      }
-
-      ~ .fieldset {
-        @apply border border-black/[0.23];
-      }
-
-      &:hover {
-        ~ .fieldset {
-          @apply border-black;
-        }
-      }
-
-      &.disabled {
-        ~ .fieldset {
-          @apply border-dotted;
-          @apply border border-black/[0.23] #{!important};
-        }
-      }
-
-      &.with-success {
-        .label {
-          @apply text-rui-success #{!important};
-        }
-
-        ~ .fieldset {
-          @apply border-rui-success #{!important};
-        }
-      }
-
-      &.with-error {
-        .label {
-          @apply text-rui-error #{!important};
-        }
-
-        ~ .fieldset {
-          @apply border-rui-error #{!important};
-        }
-      }
-    }
-
-    .label {
-      @apply text-rui-text-secondary;
-      max-width: calc(100% - 2.5rem);
-    }
-
-    .label,
-    .value {
-      @apply block truncate transition-all duration-75;
-    }
-
-    .value {
-      @apply flex gap-1 flex-wrap flex-1 ps-8;
-    }
-
-    .clear {
-      @apply ml-auto shrink-0 invisible;
-    }
-
-    .icon {
-      @apply text-rui-text-secondary transition;
-
-      &__wrapper {
-        @apply flex items-center justify-end;
-        @apply absolute top-px bottom-0;
-      }
-
-      &__append {
-        @apply right-3;
-      }
-
-      &__prepend {
-        @apply left-3;
-      }
-    }
-
-    &.float {
-      .label {
-        @apply -translate-y-2 top-0 text-xs px-1;
-      }
-
-      ~ .fieldset {
-        legend {
-          &:after {
-            content: v-bind(labelWithQuote);
-          }
-        }
-      }
-
-      &.opened,
-      &.opened.with-value,
-      &:focus,
-      &:focus.with-value,
-      &:focus-within,
-      &:focus-within.with-value {
-        .label {
-          @apply text-rui-primary;
-        }
-
-        ~ .fieldset {
-          @apply border-rui-primary;
-          @apply border-2 #{!important};
-        }
-      }
-    }
-  }
-
-  .fieldset {
-    @apply absolute w-full min-w-0 h-[calc(100%+0.5rem)] top-0 left-0 rounded pointer-events-none px-2 transition-all -mt-2;
-
-    legend {
-      @apply opacity-0 text-xs truncate;
-      max-width: calc(100% - 1rem);
-
-      &:before {
-        content: ' ';
-      }
-
-      &:after {
-        @apply truncate max-w-full leading-[0];
-        content: '\200B';
-      }
-    }
-  }
-}
-
-.menu {
-  @apply overflow-y-auto max-h-60 min-w-[2.5rem];
-}
-
-.highlighted {
-  @apply bg-rui-grey-200 #{!important};
-
-  &.active {
-    @apply bg-rui-grey-300 #{!important};
-  }
-}
-
-:global(.dark) {
-  .wrapper {
-    .activator {
-      @apply bg-transparent text-rui-text;
-
-      &:not(.outlined) {
-        @apply hover:bg-white/10 focus-within:bg-white/10;
-
-        &.disabled {
-          @apply bg-white/10;
-        }
-      }
-
-      &.readonly {
-        @apply bg-white/10;
-      }
-
-      &.outlined {
-        ~ .fieldset {
-          @apply border-white/[0.23];
-        }
-
-        &.disabled {
-          ~ .fieldset {
-            @apply border-white/[0.23] #{!important};
-          }
-        }
-
-        &:hover {
-          ~ .fieldset {
-            @apply border-white;
-          }
-        }
-      }
-    }
-  }
-
-  .highlighted {
-    @apply bg-rui-grey-800 #{!important};
-
-    &.active {
-      @apply bg-rui-grey-700 #{!important};
-    }
-  }
-}
-</style>
