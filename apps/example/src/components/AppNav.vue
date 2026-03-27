@@ -19,11 +19,8 @@ const onSwitchTheme = ({ value }: Theme) => switchThemeScheme(value);
 </script>
 
 <template>
-  <header :class="$style.header">
-    <div
-      :class="$style['header-wrapper']"
-      class="wrapper"
-    >
+  <header class="sticky top-0 z-50 flex flex-wrap items-center bg-white dark:bg-[#272727] shadow-md dark:shadow-none shadow-slate-900/5 transition duration-500 py-5">
+    <div class="wrapper flex flex-wrap items-center justify-between">
       <RouterLink
         to="/"
         aria-label="Home page"
@@ -60,20 +57,3 @@ const onSwitchTheme = ({ value }: Theme) => switchThemeScheme(value);
     </div>
   </header>
 </template>
-
-<style lang="scss" module>
-.header {
-  @apply sticky top-0 z-50 flex flex-wrap items-center bg-white shadow-md shadow-slate-900/5;
-  @apply transition duration-500 py-5;
-}
-
-.header-wrapper {
-  @apply flex flex-wrap items-center justify-between;
-}
-
-:global(.dark) {
-  .header {
-    @apply bg-[#272727] shadow-none;
-  }
-}
-</style>

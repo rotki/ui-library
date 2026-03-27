@@ -34,15 +34,15 @@ const nextPage = computed<SideNavLink | false | undefined>(
 </script>
 
 <template>
-  <div :class="$style.nav">
-    <dl :class="$style.nav__list">
+  <div class="flex-auto py-4">
+    <dl class="mt-12 flex border-t border-slate-100 dark:border-slate-800 pt-6">
       <div v-if="previousPage">
-        <dt :class="$style.nav__item">
+        <dt class="text-sm font-medium text-slate-900 dark:text-white">
           Previous
         </dt>
         <dd class="mt-1">
           <RouterLink
-            :class="$style.nav__link"
+            class="text-base font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
             :to="previousPage.to"
           >
             <span aria-hidden="true">&larr;</span> {{ previousPage.title }}
@@ -51,14 +51,14 @@ const nextPage = computed<SideNavLink | false | undefined>(
       </div>
       <div
         v-if="nextPage"
-        :class="$style.nav__next"
+        class="ml-auto text-right"
       >
-        <dt :class="$style.nav__item">
+        <dt class="text-sm font-medium text-slate-900 dark:text-white">
           Next
         </dt>
         <dd class="mt-1">
           <RouterLink
-            :class="$style.nav__link"
+            class="text-base font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
             :to="nextPage.to"
           >
             {{ nextPage.title }} <span aria-hidden="true">&rarr;</span>
@@ -68,41 +68,3 @@ const nextPage = computed<SideNavLink | false | undefined>(
     </dl>
   </div>
 </template>
-
-<style lang="scss" module>
-.nav {
-  @apply flex-auto py-4;
-
-  &__list {
-    @apply mt-12 flex border-t border-slate-100 pt-6;
-  }
-
-  &__item {
-    @apply text-sm font-medium text-slate-900;
-  }
-
-  &__next {
-    @apply ml-auto text-right;
-  }
-
-  &__link {
-    @apply text-base font-semibold text-slate-500 hover:text-slate-600;
-  }
-}
-
-:global(.dark) {
-  .nav {
-    &__list {
-      @apply border-slate-800;
-    }
-
-    &__item {
-      @apply text-white;
-    }
-
-    &__link {
-      @apply text-slate-400 hover:text-slate-300;
-    }
-  }
-}
-</style>

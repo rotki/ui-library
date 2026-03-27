@@ -58,13 +58,10 @@ const navigation = ref([
 
 <template>
   <AppNav />
-  <main
-    :class="$style.main"
-    class="wrapper"
-  >
+  <main class="wrapper flex flex-col pt-8 min-h-[calc(100vh-4.5rem)]">
     <div class="relative flex">
       <div class="relative flex-none">
-        <div :class="$style.sidenav">
+        <div class="sticky top-[4.5rem] -ml-0.5 mr-4 h-[calc(100vh-6.5rem)] w-56 overflow-y-auto overflow-x-hidden py-8 pl-0.5 pr-8">
           <AppSideNav :navigation="navigation" />
         </div>
       </div>
@@ -80,18 +77,3 @@ const navigation = ref([
     </div>
   </main>
 </template>
-
-<style lang="scss" module>
-.main {
-  @apply flex flex-col pt-8;
-  min-height: calc(100vh - 4.5rem);
-
-  .content {
-    min-height: calc(100% - 8rem);
-  }
-}
-
-.sidenav {
-  @apply sticky top-[4.5rem] -ml-0.5 mr-4 h-[calc(100vh-6.5rem)] w-56 overflow-y-auto overflow-x-hidden py-8 pl-0.5 pr-8;
-}
-</style>
