@@ -20,7 +20,7 @@ export interface UseAutoCompleteSearchOptions<TItem> {
 }
 
 export interface UseAutoCompleteSearchReturn<TItem> {
-  internalSearch: Ref<string>;
+  internalSearch: Readonly<Ref<string>>;
   debouncedInternalSearch: Readonly<Ref<string>>;
   filteredOptions: Readonly<Ref<TItem[]>>;
   justOpened: Ref<boolean>;
@@ -30,7 +30,7 @@ export interface UseAutoCompleteSearchReturn<TItem> {
 
 export function useAutoCompleteSearch<TItem>(
   options: MaybeRefOrGetter<TItem[]>,
-  searchModel: Ref<string>,
+  searchModel: Ref<string>, // eslint-disable-line @rotki/composable-input-flexibility -- needs write access
   opts: UseAutoCompleteSearchOptions<TItem>,
 ): UseAutoCompleteSearchReturn<TItem> {
   const internalSearch = shallowRef<string>('');
@@ -48,8 +48,9 @@ export function useAutoCompleteSearch<TItem>(
       return cached;
 
     if (tokenCache.size >= MAX_CACHE_SIZE) {
-      const oldest = tokenCache.keys().next().value!;
-      tokenCache.delete(oldest);
+      const oldest = tokenCache.keys().next().value;
+      if (oldest !== undefined)
+        tokenCache.delete(oldest);
     }
 
     const token = getTextToken(text);
@@ -72,19 +73,19 @@ export function useAutoCompleteSearch<TItem>(
     // Cache the search token once
     const searchToken = getCachedTextToken(search);
 
-    const usedFilter = filter || ((item) => {
-      if (!item)
-        return false;
+    const filtered = filter
+      ? optionsValue.filter(item => filter(item, search))
+      : optionsValue.filter((item) => {
+          if (!item)
+            return false;
 
-      const keywords: string[] = [getCachedTextToken(keyAttr ? String((item as any)[keyAttr]) : item.toString())];
+          const keywords: string[] = [getCachedTextToken(keyAttr ? String((item as any)[keyAttr]) : item.toString())];
 
-      if (textAttr && typeof item === 'object')
-        keywords.push(getCachedTextToken(String((item as any)[textAttr])));
+          if (textAttr && typeof item === 'object')
+            keywords.push(getCachedTextToken(String((item as any)[textAttr])));
 
-      return keywords.some(keyword => keyword.includes(searchToken));
-    });
-
-    const filtered = optionsValue.filter(item => usedFilter(item, search));
+          return keywords.some(keyword => keyword.includes(searchToken));
+        });
 
     const customValue = toValue(opts.customValue);
     const hideCustomValue = toValue(opts.hideCustomValue);
@@ -145,8 +146,8 @@ export function useAutoCompleteSearch<TItem>(
   return {
     debouncedInternalSearch,
     filteredOptions,
-    internalSearch,
-    justOpened,
+    internalSearch: readonly(internalSearch),
+    justOpened, // eslint-disable-line @rotki/composable-return-readonly -- written by focus.ts onInputFocused and component setValue
     textValueToProperValue: (val: any, returnObjectOverride: boolean = false) => textValueToProperValue(val, {
       keyAttr: toValue(opts.keyAttr),
       returnObject: returnObjectOverride || toValue(opts.returnObject),

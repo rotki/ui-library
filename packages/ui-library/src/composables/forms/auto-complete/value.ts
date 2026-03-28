@@ -27,7 +27,7 @@ export interface UseAutoCompleteValueDeps<TItem> {
 }
 
 export function useAutoCompleteValue<TValue, TItem>(
-  modelValue: Ref<TValue | undefined>,
+  modelValue: Ref<TValue | undefined>, // eslint-disable-line @rotki/composable-input-flexibility -- needs write access
   options: MaybeRefOrGetter<TItem[]>,
   opts: UseAutoCompleteValueOptions<TItem>,
   deps: UseAutoCompleteValueDeps<TItem>,
@@ -48,32 +48,16 @@ export function useAutoCompleteValue<TValue, TItem>(
     return Array.isArray(modelValueData) ? modelValueData : [modelValueData];
   }
 
-  function filterValuesByOptions(
+  function filterValues(
     valueArray: any[],
     optionsMapData: Map<any, TItem>,
     customValue: boolean,
     returnObject: boolean,
+    getKey: (val: any) => any,
   ): TItem[] {
     const filtered: TItem[] = [];
     for (const val of valueArray) {
-      const inOptions = optionsMapData.get(deps.getIdentifier(val));
-      if (inOptions !== undefined)
-        filtered.push(inOptions);
-      else if (customValue)
-        filtered.push(deps.textValueToProperValue(val, returnObject));
-    }
-    return filtered;
-  }
-
-  function filterValuesByIdentifier(
-    valueArray: any[],
-    optionsMapData: Map<any, TItem>,
-    customValue: boolean,
-    returnObject: boolean,
-  ): TItem[] {
-    const filtered: TItem[] = [];
-    for (const val of valueArray) {
-      const inOptions = optionsMapData.get(val);
+      const inOptions = optionsMapData.get(getKey(val));
       if (inOptions !== undefined)
         filtered.push(inOptions);
       else if (customValue)
@@ -90,7 +74,7 @@ export function useAutoCompleteValue<TValue, TItem>(
   ): TItem[] {
     const multipleValue = Array.isArray(modelValueData);
     const valueArray = convertModelValueToArray(modelValueData);
-    const filtered = filterValuesByOptions(valueArray, optionsMapData, customValue, returnObject);
+    const filtered = filterValues(valueArray, optionsMapData, customValue, returnObject, val => deps.getIdentifier(val));
 
     if (multipleValue || filtered.length === 0)
       return filtered;
@@ -107,7 +91,7 @@ export function useAutoCompleteValue<TValue, TItem>(
     customValue: boolean,
   ): TItem[] {
     const valueArray = convertModelValueToArray(modelValueData);
-    return filterValuesByIdentifier(valueArray, optionsMapData, customValue, returnObject);
+    return filterValues(valueArray, optionsMapData, customValue, returnObject, val => val);
   }
 
   function onUpdateModelValue(value: TValue | undefined): void {

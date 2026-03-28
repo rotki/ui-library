@@ -26,7 +26,7 @@ export interface UseAutoCompleteKeyboardNavigationDeps<TItem> {
 }
 
 export interface UseAutoCompleteKeyboardNavigationReturn {
-  focusedValueIndex: Ref<number>;
+  focusedValueIndex: Readonly<Ref<number>>;
   moveSelectedValueHighlight: (event: KeyboardEvent, next: boolean) => void;
   onEnter: (event: KeyboardEvent) => void;
   onTab: (event: KeyboardEvent) => void;
@@ -100,31 +100,38 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
     form?.dispatchEvent(new Event('submit'));
   }
 
-  function onEnter(event: KeyboardEvent): void {
+  function handleOpenMenuEnter(event: KeyboardEvent): boolean {
     const filteredOptions = get(deps.filteredOptions);
     const highlightedIndex = get(deps.highlightedIndex);
-    const isOpen = get(deps.isOpen);
     const customValue = toValue(options.customValue);
     const multiple = toValue(options.multiple);
     const internalSearch = get(deps.internalSearch);
-    const hasHighlighted = highlightedIndex > -1 && filteredOptions.length > 0;
 
-    // Custom value: use search text if highlighted option doesn't exactly match
-    if (customValue && internalSearch && isOpen && !highlightedMatchesSearch(filteredOptions, highlightedIndex, internalSearch))
-      return applyCustomValue(event, multiple);
-
-    // Apply highlighted option
-    if (hasHighlighted && isOpen) {
-      deps.applyHighlighted();
-      return event.preventDefault();
+    if (customValue && internalSearch && !highlightedMatchesSearch(filteredOptions, highlightedIndex, internalSearch)) {
+      applyCustomValue(event, multiple);
+      return true;
     }
 
-    // No options but custom value allowed: use search text
-    if (filteredOptions.length === 0 && customValue && internalSearch)
-      return applyCustomValue(event, multiple);
+    if (highlightedIndex > -1 && filteredOptions.length > 0) {
+      deps.applyHighlighted();
+      event.preventDefault();
+      return true;
+    }
+
+    if (filteredOptions.length === 0 && customValue && internalSearch) {
+      applyCustomValue(event, multiple);
+      return true;
+    }
+
+    return false;
+  }
+
+  function onEnter(event: KeyboardEvent): void {
+    if (get(deps.isOpen) && handleOpenMenuEnter(event))
+      return;
 
     // Nothing selected, menu closed: open menu
-    if (!isOpen && get(deps.value).length === 0) {
+    if (!get(deps.isOpen) && get(deps.value).length === 0) {
       set(deps.isOpen, true);
       return event.preventDefault();
     }
@@ -187,7 +194,7 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
   });
 
   return {
-    focusedValueIndex,
+    focusedValueIndex: readonly(focusedValueIndex),
     moveSelectedValueHighlight,
     onEnter,
     onInputDeletePressed,
