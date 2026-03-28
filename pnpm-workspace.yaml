@@ -6,6 +6,10 @@ packages:
 
 overrides:
   jiti: ^2.6.1
+
+peerDependencyRules:
+  allowedVersions:
+    tailwind-variants>tailwind-merge: ">=2.0.0 <3.0.0"
 ignoredBuiltDependencies:
   - vue-demi
 
