@@ -37,15 +37,20 @@ export function useAutoCompleteSearch<TItem>(
   const debouncedInternalSearch = refDebounced(internalSearch, 50);
   const justOpened = shallowRef<boolean>(false);
 
-  // Memoize token computation to avoid repeated string processing
-  const MAX_CACHE_SIZE = 500;
+  // Memoize token computation to avoid repeated string processing.
+  // Map iteration order is insertion order, so deleting the first key
+  // gives us simple LRU eviction without a separate data structure.
+  const MAX_CACHE_SIZE = 100;
   const tokenCache = new Map<string, string>();
   const getCachedTextToken = (text: string): string => {
-    if (tokenCache.has(text))
-      return tokenCache.get(text)!;
+    const cached = tokenCache.get(text);
+    if (cached !== undefined)
+      return cached;
 
-    if (tokenCache.size >= MAX_CACHE_SIZE)
-      tokenCache.clear();
+    if (tokenCache.size >= MAX_CACHE_SIZE) {
+      const oldest = tokenCache.keys().next().value!;
+      tokenCache.delete(oldest);
+    }
 
     const token = getTextToken(text);
     tokenCache.set(text, token);
