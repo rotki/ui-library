@@ -115,8 +115,8 @@ export function useAutoCompleteFocus(
       }
     },
     {
-      debounce: 200,
-      maxWait: 400,
+      debounce: 100,
+      maxWait: 200,
     },
   );
 
