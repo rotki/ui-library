@@ -55,22 +55,13 @@ export function useAutoCompleteValue<TValue, TItem>(
     returnObject: boolean,
   ): TItem[] {
     const filtered: TItem[] = [];
-    filtered.length = valueArray.length; // Pre-allocate array size
-    let index = 0;
-
     for (const val of valueArray) {
-      const identifier = deps.getIdentifier(val);
-      const inOptions = optionsMapData.get(identifier);
-
-      if (inOptions !== undefined) {
-        filtered[index++] = inOptions;
-      }
-      else if (customValue) {
-        filtered[index++] = deps.textValueToProperValue(val, returnObject);
-      }
+      const inOptions = optionsMapData.get(deps.getIdentifier(val));
+      if (inOptions !== undefined)
+        filtered.push(inOptions);
+      else if (customValue)
+        filtered.push(deps.textValueToProperValue(val, returnObject));
     }
-
-    filtered.length = index; // Trim to actual size
     return filtered;
   }
 
@@ -81,21 +72,13 @@ export function useAutoCompleteValue<TValue, TItem>(
     returnObject: boolean,
   ): TItem[] {
     const filtered: TItem[] = [];
-    filtered.length = valueArray.length; // Pre-allocate array size
-    let index = 0;
-
     for (const val of valueArray) {
       const inOptions = optionsMapData.get(val);
-
-      if (inOptions !== undefined) {
-        filtered[index++] = inOptions;
-      }
-      else if (customValue) {
-        filtered[index++] = deps.textValueToProperValue(val, returnObject);
-      }
+      if (inOptions !== undefined)
+        filtered.push(inOptions);
+      else if (customValue)
+        filtered.push(deps.textValueToProperValue(val, returnObject));
     }
-
-    filtered.length = index; // Trim to actual size
     return filtered;
   }
 
