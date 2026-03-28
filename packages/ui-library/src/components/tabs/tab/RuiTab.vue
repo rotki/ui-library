@@ -69,7 +69,7 @@ const tab = tv({
   variants: {
     layout: {
       [TabLayout.horizontal]: '',
-      [TabLayout.vertical]: '!h-[2.625rem] w-full max-w-none',
+      [TabLayout.vertical]: '!h-[3rem] w-full max-w-none',
     },
     align: {
       start: 'justify-start text-left rtl:justify-end rtl:text-right',

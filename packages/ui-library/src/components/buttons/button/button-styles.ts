@@ -3,9 +3,9 @@ import { tv } from '@/utils/tv';
 export const buttonStyles = tv({
   slots: {
     root: [
-      'text-sm leading-6 font-medium outline outline-1 outline-transparent outline-offset-[-1px]',
+      'text-sm leading-5 font-medium outline outline-1 outline-transparent outline-offset-[-1px]',
       'flex items-center justify-center gap-x-2 relative',
-      'px-4 py-1.5 rounded transition-all',
+      'px-6 py-2.5 rounded transition-all',
       '!disabled:bg-black/[.12] dark:!disabled:bg-white/[.12] !disabled:text-rui-text-disabled !disabled:active:text-rui-text-disabled',
       '!focus-visible:ring-2',
     ].join(' '),
@@ -16,13 +16,13 @@ export const buttonStyles = tv({
     variant: {
       default: {},
       outlined: { root: '!disabled:bg-transparent !disabled:active:bg-transparent disabled:outline-rui-text-disabled' },
-      text: { root: 'px-2 !disabled:bg-transparent !disabled:active:bg-transparent' },
+      text: { root: 'px-3 !disabled:bg-transparent !disabled:active:bg-transparent' },
       fab: { root: 'rounded-full py-2' },
       list: { root: 'p-3 px-3 rounded-none w-full justify-start text-left !disabled:bg-transparent !disabled:active:bg-transparent', label: 'w-full' },
     },
     size: {
-      sm: { root: 'px-2.5 py-1 text-[.8125rem] leading-[1.375rem]' },
-      lg: { root: 'px-6 py-2 text-base leading-[1.625rem]' },
+      sm: { root: 'px-4 py-1.5 text-[.8125rem] leading-5' },
+      lg: { root: 'px-8 py-3 text-base leading-5' },
     },
     color: {
       grey: { root: 'bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-text ring-rui-grey-400 dark:bg-rui-grey-300 dark:text-rui-light-text dark:ring-rui-grey-600' },
@@ -91,8 +91,8 @@ export const buttonStyles = tv({
     { color: 'success', variant: 'outlined', class: { root: 'outline-rui-success/[0.5]' } },
 
     // === Size overrides per variant ===
-    { variant: 'text', size: 'sm', class: { root: 'px-1.5' } },
-    { variant: 'text', size: 'lg', class: { root: 'px-2.5' } },
+    { variant: 'text', size: 'sm', class: { root: 'px-2' } },
+    { variant: 'text', size: 'lg', class: { root: 'px-4' } },
     { variant: 'fab', size: 'sm', class: { root: 'py-1.5 px-2' } },
     { variant: 'fab', size: 'lg', class: { root: 'py-3' } },
     { variant: 'list', size: 'sm', class: { root: 'px-3 py-1' } },

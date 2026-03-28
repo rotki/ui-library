@@ -38,7 +38,7 @@ describe('components/overlays/badge/RuiBadge.vue', () => {
     expect(badge.exists()).toBeTruthy();
     expect(badge.attributes('data-placement')).toBe('top');
     expect(badge.classes()).toContain('rounded-full');
-    expect(badge.classes()).toContain('min-h-6');
+    expect(badge.classes()).toContain('min-h-5');
     expect(badge.classes()).toContain('bg-rui-primary');
   });
 

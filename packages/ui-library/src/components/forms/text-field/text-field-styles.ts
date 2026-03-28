@@ -21,7 +21,7 @@ export const textFieldStyles = tv({
     // No pt-* here — each variant sets its own padding-top
     wrapper: 'relative w-full flex items-center rounded bg-white dark:bg-transparent',
     input: [
-      'peer leading-6 text-rui-text w-full bg-transparent pr-3',
+      'peer leading-6 text-rui-text w-full bg-transparent pr-4',
       'outline-0 outline-none transition-all',
       'placeholder:opacity-0 focus:placeholder:opacity-100',
     ].join(' '),
@@ -40,7 +40,7 @@ export const textFieldStyles = tv({
     prepend: 'flex items-center gap-1 shrink-0',
     append: 'flex items-center gap-1 shrink-0',
     icon: 'text-black/[0.54] dark:text-white/[0.56]',
-    details: 'pt-1 px-3',
+    details: 'pt-1 px-4',
     required: 'text-rui-error',
     clearButton: '!p-2',
   },
@@ -50,18 +50,18 @@ export const textFieldStyles = tv({
         wrapper: 'pt-3',
         input: 'py-1.5',
         label: `flex leading-[3.75] ${underlinePseudo}`,
-        prepend: 'pr-2',
-        append: 'pl-2',
+        prepend: 'pr-3',
+        append: 'pl-3',
       },
       filled: {
-        input: 'px-3 py-4',
-        label: `flex leading-[3.5] [--x-padding:0.75rem] rounded-t bg-black/[0.06] dark:bg-white/[0.09] ${underlinePseudo}`,
+        input: 'px-4 py-4',
+        label: `flex leading-[3.5] [--x-padding:1rem] rounded-t bg-black/[0.06] dark:bg-white/[0.09] ${underlinePseudo}`,
         prepend: 'pl-3',
         append: 'pr-3',
       },
       outlined: {
         inputWrapper: '!overflow-visible',
-        input: 'px-3 py-4',
+        input: 'px-4 py-4',
         label: [
           'flex leading-[3.5] [--x-padding:1rem]',
           'border-0 border-transparent',

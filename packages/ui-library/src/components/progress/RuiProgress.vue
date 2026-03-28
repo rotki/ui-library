@@ -40,7 +40,7 @@ const {
   circular = false,
   showLabel = false,
   thickness = 4,
-  size = 32,
+  size = 40,
 } = defineProps<Props>();
 
 defineSlots<Record<string, never>>();

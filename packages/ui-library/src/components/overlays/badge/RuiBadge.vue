@@ -62,9 +62,9 @@ const badgeStyles = tv({
       success: { badge: 'text-white bg-rui-success' },
     },
     size: {
-      sm: { badge: 'min-h-5 min-w-5' },
-      md: { badge: 'min-h-6 min-w-6' },
-      lg: { badge: 'min-h-7 min-w-7' },
+      sm: { badge: 'min-h-4 min-w-4' },
+      md: { badge: 'min-h-5 min-w-5' },
+      lg: { badge: 'min-h-6 min-w-6' },
     },
     rounded: {
       sm: { badge: 'rounded-sm' },
@@ -109,11 +109,11 @@ const ui = computed<ReturnType<typeof badgeStyles>>(() => badgeStyles({
 }));
 
 // Position configs: [leftOffset, rightBase, edgeBase, centerOffset] (rem / calc expressions)
-const DOT_POS: PosConfig = [-0.65, '100% + 0.125rem', '100% + 0.25rem', 0.25];
+const DOT_POS: PosConfig = [-0.25, '100% - 0.25rem', '100% - 0.25rem', 0.25];
 const BADGE_POS: Record<BadgeSize, PosConfig> = {
-  sm: [-0.95, '100% - 0.5rem', '100% - 0.5rem', 0.65],
-  md: [-1.05, '100% - 0.5rem', '100% - 0.5rem', 0.75],
-  lg: [-1.15, '100% - 0.5rem', '100% - 0.5rem', 0.85],
+  sm: [-0.85, '100% - 0.375rem', '100% - 0.375rem', 0.55],
+  md: [-0.95, '100% - 0.5rem', '100% - 0.5rem', 0.65],
+  lg: [-1.05, '100% - 0.5rem', '100% - 0.5rem', 0.75],
 };
 
 const positionStyle = computed<Record<string, string>>(() => {

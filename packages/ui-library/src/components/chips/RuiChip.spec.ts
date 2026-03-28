@@ -127,10 +127,10 @@ describe('components/chips/RuiChip.vue', () => {
     });
 
     const chip = wrapper.find('div[role=button]');
-    expect(chip.classes()).toContain('min-h-[2.26rem]');
+    expect(chip.classes()).toContain('min-h-8');
 
     await wrapper.setProps({ size: 'sm' });
-    expect(chip.classes()).not.toContain('min-h-[2.26rem]');
+    expect(chip.classes()).not.toContain('min-h-8');
   });
 
   it('should apply color classes', async () => {

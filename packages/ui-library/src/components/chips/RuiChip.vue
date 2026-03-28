@@ -61,24 +61,24 @@ defineSlots<{
 
 const chipStyles = tv({
   slots: {
-    root: 'inline-flex items-center justify-between px-1.5 py-1 transition-all cursor-default outline-none max-w-full truncate',
-    prepend: 'rounded-full flex items-center justify-center pr-0 w-6 h-6 text-[0.6rem] text-white bg-rui-grey-400 dark:bg-rui-grey-700 -ml-0.5 overflow-hidden',
-    label: 'truncate px-[0.375rem] text-[0.8125rem]',
-    close: 'rounded-full flex items-center p-[0.13rem] pl-0 inset-y-0 focus:outline-none -mr-1',
+    root: 'inline-flex items-center justify-between px-2 py-1 transition-all cursor-default outline-none max-w-full truncate',
+    prepend: 'rounded-full flex items-center justify-center pr-0 w-6 h-6 text-[0.6rem] text-white bg-rui-grey-400 dark:bg-rui-grey-700 overflow-hidden',
+    label: 'truncate px-2 text-[0.8125rem]',
+    close: 'rounded-full flex items-center p-[0.13rem] pl-0 inset-y-0 focus:outline-none',
     closeIcon: 'opacity-50 hover:opacity-80 dark:hover:text-rui-grey-300 transition-opacity',
   },
   variants: {
     tile: {
-      true: { root: 'rounded-sm' },
+      true: { root: 'rounded-lg' },
       false: { root: 'rounded-full' },
     },
     size: {
-      md: { root: 'min-h-[2.26rem]' },
+      md: { root: 'min-h-8' },
       sm: {
         root: 'py-[0.19rem]',
-        prepend: 'text-[0.5rem] p-[0.08rem] w-4 h-4 -ml-1',
-        label: 'px-[0.3rem] text-[0.7rem]',
-        close: 'p-[0.08rem] -mr-1.5',
+        prepend: 'text-[0.5rem] p-[0.08rem] w-4 h-4',
+        label: 'px-1.5 text-[0.7rem]',
+        close: 'p-[0.08rem]',
       },
     },
     disabled: {

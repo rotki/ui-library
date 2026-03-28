@@ -34,7 +34,7 @@ export const textAreaStyles = tv({
     prepend: 'flex items-center gap-1 shrink-0 mt-4 mx-3',
     append: 'flex items-center gap-1 shrink-0 absolute right-0 mt-4 mx-3',
     icon: 'text-black/[0.54] dark:text-white/[0.56]',
-    details: 'pt-1 px-3',
+    details: 'pt-1 px-4',
     required: 'text-rui-error',
     clearButton: '!p-2',
   },
@@ -42,21 +42,21 @@ export const textAreaStyles = tv({
     variant: {
       default: {
         inputWrapper: 'pt-4',
-        textarea: '[padding-right:calc(var(--x-padding,0.75rem)+var(--append-w,0px))]',
+        textarea: '[padding-right:calc(var(--x-padding,1rem)+var(--append-w,0px))]',
         label: `flex leading-[3.2] ${underlinePseudo}`,
       },
       filled: {
         inputWrapper: 'pt-4',
-        textarea: 'px-3 [padding-right:calc(var(--x-padding,0.75rem)+var(--append-w,0px))]',
-        textareaSizer: 'px-3',
-        label: `flex leading-[3.2] [--x-padding:0.75rem] rounded-t bg-black/[0.06] dark:bg-white/[0.09] ${underlinePseudo}`,
+        textarea: 'px-4 [padding-right:calc(var(--x-padding,1rem)+var(--append-w,0px))]',
+        textareaSizer: 'px-4',
+        label: `flex leading-[3.2] [--x-padding:1rem] rounded-t bg-black/[0.06] dark:bg-white/[0.09] ${underlinePseudo}`,
         prepend: '!mr-0',
         append: '!ml-0',
       },
       outlined: {
         inputWrapper: '!overflow-visible pt-4',
-        textarea: 'px-3 [padding-right:calc(var(--x-padding,0.75rem)+var(--append-w,0px))]',
-        textareaSizer: 'px-3',
+        textarea: 'px-4 [padding-right:calc(var(--x-padding,1rem)+var(--append-w,0px))]',
+        textareaSizer: 'px-4',
         label: [
           'flex leading-[3.2] [--x-padding:1rem]',
           'border-0 border-transparent',

@@ -57,13 +57,13 @@ const tabs = tv({
     layout: {
       [TabLayout.horizontal]: {
         root: 'flex h-fit',
-        arrow: 'h-[2.625rem] w-10',
-        bar: 'h-[2.625rem]',
+        arrow: 'h-[3rem] w-10',
+        bar: 'h-[3rem]',
         wrapper: '',
       },
       [TabLayout.vertical]: {
         root: 'inline-flex flex-col',
-        arrow: 'min-h-[2.625rem] w-full',
+        arrow: 'min-h-[3rem] w-full',
         bar: '',
         wrapper: 'flex-col h-auto',
       },
