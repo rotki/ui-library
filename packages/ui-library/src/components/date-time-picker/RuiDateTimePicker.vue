@@ -291,7 +291,6 @@ function arrowClicked(event: MouseEvent): void {
     v-bind="getRootAttrs($attrs)"
     :class="ui.wrapper()"
     placement="bottom-start"
-    :popper="{ offsetDistance: 2 }"
     :dense="dense"
     :hint="hint"
     :disabled="disabled"

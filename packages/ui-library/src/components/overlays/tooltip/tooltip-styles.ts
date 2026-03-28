@@ -2,7 +2,7 @@ import { tv } from '@/utils/tv';
 
 export const tooltipStyles = tv({
   slots: {
-    arrow: 'block w-2.5 h-2.5 transition-opacity',
+    arrow: 'absolute block w-2.5 h-2.5 transition-opacity',
     diamond: 'block border-[0.3125rem] origin-center border-l-transparent border-b-transparent border-t-rui-grey-700/90 border-r-rui-grey-700/90 rounded-[0_0.125rem_0_0]',
   },
   variants: {

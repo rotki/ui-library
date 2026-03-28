@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { VueClassValue } from '@/types/class-value';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
-import { type PopperOptions, usePopper } from '@/composables/popper';
+import { type FloatingOptions, useFloating } from '@/composables/floating';
+import { type PopperOptions, toFloatingOptions } from '@/composables/popper';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { cn, tv } from '@/utils/tv';
 
@@ -21,6 +22,8 @@ export interface MenuProps {
   disabled?: boolean;
   openDelay?: number;
   closeDelay?: number;
+  options?: FloatingOptions;
+  /** @deprecated Use `options` instead */
   popper?: PopperOptions;
   classNames?: RuiMenuClassNames;
   /** @deprecated Use `classNames.wrapper` instead */
@@ -50,7 +53,8 @@ const {
   fullWidth = false,
   openDelay = 0,
   closeDelay = 0,
-  popper = {},
+  options,
+  popper,
   classNames,
   wrapperClass = '',
   menuClass = '',
@@ -84,18 +88,18 @@ const FOCUSABLE_ELEMENTS_SELECTOR =
 
 const {
   reference: activator,
-  popper: menu,
+  popover: menu,
   open,
-  popperEnter,
+  visible,
   currentPlacement,
   leavePending,
   onLeavePending,
   onOpen,
   onClose,
-  onPopperLeave,
-  updatePopper,
-} = usePopper(
-  () => popper,
+  onLeaveComplete,
+  updatePosition,
+} = useFloating(
+  () => popper ? toFloatingOptions(popper) : (options ?? {}),
   () => disabled,
   () => openDelay,
   () => closeDelay,
@@ -111,7 +115,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
 const menuStyles = tv({
   slots: {
     wrapper: 'relative inline-flex max-w-full',
-    popper: 'w-max z-[9999]',
+    popover: 'w-max z-[9999]',
     content: 'rounded overflow-hidden shadow-8 bg-white dark:bg-[#2E2E2E] text-rui-text focus:outline-none py-2',
     details: 'pt-1',
   },
@@ -119,21 +123,16 @@ const menuStyles = tv({
     fullWidth: {
       true: { wrapper: 'w-full' },
     },
-    strategy: {
-      fixed: { popper: 'fixed' },
-      absolute: { popper: 'absolute' },
-    },
     dense: {
       true: { details: 'px-2' },
       false: { details: 'px-4' },
     },
   },
-  defaultVariants: { fullWidth: false, strategy: 'absolute', dense: false },
+  defaultVariants: { fullWidth: false, dense: false },
 });
 
 const ui = computed<ReturnType<typeof menuStyles>>(() => menuStyles({
   fullWidth,
-  strategy: popper?.strategy === 'fixed' ? 'fixed' : 'absolute',
   dense,
 }));
 
@@ -262,9 +261,9 @@ onClickOutside(menu, () => {
       to="body"
     >
       <div
-        v-if="popperEnter"
+        v-if="visible"
         ref="menu"
-        :class="ui.popper({ class: cn(classNames?.menu) ?? cn(menuClass as VueClassValue) })"
+        :class="ui.popover({ class: cn(classNames?.menu) ?? cn(menuClass as VueClassValue) })"
         role="menu"
         :data-placement="currentPlacement"
         @click="closeOnContentClick ? onLeave() : undefined"
@@ -277,8 +276,8 @@ onClickOutside(menu, () => {
           leave-active-class="transition ease-in duration-150"
           leave-from-class="opacity-100 translate-y-0"
           leave-to-class="opacity-0 translate-y-1"
-          @before-enter="updatePopper()"
-          @after-leave="leavePending ? onPopperLeave() : undefined"
+          @before-enter="updatePosition()"
+          @after-leave="leavePending ? onLeaveComplete() : undefined"
           @before-leave="onLeavePending()"
         >
           <div

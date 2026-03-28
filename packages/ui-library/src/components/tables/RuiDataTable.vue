@@ -456,7 +456,7 @@ const ui = computed<ReturnType<typeof dataTableStyles>>(() => dataTableStyles({
                       </RuiButton>
                     </slot>
                     <RuiTooltip
-                      :popper="{ placement: 'top' }"
+                      :options="{ placement: 'top' }"
                       class="ml-auto mr-2"
                     >
                       <template #activator>

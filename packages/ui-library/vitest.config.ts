@@ -48,7 +48,7 @@ const vitestConfig = defineConfig({
             '@storybook/addon-a11y/preview',
             '@storybook/vue3-vite',
             'storybook/preview-api',
-            '@popperjs/core',
+            '@floating-ui/dom',
             'tinycolor2',
           ],
         },

@@ -447,7 +447,6 @@ defineExpose({
     v-bind="{ ...getRootAttrs($attrs), ...menuOptions }"
     :class="ui.wrapper()"
     placement="bottom-start"
-    :popper="{ offsetDistance: 2 }"
     :close-on-content-click="false"
     :full-width="true"
     :persist-on-activator-click="true"

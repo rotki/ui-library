@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { VueClassValue } from '@/types/class-value';
-import { type PopperOptions, usePopper } from '@/composables/popper';
+import { type FloatingOptions, useFloating } from '@/composables/floating';
+import { type PopperOptions, toFloatingOptions } from '@/composables/popper';
 import { tooltipStyles } from './tooltip-styles';
 
 export interface RuiTooltipClassNames {
@@ -15,6 +16,8 @@ export interface Props {
   openDelay?: number;
   closeDelay?: number;
   persistOnTooltipHover?: boolean;
+  options?: FloatingOptions;
+  /** @deprecated Use `options` instead */
   popper?: PopperOptions;
   classNames?: RuiTooltipClassNames;
   /** @deprecated Use `classNames.tooltip` instead */
@@ -32,7 +35,8 @@ const {
   openDelay = 0,
   closeDelay = 500,
   persistOnTooltipHover = false,
-  popper = {},
+  options,
+  popper,
   classNames,
   tooltipClass = '',
 } = defineProps<Props>();
@@ -46,22 +50,22 @@ const tooltipId = useId();
 
 const {
   reference: activator,
-  popper: tooltip,
+  popover: tooltip,
   open,
-  popperEnter,
+  visible,
   currentPlacement,
   onOpen,
   onClose,
-  onPopperLeave,
-  updatePopper,
-} = usePopper(
-  () => popper,
+  onLeaveComplete,
+  updatePosition,
+} = useFloating(
+  () => popper ? toFloatingOptions(popper) : (options ?? {}),
   () => disabled,
   () => openDelay,
   () => closeDelay,
 );
 
-type PlacementSide = 'top' | 'bottom' | 'left' | 'right';
+type PlacementSide = 'bottom' | 'left' | 'right' | 'top';
 
 const placementSide = computed<PlacementSide>(() => {
   const placement = get(currentPlacement);
@@ -102,14 +106,11 @@ defineExpose({
       to="body"
     >
       <div
-        v-if="popperEnter"
+        v-if="visible"
         :id="tooltipId"
         ref="tooltip"
         class="w-max z-[9999]"
-        :class="[
-          classNames?.tooltip ?? tooltipClass,
-          popper?.strategy === 'fixed' ? 'fixed' : 'absolute',
-        ]"
+        :class="classNames?.tooltip ?? tooltipClass"
         role="tooltip"
         :data-placement="currentPlacement"
       >
@@ -120,8 +121,8 @@ defineExpose({
           leave-active-class="transition ease-in duration-150"
           leave-from-class="opacity-100 translate-y-0"
           leave-to-class="opacity-0 translate-y-1"
-          @before-enter="updatePopper()"
-          @after-leave="onPopperLeave()"
+          @before-enter="updatePosition()"
+          @after-leave="onLeaveComplete()"
         >
           <div
             v-if="open"

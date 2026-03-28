@@ -1,7 +1,7 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { expect, waitFor, within } from 'storybook/test';
 import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
-import { DEFAULT_POPPER_OPTIONS } from '@/composables/popper';
+import { DEFAULT_FLOATING_OPTIONS } from '@/composables/floating';
 import preview from '~/.storybook/preview';
 
 function render(args: ComponentPropsAndSlots<typeof RuiTooltip>) {
@@ -29,7 +29,7 @@ const meta = preview.meta({
     hideArrow: false,
     openDelay: 0,
     popper: {
-      ...DEFAULT_POPPER_OPTIONS,
+      ...DEFAULT_FLOATING_OPTIONS,
     },
     text: 'My Tooltip',
   },

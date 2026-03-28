@@ -2,7 +2,7 @@ import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { expect, waitFor, within } from 'storybook/test';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
-import { DEFAULT_POPPER_OPTIONS } from '@/composables/popper';
+import { DEFAULT_FLOATING_OPTIONS } from '@/composables/floating';
 import preview from '~/.storybook/preview';
 
 function render(args: ComponentPropsAndSlots<typeof RuiMenu>) {
@@ -34,7 +34,7 @@ const meta = preview.meta({
     openDelay: 0,
     openOnHover: false,
     popper: {
-      ...DEFAULT_POPPER_OPTIONS,
+      ...DEFAULT_FLOATING_OPTIONS,
     },
   },
   argTypes: {

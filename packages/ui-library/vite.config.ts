@@ -44,7 +44,9 @@ export default defineConfig({
 
         // Externalize regular dependencies (installed with the library but not bundled)
         const dependencies = [
-          '@popperjs/core',
+          '@floating-ui/core',
+          '@floating-ui/dom',
+          '@floating-ui/utils',
           '@vueuse/core',
           '@vueuse/shared',
           'scule',

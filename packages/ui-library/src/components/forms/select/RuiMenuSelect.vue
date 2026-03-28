@@ -195,7 +195,6 @@ function clear(): void {
     :success-messages="successMessages"
     :hint="hint"
     :dense="dense"
-    :popper="{ offsetDistance: 2 }"
     :show-details="!hideDetails"
     :disabled="disabled"
     disable-auto-focus
