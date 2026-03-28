@@ -73,61 +73,64 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
     }
   }
 
+  function highlightedMatchesSearch(filteredOptions: TItem[], highlightedIndex: number, search: string): boolean {
+    if (highlightedIndex < 0 || highlightedIndex >= filteredOptions.length)
+      return false;
+
+    const option = filteredOptions[highlightedIndex];
+    if (typeof option === 'string')
+      return option === search;
+
+    if (option && typeof option === 'object')
+      return (deps.getText(option) ?? '') === search;
+
+    return false;
+  }
+
+  function applyCustomValue(event: KeyboardEvent, multiple: boolean): void {
+    deps.setSearchAsValue();
+    if (!multiple)
+      set(deps.isOpen, false);
+    event.preventDefault();
+  }
+
+  function submitClosestForm(): void {
+    const activator = get(deps.activator);
+    const form = activator?.closest('form');
+    form?.dispatchEvent(new Event('submit'));
+  }
+
   function onEnter(event: KeyboardEvent): void {
     const filteredOptions = get(deps.filteredOptions);
     const highlightedIndex = get(deps.highlightedIndex);
     const isOpen = get(deps.isOpen);
     const customValue = toValue(options.customValue);
     const multiple = toValue(options.multiple);
-    const value = get(deps.value);
     const internalSearch = get(deps.internalSearch);
+    const hasHighlighted = highlightedIndex > -1 && filteredOptions.length > 0;
 
-    // Check if we should use custom value
-    if (customValue && internalSearch && isOpen) {
-      // Check if any option exactly matches the search term
-      let hasExactMatch = false;
+    // Custom value: use search text if highlighted option doesn't exactly match
+    if (customValue && internalSearch && isOpen && !highlightedMatchesSearch(filteredOptions, highlightedIndex, internalSearch))
+      return applyCustomValue(event, multiple);
 
-      if (highlightedIndex > -1 && highlightedIndex < filteredOptions.length) {
-        const highlightedOption = filteredOptions[highlightedIndex];
-        if (typeof highlightedOption === 'string') {
-          hasExactMatch = highlightedOption === internalSearch;
-        }
-        else if (highlightedOption && typeof highlightedOption === 'object') {
-          hasExactMatch = (deps.getText(highlightedOption) ?? '') === internalSearch;
-        }
-      }
-
-      // If no exact match with highlighted option, use custom value
-      if (!hasExactMatch) {
-        deps.setSearchAsValue();
-        if (!multiple)
-          set(deps.isOpen, false);
-        event.preventDefault();
-        return;
-      }
-    }
-
-    if (filteredOptions.length > 0 && highlightedIndex > -1 && isOpen) {
+    // Apply highlighted option
+    if (hasHighlighted && isOpen) {
       deps.applyHighlighted();
-      event.preventDefault();
+      return event.preventDefault();
     }
-    else if (filteredOptions.length === 0 && customValue && internalSearch) {
-      deps.setSearchAsValue();
-      if (!multiple)
-        set(deps.isOpen, false);
-      event.preventDefault();
-    }
-    else if (!isOpen && value.length === 0) {
+
+    // No options but custom value allowed: use search text
+    if (filteredOptions.length === 0 && customValue && internalSearch)
+      return applyCustomValue(event, multiple);
+
+    // Nothing selected, menu closed: open menu
+    if (!isOpen && get(deps.value).length === 0) {
       set(deps.isOpen, true);
-      event.preventDefault();
+      return event.preventDefault();
     }
-    else {
-      const activator = get(deps.activator);
-      const form = activator?.closest('form');
-      if (form) {
-        form.dispatchEvent(new Event('submit'));
-      }
-    }
+
+    // Fallback: submit parent form
+    submitClosestForm();
   }
 
   function onTab(event: KeyboardEvent): void {
