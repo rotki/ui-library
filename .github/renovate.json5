@@ -17,7 +17,7 @@
       "matchPackageNames": ["tailwindcss"]
     },
     {
-      "allowedVersions": "/^(0)\\./",
+      "allowedVersions": "/^(3)\\./",
       "groupName": "tailwind-variants",
       "matchPackageNames": ["tailwind-variants"]
     },
@@ -25,6 +25,26 @@
       "allowedVersions": "/^(2)\\./",
       "groupName": "tailwind-merge",
       "matchPackageNames": ["tailwind-merge"]
+    },
+    {
+      "groupName": "vitest monorepo",
+      "matchPackageNames": ["vitest", "@vitest/browser", "@vitest/browser-playwright", "@vitest/coverage-v8", "@vitest/ui"]
+    },
+    {
+      "groupName": "storybook monorepo",
+      "matchPackageNames": ["storybook", "@storybook/addon-a11y", "@storybook/addon-docs", "@storybook/addon-links", "@storybook/addon-themes", "@storybook/addon-vitest", "@storybook/vue3-vite", "eslint-plugin-storybook"]
+    },
+    {
+      "groupName": "vue monorepo",
+      "matchPackageNames": ["vue", "vue-tsc", "vue-component-meta"]
+    },
+    {
+      "groupName": "commitlint monorepo",
+      "matchPackageNames": ["@commitlint/cli", "@commitlint/config-conventional"]
+    },
+    {
+      "groupName": "vueuse monorepo",
+      "matchPackageNames": ["@vueuse/core", "@vueuse/shared"]
     }
   ]
 }
