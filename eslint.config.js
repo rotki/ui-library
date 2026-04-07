@@ -30,6 +30,11 @@ export default rotki({
     'max-lines': 'off',
   },
 }, {
+  files: ['**/*.yml', '**/*.yaml'],
+  rules: {
+    '@stylistic/spaced-comment': 'off', // rotki/eslint-config#80
+  },
+}, {
   files: ['pnpm-workspace.yaml'],
   rules: {
     'pnpm/yaml-enforce-settings': 'off',
