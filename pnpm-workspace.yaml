@@ -18,6 +18,7 @@ overrides:
   jiti: ^2.6.1
 
 allowBuilds:
+  '@parcel/watcher': true
   esbuild: true
   msw: false
 
