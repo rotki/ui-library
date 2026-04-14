@@ -33,7 +33,7 @@ export default defineConfig({
       formats: ['es'],
       cssFileName: 'style',
     },
-    rollupOptions: {
+    rolldownOptions: {
       external: (id: string) => {
         // Externalize all peer dependencies and their subpaths
         const peerDeps = [

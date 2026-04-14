@@ -1,15 +1,24 @@
 import { expect, test } from '@playwright/test';
 
 function getAdaptiveVariable(variableName: string): (page: import('@playwright/test').Page) => Promise<string> {
-  return async (page) => {
-    const raw = await page.evaluate((name) => {
-      const style = getComputedStyle(document.documentElement);
-      return style.getPropertyValue(name).trim();
+  return async page =>
+    page.evaluate((name) => {
+      const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      // Some variables store raw RGB channels (e.g. "78, 91, 166") which are
+      // not valid CSS colors — return them as-is.
+      // For full color values (hex, rgb, rgba), normalize via a temporary
+      // element so the format is consistent regardless of CSS minifier
+      // (LightningCSS outputs hex, esbuild preserves rgb/rgba).
+      if (/^[\d\s,.]+$/.test(raw))
+        return raw;
+
+      const el = document.createElement('div');
+      el.style.color = raw;
+      document.body.appendChild(el);
+      const normalized = getComputedStyle(el).color;
+      el.remove();
+      return normalized;
     }, variableName);
-    // Normalize leading zeros in decimal values (e.g. ".87" → "0.87")
-    // Chromium versions differ on whether they include the leading zero.
-    return raw.replace(/(?<!\d)\.(\d)/g, '0.$1');
-  };
 }
 
 test.describe('theme', () => {
