@@ -228,6 +228,45 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(wrapper.find('tbody tr:nth-child(4) div[data-id=expanded-content]').exists()).toBeFalsy();
   });
 
+  it('should not render an expanded row when no expanded-item slot is provided', async () => {
+    wrapper = createWrapper({
+      props: {
+        'expanded': [data[0]!],
+        'modelValue': [],
+        'onUpdate:expanded': (e: any) => wrapper.setProps({ expanded: e }),
+        'rowAttr': 'id',
+        'rows': data,
+      },
+    });
+
+    await nextTick();
+
+    // Row is expanded and `expandable` is true (expanded model is bound), but with no
+    // `expanded-item` slot there is nothing to show, so no expanded row should render.
+    expect(wrapper.find('tr[data-id=row-expanded]').exists()).toBeFalsy();
+
+    // Providing the slot restores the expanded row.
+    wrapper = createWrapper({
+      props: {
+        'expanded': [data[0]!],
+        'modelValue': [],
+        'onUpdate:expanded': (e: any) => wrapper.setProps({ expanded: e }),
+        'rowAttr': 'id',
+        'rows': data,
+      },
+      slots: {
+        'expanded-item': {
+          template: '<div data-id="expanded-content">Expanded content</div>',
+        },
+      },
+    });
+
+    await nextTick();
+
+    expect(wrapper.find('tr[data-id=row-expanded]').exists()).toBeTruthy();
+    expect(wrapper.find('tr[data-id=row-expanded] div[data-id=expanded-content]').exists()).toBeTruthy();
+  });
+
   it('should sticky header behaves as expected', async () => {
     wrapper = createWrapper({
       props: {

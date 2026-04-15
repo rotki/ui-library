@@ -20,8 +20,13 @@ interface User {
 
 type DataTableProps = ComponentPropsAndSlots<typeof RuiDataTable<User>>;
 
-type DataTableMetaArgs = Required<Pick<DataTableProps, 'columnAttr' | 'dense' | 'loading' | 'outlined' | 'rounded' | 'rowAttr' | 'rows' | 'striped'>>
-  & Partial<Pick<DataTableProps, 'modelValue'>>;
+type DataTableMetaArgs = Required<
+  Pick<
+    DataTableProps,
+    'columnAttr' | 'dense' | 'loading' | 'outlined' | 'rounded' | 'rowAttr' | 'rows' | 'striped'
+  >
+> &
+Partial<Pick<DataTableProps, 'modelValue'>>;
 
 function render(args: DataTableProps) {
   return {

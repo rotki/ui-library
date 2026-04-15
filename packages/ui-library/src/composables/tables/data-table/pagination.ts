@@ -1,9 +1,8 @@
-import type { ComputedRef, Ref } from 'vue';
+import type { ComputedRef, DeepReadonly, Ref, ShallowRef } from 'vue';
 import type { TableSortData } from '@/components/tables/RuiTableHead.vue';
 import type { TablePaginationData } from '@/components/tables/RuiTablePagination.vue';
 import type { TableOptions as TableDefaultOptions } from '@/composables/defaults/table';
 import { type GroupedTableRow, isRow } from '@/composables/tables/data-table/types';
-import { assert } from '@/utils/assert';
 
 export interface UseTablePaginationOptions {
   /** The default number of items displayed per page. */
@@ -16,7 +15,7 @@ export interface UseTablePaginationOptions {
 
 export interface UseTablePaginationDeps<T extends object> {
   pagination: Ref<TablePaginationData | undefined>;
-  grouped: ComputedRef<GroupedTableRow<T>[]>;
+  grouped: ComputedRef<readonly GroupedTableRow<T>[]>;
   isHiddenRow: (row: GroupedTableRow<T>) => boolean;
   sort: Ref<TableSortData<T>>;
   emitUpdateOptions: (options: {
@@ -29,10 +28,87 @@ export interface UseTablePaginationDeps<T extends object> {
 export interface UseTablePaginationReturn<T extends object> {
   paginationData: Ref<TablePaginationData>;
   filtered: ComputedRef<GroupedTableRow<T>[]>;
-  itemsLength: Ref<number>;
+  itemsLength: DeepReadonly<ShallowRef<number>>;
   globalItemsPerPageSettings: ComputedRef<boolean>;
-  setInternalTotal: (items: GroupedTableRow<T>[]) => void;
+  setInternalTotal: (items: readonly GroupedTableRow<T>[]) => void;
   resetPagination: () => void;
+}
+
+/**
+ * Skip data rows until the page start offset, tracking the last group header seen.
+ * Returns the index where collection should begin and the last group header before the slice.
+ */
+function skipToPageStart<T extends object>(
+  result: readonly GroupedTableRow<T>[],
+  start: number,
+): { startIndex: number; dataCount: number; lastGroupHeader: GroupedTableRow<T> | undefined } {
+  let dataCount = 0;
+  let lastGroupHeader: GroupedTableRow<T> | undefined;
+
+  for (const [i, item] of result.entries()) {
+    if (isRow(item)) {
+      dataCount++;
+      if (dataCount > start)
+        return { startIndex: i, dataCount, lastGroupHeader };
+    }
+    else if (dataCount < start) {
+      lastGroupHeader = item;
+    }
+    else {
+      return { startIndex: i, dataCount, lastGroupHeader };
+    }
+  }
+
+  return { startIndex: result.length, dataCount, lastGroupHeader };
+}
+
+/**
+ * Collect data rows (and interleaved group headers) for the current page.
+ */
+function collectPageRows<T extends object>(
+  items: readonly GroupedTableRow<T>[],
+  limit: number,
+): GroupedTableRow<T>[] {
+  const data: GroupedTableRow<T>[] = [];
+  let collected = 0;
+
+  for (const item of items) {
+    data.push(item);
+
+    if (isRow(item)) {
+      collected++;
+      if (collected >= limit)
+        break;
+    }
+  }
+
+  return data;
+}
+
+/**
+ * Single-pass pagination that counts only data rows while preserving group headers.
+ * Prepends the nearest group header when a page starts mid-group, and removes
+ * trailing group headers with no data rows after them.
+ */
+function paginateGroupedRows<T extends object>(
+  result: readonly GroupedTableRow<T>[],
+  start: number,
+  limit: number,
+): GroupedTableRow<T>[] {
+  const { startIndex, lastGroupHeader } = skipToPageStart(result, start);
+  const data = collectPageRows(result.slice(startIndex), limit);
+
+  // Prepend the nearest group header if the first item is a data row
+  const firstItem = data[0];
+  if (firstItem && isRow(firstItem) && lastGroupHeader)
+    data.unshift(lastGroupHeader);
+
+  // Remove trailing group header with no data rows after it
+  const lastItem = data.at(-1);
+  if (lastItem && !isRow(lastItem))
+    data.pop();
+
+  return data;
 }
 
 export function useTablePagination<T extends object>(
@@ -87,38 +163,24 @@ export function useTablePagination<T extends object>(
     const result = get(grouped);
 
     const paginated = get(paginationData);
-    const limit = paginated.limit;
     if (!paginationModifiersExternal) {
-      const start = (paginated.page - 1) * limit;
-      const end = start + limit;
-      const preGroups = result.slice(0, start + 1).filter(item => !isRow(item));
-      const postGroups = result
-        .slice(start + 1, end + preGroups.length)
-        .filter(item => !isRow(item));
-      const data = result.slice(
-        start + preGroups.length,
-        end + preGroups.length + postGroups.length,
-      );
-      const nearestGroup = preGroups.at(-1);
-      if (data.length > 0) {
-        const firstItem = data[0];
-        assert(firstItem);
-        if (isRow(firstItem) && nearestGroup)
-          data.unshift(nearestGroup);
-        const lastItem = data.at(-1);
-        if (lastItem && !isRow(lastItem))
-          data.pop();
-      }
-
+      const start = (paginated.page - 1) * paginated.limit;
+      const data = paginateGroupedRows(result, start, paginated.limit);
       return data.filter(row => !isHiddenRow(row));
     }
 
     return result.filter(row => !isHiddenRow(row));
   });
 
-  function setInternalTotal(items: GroupedTableRow<T>[]): void {
-    if (!paginationModifiersExternal)
-      set(itemsLength, items.filter(isRow).length);
+  function setInternalTotal(items: readonly GroupedTableRow<T>[]): void {
+    if (!paginationModifiersExternal) {
+      let count = 0;
+      for (const item of items) {
+        if (isRow(item))
+          count++;
+      }
+      set(itemsLength, count);
+    }
   }
 
   function resetPagination(): void {
@@ -168,7 +230,7 @@ export function useTablePagination<T extends object>(
   return {
     paginationData,
     filtered,
-    itemsLength,
+    itemsLength: readonly(itemsLength),
     globalItemsPerPageSettings,
     setInternalTotal,
     resetPagination,

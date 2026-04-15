@@ -21,6 +21,7 @@ export interface BaseTableColumn<T> {
   align?: TableAlign;
   class?: string;
   cellClass?: string;
+  tdClass?: string;
   colspan?: string | number;
   rowspan?: string | number;
 
@@ -74,7 +75,6 @@ export interface Props<T> {
   stick?: boolean;
   selectable?: boolean;
   disableCheckAll?: boolean;
-  noData?: boolean;
   colspan?: number;
   columns?: TableColumn<T>[];
   capitalizeHeaders?: boolean;
