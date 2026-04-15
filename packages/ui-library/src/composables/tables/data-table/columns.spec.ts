@@ -1,26 +1,12 @@
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
-import { mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
-import { defineComponent } from 'vue';
 import { useTableColumns } from '@/composables/tables/data-table/columns';
+import { withSetup } from '~/tests/helpers/with-setup';
 
 interface TestItem {
   id: number;
   name: string;
   title: string;
-}
-
-function withSetup<T>(composable: () => T): { result: T; unmount: () => void } {
-  let result!: T;
-  const TestComponent = defineComponent({
-    setup() {
-      result = composable();
-      return {};
-    },
-    template: '<div></div>',
-  });
-  const wrapper = mount(TestComponent);
-  return { result, unmount: () => wrapper.unmount() };
 }
 
 describe('composables/tables/data-table/columns', () => {
