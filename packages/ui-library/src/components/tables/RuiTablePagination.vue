@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiMenuSelect from '@/components/forms/select/RuiMenuSelect.vue';
+import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { type TablePaginationData, usePaginationNavigation } from '@/components/tables/use-pagination-navigation';
 import { useTable } from '@/composables/defaults/table';
@@ -12,17 +13,30 @@ export interface Props {
   dense?: boolean;
   disablePerPage?: boolean;
   loading?: boolean;
+  /**
+   * Maximum number of pages before the jump-to-page dropdown is replaced
+   * with a numeric input. Set to `0` to always use the input, or a very
+   * large number to always use the dropdown. Defaults to `500` — past that
+   * materialising the full range list stalls the main thread.
+   */
+  rangesThreshold?: number;
 }
 
 const modelValue = defineModel<TablePaginationData>({ required: true });
 
-const { dense = false, loading = false, disablePerPage = false } = defineProps<Props>();
+const {
+  dense = false,
+  loading = false,
+  disablePerPage = false,
+  rangesThreshold = 500,
+} = defineProps<Props>();
 
 const paginationStyles = tv({
   slots: {
     wrapper: 'relative flex flex-wrap items-center justify-end gap-x-4 gap-y-0',
     limit: 'flex items-center space-x-2 text-caption',
     ranges: 'flex items-center space-x-2 text-caption pr-2',
+    pageInput: 'w-20',
     sectionLabel: 'text-rui-text-secondary whitespace-nowrap py-3',
     indicator: 'text-rui-text text-caption whitespace-nowrap',
     navigation: 'flex items-center',
@@ -43,16 +57,37 @@ const tableDefaults = useTable();
 const {
   limits,
   currentLimit,
+  pages,
   ranges,
   indicatorText,
   currentRange,
+  useInputJump,
   hasPrev,
   hasNext,
   onPrev,
   onNext,
   onFirst,
   onLast,
-} = usePaginationNavigation(modelValue, tableDefaults);
+} = usePaginationNavigation(modelValue, tableDefaults, () => rangesThreshold);
+
+const pageDraft = ref<string>(String(get(currentRange)));
+
+watch(currentRange, (value) => {
+  set(pageDraft, String(value));
+});
+
+function commitPageInput(): void {
+  const parsed = Number.parseInt(get(pageDraft), 10);
+  const maxPage = get(pages);
+  if (!Number.isFinite(parsed) || maxPage === 0) {
+    set(pageDraft, String(get(currentRange)));
+    return;
+  }
+  const clamped = Math.min(Math.max(parsed, 1), maxPage);
+  if (clamped !== get(currentRange))
+    set(currentRange, clamped);
+  set(pageDraft, String(clamped));
+}
 </script>
 
 <template>
@@ -79,9 +114,25 @@ const {
       :class="ui.ranges()"
       data-id="table-pagination-ranges-section"
     >
-      <span :class="ui.sectionLabel()">Items #</span>
+      <span :class="ui.sectionLabel()">{{ useInputJump ? 'Page' : 'Items #' }}</span>
+      <RuiTextField
+        v-if="useInputJump"
+        v-model="pageDraft"
+        :disabled="loading"
+        :class="ui.pageInput()"
+        type="number"
+        min="1"
+        :max="pages"
+        inputmode="numeric"
+        hide-details
+        dense
+        variant="outlined"
+        data-id="table-pagination-ranges-input"
+        @blur="commitPageInput()"
+        @keydown.enter="commitPageInput()"
+      />
       <RuiMenuSelect
-        v-if="ranges.length > 0"
+        v-else-if="ranges.length > 0"
         v-model="currentRange"
         :options="ranges"
         :disabled="loading"

@@ -36,6 +36,18 @@ const paginationSticky = ref<TablePaginationData>({
   page: 1,
   total: fixedRows.length,
 });
+
+const paginationLargeTotal = ref<TablePaginationData>({
+  limit: 10,
+  page: 1,
+  total: 100_000,
+});
+
+const paginationLargeTotalDropdown = ref<TablePaginationData>({
+  limit: 10,
+  page: 1,
+  total: 100_000,
+});
 </script>
 
 <template>
@@ -171,6 +183,47 @@ const paginationSticky = ref<TablePaginationData>({
             </RuiButton>
           </template>
         </RuiDataTable>
+      </div>
+
+      <!-- Large total (jump-to-page input mode) -->
+      <div
+        class="flex flex-col space-y-3"
+        data-id="table-pagination-large-total"
+      >
+        <h4>Large Total (jump-to-page input)</h4>
+        <p class="text-sm text-rui-text-secondary">
+          Simulated server-side pagination with total = 100,000 and limit = 10 →
+          10,000 pages. The ranges dropdown is replaced by a numeric input.
+        </p>
+        <RuiDataTable
+          v-model:pagination.external="paginationLargeTotal"
+          :rows="fixedRows"
+          :cols="fixedColumns"
+          row-attr="id"
+          outlined
+          data-id="table"
+        />
+      </div>
+
+      <!-- Large total with dropdown forced via rangesThreshold=0 -->
+      <div
+        class="flex flex-col space-y-3"
+        data-id="table-pagination-large-total-dropdown"
+      >
+        <h4>Large Total (dropdown forced)</h4>
+        <p class="text-sm text-rui-text-secondary">
+          Same total as above but with <code>rangesThreshold = 0</code> — the
+          dropdown stays, so you can confirm the escape hatch works.
+        </p>
+        <RuiDataTable
+          v-model:pagination.external="paginationLargeTotalDropdown"
+          :rows="fixedRows"
+          :cols="fixedColumns"
+          :ranges-threshold="0"
+          row-attr="id"
+          outlined
+          data-id="table"
+        />
       </div>
 
       <!-- Sticky header -->

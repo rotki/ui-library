@@ -73,6 +73,11 @@ export interface Props<T, K extends keyof T> {
   loading?: boolean;
   disablePerPage?: boolean;
   /**
+   * Maximum number of pages before the jump-to-page dropdown is replaced with
+   * a numeric input. Defaults to `500`. Forwarded to `RuiTablePagination`.
+   */
+  rangesThreshold?: number;
+  /**
    * data to display for empty state
    * text and icon
    * @example :empty="{ icon: 'transactions-line', label: 'No transactions found' }"
@@ -139,6 +144,7 @@ const {
   striped = false,
   loading = false,
   disablePerPage = false,
+  rangesThreshold = 500,
   empty = { label: 'No item found' },
   hideDefaultHeader = false,
   hideDefaultFooter = false,
@@ -335,6 +341,7 @@ const ui = computed<ReturnType<typeof dataTableStyles>>(() => dataTableStyles({
       :dense="dense"
       :loading="loading"
       :disable-per-page="disablePerPage"
+      :ranges-threshold="rangesThreshold"
       data-id="table-pagination"
       @update:model-value="onPaginate()"
     />
@@ -638,6 +645,7 @@ const ui = computed<ReturnType<typeof dataTableStyles>>(() => dataTableStyles({
       :dense="dense"
       :loading="loading"
       :disable-per-page="disablePerPage"
+      :ranges-threshold="rangesThreshold"
       data-id="table-pagination"
       @update:model-value="onPaginate()"
     />

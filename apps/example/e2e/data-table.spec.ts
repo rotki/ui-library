@@ -168,8 +168,9 @@ test.describe('data tables - pagination', () => {
     const perPageSelect = container.locator('[data-id=table-pagination-limit] [data-id=activator]').first();
     await perPageSelect.click();
 
-    // Select a different limit (e.g., 10)
-    const option = page.getByRole('button', { name: '10', exact: true });
+    // Select a different limit (e.g., 10) — scope to the opened menu content,
+    // otherwise the activator buttons of sibling pagination sections collide.
+    const option = page.getByTestId('content').getByRole('button', { name: '10', exact: true });
     await option.click();
 
     // Row count should change
@@ -253,6 +254,58 @@ test.describe('data tables - pagination', () => {
     // The table thead should have sticky class (library uses absolute/fixed positioning for sticky behavior)
     const thead = table.locator('table thead[data-id="head-main"]');
     await expect(thead).toHaveClass(/absolute/);
+  });
+
+  test('should swap dropdown for jump-to-page input when pages exceed rangesThreshold', async ({ page }) => {
+    const container = page.locator('[data-id=table-pagination-large-total]');
+    const table = container.locator('[data-id=table]');
+    await expect(table).toBeVisible();
+
+    // Dropdown must not render above the threshold
+    await expect(container.locator('[data-id=table-pagination-ranges]')).toHaveCount(0);
+
+    // Input must be present (one per header/footer pagination instance)
+    const inputs = container.locator('[data-id=table-pagination-ranges-input] input');
+    await expect(inputs.first()).toBeVisible();
+
+    const input = inputs.first();
+    await expect(input).toHaveValue('1');
+
+    // Typing a page and pressing Enter should commit
+    await input.fill('4242');
+    await input.press('Enter');
+    await expect(input).toHaveValue('4242');
+
+    // The other pagination instance should sync
+    await expect(inputs.nth(1)).toHaveValue('4242');
+  });
+
+  test('should clamp out-of-range page input to the last page', async ({ page }) => {
+    const container = page.locator('[data-id=table-pagination-large-total]');
+    const input = container.locator('[data-id=table-pagination-ranges-input] input').first();
+
+    // 100_000 / 10 = 10_000 pages
+    await input.fill('999999999');
+    await input.press('Enter');
+    await expect(input).toHaveValue('10000');
+
+    // Negative / zero should clamp to 1
+    await input.fill('0');
+    await input.press('Enter');
+    await expect(input).toHaveValue('1');
+  });
+
+  test('should keep the ranges dropdown when rangesThreshold is 0 even for large totals', async ({ page }) => {
+    const container = page.locator('[data-id=table-pagination-large-total-dropdown]');
+    const table = container.locator('[data-id=table]');
+    await expect(table).toBeVisible();
+
+    // Input must not render when escape hatch is active
+    await expect(container.locator('[data-id=table-pagination-ranges-input]')).toHaveCount(0);
+
+    // Dropdown activator must still be present
+    const activator = container.locator('[data-id=table-pagination-ranges] [data-id=activator]').first();
+    await expect(activator).toBeVisible();
   });
 
   test('should produce consistent header widths after resize cycle', async ({ page }) => {

@@ -7,6 +7,7 @@ import { createTableDefaults, type TableOptions } from '@/composables/defaults/t
 function withSetup(
   initialData: TablePaginationData,
   tableOptions?: Partial<TableOptions>,
+  rangesThreshold?: number,
 ) {
   const modelValue = ref<TablePaginationData>(initialData) as Ref<TablePaginationData>;
   const defaults = createTableDefaults(tableOptions);
@@ -14,7 +15,7 @@ function withSetup(
   let result!: ReturnType<typeof usePaginationNavigation>;
   const TestComponent = defineComponent({
     setup() {
-      result = usePaginationNavigation(modelValue, defaults);
+      result = usePaginationNavigation(modelValue, defaults, rangesThreshold);
       return {};
     },
     template: '<div></div>',
@@ -147,6 +148,53 @@ describe('components/tables/use-pagination-navigation', () => {
     });
   });
 
+  describe('useInputJump / rangesThreshold', () => {
+    it('should stay on the dropdown when pages fit within the default threshold', () => {
+      const { result, unmount: u } = withSetup({ page: 1, total: 5000, limit: 10 });
+      unmount = u;
+
+      expect(result.useInputJump.value).toBe(false);
+      expect(result.ranges.value).toHaveLength(500);
+    });
+
+    it('should flip to input mode and skip range materialisation above the threshold', () => {
+      const { result, unmount: u } = withSetup({ page: 1, total: 5010, limit: 10 });
+      unmount = u;
+
+      expect(result.pages.value).toBe(501);
+      expect(result.useInputJump.value).toBe(true);
+      expect(result.ranges.value).toEqual([]);
+    });
+
+    it('should respect a custom threshold', () => {
+      const { result, unmount: u } = withSetup({ page: 1, total: 120, limit: 10 }, undefined, 5);
+      unmount = u;
+
+      expect(result.useInputJump.value).toBe(true);
+      expect(result.ranges.value).toEqual([]);
+    });
+
+    it('should disable the input-mode switch when threshold is 0', () => {
+      const { result, unmount: u } = withSetup(
+        { page: 1, total: 100_000, limit: 10 },
+        undefined,
+        0,
+      );
+      unmount = u;
+
+      expect(result.useInputJump.value).toBe(false);
+    });
+
+    it('should avoid materialising millions of ranges when total is huge', () => {
+      const { result, unmount: u } = withSetup({ page: 1, total: 4_015_386, limit: 10 });
+      unmount = u;
+
+      expect(result.pages.value).toBe(401_539);
+      expect(result.useInputJump.value).toBe(true);
+      expect(result.ranges.value).toEqual([]);
+    });
+  });
+
   describe('indicatorText', () => {
     it('should show total count', () => {
       const { result, unmount: u } = withSetup({ page: 1, total: 100, limit: 10 });
@@ -163,9 +211,18 @@ describe('components/tables/use-pagination-navigation', () => {
     });
 
     it('should format large totals', () => {
-      const { result, unmount: u } = withSetup({ page: 1, total: 10000, limit: 10 });
+      const { result, unmount: u } = withSetup({ page: 1, total: 10000, limit: 100 });
       unmount = u;
 
+      expect(result.useInputJump.value).toBe(false);
+      expect(result.indicatorText.value).toBe('of 10,000');
+    });
+
+    it('should switch to page count in input mode', () => {
+      const { result, unmount: u } = withSetup({ page: 1, total: 100_000, limit: 10 });
+      unmount = u;
+
+      expect(result.useInputJump.value).toBe(true);
       expect(result.indicatorText.value).toBe('of 10,000');
     });
   });

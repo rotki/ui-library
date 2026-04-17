@@ -1,4 +1,4 @@
-import type { ComputedRef, Ref, WritableComputedRef } from 'vue';
+import type { ComputedRef, MaybeRefOrGetter, Ref, WritableComputedRef } from 'vue';
 import type { TableOptions } from '@/composables/defaults/table';
 import { formatInteger } from '@/utils/helpers';
 
@@ -20,6 +20,7 @@ export interface UsePaginationNavigationReturn {
   ranges: ComputedRef<PageRange[]>;
   indicatorText: ComputedRef<string>;
   currentRange: WritableComputedRef<number>;
+  useInputJump: ComputedRef<boolean>;
   hasPrev: ComputedRef<boolean>;
   hasNext: ComputedRef<boolean>;
   onPrev: () => void;
@@ -32,6 +33,7 @@ export function usePaginationNavigation(
   // eslint-disable-next-line @rotki/composable-input-flexibility
   modelValue: Ref<TablePaginationData>,
   tableDefaults: TableOptions,
+  rangesThreshold: MaybeRefOrGetter<number> = 500,
 ): UsePaginationNavigationReturn {
   const limits = computed<LimitEntry[]>(() =>
     (get(modelValue).limits ?? get(tableDefaults.limits)).map(limit => ({ limit })),
@@ -62,15 +64,26 @@ export function usePaginationNavigation(
     return `${formatInteger(start)} - ${formatInteger(end)}`;
   }
 
-  const ranges = computed<PageRange[]>(() =>
-    Array.from({ length: get(pages) }, (_, i) => {
+  const useInputJump = computed<boolean>(() => {
+    const threshold = toValue(rangesThreshold);
+    return threshold > 0 && get(pages) > threshold;
+  });
+
+  const ranges = computed<PageRange[]>(() => {
+    if (get(useInputJump))
+      return [];
+
+    return Array.from({ length: get(pages) }, (_, i) => {
       const page = i + 1;
       return { page, text: pageRangeText(page) };
-    }),
-  );
+    });
+  });
 
   const indicatorText = computed<string>(() => {
     const { total } = get(modelValue);
+    if (get(useInputJump))
+      return `of ${formatInteger(get(pages))}`;
+
     return total ? `of ${formatInteger(total)}` : `0 of 0`;
   });
 
@@ -117,6 +130,7 @@ export function usePaginationNavigation(
     ranges,
     indicatorText,
     currentRange,
+    useInputJump,
     hasPrev,
     hasNext,
     onPrev,
