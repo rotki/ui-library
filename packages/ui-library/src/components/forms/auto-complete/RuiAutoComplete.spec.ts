@@ -374,6 +374,64 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     ]]);
   });
 
+  it('should apply highlighted option instead of typed text when user arrow-navigates with custom-value enabled', async () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      attachTo: document.body,
+      props: {
+        customValue: true,
+        hideCustomValue: true,
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    await wrapper.find('[data-id=activator]').trigger('click');
+    await vi.runAllTimersAsync();
+
+    await wrapper.find('input').setValue('Ger');
+    await vi.runAllTimersAsync();
+    expect(queryByRole('menu')).toBeTruthy();
+
+    // User explicitly arrow-navigates down to the real "Germany" row.
+    await wrapper.find('[data-id=activator]').trigger('keydown.down');
+    await vi.runAllTimersAsync();
+
+    await wrapper.find('[data-id=activator]').trigger('keydown.enter');
+    await vi.runAllTimersAsync();
+
+    expect(wrapper.emitted()).toHaveProperty('update:modelValue');
+    // Must emit Germany's id ('1'), NOT the typed custom text 'Ger'.
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['1']);
+  });
+
+  it('should still commit typed custom value on Enter when user has not arrow-navigated', async () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      attachTo: document.body,
+      props: {
+        autoSelectFirst: true,
+        customValue: true,
+        hideCustomValue: true,
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    await wrapper.find('input').setValue('Ger');
+    await vi.advanceTimersToNextTimerAsync();
+
+    // No arrow navigation — autoSelectFirst auto-highlights, but user expects
+    // their typed text to be committed as a custom value.
+    await wrapper.find('[data-id=activator]').trigger('keydown.enter');
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(wrapper.emitted()).toHaveProperty('update:modelValue');
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['Ger']);
+  });
+
   it('should hide selected value when search input focused in single select', async () => {
     wrapper = createWrapper<string, SelectOption>({
       attachTo: document.body,

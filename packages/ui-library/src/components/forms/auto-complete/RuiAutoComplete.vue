@@ -212,6 +212,7 @@ const {
   moveHighlight,
   applyHighlighted,
   optionsWithSelectedHidden,
+  userNavigated,
 } = useDropdownMenu<TValue, TItem>({
   itemHeight: resolvedItemHeight,
   keyAttr,
@@ -253,6 +254,7 @@ const {
     removeValue: (item: TItem): void => { setValue(item); },
     searchInputFocused,
     setSearchAsValue,
+    userNavigated,
     value,
   },
 );

@@ -266,6 +266,26 @@ test.describe('auto-complete - search', () => {
     await expect(ac.locator('input')).toHaveValue('MyCustomEntry');
   });
 
+  test('should commit highlighted option on Enter after arrow navigation with custom-value', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-search-custom-value]');
+    const activator = ac.locator('[data-id=activator]');
+
+    await activator.click();
+    // Type a partial query that uniquely matches "Lorem".
+    await ac.locator('input').fill('Lor');
+
+    // Wait for the filtered menu to settle (internal search is debounced).
+    await expect(page.locator('div[role=menu] button')).toHaveCount(3);
+
+    // Arrow down past the prepended custom-value row to highlight the real "Lorem" option.
+    await activator.press('ArrowDown');
+    await activator.press('ArrowDown');
+    await activator.press('Enter');
+
+    // Expected: highlighted option wins over typed text.
+    await expect(ac.locator('input')).toHaveValue('Lorem');
+  });
+
   test('should hide custom value option from menu', async ({ page }) => {
     const ac = page.locator('[data-id=ac-search-custom-hide]');
     const activator = ac.locator('[data-id=activator]');

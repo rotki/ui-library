@@ -136,6 +136,7 @@ export function useDropdownMenu<TValue, TItem>({
   });
 
   const highlightedIndex: Ref<number> = ref(get(autoSelectFirst) ? 0 : -1);
+  const userNavigated = ref<boolean>(false);
 
   const optionWidthBounds = computed<{ min: number; max: number }>(() => {
     let min = 0;
@@ -219,6 +220,7 @@ export function useDropdownMenu<TValue, TItem>({
   watch(highlightedIndex, () => adjustScrollByHighlightedIndex());
 
   watch(options, () => {
+    set(userNavigated, false);
     if (get(highlightedIndex) !== -1) {
       if (get(autoSelectFirst)) {
         set(highlightedIndex, 0);
@@ -234,11 +236,18 @@ export function useDropdownMenu<TValue, TItem>({
     }
   });
 
+  watch(isOpen, (open) => {
+    if (!open)
+      set(userNavigated, false);
+  });
+
   const moveHighlight = (up: boolean): void => {
     if (!get(isOpen)) {
       toggle(true);
       return;
     }
+
+    set(userNavigated, true);
 
     let position = get(highlightedIndex);
     const move = up ? -1 : 1;
@@ -281,6 +290,7 @@ export function useDropdownMenu<TValue, TItem>({
     optionsWithSelectedHidden: options,
     renderedData,
     toggle,
+    userNavigated,
     valueKey,
     wrapperProps,
   };

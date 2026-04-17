@@ -16,6 +16,7 @@ export interface UseAutoCompleteKeyboardNavigationDeps<TItem> {
   filteredOptions: Ref<TItem[]>;
   isOpen: Ref<boolean>;
   highlightedIndex: Ref<number>;
+  userNavigated: Ref<boolean>;
   searchInputFocused: Ref<boolean>;
   applyHighlighted: () => void;
   clear: () => void;
@@ -106,6 +107,14 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
     const customValue = toValue(options.customValue);
     const multiple = toValue(options.multiple);
     const internalSearch = get(deps.internalSearch);
+
+    const userNavigated = get(deps.userNavigated);
+
+    if (userNavigated && highlightedIndex > -1 && filteredOptions.length > 0) {
+      deps.applyHighlighted();
+      event.preventDefault();
+      return true;
+    }
 
     if (customValue && internalSearch && !highlightedMatchesSearch(filteredOptions, highlightedIndex, internalSearch)) {
       applyCustomValue(event, multiple);
