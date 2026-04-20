@@ -32,7 +32,7 @@ function loadValidIcons(): Set<string> {
       // Read and parse the file to extract the RuiIcons array
       const content = readFileSync(distPath, 'utf-8');
       // eslint-disable-next-line regexp/strict
-      const match = content.match(/const RuiIcons = \[(.*?)];/s);
+      const match = content.match(/(?:const|var|let) RuiIcons = \[(.*?)];?/s);
       if (match?.[1]) {
         const iconsStr = match[1];
         const icons = iconsStr.match(/"([^"]+)"/g)?.map(s => s.slice(1, -1)) || [];
