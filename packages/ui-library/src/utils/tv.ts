@@ -21,6 +21,17 @@ export const tv = /* @__PURE__ */ createTV({
       'bg-shade': [{ 'bg-shade': [isAny] }],
       'text-tint': [{ 'text-tint': [isAny] }],
       'text-shade': [{ 'text-shade': [isAny] }],
+      // Custom theme colors (text-rui-*) belong to the text-color group so
+      // they don't conflict with the custom typography utilities below, which
+      // tw-merge would otherwise both classify as font-size.
+      'text-color': [{ 'text-rui': [isAny] }],
+      'font-size': [
+        { 'text-body': [isAny] },
+        'text-caption',
+        'text-overline',
+        { 'text-h': [isAny] },
+        { 'text-subtitle': [isAny] },
+      ],
     },
   },
 });
