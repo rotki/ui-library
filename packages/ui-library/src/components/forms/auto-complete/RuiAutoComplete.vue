@@ -129,7 +129,7 @@ const slots = defineSlots<{
   }) => any;
   'activator.label'?: (props: { value: TItem[] }) => any;
   'selection.prepend'?: (props: { index: number; item: TItem }) => any;
-  'selection'?: (props: { index: number; item: TItem; chipAttrs?: Record<string, unknown> }) => any;
+  'selection'?: (props: { index: number; item: TItem; chipAttrs: Record<string, unknown> }) => any;
   'item.prepend'?: (props: { disabled: boolean; item: TItem; active: boolean }) => any;
   'item'?: (props: { disabled: boolean; item: TItem; active: boolean }) => any;
   'item.append'?: (props: { disabled: boolean; item: TItem; active: boolean }) => any;
@@ -543,7 +543,7 @@ defineExpose({
                   <slot
                     :index="i"
                     name="selection"
-                    v-bind="{ item }"
+                    v-bind="{ item, chipAttrs: chipAttrs(item, i) }"
                   >
                     {{ getText(item) }}
                   </slot>
