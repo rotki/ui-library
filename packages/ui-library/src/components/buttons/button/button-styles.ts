@@ -65,12 +65,16 @@ export const buttonStyles = tv({
     { color: 'grey', variant: 'text', class: { root: 'text-rui-text-secondary' } },
 
     // === Context colors — outlined/text variants ===
-    { color: 'primary', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-primary-lighter/[.04] active:bg-rui-primary-lighter/10 text-rui-primary' } },
-    { color: 'secondary', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-secondary-lighter/[.04] active:bg-rui-secondary-lighter/10 text-rui-secondary' } },
-    { color: 'error', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-error-lighter/[.04] active:bg-rui-error-lighter/10 text-rui-error' } },
-    { color: 'warning', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-warning-lighter/[.04] active:bg-rui-warning-lighter/10 text-rui-warning' } },
-    { color: 'info', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-info-lighter/[.04] active:bg-rui-info-lighter/10 text-rui-info' } },
-    { color: 'success', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-success-lighter/[.04] active:bg-rui-success-lighter/10 text-rui-success' } },
+    // `dark:text-rui-<color>` is required to beat `dark:text-rui-text` set by
+    // the base color variant (meant for filled buttons where text sits on a
+    // colored bg). Without the override, outlined/text/list buttons in dark
+    // mode render white text against a themed outline/underline.
+    { color: 'primary', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-primary-lighter/[.04] active:bg-rui-primary-lighter/10 text-rui-primary dark:text-rui-primary' } },
+    { color: 'secondary', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-secondary-lighter/[.04] active:bg-rui-secondary-lighter/10 text-rui-secondary dark:text-rui-secondary' } },
+    { color: 'error', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-error-lighter/[.04] active:bg-rui-error-lighter/10 text-rui-error dark:text-rui-error' } },
+    { color: 'warning', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-warning-lighter/[.04] active:bg-rui-warning-lighter/10 text-rui-warning dark:text-rui-warning' } },
+    { color: 'info', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-info-lighter/[.04] active:bg-rui-info-lighter/10 text-rui-info dark:text-rui-info' } },
+    { color: 'success', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-success-lighter/[.04] active:bg-rui-success-lighter/10 text-rui-success dark:text-rui-success' } },
 
     // === Context colors — active default ===
     { color: 'primary', active: true, class: { root: 'bg-rui-primary-darker' } },
