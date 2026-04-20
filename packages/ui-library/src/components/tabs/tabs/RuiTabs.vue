@@ -31,7 +31,11 @@ defineOptions({
   name: 'RuiTabs',
 });
 
-const modelValue = defineModel<number | string>();
+// Default 0 (first tab) matches the existing internal fallback on line 163.
+// Providing a default narrows the `update:modelValue` emit payload from
+// `value?: number | string` to `value: number | string`, so consumers can
+// type their handler signatures without undefined unions.
+const modelValue = defineModel<number | string>({ default: 0 });
 
 const {
   color,

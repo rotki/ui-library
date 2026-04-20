@@ -6,7 +6,14 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const modelValue = defineModel<T>();
+// Default matches RuiTabs' `defineModel<... >({ default: 0 })`. Without a
+// default, consumers that bind both components to the same ref (e.g.
+// `v-model="item.modelValue"` on both RuiTabs and RuiTabItems, where the
+// ref starts as `undefined`) leave RuiTabItems with `modelValue === undefined`.
+// The `active = modelValue === value` check then fails for every tab — the
+// panel renders but stays height:0, so e2e `toHaveText` and `toBeVisible`
+// assertions pass the element but see no content.
+const modelValue = defineModel<T>({ default: 0 as T });
 
 const slots = useSlots();
 
