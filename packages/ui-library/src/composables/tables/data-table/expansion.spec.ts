@@ -32,29 +32,20 @@ describe('composables/tables/data-table/expansion', () => {
     const { result, unmount: u } = withSetup(() =>
       useTableExpansion<TestItem, 'id'>(
         { rowAttr: 'id', singleExpand: false },
-        { expanded: ref(undefined), hasExpandedItemSlot: ref(true) },
+        { expanded: ref(undefined) },
       ),
     );
     unmount = u;
     expect(get(result.expandable)).toBe(false);
   });
 
-  it('should return expandable as false when no expanded-item slot', () => {
+  it('should return expandable as true when expanded is a defined array', () => {
+    // Slot presence is no longer checked here — the template does
+    // `!!$slots['expanded-item']` inline so conditional slots stay reactive.
     const { result, unmount: u } = withSetup(() =>
       useTableExpansion<TestItem, 'id'>(
         { rowAttr: 'id', singleExpand: false },
-        { expanded: ref([]), hasExpandedItemSlot: ref(false) },
-      ),
-    );
-    unmount = u;
-    expect(get(result.expandable)).toBe(false);
-  });
-
-  it('should return expandable as true when both expanded and slot exist', () => {
-    const { result, unmount: u } = withSetup(() =>
-      useTableExpansion<TestItem, 'id'>(
-        { rowAttr: 'id', singleExpand: false },
-        { expanded: ref([]), hasExpandedItemSlot: ref(true) },
+        { expanded: ref([]) },
       ),
     );
     unmount = u;
@@ -66,7 +57,7 @@ describe('composables/tables/data-table/expansion', () => {
     const { result, unmount: u } = withSetup(() =>
       useTableExpansion<TestItem, 'id'>(
         { rowAttr: 'id', singleExpand: false },
-        { expanded, hasExpandedItemSlot: ref(true) },
+        { expanded },
       ),
     );
     unmount = u;
@@ -86,7 +77,7 @@ describe('composables/tables/data-table/expansion', () => {
     const { result, unmount: u } = withSetup(() =>
       useTableExpansion<TestItem, 'id'>(
         { rowAttr: 'id', singleExpand: true },
-        { expanded, hasExpandedItemSlot: ref(true) },
+        { expanded },
       ),
     );
     unmount = u;
@@ -107,7 +98,7 @@ describe('composables/tables/data-table/expansion', () => {
     const { result, unmount: u } = withSetup(() =>
       useTableExpansion<TestItem, 'id'>(
         { rowAttr: 'id', singleExpand: false },
-        { expanded: expanded as any, hasExpandedItemSlot: ref(true) },
+        { expanded: expanded as any },
       ),
     );
     unmount = u;
@@ -121,7 +112,7 @@ describe('composables/tables/data-table/expansion', () => {
     const { result, unmount: u } = withSetup(() =>
       useTableExpansion<TestItem, 'id'>(
         { rowAttr: 'id', singleExpand: true },
-        { expanded, hasExpandedItemSlot: ref(true) },
+        { expanded },
       ),
     );
     unmount = u;
@@ -137,7 +128,7 @@ describe('composables/tables/data-table/expansion', () => {
     const { result, unmount: u } = withSetup(() =>
       useTableExpansion<TestItem, 'id'>(
         { rowAttr: 'id', singleExpand: false },
-        { expanded, hasExpandedItemSlot: ref(true) },
+        { expanded },
       ),
     );
     unmount = u;

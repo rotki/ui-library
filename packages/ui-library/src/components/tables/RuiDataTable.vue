@@ -198,11 +198,9 @@ const { stick } = useStickyTableHeader(
   { table, tableScroller },
 );
 
-const hasExpandedItemSlot = computed<boolean>(() => !!slots['expanded-item']);
-
 const { expandable, isExpanded, onToggleExpand } = useTableExpansion<T, IdType>(
   { rowAttr, singleExpand },
-  { expanded, hasExpandedItemSlot },
+  { expanded },
 );
 
 function emitUpdateOptions(opts: { sort?: TableSortData<T>; pagination?: TablePaginationData }): void {
@@ -556,7 +554,7 @@ const ui = computed<ReturnType<typeof dataTableStyles>>(() => dataTableStyles({
               </tr>
 
               <tr
-                v-if="expandable && isExpanded(row[rowAttr])"
+                v-if="expandable && !!$slots['expanded-item'] && isExpanded(row[rowAttr])"
                 :key="`row-expand-${index}`"
                 :class="ui.tr({ rowVariant: 'expandable' })"
                 data-id="row-expanded"
