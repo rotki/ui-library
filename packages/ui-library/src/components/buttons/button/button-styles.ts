@@ -53,7 +53,7 @@ export const buttonStyles = tv({
   compoundVariants: [
     // === Grey color variants ===
     { color: 'grey', active: true, class: { root: 'bg-rui-grey-50' } },
-    { color: 'grey', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-black/[.04] active:bg-black/10 dark:active:bg-white/10 dark:hover:bg-white/[.04] dark:text-rui-text' } },
+    { color: 'grey', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-black/[.04] active:bg-black/10 dark:bg-transparent dark:active:bg-white/10 dark:hover:bg-white/[.04] dark:text-rui-text' } },
     { color: 'grey', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-black/10 dark:bg-white/30' } },
     { color: 'grey', variant: 'outlined', class: { root: 'outline-rui-text' } },
     { color: 'grey', variant: 'text', class: { root: 'text-rui-text-secondary' } },
