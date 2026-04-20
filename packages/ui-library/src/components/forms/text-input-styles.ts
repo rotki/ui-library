@@ -46,7 +46,7 @@ export const textInputBase = tv({
       'border border-black/[0.23]',
       'dark:border-white/[0.23]',
     ].join(' '),
-    legend: 'invisible text-xs truncate [max-width:calc(100%-1rem)] leading-[0]',
+    legend: 'invisible text-[0.75rem] truncate [max-width:calc(100%-1rem)] leading-[0]',
   },
   variants: {
     focused: {
@@ -182,7 +182,7 @@ export const activatorStyles = tv({
     },
     float: {
       true: {
-        label: '-translate-y-2 top-0 text-xs px-1',
+        label: '-translate-y-2 top-0 text-[0.75rem] leading-4',
       },
     },
     opened: {

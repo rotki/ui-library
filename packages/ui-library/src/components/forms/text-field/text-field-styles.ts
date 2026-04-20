@@ -27,13 +27,17 @@ export const textFieldStyles = tv({
     ].join(' '),
     // No border-b or display here — each variant sets its own
     label: [
-      'left-0 text-base pointer-events-none',
+      // Use arbitrary `text-[1rem]` instead of `text-base` — the named class
+      // bundles `line-height: 1.5rem`, and the consumer's later-loaded
+      // `.text-base` rule would override our `leading-*` per variant. The
+      // arbitrary form emits font-size only, so `leading-*` stays authoritative.
+      'left-0 text-[1rem] pointer-events-none',
       'absolute top-0 h-full w-full select-none',
       // Dynamic padding via CSS variables
       '[padding-left:calc(var(--x-padding,0px)+var(--prepend-w,0px))]',
       '[padding-right:calc(var(--x-padding,0px)+var(--append-w,0px))]',
       // CSS-only autofill fallback (before JS catches up)
-      'peer-autofill:text-xs peer-autofill:leading-tight',
+      'peer-autofill:text-[0.75rem] peer-autofill:leading-tight',
     ].join(' '),
     labelText: 'truncate transition-all duration-75',
     inputWrapper: 'flex flex-1 overflow-hidden',
@@ -86,7 +90,7 @@ export const textFieldStyles = tv({
     active: {
       true: {
         label: [
-          'text-xs leading-tight',
+          'text-[0.75rem] leading-tight',
           '[padding-left:var(--x-padding,0px)]',
           '[padding-right:var(--x-padding,0px)]',
         ].join(' '),
