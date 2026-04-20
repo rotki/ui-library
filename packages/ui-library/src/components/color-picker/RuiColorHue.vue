@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { clamp } from '@vueuse/shared';
+import { cn, tv } from '@/utils/tv';
 import { roundTwoDecimal, useElementDrag } from './utils';
 
 interface Limit {
@@ -76,6 +77,8 @@ watch(modelValue, () => {
 onMounted(() => {
   updatePosition();
 });
+
+const rootStyle = tv({ base: 'relative w-full h-3.5 rounded-full cursor-pointer bg-hue-spectrum' });
 </script>
 
 <template>
@@ -87,8 +90,8 @@ onMounted(() => {
     aria-valuemin="0"
     aria-valuemax="360"
     data-id="color-hue"
-    class="relative w-full h-3.5 rounded-full cursor-pointer bg-hue-spectrum"
-    v-bind="$attrs"
+    :class="rootStyle({ class: cn($attrs.class) })"
+    v-bind="{ ...$attrs, class: undefined }"
     @click="handleClick($event)"
     @mousedown="onMouseDown($event)"
     @touchstart="onTouchStart($event)"

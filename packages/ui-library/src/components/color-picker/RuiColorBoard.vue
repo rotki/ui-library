@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { clamp } from '@vueuse/shared';
 import tinycolor from 'tinycolor2';
+import { cn, tv } from '@/utils/tv';
 import { type Color, useElementDrag } from './utils';
 
 defineOptions({
@@ -81,6 +82,8 @@ watch(
 onMounted(() => {
   updatePosition();
 });
+
+const rootStyle = tv({ base: 'relative w-full h-40 overflow-hidden cursor-pointer' });
 </script>
 
 <template>
@@ -90,8 +93,8 @@ onMounted(() => {
     aria-label="Color saturation and brightness"
     :aria-valuetext="`Saturation ${Math.round(state.saturation * 100)}%, Brightness ${Math.round(state.brightness * 100)}%`"
     data-id="color-board"
-    class="relative w-full h-40 overflow-hidden cursor-pointer"
-    v-bind="$attrs"
+    :class="rootStyle({ class: cn($attrs.class) })"
+    v-bind="{ ...$attrs, class: undefined }"
     :style="{ backgroundColor: state.hexString }"
     @click="handleClick($event)"
     @mousedown="onMouseDown($event)"
