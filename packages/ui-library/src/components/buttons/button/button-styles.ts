@@ -4,7 +4,13 @@ export const buttonStyles = tv({
   slots: {
     root: [
       'text-sm leading-5 font-medium outline outline-1 outline-transparent outline-offset-[-1px]',
-      'flex items-center justify-center gap-x-2 relative',
+      // `position: relative` is only needed as a positioning context for the
+      // absolute-positioned loading spinner; applied via the `loading` variant
+      // below. Putting it here would collide with consumers that need to pin
+      // the button with `fixed`/`absolute` (cascade order picks the later
+      // utility — usually `relative` — and the consumer's `right-*`/`bottom-*`
+      // end up as relative offsets, which misplaces FABs).
+      'flex items-center justify-center gap-x-2',
       'px-6 py-2.5 rounded transition-all',
       '!disabled:bg-black/[.12] dark:!disabled:bg-white/[.12] !disabled:text-rui-text-disabled !disabled:active:text-rui-text-disabled',
       '!focus-visible:ring-2',
@@ -44,7 +50,7 @@ export const buttonStyles = tv({
       false: {},
     },
     loading: {
-      true: { root: 'space-x-0 [&>*:not([data-spinner])]:opacity-0 [&>*:not([data-spinner])]:invisible' },
+      true: { root: 'relative space-x-0 [&>*:not([data-spinner])]:opacity-0 [&>*:not([data-spinner])]:invisible' },
     },
     hideFocusIndicator: {
       true: { root: '!focus-visible:ring-0' },
