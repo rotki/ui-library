@@ -69,7 +69,11 @@ const tab = tv({
   variants: {
     layout: {
       [TabLayout.horizontal]: '',
-      [TabLayout.vertical]: '!h-[3rem] w-full max-w-none',
+      // `min-h` instead of `h`: keep the 48px floor so simple text tabs
+      // match horizontal layout, but let tabs grow to fit richer content
+      // (logo + label, multi-line text) instead of clipping against the
+      // scroll container's `overflow-auto`.
+      [TabLayout.vertical]: '!min-h-[3rem] w-full max-w-none',
     },
     align: {
       start: 'justify-start text-left rtl:justify-end rtl:text-right',
