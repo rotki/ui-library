@@ -85,6 +85,7 @@
     "build:web-types": "tsx scripts/build-web-types.mjs",
     "generate-icons": "tsx scripts/generate-icons.mjs",
     "resolve:alias": "tsc-alias --replacer ./scripts/tsc-alias-replacer.cjs -p tsconfig.build.json --dir dist",
+    "verify:dist": "tsx scripts/verify-dist.ts",
     "dev": "vite",
     "prepare": "node scripts/prepare.mjs",
     "storybook": "storybook dev -p 6006",
@@ -103,7 +104,13 @@
   },
   "peerDependencies": {
     "dayjs": ">=1.11.13 <12",
-    "vue": ">=3.5.0"
+    "vue": ">=3.5.0",
+    "vue-router": ">=5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vue-router": {
+      "optional": true
+    }
   },
   "web-types": "dist/web-types.json",
   "dependencies": {

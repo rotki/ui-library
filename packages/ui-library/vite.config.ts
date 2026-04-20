@@ -1,7 +1,19 @@
+import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import vue from '@vitejs/plugin-vue';
 import AutoImport from 'unplugin-auto-import/vite';
 import { defineConfig } from 'vitest/config';
+
+const require = createRequire(import.meta.url);
+const pkg = require('./package.json') as {
+  dependencies?: Record<string, string>;
+  peerDependencies?: Record<string, string>;
+};
+
+const declaredDeps: string[] = [
+  ...Object.keys(pkg.dependencies ?? {}),
+  ...Object.keys(pkg.peerDependencies ?? {}),
+];
 
 export default defineConfig({
   resolve: {
@@ -35,31 +47,16 @@ export default defineConfig({
     },
     rolldownOptions: {
       external: (id: string) => {
-        // Externalize all peer dependencies and their subpaths
-        const peerDeps = [
-          'vue',
-          'vue-router',
-          'dayjs',
-        ];
-
-        // Externalize regular dependencies (installed with the library but not bundled)
-        const dependencies = [
+        // Anything declared in package.json (deps + peerDeps) is always externalized —
+        // runtime deps must be installed by the consumer and resolved from their
+        // node_modules, never bundled with pnpm peer-hash paths baked in.
+        const extraExternals = [
+          // Transitive runtime deps not listed in package.json but referenced directly
           '@floating-ui/core',
-          '@floating-ui/dom',
           '@floating-ui/utils',
-          '@vueuse/core',
-          '@vueuse/shared',
-          'scule',
-          'tinycolor2',
-        ];
-
-        // Externalize build-time only dependencies
-        const buildOnlyDeps = [
+          // Build-time only deps
           'tailwindcss',
-        ];
-
-        // Externalize Node.js built-ins (for vite-plugin)
-        const nodeBuiltins = [
+          // Node.js built-ins (for vite-plugin)
           'node:fs',
           'node:path',
           'node:url',
@@ -69,9 +66,9 @@ export default defineConfig({
           'vite',
         ];
 
-        const allExternal = [...peerDeps, ...dependencies, ...buildOnlyDeps, ...nodeBuiltins];
+        const allExternal = [...declaredDeps, ...extraExternals];
 
-        // Check if the import matches any external dependency (including subpaths like dayjs/plugin/utc)
+        // Match bare id or subpaths (e.g., dayjs/plugin/utc)
         return allExternal.some(dep => id === dep || id.startsWith(`${dep}/`));
       },
       output: {
