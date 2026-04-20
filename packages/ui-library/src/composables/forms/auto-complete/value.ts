@@ -80,7 +80,7 @@ export function useAutoCompleteValue<TValue, TItem>(
       return filtered;
 
     const val = filtered[0];
-    assert(val);
+    assert(val !== undefined && val !== null);
     return [val];
   }
 
@@ -141,7 +141,7 @@ export function useAutoCompleteValue<TValue, TItem>(
     }
     else {
       const firstItem = currentValue[0];
-      assert(firstItem);
+      assert(firstItem !== undefined && firstItem !== null);
       deps.updateInternalSearch(deps.getText(firstItem));
     }
   }, { immediate: true });
