@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { VueClassValue } from '@/types/class-value';
 import Icon from '@/components/icons/RuiIcon.vue';
+import { cn, tv } from '@/utils/tv';
 
 export interface RuiAccordionClassNames {
   root?: VueClassValue;
@@ -60,14 +61,16 @@ function onKeydown(event: KeyboardEvent): void {
     toggle();
   }
 }
+
+const rootStyle = tv({ base: 'flex flex-col items-start' });
 </script>
 
 <template>
   <div
-    class="flex flex-col items-start"
+    :class="rootStyle({ class: cn(classNames?.root ?? $attrs.class) })"
     :data-state="open ? 'open' : 'closed'"
     data-accordion
-    v-bind="$attrs"
+    v-bind="{ ...$attrs, class: undefined }"
   >
     <div
       v-if="$slots.header"
