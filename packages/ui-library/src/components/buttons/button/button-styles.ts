@@ -11,7 +11,7 @@ export const buttonStyles = tv({
       // utility — usually `relative` — and the consumer's `right-*`/`bottom-*`
       // end up as relative offsets, which misplaces FABs).
       'flex items-center justify-center gap-x-2',
-      'px-6 py-2.5 rounded transition-all',
+      'px-4 py-1.5 rounded transition-all',
       // `disabled` on the element covers two states: actually disabled and
       // loading (RuiButton sets `disabled = disabled || loading`). The
       // color/bg/text overrides for the "grey disabled" look live in the
@@ -28,13 +28,13 @@ export const buttonStyles = tv({
     variant: {
       default: {},
       outlined: {},
-      text: { root: 'px-3' },
+      text: { root: 'px-2' },
       fab: { root: 'rounded-full py-2' },
       list: { root: 'p-3 px-3 rounded-none w-full justify-start text-left', label: 'w-full' },
     },
     size: {
-      sm: { root: 'px-4 py-1.5 text-[.8125rem] leading-5' },
-      lg: { root: 'px-8 py-3 text-[1rem] leading-5' },
+      sm: { root: 'px-2.5 py-1 text-[.8125rem] leading-5' },
+      lg: { root: 'px-6 py-2 text-[1rem] leading-5' },
     },
     color: {
       grey: { root: 'bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-text ring-rui-grey-400 dark:bg-rui-grey-300 dark:text-rui-light-text dark:ring-rui-grey-600' },
@@ -117,8 +117,8 @@ export const buttonStyles = tv({
     { color: 'success', variant: 'outlined', class: { root: 'outline-rui-success/[0.5]' } },
 
     // === Size overrides per variant ===
-    { variant: 'text', size: 'sm', class: { root: 'px-2' } },
-    { variant: 'text', size: 'lg', class: { root: 'px-4' } },
+    { variant: 'text', size: 'sm', class: { root: 'px-1.5' } },
+    { variant: 'text', size: 'lg', class: { root: 'px-2.5' } },
     { variant: 'fab', size: 'sm', class: { root: 'py-1.5 px-2' } },
     { variant: 'fab', size: 'lg', class: { root: 'py-3' } },
     { variant: 'list', size: 'sm', class: { root: 'px-3 py-1' } },
