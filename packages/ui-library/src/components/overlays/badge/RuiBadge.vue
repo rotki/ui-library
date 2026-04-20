@@ -49,7 +49,7 @@ const badgeStyles = tv({
   slots: {
     wrapper: 'relative inline-block',
     badge: 'flex items-center justify-center text-xs font-medium absolute bg-transparent text-rui-light-text dark:text-rui-text',
-    content: 'flex items-center px-1',
+    content: 'flex items-center px-1.5',
   },
   variants: {
     color: {
@@ -159,7 +159,7 @@ const positionStyle = computed<Record<string, string>>(() => {
       >
         <span
           v-if="!dot"
-          :class="ui.content({ class: hasIconAndText ? 'px-2' : undefined })"
+          :class="ui.content({ class: hasIconAndText ? 'px-2.5' : undefined })"
         >
           <slot name="badge">
             {{ text }}
