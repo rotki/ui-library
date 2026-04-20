@@ -3,7 +3,7 @@ import RuiSkeletonBase, {
   type Props as SkeletonBaseProps,
 } from '@/components/loaders/RuiSkeletonBase.vue';
 import { SkeletonType } from '@/components/loaders/skeleton-type';
-import { tv } from '@/utils/tv';
+import { cn, tv } from '@/utils/tv';
 
 export interface Props extends SkeletonBaseProps {
   type?: SkeletonType;
@@ -34,7 +34,8 @@ const skeletonType = tv({
   },
 });
 
-const ui = computed<string>(() => skeletonType({ type }));
+const attrs = useAttrs();
+const ui = computed<string>(() => skeletonType({ type, class: cn(attrs.class) }));
 const isMultiLine = computed<boolean>(() => multiLineTypes.includes(type));
 </script>
 
@@ -43,12 +44,12 @@ const isMultiLine = computed<boolean>(() => multiLineTypes.includes(type));
     v-if="!isMultiLine"
     :class="ui"
     :rounded="rounded"
-    v-bind="$attrs"
+    v-bind="{ ...attrs, class: undefined }"
   />
   <div
     v-else
     :class="ui"
-    v-bind="$attrs"
+    v-bind="{ ...attrs, class: undefined }"
   >
     <RuiSkeletonBase
       v-if="type === SkeletonType.ARTICLE"
