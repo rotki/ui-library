@@ -12,8 +12,8 @@ export const buttonStyles = tv({
       // end up as relative offsets, which misplaces FABs).
       'flex items-center justify-center gap-x-2',
       'px-6 py-2.5 rounded transition-all',
-      '!disabled:bg-black/[.12] dark:!disabled:bg-white/[.12] !disabled:text-rui-text-disabled !disabled:active:text-rui-text-disabled',
-      '!focus-visible:ring-2',
+      'disabled:!bg-black/[.12] dark:disabled:!bg-white/[.12] disabled:!text-rui-text-disabled disabled:active:!text-rui-text-disabled disabled:cursor-not-allowed',
+      'focus-visible:!ring-2',
     ].join(' '),
     label: 'inline-block text-nowrap',
     spinner: 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
@@ -21,10 +21,10 @@ export const buttonStyles = tv({
   variants: {
     variant: {
       default: {},
-      outlined: { root: '!disabled:bg-transparent !disabled:active:bg-transparent disabled:outline-rui-text-disabled' },
-      text: { root: 'px-3 !disabled:bg-transparent !disabled:active:bg-transparent' },
+      outlined: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent disabled:outline-rui-text-disabled' },
+      text: { root: 'px-3 disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent' },
       fab: { root: 'rounded-full py-2' },
-      list: { root: 'p-3 px-3 rounded-none w-full justify-start text-left !disabled:bg-transparent !disabled:active:bg-transparent', label: 'w-full' },
+      list: { root: 'p-3 px-3 rounded-none w-full justify-start text-left disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent', label: 'w-full' },
     },
     size: {
       sm: { root: 'px-4 py-1.5 text-[.8125rem] leading-5' },
@@ -53,7 +53,7 @@ export const buttonStyles = tv({
       true: { root: 'relative space-x-0 [&>*:not([data-spinner])]:opacity-0 [&>*:not([data-spinner])]:invisible' },
     },
     hideFocusIndicator: {
-      true: { root: '!focus-visible:ring-0' },
+      true: { root: 'focus-visible:!ring-0' },
     },
   },
   compoundVariants: [
