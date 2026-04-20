@@ -136,29 +136,33 @@ const ui = computed<ReturnType<typeof menuStyles>>(() => menuStyles({
   dense,
 }));
 
+// NOTE: both computed functions must return the *same* object shape from
+// every branch — otherwise vue-tsc infers the slot's `attrs` type as a
+// discriminated union where each key is either "all defined" or "all
+// undefined", which breaks consumer code that types its own `attrs`
+// handler with individually-optional keys.
 const baseMenuAttrs = computed<BaseMenuAttrs>(() => {
-  if (disabled)
-    return {};
-
   const clickVal = get(click);
   return {
-    onMouseover: () => {
-      if (openOnHover)
-        onOpen();
-    },
-    onMouseleave: () => {
-      if (openOnHover && !clickVal)
-        onClose();
-    },
-  } satisfies BaseMenuAttrs;
+    onMouseover: disabled
+      ? undefined
+      : () => {
+          if (openOnHover)
+            onOpen();
+        },
+    onMouseleave: disabled
+      ? undefined
+      : () => {
+          if (openOnHover && !clickVal)
+            onClose();
+        },
+  };
 });
 
-const menuAttrs = computed<MenuAttrs>(() => {
-  if (disabled)
-    return {};
-
-  return { ...get(baseMenuAttrs), onClick: checkClick };
-});
+const menuAttrs = computed<MenuAttrs>(() => ({
+  ...get(baseMenuAttrs),
+  onClick: disabled ? undefined : checkClick,
+}));
 
 function focusOnContent() {
   const content = get(menuContent);
