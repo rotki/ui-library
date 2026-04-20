@@ -3,6 +3,7 @@ import type { ContextColorsType } from '@/consts/colors';
 import { type ButtonSize, ButtonVariant, FAB_DEFAULT_ELEVATION, getButtonSpinnerSize, NO_ELEVATION } from '@/components/buttons/button/button-props';
 import { buttonStyles } from '@/components/buttons/button/button-styles';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
+import { cn } from '@/utils/tv';
 
 export interface Props<T = undefined> {
   disabled?: boolean;
@@ -74,7 +75,7 @@ const ui = computed<ReturnType<typeof buttonStyles>>(() => buttonStyles({
   <Component
     :is="tag"
     :class="[
-      ui.root(),
+      ui.root({ class: cn($attrs.class) }),
       `shadow-${usedElevation}`,
     ]"
     :disabled="disabled || loading"
@@ -82,7 +83,7 @@ const ui = computed<ReturnType<typeof buttonStyles>>(() => buttonStyles({
     :data-variant="variant"
     :data-color="color"
     :data-active="active || undefined"
-    v-bind="$attrs"
+    v-bind="{ ...$attrs, class: undefined }"
     @click="emit('update:modelValue', btnValue)"
   >
     <slot name="prepend" />

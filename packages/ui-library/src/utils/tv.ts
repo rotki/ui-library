@@ -10,7 +10,7 @@
 
 import type { VueClassValue } from '@/types/class-value';
 import { createTV } from 'tailwind-variants';
-import { normalizeClass } from 'vue';
+import { type ClassValue, normalizeClass } from 'vue';
 
 const isAny: (v: string) => boolean = () => true;
 
@@ -37,11 +37,13 @@ export const tv = /* @__PURE__ */ createTV({
 });
 
 /**
- * Normalizes a VueClassValue (string | object | array) to a plain string
- * compatible with tailwind-variants' class parameter.
+ * Normalizes any Vue `:class` binding value (string, object, array, nullish
+ * or `false`) to a plain string compatible with tailwind-variants' `class`
+ * parameter. Accepts Vue's runtime `ClassValue` so call sites can pass
+ * `$attrs.class` directly without casting.
  */
-export function cn(value: VueClassValue | undefined): string | undefined {
-  if (value == null)
+export function cn(value: ClassValue | VueClassValue | undefined): string | undefined {
+  if (value == null || value === false)
     return undefined;
   if (typeof value === 'string')
     return value || undefined;
