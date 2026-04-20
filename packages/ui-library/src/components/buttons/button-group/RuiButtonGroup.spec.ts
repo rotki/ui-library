@@ -74,7 +74,7 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
     await wrapper.setProps({ size: 'sm' });
     expectWrapperToHaveClass(wrapper, 'button', /py-1/);
     await wrapper.setProps({ size: 'lg' });
-    expectWrapperToHaveClass(wrapper, 'button', /text-base/);
+    expect(wrapper.find('button').classes()).toContain('text-[1rem]');
   });
 
   it('should toggleable button group', async () => {

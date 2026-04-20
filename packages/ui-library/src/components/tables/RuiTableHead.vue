@@ -115,7 +115,7 @@ const tableHeadStyles = tv({
     thead: 'divide-y divide-black/[0.12] dark:divide-white/[0.12]',
     checkbox: 'px-2 w-[3.625rem] max-w-[3.625rem] [&_label]:ml-0',
     th: 'p-4',
-    columnText: 'text-rui-text dark:text-white font-medium text-sm leading-6',
+    columnText: 'text-rui-text dark:text-white font-medium text-[0.875rem] leading-6',
     sortButton: 'inline-flex group/sort',
     sortIcon: 'transition opacity-0 rotate-180 group-hover/sort:opacity-60',
     loaderRow: 'border-none',

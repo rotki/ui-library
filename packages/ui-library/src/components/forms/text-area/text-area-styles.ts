@@ -25,7 +25,7 @@ export const textAreaStyles = tv({
     ].join(' '),
     textareaSizer: 'invisible absolute top-0 left-0 w-full h-0 -z-10 pointer-events-none',
     label: [
-      'left-0 text-base pointer-events-none',
+      'left-0 text-[1rem] pointer-events-none',
       'absolute top-0 h-full w-full select-none',
       '[padding-left:calc(var(--x-padding,0px)+var(--prepend-w,0px))]',
       '[padding-right:calc(var(--x-padding,0px)+var(--append-w,0px))]',
@@ -93,7 +93,7 @@ export const textAreaStyles = tv({
     active: {
       true: {
         label: [
-          'text-xs leading-tight',
+          'text-[0.75rem] leading-tight',
           '[padding-left:var(--x-padding,0px)]',
           '[padding-right:var(--x-padding,0px)]',
         ].join(' '),
