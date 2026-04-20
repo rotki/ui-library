@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useTimeoutFn } from '@vueuse/core';
 import { transformPropsUnit } from '@/utils/helpers';
+import { cn, tv } from '@/utils/tv';
 
 export interface NotificationProps {
   timeout: number;
@@ -24,6 +25,8 @@ defineSlots<{
 const style = computed<{ width: string | undefined }>(() => ({
   width: transformPropsUnit(width),
 }));
+
+const rootStyle = tv({ base: 'top-2 right-2 fixed drop-shadow-lg rounded-sm z-50' });
 
 const { start, stop } = useTimeoutFn(() => {
   set(modelValue, false);
@@ -63,14 +66,13 @@ watchImmediate(modelValue, (display) => {
         v-if="modelValue"
         role="alert"
         aria-live="polite"
-        class="top-2 right-2 fixed drop-shadow-lg rounded-sm z-50"
-        :class="{
+        :class="rootStyle({ class: cn([$attrs.class, {
           'bg-white dark:bg-[#363636]': !theme,
           'bg-white text-rui-light-text': theme === 'light',
           'bg-[#363636] text-rui-dark-text': theme === 'dark',
-        }"
+        }]) })"
         :style="style"
-        v-bind="$attrs"
+        v-bind="{ ...$attrs, class: undefined }"
         @click="dismiss()"
       >
         <slot />
