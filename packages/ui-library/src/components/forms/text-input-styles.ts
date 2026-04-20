@@ -122,12 +122,14 @@ export const activatorStyles = tv({
     // Re-declare base slots for type inference
     fieldset: '',
     legend: '',
-    // Block-level `flex` (not inline-flex w-full) so a consumer-provided width
-    // class like `w-[20rem]` overrides the default fill-parent behavior. With
-    // `inline-flex w-full` the library's `w-full` conflicts with the consumer's
-    // width utility on the same element; cascade order decides the winner and
-    // the consumer class silently loses.
-    wrapper: 'flex flex-col',
+    // `w-full inline-flex flex-col` so the activator fills its parent
+    // regardless of context (block, flex-row, grid). A consumer-passed
+    // width utility like `w-[20rem]` would normally collide with `w-full`
+    // on the same element and lose to cascade order; RuiAutoComplete /
+    // RuiMenuSelect / RuiDateTimePicker route consumer classes through
+    // `ui.wrapper({ class })` so tailwind-variants' twMerge deduplicates
+    // and the consumer's width wins.
+    wrapper: 'w-full inline-flex flex-col',
     activator: [
       'group relative inline-flex items-center w-full',
       'outline-none focus:outline-none focus-within:outline-none cursor-pointer',

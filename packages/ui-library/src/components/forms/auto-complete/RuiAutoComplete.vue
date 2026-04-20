@@ -446,8 +446,8 @@ defineExpose({
 <template>
   <RuiMenu
     v-model="isOpen"
-    v-bind="{ ...getRootAttrs($attrs), ...menuOptions }"
-    :class="ui.wrapper()"
+    v-bind="{ ...getRootAttrs($attrs, []), ...menuOptions }"
+    :class="ui.wrapper({ class: cn($attrs.class) })"
     placement="bottom-start"
     :close-on-content-click="false"
     :full-width="true"

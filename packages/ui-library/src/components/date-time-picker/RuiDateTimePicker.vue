@@ -11,6 +11,7 @@ import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
+import { cn } from '@/utils/tv';
 
 type DateFormat = 'year-first' | 'month-first' | 'day-first';
 
@@ -288,8 +289,8 @@ function arrowClicked(event: MouseEvent): void {
 <template>
   <RuiMenu
     v-model="isOpen"
-    v-bind="getRootAttrs($attrs)"
-    :class="ui.wrapper()"
+    v-bind="getRootAttrs($attrs, [])"
+    :class="ui.wrapper({ class: cn($attrs.class) })"
     placement="bottom-start"
     :dense="dense"
     :hint="hint"
