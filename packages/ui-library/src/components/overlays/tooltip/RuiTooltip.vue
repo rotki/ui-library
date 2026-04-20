@@ -2,6 +2,7 @@
 import type { VueClassValue } from '@/types/class-value';
 import { type FloatingOptions, useFloating } from '@/composables/floating';
 import { type PopperOptions, toFloatingOptions } from '@/composables/popper';
+import { cn, tv } from '@/utils/tv';
 import { tooltipStyles } from './tooltip-styles';
 
 export interface RuiTooltipClassNames {
@@ -26,6 +27,7 @@ export interface Props {
 
 defineOptions({
   name: 'RuiTooltip',
+  inheritAttrs: false,
 });
 
 const {
@@ -45,6 +47,8 @@ defineSlots<{
   activator?: (props: { open: boolean; close: () => void }) => any;
   default?: () => any;
 }>();
+
+const rootStyle = tv({ base: 'relative inline-flex' });
 
 const tooltipId = useId();
 
@@ -87,7 +91,8 @@ defineExpose({
 <template>
   <div
     ref="activator"
-    class="relative inline-flex"
+    v-bind="{ ...$attrs, class: undefined }"
+    :class="rootStyle({ class: cn($attrs.class) })"
     :data-tooltip-disabled="disabled"
     :aria-describedby="!disabled && open ? tooltipId : undefined"
     @mouseover="onOpen()"
