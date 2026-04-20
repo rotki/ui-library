@@ -27,7 +27,7 @@ export interface UseAutoCompleteKeyboardNavigationDeps<TItem> {
 }
 
 export interface UseAutoCompleteKeyboardNavigationReturn {
-  focusedValueIndex: Readonly<Ref<number>>;
+  focusedValueIndex: Ref<number>;
   moveSelectedValueHighlight: (event: KeyboardEvent, next: boolean) => void;
   onEnter: (event: KeyboardEvent) => void;
   onTab: (event: KeyboardEvent) => void;
@@ -203,7 +203,8 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
   });
 
   return {
-    focusedValueIndex: readonly(focusedValueIndex),
+    // eslint-disable-next-line @rotki/composable-return-readonly -- written by focus.ts onInputFocused
+    focusedValueIndex,
     moveSelectedValueHighlight,
     onEnter,
     onInputDeletePressed,
