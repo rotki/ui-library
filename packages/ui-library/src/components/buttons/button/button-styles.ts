@@ -12,7 +12,13 @@ export const buttonStyles = tv({
       // end up as relative offsets, which misplaces FABs).
       'flex items-center justify-center gap-x-2',
       'px-6 py-2.5 rounded transition-all',
-      'disabled:!bg-black/[.12] dark:disabled:!bg-white/[.12] disabled:!text-rui-text-disabled disabled:active:!text-rui-text-disabled disabled:cursor-not-allowed',
+      // `disabled` on the element covers two states: actually disabled and
+      // loading (RuiButton sets `disabled = disabled || loading`). The
+      // color/bg/text overrides for the "grey disabled" look live in the
+      // `loading: false` compounds below so they skip firing on loading
+      // buttons — where we want the variant color to stay visible behind
+      // the spinner. Cursor stays here since both states are non-clickable.
+      'disabled:cursor-not-allowed',
       'focus-visible:!ring-2',
     ].join(' '),
     label: 'inline-block text-nowrap',
@@ -21,10 +27,10 @@ export const buttonStyles = tv({
   variants: {
     variant: {
       default: {},
-      outlined: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent disabled:outline-rui-text-disabled' },
-      text: { root: 'px-3 disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent' },
+      outlined: {},
+      text: { root: 'px-3' },
       fab: { root: 'rounded-full py-2' },
-      list: { root: 'p-3 px-3 rounded-none w-full justify-start text-left disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent', label: 'w-full' },
+      list: { root: 'p-3 px-3 rounded-none w-full justify-start text-left', label: 'w-full' },
     },
     size: {
       sm: { root: 'px-4 py-1.5 text-[.8125rem] leading-5' },
@@ -50,13 +56,23 @@ export const buttonStyles = tv({
       false: {},
     },
     loading: {
-      true: { root: 'relative space-x-0 [&>*:not([data-spinner])]:opacity-0 [&>*:not([data-spinner])]:invisible' },
+      true: { root: 'relative !cursor-progress space-x-0 [&>*:not([data-spinner])]:opacity-0 [&>*:not([data-spinner])]:invisible' },
+      false: {},
     },
     hideFocusIndicator: {
       true: { root: 'focus-visible:!ring-0' },
     },
   },
   compoundVariants: [
+    // === Disabled (not loading) appearance ===
+    // Applied only when `loading: false` so that loading buttons keep their
+    // variant color/outline visible behind the spinner; pure disabled buttons
+    // fade to the Material disabled palette.
+    { loading: false, class: { root: 'disabled:!bg-black/[.12] dark:disabled:!bg-white/[.12] disabled:!text-rui-text-disabled disabled:active:!text-rui-text-disabled' } },
+    { loading: false, variant: 'outlined', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent disabled:outline-rui-text-disabled' } },
+    { loading: false, variant: 'text', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent' } },
+    { loading: false, variant: 'list', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent' } },
+
     // === Grey color variants ===
     { color: 'grey', active: true, class: { root: 'bg-rui-grey-50' } },
     { color: 'grey', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-black/[.04] active:bg-black/10 dark:bg-transparent dark:active:bg-white/10 dark:hover:bg-white/[.04] dark:text-rui-text' } },
