@@ -199,6 +199,35 @@ export const OutlinedWithNoLabel = meta.story({
   },
 });
 
+export const DefaultWithNoLabel = meta.story({
+  args: {
+    placeholder: 'Placeholder',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'When the default (underlined) variant is used without a label, the wrapper drops the `pt-3` floating-label reserve. This keeps the underline at a consistent height with other controls in the same row — for example the dense variant lines up with RuiMenuSelect dense at 32px.',
+      },
+    },
+  },
+});
+
+export const DenseWithNoLabel = meta.story({
+  args: {
+    dense: true,
+    placeholder: 'Placeholder',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Dense + no label = 32px, matching `<RuiMenuSelect dense>`. Useful for inline controls such as table pagination where a text field sits next to a select.',
+      },
+    },
+  },
+});
+
 export const OutlinedWithVeryLongLabel = meta.story({
   args: {
     label:

@@ -125,6 +125,14 @@ export const textFieldStyles = tv({
     // --- Default variant ---
     { variant: 'default', focused: true, class: { label: 'after:scale-x-100' } },
     { variant: 'default', dense: true, class: { input: 'py-1', label: 'leading-[3.5]' } },
+    // Without a label, the wrapper's `pt-3` floating-label reserve serves no
+    // purpose and leaves the field ~4–12px taller than an equivalent
+    // RuiMenuSelect dense activator. Strip it and tighten the input padding
+    // so the underline sits at a matching baseline (40px non-dense, 32px
+    // dense) — these match min-h-10 and !min-h-8 of the menu-select
+    // activator.
+    { variant: 'default', noLabel: true, class: { wrapper: '!pt-0', input: 'py-2' } },
+    { variant: 'default', noLabel: true, dense: true, class: { input: 'py-1' } },
 
     // --- Filled variant ---
     { variant: 'filled', focused: true, class: { label: 'bg-black/[0.09] dark:bg-white/[0.13]' } },
