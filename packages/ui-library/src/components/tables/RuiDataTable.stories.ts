@@ -126,9 +126,9 @@ function render(args: DataTableProps) {
         v-model:pagination="pagination"
         v-model:sort="sort"
         :search="search"
-        v-model:expanded="args.expanded"
-        v-model:group="args.group"
-        v-model:collapsed="args.collapsed"
+        v-model:expanded="expanded"
+        v-model:group="group"
+        v-model:collapsed="collapsed"
         :row-attr="args.rowAttr"
         :rows="args.rows"
       >
@@ -161,72 +161,39 @@ function render(args: DataTableProps) {
   };
 }
 
-const data: User[] = [
-  {
-    date: '10.09.2023',
-    email: 'Lefteris@example.com',
-    id: 1,
-    name: 'Lefteris',
-    role: 'Member',
-    title: 'Director of Product',
-  },
-  {
-    date: '10.09.2023',
-    email: 'Kelsos@example.com',
-    id: 2,
-    name: 'Kelsos',
-    role: 'Member',
-    title: 'Director of Product',
-  },
-  {
-    date: '10.09.2023',
-    email: 'Yabir@example.com',
-    id: 3,
-    name: 'Yabir',
-    role: 'Member',
-    title: 'Director of Product',
-  },
-  {
-    date: '10.09.2023',
-    email: 'Luki@example.com',
-    id: 4,
-    name: 'Luki',
-    role: 'Member',
-    title: 'Director of Product',
-  },
-  {
-    date: '10.09.2023',
-    email: 'Celina@example.com',
-    id: 5,
-    name: 'Celina',
-    role: 'Member',
-    title: 'Director of Product',
-  },
-  {
-    date: '10.09.2023',
-    email: 'Joseph@example.com',
-    id: 6,
-    name: 'Joseph',
-    role: 'Member',
-    title: 'Director of Product',
-  },
-  {
-    date: '10.09.2023',
-    email: 'Dimitry@example.com',
-    id: 7,
-    name: 'Dimitry',
-    role: 'Member',
-    title: 'Director of Product',
-  },
-  ...[...new Array(43)].map((_, index) => ({
-    date: '10.09.2023',
-    email: 'lindsay.walton@example.com',
-    id: index + 8,
-    name: 'Lindsay Walton',
-    role: 'Member',
-    title: 'Front-end Developer',
-  })),
+const names: string[] = [
+  'Alice',
+  'Bob',
+  'Carol',
+  'Dave',
+  'Eve',
+  'Frank',
+  'Grace',
+  'Hank',
+  'Ivy',
+  'Jack',
 ];
+const titles: string[] = [
+  'Frontend Engineer',
+  'Backend Engineer',
+  'Designer',
+  'QA Engineer',
+  'DevOps Engineer',
+  'Product Manager',
+];
+const roles: string[] = ['Member', 'Member', 'Admin'];
+
+const data: User[] = Array.from({ length: 50 }, (_, i): User => {
+  const name = names[i % names.length]!;
+  return {
+    date: `${((i % 28) + 1).toString().padStart(2, '0')}.${((i % 12) + 1).toString().padStart(2, '0')}.2024`,
+    email: `${name.toLowerCase()}.${i + 1}@example.com`,
+    id: i + 1,
+    name,
+    role: roles[i % roles.length]!,
+    title: titles[i % titles.length]!,
+  };
+});
 
 const columns: TableColumn<User>[] = [
   {
@@ -318,7 +285,7 @@ export const Default = meta.story({
   },
   async play({ canvas, userEvent }) {
     await expect(canvas.getByRole('table')).toBeVisible();
-    await expect(canvas.getByText('Lefteris')).toBeVisible();
+    await expect(canvas.getByText('Alice')).toBeVisible();
     // Click sortable column header to toggle sort
     const fullNameHeader = canvas.getByRole('columnheader', { name: /Full name/ });
     await userEvent.click(fullNameHeader);
@@ -527,6 +494,94 @@ export const Grouped = meta.story({
     cols: columns,
     expanded: [],
     group: 'name',
+    modelValue: [],
+    outlined: true,
+    pagination: { limit: 5, page: 1, total: 50 },
+    rows: data,
+    sort: [
+      { column: 'name', direction: 'asc' },
+      { column: 'email', direction: 'asc' },
+    ],
+  },
+});
+
+export const WithSearch = meta.story({
+  args: {
+    cols: columns,
+    outlined: true,
+    pagination: { limit: 10, page: 1, total: 50 },
+    rows: data,
+    search: '',
+    sort: [{ column: 'name', direction: 'asc' }],
+  },
+});
+
+export const RoundedSmall = meta.story({
+  args: {
+    cols: columns,
+    outlined: true,
+    rows: data,
+    rounded: 'sm',
+  },
+});
+
+export const RoundedLarge = meta.story({
+  args: {
+    cols: columns,
+    outlined: true,
+    rows: data,
+    rounded: 'lg',
+  },
+});
+
+export const DisabledRows = meta.story({
+  args: {
+    cols: columns,
+    disabledRows: data.slice(0, 3),
+    modelValue: [],
+    outlined: true,
+    pagination: { limit: 10, page: 1, total: 50 },
+    rows: data,
+  },
+});
+
+export const MultiPageSelect = meta.story({
+  args: {
+    cols: columns,
+    modelValue: [],
+    multiPageSelect: true,
+    outlined: true,
+    pagination: { limit: 5, page: 1, total: 50 },
+    rows: data,
+  },
+});
+
+export const CustomItemClass = meta.story({
+  args: {
+    cols: columns,
+    itemClass: (item: User) => (item.name === 'Alice' ? 'bg-rui-success/10' : ''),
+    outlined: true,
+    rows: data,
+  },
+});
+
+export const HiddenHeaderAndFooter = meta.story({
+  args: {
+    cols: columns,
+    hideDefaultFooter: true,
+    hideDefaultHeader: true,
+    outlined: true,
+    rows: data,
+  },
+});
+
+export const GroupedWithExpandButtonEnd = meta.story({
+  args: {
+    collapsed: [],
+    cols: columns,
+    expanded: [],
+    group: 'name',
+    groupExpandButtonPosition: 'end',
     modelValue: [],
     outlined: true,
     pagination: { limit: 5, page: 1, total: 50 },

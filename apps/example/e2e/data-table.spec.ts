@@ -360,7 +360,7 @@ test.describe('data tables - search', () => {
     const initialRows = await table.locator('tbody tr:not([data-id="row-empty"])').count();
 
     // Type search query
-    await searchInput.fill('Chelsey');
+    await searchInput.fill('Alice');
 
     // Wait for filtering
     await page.waitForTimeout(100);
@@ -381,7 +381,7 @@ test.describe('data tables - search', () => {
     const initialRows = await table.locator('tbody tr:not([data-id="row-empty"])').count();
 
     // Search to filter
-    await searchInput.fill('Chelsey');
+    await searchInput.fill('Alice');
     await page.waitForTimeout(100);
 
     const filteredRows = await table.locator('tbody tr:not([data-id="row-empty"])').count();
@@ -404,13 +404,13 @@ test.describe('data tables - search', () => {
     await expect(table).toBeVisible();
 
     // Search with lowercase
-    await searchInput.fill('chelsey');
+    await searchInput.fill('alice');
     await page.waitForTimeout(100);
 
     const lowerCaseResults = await table.locator('tbody tr:not([data-id="row-empty"])').count();
 
     // Clear and search with uppercase
-    await searchInput.fill('CHELSEY');
+    await searchInput.fill('ALICE');
     await page.waitForTimeout(100);
 
     const upperCaseResults = await table.locator('tbody tr:not([data-id="row-empty"])').count();
@@ -452,7 +452,7 @@ test.describe('data tables - search', () => {
     await expect(rangeDisplay).toContainText('6 - 10');
 
     // Now search
-    await searchInput.fill('Chelsey');
+    await searchInput.fill('Alice');
     await page.waitForTimeout(100);
 
     // Page should reset to 1 (range should start from 1)
