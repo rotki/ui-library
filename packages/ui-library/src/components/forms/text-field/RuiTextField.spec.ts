@@ -75,10 +75,11 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
   it('should pass variant props', async () => {
     wrapper = createWrapper({
       props: {
+        label: 'Field',
         modelValue: '',
       },
     });
-    // Default variant has pt-3 on wrapper
+    // Default variant reserves pt-3 on the wrapper for the floating label.
     expectWrapperToHaveClass(wrapper, '[data-id=wrapper]', /pt-3/);
 
     await wrapper.setProps({ variant: 'filled' });
@@ -88,6 +89,35 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
     await wrapper.setProps({ variant: 'outlined' });
     expectWrapperNotToHaveClass(wrapper, '[data-id=wrapper]', /pt-3/);
     expect(wrapper.find('fieldset').exists()).toBeTruthy();
+  });
+
+  it('should drop the floating-label reserve when used without a label', async () => {
+    // Default variant reserves pt-3 on the wrapper for the floating label.
+    // When there is no label the compound variant adds `!pt-0`, which
+    // overrides pt-3 via !important. This makes a dense unlabeled field line
+    // up with a dense RuiMenuSelect activator (both 32px).
+    wrapper = createWrapper({
+      props: {
+        modelValue: '',
+      },
+    });
+    expectWrapperToHaveClass(wrapper, '[data-id=wrapper]', /!pt-0/);
+
+    // Non-dense noLabel uses py-2 on the input (40px total, matches
+    // MenuSelect's non-dense min-h-10).
+    expectWrapperToHaveClass(wrapper, 'input', /py-2/);
+
+    // Dense noLabel tightens the input further to py-1 (32px total,
+    // matches MenuSelect's dense `!min-h-8`).
+    await wrapper.setProps({ dense: true });
+    expectWrapperToHaveClass(wrapper, 'input', /py-1(?!\.)/);
+    expectWrapperToHaveClass(wrapper, '[data-id=wrapper]', /!pt-0/);
+
+    // Once a label is provided the !pt-0 override is dropped so the
+    // floating-label reserve behaves as before.
+    await wrapper.setProps({ label: 'Labelled', dense: false });
+    expectWrapperNotToHaveClass(wrapper, '[data-id=wrapper]', /!pt-0/);
+    expectWrapperToHaveClass(wrapper, '[data-id=wrapper]', /pt-3/);
   });
 
   it('should pass dense props', async () => {
