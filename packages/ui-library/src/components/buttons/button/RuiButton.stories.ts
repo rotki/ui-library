@@ -32,7 +32,7 @@ const meta = preview.meta({
     label: { control: 'text' },
     loading: { control: 'boolean', table: { category: 'State' } },
     rounded: { control: 'boolean', table: { category: 'Shape' } },
-    size: { control: 'select', options: ['medium', 'sm', 'lg'] },
+    size: { control: 'select', options: ['medium', 'sm', 'lg', 'xl'] },
     type: { control: 'select', options: ['button', 'submit'] },
     variant: {
       control: 'select',
@@ -106,6 +106,14 @@ export const PrimaryLarge = meta.story({
     color: 'primary',
     label: 'Large',
     size: 'lg',
+  },
+});
+
+export const PrimaryExtraLarge = meta.story({
+  args: {
+    color: 'primary',
+    label: 'Extra Large',
+    size: 'xl',
   },
 });
 

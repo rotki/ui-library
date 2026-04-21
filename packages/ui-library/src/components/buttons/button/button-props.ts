@@ -11,11 +11,12 @@ export type ButtonVariant = (typeof ButtonVariant)[keyof typeof ButtonVariant];
 export const ButtonSize = {
   sm: 'sm',
   lg: 'lg',
+  xl: 'xl',
 } as const;
 
 export type ButtonSize = (typeof ButtonSize)[keyof typeof ButtonSize];
 
-const SPINNER_SIZES: Record<string, number> = { sm: 18, lg: 26 };
+const SPINNER_SIZES: Record<string, number> = { sm: 18, lg: 26, xl: 28 };
 const DEFAULT_SPINNER_SIZE = 22;
 
 export const FAB_DEFAULT_ELEVATION = 6;

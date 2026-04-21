@@ -105,6 +105,10 @@ describe('components/buttons/button/RuiButton.vue', () => {
     expectWrapperToHaveClass(wrapper, 'button', /py-1/);
     await wrapper.setProps({ size: 'lg' });
     expect(wrapper.find('button').classes()).toContain('text-[1rem]');
+    await wrapper.setProps({ size: 'xl' });
+    expect(wrapper.find('button').classes()).toContain('text-[1rem]');
+    expectWrapperToHaveClass(wrapper, 'button', /py-2\.5/);
+    expectWrapperToHaveClass(wrapper, 'button', /leading-6/);
   });
 
   it('should pass elevation props and set to correct classes based on the state', async () => {

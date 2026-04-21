@@ -35,6 +35,7 @@ export const buttonStyles = tv({
     size: {
       sm: { root: 'px-2.5 py-1 text-[.8125rem] leading-5' },
       lg: { root: 'px-6 py-2 text-[1rem] leading-5' },
+      xl: { root: 'px-6 py-2.5 text-[1rem] leading-6' },
     },
     color: {
       grey: { root: 'bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-text ring-rui-grey-400 dark:bg-rui-grey-300 dark:text-rui-light-text dark:ring-rui-grey-600' },
