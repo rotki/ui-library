@@ -36,7 +36,7 @@ const paginationStyles = tv({
     wrapper: 'relative flex flex-wrap items-center justify-end gap-x-4 gap-y-0',
     limit: 'flex items-center space-x-2 text-caption',
     ranges: 'flex items-center space-x-2 text-caption pr-2',
-    pageInput: 'w-20',
+    pageInput: 'w-14 [&_input]:text-center',
     sectionLabel: 'text-rui-text-secondary whitespace-nowrap py-3',
     indicator: 'text-rui-text text-caption whitespace-nowrap',
     navigation: 'flex items-center',
@@ -119,14 +119,14 @@ function commitPageInput(): void {
         v-if="useInputJump"
         v-model="pageDraft"
         :disabled="loading"
-        :class="ui.pageInput()"
+        :class="[ui.pageInput()]"
+        class="[&_input]:!pr-0"
         type="number"
         min="1"
         :max="pages"
         inputmode="numeric"
         hide-details
         dense
-        variant="outlined"
         data-id="table-pagination-ranges-input"
         @blur="commitPageInput()"
         @keydown.enter="commitPageInput()"
