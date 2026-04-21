@@ -12,6 +12,10 @@ export const buttonStyles = tv({
       // end up as relative offsets, which misplaces FABs).
       'flex items-center justify-center gap-x-2',
       'px-4 py-1.5 rounded transition-all',
+      // Default (md) icon sizing for RuiIcons in button slots (prepend/append
+      // /default). Size variants below override this via `!` so the rule
+      // specificity wins regardless of CSS source order.
+      '[&_.rui-icon]:w-[1.125rem] [&_.rui-icon]:h-[1.125rem]',
       // `disabled` on the element covers two states: actually disabled and
       // loading (RuiButton sets `disabled = disabled || loading`). The
       // color/bg/text overrides for the "grey disabled" look live in the
@@ -33,9 +37,18 @@ export const buttonStyles = tv({
       list: { root: 'p-3 px-3 rounded-none w-full justify-start text-left', label: 'w-full' },
     },
     size: {
-      sm: { root: 'px-2.5 py-1 text-[.8125rem] leading-5' },
-      lg: { root: 'px-6 py-2 text-[1rem] leading-5' },
-      xl: { root: 'px-6 py-2.5 text-[1rem] leading-6' },
+      // Each size variant sets a matching descendant rule so RuiIcons in
+      // button slots (prepend/append/default) inherit a size proportional to
+      // the button's height. The `.rui-icon` class sits on the icon's <svg>
+      // and its `w-6 h-6` default (set by RuiIcon when no size prop is
+      // passed) is overridden here because the descendant selector is more
+      // specific. `!` guarantees size variants beat the md default baked
+      // into the base root regardless of CSS source order. Consumers can
+      // still force a specific icon size by passing the `size` prop on
+      // RuiIcon — that path stamps inline width/height which beats classes.
+      sm: { root: 'px-2.5 py-1 text-[.8125rem] leading-5 [&_.rui-icon]:!w-4 [&_.rui-icon]:!h-4' },
+      lg: { root: 'px-6 py-2 text-[1rem] leading-5 [&_.rui-icon]:!w-5 [&_.rui-icon]:!h-5' },
+      xl: { root: 'px-6 py-2.5 text-[1rem] leading-6 [&_.rui-icon]:!w-[1.375rem] [&_.rui-icon]:!h-[1.375rem]' },
     },
     color: {
       grey: { root: 'bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-text ring-rui-grey-400 dark:bg-rui-grey-300 dark:text-rui-light-text dark:ring-rui-grey-600' },

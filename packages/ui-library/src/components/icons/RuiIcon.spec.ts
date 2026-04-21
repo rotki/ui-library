@@ -91,6 +91,16 @@ describe('components/icons/RuiIcon.vue', () => {
     expect(wrapper.classes()).not.toContain('h-6');
   });
 
+  it('should always carry the rui-icon marker class for parent-driven sizing', () => {
+    wrapper = createWrapper({
+      props: {
+        name: 'lu-circle-arrow-down',
+      },
+    });
+
+    expect(wrapper.classes()).toContain('rui-icon');
+  });
+
   it('should render svg element', () => {
     wrapper = createWrapper({
       props: {

@@ -63,6 +63,7 @@ const components = computed<SvgComponent[] | undefined>(() => {
 <template>
   <svg
     aria-hidden="true"
+    class="rui-icon"
     :class="ui"
     :height="hasExplicitSize ? size : undefined"
     :width="hasExplicitSize ? size : undefined"

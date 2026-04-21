@@ -1,6 +1,7 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { expect } from 'storybook/test';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { contextColors } from '@/consts/colors';
 import preview from '~/.storybook/preview';
 
@@ -115,6 +116,47 @@ export const PrimaryExtraLarge = meta.story({
     label: 'Extra Large',
     size: 'xl',
   },
+});
+
+export const AutoSizedIcon = meta.story({
+  args: {
+    color: 'primary',
+    label: 'Refresh',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'When `<RuiIcon>` is used inside a button without an explicit `size` prop, it inherits a size proportional to the button height (sm → 1rem, md → 1.125rem, lg → 1.25rem, xl → 1.375rem). Passing `size` on `<RuiIcon>` still wins via inline width/height attributes.',
+      },
+    },
+  },
+  render: args => ({
+    components: { RuiButton, RuiIcon },
+    setup() {
+      return { args };
+    },
+    template: `
+      <div class="flex items-center gap-4">
+        <RuiButton v-bind="args" size="sm">
+          <template #prepend><RuiIcon name="lu-refresh-ccw" /></template>
+          Small
+        </RuiButton>
+        <RuiButton v-bind="args">
+          <template #prepend><RuiIcon name="lu-refresh-ccw" /></template>
+          Medium
+        </RuiButton>
+        <RuiButton v-bind="args" size="lg">
+          <template #prepend><RuiIcon name="lu-refresh-ccw" /></template>
+          Large
+        </RuiButton>
+        <RuiButton v-bind="args" size="xl">
+          <template #prepend><RuiIcon name="lu-refresh-ccw" /></template>
+          Extra Large
+        </RuiButton>
+      </div>
+    `,
+  }),
 });
 
 export const PrimaryLargeRounded = meta.story({

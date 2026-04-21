@@ -111,6 +111,22 @@ describe('components/buttons/button/RuiButton.vue', () => {
     expectWrapperToHaveClass(wrapper, 'button', /leading-6/);
   });
 
+  it('should scope descendant icon sizing to the button size', async () => {
+    wrapper = createWrapper();
+    // default (md) — 1.125rem icons, baked into the base root
+    expect(wrapper.find('button').classes()).toContain('[&_.rui-icon]:w-[1.125rem]');
+
+    // size variants use `!` so they beat the md baseline regardless of CSS source order
+    await wrapper.setProps({ size: 'sm' });
+    expect(wrapper.find('button').classes()).toContain('[&_.rui-icon]:!w-4');
+
+    await wrapper.setProps({ size: 'lg' });
+    expect(wrapper.find('button').classes()).toContain('[&_.rui-icon]:!w-5');
+
+    await wrapper.setProps({ size: 'xl' });
+    expect(wrapper.find('button').classes()).toContain('[&_.rui-icon]:!w-[1.375rem]');
+  });
+
   it('should pass elevation props and set to correct classes based on the state', async () => {
     wrapper = createWrapper();
     expectWrapperToHaveClass(wrapper, 'button', /shadow-0/);
