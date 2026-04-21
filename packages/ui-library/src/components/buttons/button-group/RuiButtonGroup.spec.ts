@@ -1,5 +1,6 @@
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
+import { h } from 'vue';
 import RuiButtonGroup from '@/components/buttons/button-group/RuiButtonGroup.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import {
@@ -75,6 +76,28 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
     expectWrapperToHaveClass(wrapper, 'button', /py-1/);
     await wrapper.setProps({ size: 'lg' });
     expect(wrapper.find('button').classes()).toContain('text-[1rem]');
+    await wrapper.setProps({ size: 'xl' });
+    expectWrapperToHaveClass(wrapper, 'button', /py-2\.5/);
+    expectWrapperToHaveClass(wrapper, 'button', /leading-6/);
+  });
+
+  it('should let child size override group size', () => {
+    // Group is lg but the first child explicitly sets sm; sm should win for that child only.
+    const wrapperWithOverride = mount(RuiButtonGroup, {
+      props: { size: 'lg' },
+      slots: {
+        default: [
+          h(RuiButton, { size: 'sm' }, () => 'sm'),
+          h(RuiButton, () => 'default'),
+        ],
+      },
+    });
+    const buttons = wrapperWithOverride.findAll('button');
+    // First button keeps sm
+    expect(buttons[0]!.classes()).toContain('py-1');
+    // Second button inherits group size lg
+    expect(buttons[1]!.classes()).toContain('text-[1rem]');
+    wrapperWithOverride.unmount();
   });
 
   it('should toggleable button group', async () => {

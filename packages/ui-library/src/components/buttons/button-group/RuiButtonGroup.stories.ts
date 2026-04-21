@@ -50,7 +50,7 @@ const meta = preview.meta({
     activeColor: { control: 'select', options: contextColors },
     color: { control: 'select', options: contextColors },
     gap: { control: 'select', options: ['md', 'sm', 'lg'] },
-    size: { control: 'select', options: ['md', 'sm', 'lg'] },
+    size: { control: 'select', options: ['md', 'sm', 'lg', 'xl'] },
     variant: {
       control: 'select',
       options: ['default', 'outlined', 'text'],
@@ -89,6 +89,24 @@ export const Primary = meta.story({
 export const SmallGap = meta.story({
   args: {
     gap: 'sm',
+  },
+});
+
+export const Small = meta.story({
+  args: {
+    size: 'sm',
+  },
+});
+
+export const Large = meta.story({
+  args: {
+    size: 'lg',
+  },
+});
+
+export const ExtraLarge = meta.story({
+  args: {
+    size: 'xl',
   },
 });
 

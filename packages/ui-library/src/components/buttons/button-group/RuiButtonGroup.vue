@@ -1,4 +1,5 @@
 <script lang="ts" generic="T = undefined" setup>
+import type { ButtonSize } from '@/components/buttons/button/button-props';
 import type { ContextColorsType } from '@/consts/colors';
 import { Fragment, isVNode } from 'vue';
 import { tv } from '@/utils/tv';
@@ -8,7 +9,7 @@ export interface Props {
   color?: ContextColorsType;
   activeColor?: ContextColorsType;
   variant?: 'default' | 'outlined' | 'text';
-  size?: 'sm' | 'lg';
+  size?: ButtonSize;
   gap?: 'sm' | 'md' | 'lg';
   required?: boolean;
   disabled?: boolean;
@@ -134,11 +135,17 @@ const children = computed<VNode[]>(() => {
     const active = isActive(value ?? i, selectedValue);
     const resolvedColor = active && activeColor ? activeColor : color;
 
+    // Only fall back to the group's size when the child did not set one itself.
+    // This lets consumers override size per-button while still benefiting from
+    // the group-level default.
+    const childSize = child.props?.size;
+
     child.props = {
       ...child.props,
       active,
       ...(disabled && { disabled: true }),
       ...(resolvedColor && { color: resolvedColor }),
+      ...(!childSize && size && { size }),
     };
 
     return child;
@@ -199,7 +206,6 @@ function onClick(id: T): void {
       v-for="(child, i) in children"
       :key="i"
       :class="ui.button()"
-      :size="size"
       :variant="variant"
       @update:model-value="onClick($event ?? i)"
     />
