@@ -14,7 +14,7 @@ defineOptions({
   name: 'RuiIcon',
 });
 
-const { name, size = 24, color } = defineProps<Props>();
+const { name, size, color } = defineProps<Props>();
 
 const { registeredIcons } = useIcons();
 
@@ -30,10 +30,18 @@ const iconStyles = tv({
       info: 'text-rui-info',
       success: 'text-rui-success',
     },
+    sized: {
+      // When no explicit size prop is set, fall back to Tailwind classes so a
+      // parent (e.g. RuiButton) can override the icon size via CSS without
+      // competing with inline width/height attributes.
+      false: 'w-6 h-6',
+      true: '',
+    },
   },
 });
 
-const ui = computed<string>(() => iconStyles({ color }));
+const hasExplicitSize = computed<boolean>(() => size !== undefined);
+const ui = computed<string>(() => iconStyles({ color, sized: get(hasExplicitSize) }));
 
 const isFill = computed<boolean>(() => name.endsWith('-fill'));
 
@@ -56,8 +64,8 @@ const components = computed<SvgComponent[] | undefined>(() => {
   <svg
     aria-hidden="true"
     :class="ui"
-    :height="size"
-    :width="size"
+    :height="hasExplicitSize ? size : undefined"
+    :width="hasExplicitSize ? size : undefined"
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
   >

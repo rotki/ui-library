@@ -63,4 +63,42 @@ export const PrimaryLarge = meta.story({
   },
 });
 
+export const CssSized = meta.story({
+  args: {
+    color: 'primary',
+    name: 'lu-arrow-down',
+    size: undefined,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'When the `size` prop is omitted, the icon falls back to `w-6 h-6` classes. Parents can override via CSS (e.g. wrapping in `<div class="w-4 h-4">` or applying `[&_svg]:w-5` on an ancestor).',
+      },
+    },
+  },
+  render: args => ({
+    components: { RuiIcon },
+    setup() {
+      return { args };
+    },
+    template: `
+      <div class="flex items-center gap-6">
+        <div class="flex flex-col items-center gap-1">
+          <RuiIcon v-bind="args" />
+          <span class="text-xs">default (24px)</span>
+        </div>
+        <div class="flex flex-col items-center gap-1">
+          <div class="w-4 h-4"><RuiIcon v-bind="args" class="w-full h-full" /></div>
+          <span class="text-xs">wrapper w-4 h-4</span>
+        </div>
+        <div class="flex flex-col items-center gap-1 [&_svg]:w-5 [&_svg]:h-5">
+          <RuiIcon v-bind="args" />
+          <span class="text-xs">ancestor [&_svg]:w-5</span>
+        </div>
+      </div>
+    `,
+  }),
+});
+
 export default meta;

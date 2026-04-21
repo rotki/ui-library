@@ -65,15 +65,30 @@ describe('components/icons/RuiIcon.vue', () => {
     expect(wrapper.classes()).toContain('text-rui-error');
   });
 
-  it('should use default size of 24', () => {
+  it('should default to w-6/h-6 without inline size attributes', () => {
     wrapper = createWrapper({
       props: {
         name: 'lu-circle-arrow-down',
       },
     });
 
-    expect(wrapper.attributes('width')).toMatch('24');
-    expect(wrapper.attributes('height')).toMatch('24');
+    // No inline width/height lets parent CSS override the size.
+    expect(wrapper.attributes('width')).toBeUndefined();
+    expect(wrapper.attributes('height')).toBeUndefined();
+    expect(wrapper.classes()).toContain('w-6');
+    expect(wrapper.classes()).toContain('h-6');
+  });
+
+  it('should drop the default sizing class when size prop is set', () => {
+    wrapper = createWrapper({
+      props: {
+        name: 'lu-circle-arrow-down',
+        size: 32,
+      },
+    });
+
+    expect(wrapper.classes()).not.toContain('w-6');
+    expect(wrapper.classes()).not.toContain('h-6');
   });
 
   it('should render svg element', () => {
