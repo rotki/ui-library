@@ -130,8 +130,9 @@ export function useAutoCompleteValue<TValue, TItem>(
     },
   });
 
-  // Sync search text when menu is closed and value changes
-  watch([modelValue, () => toValue(deps.isOpen)], () => {
+  // Watching `value` (not `modelValue`) so the search text resyncs once
+  // `options` arrives later and the lookup can finally resolve.
+  watch([value, () => toValue(deps.isOpen)], () => {
     if (toValue(deps.isOpen) || !toValue(deps.shouldApplyValueAsSearch))
       return;
 
