@@ -159,6 +159,91 @@ export const AutoSizedIcon = meta.story({
   }),
 });
 
+export const IconOnlySizes = meta.story({
+  args: {
+    color: 'primary',
+    variant: 'text',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Icon-only buttons (`icon` prop) land at the same height as text buttons of the matching `size` (sm 28px, md 32px, lg 36px, xl 44px) with a ~60–70% icon-to-box ratio.',
+      },
+    },
+  },
+  render: args => ({
+    components: { RuiButton, RuiIcon },
+    setup() {
+      return { args };
+    },
+    template: `
+      <div class="flex items-center gap-4">
+        <RuiButton v-bind="args" icon size="sm" aria-label="small">
+          <RuiIcon name="lu-settings" />
+        </RuiButton>
+        <RuiButton v-bind="args" icon aria-label="medium">
+          <RuiIcon name="lu-settings" />
+        </RuiButton>
+        <RuiButton v-bind="args" icon size="lg" aria-label="large">
+          <RuiIcon name="lu-settings" />
+        </RuiButton>
+        <RuiButton v-bind="args" icon size="xl" aria-label="extra large">
+          <RuiIcon name="lu-settings" />
+        </RuiButton>
+      </div>
+    `,
+  }),
+});
+
+export const IconOnlyVsText = meta.story({
+  args: {
+    color: 'primary',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Icon-only and text buttons at the same `size` render at matching heights, so they line up cleanly when mixed in a toolbar.',
+      },
+    },
+  },
+  render: args => ({
+    components: { RuiButton, RuiIcon },
+    setup() {
+      return { args };
+    },
+    template: `
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-3">
+          <RuiButton v-bind="args" size="sm">Small</RuiButton>
+          <RuiButton v-bind="args" variant="text" icon size="sm" aria-label="small icon">
+            <RuiIcon name="lu-ellipsis-vertical" />
+          </RuiButton>
+        </div>
+        <div class="flex items-center gap-3">
+          <RuiButton v-bind="args">Medium</RuiButton>
+          <RuiButton v-bind="args" variant="text" icon aria-label="medium icon">
+            <RuiIcon name="lu-ellipsis-vertical" />
+          </RuiButton>
+        </div>
+        <div class="flex items-center gap-3">
+          <RuiButton v-bind="args" size="lg">Large</RuiButton>
+          <RuiButton v-bind="args" variant="text" icon size="lg" aria-label="large icon">
+            <RuiIcon name="lu-ellipsis-vertical" />
+          </RuiButton>
+        </div>
+        <div class="flex items-center gap-3">
+          <RuiButton v-bind="args" size="xl">Extra Large</RuiButton>
+          <RuiButton v-bind="args" variant="text" icon size="xl" aria-label="xl icon">
+            <RuiIcon name="lu-ellipsis-vertical" />
+          </RuiButton>
+        </div>
+      </div>
+    `,
+  }),
+});
+
 export const PrimaryLargeRounded = meta.story({
   args: {
     color: 'primary',

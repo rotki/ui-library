@@ -63,7 +63,10 @@ export const buttonStyles = tv({
       true: { root: 'rounded-full' },
     },
     icon: {
-      true: { root: 'rounded-full px-3 py-3' },
+      // Padding and icon sizing live in the `icon + size` compound variants
+      // below so every size resolves to a height matching its text-button
+      // counterpart; this base only contributes the round shape.
+      true: { root: 'rounded-full' },
     },
     active: {
       true: {},
@@ -136,8 +139,24 @@ export const buttonStyles = tv({
     { variant: 'fab', size: 'sm', class: { root: 'py-1.5 px-2' } },
     { variant: 'fab', size: 'lg', class: { root: 'py-3' } },
     { variant: 'list', size: 'sm', class: { root: 'px-3 py-1' } },
-    { icon: true, size: 'sm', class: { root: 'px-1 py-1' } },
-    { icon: true, size: 'lg', class: { root: 'px-4 py-4' } },
+    // Icon-only button sizing — every size lands at the same height as the
+    // text button of the matching size, with a ~60–70% icon ratio (Material-3
+    // style). The `size` rule sizes icons to 16/20/22px for text-button
+    // prepend/append slots; here icon-only buttons get a larger glyph so they
+    // don't look lost in the square. All values use standard Tailwind tokens
+    // (rem-based): p-1 = 0.25rem, p-1.5 = 0.375rem, p-2 = 0.5rem; w-5/6/7 =
+    // 1.25/1.5/1.75rem. Prior `px-3 py-3` on icon base + `px-4 py-4` on lg
+    // compound produced 42px (md) and 52px (lg) squares that dwarfed
+    // neighboring text buttons in toolbars.
+    //
+    // md (default): p-1.5 + w-5  icon = 0.75 + 1.25 = 2rem   (32px)
+    // sm:           p-1   + w-5  icon = 0.5  + 1.25 = 1.75rem (28px)
+    // lg:           p-1.5 + w-6  icon = 0.75 + 1.5  = 2.25rem (36px)
+    // xl:           p-2   + w-7  icon = 1    + 1.75 = 2.75rem (44px)
+    { icon: true, class: { root: 'p-1.5 [&_.rui-icon]:!w-5 [&_.rui-icon]:!h-5' } },
+    { icon: true, size: 'sm', class: { root: 'p-1 [&_.rui-icon]:!w-5 [&_.rui-icon]:!h-5' } },
+    { icon: true, size: 'lg', class: { root: 'p-1.5 [&_.rui-icon]:!w-6 [&_.rui-icon]:!h-6' } },
+    { icon: true, size: 'xl', class: { root: 'p-2 [&_.rui-icon]:!w-7 [&_.rui-icon]:!h-7' } },
     { variant: 'fab', icon: true, size: 'sm', class: { root: 'px-2 py-2' } },
   ],
   compoundSlots: [
