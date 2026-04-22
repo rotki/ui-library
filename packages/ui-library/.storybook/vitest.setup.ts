@@ -1,11 +1,8 @@
-import * as a11yAddonAnnotations from '@storybook/addon-a11y/preview';
-import { setProjectAnnotations } from '@storybook/vue3-vite';
 import { afterEach } from 'vitest';
-import previewAnnotations from './preview';
 
-// @ts-expect-error definePreview() returns VuePreview which is not compatible with setProjectAnnotations types storybookjs/storybook issues 33057
-const annotations = setProjectAnnotations([a11yAddonAnnotations, previewAnnotations]);
-await annotations.beforeAll?.();
+// Since Storybook 10.3, @storybook/addon-vitest applies preview annotations
+// automatically; calling setProjectAnnotations here registers duplicate hooks
+// that were preventing the browser backend from shutting down cleanly on CI.
 
 // Clean up teleported elements (tooltips, menus, dialogs) that persist in document.body
 afterEach(() => {

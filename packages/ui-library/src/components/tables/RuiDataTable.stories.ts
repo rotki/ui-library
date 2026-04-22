@@ -285,7 +285,9 @@ export const Default = meta.story({
   },
   async play({ canvas, userEvent }) {
     await expect(canvas.getByRole('table')).toBeVisible();
-    await expect(canvas.getByText('Alice')).toBeVisible();
+    // The deterministic fixture cycles through 10 names over 50 rows, so
+    // "Alice" matches multiple cells — assert the first is visible.
+    await expect(canvas.getAllByText('Alice')[0]).toBeVisible();
     // Click sortable column header to toggle sort
     const fullNameHeader = canvas.getByRole('columnheader', { name: /Full name/ });
     await userEvent.click(fullNameHeader);

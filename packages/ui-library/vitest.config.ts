@@ -70,6 +70,7 @@ const vitestConfig = defineConfig({
           fileParallelism: false,
           testTimeout: 15_000,
           hookTimeout: 15_000,
+          closeTimeout: 30_000,
           retry: 2,
           exclude: ['**/stories/references/**'],
           setupFiles: ['./.storybook/vitest.setup.ts'],
