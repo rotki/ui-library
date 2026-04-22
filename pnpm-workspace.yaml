@@ -37,7 +37,6 @@ catalog:
   '@storybook/addon-vitest': 10.3.5
   '@storybook/vue3-vite': 10.3.5
   '@tsconfig/node24': 24.0.4
-  '@types/jsdom': 28.0.1
   '@types/node': 24.12.2
   '@types/tinycolor2': 1.4.6
   '@vitejs/plugin-vue': 6.0.6
@@ -60,7 +59,6 @@ catalog:
   fs-extra: 11.3.4
   happy-dom: 20.9.0
   husky: 9.1.7
-  jsdom: 28.1.0
   lint-staged: 16.4.0
   lucide: 0.577.0
   msw: 2.13.3
