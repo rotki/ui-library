@@ -102,6 +102,9 @@ describe('components/buttons/button/RuiButton.vue', () => {
 
   it('should pass size props', async () => {
     wrapper = createWrapper();
+    await wrapper.setProps({ size: 'xs' });
+    expect(wrapper.find('button').classes()).toContain('text-[.75rem]');
+    expect(wrapper.find('button').classes()).toContain('leading-4');
     await wrapper.setProps({ size: 'sm' });
     expectWrapperToHaveClass(wrapper, 'button', /py-1/);
     await wrapper.setProps({ size: 'lg' });
@@ -137,8 +140,8 @@ describe('components/buttons/button/RuiButton.vue', () => {
   // passing `size` on RuiIcon stamps an inline style on the svg, which
   // overrides the inherited value without needing !important.
   describe('icon size cascade inside button (issue #512)', () => {
-    const perSize = { sm: '![--rui-icon-size:1rem]', lg: '![--rui-icon-size:1.25rem]', xl: '![--rui-icon-size:1.375rem]' } as const;
-    for (const size of ['sm', 'lg', 'xl'] as const) {
+    const perSize = { xs: '![--rui-icon-size:0.75rem]', sm: '![--rui-icon-size:1rem]', lg: '![--rui-icon-size:1.25rem]', xl: '![--rui-icon-size:1.375rem]' } as const;
+    for (const size of ['xs', 'sm', 'lg', 'xl'] as const) {
       it(`should attach ${perSize[size]} when size is ${size}`, () => {
         wrapper = createWrapper({
           props: { size },
@@ -198,6 +201,11 @@ describe('components/buttons/button/RuiButton.vue', () => {
       });
       // md icon-only: 1.25rem glyph via compound variant
       expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1.25rem]');
+
+      await wrapper.setProps({ size: 'xs' });
+      // xs icon-only: 0.875rem glyph (14px) at 70% of a 1.25rem (20px) box.
+      expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:0.875rem]');
+      expect(wrapper.find('button').classes()).toContain('p-[0.1875rem]');
 
       await wrapper.setProps({ size: 'sm' });
       expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1.25rem]');

@@ -33,7 +33,7 @@ const meta = preview.meta({
     label: { control: 'text' },
     loading: { control: 'boolean', table: { category: 'State' } },
     rounded: { control: 'boolean', table: { category: 'Shape' } },
-    size: { control: 'select', options: ['medium', 'sm', 'lg', 'xl'] },
+    size: { control: 'select', options: ['medium', 'xs', 'sm', 'lg', 'xl'] },
     type: { control: 'select', options: ['button', 'submit'] },
     variant: {
       control: 'select',
@@ -127,7 +127,7 @@ export const AutoSizedIcon = meta.story({
     docs: {
       description: {
         story:
-          'When `<RuiIcon>` is used inside a button without an explicit `size` prop, it inherits a size proportional to the button height (sm → 1rem, md → 1.125rem, lg → 1.25rem, xl → 1.375rem). Sizing flows through the `--rui-icon-size` custom property: the button seeds it per size variant, and the icon reads it via `width: var(--rui-icon-size, 1.5rem)`. A consumer passing `size` on `<RuiIcon>` still wins because that path stamps an inline style on the svg itself (see `ConsumerIconSizeOverride`).',
+          'When `<RuiIcon>` is used inside a button without an explicit `size` prop, it inherits a size proportional to the button height (xs → 0.75rem, sm → 1rem, md → 1.125rem, lg → 1.25rem, xl → 1.375rem). Sizing flows through the `--rui-icon-size` custom property: the button seeds it per size variant, and the icon reads it via `width: var(--rui-icon-size, 1.5rem)`. A consumer passing `size` on `<RuiIcon>` still wins because that path stamps an inline style on the svg itself (see `ConsumerIconSizeOverride`).',
       },
     },
   },
@@ -138,6 +138,10 @@ export const AutoSizedIcon = meta.story({
     },
     template: `
       <div class="flex items-center gap-4">
+        <RuiButton v-bind="args" size="xs">
+          <template #prepend><RuiIcon name="lu-refresh-ccw" /></template>
+          Extra Small
+        </RuiButton>
         <RuiButton v-bind="args" size="sm">
           <template #prepend><RuiIcon name="lu-refresh-ccw" /></template>
           Small
@@ -168,7 +172,7 @@ export const IconOnlySizes = meta.story({
     docs: {
       description: {
         story:
-          'Icon-only buttons (`icon` prop) land at the same height as text buttons of the matching `size` (sm 28px, md 32px, lg 36px, xl 44px) with a ~60–70% icon-to-box ratio.',
+          'Icon-only buttons (`icon` prop) land at the same height as text buttons of the matching `size` (xs 20px, sm 28px, md 32px, lg 36px, xl 44px) with a ~60–70% icon-to-box ratio. `xs` is aimed at inline contexts like copy buttons or badge actions where a 28px `sm` would still feel heavy.',
       },
     },
   },
@@ -179,6 +183,9 @@ export const IconOnlySizes = meta.story({
     },
     template: `
       <div class="flex items-center gap-4">
+        <RuiButton v-bind="args" icon size="xs" aria-label="extra small">
+          <RuiIcon name="lu-settings" />
+        </RuiButton>
         <RuiButton v-bind="args" icon size="sm" aria-label="small">
           <RuiIcon name="lu-settings" />
         </RuiButton>
@@ -215,6 +222,12 @@ export const IconOnlyVsText = meta.story({
     },
     template: `
       <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-3">
+          <RuiButton v-bind="args" size="xs">Extra Small</RuiButton>
+          <RuiButton v-bind="args" variant="text" icon size="xs" aria-label="xs icon">
+            <RuiIcon name="lu-ellipsis-vertical" />
+          </RuiButton>
+        </div>
         <div class="flex items-center gap-3">
           <RuiButton v-bind="args" size="sm">Small</RuiButton>
           <RuiButton v-bind="args" variant="text" icon size="sm" aria-label="small icon">
@@ -253,7 +266,7 @@ export const ConsumerIconSizeOverride = meta.story({
     docs: {
       description: {
         story:
-          'A `size` prop on `<RuiIcon>` overrides the button-driven glyph size. The icon stamps `style="--rui-icon-size: <n>px"` on its own svg, which beats the value inherited from the button (inline style wins over any inherited custom property, including ones flagged `!important` on an ancestor). This is the case from rotki/ui-library#512 — before the fix, the icon-library\'s `!w-X` descendant rule always won and the `size` prop was a no-op inside any button.',
+          'A `size` prop on `<RuiIcon>` overrides the button-driven glyph size. The icon stamps `style="--rui-icon-size: <n>px"` on its own svg, which beats the value inherited from the button (inline style wins over any inherited custom property, including ones flagged `!important` on an ancestor). This is the case from rotki/ui-library#512 — before the fix, the library\'s `!w-X` descendant rule always won and the `size` prop was a no-op inside any button. For inline "tiny button" cases (copy buttons, badge actions), reach for `size="xs"` first; use the icon-level override only when you specifically need a non-default ratio inside a given button size.',
       },
     },
   },
@@ -264,6 +277,12 @@ export const ConsumerIconSizeOverride = meta.story({
     },
     template: `
       <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-4">
+          <RuiButton v-bind="args" icon size="xs" aria-label="xs icon-only copy">
+            <RuiIcon name="lu-copy" />
+          </RuiButton>
+          <span class="text-rui-text-secondary text-sm">xs icon-only (20px box, 14px glyph) — preferred for inline copy / badge actions instead of overriding the glyph inside a larger button.</span>
+        </div>
         <div class="flex items-center gap-4">
           <RuiButton v-bind="args" icon size="sm" aria-label="default sm icon-only">
             <RuiIcon name="lu-copy" />
@@ -312,6 +331,10 @@ export const ListVariantWithIcons = meta.story({
     },
     template: `
       <div class="w-64 border border-rui-grey-200 dark:border-rui-grey-800 rounded-md overflow-hidden divide-y divide-rui-grey-200 dark:divide-rui-grey-800">
+        <RuiButton v-bind="args" size="xs">
+          <template #prepend><RuiIcon name="lu-settings" /></template>
+          Extra small row
+        </RuiButton>
         <RuiButton v-bind="args" size="sm">
           <template #prepend><RuiIcon name="lu-settings" /></template>
           Small row

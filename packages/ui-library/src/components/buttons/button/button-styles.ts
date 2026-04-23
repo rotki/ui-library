@@ -47,6 +47,7 @@ export const buttonStyles = tv({
       // base root regardless of CSS source order. A consumer passing `size`
       // on RuiIcon still wins: that path stamps an inline style on the svg
       // element itself, which beats the inherited value from the button.
+      xs: { root: 'px-2 py-[0.125rem] text-[.75rem] leading-4 ![--rui-icon-size:0.75rem]' },
       sm: { root: 'px-2.5 py-1 text-[.8125rem] leading-5 ![--rui-icon-size:1rem]' },
       lg: { root: 'px-6 py-2 text-[1rem] leading-5 ![--rui-icon-size:1.25rem]' },
       xl: { root: 'px-6 py-2.5 text-[1rem] leading-6 ![--rui-icon-size:1.375rem]' },
@@ -135,26 +136,30 @@ export const buttonStyles = tv({
     { color: 'success', variant: 'outlined', class: { root: 'outline-rui-success/[0.5]' } },
 
     // === Size overrides per variant ===
+    { variant: 'text', size: 'xs', class: { root: 'px-1' } },
     { variant: 'text', size: 'sm', class: { root: 'px-1.5' } },
     { variant: 'text', size: 'lg', class: { root: 'px-2.5' } },
+    { variant: 'fab', size: 'xs', class: { root: 'py-1 px-1' } },
     { variant: 'fab', size: 'sm', class: { root: 'py-1.5 px-2' } },
     { variant: 'fab', size: 'lg', class: { root: 'py-3' } },
+    { variant: 'list', size: 'xs', class: { root: 'px-3 py-0.5' } },
     { variant: 'list', size: 'sm', class: { root: 'px-3 py-1' } },
     // Icon-only button sizing — every size lands at the same height as the
     // text button of the matching size, with a ~60–70% icon ratio (Material-3
-    // style). The `size` rule sizes icons to 16/20/22px for text-button
+    // style). The `size` rule sizes icons to 12/16/20/22px for text-button
     // prepend/append slots; here icon-only buttons get a larger glyph so they
-    // don't look lost in the square. All values use standard Tailwind tokens
-    // (rem-based): p-1 = 0.25rem, p-1.5 = 0.375rem, p-2 = 0.5rem; w-5/6/7 =
-    // 1.25/1.5/1.75rem. Prior `px-3 py-3` on icon base + `px-4 py-4` on lg
-    // compound produced 42px (md) and 52px (lg) squares that dwarfed
-    // neighboring text buttons in toolbars.
+    // don't look lost in the square. Values are rem-based throughout: p-1 =
+    // 0.25rem, p-1.5 = 0.375rem, p-2 = 0.5rem; glyph sizes use rem literals.
+    // xs uses an arbitrary 0.1875rem (3px) padding — no Tailwind token hits
+    // it cleanly — to keep the 70% icon ratio with a 14px glyph.
     //
-    // md (default): p-1.5 + w-5  icon = 0.75 + 1.25 = 2rem   (32px)
-    // sm:           p-1   + w-5  icon = 0.5  + 1.25 = 1.75rem (28px)
-    // lg:           p-1.5 + w-6  icon = 0.75 + 1.5  = 2.25rem (36px)
-    // xl:           p-2   + w-7  icon = 1    + 1.75 = 2.75rem (44px)
+    // xs:           p-[0.1875rem] + 0.875rem icon = 0.375 + 0.875 = 1.25rem (20px) — 70% ratio
+    // sm:           p-1           + 1.25rem icon  = 0.5   + 1.25  = 1.75rem (28px)
+    // md (default): p-1.5         + 1.25rem icon  = 0.75  + 1.25  = 2rem    (32px)
+    // lg:           p-1.5         + 1.5rem icon   = 0.75  + 1.5   = 2.25rem (36px)
+    // xl:           p-2           + 1.75rem icon  = 1     + 1.75  = 2.75rem (44px)
     { icon: true, class: { root: 'p-1.5 ![--rui-icon-size:1.25rem]' } },
+    { icon: true, size: 'xs', class: { root: 'p-[0.1875rem] ![--rui-icon-size:0.875rem]' } },
     { icon: true, size: 'sm', class: { root: 'p-1 ![--rui-icon-size:1.25rem]' } },
     { icon: true, size: 'lg', class: { root: 'p-1.5 ![--rui-icon-size:1.5rem]' } },
     { icon: true, size: 'xl', class: { root: 'p-2 ![--rui-icon-size:1.75rem]' } },
