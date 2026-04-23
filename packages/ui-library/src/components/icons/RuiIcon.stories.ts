@@ -73,7 +73,7 @@ export const CssSized = meta.story({
     docs: {
       description: {
         story:
-          'When the `size` prop is omitted, the icon falls back to `w-6 h-6` classes. Parents can override via CSS (e.g. wrapping in `<div class="w-4 h-4">` or applying `[&_svg]:w-5` on an ancestor).',
+          'When the `size` prop is omitted, the icon resolves its width/height through `var(--rui-icon-size, 1.5rem)`. A parent (like `RuiButton`) can shrink every icon it contains by setting `--rui-icon-size`; supplying `size` on the icon instead stamps an inline style on the svg, which wins for that icon specifically.',
       },
     },
   },
