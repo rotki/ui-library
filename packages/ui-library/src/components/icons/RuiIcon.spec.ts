@@ -32,7 +32,7 @@ describe('components/icons/RuiIcon.vue', () => {
     expect(wrapper.attributes('aria-hidden')).toBe('true');
   });
 
-  it('should change size via size prop', async () => {
+  it('should drive size via --rui-icon-size inline style when size prop is set', async () => {
     wrapper = createWrapper({
       props: {
         name: 'lu-circle-arrow-down',
@@ -40,12 +40,19 @@ describe('components/icons/RuiIcon.vue', () => {
       },
     });
 
-    expect(wrapper.attributes('width')).toMatch('32');
-    expect(wrapper.attributes('height')).toMatch('32');
+    // Numeric sizes are normalized to px so the custom property has a valid
+    // CSS length for the svg's `width: var(--rui-icon-size, 1.5rem)` class.
+    expect(wrapper.attributes('style')).toContain('--rui-icon-size: 32px');
+    // Presentation attrs are intentionally gone — they had specificity 0 and
+    // lost the cascade inside RuiButton (see rotki/ui-library#512).
+    expect(wrapper.attributes('width')).toBeUndefined();
+    expect(wrapper.attributes('height')).toBeUndefined();
 
     await wrapper.setProps({ size: 48 });
-    expect(wrapper.attributes('width')).toMatch('48');
-    expect(wrapper.attributes('height')).toMatch('48');
+    expect(wrapper.attributes('style')).toContain('--rui-icon-size: 48px');
+
+    await wrapper.setProps({ size: '1.25rem' });
+    expect(wrapper.attributes('style')).toContain('--rui-icon-size: 1.25rem');
   });
 
   it('should apply color classes', async () => {
@@ -65,21 +72,22 @@ describe('components/icons/RuiIcon.vue', () => {
     expect(wrapper.classes()).toContain('text-rui-error');
   });
 
-  it('should default to w-6/h-6 without inline size attributes', () => {
+  it('should size via --rui-icon-size with a 1.5rem fallback and no inline style', () => {
     wrapper = createWrapper({
       props: {
         name: 'lu-circle-arrow-down',
       },
     });
 
-    // No inline width/height lets parent CSS override the size.
-    expect(wrapper.attributes('width')).toBeUndefined();
-    expect(wrapper.attributes('height')).toBeUndefined();
-    expect(wrapper.classes()).toContain('w-6');
-    expect(wrapper.classes()).toContain('h-6');
+    // No size prop → no inline `--rui-icon-size` → the var() fallback of
+    // 1.5rem drives width/height. A parent (e.g. RuiButton) can still inject
+    // `--rui-icon-size` to shrink the icon in lockstep with its own size.
+    expect(wrapper.attributes('style')).toBeUndefined();
+    expect(wrapper.classes()).toContain('w-[var(--rui-icon-size,1.5rem)]');
+    expect(wrapper.classes()).toContain('h-[var(--rui-icon-size,1.5rem)]');
   });
 
-  it('should drop the default sizing class when size prop is set', () => {
+  it('should keep the var-driven sizing classes when size prop is set', () => {
     wrapper = createWrapper({
       props: {
         name: 'lu-circle-arrow-down',
@@ -87,8 +95,9 @@ describe('components/icons/RuiIcon.vue', () => {
       },
     });
 
-    expect(wrapper.classes()).not.toContain('w-6');
-    expect(wrapper.classes()).not.toContain('h-6');
+    // The classes stay; the size prop just changes the custom property.
+    expect(wrapper.classes()).toContain('w-[var(--rui-icon-size,1.5rem)]');
+    expect(wrapper.classes()).toContain('h-[var(--rui-icon-size,1.5rem)]');
   });
 
   it('should always carry the rui-icon marker class for parent-driven sizing', () => {

@@ -127,7 +127,7 @@ export const AutoSizedIcon = meta.story({
     docs: {
       description: {
         story:
-          'When `<RuiIcon>` is used inside a button without an explicit `size` prop, it inherits a size proportional to the button height (sm → 1rem, md → 1.125rem, lg → 1.25rem, xl → 1.375rem). Passing `size` on `<RuiIcon>` still wins via inline width/height attributes.',
+          'When `<RuiIcon>` is used inside a button without an explicit `size` prop, it inherits a size proportional to the button height (sm → 1rem, md → 1.125rem, lg → 1.25rem, xl → 1.375rem). Sizing flows through the `--rui-icon-size` custom property: the button seeds it per size variant, and the icon reads it via `width: var(--rui-icon-size, 1.5rem)`. A consumer passing `size` on `<RuiIcon>` still wins because that path stamps an inline style on the svg itself (see `ConsumerIconSizeOverride`).',
       },
     },
   },
@@ -239,6 +239,99 @@ export const IconOnlyVsText = meta.story({
             <RuiIcon name="lu-ellipsis-vertical" />
           </RuiButton>
         </div>
+      </div>
+    `,
+  }),
+});
+
+export const ConsumerIconSizeOverride = meta.story({
+  args: {
+    color: 'primary',
+    variant: 'text',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A `size` prop on `<RuiIcon>` overrides the button-driven glyph size. The icon stamps `style="--rui-icon-size: <n>px"` on its own svg, which beats the value inherited from the button (inline style wins over any inherited custom property, including ones flagged `!important` on an ancestor). This is the case from rotki/ui-library#512 — before the fix, the icon-library\'s `!w-X` descendant rule always won and the `size` prop was a no-op inside any button.',
+      },
+    },
+  },
+  render: args => ({
+    components: { RuiButton, RuiIcon },
+    setup() {
+      return { args };
+    },
+    template: `
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-4">
+          <RuiButton v-bind="args" icon size="sm" aria-label="default sm icon-only">
+            <RuiIcon name="lu-copy" />
+          </RuiButton>
+          <RuiButton v-bind="args" icon size="sm" aria-label="overridden sm icon-only">
+            <RuiIcon name="lu-copy" :size="14" />
+          </RuiButton>
+          <span class="text-rui-text-secondary text-sm">sm icon-only button — default 20px glyph vs. consumer-forced 14px</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <RuiButton v-bind="args" size="lg">
+            <template #prepend><RuiIcon name="lu-plus" /></template>
+            Default
+          </RuiButton>
+          <RuiButton v-bind="args" size="lg">
+            <template #prepend><RuiIcon name="lu-plus" :size="12" /></template>
+            Tiny icon
+          </RuiButton>
+          <RuiButton v-bind="args" size="lg">
+            <template #prepend><RuiIcon name="lu-plus" :size="24" /></template>
+            Oversized icon
+          </RuiButton>
+        </div>
+      </div>
+    `,
+  }),
+});
+
+export const ListVariantWithIcons = meta.story({
+  args: {
+    color: 'primary',
+    variant: 'list',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'List-variant buttons (used inside menus) keep the same icon-size contract as every other variant: the glyph scales in lockstep with the button `size`, and a consumer-supplied `size` on `<RuiIcon>` still wins. Use this story as the visual baseline for text-baseline alignment against the icon — rows should center cleanly without clipping or drift.',
+      },
+    },
+  },
+  render: args => ({
+    components: { RuiButton, RuiIcon },
+    setup() {
+      return { args };
+    },
+    template: `
+      <div class="w-64 border border-rui-grey-200 dark:border-rui-grey-800 rounded-md overflow-hidden divide-y divide-rui-grey-200 dark:divide-rui-grey-800">
+        <RuiButton v-bind="args" size="sm">
+          <template #prepend><RuiIcon name="lu-settings" /></template>
+          Small row
+        </RuiButton>
+        <RuiButton v-bind="args">
+          <template #prepend><RuiIcon name="lu-settings" /></template>
+          Medium row
+        </RuiButton>
+        <RuiButton v-bind="args" size="lg">
+          <template #prepend><RuiIcon name="lu-settings" /></template>
+          Large row
+        </RuiButton>
+        <RuiButton v-bind="args" size="xl">
+          <template #prepend><RuiIcon name="lu-settings" /></template>
+          Extra large row
+        </RuiButton>
+        <RuiButton v-bind="args">
+          <template #prepend><RuiIcon name="lu-settings" :size="12" /></template>
+          Medium row with forced 12px icon
+        </RuiButton>
       </div>
     `,
   }),

@@ -21,6 +21,7 @@ const { registeredIcons } = useIcons();
 type SvgComponent = [tag: string, attrs: Record<string, string>];
 
 const iconStyles = tv({
+  base: 'w-[var(--rui-icon-size,1.5rem)] h-[var(--rui-icon-size,1.5rem)]',
   variants: {
     color: {
       primary: 'text-rui-primary',
@@ -30,18 +31,22 @@ const iconStyles = tv({
       info: 'text-rui-info',
       success: 'text-rui-success',
     },
-    sized: {
-      // When no explicit size prop is set, fall back to Tailwind classes so a
-      // parent (e.g. RuiButton) can override the icon size via CSS without
-      // competing with inline width/height attributes.
-      false: 'w-6 h-6',
-      true: '',
-    },
   },
 });
 
 const hasExplicitSize = computed<boolean>(() => size !== undefined);
-const ui = computed<string>(() => iconStyles({ color, sized: get(hasExplicitSize) }));
+const ui = computed<string>(() => iconStyles({ color }));
+
+// Render the `size` prop as an inline CSS custom property on the svg. Because
+// inline style wins against any inherited value for the same property on this
+// element, the consumer-supplied size beats the button's `--rui-icon-size`
+// assignment without needing !important. Numbers default to pixel units.
+const sizeStyle = computed<Record<string, string> | undefined>(() => {
+  if (!get(hasExplicitSize))
+    return undefined;
+  const value = typeof size === 'number' ? `${size}px` : String(size);
+  return { '--rui-icon-size': value };
+});
 
 const isFill = computed<boolean>(() => name.endsWith('-fill'));
 
@@ -65,8 +70,7 @@ const components = computed<SvgComponent[] | undefined>(() => {
     aria-hidden="true"
     class="rui-icon"
     :class="ui"
-    :height="hasExplicitSize ? size : undefined"
-    :width="hasExplicitSize ? size : undefined"
+    :style="sizeStyle"
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
   >

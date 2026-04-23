@@ -12,10 +12,13 @@ export const buttonStyles = tv({
       // end up as relative offsets, which misplaces FABs).
       'flex items-center justify-center gap-x-2',
       'px-4 py-1.5 rounded transition-all',
-      // Default (md) icon sizing for RuiIcons in button slots (prepend/append
-      // /default). Size variants below override this via `!` so the rule
-      // specificity wins regardless of CSS source order.
-      '[&_.rui-icon]:w-[1.125rem] [&_.rui-icon]:h-[1.125rem]',
+      // Default (md) icon sizing is driven by a CSS custom property so that
+      // RuiIcon's `size` prop (stamped as inline `style="--rui-icon-size"` on
+      // the svg) can override it cleanly. Size variants below redefine the
+      // property with `!` so they beat this baseline on the same element;
+      // inline style on the svg then beats the inherited value when a
+      // consumer supplies their own size. See rotki/ui-library#512.
+      '[--rui-icon-size:1.125rem]',
       // `disabled` on the element covers two states: actually disabled and
       // loading (RuiButton sets `disabled = disabled || loading`). The
       // color/bg/text overrides for the "grey disabled" look live in the
@@ -37,18 +40,16 @@ export const buttonStyles = tv({
       list: { root: 'p-3 px-3 rounded-none w-full justify-start text-left', label: 'w-full' },
     },
     size: {
-      // Each size variant sets a matching descendant rule so RuiIcons in
-      // button slots (prepend/append/default) inherit a size proportional to
-      // the button's height. The `.rui-icon` class sits on the icon's <svg>
-      // and its `w-6 h-6` default (set by RuiIcon when no size prop is
-      // passed) is overridden here because the descendant selector is more
-      // specific. `!` guarantees size variants beat the md default baked
-      // into the base root regardless of CSS source order. Consumers can
-      // still force a specific icon size by passing the `size` prop on
-      // RuiIcon — that path stamps inline width/height which beats classes.
-      sm: { root: 'px-2.5 py-1 text-[.8125rem] leading-5 [&_.rui-icon]:!w-4 [&_.rui-icon]:!h-4' },
-      lg: { root: 'px-6 py-2 text-[1rem] leading-5 [&_.rui-icon]:!w-5 [&_.rui-icon]:!h-5' },
-      xl: { root: 'px-6 py-2.5 text-[1rem] leading-6 [&_.rui-icon]:!w-[1.375rem] [&_.rui-icon]:!h-[1.375rem]' },
+      // Each size variant redefines `--rui-icon-size` on the button so the
+      // value inherits into RuiIcons in button slots (prepend/append/default)
+      // and drives their `width: var(--rui-icon-size, 1.5rem)` class. `!` on
+      // the arbitrary property makes the variant beat the md baseline in the
+      // base root regardless of CSS source order. A consumer passing `size`
+      // on RuiIcon still wins: that path stamps an inline style on the svg
+      // element itself, which beats the inherited value from the button.
+      sm: { root: 'px-2.5 py-1 text-[.8125rem] leading-5 ![--rui-icon-size:1rem]' },
+      lg: { root: 'px-6 py-2 text-[1rem] leading-5 ![--rui-icon-size:1.25rem]' },
+      xl: { root: 'px-6 py-2.5 text-[1rem] leading-6 ![--rui-icon-size:1.375rem]' },
     },
     color: {
       grey: { root: 'bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-text ring-rui-grey-400 dark:bg-rui-grey-300 dark:text-rui-light-text dark:ring-rui-grey-600' },
@@ -153,10 +154,10 @@ export const buttonStyles = tv({
     // sm:           p-1   + w-5  icon = 0.5  + 1.25 = 1.75rem (28px)
     // lg:           p-1.5 + w-6  icon = 0.75 + 1.5  = 2.25rem (36px)
     // xl:           p-2   + w-7  icon = 1    + 1.75 = 2.75rem (44px)
-    { icon: true, class: { root: 'p-1.5 [&_.rui-icon]:!w-5 [&_.rui-icon]:!h-5' } },
-    { icon: true, size: 'sm', class: { root: 'p-1 [&_.rui-icon]:!w-5 [&_.rui-icon]:!h-5' } },
-    { icon: true, size: 'lg', class: { root: 'p-1.5 [&_.rui-icon]:!w-6 [&_.rui-icon]:!h-6' } },
-    { icon: true, size: 'xl', class: { root: 'p-2 [&_.rui-icon]:!w-7 [&_.rui-icon]:!h-7' } },
+    { icon: true, class: { root: 'p-1.5 ![--rui-icon-size:1.25rem]' } },
+    { icon: true, size: 'sm', class: { root: 'p-1 ![--rui-icon-size:1.25rem]' } },
+    { icon: true, size: 'lg', class: { root: 'p-1.5 ![--rui-icon-size:1.5rem]' } },
+    { icon: true, size: 'xl', class: { root: 'p-2 ![--rui-icon-size:1.75rem]' } },
     { variant: 'fab', icon: true, size: 'sm', class: { root: 'px-2 py-2' } },
   ],
   compoundSlots: [

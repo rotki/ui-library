@@ -1,6 +1,7 @@
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
 function createWrapper(
@@ -111,20 +112,145 @@ describe('components/buttons/button/RuiButton.vue', () => {
     expectWrapperToHaveClass(wrapper, 'button', /leading-6/);
   });
 
-  it('should scope descendant icon sizing to the button size', async () => {
+  it('should set --rui-icon-size per button size so descendant icons scale', async () => {
     wrapper = createWrapper();
-    // default (md) — 1.125rem icons, baked into the base root
-    expect(wrapper.find('button').classes()).toContain('[&_.rui-icon]:w-[1.125rem]');
+    // default (md) — the base root seeds the property without `!` so consumer
+    // overrides via inline style on the svg still win.
+    expect(wrapper.find('button').classes()).toContain('[--rui-icon-size:1.125rem]');
 
-    // size variants use `!` so they beat the md baseline regardless of CSS source order
+    // Size variants redefine the property with `!` so they beat the base
+    // rule on the same element regardless of CSS source order.
     await wrapper.setProps({ size: 'sm' });
-    expect(wrapper.find('button').classes()).toContain('[&_.rui-icon]:!w-4');
+    expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1rem]');
 
     await wrapper.setProps({ size: 'lg' });
-    expect(wrapper.find('button').classes()).toContain('[&_.rui-icon]:!w-5');
+    expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1.25rem]');
 
     await wrapper.setProps({ size: 'xl' });
-    expect(wrapper.find('button').classes()).toContain('[&_.rui-icon]:!w-[1.375rem]');
+    expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1.375rem]');
+  });
+
+  // Regression tests for https://github.com/rotki/ui-library/issues/512
+  // Icon sizing inside a button now flows through a single CSS custom
+  // property, `--rui-icon-size`. The button seeds it per size variant; the
+  // icon reads it via `width: var(--rui-icon-size, 1.5rem)`. A consumer
+  // passing `size` on RuiIcon stamps an inline style on the svg, which
+  // overrides the inherited value without needing !important.
+  describe('icon size cascade inside button (issue #512)', () => {
+    const perSize = { sm: '![--rui-icon-size:1rem]', lg: '![--rui-icon-size:1.25rem]', xl: '![--rui-icon-size:1.375rem]' } as const;
+    for (const size of ['sm', 'lg', 'xl'] as const) {
+      it(`should attach ${perSize[size]} when size is ${size}`, () => {
+        wrapper = createWrapper({
+          props: { size },
+          slots: {
+            prepend: () => h(RuiIcon, { name: 'lu-circle-arrow-down', size: 14 }),
+          },
+        });
+        expect(wrapper.find('button').classes()).toContain(perSize[size]);
+      });
+    }
+
+    it('should let a consumer-supplied RuiIcon size override the button variant', () => {
+      wrapper = createWrapper({
+        props: { size: 'sm' },
+        slots: {
+          prepend: () => h(RuiIcon, { name: 'lu-circle-arrow-down', size: 14 }),
+        },
+      });
+      const svg = wrapper.find('svg.rui-icon');
+      // Consumer-driven size lands as inline style — beats the button's
+      // inherited `![--rui-icon-size:1rem]` on the svg itself.
+      expect(svg.attributes('style')).toContain('--rui-icon-size: 14px');
+      // Presentation attrs are gone — the whole point of #512 was to stop
+      // relying on them because they lost the cascade.
+      expect(svg.attributes('width')).toBeUndefined();
+      expect(svg.attributes('height')).toBeUndefined();
+      // Button still carries its own property so a bare RuiIcon (no size)
+      // next to this one would inherit the button-driven size.
+      expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1rem]');
+    });
+
+    it('should override the md baseline via `!` on size variants', async () => {
+      wrapper = createWrapper({
+        slots: {
+          prepend: () => h(RuiIcon, { name: 'lu-circle-arrow-down' }),
+        },
+      });
+      // md default: no `!` prefix on the baseline rule — consumers can
+      // shadow it with their own `--rui-icon-size` without fighting
+      // !important.
+      expect(wrapper.find('button').classes()).toContain('[--rui-icon-size:1.125rem]');
+      expect(wrapper.find('button').classes()).not.toContain('![--rui-icon-size:1.125rem]');
+
+      await wrapper.setProps({ size: 'sm' });
+      expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1rem]');
+      // baseline rule is still on the element — size variants win through
+      // `!important` + equal specificity, not removal.
+      expect(wrapper.find('button').classes()).toContain('[--rui-icon-size:1.125rem]');
+    });
+
+    it('should apply icon-only compound variant sizing across button sizes', async () => {
+      wrapper = createWrapper({
+        props: { icon: true },
+        slots: {
+          default: () => h(RuiIcon, { name: 'lu-circle-arrow-down' }),
+        },
+      });
+      // md icon-only: 1.25rem glyph via compound variant
+      expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1.25rem]');
+
+      await wrapper.setProps({ size: 'sm' });
+      expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1.25rem]');
+
+      await wrapper.setProps({ size: 'lg' });
+      expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1.5rem]');
+
+      await wrapper.setProps({ size: 'xl' });
+      expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1.75rem]');
+    });
+  });
+
+  // Pairs with issue #512 second half: list-variant icon alignment audit.
+  describe('list variant icon slot (issue #512)', () => {
+    it('should preserve flex alignment for prepend icons in list variant', () => {
+      wrapper = createWrapper({
+        props: { variant: 'list' },
+        slots: {
+          prepend: () => h(RuiIcon, { name: 'lu-circle-arrow-down' }),
+          default: () => 'Menu item',
+        },
+      });
+      const btn = wrapper.find('button');
+      expect(btn.classes()).toContain('flex');
+      expect(btn.classes()).toContain('items-center');
+      expect(btn.classes()).toContain('justify-start');
+    });
+
+    it('should give list-variant labels w-full so text fills the row', () => {
+      wrapper = createWrapper({
+        props: { variant: 'list' },
+        slots: {
+          prepend: () => h(RuiIcon, { name: 'lu-circle-arrow-down' }),
+          default: () => 'Menu item',
+        },
+      });
+      expect(wrapper.find('[data-id="btn-label"]').classes()).toContain('w-full');
+    });
+
+    it('should scale list-variant icons in lockstep with button size', async () => {
+      wrapper = createWrapper({
+        props: { variant: 'list' },
+        slots: {
+          prepend: () => h(RuiIcon, { name: 'lu-circle-arrow-down' }),
+          default: () => 'Menu item',
+        },
+      });
+      // md
+      expect(wrapper.find('button').classes()).toContain('[--rui-icon-size:1.125rem]');
+
+      await wrapper.setProps({ size: 'sm' });
+      expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1rem]');
+    });
   });
 
   it('should pass elevation props and set to correct classes based on the state', async () => {
