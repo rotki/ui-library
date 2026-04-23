@@ -76,7 +76,12 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
     expectWrapperToHaveClass(wrapper, 'button', /py-1/);
     await wrapper.setProps({ size: 'lg' });
     expect(wrapper.find('button').classes()).toContain('text-[1rem]');
+    // xl now targets the 40px input-row height (py-2 + leading-6 = 40).
     await wrapper.setProps({ size: 'xl' });
+    expectWrapperToHaveClass(wrapper, 'button', /py-2(?!\.5)/);
+    expectWrapperToHaveClass(wrapper, 'button', /leading-6/);
+    // 2xl keeps the previous xl geometry at 44px.
+    await wrapper.setProps({ size: '2xl' });
     expectWrapperToHaveClass(wrapper, 'button', /py-2\.5/);
     expectWrapperToHaveClass(wrapper, 'button', /leading-6/);
   });

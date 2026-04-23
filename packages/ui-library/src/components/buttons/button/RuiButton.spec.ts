@@ -109,7 +109,13 @@ describe('components/buttons/button/RuiButton.vue', () => {
     expectWrapperToHaveClass(wrapper, 'button', /py-1/);
     await wrapper.setProps({ size: 'lg' });
     expect(wrapper.find('button').classes()).toContain('text-[1rem]');
+    // xl now targets 40px (input-row height): py-2 (16) + leading-6 (24) = 40.
     await wrapper.setProps({ size: 'xl' });
+    expect(wrapper.find('button').classes()).toContain('text-[1rem]');
+    expect(wrapper.find('button').classes()).toContain('py-2');
+    expect(wrapper.find('button').classes()).toContain('leading-6');
+    // 2xl keeps the previous xl geometry at 44px (py-2.5 + leading-6).
+    await wrapper.setProps({ size: '2xl' });
     expect(wrapper.find('button').classes()).toContain('text-[1rem]');
     expectWrapperToHaveClass(wrapper, 'button', /py-2\.5/);
     expectWrapperToHaveClass(wrapper, 'button', /leading-6/);
@@ -129,7 +135,13 @@ describe('components/buttons/button/RuiButton.vue', () => {
     await wrapper.setProps({ size: 'lg' });
     expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1.25rem]');
 
+    // xl and 2xl share the same text-slot glyph (1.375rem) — they differ only
+    // in box height (40 vs 44). The glyph weight stays identical so a row of
+    // xl+2xl buttons doesn't shift in icon weight when heights differ.
     await wrapper.setProps({ size: 'xl' });
+    expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1.375rem]');
+
+    await wrapper.setProps({ size: '2xl' });
     expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1.375rem]');
   });
 
@@ -140,8 +152,14 @@ describe('components/buttons/button/RuiButton.vue', () => {
   // passing `size` on RuiIcon stamps an inline style on the svg, which
   // overrides the inherited value without needing !important.
   describe('icon size cascade inside button (issue #512)', () => {
-    const perSize = { xs: '![--rui-icon-size:0.75rem]', sm: '![--rui-icon-size:1rem]', lg: '![--rui-icon-size:1.25rem]', xl: '![--rui-icon-size:1.375rem]' } as const;
-    for (const size of ['xs', 'sm', 'lg', 'xl'] as const) {
+    const perSize = {
+      'xs': '![--rui-icon-size:0.75rem]',
+      'sm': '![--rui-icon-size:1rem]',
+      'lg': '![--rui-icon-size:1.25rem]',
+      'xl': '![--rui-icon-size:1.375rem]',
+      '2xl': '![--rui-icon-size:1.375rem]',
+    } as const;
+    for (const size of ['xs', 'sm', 'lg', 'xl', '2xl'] as const) {
       it(`should attach ${perSize[size]} when size is ${size}`, () => {
         wrapper = createWrapper({
           props: { size },
@@ -213,8 +231,15 @@ describe('components/buttons/button/RuiButton.vue', () => {
       await wrapper.setProps({ size: 'lg' });
       expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1.5rem]');
 
+      // xl icon-only lands at 40px (p-2 + 1.5rem = 40) with a 60% icon ratio.
       await wrapper.setProps({ size: 'xl' });
+      expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1.5rem]');
+      expect(wrapper.find('button').classes()).toContain('p-2');
+
+      // 2xl icon-only keeps the 44px box (p-2 + 1.75rem = 44), 64% ratio.
+      await wrapper.setProps({ size: '2xl' });
       expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1.75rem]');
+      expect(wrapper.find('button').classes()).toContain('p-2');
     });
   });
 

@@ -47,10 +47,15 @@ export const buttonStyles = tv({
       // base root regardless of CSS source order. A consumer passing `size`
       // on RuiIcon still wins: that path stamps an inline style on the svg
       // element itself, which beats the inherited value from the button.
-      xs: { root: 'px-2 py-[0.125rem] text-[.75rem] leading-4 ![--rui-icon-size:0.75rem]' },
-      sm: { root: 'px-2.5 py-1 text-[.8125rem] leading-5 ![--rui-icon-size:1rem]' },
-      lg: { root: 'px-6 py-2 text-[1rem] leading-5 ![--rui-icon-size:1.25rem]' },
-      xl: { root: 'px-6 py-2.5 text-[1rem] leading-6 ![--rui-icon-size:1.375rem]' },
+      'xs': { root: 'px-2 py-[0.125rem] text-[.75rem] leading-4 ![--rui-icon-size:0.75rem]' },
+      'sm': { root: 'px-2.5 py-1 text-[.8125rem] leading-5 ![--rui-icon-size:1rem]' },
+      'lg': { root: 'px-6 py-2 text-[1rem] leading-5 ![--rui-icon-size:1.25rem]' },
+      // `xl` targets the 40px input height — the common toolbar case where a
+      // RuiButton needs to line up with RuiTextField / RuiMenuSelect. For a
+      // 44px jumbo-CTA button (auth screens, empty-state primaries), reach for
+      // `2xl` instead.
+      'xl': { root: 'px-6 py-2 text-[1rem] leading-6 ![--rui-icon-size:1.375rem]' },
+      '2xl': { root: 'px-6 py-2.5 text-[1rem] leading-6 ![--rui-icon-size:1.375rem]' },
     },
     color: {
       grey: { root: 'bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-text ring-rui-grey-400 dark:bg-rui-grey-300 dark:text-rui-light-text dark:ring-rui-grey-600' },
@@ -139,6 +144,8 @@ export const buttonStyles = tv({
     { variant: 'text', size: 'xs', class: { root: 'px-1' } },
     { variant: 'text', size: 'sm', class: { root: 'px-1.5' } },
     { variant: 'text', size: 'lg', class: { root: 'px-2.5' } },
+    { variant: 'text', size: 'xl', class: { root: 'px-2.5' } },
+    { variant: 'text', size: '2xl', class: { root: 'px-2.5' } },
     { variant: 'fab', size: 'xs', class: { root: 'py-1 px-1' } },
     { variant: 'fab', size: 'sm', class: { root: 'py-1.5 px-2' } },
     { variant: 'fab', size: 'lg', class: { root: 'py-3' } },
@@ -153,16 +160,18 @@ export const buttonStyles = tv({
     // xs uses an arbitrary 0.1875rem (3px) padding — no Tailwind token hits
     // it cleanly — to keep the 70% icon ratio with a 14px glyph.
     //
-    // xs:           p-[0.1875rem] + 0.875rem icon = 0.375 + 0.875 = 1.25rem (20px) — 70% ratio
-    // sm:           p-1           + 1.25rem icon  = 0.5   + 1.25  = 1.75rem (28px)
-    // md (default): p-1.5         + 1.25rem icon  = 0.75  + 1.25  = 2rem    (32px)
-    // lg:           p-1.5         + 1.5rem icon   = 0.75  + 1.5   = 2.25rem (36px)
-    // xl:           p-2           + 1.75rem icon  = 1     + 1.75  = 2.75rem (44px)
+    // xs:           p-[0.1875rem] + 0.875rem icon = 0.375 + 0.875 = 1.25rem (20px) — 70%
+    // sm:           p-1           + 1.25rem icon  = 0.5   + 1.25  = 1.75rem (28px) — 71%
+    // md (default): p-1.5         + 1.25rem icon  = 0.75  + 1.25  = 2rem    (32px) — 63%
+    // lg:           p-1.5         + 1.5rem  icon  = 0.75  + 1.5   = 2.25rem (36px) — 67%
+    // xl:           p-2           + 1.5rem  icon  = 1     + 1.5   = 2.5rem  (40px) — 60%
+    // 2xl:          p-2           + 1.75rem icon  = 1     + 1.75  = 2.75rem (44px) — 64%
     { icon: true, class: { root: 'p-1.5 ![--rui-icon-size:1.25rem]' } },
     { icon: true, size: 'xs', class: { root: 'p-[0.1875rem] ![--rui-icon-size:0.875rem]' } },
     { icon: true, size: 'sm', class: { root: 'p-1 ![--rui-icon-size:1.25rem]' } },
     { icon: true, size: 'lg', class: { root: 'p-1.5 ![--rui-icon-size:1.5rem]' } },
-    { icon: true, size: 'xl', class: { root: 'p-2 ![--rui-icon-size:1.75rem]' } },
+    { icon: true, size: 'xl', class: { root: 'p-2 ![--rui-icon-size:1.5rem]' } },
+    { icon: true, size: '2xl', class: { root: 'p-2 ![--rui-icon-size:1.75rem]' } },
     { variant: 'fab', icon: true, size: 'sm', class: { root: 'px-2 py-2' } },
   ],
   compoundSlots: [

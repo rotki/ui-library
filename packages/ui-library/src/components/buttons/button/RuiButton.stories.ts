@@ -1,6 +1,7 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { expect } from 'storybook/test';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { contextColors } from '@/consts/colors';
 import preview from '~/.storybook/preview';
@@ -33,7 +34,10 @@ const meta = preview.meta({
     label: { control: 'text' },
     loading: { control: 'boolean', table: { category: 'State' } },
     rounded: { control: 'boolean', table: { category: 'Shape' } },
-    size: { control: 'select', options: ['medium', 'xs', 'sm', 'lg', 'xl'] },
+    // `md` is the default and is represented by an unset `size` — clear the
+    // control to see it. The enum intentionally omits `md`; ButtonSize only
+    // lists the opt-in deltas.
+    size: { control: 'select', options: ['xs', 'sm', 'lg', 'xl', '2xl'] },
     type: { control: 'select', options: ['button', 'submit'] },
     variant: {
       control: 'select',
@@ -118,6 +122,14 @@ export const PrimaryExtraLarge = meta.story({
   },
 });
 
+export const Primary2xl = meta.story({
+  args: {
+    color: 'primary',
+    label: '2× Extra Large',
+    size: '2xl',
+  },
+});
+
 export const AutoSizedIcon = meta.story({
   args: {
     color: 'primary',
@@ -127,7 +139,7 @@ export const AutoSizedIcon = meta.story({
     docs: {
       description: {
         story:
-          'When `<RuiIcon>` is used inside a button without an explicit `size` prop, it inherits a size proportional to the button height (xs → 0.75rem, sm → 1rem, md → 1.125rem, lg → 1.25rem, xl → 1.375rem). Sizing flows through the `--rui-icon-size` custom property: the button seeds it per size variant, and the icon reads it via `width: var(--rui-icon-size, 1.5rem)`. A consumer passing `size` on `<RuiIcon>` still wins because that path stamps an inline style on the svg itself (see `ConsumerIconSizeOverride`).',
+          'When `<RuiIcon>` is used inside a button without an explicit `size` prop, it inherits a size proportional to the button height (xs → 0.75rem, sm → 1rem, md → 1.125rem, lg → 1.25rem, xl & 2xl → 1.375rem). Sizing flows through the `--rui-icon-size` custom property: the button seeds it per size variant, and the icon reads it via `width: var(--rui-icon-size, 1.5rem)`. A consumer passing `size` on `<RuiIcon>` still wins because that path stamps an inline style on the svg itself (see `ConsumerIconSizeOverride`). `xl` and `2xl` share the same glyph weight — `xl` targets the 40px input-row height; `2xl` keeps the previous 44px for jumbo CTAs.',
       },
     },
   },
@@ -156,7 +168,11 @@ export const AutoSizedIcon = meta.story({
         </RuiButton>
         <RuiButton v-bind="args" size="xl">
           <template #prepend><RuiIcon name="lu-refresh-ccw" /></template>
-          Extra Large
+          Extra Large (40)
+        </RuiButton>
+        <RuiButton v-bind="args" size="2xl">
+          <template #prepend><RuiIcon name="lu-refresh-ccw" /></template>
+          2× Extra Large (44)
         </RuiButton>
       </div>
     `,
@@ -172,7 +188,7 @@ export const IconOnlySizes = meta.story({
     docs: {
       description: {
         story:
-          'Icon-only buttons (`icon` prop) land at the same height as text buttons of the matching `size` (xs 20px, sm 28px, md 32px, lg 36px, xl 44px) with a ~60–70% icon-to-box ratio. `xs` is aimed at inline contexts like copy buttons or badge actions where a 28px `sm` would still feel heavy.',
+          'Icon-only buttons (`icon` prop) land at the same height as text buttons of the matching `size` (xs 20px, sm 28px, md 32px, lg 36px, xl 40px, 2xl 44px) with a ~60–70% icon-to-box ratio. `xs` is aimed at inline contexts like copy buttons or badge actions; `xl` lines up with RuiTextField / RuiMenuSelect at the 40px input height; `2xl` is for jumbo CTAs that used to land on the old 44px `xl`.',
       },
     },
   },
@@ -196,6 +212,9 @@ export const IconOnlySizes = meta.story({
           <RuiIcon name="lu-settings" />
         </RuiButton>
         <RuiButton v-bind="args" icon size="xl" aria-label="extra large">
+          <RuiIcon name="lu-settings" />
+        </RuiButton>
+        <RuiButton v-bind="args" icon size="2xl" aria-label="two extra large">
           <RuiIcon name="lu-settings" />
         </RuiButton>
       </div>
@@ -247,11 +266,55 @@ export const IconOnlyVsText = meta.story({
           </RuiButton>
         </div>
         <div class="flex items-center gap-3">
-          <RuiButton v-bind="args" size="xl">Extra Large</RuiButton>
+          <RuiButton v-bind="args" size="xl">Extra Large (40)</RuiButton>
           <RuiButton v-bind="args" variant="text" icon size="xl" aria-label="xl icon">
             <RuiIcon name="lu-ellipsis-vertical" />
           </RuiButton>
         </div>
+        <div class="flex items-center gap-3">
+          <RuiButton v-bind="args" size="2xl">2× Extra Large (44)</RuiButton>
+          <RuiButton v-bind="args" variant="text" icon size="2xl" aria-label="2xl icon">
+            <RuiIcon name="lu-ellipsis-vertical" />
+          </RuiButton>
+        </div>
+      </div>
+    `,
+  }),
+});
+
+export const XlMatchesInputHeight = meta.story({
+  args: {
+    color: 'primary',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`size="xl"` is tuned to the 40px input-row height so buttons line up with `<RuiTextField>` / `<RuiMenuSelect>` in a toolbar without ad-hoc `class="!h-10"` workarounds. Combine it with `size="md"` or `"lg"` elsewhere in the app; reach for `2xl` only when you need a 44px jumbo CTA.',
+      },
+    },
+  },
+  render: args => ({
+    components: { RuiButton, RuiIcon, RuiTextField },
+    setup() {
+      return { args };
+    },
+    template: `
+      <div class="flex items-center gap-3">
+        <RuiTextField
+          placeholder="Search"
+          variant="outlined"
+          color="primary"
+          dense
+          hide-details
+        />
+        <RuiButton v-bind="args" size="xl" icon aria-label="filter">
+          <RuiIcon name="lu-funnel" />
+        </RuiButton>
+        <RuiButton v-bind="args" size="xl">
+          <template #prepend><RuiIcon name="lu-file-down" /></template>
+          Export
+        </RuiButton>
       </div>
     `,
   }),
