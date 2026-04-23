@@ -18,8 +18,12 @@ test.describe('icons', () => {
   test('should render icons with correct dimensions', async ({ page }) => {
     const contentArea = page.locator('h2[data-id=icons] + div[data-id=content]');
     const icon = contentArea.locator('svg[aria-hidden="true"]').first();
-    await expect(icon).toHaveAttribute('width', '24');
-    await expect(icon).toHaveAttribute('height', '24');
+    // Icon sizing flows through `--rui-icon-size` (fallback 1.5rem = 24px).
+    // Assert the computed box instead of the deprecated `width`/`height`
+    // presentation attrs — this tests what actually renders and survives
+    // any future shift in the mechanism (see rotki/ui-library#512).
+    await expect(icon).toHaveCSS('width', '24px');
+    await expect(icon).toHaveCSS('height', '24px');
   });
 
   test('should render multiple icons', async ({ page }) => {

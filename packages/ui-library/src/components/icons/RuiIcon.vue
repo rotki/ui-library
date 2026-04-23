@@ -40,11 +40,16 @@ const ui = computed<string>(() => iconStyles({ color }));
 // Render the `size` prop as an inline CSS custom property on the svg. Because
 // inline style wins against any inherited value for the same property on this
 // element, the consumer-supplied size beats the button's `--rui-icon-size`
-// assignment without needing !important. Numbers default to pixel units.
+// assignment without needing !important. A bare number (or numeric string —
+// `:size="16"` resolves to a string in the template binding) is coerced to px;
+// values that already include a unit (`1rem`, `18px`, `calc(...)`) pass
+// through unchanged. The previous SVG-attr path accepted bare numbers because
+// `width`/`height` presentation attrs treat them as px; CSS does not.
 const sizeStyle = computed<Record<string, string> | undefined>(() => {
   if (!get(hasExplicitSize))
     return undefined;
-  const value = typeof size === 'number' ? `${size}px` : String(size);
+  const raw = String(size);
+  const value = /^\d+(?:\.\d+)?$/.test(raw) ? `${raw}px` : raw;
   return { '--rui-icon-size': value };
 });
 

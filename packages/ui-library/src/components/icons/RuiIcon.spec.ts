@@ -55,6 +55,26 @@ describe('components/icons/RuiIcon.vue', () => {
     expect(wrapper.attributes('style')).toContain('--rui-icon-size: 1.25rem');
   });
 
+  it('should coerce a bare-number size string to px', async () => {
+    // `:size="16"` in a template binds as a string; before the fix this
+    // produced `--rui-icon-size: 16` (no unit), an invalid CSS length that
+    // computed to 0 width. Assert the numeric-string path stays px-coerced.
+    wrapper = createWrapper({
+      props: {
+        name: 'lu-circle-arrow-down',
+        size: '16',
+      },
+    });
+    expect(wrapper.attributes('style')).toContain('--rui-icon-size: 16px');
+
+    await wrapper.setProps({ size: '18.5' });
+    expect(wrapper.attributes('style')).toContain('--rui-icon-size: 18.5px');
+
+    // Values that already carry a unit pass through unchanged.
+    await wrapper.setProps({ size: '20px' });
+    expect(wrapper.attributes('style')).toContain('--rui-icon-size: 20px');
+  });
+
   it('should apply color classes', async () => {
     wrapper = createWrapper({
       props: {
