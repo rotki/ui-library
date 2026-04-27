@@ -104,6 +104,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/avatars': RouteRecordInfo<
+      '/avatars',
+      '/avatars',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/badges': RouteRecordInfo<
       '/badges',
       '/badges',
@@ -474,6 +481,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/auto-completes/selection.vue': {
       routes:
         | '/auto-completes/selection'
+      views:
+        | never
+    }
+    'src/pages/avatars.vue': {
+      routes:
+        | '/avatars'
       views:
         | never
     }

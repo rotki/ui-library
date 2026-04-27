@@ -32,6 +32,7 @@ const navigation = ref([
       { to: '/dividers', title: 'Dividers' },
       { to: '/cards', title: 'Cards' },
       { to: '/tabs', title: 'Tabs' },
+      { to: '/avatars', title: 'Avatars' },
       { to: '/badges', title: 'Badges' },
       { to: '/accordions', title: 'Accordions' },
       { to: '/dialogs', title: 'Dialogs' },

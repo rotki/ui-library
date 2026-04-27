@@ -9,6 +9,8 @@ import type {
 import RuiAccordion, { type AccordionProps, type RuiAccordionClassNames } from '@/components/accordions/accordion/RuiAccordion.vue';
 import RuiAccordions, { type Props as AccordionsProps } from '@/components/accordions/accordions/RuiAccordions.vue';
 import RuiAlert, { type Props as AlertProps } from '@/components/alerts/RuiAlert.vue';
+import RuiAvatar, { type Props as AvatarProps } from '@/components/avatars/RuiAvatar.vue';
+import RuiAvatarGroup, { type Props as AvatarGroupProps } from '@/components/avatars/RuiAvatarGroup.vue';
 import RuiButtonGroup, { type Props as ButtonGroupProps } from '@/components/buttons/button-group/RuiButtonGroup.vue';
 import RuiButton, { type Props as ButtonProps } from '@/components/buttons/button/RuiButton.vue';
 import RuiCalendar, { type CalendarProps } from '@/components/calendar/RuiCalendar.vue';
@@ -56,6 +58,8 @@ export type {
   AccordionsProps,
   AlertProps,
   AutoCompleteProps,
+  AvatarGroupProps,
+  AvatarProps,
   BadgeProps,
   BottomSheetProps,
   ButtonGroupProps,
@@ -120,6 +124,8 @@ export {
   RuiAccordions,
   RuiAlert,
   RuiAutoComplete,
+  RuiAvatar,
+  RuiAvatarGroup,
   RuiBadge,
   RuiBottomSheet,
   RuiButton,
