@@ -1077,4 +1077,26 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     const chipElement = firstChip.element as HTMLElement;
     expect(chipElement.getAttribute('data-index')).toBe('0');
   });
+
+  it('should expose openMenu and closeMenu to control the menu programmatically', async () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      props: {
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    await vi.advanceTimersToNextTimerAsync();
+    expect(queryByRole('menu')).toBeFalsy();
+
+    wrapper.vm.openMenu();
+    await vi.runAllTimersAsync();
+    expect(queryByRole('menu')).toBeTruthy();
+
+    wrapper.vm.closeMenu();
+    await vi.runAllTimersAsync();
+    expect(queryByRole('menu')).toBeFalsy();
+  });
 });

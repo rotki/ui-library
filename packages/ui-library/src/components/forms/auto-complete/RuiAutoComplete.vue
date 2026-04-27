@@ -425,6 +425,14 @@ function arrowClicked(event: MouseEvent): void {
   }
 }
 
+function openMenu(): void {
+  set(isOpen, true);
+}
+
+function closeMenu(): void {
+  set(isOpen, false);
+}
+
 // Optimize options watcher with shallow comparison first
 watch(() => options, (curr, old) => {
   if (curr === old || customValue)
@@ -438,7 +446,9 @@ watch(() => options, (curr, old) => {
 });
 
 defineExpose({
+  closeMenu,
   focus: focusSetInputFocus,
+  openMenu,
   setSelectionRange,
 });
 </script>
