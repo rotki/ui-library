@@ -23,4 +23,27 @@ test.describe('buttons', () => {
     await expect(disabledButton).toBeDisabled();
     await expect(disabledButton).toContainText('0');
   });
+
+  test('list-variant button label shares the icon line-box (issue #515)', async ({ page }) => {
+    const button = page.getByTestId('list-button-md-settings');
+    const label = button.locator('[data-id="btn-label"]');
+    const icon = button.locator('svg').first();
+
+    await expect(button).toBeVisible();
+
+    // Label line-height collapses to the md icon size (1.125rem = 18px) so the
+    // label's line-box matches the icon's bounding box; without the fix the
+    // label inherits leading-5 (20px) and visually drifts above the icon.
+    await expect(label).toHaveCSS('line-height', '18px');
+
+    const labelBox = await label.boundingBox();
+    const iconBox = await icon.boundingBox();
+    expect(labelBox).not.toBeNull();
+    expect(iconBox).not.toBeNull();
+
+    // Centers should line up within ~1px now that the line-boxes match.
+    const labelCenter = labelBox!.y + labelBox!.height / 2;
+    const iconCenter = iconBox!.y + iconBox!.height / 2;
+    expect(Math.abs(labelCenter - iconCenter)).toBeLessThanOrEqual(1);
+  });
 });

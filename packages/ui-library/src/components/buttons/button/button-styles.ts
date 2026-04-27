@@ -37,7 +37,13 @@ export const buttonStyles = tv({
       outlined: {},
       text: { root: 'px-2' },
       fab: { root: 'rounded-full py-2' },
-      list: { root: 'p-3 px-3 rounded-none w-full justify-start text-left', label: 'w-full' },
+      // `leading-[1.125rem]` on the label collapses the 20px line-box (inherited
+      // from the root's `leading-5`) down to 18px so it matches the md icon box
+      // (`--rui-icon-size: 1.125rem`). Without it, `flex items-center` centers
+      // the 20px line-box against the 18px icon box and the baseline-aligned
+      // glyphs visually drift above the icon's optical center — most readable
+      // in tight list rows. See rotki/ui-library#515.
+      list: { root: 'p-3 px-3 rounded-none w-full justify-start text-left', label: 'w-full leading-[1.125rem]' },
     },
     size: {
       // Each size variant redefines `--rui-icon-size` on the button so the
