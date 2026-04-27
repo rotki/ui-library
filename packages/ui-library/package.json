@@ -83,7 +83,7 @@
     "build:tailwind": "tailwindcss -o dist/style.css --minify",
     "build:types": "vue-tsc -p tsconfig.build.json",
     "build:web-types": "tsx scripts/build-web-types.mjs",
-    "generate-icons": "tsx scripts/generate-icons.mjs",
+    "generate-icons": "tsx scripts/generate-icons.ts",
     "resolve:alias": "tsc-alias --replacer ./scripts/tsc-alias-replacer.cjs -p tsconfig.build.json --dir dist",
     "verify:dist": "tsx scripts/verify-dist.ts",
     "dev": "vite",

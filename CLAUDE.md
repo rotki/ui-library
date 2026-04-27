@@ -40,7 +40,7 @@ This is `@rotki/ui-library` - a Vue 3 component library and design system for ro
 
 - `pnpm run dev` - Start Vite development server
 - `pnpm run storybook` - Start Storybook for component development and documentation
-- `pnpm run generate-icons` - Generate icon components from remix-icons
+- `pnpm run generate-icons` - Generate icon data from Lucide and `src/custom-icons/`
 - `pnpm run new` - Create new component story scaffold
 
 ## Project Architecture
@@ -49,7 +49,7 @@ This is `@rotki/ui-library` - a Vue 3 component library and design system for ro
 
 - **Components** (`src/components/`): Vue components organized by category (buttons, forms, overlays, etc.)
 - **Composables** (`src/composables/`): Reusable Vue composition functions
-- **Icons** (`src/icons/`): Auto-generated icon components from remix-icons
+- **Icons** (`src/icons/`): Auto-generated icon data from Lucide and `src/custom-icons/` (gitignored — produced by `pnpm run generate-icons`)
 - **Theme** (`src/theme/`): Tailwind CSS theme configuration and utilities
 - **Types** (`src/types/`): TypeScript type definitions
 - **Utils** (`src/utils/`): Utility functions and helpers
@@ -77,7 +77,7 @@ Each component typically includes:
 - **TypeScript**: Fully typed with comprehensive prop interfaces
 - **Tailwind Integration**: Custom theme plugin provides design system tokens
 - **Auto-imports**: Vue APIs and utility functions are auto-imported via unplugin-auto-import
-- **Icon System**: Icons are generated from remix-icons and must be explicitly registered
+- **Icon System**: Icons are generated from Lucide (plus brand icons from `src/custom-icons/`) and must be explicitly registered via `RuiPlugin`
 
 ### Build System
 

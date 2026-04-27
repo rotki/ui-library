@@ -344,10 +344,12 @@ When the dependency installed on the main project, it will run the `prepare` scr
 
 ### Generating the library icons
 
-We use [Lucide](https://lucide.dev/) icons as the base icon set. Brand icons (Discord, Reddit, X/Twitter, etc.) in the `src/custom-icons/` directory are sourced from [Simple Icons](https://simpleicons.org/). You need to run this script to generate the icon data from SVGs. (This script runs automatically on `prepare`. Run this in case the icons aren't generated properly)
+We use [Lucide](https://lucide.dev/) icons as the base icon set. Brand icons (Discord, Reddit, X/Twitter, etc.) in the `src/custom-icons/` directory are sourced from [Simple Icons](https://simpleicons.org/).
+
+The generator (`scripts/generate-icons.ts`) reads each Lucide icon's pre-parsed component data and the parsed XML of every SVG in `src/custom-icons/`, and emits one `[tag, attrs]` tuple per renderable primitive into `src/icons/icons_*.ts`. Multi-path icons stay as multiple entries — they are not collapsed into a single concatenated path. The generated files are gitignored and rebuilt by the `build` script; run the command below if you need to regenerate them by hand.
 
 ```
-pnpm run generate:icons
+pnpm run generate-icons
 ```
 
 ## License
