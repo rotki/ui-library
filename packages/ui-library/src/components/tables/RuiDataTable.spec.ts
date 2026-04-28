@@ -757,6 +757,28 @@ describe('components/tables/RuiDataTable.vue', () => {
       expect(wrapper.props().pagination?.page).toBe(1);
     });
 
+    it('should not emit update:expanded on page change when expanded is not bound', async () => {
+      wrapper = createWrapper({
+        props: {
+          'cols': columns,
+          'onUpdate:pagination': (e: any) => wrapper.setProps({ pagination: e }),
+          'pagination': { limit: 10, page: 1, total: 50 },
+          'rowAttr': 'id',
+          'rows': data,
+        },
+      });
+
+      expect(wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"]').exists()).toBe(false);
+
+      const innerPagination = wrapper.findComponent(RuiTablePagination);
+      innerPagination.vm.$emit('update:modelValue', { limit: 10, page: 2, total: 50 });
+      await nextTick();
+
+      expect(wrapper.props().pagination?.page).toBe(2);
+      expect(wrapper.emitted('update:expanded')).toBeUndefined();
+      expect(wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"]').exists()).toBe(false);
+    });
+
     it('should clear selection when toggling all off', async () => {
       wrapper = createWrapper({
         props: {

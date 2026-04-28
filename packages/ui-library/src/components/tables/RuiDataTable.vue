@@ -297,7 +297,8 @@ function onSort(payload: Parameters<typeof applySort>[0]): void {
 }
 
 function onPaginate(): void {
-  set(expanded, []);
+  if (get(expanded))
+    set(expanded, []);
   if (!multiPageSelect)
     onToggleAll(false);
   resetCheckboxShiftState();

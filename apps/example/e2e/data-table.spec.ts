@@ -135,6 +135,24 @@ test.describe('data tables - pagination', () => {
     expect(textBefore).not.toEqual(textAfter);
   });
 
+  test('should not introduce an expand-button column on page change when expanded is not bound', async ({ page }) => {
+    const container = page.locator('[data-id=table-pagination-basic]');
+    const table = container.locator('[data-id=table]');
+    await expect(table).toBeVisible();
+
+    // No expand button on initial render
+    await expect(table.locator('tbody [data-id="expand-button"]')).toHaveCount(0);
+
+    // Trigger pagination
+    await container.locator('[data-id=table-pagination-next]').first().click();
+
+    // No expand button should appear after page change (regression: #onPaginate
+    // used to unconditionally reset `expanded` to [], flipping `expandable` to
+    // true and auto-adding an expand column even though no `expanded-item` slot
+    // was provided).
+    await expect(table.locator('tbody [data-id="expand-button"]')).toHaveCount(0);
+  });
+
   test('should navigate back with previous button', async ({ page }) => {
     const container = page.locator('[data-id=table-pagination-basic]');
     const table = container.locator('[data-id=table]');
