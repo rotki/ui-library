@@ -1,35 +1,23 @@
-import type { GroupedTableRow } from '@/composables/tables/data-table/types';
-import { mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { defineComponent } from 'vue';
 import { createTableDefaults, TableSymbol } from '@/composables/defaults/table';
 import { useTablePagination } from '@/composables/tables/data-table/pagination';
+import { GROUP_HEADER_BRAND, type GroupedTableRow } from '@/composables/tables/data-table/types';
+import { withSetup } from '~/tests/helpers/with-setup';
 
 interface TestItem {
   id: number;
   name: string;
 }
 
-function withSetup<T>(composable: () => T): { result: T; unmount: () => void } {
-  let result!: T;
-  const TestComponent = defineComponent({
-    setup() {
-      result = composable();
-      return {};
+const paginationMountOptions = {
+  global: {
+    provide: {
+      [TableSymbol.valueOf()]: createTableDefaults({
+        limits: [5, 10, 25],
+      }),
     },
-    template: '<div></div>',
-  });
-  const wrapper = mount(TestComponent, {
-    global: {
-      provide: {
-        [TableSymbol.valueOf()]: createTableDefaults({
-          limits: [5, 10, 25],
-        }),
-      },
-    },
-  });
-  return { result, unmount: () => wrapper.unmount() };
-}
+  },
+};
 
 describe('composables/tables/data-table/pagination', () => {
   let unmount: () => void;
@@ -56,8 +44,7 @@ describe('composables/tables/data-table/pagination', () => {
           emitUpdateOptions: () => {},
           tableDefaults,
         },
-      ),
-    );
+      ), paginationMountOptions);
     unmount = u;
 
     const pagination = get(result.paginationData);
@@ -83,8 +70,7 @@ describe('composables/tables/data-table/pagination', () => {
           emitUpdateOptions: () => {},
           tableDefaults,
         },
-      ),
-    );
+      ), paginationMountOptions);
     unmount = u;
 
     result.setInternalTotal(rows);
@@ -111,8 +97,7 @@ describe('composables/tables/data-table/pagination', () => {
           emitUpdateOptions: () => {},
           tableDefaults,
         },
-      ),
-    );
+      ), paginationMountOptions);
     unmount = u;
 
     result.setInternalTotal(rows);
@@ -139,8 +124,7 @@ describe('composables/tables/data-table/pagination', () => {
           emitUpdateOptions: () => {},
           tableDefaults,
         },
-      ),
-    );
+      ), paginationMountOptions);
     unmount = u;
 
     expect(get(result.filtered)).toHaveLength(25);
@@ -160,8 +144,7 @@ describe('composables/tables/data-table/pagination', () => {
           emitUpdateOptions: () => {},
           tableDefaults,
         },
-      ),
-    );
+      ), paginationMountOptions);
     unmount = u;
 
     result.setInternalTotal(rows);
@@ -183,8 +166,7 @@ describe('composables/tables/data-table/pagination', () => {
           emitUpdateOptions,
           tableDefaults,
         },
-      ),
-    );
+      ), paginationMountOptions);
     unmount = u;
 
     set(result.paginationData, { limit: 5, page: 1, total: 25 });
@@ -209,8 +191,7 @@ describe('composables/tables/data-table/pagination', () => {
           emitUpdateOptions: () => {},
           tableDefaults,
         },
-      ),
-    );
+      ), paginationMountOptions);
     unmount = u;
 
     result.setInternalTotal(rows);
@@ -241,8 +222,7 @@ describe('composables/tables/data-table/pagination', () => {
           emitUpdateOptions: () => {},
           tableDefaults,
         },
-      ),
-    );
+      ), paginationMountOptions);
     unmount = u;
 
     // Change pagination limit
@@ -272,8 +252,7 @@ describe('composables/tables/data-table/pagination', () => {
           emitUpdateOptions: () => {},
           tableDefaults,
         },
-      ),
-    );
+      ), paginationMountOptions);
     unmount = u;
 
     result.setInternalTotal(rows);
@@ -304,8 +283,7 @@ describe('composables/tables/data-table/pagination', () => {
           emitUpdateOptions: () => {},
           tableDefaults,
         },
-      ),
-    );
+      ), paginationMountOptions);
     unmount = u;
 
     result.setInternalTotal(rows);
@@ -321,10 +299,10 @@ describe('composables/tables/data-table/pagination', () => {
   it('should handle pagination with group headers', () => {
     const tableDefaults = createTableDefaults({ limits: [5, 10, 25] });
     const groupedData: GroupedTableRow<TestItem>[] = [
-      { __header__: true, group: { name: 'A' }, identifier: 'A' },
+      { [GROUP_HEADER_BRAND]: true, group: { name: 'A' }, identifier: 'A' },
       { id: 1, name: 'A' },
       { id: 2, name: 'A' },
-      { __header__: true, group: { name: 'B' }, identifier: 'B' },
+      { [GROUP_HEADER_BRAND]: true, group: { name: 'B' }, identifier: 'B' },
       { id: 3, name: 'B' },
     ];
 
@@ -344,8 +322,7 @@ describe('composables/tables/data-table/pagination', () => {
           emitUpdateOptions: () => {},
           tableDefaults,
         },
-      ),
-    );
+      ), paginationMountOptions);
     unmount = u;
 
     result.setInternalTotal(groupedData);
@@ -373,8 +350,7 @@ describe('composables/tables/data-table/pagination', () => {
           emitUpdateOptions: () => {},
           tableDefaults,
         },
-      ),
-    );
+      ), paginationMountOptions);
     unmount = u;
 
     result.setInternalTotal(rows);
@@ -404,8 +380,7 @@ describe('composables/tables/data-table/pagination', () => {
           emitUpdateOptions: () => {},
           tableDefaults,
         },
-      ),
-    );
+      ), paginationMountOptions);
     unmount = u;
 
     // 25 rows, first 5 hidden
@@ -425,11 +400,203 @@ describe('composables/tables/data-table/pagination', () => {
           emitUpdateOptions: () => {},
           tableDefaults,
         },
-      ),
-    );
+      ), paginationMountOptions);
     unmount = u;
 
     result.setInternalTotal(rows);
     expect(get(result.itemsLength)).toBe(0);
+  });
+
+  describe('grouped pagination algorithm', () => {
+    const groupedData: GroupedTableRow<TestItem>[] = [
+      { [GROUP_HEADER_BRAND]: true, group: { name: 'A' }, identifier: 'A' },
+      { id: 1, name: 'A' },
+      { id: 2, name: 'A' },
+      { id: 3, name: 'A' },
+      { [GROUP_HEADER_BRAND]: true, group: { name: 'B' }, identifier: 'B' },
+      { id: 4, name: 'B' },
+      { id: 5, name: 'B' },
+    ];
+
+    it('should prepend group header when page starts mid-group', () => {
+      const tableDefaults = createTableDefaults({ limits: [2, 5, 10] });
+      const pagination = ref<{ limit: number; page: number; total: number } | undefined>({
+        limit: 2,
+        page: 2,
+        total: 5,
+      });
+      const { result, unmount: u } = withSetup(() =>
+        useTablePagination<TestItem>(
+          { itemsPerPage: 2, paginationModifiersExternal: false, globalItemsPerPage: undefined },
+          {
+            pagination,
+            grouped: computed<GroupedTableRow<TestItem>[]>(() => groupedData),
+            isHiddenRow: () => false,
+            sort: ref(undefined),
+            emitUpdateOptions: () => {},
+            tableDefaults,
+          },
+        ), paginationMountOptions);
+      unmount = u;
+
+      result.setInternalTotal(groupedData);
+
+      const filtered = get(result.filtered);
+      // Page 2 with limit 2: data rows 3 and 4
+      // Row 3 (id:3) belongs to group A, so group A header should be prepended
+      // Row 4 (id:4) belongs to group B, so group B header should also appear
+      expect(filtered).toHaveLength(4);
+      expect(filtered[0]).toHaveProperty('identifier', 'A');
+      expect(filtered[1]).toHaveProperty('id', 3);
+      expect(filtered[2]).toHaveProperty('identifier', 'B');
+      expect(filtered[3]).toHaveProperty('id', 4);
+    });
+
+    it('should remove trailing group header with no data rows after it', () => {
+      const tableDefaults = createTableDefaults({ limits: [3, 5, 10] });
+      const pagination = ref<{ limit: number; page: number; total: number } | undefined>({
+        limit: 3,
+        page: 1,
+        total: 5,
+      });
+      const { result, unmount: u } = withSetup(() =>
+        useTablePagination<TestItem>(
+          { itemsPerPage: 3, paginationModifiersExternal: false, globalItemsPerPage: undefined },
+          {
+            pagination,
+            grouped: computed<GroupedTableRow<TestItem>[]>(() => groupedData),
+            isHiddenRow: () => false,
+            sort: ref(undefined),
+            emitUpdateOptions: () => {},
+            tableDefaults,
+          },
+        ), paginationMountOptions);
+      unmount = u;
+
+      result.setInternalTotal(groupedData);
+
+      const filtered = get(result.filtered);
+      // Page 1 with limit 3: data rows 1, 2, 3 (all group A)
+      // The algorithm collects group A header + rows 1,2,3, then group B header
+      // But group B header has no data rows on this page, so it should be removed
+      expect(filtered).toHaveLength(4);
+      expect(filtered[0]).toHaveProperty('identifier', 'A');
+      expect(filtered[1]).toHaveProperty('id', 1);
+      expect(filtered[2]).toHaveProperty('id', 2);
+      expect(filtered[3]).toHaveProperty('id', 3);
+      // Group B header should NOT be present
+      const hasTrailingBHeader = filtered.some(
+        item => 'identifier' in item && item.identifier === 'B',
+      );
+      expect(hasTrailingBHeader).toBe(false);
+    });
+
+    it('should handle group header exactly at page boundary start', () => {
+      const tableDefaults = createTableDefaults({ limits: [2, 5, 10] });
+      // Group A has 3 data rows, Group B has 2 data rows
+      // With limit 3, page 2 starts at data row index 3, which is id:4 (group B)
+      // The group B header sits exactly before data row 4
+      const pagination = ref<{ limit: number; page: number; total: number } | undefined>({
+        limit: 3,
+        page: 2,
+        total: 5,
+      });
+      const { result, unmount: u } = withSetup(() =>
+        useTablePagination<TestItem>(
+          { itemsPerPage: 3, paginationModifiersExternal: false, globalItemsPerPage: undefined },
+          {
+            pagination,
+            grouped: computed<GroupedTableRow<TestItem>[]>(() => groupedData),
+            isHiddenRow: () => false,
+            sort: ref(undefined),
+            emitUpdateOptions: () => {},
+            tableDefaults,
+          },
+        ), paginationMountOptions);
+      unmount = u;
+
+      result.setInternalTotal(groupedData);
+
+      const filtered = get(result.filtered);
+      // Page 2: data rows 4 and 5 (group B)
+      // Group B header falls at exactly the page boundary (dataCount === start when header is seen)
+      // so it should be included naturally (not prepended)
+      expect(filtered).toHaveLength(3);
+      expect(filtered[0]).toHaveProperty('identifier', 'B');
+      expect(filtered[1]).toHaveProperty('id', 4);
+      expect(filtered[2]).toHaveProperty('id', 5);
+    });
+
+    it('should include multiple group headers when page spans two groups', () => {
+      const tableDefaults = createTableDefaults({ limits: [4, 5, 10] });
+      const pagination = ref<{ limit: number; page: number; total: number } | undefined>({
+        limit: 4,
+        page: 1,
+        total: 5,
+      });
+      const { result, unmount: u } = withSetup(() =>
+        useTablePagination<TestItem>(
+          { itemsPerPage: 4, paginationModifiersExternal: false, globalItemsPerPage: undefined },
+          {
+            pagination,
+            grouped: computed<GroupedTableRow<TestItem>[]>(() => groupedData),
+            isHiddenRow: () => false,
+            sort: ref(undefined),
+            emitUpdateOptions: () => {},
+            tableDefaults,
+          },
+        ), paginationMountOptions);
+      unmount = u;
+
+      result.setInternalTotal(groupedData);
+
+      const filtered = get(result.filtered);
+      // Page 1 with limit 4: data rows 1, 2, 3, 4
+      // Group A header + rows 1,2,3 + Group B header + row 4
+      expect(filtered).toHaveLength(6);
+      expect(filtered[0]).toHaveProperty('identifier', 'A');
+      expect(filtered[1]).toHaveProperty('id', 1);
+      expect(filtered[2]).toHaveProperty('id', 2);
+      expect(filtered[3]).toHaveProperty('id', 3);
+      expect(filtered[4]).toHaveProperty('identifier', 'B');
+      expect(filtered[5]).toHaveProperty('id', 4);
+    });
+
+    it('should filter hidden rows from grouped pagination results', () => {
+      const tableDefaults = createTableDefaults({ limits: [5, 10, 25] });
+      const pagination = ref<{ limit: number; page: number; total: number } | undefined>({
+        limit: 5,
+        page: 1,
+        total: 5,
+      });
+      const { result, unmount: u } = withSetup(() =>
+        useTablePagination<TestItem>(
+          { itemsPerPage: 5, paginationModifiersExternal: false, globalItemsPerPage: undefined },
+          {
+            pagination,
+            grouped: computed<GroupedTableRow<TestItem>[]>(() => groupedData),
+            isHiddenRow: (row: GroupedTableRow<TestItem>): boolean => {
+              if ('id' in row)
+                return row.id <= 3;
+              return false;
+            },
+            sort: ref(undefined),
+            emitUpdateOptions: () => {},
+            tableDefaults,
+          },
+        ), paginationMountOptions);
+      unmount = u;
+
+      result.setInternalTotal(groupedData);
+
+      const filtered = get(result.filtered);
+      // All 5 data rows fit on page 1. isHiddenRow hides rows with id <= 3.
+      // Remaining visible: group A header, group B header, row 4, row 5
+      // Group A header stays because isHiddenRow returns false for headers
+      const dataRows = filtered.filter(item => 'id' in item);
+      expect(dataRows).toHaveLength(2);
+      expect(dataRows[0]).toHaveProperty('id', 4);
+      expect(dataRows[1]).toHaveProperty('id', 5);
+    });
   });
 });

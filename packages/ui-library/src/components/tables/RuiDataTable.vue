@@ -1,12 +1,8 @@
 <script lang="ts" setup generic="T extends object, IdType extends keyof T = keyof T">
-import RuiButton from '@/components/buttons/button/RuiButton.vue';
-import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
-import RuiIcon from '@/components/icons/RuiIcon.vue';
-import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
-import RuiProgress from '@/components/progress/RuiProgress.vue';
-import { dataTableStyles, getAlignClass } from '@/components/tables/data-table-styles';
-import RuiExpandButton from '@/components/tables/RuiExpandButton.vue';
-import RuiTableEmptyState from '@/components/tables/RuiTableEmptyState.vue';
+import type { GroupHeader } from '@/composables/tables/data-table/types';
+import { dataTableStyles } from '@/components/tables/data-table-styles';
+import { type DataTableClasses, provideDataTableContext } from '@/components/tables/data-table/context';
+import RuiDataTableBody from '@/components/tables/data-table/RuiDataTableBody.vue';
 import RuiTableHead, {
   type GroupData,
   type TableColumn,
@@ -16,6 +12,7 @@ import RuiTableHead, {
 import RuiTablePagination, {
   type TablePaginationData,
 } from '@/components/tables/RuiTablePagination.vue';
+import { GroupExpandButtonPosition } from '@/components/tables/table-props';
 import { useTable } from '@/composables/defaults/table';
 import { useStickyTableHeader } from '@/composables/sticky-header';
 import { useTableColumns } from '@/composables/tables/data-table/columns';
@@ -24,7 +21,6 @@ import { useTableGrouping } from '@/composables/tables/data-table/grouping';
 import { useTablePagination } from '@/composables/tables/data-table/pagination';
 import { useTableSelection } from '@/composables/tables/data-table/selection';
 import { useTableSort } from '@/composables/tables/data-table/sort';
-import { type GroupHeader, isRow } from '@/composables/tables/data-table/types';
 
 export type { GroupedTableRow, GroupHeader, TableOptions } from '@/composables/tables/data-table/types';
 
@@ -110,7 +106,7 @@ export interface Props<T, K extends keyof T> {
    * When true, changing the items per page setting in one table will affect other tables.
    */
   globalItemsPerPage?: boolean;
-  groupExpandButtonPosition?: 'start' | 'end';
+  groupExpandButtonPosition?: GroupExpandButtonPosition;
   disabledRows?: readonly T[];
   multiPageSelect?: boolean;
   itemClass?: ((item: T) => string) | string;
@@ -153,7 +149,7 @@ const {
   stickyHeader = false,
   stickyOffset,
   globalItemsPerPage = undefined,
-  groupExpandButtonPosition = 'start',
+  groupExpandButtonPosition = GroupExpandButtonPosition.start,
   disabledRows,
   multiPageSelect = false,
   itemClass = '',
@@ -229,14 +225,12 @@ const {
   isHiddenRow,
   onToggleExpandGroup,
   onUngroup,
-  onCopyGroup,
 } = useTableGrouping<T, IdType>(
   { rowAttr },
   {
     group,
     collapsed,
     sorted,
-    emitCopyGroup: (value: GroupData<T>) => emit('copy:group', value),
   },
 );
 
@@ -271,7 +265,17 @@ const { columns, colspan, headerSlots, cellValue } = useTableColumns<T, IdType>(
   groupKeys,
   selectedData,
   slots,
+  tdResolver: options => get(ui).td(options),
 });
+
+const ITEM_SLOT_PREFIX = 'item.';
+
+// Slot keys are static for the component lifetime — no reactivity needed
+const itemSlotKeys: Set<string> = new Set(
+  Object.keys(slots)
+    .filter((key): key is `item.${string}` => key.startsWith(ITEM_SLOT_PREFIX))
+    .map(key => key.slice(ITEM_SLOT_PREFIX.length)),
+);
 
 const {
   isAllSelected,
@@ -297,7 +301,8 @@ function onSort(payload: Parameters<typeof applySort>[0]): void {
 }
 
 function onPaginate(): void {
-  set(expanded, []);
+  if ((get(expanded)?.length ?? 0) > 0)
+    set(expanded, []);
   if (!multiPageSelect)
     onToggleAll(false);
   resetCheckboxShiftState();
@@ -326,6 +331,49 @@ const ui = computed<ReturnType<typeof dataTableStyles>>(() => dataTableStyles({
   dense,
   striped,
 }));
+
+const classes = computed<DataTableClasses>(() => {
+  const s = get(ui);
+  return {
+    td: s.td(),
+    tr: s.tr(),
+    trSelected: s.tr({ rowVariant: 'selected' }),
+    trExpandable: s.tr({ rowVariant: 'expandable' }),
+    trGroup: s.tr({ rowVariant: 'group' }),
+    trEmpty: s.tr({ rowVariant: 'empty' }),
+    checkbox: s.checkbox(),
+    tbody: s.tbody(),
+    tbodyLoader: s.tbodyLoader(),
+    tbodyLoaderContent: s.tbodyLoaderContent(),
+  };
+});
+
+provideDataTableContext<T, IdType>({
+  // Reactive (ComputedRef/Ref) — destructuring preserves reactivity via Vue template auto-unwrap
+  classes,
+  columns,
+  colspan,
+  expandable,
+  groupKey,
+  selectedData,
+  // Static values
+  cellValue,
+  dense,
+  getRowId: (row: T) => row[rowAttr],
+  itemSlotKeys,
+  groupExpandButtonPosition,
+  isDisabledRow,
+  isExpanded,
+  isExpandedGroup,
+  isSelected,
+  itemClass,
+  onCheckboxClick,
+  onCopyGroup: (header: GroupHeader<T>) => emit('copy:group', { key: get(groupKey) ?? '', value: header.group }),
+  onSelect,
+  onToggleExpand,
+  onToggleExpandGroup,
+  onUngroup,
+});
 </script>
 
 <template>
@@ -363,7 +411,6 @@ const ui = computed<ReturnType<typeof dataTableStyles>>(() => dataTableStyles({
           :dense="dense"
           :disable-check-all="!filtered?.length"
           :is-all-selected="isAllSelected"
-          :no-data="noData"
           :selectable="!!selectedData"
           :sort-data="sortData"
           :sorted-map="sortedMap"
@@ -390,7 +437,6 @@ const ui = computed<ReturnType<typeof dataTableStyles>>(() => dataTableStyles({
           :column-attr="columnAttr"
           :columns="columns"
           :dense="dense"
-          :no-data="noData"
           :selectable="!!selectedData"
           :sort-data="sortData"
           :sorted-map="sortedMap"
@@ -407,230 +453,87 @@ const ui = computed<ReturnType<typeof dataTableStyles>>(() => dataTableStyles({
             />
           </template>
         </RuiTableHead>
-        <tbody :class="ui.tbody()">
-          <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
-          <slot
+        <RuiDataTableBody
+          :filtered="filtered"
+          :loading="loading"
+          :no-data="noData"
+          :empty="empty"
+        >
+          <template
             v-if="slots['body.prepend']"
-            :colspan="colspan"
-            name="body.prepend"
-          />
-          <template v-for="(row, index) in filtered">
-            <tr
-              v-if="!isRow(row)"
-              :key="`row-${index}`"
-              :class="[ui.tr({ rowVariant: 'group' })]"
-              data-id="row-group"
-            >
-              <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
-              <slot
-                name="group.header"
-                :colspan="colspan"
-                :header="row"
-                :is-open="isExpandedGroup(row.group)"
-                :toggle="() => onToggleExpandGroup(row.group, row.identifier)"
-              >
-                <td
-                  :class="[ui.td()]"
-                  class="!p-2"
-                  :colspan="colspan"
-                >
-                  <div class="flex items-center gap-2">
-                    <RuiExpandButton
-                      v-if="groupExpandButtonPosition === 'start'"
-                      :expanded="isExpandedGroup(row.group)"
-                      @click="onToggleExpandGroup(row.group, row.identifier)"
-                    />
-                    <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
-                    <slot
-                      :group-key="groupKey"
-                      name="group.header.content"
-                      :header="row"
-                    >
-                      <span>{{ groupKey }}: {{ row.identifier }}</span>
-                      <RuiButton
-                        size="sm"
-                        variant="text"
-                        icon
-                        data-id="group-copy-button"
-                        @click="onCopyGroup({ key: groupKey, value: row.group })"
-                      >
-                        <RuiIcon
-                          name="lu-copy"
-                          size="16"
-                        />
-                      </RuiButton>
-                    </slot>
-                    <RuiTooltip
-                      :options="{ placement: 'top' }"
-                      class="ml-auto mr-2"
-                    >
-                      <template #activator>
-                        <RuiButton
-                          size="sm"
-                          variant="text"
-                          icon
-                          data-id="group-ungroup-button"
-                          @click="onUngroup()"
-                        >
-                          <RuiIcon
-                            name="lu-trash-2"
-                            size="14"
-                          />
-                        </RuiButton>
-                      </template>
-                      Ungroup
-                    </RuiTooltip>
-                    <RuiExpandButton
-                      v-if="groupExpandButtonPosition === 'end'"
-                      :expanded="isExpandedGroup(row.group)"
-                      @click="onToggleExpandGroup(row.group, row.identifier)"
-                    />
-                  </div>
-                </td>
-              </slot>
-            </tr>
-            <template v-else>
-              <tr
-                :key="`row-${index}`"
-                :class="[
-                  ui.tr({ rowVariant: isSelected(row[rowAttr]) ? 'selected' : undefined }),
-                  typeof itemClass === 'string' ? itemClass : itemClass(row),
-                ]"
-                :aria-selected="selectedData ? isSelected(row[rowAttr]) : undefined"
-                data-id="row"
-              >
-                <td
-                  v-if="selectedData"
-                  :class="ui.checkbox()"
-                  colspan="1"
-                  rowspan="1"
-                >
-                  <RuiCheckbox
-                    :data-id="`table-toggle-check-${index}`"
-                    :model-value="isSelected(row[rowAttr])"
-                    :disabled="isDisabledRow(row[rowAttr])"
-                    :size="dense ? 'sm' : undefined"
-                    color="primary"
-                    class="select-none"
-                    hide-details
-                    @update:model-value="onSelect($event, row[rowAttr], true)"
-                    @click="onCheckboxClick($event, row[rowAttr], index)"
-                  />
-                </td>
-
-                <td
-                  v-for="(column, subIndex) in columns"
-                  :key="subIndex"
-                  :class="[
-                    ui.td({ class: getAlignClass(column.align) }),
-                    column.cellClass,
-                  ]"
-                  :colspan="column.colspan ?? 1"
-                  :rowspan="column.rowspan ?? 1"
-                >
-                  <slot
-                    v-if="column.key === 'expand'"
-                    :name="`item.${column.key.toString()}`"
-                    :column="column"
-                    :row="row"
-                    :index="index"
-                  >
-                    <RuiExpandButton
-                      v-if="!slots['item.expand']"
-                      :expanded="isExpanded(row[rowAttr])"
-                      @click="onToggleExpand(row)"
-                    />
-                  </slot>
-                  <slot
-                    v-else
-                    :column="column"
-                    :index="index"
-                    :name="`item.${column.key.toString()}`"
-                    :row="row"
-                  >
-                    {{ cellValue(row, column.key) }}
-                  </slot>
-                </td>
-              </tr>
-
-              <tr
-                v-if="expandable && !!$slots['expanded-item'] && isExpanded(row[rowAttr])"
-                :key="`row-expand-${index}`"
-                :class="ui.tr({ rowVariant: 'expandable' })"
-                data-id="row-expanded"
-              >
-                <td
-                  :colspan="colspan"
-                  :class="[ui.td()]"
-                >
-                  <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
-                  <slot
-                    name="expanded-item"
-                    :row="row"
-                    :index="index"
-                  />
-                </td>
-              </tr>
-            </template>
-          </template>
-          <tr v-if="loading && noData">
-            <td
-              :class="ui.tbodyLoader()"
-              :colspan="colspan"
-              data-id="tbody-loader"
-            >
-              <div :class="ui.tbodyLoaderContent()">
-                <RuiProgress
-                  color="primary"
-                  variant="indeterminate"
-                  circular
-                />
-              </div>
-            </td>
-          </tr>
-          <tr
-            v-if="noData && empty && !loading"
-            :class="ui.tr({ rowVariant: 'empty' })"
-            data-id="row-empty"
+            #body.prepend="slotData"
           >
-            <Transition
-              appear
-              enter-active-class="transition ease-out duration-200 delay-200"
-              enter-from-class="opacity-0 translate-y-1"
-              enter-to-class="opacity-100 translate-y-0"
-              leave-active-class="transition ease-in duration-150"
-              leave-from-class="opacity-100 translate-y-0"
-              leave-to-class="opacity-0 translate-y-1"
-            >
-              <td
-                :class="ui.td()"
-                :colspan="colspan"
-              >
-                <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
-                <slot name="no-data">
-                  <RuiTableEmptyState
-                    :label="empty.label"
-                    :description="empty.description"
-                  >
-                    <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
-                    <template
-                      v-if="slots['empty-description']"
-                      #description
-                    >
-                      <slot name="empty-description" />
-                    </template>
-                  </RuiTableEmptyState>
-                </slot>
-              </td>
-            </Transition>
-          </tr>
-          <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
-          <slot
+            <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
+            <slot
+              name="body.prepend"
+              v-bind="slotData"
+            />
+          </template>
+          <template
+            v-if="slots['group.header']"
+            #group.header="slotData"
+          >
+            <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
+            <slot
+              name="group.header"
+              v-bind="slotData"
+            />
+          </template>
+          <template
+            v-if="slots['group.header.content']"
+            #group.header.content="slotData"
+          >
+            <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
+            <slot
+              name="group.header.content"
+              v-bind="slotData"
+            />
+          </template>
+          <template
+            v-for="key in itemSlotKeys"
+            #[`item.${key}`]="slotData"
+          >
+            <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
+            <slot
+              :name="`item.${key}`"
+              v-bind="slotData"
+            />
+          </template>
+          <template
+            v-if="slots['expanded-item']"
+            #expanded-item="slotData"
+          >
+            <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
+            <slot
+              name="expanded-item"
+              v-bind="slotData"
+            />
+          </template>
+          <template
+            v-if="slots['no-data']"
+            #no-data
+          >
+            <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
+            <slot name="no-data" />
+          </template>
+          <template
+            v-if="slots['empty-description']"
+            #empty-description
+          >
+            <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
+            <slot name="empty-description" />
+          </template>
+          <template
             v-if="slots['body.append']"
-            :colspan="colspan"
-            name="body.append"
-          />
-        </tbody>
+            #body.append="slotData"
+          >
+            <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
+            <slot
+              name="body.append"
+              v-bind="slotData"
+            />
+          </template>
+        </RuiDataTableBody>
         <tfoot>
           <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
           <slot name="tfoot" />

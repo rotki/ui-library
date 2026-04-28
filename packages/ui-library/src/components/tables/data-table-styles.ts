@@ -1,7 +1,5 @@
 import { tv } from '@/utils/tv';
 
-export { getAlignClass } from '@/components/tables/table-props';
-
 export const dataTableStyles = tv({
   slots: {
     wrapper: 'relative divide-y divide-black/[0.12] dark:divide-white/[0.12] overflow-hidden',

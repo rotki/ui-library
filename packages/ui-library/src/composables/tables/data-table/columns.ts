@@ -4,7 +4,8 @@ import type {
   TableColumn,
   TableRowKey,
 } from '@/components/tables/RuiTableHead.vue';
-import { isHeaderSlot } from '@/composables/tables/data-table/types';
+import { getAlignClass, TableAlign } from '@/components/tables/table-props';
+import { getObjectKeys, isHeaderSlot } from '@/composables/tables/data-table/types';
 
 export interface UseTableColumnsOptions<T extends object, IdType extends keyof T> {
   /** Column definitions for the table. When omitted, columns are inferred from row data. */
@@ -21,28 +22,38 @@ export interface UseTableColumnsOptions<T extends object, IdType extends keyof T
   selectedData: Ref<T[IdType][] | undefined>;
   /** Template slots provided to the table component. */
   slots: Record<string, any>;
+  /** Pre-computes td class per column to avoid per-cell tv() calls. */
+  tdResolver?: (options: { class?: string }) => string;
 }
 
 export interface UseTableColumnsReturn<T extends object> {
   columns: ComputedRef<TableColumn<T>[]>;
   colspan: ComputedRef<number>;
-  headerSlots: ComputedRef<`header.${string}`[]>;
+  headerSlots: `header.${string}`[];
   cellValue: (row: T, key: TableColumn<T>['key']) => T[TableRowKey<T>];
 }
 
 export function useTableColumns<T extends object, IdType extends keyof T>(
   options: UseTableColumnsOptions<T, IdType>,
 ): UseTableColumnsReturn<T> {
-  const { cols, columnAttr, expandable, groupKeys, rows, selectedData, slots } = options;
+  const { cols, columnAttr, expandable, groupKeys, rows, selectedData, slots, tdResolver } = options;
 
-  const getKeys = <O extends object>(t: O): TableRowKey<O>[] => Object.keys(t) as TableRowKey<O>[];
+  function attachTdClass(columnList: TableColumn<T>[]): TableColumn<T>[] {
+    if (!tdResolver)
+      return columnList;
+
+    return columnList.map(col => ({
+      ...col,
+      tdClass: tdResolver({ class: getAlignClass(col.align) }),
+    }));
+  }
 
   const columns = computed<TableColumn<T>[]>(() => {
     const currentCols = toValue(cols);
     const currentRows = toValue(rows);
     const data =
       currentCols ??
-      getKeys(currentRows[0] ?? {}).map(
+      getObjectKeys(currentRows[0] ?? {}).map(
         key =>
           ({
             key,
@@ -53,24 +64,24 @@ export function useTableColumns<T extends object, IdType extends keyof T>(
     const hasExpandColumn = data.some(row => row.key === 'expand');
 
     if (get(expandable) && !hasExpandColumn) {
-      return [
+      return attachTdClass([
         ...data,
         {
           key: 'expand' as TableRowKey<T>,
           sortable: false,
           class: 'w-16',
           cellClass: '!py-0 w-16',
-          align: 'end',
+          align: TableAlign.end,
         } satisfies NoneSortableTableColumn<T>,
-      ];
+      ]);
     }
 
     const groupByKeys = get(groupKeys);
 
     if (groupByKeys.length === 0)
-      return data;
+      return attachTdClass(data);
 
-    return data.filter(column => !groupByKeys.includes(column.key as TableRowKey<T>));
+    return attachTdClass(data.filter(column => !groupByKeys.includes(column.key as TableRowKey<T>)));
   });
 
   const colspan = computed<number>(() => {
@@ -81,7 +92,8 @@ export function useTableColumns<T extends object, IdType extends keyof T>(
     return columnLength;
   });
 
-  const headerSlots = computed<`header.${string}`[]>(() => Object.keys(slots).filter(isHeaderSlot));
+  // Slot keys are static for the component lifetime — no reactivity needed
+  const headerSlots: `header.${string}`[] = Object.keys(slots).filter(isHeaderSlot);
 
   function cellValue(row: T, key: TableColumn<T>['key']): T[TableRowKey<T>] {
     return row[key as TableRowKey<T>];

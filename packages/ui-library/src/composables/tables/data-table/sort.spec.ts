@@ -1,25 +1,13 @@
-import { mount } from '@vue/test-utils';
+import type { TableSortData } from '@/components/tables/RuiTableHead.vue';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { defineComponent } from 'vue';
 import { useTableSort } from '@/composables/tables/data-table/sort';
+import { assert } from '@/utils/assert';
+import { withSetup } from '~/tests/helpers/with-setup';
 
 interface TestItem {
   id: number;
   name: string;
   title: string;
-}
-
-function withSetup<T>(composable: () => T): { result: T; unmount: () => void } {
-  let result!: T;
-  const TestComponent = defineComponent({
-    setup() {
-      result = composable();
-      return {};
-    },
-    template: '<div></div>',
-  });
-  const wrapper = mount(TestComponent);
-  return { result, unmount: () => wrapper.unmount() };
 }
 
 describe('composables/tables/data-table/sort', () => {
@@ -36,7 +24,7 @@ describe('composables/tables/data-table/sort', () => {
   });
 
   it('should filter rows based on search query', () => {
-    const sort = ref<{ column?: string; direction: 'asc' | 'desc' } | undefined>({
+    const sort = ref<TableSortData<TestItem>>({
       column: undefined,
       direction: 'asc',
     });
@@ -44,7 +32,7 @@ describe('composables/tables/data-table/sort', () => {
       useTableSort<TestItem>(
         { rows: () => rows, search: () => 'alice', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -57,12 +45,12 @@ describe('composables/tables/data-table/sort', () => {
   });
 
   it('should sort rows ascending', () => {
-    const sort = ref({ column: 'name', direction: 'asc' as const });
+    const sort = ref<TableSortData<TestItem>>({ column: 'name', direction: 'asc' });
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -77,12 +65,12 @@ describe('composables/tables/data-table/sort', () => {
   });
 
   it('should sort rows descending', () => {
-    const sort = ref({ column: 'name', direction: 'desc' as const });
+    const sort = ref<TableSortData<TestItem>>({ column: 'name', direction: 'desc' });
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -96,12 +84,12 @@ describe('composables/tables/data-table/sort', () => {
   });
 
   it('should sort numeric values correctly', () => {
-    const sort = ref({ column: 'id', direction: 'asc' as const });
+    const sort = ref<TableSortData<TestItem>>({ column: 'id', direction: 'asc' });
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -116,12 +104,12 @@ describe('composables/tables/data-table/sort', () => {
   });
 
   it('should not sort when sortModifiersExternal is true', () => {
-    const sort = ref({ column: 'name', direction: 'asc' as const });
+    const sort = ref<TableSortData<TestItem>>({ column: 'name', direction: 'asc' });
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: true },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -134,12 +122,12 @@ describe('composables/tables/data-table/sort', () => {
   });
 
   it('should build sortedMap from single sort', () => {
-    const sort = ref({ column: 'name', direction: 'asc' as const });
+    const sort = ref<TableSortData<TestItem>>({ column: 'name', direction: 'asc' });
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -152,13 +140,13 @@ describe('composables/tables/data-table/sort', () => {
   });
 
   it('should emit update:options when sort changes via onSort', () => {
-    const sort = ref({ column: undefined, direction: 'asc' as const });
+    const sort = ref<TableSortData<TestItem>>({ column: undefined, direction: 'asc' });
     const emitUpdateOptions = vi.fn();
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions,
         },
@@ -171,12 +159,12 @@ describe('composables/tables/data-table/sort', () => {
   });
 
   it('should toggle single sort direction on same column', () => {
-    const sort = ref({ column: 'name', direction: 'asc' as const });
+    const sort = ref<TableSortData<TestItem>>({ column: 'name', direction: 'asc' });
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -190,12 +178,12 @@ describe('composables/tables/data-table/sort', () => {
   });
 
   it('should clear single sort when toggling past desc', () => {
-    const sort = ref({ column: 'name', direction: 'desc' as const });
+    const sort = ref<TableSortData<TestItem>>({ column: 'name', direction: 'desc' });
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -209,12 +197,12 @@ describe('composables/tables/data-table/sort', () => {
   });
 
   it('should set new column when sorting unsorted column in single mode', () => {
-    const sort = ref({ column: 'name', direction: 'asc' as const });
+    const sort = ref<TableSortData<TestItem>>({ column: 'name', direction: 'asc' });
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -227,12 +215,12 @@ describe('composables/tables/data-table/sort', () => {
   });
 
   it('should support explicit direction in onSort', () => {
-    const sort = ref({ column: undefined, direction: 'asc' as const });
+    const sort = ref<TableSortData<TestItem>>({ column: undefined, direction: 'asc' });
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -245,12 +233,12 @@ describe('composables/tables/data-table/sort', () => {
   });
 
   it('should add column in multi-sort mode', () => {
-    const sort = ref([{ column: 'name', direction: 'asc' as const }]);
+    const sort = ref<TableSortData<TestItem>>([{ column: 'name', direction: 'asc' }]);
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -265,12 +253,12 @@ describe('composables/tables/data-table/sort', () => {
   });
 
   it('should toggle direction in multi-sort mode', () => {
-    const sort = ref([{ column: 'name', direction: 'asc' as const }]);
+    const sort = ref<TableSortData<TestItem>>([{ column: 'name', direction: 'asc' }]);
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -280,21 +268,22 @@ describe('composables/tables/data-table/sort', () => {
 
     // asc → desc
     result.onSort({ key: 'name' });
-    const sortVal = get(result.sortData) as Array<{ column: string; direction: string }>;
+    const sortVal = get(result.sortData);
+    assert(Array.isArray(sortVal));
     expect(sortVal).toHaveLength(1);
     expect(sortVal[0]?.direction).toBe('desc');
   });
 
   it('should remove column in multi-sort when toggling past desc', () => {
-    const sort = ref([
-      { column: 'name', direction: 'desc' as const },
-      { column: 'title', direction: 'asc' as const },
+    const sort = ref<TableSortData<TestItem>>([
+      { column: 'name', direction: 'desc' },
+      { column: 'title', direction: 'asc' },
     ]);
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -304,21 +293,22 @@ describe('composables/tables/data-table/sort', () => {
 
     // desc → remove
     result.onSort({ key: 'name' });
-    const sortVal = get(result.sortData) as Array<{ column: string; direction: string }>;
+    const sortVal = get(result.sortData);
+    assert(Array.isArray(sortVal));
     expect(sortVal).toHaveLength(1);
     expect(sortVal[0]?.column).toBe('title');
   });
 
   it('should return sort index for multi-sort', () => {
-    const sort = ref([
-      { column: 'name', direction: 'asc' as const },
-      { column: 'title', direction: 'asc' as const },
+    const sort = ref<TableSortData<TestItem>>([
+      { column: 'name', direction: 'asc' },
+      { column: 'title', direction: 'asc' },
     ]);
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -332,12 +322,12 @@ describe('composables/tables/data-table/sort', () => {
   });
 
   it('should return -1 for getSortIndex in single sort mode', () => {
-    const sort = ref({ column: 'name', direction: 'asc' as const });
+    const sort = ref<TableSortData<TestItem>>({ column: 'name', direction: 'asc' });
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -349,15 +339,15 @@ describe('composables/tables/data-table/sort', () => {
   });
 
   it('should build sortedMap from multi-sort array', () => {
-    const sort = ref([
-      { column: 'name', direction: 'asc' as const },
-      { column: 'id', direction: 'desc' as const },
+    const sort = ref<TableSortData<TestItem>>([
+      { column: 'name', direction: 'asc' },
+      { column: 'id', direction: 'desc' },
     ]);
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -371,12 +361,12 @@ describe('composables/tables/data-table/sort', () => {
   });
 
   it('should return empty sortedMap when single sort column is undefined', () => {
-    const sort = ref({ column: undefined, direction: 'asc' as const });
+    const sort = ref<TableSortData<TestItem>>({ column: undefined, direction: 'asc' });
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -389,15 +379,15 @@ describe('composables/tables/data-table/sort', () => {
   });
 
   it('should skip entries with falsy column in multi-sort sortedMap', () => {
-    const sort = ref([
-      { column: 'name', direction: 'asc' as const },
-      { column: undefined, direction: 'asc' as const },
+    const sort = ref<TableSortData<TestItem>>([
+      { column: 'name', direction: 'asc' },
+      { column: undefined, direction: 'asc' },
     ]);
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -411,12 +401,12 @@ describe('composables/tables/data-table/sort', () => {
   });
 
   it('should preserve row order when sort column is undefined', () => {
-    const sort = ref({ column: undefined, direction: 'asc' as const });
+    const sort = ref<TableSortData<TestItem>>({ column: undefined, direction: 'asc' });
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -432,12 +422,12 @@ describe('composables/tables/data-table/sort', () => {
   });
 
   it('should support explicit direction in multi-sort onSort', () => {
-    const sort = ref([{ column: 'name', direction: 'asc' as const }]);
+    const sort = ref<TableSortData<TestItem>>([{ column: 'name', direction: 'asc' }]);
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions: () => {},
         },
@@ -446,20 +436,21 @@ describe('composables/tables/data-table/sort', () => {
     unmount = u;
 
     result.onSort({ key: 'title', direction: 'desc' });
-    const sortVal = get(result.sortData) as Array<{ column: string; direction: string }>;
+    const sortVal = get(result.sortData);
+    assert(Array.isArray(sortVal));
     expect(sortVal).toHaveLength(2);
     expect(sortVal[1]?.column).toBe('title');
     expect(sortVal[1]?.direction).toBe('desc');
   });
 
   it('should do nothing when onSort is called with undefined sortData', () => {
-    const sort = ref(undefined);
+    const sort = ref<TableSortData<TestItem>>(undefined);
     const emitUpdateOptions = vi.fn();
     const { result, unmount: u } = withSetup(() =>
       useTableSort<TestItem>(
         { rows: () => rows, search: () => '', sortModifiersExternal: false },
         {
-          sort: sort as any,
+          sort,
           pagination: ref(undefined),
           emitUpdateOptions,
         },
@@ -469,5 +460,151 @@ describe('composables/tables/data-table/sort', () => {
 
     result.onSort({ key: 'name' });
     expect(emitUpdateOptions).not.toHaveBeenCalled();
+  });
+
+  it('should match rows with undefined field values when searching for "undefined"', () => {
+    interface PartialItem {
+      id: number;
+      name: string | undefined;
+      title: string;
+    }
+
+    const rowsWithUndefined: PartialItem[] = [
+      { id: 1, name: undefined, title: 'Developer' },
+      { id: 2, name: 'Bob', title: 'Designer' },
+    ];
+
+    const { result, unmount: u } = withSetup(() =>
+      useTableSort<PartialItem>(
+        { rows: () => rowsWithUndefined, search: () => 'undefined', sortModifiersExternal: false },
+        {
+          sort: ref<TableSortData<PartialItem>>({ column: undefined, direction: 'asc' }),
+          pagination: ref(undefined),
+          emitUpdateOptions: () => {},
+        },
+      ),
+    );
+    unmount = u;
+
+    expect(get(result.searchData)).toHaveLength(1);
+    expect(get(result.searchData)[0]?.id).toBe(1);
+  });
+
+  it('should return empty results when searching on empty rows', () => {
+    const emptyRows: TestItem[] = [];
+
+    const { result, unmount: u } = withSetup(() =>
+      useTableSort<TestItem>(
+        { rows: () => emptyRows, search: () => 'alice', sortModifiersExternal: false },
+        {
+          sort: ref<TableSortData<TestItem>>({ column: undefined, direction: 'asc' }),
+          pagination: ref(undefined),
+          emitUpdateOptions: () => {},
+        },
+      ),
+    );
+    unmount = u;
+
+    expect(get(result.searchData)).toHaveLength(0);
+  });
+
+  it('should detect numeric column type by skipping null values', () => {
+    interface NullableItem {
+      id: number;
+      score: number | null;
+    }
+
+    const rowsWithNull: NullableItem[] = [
+      { id: 1, score: null },
+      { id: 2, score: 10 },
+      { id: 3, score: 2 },
+    ];
+
+    const { result, unmount: u } = withSetup(() =>
+      useTableSort<NullableItem>(
+        { rows: () => rowsWithNull, search: () => '', sortModifiersExternal: false },
+        {
+          sort: ref<TableSortData<NullableItem>>({ column: 'score', direction: 'asc' }),
+          pagination: ref(undefined),
+          emitUpdateOptions: () => {},
+        },
+      ),
+    );
+    unmount = u;
+
+    const sorted = get(result.sorted);
+    // Numeric sort: null coerces to 0 via Number(null), so null < 2 < 10
+    expect(sorted[0]?.score).toBeNull();
+    expect(sorted[1]?.score).toBe(2);
+    expect(sorted[2]?.score).toBe(10);
+  });
+
+  it('should break ties with secondary sort in multi-column sort', () => {
+    interface TieItem {
+      id: number;
+      group: string;
+      rank: number;
+    }
+
+    const tieRows: TieItem[] = [
+      { id: 1, group: 'A', rank: 3 },
+      { id: 2, group: 'A', rank: 1 },
+      { id: 3, group: 'B', rank: 2 },
+      { id: 4, group: 'A', rank: 2 },
+    ];
+
+    const { result, unmount: u } = withSetup(() =>
+      useTableSort<TieItem>(
+        { rows: () => tieRows, search: () => '', sortModifiersExternal: false },
+        {
+          sort: ref<TableSortData<TieItem>>([
+            { column: 'group', direction: 'asc' },
+            { column: 'rank', direction: 'asc' },
+          ]),
+          pagination: ref(undefined),
+          emitUpdateOptions: () => {},
+        },
+      ),
+    );
+    unmount = u;
+
+    const sorted = get(result.sorted);
+    // Group A first (sorted by rank: 1, 2, 3), then group B (rank: 2)
+    expect(sorted[0]?.id).toBe(2);
+    expect(sorted[1]?.id).toBe(4);
+    expect(sorted[2]?.id).toBe(1);
+    expect(sorted[3]?.id).toBe(3);
+  });
+
+  it('should handle column with all null values without errors', () => {
+    interface AllNullItem {
+      id: number;
+      value: string | null;
+    }
+
+    const allNullRows: AllNullItem[] = [
+      { id: 1, value: null },
+      { id: 2, value: null },
+      { id: 3, value: null },
+    ];
+
+    const { result, unmount: u } = withSetup(() =>
+      useTableSort<AllNullItem>(
+        { rows: () => allNullRows, search: () => '', sortModifiersExternal: false },
+        {
+          sort: ref<TableSortData<AllNullItem>>({ column: 'value', direction: 'asc' }),
+          pagination: ref(undefined),
+          emitUpdateOptions: () => {},
+        },
+      ),
+    );
+    unmount = u;
+
+    const sorted = get(result.sorted);
+    // Should not throw; all null values treated as string comparison
+    expect(sorted).toHaveLength(3);
+    expect(sorted[0]?.id).toBe(1);
+    expect(sorted[1]?.id).toBe(2);
+    expect(sorted[2]?.id).toBe(3);
   });
 });

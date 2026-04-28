@@ -1,9 +1,15 @@
 import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue';
 import type { SortColumn, TableRowKey, TableSortData } from '@/components/tables/RuiTableHead.vue';
 import type { TablePaginationData } from '@/components/tables/RuiTablePagination.vue';
+import { SortDirection } from '@/components/tables/table-props';
+import { getObjectKeys } from '@/composables/tables/data-table/types';
 import { assert } from '@/utils/assert';
 
 const SORT_COLLATOR = new Intl.Collator(undefined, { sensitivity: 'accent', usage: 'sort' });
+
+function toggleDirection(direction: SortDirection): SortDirection {
+  return direction === SortDirection.asc ? SortDirection.desc : SortDirection.asc;
+}
 
 export interface UseTableSortOptions<T extends object> {
   /** The data rows to sort. */
@@ -26,11 +32,31 @@ export interface UseTableSortDeps<T extends object> {
 export interface UseTableSortReturn<T extends object> {
   sortData: ComputedRef<TableSortData<T>>;
   sortedMap: ComputedRef<Partial<Record<TableRowKey<T>, SortColumn<T>>>>;
-  searchData: ComputedRef<T[]>;
-  sorted: ComputedRef<T[]>;
+  searchData: ComputedRef<readonly T[]>;
+  sorted: ComputedRef<readonly T[]>;
   isSortedBy: (key: TableRowKey<T>) => boolean;
   getSortIndex: (key: TableRowKey<T>) => number;
-  onSort: (payload: { key: TableRowKey<T>; direction?: 'asc' | 'desc' }) => void;
+  onSort: (payload: { key: TableRowKey<T>; direction?: SortDirection }) => void;
+}
+
+/**
+ * Detect whether each column contains numeric data by sampling the first non-null value.
+ */
+function detectNumericColumns<T extends object>(
+  activeColumns: TableRowKey<T>[],
+  data: readonly T[],
+): Map<TableRowKey<T>, boolean> {
+  const isNumericCol = new Map<TableRowKey<T>, boolean>();
+  for (const key of activeColumns) {
+    for (const row of data) {
+      const val = row[key];
+      if (val != null) {
+        isNumericCol.set(key, !Number.isNaN(Number(val)));
+        break;
+      }
+    }
+  }
+  return isNumericCol;
 }
 
 export function useTableSort<T extends object>(
@@ -39,8 +65,6 @@ export function useTableSort<T extends object>(
 ): UseTableSortReturn<T> {
   const { rows, search, sortModifiersExternal } = options;
   const { sort, pagination, emitUpdateOptions } = deps;
-
-  const getKeys = <O extends object>(t: O): TableRowKey<O>[] => Object.keys(t) as TableRowKey<O>[];
 
   const sortData = computed<TableSortData<T>>({
     get(): TableSortData<T> {
@@ -77,46 +101,75 @@ export function useTableSort<T extends object>(
     }, mapped);
   });
 
-  const searchData = computed<T[]>(() => {
+  // Pre-compute a single lowercased searchable string per row, recomputed only when rows change
+  const searchIndex = computed<Map<T, string>>(() => {
+    if (!toValue(search))
+      return new Map<T, string>();
+
+    const currentRows = toValue(rows);
+    const index = new Map<T, string>();
+    for (const row of currentRows) {
+      const parts: string[] = [];
+      for (const key of getObjectKeys(row))
+        parts.push(`${row[key]}`);
+      index.set(row, parts.join('\0').toLocaleLowerCase());
+    }
+    return index;
+  });
+
+  const searchData = computed<readonly T[]>(() => {
     const currentRows = toValue(rows);
     const query = toValue(search)?.toLocaleLowerCase();
     if (!query)
-      return [...currentRows];
+      return currentRows;
 
-    return currentRows.filter(row =>
-      getKeys(row).some(key => `${row[key]}`.toLocaleLowerCase().includes(query)),
-    );
+    const index = get(searchIndex);
+    return currentRows.filter((row) => {
+      const searchStr = index.get(row);
+      return searchStr?.includes(query) ?? false;
+    });
   });
 
-  const sorted: ComputedRef<T[]> = computed(() => {
+  const sorted: ComputedRef<readonly T[]> = computed(() => {
     const sortBy = get(sortData);
     if (!sortBy || sortModifiersExternal)
       return get(searchData);
 
     const data = [...get(searchData)];
+    const sortColumns = Array.isArray(sortBy) ? sortBy : [sortBy];
+    const activeColumns = sortColumns
+      .map(col => col.column)
+      .filter((col): col is TableRowKey<T> => !!col);
 
-    const sortFn = (by: SortColumn<T>): void => {
-      data.sort((a, b) => {
-        const column = by.column;
-        if (!column)
-          return 0;
+    if (activeColumns.length === 0)
+      return data;
 
-        let [aValue, bValue] = [a[column], b[column]];
-        if (by.direction === 'desc')
-          [aValue, bValue] = [bValue, aValue];
+    const isNumericCol = detectNumericColumns(activeColumns, data);
 
-        const aNumber = Number(aValue);
-        const bNumber = Number(bValue);
-        if (!isNaN(aNumber) && !isNaN(bNumber))
-          return aNumber - bNumber;
+    // Build a lookup for direction per column
+    const directionMap = new Map<TableRowKey<T>, SortDirection>();
+    for (const col of sortColumns) {
+      if (col.column)
+        directionMap.set(col.column, col.direction ?? SortDirection.asc);
+    }
 
-        return SORT_COLLATOR.compare(`${aValue}`, `${bValue}`);
-      });
-    };
+    data.sort((a, b) => {
+      for (const key of activeColumns) {
+        let [aVal, bVal] = [a[key], b[key]];
+        if (directionMap.get(key) === SortDirection.desc)
+          [aVal, bVal] = [bVal, aVal];
 
-    if (!Array.isArray(sortBy))
-      sortFn(sortBy);
-    else [...sortBy].reverse().forEach(sortFn);
+        let result: number;
+        if (isNumericCol.get(key))
+          result = Number(aVal) - Number(bVal);
+        else
+          result = SORT_COLLATOR.compare(`${aVal}`, `${bVal}`);
+
+        if (result !== 0)
+          return result;
+      }
+      return 0;
+    });
 
     return data;
   });
@@ -134,56 +187,67 @@ export function useTableSort<T extends object>(
     return sortBy.findIndex(s => s.column === key);
   }
 
-  function onSort({ key, direction }: { key: TableRowKey<T>; direction?: 'asc' | 'desc' }): void {
-    const sortBy = get(sortData);
-    if (!sortBy)
-      return;
+  function onSortSingle(
+    sortBy: SortColumn<T>,
+    key: TableRowKey<T>,
+    direction?: SortDirection,
+  ): void {
+    if (isSortedBy(key)) {
+      const newDirection = toggleDirection(direction ?? SortDirection.asc);
 
-    if (!Array.isArray(sortBy)) {
-      if (isSortedBy(key)) {
-        const newDirection = !direction || direction === 'asc' ? 'desc' : 'asc';
-
-        if (sortBy.direction === newDirection) {
-          set(sortData, { ...sortBy, column: undefined, direction: 'asc' });
-        }
-        else {
-          set(sortData, {
-            ...sortBy,
-            direction: sortBy.direction === 'asc' ? 'desc' : 'asc',
-          });
-        }
+      if (sortBy.direction === newDirection) {
+        set(sortData, { ...sortBy, column: undefined, direction: SortDirection.asc });
       }
       else {
-        set(sortData, { column: key, direction: direction || 'asc' });
+        set(sortData, {
+          ...sortBy,
+          direction: toggleDirection(sortBy.direction),
+        });
       }
-      return;
     }
+    else {
+      set(sortData, { column: key, direction: direction ?? SortDirection.asc });
+    }
+  }
 
+  function onSortMulti(
+    sortBy: SortColumn<T>[],
+    key: TableRowKey<T>,
+    direction?: SortDirection,
+  ): void {
     if (isSortedBy(key)) {
-      const newDirection = !direction || direction === 'asc' ? 'desc' : 'asc';
+      const newDirection = toggleDirection(direction ?? SortDirection.asc);
 
       const index = getSortIndex(key);
       const sortByCol = sortBy[index];
       assert(sortByCol);
 
       if (sortByCol.direction === newDirection) {
-        set(
-          sortData,
-          sortBy.filter((_, i) => i !== index),
-        );
+        set(sortData, sortBy.filter((_, i) => i !== index));
       }
       else {
         set(
           sortData,
           sortBy.map((col, i) =>
-            i === index ? { ...col, direction: col.direction === 'asc' ? 'desc' : 'asc' } : col,
+            i === index ? { ...col, direction: toggleDirection(col.direction) } : col,
           ),
         );
       }
     }
     else {
-      set(sortData, [...sortBy, { column: key, direction: direction || 'asc' }]);
+      set(sortData, [...sortBy, { column: key, direction: direction ?? SortDirection.asc }]);
     }
+  }
+
+  function onSort({ key, direction }: { key: TableRowKey<T>; direction?: SortDirection }): void {
+    const sortBy = get(sortData);
+    if (!sortBy)
+      return;
+
+    if (Array.isArray(sortBy))
+      onSortMulti(sortBy, key, direction);
+    else
+      onSortSingle(sortBy, key, direction);
   }
 
   return {

@@ -1,6 +1,7 @@
 import type { ComputedRef, Ref } from 'vue';
-import type { GroupData, TableRowKey, TableRowKeyData } from '@/components/tables/RuiTableHead.vue';
+import type { TableRowKey, TableRowKeyData } from '@/components/tables/RuiTableHead.vue';
 import {
+  GROUP_HEADER_BRAND,
   type GroupedTableRow,
   type GroupHeader,
   isRow,
@@ -15,16 +16,15 @@ export interface UseTableGroupingOptions<T extends object, IdType extends keyof 
 export interface UseTableGroupingDeps<T extends object> {
   group: Ref<TableRowKeyData<T>>;
   collapsed: Ref<T[] | undefined>;
-  sorted: ComputedRef<T[]>;
-  emitCopyGroup: (value: GroupData<T>) => void;
+  sorted: ComputedRef<readonly T[]>;
 }
 
 export interface UseTableGroupingReturn<T extends object> {
   groupKeys: ComputedRef<TableRowKey<T>[]>;
-  groupKey: ComputedRef<string>;
+  groupKey: ComputedRef<string | undefined>;
   isGrouped: ComputedRef<boolean>;
   mappedGroups: ComputedRef<Record<string, GroupedTableRow<T>[]>>;
-  grouped: ComputedRef<GroupedTableRow<T>[]>;
+  grouped: ComputedRef<readonly GroupedTableRow<T>[]>;
   getRowGroup: (row: T) => Partial<T>;
   getGroupRows: (groupVal: string) => T[];
   compareGroupsFn: (a: T, b: Partial<T>) => boolean;
@@ -32,7 +32,6 @@ export interface UseTableGroupingReturn<T extends object> {
   isHiddenRow: (row: GroupedTableRow<T>) => boolean;
   onToggleExpandGroup: (group: Partial<T>, value?: string) => void;
   onUngroup: () => void;
-  onCopyGroup: (value: GroupData<T>) => void;
 }
 
 // Null character separator prevents false collisions when group values contain commas
@@ -43,7 +42,7 @@ export function useTableGrouping<T extends object, IdType extends keyof T>(
   deps: UseTableGroupingDeps<T>,
 ): UseTableGroupingReturn<T> {
   const { rowAttr } = options;
-  const { group, collapsed, sorted, emitCopyGroup } = deps;
+  const { group, collapsed, sorted } = deps;
 
   const collapsedRows: Ref<T[]> = ref([]);
 
@@ -61,9 +60,12 @@ export function useTableGrouping<T extends object, IdType extends keyof T>(
     return groupBy;
   });
 
-  const groupKey = computed<string>(() => get(groupKeys).join(':'));
+  const groupKey = computed<string | undefined>(() => {
+    const key = get(groupKeys).join(':');
+    return key || undefined;
+  });
 
-  const isGrouped = computed<boolean>(() => !!get(groupKey));
+  const isGrouped = computed<boolean>(() => get(groupKey) !== undefined);
 
   const collapsedIdentifierSet = computed<Set<T[IdType]>>(
     () => new Set(get(collapsedRows).map(row => row[rowAttr])),
@@ -75,13 +77,8 @@ export function useTableGrouping<T extends object, IdType extends keyof T>(
       return new Set<string>();
 
     const seen = new Set<string>();
-    for (const row of get(collapsedRows)) {
-      const groupVal = grouping
-        .map(key => row[key])
-        .filter(isDefined)
-        .join(GROUP_KEY_SEPARATOR);
-      seen.add(groupVal);
-    }
+    for (const row of get(collapsedRows))
+      seen.add(computeGroupKey(row, grouping));
     return seen;
   });
 
@@ -102,7 +99,14 @@ export function useTableGrouping<T extends object, IdType extends keyof T>(
   }
 
   function isExpandedGroup(value: Partial<T>): boolean {
-    const groupVal = Object.values(value).filter(isDefined).join(GROUP_KEY_SEPARATOR);
+    const grouping = get(groupKeys);
+    let groupVal = '';
+    for (const gk of grouping) {
+      if (groupVal)
+        groupVal += GROUP_KEY_SEPARATOR;
+      const val = value[gk];
+      groupVal += isDefined(val) ? val : '';
+    }
     return !get(collapsedGroupKeySet).has(groupVal);
   }
 
@@ -114,43 +118,61 @@ export function useTableGrouping<T extends object, IdType extends keyof T>(
     return get(collapsedIdentifierSet).has(row[rowAttr]);
   }
 
+  function computeGroupKey(row: T, grouping: TableRowKey<T>[]): string {
+    let key = '';
+    for (const gk of grouping) {
+      if (key)
+        key += GROUP_KEY_SEPARATOR;
+      const val = row[gk];
+      key += isDefined(val) ? val : '';
+    }
+    return key;
+  }
+
   const mappedGroups = computed<Record<string, GroupedTableRow<T>[]>>(() => {
-    if (!get(isGrouped))
+    const grouping = get(groupKeys);
+    if (grouping.length === 0)
       return {};
 
     const result = get(sorted);
     const identifier = rowAttr;
+    const acc: Record<string, GroupedTableRow<T>[]> = {};
 
-    return result.reduce((acc: Record<string, GroupedTableRow<T>[]>, row) => {
+    for (const row of result) {
       if (!isDefined(row[identifier]) || row[identifier] === '')
-        return acc;
+        continue;
 
-      const rowGroup = getRowGroup(row);
-      const groupVal = Object.values(rowGroup).filter(isDefined).join(GROUP_KEY_SEPARATOR);
+      const groupVal = computeGroupKey(row, grouping);
       if (!acc[groupVal]) {
         acc[groupVal] = [
           {
-            __header__: true,
-            group: rowGroup,
+            [GROUP_HEADER_BRAND]: true,
+            group: getRowGroup(row),
             identifier: groupVal,
           } satisfies GroupHeader<T>,
         ];
       }
 
       acc[groupVal].push(row);
+    }
 
-      return acc;
-    }, {});
+    return acc;
   });
 
-  const grouped = computed<GroupedTableRow<T>[]>(() => {
+  const grouped = computed<readonly GroupedTableRow<T>[]>(() => {
     const result = get(sorted);
     const groupByKey = get(groupKey);
 
     if (!groupByKey)
       return result;
 
-    return Object.values(get(mappedGroups)).flat();
+    const groups = get(mappedGroups);
+    const out: GroupedTableRow<T>[] = [];
+    for (const items of Object.values(groups)) {
+      for (const item of items)
+        out.push(item);
+    }
+    return out;
   });
 
   function getGroupRows(groupVal: string): T[] {
@@ -189,10 +211,6 @@ export function useTableGrouping<T extends object, IdType extends keyof T>(
     set(group, Array.isArray(get(group)) ? [] : undefined);
   }
 
-  function onCopyGroup(value: GroupData<T>): void {
-    emitCopyGroup(value);
-  }
-
   return {
     groupKeys,
     groupKey,
@@ -206,6 +224,5 @@ export function useTableGrouping<T extends object, IdType extends keyof T>(
     isHiddenRow,
     onToggleExpandGroup,
     onUngroup,
-    onCopyGroup,
   };
 }

@@ -41,11 +41,11 @@ export function useTableSelection<T extends object, IdType extends keyof T>(
 
   const shiftClicked: Ref<boolean> = shallowRef(false);
   const lastSelectedIndex: Ref<number> = shallowRef(-1);
-  const internalSelectedData: Ref<T[IdType][]> = ref([]);
+  const internalSelectedData: Ref<T[IdType][]> = shallowRef([]);
   const { create: scheduleShiftSelect } = useTimeoutManager();
 
   // Sync external selection model to internal state
-  watch(selectedData, val => set(internalSelectedData, val), { immediate: true });
+  watch(selectedData, val => set(internalSelectedData, val ?? []), { immediate: true });
 
   const visibleIdentifiers = computed<T[IdType][]>(() =>
     get(filtered)
@@ -145,7 +145,7 @@ export function useTableSelection<T extends object, IdType extends keyof T>(
     else if (!checked && selected) {
       set(
         internalSelectedData,
-        [...selectedRows].filter(r => r !== value),
+        selectedRows.filter(r => r !== value),
       );
     }
 
@@ -185,11 +185,24 @@ export function useTableSelection<T extends object, IdType extends keyof T>(
               const from = Math.min(lastIndex, index);
               const to = Math.max(lastIndex, index);
 
+              // Batch: collect all IDs in range, then update once
+              const currentSelected = get(internalSelectedData);
+              const rangeIds: T[IdType][] = [];
               for (let i = from; i <= to; i++) {
                 const currSelectedData = tableData[i];
                 assert(currSelectedData);
                 if (isRow(currSelectedData) && !isDisabledRow(currSelectedData[rowAttr]))
-                  onSelect(valueToApply, currSelectedData[rowAttr]);
+                  rangeIds.push(currSelectedData[rowAttr]);
+              }
+
+              if (valueToApply) {
+                const existing = new Set(currentSelected);
+                const toAdd = rangeIds.filter(id => !existing.has(id));
+                set(internalSelectedData, [...currentSelected, ...toAdd]);
+              }
+              else {
+                const toRemove = new Set(rangeIds);
+                set(internalSelectedData, currentSelected.filter(id => !toRemove.has(id)));
               }
             }
 

@@ -1,24 +1,11 @@
-import { mount } from '@vue/test-utils';
-import { afterEach, describe, expect, it } from 'vitest';
-import { defineComponent } from 'vue';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useTableSelection } from '@/composables/tables/data-table/selection';
+import { GROUP_HEADER_BRAND, type GroupedTableRow, type GroupHeader } from '@/composables/tables/data-table/types';
+import { withSetup } from '~/tests/helpers/with-setup';
 
 interface TestItem {
   id: number;
   name: string;
-}
-
-function withSetup<T>(composable: () => T): { result: T; unmount: () => void } {
-  let result!: T;
-  const TestComponent = defineComponent({
-    setup() {
-      result = composable();
-      return {};
-    },
-    template: '<div></div>',
-  });
-  const wrapper = mount(TestComponent);
-  return { result, unmount: () => wrapper.unmount() };
 }
 
 describe('composables/tables/data-table/selection', () => {
@@ -490,5 +477,222 @@ describe('composables/tables/data-table/selection', () => {
     result.deselectRemovedRows();
     // All visible, nothing removed
     expect(get(selectedData)).toEqual([1, 2, 3]);
+  });
+
+  describe('onCheckboxClick shift-select', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+      unmount?.();
+    });
+
+    function createMockCheckboxEvent(options: { shiftKey: boolean }): MouseEvent {
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      const wrapper = document.createElement('div');
+      wrapper.appendChild(input);
+
+      const target = document.createElement('div');
+      wrapper.appendChild(target);
+
+      const event = new MouseEvent('click', { shiftKey: options.shiftKey, bubbles: true });
+      Object.defineProperty(event, 'currentTarget', { value: wrapper });
+      Object.defineProperty(event, 'target', { value: target });
+      return event;
+    }
+
+    it('should select a contiguous range between last click and current click', () => {
+      const selectedData = ref<number[]>([]);
+      const extendedRows: TestItem[] = [
+        { id: 1, name: 'Alice' },
+        { id: 2, name: 'Bob' },
+        { id: 3, name: 'Charlie' },
+        { id: 4, name: 'Dave' },
+        { id: 5, name: 'Eve' },
+      ];
+      const { result, unmount: u } = withSetup(() =>
+        useTableSelection<TestItem, 'id'>(
+          { rowAttr: 'id', multiPageSelect: false, disabledRows: () => undefined },
+          {
+            selectedData,
+            filtered: computed<GroupedTableRow<TestItem>[]>(() => extendedRows),
+          },
+        ),
+      );
+      unmount = u;
+
+      // First click on row index 0 (non-shift to set anchor)
+      const normalEvent = createMockCheckboxEvent({ shiftKey: false });
+      result.onCheckboxClick(normalEvent, 1, 0);
+
+      // Select row 1 so it becomes the anchor's selected state
+      result.onSelect(true, 1, true);
+
+      // Shift-click on row index 3
+      const shiftEvent = createMockCheckboxEvent({ shiftKey: true });
+      result.onCheckboxClick(shiftEvent, 4, 3);
+
+      vi.advanceTimersByTime(2);
+
+      // Rows 0..3 (ids 1,2,3,4) should be selected
+      expect(get(selectedData)).toContain(1);
+      expect(get(selectedData)).toContain(2);
+      expect(get(selectedData)).toContain(3);
+      expect(get(selectedData)).toContain(4);
+      expect(get(selectedData)).not.toContain(5);
+    });
+
+    it('should deselect range when anchor row was deselected', () => {
+      const extendedRows: TestItem[] = [
+        { id: 1, name: 'Alice' },
+        { id: 2, name: 'Bob' },
+        { id: 3, name: 'Charlie' },
+        { id: 4, name: 'Dave' },
+      ];
+      const selectedData = ref<number[]>([1, 2, 3, 4]);
+      const { result, unmount: u } = withSetup(() =>
+        useTableSelection<TestItem, 'id'>(
+          { rowAttr: 'id', multiPageSelect: false, disabledRows: () => undefined },
+          {
+            selectedData,
+            filtered: computed<GroupedTableRow<TestItem>[]>(() => extendedRows),
+          },
+        ),
+      );
+      unmount = u;
+
+      // First click on row index 0 (non-shift to set anchor)
+      const normalEvent = createMockCheckboxEvent({ shiftKey: false });
+      result.onCheckboxClick(normalEvent, 1, 0);
+
+      // Deselect the anchor row so isSelected(1) is false
+      result.onSelect(false, 1, true);
+
+      // Shift-click on row index 3
+      const shiftEvent = createMockCheckboxEvent({ shiftKey: true });
+      result.onCheckboxClick(shiftEvent, 4, 3);
+
+      vi.advanceTimersByTime(2);
+
+      // All rows in the range should be deselected
+      expect(get(selectedData)).not.toContain(1);
+      expect(get(selectedData)).not.toContain(2);
+      expect(get(selectedData)).not.toContain(3);
+      expect(get(selectedData)).not.toContain(4);
+    });
+
+    it('should skip disabled rows within the range', () => {
+      const extendedRows: TestItem[] = [
+        { id: 1, name: 'Alice' },
+        { id: 2, name: 'Bob' },
+        { id: 3, name: 'Charlie' },
+        { id: 4, name: 'Dave' },
+      ];
+      const disabledRow: TestItem = { id: 2, name: 'Bob' };
+      const selectedData = ref<number[]>([]);
+      const { result, unmount: u } = withSetup(() =>
+        useTableSelection<TestItem, 'id'>(
+          { rowAttr: 'id', multiPageSelect: false, disabledRows: () => [disabledRow] },
+          {
+            selectedData,
+            filtered: computed<GroupedTableRow<TestItem>[]>(() => extendedRows),
+          },
+        ),
+      );
+      unmount = u;
+
+      // First click on row 0 (non-shift to set anchor)
+      const normalEvent = createMockCheckboxEvent({ shiftKey: false });
+      result.onCheckboxClick(normalEvent, 1, 0);
+
+      // Select row 1 so anchor is selected
+      result.onSelect(true, 1, true);
+
+      // Shift-click on row 3
+      const shiftEvent = createMockCheckboxEvent({ shiftKey: true });
+      result.onCheckboxClick(shiftEvent, 4, 3);
+
+      vi.advanceTimersByTime(2);
+
+      // Row 2 (disabled) should not be selected
+      expect(get(selectedData)).toContain(1);
+      expect(get(selectedData)).not.toContain(2);
+      expect(get(selectedData)).toContain(3);
+      expect(get(selectedData)).toContain(4);
+    });
+
+    it('should skip group headers in filtered data', () => {
+      const groupHeader: GroupHeader<TestItem> = {
+        [GROUP_HEADER_BRAND]: true,
+        identifier: 'group-1',
+        group: { name: 'Group 1' },
+      };
+      const mixedRows: GroupedTableRow<TestItem>[] = [
+        { id: 1, name: 'Alice' },
+        groupHeader,
+        { id: 2, name: 'Bob' },
+        { id: 3, name: 'Charlie' },
+      ];
+      const selectedData = ref<number[]>([]);
+      const { result, unmount: u } = withSetup(() =>
+        useTableSelection<TestItem, 'id'>(
+          { rowAttr: 'id', multiPageSelect: false, disabledRows: () => undefined },
+          {
+            selectedData,
+            filtered: computed<GroupedTableRow<TestItem>[]>(() => mixedRows),
+          },
+        ),
+      );
+      unmount = u;
+
+      // First click on index 0 (non-shift to set anchor)
+      const normalEvent = createMockCheckboxEvent({ shiftKey: false });
+      result.onCheckboxClick(normalEvent, 1, 0);
+
+      // Select row 1 so anchor is selected
+      result.onSelect(true, 1, true);
+
+      // Shift-click on index 3 (id: 3)
+      const shiftEvent = createMockCheckboxEvent({ shiftKey: true });
+      result.onCheckboxClick(shiftEvent, 3, 3);
+
+      vi.advanceTimersByTime(2);
+
+      // All real rows should be selected, group header skipped
+      expect(get(selectedData)).toContain(1);
+      expect(get(selectedData)).toContain(2);
+      expect(get(selectedData)).toContain(3);
+      expect(get(selectedData)).toHaveLength(3);
+    });
+
+    it('should select single row when no prior click exists', () => {
+      const selectedData = ref<number[]>([]);
+      const { result, unmount: u } = withSetup(() =>
+        useTableSelection<TestItem, 'id'>(
+          { rowAttr: 'id', multiPageSelect: false, disabledRows: () => undefined },
+          {
+            selectedData,
+            filtered: computed<GroupedTableRow<TestItem>[]>(() => rows),
+          },
+        ),
+      );
+      unmount = u;
+
+      // Shift-click without any prior click (lastSelectedIndex === -1)
+      const shiftEvent = createMockCheckboxEvent({ shiftKey: true });
+      result.onCheckboxClick(shiftEvent, 2, 1);
+
+      vi.advanceTimersByTime(2);
+
+      // When lastSelectedIndex is -1, it falls back to lastIndex = index,
+      // so it toggles just the single row at that index.
+      // Row at index 1 is id:2, and since it's not selected, isSelected returns false,
+      // so valueToApply is false, and it calls onSelect(!false, value) = onSelect(true, 2)
+      expect(get(selectedData)).toContain(2);
+      expect(get(selectedData)).toHaveLength(1);
+    });
   });
 });

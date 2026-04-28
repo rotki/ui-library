@@ -1,25 +1,12 @@
-import { mount } from '@vue/test-utils';
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { defineComponent } from 'vue';
+import { afterEach, describe, expect, it } from 'vitest';
 import { useTableGrouping } from '@/composables/tables/data-table/grouping';
+import { GROUP_HEADER_BRAND } from '@/composables/tables/data-table/types';
+import { withSetup } from '~/tests/helpers/with-setup';
 
 interface TestItem {
   id: number;
   name: string;
   title: string;
-}
-
-function withSetup<T>(composable: () => T): { result: T; unmount: () => void } {
-  let result!: T;
-  const TestComponent = defineComponent({
-    setup() {
-      result = composable();
-      return {};
-    },
-    template: '<div></div>',
-  });
-  const wrapper = mount(TestComponent);
-  return { result, unmount: () => wrapper.unmount() };
 }
 
 describe('composables/tables/data-table/grouping', () => {
@@ -43,7 +30,6 @@ describe('composables/tables/data-table/grouping', () => {
           group: ref(undefined),
           collapsed: ref(undefined),
           sorted: computed(() => rows),
-          emitCopyGroup: () => {},
         },
       ),
     );
@@ -61,7 +47,6 @@ describe('composables/tables/data-table/grouping', () => {
           group: ref('title') as any,
           collapsed: ref(undefined),
           sorted: computed(() => rows),
-          emitCopyGroup: () => {},
         },
       ),
     );
@@ -80,7 +65,6 @@ describe('composables/tables/data-table/grouping', () => {
           group: ref('title') as any,
           collapsed: ref(undefined),
           sorted: computed(() => rows),
-          emitCopyGroup: () => {},
         },
       ),
     );
@@ -89,7 +73,7 @@ describe('composables/tables/data-table/grouping', () => {
     const grouped = get(result.grouped);
     expect(grouped).toHaveLength(5);
 
-    const headers = grouped.filter(item => '__header__' in item);
+    const headers = grouped.filter(item => GROUP_HEADER_BRAND in item);
     expect(headers).toHaveLength(2);
   });
 
@@ -102,7 +86,6 @@ describe('composables/tables/data-table/grouping', () => {
           group: ref('title') as any,
           collapsed,
           sorted: computed(() => rows),
-          emitCopyGroup: () => {},
         },
       ),
     );
@@ -131,7 +114,6 @@ describe('composables/tables/data-table/grouping', () => {
           group: group as any,
           collapsed,
           sorted: computed(() => rows),
-          emitCopyGroup: () => {},
         },
       ),
     );
@@ -142,25 +124,6 @@ describe('composables/tables/data-table/grouping', () => {
     expect(get(collapsed)).toEqual([]);
   });
 
-  it('should call emitCopyGroup on copy', () => {
-    const emitCopyGroup = vi.fn();
-    const { result, unmount: u } = withSetup(() =>
-      useTableGrouping<TestItem, 'id'>(
-        { rowAttr: 'id' },
-        {
-          group: ref('title') as any,
-          collapsed: ref(undefined),
-          sorted: computed(() => rows),
-          emitCopyGroup,
-        },
-      ),
-    );
-    unmount = u;
-
-    result.onCopyGroup({ key: 'title', value: { title: 'Developer' } });
-    expect(emitCopyGroup).toHaveBeenCalledWith({ key: 'title', value: { title: 'Developer' } });
-  });
-
   it('should support array group keys', () => {
     const { result, unmount: u } = withSetup(() =>
       useTableGrouping<TestItem, 'id'>(
@@ -169,7 +132,6 @@ describe('composables/tables/data-table/grouping', () => {
           group: ref(['name', 'title']) as any,
           collapsed: ref(undefined),
           sorted: computed(() => rows),
-          emitCopyGroup: () => {},
         },
       ),
     );
@@ -189,7 +151,6 @@ describe('composables/tables/data-table/grouping', () => {
           group: ref('title') as any,
           collapsed,
           sorted: computed(() => rows),
-          emitCopyGroup: () => {},
         },
       ),
     );
@@ -217,7 +178,6 @@ describe('composables/tables/data-table/grouping', () => {
           group: ref(undefined),
           collapsed: ref(undefined),
           sorted: computed(() => rows),
-          emitCopyGroup: () => {},
         },
       ),
     );
@@ -235,14 +195,13 @@ describe('composables/tables/data-table/grouping', () => {
           group: ref('title') as any,
           collapsed,
           sorted: computed(() => rows),
-          emitCopyGroup: () => {},
         },
       ),
     );
     unmount = u;
 
     const header = {
-      __header__: true as const,
+      [GROUP_HEADER_BRAND]: true as const,
       group: { title: 'Developer' },
       identifier: 'Developer',
     };
@@ -257,7 +216,6 @@ describe('composables/tables/data-table/grouping', () => {
           group: ref('title') as any,
           collapsed: ref(undefined),
           sorted: computed(() => rows),
-          emitCopyGroup: () => {},
         },
       ),
     );
@@ -280,7 +238,6 @@ describe('composables/tables/data-table/grouping', () => {
           group: ref(undefined),
           collapsed: ref(undefined),
           sorted: computed(() => rows),
-          emitCopyGroup: () => {},
         },
       ),
     );
@@ -297,7 +254,6 @@ describe('composables/tables/data-table/grouping', () => {
           group: ref('title') as any,
           collapsed: ref(undefined),
           sorted: computed(() => rows),
-          emitCopyGroup: () => {},
         },
       ),
     );
@@ -316,7 +272,6 @@ describe('composables/tables/data-table/grouping', () => {
           group: ref(undefined),
           collapsed: ref(undefined),
           sorted: computed(() => rows),
-          emitCopyGroup: () => {},
         },
       ),
     );
@@ -334,7 +289,6 @@ describe('composables/tables/data-table/grouping', () => {
           group: ref('title') as any,
           collapsed,
           sorted: computed(() => rows),
-          emitCopyGroup: () => {},
         },
       ),
     );
@@ -356,7 +310,6 @@ describe('composables/tables/data-table/grouping', () => {
           group: group as any,
           collapsed,
           sorted: computed(() => rows),
-          emitCopyGroup: () => {},
         },
       ),
     );
@@ -380,7 +333,6 @@ describe('composables/tables/data-table/grouping', () => {
           group: ref('title') as any,
           collapsed: ref(undefined),
           sorted: computed(() => rowsWithEmpty),
-          emitCopyGroup: () => {},
         },
       ),
     );
@@ -406,7 +358,6 @@ describe('composables/tables/data-table/grouping', () => {
           group: ref(['name', 'title']) as any,
           collapsed: ref(undefined),
           sorted: computed(() => multiRows),
-          emitCopyGroup: () => {},
         },
       ),
     );
@@ -419,5 +370,127 @@ describe('composables/tables/data-table/grouping', () => {
     const grouped = get(result.grouped);
     // 3 headers + 3 rows
     expect(grouped).toHaveLength(6);
+  });
+
+  it('should produce different group keys for multi-key grouping with partial undefined', () => {
+    interface PartialItem {
+      id: number;
+      name: string | undefined;
+      title: string | undefined;
+    }
+
+    const partialRows: PartialItem[] = [
+      { id: 1, name: 'foo', title: undefined },
+      { id: 2, name: undefined, title: 'foo' },
+    ];
+
+    const { result, unmount: u } = withSetup(() =>
+      useTableGrouping<PartialItem, 'id'>(
+        { rowAttr: 'id' },
+        {
+          group: ref(['name', 'title']) as any,
+          collapsed: ref(undefined),
+          sorted: computed<readonly PartialItem[]>(() => partialRows),
+        },
+      ),
+    );
+    unmount = u;
+
+    const groups = get(result.mappedGroups);
+    // Two distinct group keys — no collision between { name: 'foo', title: undefined } and { name: undefined, title: 'foo' }
+    expect(Object.keys(groups)).toHaveLength(2);
+
+    const grouped = get(result.grouped);
+    // 2 headers + 2 rows
+    expect(grouped).toHaveLength(4);
+
+    const headers = grouped.filter(item => GROUP_HEADER_BRAND in item);
+    expect(headers).toHaveLength(2);
+  });
+
+  it('should not collapse unrelated multi-key group when collapsing another sharing a partial key', () => {
+    interface MultiKeyItem {
+      id: number;
+      category: string;
+      status: string;
+    }
+
+    const multiKeyRows: MultiKeyItem[] = [
+      { id: 1, category: 'A', status: 'active' },
+      { id: 2, category: 'A', status: 'inactive' },
+      { id: 3, category: 'B', status: 'active' },
+    ];
+
+    const collapsed = ref<MultiKeyItem[]>([]);
+    const { result, unmount: u } = withSetup(() =>
+      useTableGrouping<MultiKeyItem, 'id'>(
+        { rowAttr: 'id' },
+        {
+          group: ref(['category', 'status']) as any,
+          collapsed,
+          sorted: computed<readonly MultiKeyItem[]>(() => multiKeyRows),
+        },
+      ),
+    );
+    unmount = u;
+
+    // All groups start expanded
+    expect(result.isExpandedGroup({ category: 'A', status: 'active' })).toBe(true);
+    expect(result.isExpandedGroup({ category: 'A', status: 'inactive' })).toBe(true);
+    expect(result.isExpandedGroup({ category: 'B', status: 'active' })).toBe(true);
+
+    // Collapse the A+active group — find its key from the grouped output
+    const grouped = get(result.grouped);
+    const aActiveHeader = grouped.find(
+      item => GROUP_HEADER_BRAND in item && 'identifier' in item,
+    );
+    const aActiveKey = aActiveHeader && 'identifier' in aActiveHeader ? aActiveHeader.identifier : undefined;
+
+    result.onToggleExpandGroup({ category: 'A', status: 'active' }, aActiveKey);
+
+    // A+active is collapsed
+    expect(result.isExpandedGroup({ category: 'A', status: 'active' })).toBe(false);
+
+    // A+inactive and B+active should still be expanded
+    expect(result.isExpandedGroup({ category: 'A', status: 'inactive' })).toBe(true);
+    expect(result.isExpandedGroup({ category: 'B', status: 'active' })).toBe(true);
+  });
+
+  it('should exclude rows with empty rowAttr value from grouped output', () => {
+    interface EmptyIdItem {
+      id: number | string;
+      name: string;
+      title: string;
+    }
+
+    const rowsWithEmptyId: EmptyIdItem[] = [
+      { id: 1, name: 'Alice', title: 'Developer' },
+      { id: '', name: 'Ghost', title: 'None' },
+      { id: 3, name: 'Charlie', title: 'Developer' },
+    ];
+
+    const { result, unmount: u } = withSetup(() =>
+      useTableGrouping<EmptyIdItem, 'id'>(
+        { rowAttr: 'id' },
+        {
+          group: ref('title') as any,
+          collapsed: ref(undefined),
+          sorted: computed<readonly EmptyIdItem[]>(() => rowsWithEmptyId),
+        },
+      ),
+    );
+    unmount = u;
+
+    const groups = get(result.mappedGroups);
+    // "None" group should not exist since the row has empty id
+    expect(groups.None).toBeUndefined();
+
+    // Only "Developer" group should exist
+    expect(Object.keys(groups)).toHaveLength(1);
+    expect(groups.Developer).toBeDefined();
+
+    const grouped = get(result.grouped);
+    // 1 header + 2 Developer rows (Ghost row excluded)
+    expect(grouped).toHaveLength(3);
   });
 });

@@ -6,6 +6,13 @@ export const TableAlign = {
 
 export type TableAlign = (typeof TableAlign)[keyof typeof TableAlign];
 
+export const GroupExpandButtonPosition = {
+  start: 'start',
+  end: 'end',
+} as const;
+
+export type GroupExpandButtonPosition = (typeof GroupExpandButtonPosition)[keyof typeof GroupExpandButtonPosition];
+
 export const SortDirection = {
   asc: 'asc',
   desc: 'desc',
