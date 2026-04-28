@@ -2377,4 +2377,53 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       expect(wrapper.text()).toContain('This hint should be visible');
     });
   });
+
+  describe('menu-open model', () => {
+    it('emits update:menuOpen when the picker menu opens and closes', async () => {
+      wrapper = createWrapper({
+        props: {
+          modelValue: new Date(),
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      await wrapper.find('[data-id="activator"]').trigger('click');
+      await vi.runOnlyPendingTimersAsync();
+
+      let events = wrapper.emitted('update:menuOpen');
+      expect(events?.at(-1)).toEqual([true]);
+
+      await wrapper.find('[data-id="append"]').trigger('click');
+      await vi.runOnlyPendingTimersAsync();
+
+      events = wrapper.emitted('update:menuOpen');
+      expect(events?.at(-1)).toEqual([false]);
+    });
+
+    it('stays open while the calendar sub-menu opens after the picker is open', async () => {
+      wrapper = createWrapper({
+        props: {
+          modelValue: new Date(),
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      await wrapper.find('[data-id="activator"]').trigger('click');
+      await vi.runOnlyPendingTimersAsync();
+
+      const menu = wrapper.findComponent({ name: 'RuiDateTimePickerMenu' });
+      assert(menu.exists());
+
+      menu.vm.$emit('update:calendarMenuOpen', true);
+      await nextTick();
+      await vi.runOnlyPendingTimersAsync();
+      const menuAfter = wrapper.findComponent({ name: 'RuiDateTimePickerMenu' });
+      menuAfter.vm.$emit('update:calendarMenuOpen', false);
+      await nextTick();
+      await vi.runOnlyPendingTimersAsync();
+
+      const events = wrapper.emitted('update:menuOpen');
+      expect(events?.every(e => e[0] === true)).toBe(true);
+    });
+  });
 });

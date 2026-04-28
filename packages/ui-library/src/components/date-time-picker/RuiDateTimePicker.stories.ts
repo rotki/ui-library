@@ -1,5 +1,7 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { expect, waitFor, within } from 'storybook/test';
+import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
 import { TimeAccuracy } from '@/consts/time-accuracy';
 import preview from '~/.storybook/preview';
 import RuiDateTimePicker from './RuiDateTimePicker.vue';
@@ -172,6 +174,35 @@ export const Required = meta.story({
     required: true,
     variant: 'outlined',
   },
+});
+
+export const InsideParentMenu = meta.story({
+  args: {
+    modelValue: new Date(),
+    variant: 'outlined',
+  },
+  render: args => ({
+    components: { RuiButton, RuiDateTimePicker, RuiMenu },
+    setup() {
+      const open = ref<boolean>(false);
+      const pickerMenuOpen = ref<boolean>(false);
+      return { args, open, pickerMenuOpen };
+    },
+    template: `<div class="p-8">
+      <RuiMenu v-model="open" :persistent="pickerMenuOpen" :close-on-content-click="false">
+        <template #activator="{ attrs }">
+          <RuiButton v-bind="attrs">Open parent menu</RuiButton>
+        </template>
+        <div class="p-4 w-[360px]">
+          <RuiDateTimePicker
+            v-bind="args"
+            v-model="args.modelValue"
+            v-model:menu-open="pickerMenuOpen"
+          />
+        </div>
+      </RuiMenu>
+    </div>`,
+  }),
 });
 
 export default meta;

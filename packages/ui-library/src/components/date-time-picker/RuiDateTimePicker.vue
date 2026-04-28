@@ -50,6 +50,7 @@ defineOptions({
 });
 
 const modelValue = defineModel<ModelValueType<DateTimeModelType>>({ required: true });
+const menuOpen = defineModel<boolean>('menuOpen', { default: false });
 
 const {
   disabled = false,
@@ -284,6 +285,12 @@ function arrowClicked(event: MouseEvent): void {
     event.stopPropagation();
   }
 }
+
+const anyMenuOpen = computed<boolean>(() => get(isOpen) || get(calendarMenuOpen));
+
+watch(anyMenuOpen, (value) => {
+  set(menuOpen, value);
+});
 </script>
 
 <template>
