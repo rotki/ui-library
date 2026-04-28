@@ -1,13 +1,15 @@
-<script lang="ts" setup>
+<script lang="ts" setup generic="TValue">
 import type { ContextColorsType } from '@/consts/colors';
 import { objectPick } from '@vueuse/shared';
 import { checkControlStyles, getCheckControlIconSize } from '@/components/forms/check-control-styles';
+import { RuiCheckboxGroupContextKey } from '@/components/forms/checkbox/checkbox-group/context';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
-export interface Props {
+export interface Props<TValue> {
+  value?: TValue;
   disabled?: boolean;
   color?: ContextColorsType;
   size?: 'sm' | 'lg';
@@ -29,16 +31,17 @@ const modelValue = defineModel<boolean>({ default: false });
 const indeterminate = defineModel<boolean>('indeterminate', { default: false });
 
 const {
-  disabled = false,
-  color = undefined,
-  size = undefined,
+  value = undefined,
+  disabled: disabledProp = false,
+  color: colorProp = undefined,
+  size: sizeProp = undefined,
   label = '',
   hint = '',
   errorMessages = [],
   successMessages = [],
   hideDetails = false,
   required = false,
-} = defineProps<Props>();
+} = defineProps<Props<TValue>>();
 
 defineSlots<{
   default?: () => any;
@@ -46,29 +49,44 @@ defineSlots<{
 
 const el = useTemplateRef<HTMLInputElement>('el');
 
+const group = inject(RuiCheckboxGroupContextKey, undefined);
+
+const disabled = computed<boolean>(() => disabledProp || (group ? toValue(group.disabled) : false));
+const color = computed<ContextColorsType | undefined>(() => colorProp ?? (group ? toValue(group.color) : undefined));
+const size = computed<'sm' | 'lg' | undefined>(() => sizeProp ?? (group ? toValue(group.size) : undefined));
+// Suppress per-child details inside a group so the group's own hint/error wins.
+const effectiveHideDetails = computed<boolean>(() => hideDetails || (group !== undefined && value !== undefined));
+
 const { hasError, validation } = useFormTextDetail(
   () => errorMessages,
   () => successMessages,
 );
 
-const ui = computed<ReturnType<typeof checkControlStyles>>(() => checkControlStyles({
-  size,
-  disabled,
-  checked: get(modelValue) || get(indeterminate),
-  validation: get(validation),
-  color,
-}));
-
 const internalModelValue = computed<boolean>({
-  get: () => get(modelValue),
+  get: () => {
+    if (group && value !== undefined)
+      return group.isChecked(value);
+    return get(modelValue);
+  },
   set: (checked: boolean) => {
     if (checked)
       set(indeterminate, false);
-    set(modelValue, checked);
+    if (group && value !== undefined)
+      group.toggle(value, checked);
+    else
+      set(modelValue, checked);
   },
 });
 
-const iconSize = computed<number>(() => getCheckControlIconSize(size));
+const ui = computed<ReturnType<typeof checkControlStyles>>(() => checkControlStyles({
+  size: get(size),
+  disabled: get(disabled),
+  checked: get(internalModelValue) || get(indeterminate),
+  validation: get(validation),
+  color: get(color),
+}));
+
+const iconSize = computed<number>(() => getCheckControlIconSize(get(size)));
 
 watch(indeterminate, (val) => {
   const input = get(el);
@@ -92,7 +110,7 @@ watch(internalModelValue, (val) => {
       :class="ui.wrapper()"
       v-bind="objectPick($attrs, ['onClick'])"
       :data-disabled="disabled || undefined"
-      :data-checked="modelValue || indeterminate || undefined"
+      :data-checked="internalModelValue || indeterminate || undefined"
       :data-error="hasError ? '' : undefined"
     >
       <input
@@ -111,7 +129,7 @@ watch(internalModelValue, (val) => {
           :size="iconSize"
         />
         <RuiIcon
-          v-else-if="modelValue"
+          v-else-if="internalModelValue"
           name="lu-checkbox-fill"
           :size="iconSize"
         />
@@ -135,7 +153,7 @@ watch(internalModelValue, (val) => {
       </span>
     </label>
     <RuiFormTextDetail
-      v-if="!hideDetails"
+      v-if="!effectiveHideDetails"
       :error-messages="errorMessages"
       :success-messages="successMessages"
       :hint="hint"

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type ContextColorsType, RuiCheckbox } from '@rotki/ui-library';
+import { type ContextColorsType, RuiCheckbox, RuiCheckboxGroup } from '@rotki/ui-library';
 import ComponentGroup from '@/components/ComponentGroup.vue';
 import ComponentView from '@/components/ComponentView.vue';
 
@@ -49,6 +49,56 @@ function generateCheckboxes(): CheckboxData[] {
 onBeforeMount(() => {
   set(checkboxes, generateCheckboxes());
 });
+
+const checkboxGroups = ref<{
+  value: string[];
+  disabled?: boolean;
+  size?: 'sm' | 'lg';
+  inline?: boolean;
+  options: { value: string; color: ContextColorsType }[];
+}[]>([
+  {
+    value: ['apples', 'oranges'],
+    inline: true,
+    options: [
+      { value: 'apples', color: 'primary' },
+      { value: 'oranges', color: 'secondary' },
+      { value: 'grapes', color: 'success' },
+      { value: 'bananas', color: 'warning' },
+    ],
+  },
+  {
+    value: [],
+    size: 'sm',
+    inline: true,
+    options: [
+      { value: 'a', color: 'primary' },
+      { value: 'b', color: 'secondary' },
+      { value: 'c', color: 'success' },
+    ],
+  },
+  {
+    value: ['x'],
+    disabled: true,
+    size: 'lg',
+    inline: true,
+    options: [
+      { value: 'x', color: 'primary' },
+      { value: 'y', color: 'secondary' },
+      { value: 'z', color: 'error' },
+    ],
+  },
+]);
+
+const numericCheckboxGroup = ref<{ value: number[]; options: { value: number; label: string }[] }>({
+  value: [1, 3],
+  options: [
+    { value: 1, label: 'One' },
+    { value: 2, label: 'Two' },
+    { value: 3, label: 'Three' },
+    { value: 4, label: 'Four' },
+  ],
+});
 </script>
 
 <template>
@@ -72,6 +122,50 @@ onBeforeMount(() => {
       </template>
     </ComponentGroup>
 
-    <div />
+    <h2
+      class="text-h4 mb-6"
+      data-id="checkbox-group-title"
+    >
+      Checkbox Groups
+    </h2>
+    <div
+      class="grid gap-8"
+      data-id="checkbox-group-wrapper"
+    >
+      <RuiCheckboxGroup
+        v-for="(group, i) in checkboxGroups"
+        :key="i"
+        v-model="group.value"
+        :disabled="group.disabled"
+        :size="group.size"
+        :inline="group.inline"
+        :hint="`Selected: ${group.value.join(', ') || 'none'}`"
+        :data-id="`checkbox-group-${i}`"
+      >
+        <RuiCheckbox
+          v-for="(option, j) in group.options"
+          :key="j"
+          :value="option.value"
+          :color="option.color"
+        >
+          <span class="capitalize">{{ option.value }}</span>
+        </RuiCheckbox>
+      </RuiCheckboxGroup>
+      <RuiCheckboxGroup
+        v-model="numericCheckboxGroup.value"
+        :hint="`Selected: ${numericCheckboxGroup.value.join(', ') || 'none'}`"
+        label="Numeric values"
+        data-id="checkbox-group-numeric"
+        inline
+      >
+        <RuiCheckbox
+          v-for="(option, j) in numericCheckboxGroup.options"
+          :key="j"
+          :value="option.value"
+        >
+          {{ option.label }}
+        </RuiCheckbox>
+      </RuiCheckboxGroup>
+    </div>
   </ComponentView>
 </template>

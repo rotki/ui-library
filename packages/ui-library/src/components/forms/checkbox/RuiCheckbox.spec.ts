@@ -1,16 +1,14 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
+import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
 import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiCheckbox>,
-): VueWrapper<InstanceType<typeof RuiCheckbox>> {
+function createWrapper(options?: ComponentMountingOptions<typeof RuiCheckbox>) {
   return mount(RuiCheckbox, { ...options, global: { stubs: ['rui-icon'] } });
 }
 
 describe('components/forms/checkbox/RuiCheckbox.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiCheckbox>>;
+  let wrapper: ReturnType<typeof createWrapper>;
 
   afterEach(() => {
     wrapper.unmount();

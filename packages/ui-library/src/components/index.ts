@@ -21,6 +21,7 @@ import RuiColorPicker from '@/components/color-picker/RuiColorPicker.vue';
 import RuiDateTimePicker, { type RuiDateTimePickerProps } from '@/components/date-time-picker/RuiDateTimePicker.vue';
 import RuiDivider, { type Props as DividerProps } from '@/components/divider/RuiDivider.vue';
 import RuiAutoComplete, { type AutoCompleteProps, type RuiAutoCompleteClassNames } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
+import RuiCheckboxGroup, { type Props as CheckboxGroupProps } from '@/components/forms/checkbox/checkbox-group/RuiCheckboxGroup.vue';
 import RuiCheckbox, { type Props as CheckboxProps } from '@/components/forms/checkbox/RuiCheckbox.vue';
 import RuiRadioGroup, { type Props as RadioGroupProps } from '@/components/forms/radio-button/radio-group/RuiRadioGroup.vue';
 import RuiRadio, { type RadioProps } from '@/components/forms/radio-button/radio/RuiRadio.vue';
@@ -67,6 +68,7 @@ export type {
   CalendarProps,
   CardHeaderProps,
   CardProps,
+  CheckboxGroupProps,
   CheckboxProps,
   ChipProps,
   DataTableColumn,
@@ -134,6 +136,7 @@ export {
   RuiCard,
   RuiCardHeader,
   RuiCheckbox,
+  RuiCheckboxGroup,
   RuiChip,
   RuiColorPicker,
   RuiDataTable,
