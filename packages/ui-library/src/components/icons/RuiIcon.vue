@@ -21,7 +21,14 @@ const { registeredIcons } = useIcons();
 type SvgComponent = [tag: string, attrs: Record<string, string>];
 
 const iconStyles = tv({
-  base: 'w-[var(--rui-icon-size,1.5rem)] h-[var(--rui-icon-size,1.5rem)]',
+  // `shrink-0` keeps the icon at its declared `--rui-icon-size` when it sits
+  // in a flex container next to a long flex-grow sibling (e.g. a `w-full`
+  // button label in `variant="list"`). Without it, the SVG — even with an
+  // explicit width — gets compressed along the main axis when the row is
+  // narrower than the label's intrinsic width, while the height stays put,
+  // producing a sliver glyph. The icon's box is always intentionally driven
+  // by `--rui-icon-size`, so flex shrinking is never the desired behavior.
+  base: 'shrink-0 w-[var(--rui-icon-size,1.5rem)] h-[var(--rui-icon-size,1.5rem)]',
   variants: {
     color: {
       primary: 'text-rui-primary',

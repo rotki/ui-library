@@ -120,6 +120,21 @@ describe('components/icons/RuiIcon.vue', () => {
     expect(wrapper.classes()).toContain('h-[var(--rui-icon-size,1.5rem)]');
   });
 
+  it('should carry shrink-0 so a flex sibling cannot squeeze the icon below --rui-icon-size', () => {
+    wrapper = createWrapper({
+      props: {
+        name: 'lu-circle-arrow-down',
+      },
+    });
+
+    // Regression guard: in `RuiButton variant="list"` the label is `w-full`
+    // and `text-nowrap`. With a long label inside a width-bounded menu, a
+    // shrinkable SVG sibling collapses on the main axis (the height stays at
+    // the var-driven box, so the glyph renders as a sliver). `shrink-0`
+    // pins the icon at its `--rui-icon-size` regardless of sibling pressure.
+    expect(wrapper.classes()).toContain('shrink-0');
+  });
+
   it('should always carry the rui-icon marker class for parent-driven sizing', () => {
     wrapper = createWrapper({
       props: {
