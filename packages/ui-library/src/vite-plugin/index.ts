@@ -62,6 +62,25 @@ function loadValidIcons(): Set<string> {
 }
 
 /**
+ * Loads the baseline icons used by library components, emitted at library
+ * build time. Consumers always need these regardless of their own source.
+ */
+function loadLibraryBaselineIcons(): string[] {
+  const distPath = resolve(__dirname, '../library-icons.json');
+  if (existsSync(distPath)) {
+    try {
+      const parsed: unknown = JSON.parse(readFileSync(distPath, 'utf-8'));
+      if (Array.isArray(parsed))
+        return parsed.filter((v): v is string => typeof v === 'string');
+    }
+    catch {
+      // fall through
+    }
+  }
+  return [];
+}
+
+/**
  * Vite plugin for automatic icon detection and registration
  */
 export function ruiIconsPlugin(options: RuiIconsPluginOptions = {}): Plugin {
@@ -73,6 +92,7 @@ export function ruiIconsPlugin(options: RuiIconsPluginOptions = {}): Plugin {
   } = options;
 
   let validIcons: Set<string>;
+  let libraryBaseline: string[];
   let scanResult: ScanResult;
   let server: ViteDevServer | null = null;
   let root: string;
@@ -96,7 +116,7 @@ export function ruiIconsPlugin(options: RuiIconsPluginOptions = {}): Plugin {
     const glob = fg.default || fg;
 
     scanResult = {
-      icons: new Set(include),
+      icons: new Set([...libraryBaseline, ...include]),
       invalidIcons: new Map(),
     };
 
@@ -200,7 +220,9 @@ export function ruiIconsPlugin(options: RuiIconsPluginOptions = {}): Plugin {
     configResolved(config) {
       root = config.root;
       validIcons = loadValidIcons();
+      libraryBaseline = loadLibraryBaselineIcons();
       log(`Loaded ${validIcons.size} valid icon names`);
+      log(`Loaded ${libraryBaseline.length} baseline icons used by library components`);
     },
 
     configureServer(_server) {

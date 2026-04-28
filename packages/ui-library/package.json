@@ -85,6 +85,7 @@
     "build:web-types": "tsx scripts/build-web-types.mjs",
     "generate-icons": "tsx scripts/generate-icons.ts",
     "resolve:alias": "tsc-alias --replacer ./scripts/tsc-alias-replacer.cjs -p tsconfig.build.json --dir dist",
+    "scan:library-icons": "tsx scripts/scan-library-icons.ts",
     "verify:dist": "tsx scripts/verify-dist.ts",
     "dev": "vite",
     "prepare": "node scripts/prepare.mjs",
