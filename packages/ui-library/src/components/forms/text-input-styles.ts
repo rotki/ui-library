@@ -216,6 +216,8 @@ export const activatorStyles = tv({
     hasSuccess: {
       true: {},
     },
+    // Re-declare for type inference — actual styles are in textInputBase
+    hovered: { true: {} },
   },
   compoundVariants: [
     // Legend padding when label is floated

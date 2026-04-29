@@ -82,6 +82,7 @@ const baseFormats: Record<DateFormat, string> = {
 };
 
 const isOpen = ref<boolean>(false);
+const isHovered = ref<boolean>(false);
 const cursorPosition = ref<number>(0);
 const currentValue = ref<number>();
 
@@ -235,6 +236,7 @@ const ui = computed<ReturnType<typeof dateTimePickerStyles>>(() => dateTimePicke
   outlined: get(isOutlined),
   float: get(float),
   opened: get(isOpen),
+  hovered: get(isHovered),
   dense,
   disabled,
   readonly,
@@ -321,6 +323,8 @@ watch(anyMenuOpen, (value) => {
         data-id="activator"
         :aria-invalid="hasError"
         :tabindex="disabled || readonly ? -1 : 0"
+        @mouseenter="isHovered = true"
+        @mouseleave="isHovered = false"
         @click="setInputFocus()"
       >
         <span

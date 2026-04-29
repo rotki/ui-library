@@ -105,6 +105,7 @@ defineSlots<{
 const menuRef = useTemplateRef<HTMLDivElement>('menuRef');
 const activator = useTemplateRef<HTMLDivElement>('activator');
 const { focused } = useFocus(activator);
+const isHovered = ref<boolean>(false);
 
 const { hasError, hasSuccess } = useFormTextDetail(
   () => errorMessages,
@@ -169,6 +170,7 @@ const ui = computed<ReturnType<typeof menuSelectStyles>>(() => menuSelectStyles(
   outlined: get(outlined),
   float: get(float),
   opened: get(isOpen),
+  hovered: get(isHovered),
   dense,
   disabled,
   readonly: readOnly,
@@ -221,6 +223,8 @@ function clear(): void {
           }"
           data-id="activator"
           :aria-invalid="hasError"
+          @mouseenter="isHovered = true"
+          @mouseleave="isHovered = false"
           @keydown.up.prevent="moveHighlight(true)"
           @keydown.down.prevent="moveHighlight(false)"
           @keydown.enter.prevent="applyHighlighted()"
