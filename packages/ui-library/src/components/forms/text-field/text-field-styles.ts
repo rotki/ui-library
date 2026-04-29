@@ -145,7 +145,16 @@ export const textFieldStyles = tv({
     // --- Outlined variant ---
     { variant: 'outlined', active: true, class: {
       input: 'border-t-transparent',
-      label: '!h-auto -translate-y-1/2 pl-4',
+      // Use a fixed translate in rem (≈50% of the active label's
+      // 0.9375rem height — text-[0.75rem] × leading-tight). A percentage
+      // translate gets recomputed against the *current* label height,
+      // which jumps from 0.9375rem to the input's full height the moment
+      // !h-auto is removed on blur — producing a transient transform far
+      // larger than the floated value and a visible upward overshoot
+      // before the transition settles. Anchoring in rem (rather than %)
+      // keeps the start/end values consistent across the height swap and
+      // scales with the root font-size.
+      label: '!h-auto -translate-y-[0.5rem] pl-4',
     } },
     { variant: 'outlined', dense: true, class: { input: 'py-2', label: 'leading-[2.5]' } },
 
