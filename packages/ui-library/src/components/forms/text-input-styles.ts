@@ -45,6 +45,14 @@ export const textInputBase = tv({
       'rounded pointer-events-none px-2 transition-all -mt-2',
       'border border-black/[0.23]',
       'dark:border-white/[0.23]',
+      // Force the fieldset onto its own GPU compositing layer so the
+      // focused border is rasterized on integer pixel boundaries. Without
+      // this, at fractional y-coordinates with non-integer device pixel
+      // ratios (e.g. DPR 1.25), Chromium anti-aliases the 1.6px-2px focus
+      // border across two physical pixel rows behind the floated label,
+      // appearing as "two thin lines crossing the label". translateZ(0)
+      // promotes to a layer; the layer's raster snaps to integer pixels.
+      'transform-gpu',
     ].join(' '),
     legend: 'invisible text-[0.75rem] truncate [max-width:calc(100%-1rem)] leading-[0]',
   },
