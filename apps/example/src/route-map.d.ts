@@ -405,6 +405,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/visual/text-field': RouteRecordInfo<
+      '/visual/text-field',
+      '/visual/text-field',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
   }
 
   /**
@@ -739,6 +746,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/tooltips.vue': {
       routes:
         | '/tooltips'
+      views:
+        | never
+    }
+    'src/pages/visual/text-field.vue': {
+      routes:
+        | '/visual/text-field'
       views:
         | never
     }

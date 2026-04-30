@@ -7,8 +7,16 @@ const baseURL = useDev ? 'http://localhost:5173' : 'http://localhost:4173';
 // Use system Chromium if PLAYWRIGHT_CHROMIUM_PATH is set (e.g., on Arch Linux)
 const chromiumPath = process.env.PLAYWRIGHT_CHROMIUM_PATH;
 
+// Visual regression specs (`e2e/visual/**`) are pixel-sensitive and only
+// produce stable snapshots inside the pinned Playwright Docker image. They
+// are excluded from the default `test:e2e` run; the dedicated
+// `test:visual` / `test:visual:update` scripts set `PLAYWRIGHT_VISUAL=1`,
+// run inside the container, and pick them up via the override below.
+const includeVisual = !!process.env.PLAYWRIGHT_VISUAL;
+
 export default defineConfig({
   testDir: './e2e',
+  testIgnore: includeVisual ? undefined : '**/visual/**',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

@@ -54,6 +54,12 @@ const navigation = ref([
       },
     ],
   },
+  {
+    title: 'Visual Tests',
+    links: [
+      { to: '/visual/text-field', title: 'Text Field' },
+    ],
+  },
 ]);
 </script>
 
