@@ -91,8 +91,11 @@ export const textFieldStyles = tv({
       true: {
         label: [
           'text-[0.75rem] leading-tight',
-          '[padding-left:var(--x-padding,0px)]',
-          '[padding-right:var(--x-padding,0px)]',
+          // Keep --prepend-w / --append-w in the floated padding so the
+          // label sits above the input column, not above the prepend
+          // icon / append button.
+          '[padding-left:calc(var(--x-padding,0px)+var(--prepend-w,0px))]',
+          '[padding-right:calc(var(--x-padding,0px)+var(--append-w,0px))]',
         ].join(' '),
       },
     },
@@ -125,6 +128,15 @@ export const textFieldStyles = tv({
     // --- Default variant ---
     { variant: 'default', focused: true, class: { label: 'after:scale-x-100' } },
     { variant: 'default', dense: true, class: { input: 'py-1', label: 'leading-[3.5]' } },
+    // In dense mode, lift only the labelText glyphs (not the label
+    // container) so the floated label clears the compact ~32px input row.
+    // Translating the label container would drag its `after:` underline
+    // pseudo with it, leaving the focus underline floating above the
+    // input row; translating only the inner span keeps the underline
+    // anchored. Non-dense default has enough vertical breathing room
+    // (~36px input + 12px `pt-3` reserve) that the labelText sits cleanly
+    // above the input without any lift.
+    { variant: 'default', dense: true, active: true, class: { labelText: '-translate-y-[0.5rem]' } },
     // Without a label, the wrapper's `pt-3` floating-label reserve serves no
     // purpose and leaves the field ~4–12px taller than an equivalent
     // RuiMenuSelect dense activator. Strip it and tighten the input padding
@@ -154,9 +166,22 @@ export const textFieldStyles = tv({
       // before the transition settles. Anchoring in rem (rather than %)
       // keeps the start/end values consistent across the height swap and
       // scales with the root font-size.
-      label: '!h-auto -translate-y-[0.5rem] pl-4',
+      //
+      // Override the active slot's padding-left to drop `--prepend-w` and
+      // stay anchored to the field's left edge — per MD3, the floated
+      // label of an outlined field straddles the border at the start of
+      // the field, not above the input column. Filled/default both keep
+      // the prepend offset (label sits above the input), but outlined
+      // does not.
+      label: '!h-auto -translate-y-[0.5rem] [padding-left:var(--x-padding,0px)]',
     } },
     { variant: 'outlined', dense: true, class: { input: 'py-2', label: 'leading-[2.5]' } },
+    // Re-assert `leading-tight` for outlined+dense+active. The dense rule
+    // above sets `leading-[2.5]` which twMerge keeps as the winning leading
+    // (it appears later than the active slot's `leading-tight`), inflating
+    // the floated label's line-box from ~15px to ~30px and pushing its
+    // visual centre below the fieldset border.
+    { variant: 'outlined', dense: true, active: true, class: { label: '!leading-tight' } },
 
     // --- Focus label color (per color) ---
     { focused: true, color: 'primary', class: { label: 'text-rui-primary' } },
