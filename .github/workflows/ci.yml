@@ -20,6 +20,12 @@ concurrency:
 
 permissions: { }
 
+# Layout note: jobs run fully in parallel. Each job that touches code does
+# its own `pnpm install` + (when needed) `pnpm run build:prod`; that
+# duplication (~90s per job, mostly cache-warm) is intentional — it keeps
+# wall-time down by avoiding a serial `build` job that downstream tests
+# would have to wait on. Tests run while the build for the next test set
+# is still in flight.
 jobs:
   commit-lint:
     runs-on: ubuntu-latest
@@ -55,11 +61,13 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
 
-  ci:
+  # Cheap fast-feedback job: lint + example-app typecheck. Library typecheck
+  # is implicit in the build:types step that runs as part of `build:prod` in
+  # `unit`, `storybook`, `e2e` and `visual` — no need to repeat it here.
+  validate:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      actions: write
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -81,58 +89,231 @@ jobs:
       - name: Run linter 👀
         run: pnpm run lint
 
+      - name: Typecheck example app
+        run: pnpm --filter example typecheck
+
+  # Vitest unit tests in browser mode. Uploads the blob-format coverage
+  # report so the `coverage` job can merge it with the storybook report.
+  unit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@5280c022466e8e5ea34ea201e2fda33875aeefdb # v6
+
+      - name: Setup node env 🏗
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          cache: pnpm
+          node-version-file: .nvmrc
+
+      - name: Install dependencies 👨🏻‍💻
+        run: pnpm install --frozen-lockfile
+
       - name: Build
         run: pnpm run build:prod
 
-      - name: Build Storybook
-        run: pnpm run build:storybook
+      - name: Cache Playwright browsers
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
 
-      - name: Install Playwright Browsers (Storybook)
+      - name: Install Playwright Browsers
         working-directory: packages/ui-library
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Run Unit Tests with Coverage
         run: pnpm run coverage:unit
 
+      - name: Upload unit coverage report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: vitest-report-unit
+          path: packages/ui-library/tests/.vitest-reports/unit.json
+          retention-days: 1
+          if-no-files-found: error
+
+  # Storybook play-function tests via Playwright. Split off from `unit` so
+  # the storybook build (~30-60s) and its test run parallelise with the
+  # vitest run instead of stacking serially.
+  storybook:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@5280c022466e8e5ea34ea201e2fda33875aeefdb # v6
+
+      - name: Setup node env 🏗
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          cache: pnpm
+          node-version-file: .nvmrc
+
+      - name: Install dependencies 👨🏻‍💻
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm run build:prod
+
+      - name: Build Storybook
+        run: pnpm run build:storybook
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright Browsers
+        working-directory: packages/ui-library
+        run: pnpm exec playwright install --with-deps chromium
+
       - name: Run Storybook Tests with Coverage
         run: pnpm run coverage:storybook
 
+      - name: Upload storybook coverage report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: vitest-report-storybook
+          path: packages/ui-library/tests/.vitest-reports/storybook.json
+          retention-days: 1
+          if-no-files-found: error
+
+  # Combine the two coverage blobs and forward to codecov. Tiny job, runs
+  # once both producers have finished. If either upstream job is skipped
+  # (e.g. a future paths-filter), this job still attempts the merge from
+  # whatever coverage is present.
+  coverage:
+    runs-on: ubuntu-latest
+    needs: [unit, storybook]
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@5280c022466e8e5ea34ea201e2fda33875aeefdb # v6
+
+      - name: Setup node env 🏗
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          cache: pnpm
+          node-version-file: .nvmrc
+
+      - name: Install dependencies 👨🏻‍💻
+        run: pnpm install --frozen-lockfile
+
+      - name: Download unit coverage report
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: vitest-report-unit
+          path: packages/ui-library/tests/.vitest-reports
+
+      - name: Download storybook coverage report
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: vitest-report-storybook
+          path: packages/ui-library/tests/.vitest-reports
+
       - name: Merge Coverage Reports
         run: pnpm run coverage:merge
-
-      - name: Typecheck
-        run: pnpm run -r typecheck
-
-      - name: Install Playwright Browsers
-        working-directory: apps/example
-        run: pnpm exec playwright install --with-deps chromium
-
-      - name: Run Playwright tests
-        working-directory: apps/example
-        run: pnpm run test:e2e
-
-      - name: Upload Playwright Report
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        if: failure()
-        with:
-          name: playwright-report
-          path: |
-            apps/example/playwright-report/
-            apps/example/test-results/
-          retention-days: 7
 
       - name: Upload coverage
         uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
+  # Behavioural Playwright e2e suite against the example app. Sharded ×2
+  # so each shard runs ~half the specs in parallel — wall-time drops as
+  # the suite grows; the per-shard install/build overhead is the same
+  # ~90s as any other job.
+  #
+  # `fail-fast: false` so one shard's failure doesn't cancel the other —
+  # we want to see every failing spec in the same run.
+  e2e:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@5280c022466e8e5ea34ea201e2fda33875aeefdb # v6
+
+      - name: Setup node env 🏗
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          cache: pnpm
+          node-version-file: .nvmrc
+
+      - name: Install dependencies 👨🏻‍💻
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm run build:prod
+
+      - name: Build example app
+        run: pnpm --filter example build:app
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright Browsers
+        working-directory: apps/example
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run Playwright tests (shard ${{ matrix.shard }}/2)
+        working-directory: apps/example
+        run: pnpm exec playwright test --shard=${{ matrix.shard }}/2
+
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: failure()
+        with:
+          name: playwright-report-shard-${{ matrix.shard }}
+          path: |
+            apps/example/playwright-report/
+            apps/example/test-results/
+          retention-days: 7
+
   # Visual regression suite. Runs in Playwright's pinned Docker image so the
   # rendering environment (browser binary + system fonts + freetype + arch)
   # matches what contributors get from `pnpm test:visual`. Without the pin,
   # snapshots captured locally and on CI would diverge by a handful of
-  # antialiasing pixels and every run would fail. Kept as a separate job so
-  # it parallelises with the main `ci` job and never blocks fast feedback on
-  # lint/typecheck/unit.
+  # antialiasing pixels and every run would fail.
   visual:
     runs-on: ubuntu-latest
     container:
