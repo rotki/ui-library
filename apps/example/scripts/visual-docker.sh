@@ -34,13 +34,22 @@ fi
 # `--ipc=host` is recommended by Playwright to avoid Chrome OOMs in CI.
 # `--network=host` lets the dev/preview server bind on the same loopback
 # Playwright connects to without a separate compose stack.
+#
+# `--user $UID:$GID` keeps any files written into the bind-mounted repo
+# (dist/, test-results/, playwright-report/, baselines, etc.) owned by the
+# host user so subsequent local commands like `pnpm build` or
+# `pnpm test:e2e` can rewrite them without sudo. We still need a writable
+# $HOME for corepack/pnpm caches, so we point HOME at /tmp inside the
+# container (the user-namespaced uid won't have /root or /home/pwuser).
 exec docker run --rm \
   --ipc=host \
   --network=host \
+  --user "$(id -u):$(id -g)" \
   -v "$REPO_ROOT:/work" \
   -v /work/node_modules \
   -v /work/apps/example/node_modules \
   -v /work/packages/ui-library/node_modules \
+  -e HOME=/tmp \
   -e PLAYWRIGHT_VISUAL=1 \
   -e CI="${CI:-}" \
   -w /work \
