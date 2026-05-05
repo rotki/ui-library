@@ -60,6 +60,7 @@ const options: TimezoneOption[] = timezones.map(value => ({
     v-model="modelValue"
     key-attr="value"
     text-attr="label"
+    auto-select-first
     :options="options"
     :label="label"
     :variant="variant"
