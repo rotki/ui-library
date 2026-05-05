@@ -19,6 +19,7 @@ import RuiCardHeader, { type Props as CardHeaderProps } from '@/components/cards
 import RuiChip, { type Props as ChipProps, type RuiChipClassNames } from '@/components/chips/RuiChip.vue';
 import RuiColorPicker from '@/components/color-picker/RuiColorPicker.vue';
 import RuiDateTimePicker, { type RuiDateTimePickerProps } from '@/components/date-time-picker/RuiDateTimePicker.vue';
+import RuiTimezoneSelect, { type RuiTimezoneSelectProps } from '@/components/date-time-picker/RuiTimezoneSelect.vue';
 import RuiDivider, { type Props as DividerProps } from '@/components/divider/RuiDivider.vue';
 import RuiAutoComplete, { type AutoCompleteProps, type RuiAutoCompleteClassNames } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
 import RuiCheckboxGroup, { type Props as CheckboxGroupProps } from '@/components/forms/checkbox/checkbox-group/RuiCheckboxGroup.vue';
@@ -105,6 +106,7 @@ export type {
   RuiStepperClassNames,
   RuiTabClassNames,
   RuiTimePickerProps,
+  RuiTimezoneSelectProps,
   RuiTooltipClassNames,
   SimpleSelectProps,
   SkeletonLoaderProps,
@@ -168,5 +170,6 @@ export {
   RuiTextArea,
   RuiTextField,
   RuiTimePicker,
+  RuiTimezoneSelect,
   RuiTooltip,
 };

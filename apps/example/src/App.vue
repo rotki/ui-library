@@ -43,6 +43,7 @@ const navigation = ref([
       { to: '/calendars', title: 'Calendars' },
       { to: '/datetimepickers', title: 'Date Time Pickers' },
       { to: '/timepickers', title: 'Time Pickers' },
+      { to: '/timezone-selects', title: 'Timezone Select' },
     ],
   },
   {

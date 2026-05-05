@@ -398,6 +398,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/timezone-selects': RouteRecordInfo<
+      '/timezone-selects',
+      '/timezone-selects',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/tooltips': RouteRecordInfo<
       '/tooltips',
       '/tooltips',
@@ -740,6 +747,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/timepickers.vue': {
       routes:
         | '/timepickers'
+      views:
+        | never
+    }
+    'src/pages/timezone-selects.vue': {
+      routes:
+        | '/timezone-selects'
       views:
         | never
     }

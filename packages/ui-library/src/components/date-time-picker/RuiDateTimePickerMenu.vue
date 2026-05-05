@@ -2,8 +2,7 @@
 import type { TimeAccuracy } from '@/consts/time-accuracy';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCalendar from '@/components/calendar/RuiCalendar.vue';
-import { timezones } from '@/components/date-time-picker/timezones';
-import RuiAutoComplete from '@/components/forms/auto-complete/RuiAutoComplete.vue';
+import RuiTimezoneSelect from '@/components/date-time-picker/RuiTimezoneSelect.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiTimePicker, { type TimePickerSelection } from '@/components/time-picker/RuiTimePicker.vue';
 
@@ -74,13 +73,10 @@ function setNow(): void {
             />
           </RuiButton>
         </div>
-        <RuiAutoComplete
+        <RuiTimezoneSelect
           v-model="selectedTimezone"
           hide-details
-          label="Timezone"
           class="pt-0 pr-0"
-          variant="outlined"
-          :options="timezones"
         />
       </div>
       <slot />
