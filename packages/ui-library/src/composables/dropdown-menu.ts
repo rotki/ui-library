@@ -136,7 +136,7 @@ export function useDropdownMenu<TValue, TItem>({
   });
 
   const highlightedIndex: Ref<number> = ref(get(autoSelectFirst) ? 0 : -1);
-  const userNavigated = ref<boolean>(false);
+  const userNavigated = shallowRef<boolean>(false);
 
   const optionWidthBounds = computed<{ min: number; max: number }>(() => {
     let min = 0;
@@ -191,13 +191,31 @@ export function useDropdownMenu<TValue, TItem>({
     return selected.findIndex(selectedItem => getIdentifier(selectedItem) === itemId);
   }
 
-  function adjustScrollByHighlightedIndex(): void {
-    const index = get(highlightedIndex);
-    if (index > -1)
-      scrollTo(index);
+  function scrollHighlightedIntoView(): void {
+    get(_menuRef)
+      ?.querySelector<HTMLElement>('[data-highlighted="true"]')
+      ?.scrollIntoView({ block: 'nearest' });
   }
 
-  function updateOpen(open: boolean): void {
+  async function adjustScrollByHighlightedIndex(): Promise<void> {
+    const index = get(highlightedIndex);
+    if (index === -1)
+      return;
+
+    await nextTick();
+    if (get(_menuRef)?.querySelector('[data-highlighted="true"]')) {
+      scrollHighlightedIntoView();
+      return;
+    }
+
+    // Highlighted item is outside the virtual list's rendered window —
+    // kick the virtual scroll to render it, then nudge it fully into view.
+    scrollTo(index);
+    await nextTick();
+    scrollHighlightedIntoView();
+  }
+
+  async function updateOpen(open: boolean): Promise<void> {
     if (!open)
       return;
 
@@ -210,21 +228,23 @@ export function useDropdownMenu<TValue, TItem>({
         set(highlightedIndex, index);
     }
 
-    nextTick(() => adjustScrollByHighlightedIndex());
+    await adjustScrollByHighlightedIndex();
   }
 
-  watch([isOpen, () => toValue(disabled)], ([open, _]) => {
-    updateOpen(open);
+  watch([isOpen, () => toValue(disabled)], async ([open, _]) => {
+    await updateOpen(open);
   });
 
-  watch(highlightedIndex, () => adjustScrollByHighlightedIndex());
+  watch(highlightedIndex, async () => {
+    await adjustScrollByHighlightedIndex();
+  });
 
-  watch(options, () => {
+  watch(options, async () => {
     set(userNavigated, false);
     if (get(highlightedIndex) !== -1) {
       if (get(autoSelectFirst)) {
         set(highlightedIndex, 0);
-        adjustScrollByHighlightedIndex();
+        await adjustScrollByHighlightedIndex();
       }
       else {
         set(highlightedIndex, -1);
