@@ -78,7 +78,7 @@
   },
   "scripts": {
     "build:prod": "tsx scripts/dist-build.mjs",
-    "build": "pnpm run generate-icons && vite build && cp ../../README.md dist/ && cp src/vite-plugin/client.d.ts dist/vite-plugin/",
+    "build": "pnpm run generate-icons && vite build && cp src/vite-plugin/client.d.ts dist/vite-plugin/",
     "build:storybook": "STORYBOOK=true storybook build",
     "build:tailwind": "tailwindcss -o dist/style.css --minify",
     "build:types": "vue-tsc -p tsconfig.build.json",
