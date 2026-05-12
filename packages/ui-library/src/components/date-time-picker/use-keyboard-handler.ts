@@ -81,6 +81,7 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
   function setSegment(segmentType: DateTimeSegmentType): void {
     const segments = get(segmentPositions).find(segment => segment.type === segmentType);
     if (segments) {
+      set(currentValue, undefined);
       setCursorPosition(segments);
     }
   }
@@ -244,6 +245,10 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
       return;
     const currentSegment = getCurrentSegment(getClickPosition(event, event.target, true));
     if (currentSegment) {
+      // Reset in-progress digit buffer: switching segments must not carry typed digits over,
+      // otherwise a leftover digit from another segment combines with the next keystroke
+      // (e.g. type "1" in HH, click mm, type "3" → mm becomes 13 instead of 3).
+      set(currentValue, undefined);
       clickedSegment = currentSegment;
     }
   }
@@ -253,6 +258,7 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
       return;
     const currentSegment = getCurrentSegment(getClickPosition(event, event.target, true));
     if (currentSegment) {
+      set(currentValue, undefined);
       clickedSegment = currentSegment;
       set(cursorPosition, currentSegment.end);
       event.target.setSelectionRange(currentSegment.start, currentSegment.end);

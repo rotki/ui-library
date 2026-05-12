@@ -205,6 +205,141 @@ describe('use-keyboard-handler', () => {
     });
   });
 
+  describe('segment switching resets in-progress digit buffer', () => {
+    function makeInputWithSelection(value: string, start: number, end: number): HTMLInputElement {
+      const input = document.createElement('input');
+      input.value = value;
+      Object.defineProperty(input, 'selectionStart', { value: start, writable: true, configurable: true });
+      Object.defineProperty(input, 'selectionEnd', { value: end, writable: true, configurable: true });
+      return input;
+    }
+
+    it('should not carry a partially typed HH digit into mm when clicking minute segment', () => {
+      const segmentValues: Record<DateTimeSegmentType, number | undefined> = {
+        DD: 15,
+        HH: 14,
+        MM: 6,
+        SSS: 0,
+        YYYY: 2023,
+        mm: 30,
+        ss: 0,
+      };
+      const currentValue = ref<number | undefined>(undefined);
+      const cursorPosition = ref<number>(0);
+      const hhInput = makeInputWithSelection('15/06/2023 14:30', 11, 13);
+
+      const setValue = vi.fn((segment: DateTimeSegmentType, value?: number) => {
+        segmentValues[segment] = value;
+        currentValue.value = value;
+      });
+
+      const { handler } = createMockOptions({
+        currentValue,
+        cursorPosition,
+        setValue,
+        textInput: ref<HTMLInputElement | undefined>(hhInput),
+      });
+
+      // Type "1" in HH segment → HH=1, currentValue=1, no auto-navigate (length < 2)
+      const key1 = new KeyboardEvent('keydown', { key: '1' });
+      Object.defineProperty(key1, 'target', { value: hhInput });
+      handler.handleKeyDown(key1);
+      expect(segmentValues.HH).toBe(1);
+      expect(currentValue.value).toBe(1);
+
+      // User clicks on minute segment via mouse (selection 14-16)
+      const mmInput = makeInputWithSelection('15/06/2023 01:30', 14, 16);
+      const click = new MouseEvent('click', { clientX: 0, clientY: 0 });
+      Object.defineProperty(click, 'target', { value: mmInput });
+      handler.handleClick(click);
+
+      // currentValue must be cleared so the next digit doesn't combine with "1"
+      expect(currentValue.value).toBeUndefined();
+
+      // Type "3" in mm — should become 3, not 13
+      const key3 = new KeyboardEvent('keydown', { key: '3' });
+      Object.defineProperty(key3, 'target', { value: mmInput });
+      handler.handleKeyDown(key3);
+      expect(segmentValues.mm).toBe(3);
+    });
+
+    it('should reset currentValue when handleMouseDown selects a segment', () => {
+      const currentValue = ref<number | undefined>(7);
+      const mmInput = makeInputWithSelection('15/06/2023 14:30', 14, 16);
+
+      const { handler } = createMockOptions({ currentValue });
+
+      const event = new MouseEvent('mousedown', { clientX: 50, clientY: 10 });
+      Object.defineProperty(event, 'target', { value: mmInput });
+      handler.handleMouseDown(event);
+
+      expect(currentValue.value).toBeUndefined();
+    });
+
+    it('should reset currentValue when setSegment switches segments programmatically', () => {
+      const currentValue = ref<number | undefined>(4);
+      const mockInput = makeInputWithSelection('15/06/2023 14:30', 0, 0);
+
+      const { handler } = createMockOptions({
+        currentValue,
+        textInput: ref<HTMLInputElement | undefined>(mockInput),
+      });
+
+      handler.setSegment('mm');
+
+      expect(currentValue.value).toBeUndefined();
+    });
+
+    it('should not let a leftover mm digit bleed into HH after switching back', () => {
+      const segmentValues: Record<DateTimeSegmentType, number | undefined> = {
+        DD: 15,
+        HH: 14,
+        MM: 6,
+        SSS: 0,
+        YYYY: 2023,
+        mm: 30,
+        ss: 0,
+      };
+      const currentValue = ref<number | undefined>(undefined);
+      const cursorPosition = ref<number>(0);
+      const mmInput = makeInputWithSelection('15/06/2023 14:30', 14, 16);
+
+      const setValue = vi.fn((segment: DateTimeSegmentType, value?: number) => {
+        segmentValues[segment] = value;
+        currentValue.value = value;
+      });
+
+      const { handler } = createMockOptions({
+        currentValue,
+        cursorPosition,
+        setValue,
+        textInput: ref<HTMLInputElement | undefined>(mmInput),
+      });
+
+      // Type "2" in mm → mm=2, currentValue=2
+      const key2 = new KeyboardEvent('keydown', { key: '2' });
+      Object.defineProperty(key2, 'target', { value: mmInput });
+      handler.handleKeyDown(key2);
+      expect(segmentValues.mm).toBe(2);
+
+      // Switch to HH via the menu's setSegment (e.g. clicking "Select hours" tab)
+      handler.setSegment('HH');
+      expect(currentValue.value).toBeUndefined();
+
+      // Type "1" then "2" expecting HH=12 (not 212 or 13 or anything else)
+      const hhInput = makeInputWithSelection('15/06/2023 14:02', 11, 13);
+      const k1 = new KeyboardEvent('keydown', { key: '1' });
+      Object.defineProperty(k1, 'target', { value: hhInput });
+      handler.handleKeyDown(k1);
+      expect(segmentValues.HH).toBe(1);
+
+      const k2 = new KeyboardEvent('keydown', { key: '2' });
+      Object.defineProperty(k2, 'target', { value: hhInput });
+      handler.handleKeyDown(k2);
+      expect(segmentValues.HH).toBe(12);
+    });
+  });
+
   describe('handleClick', () => {
     it('should set cursor position to clicked segment', () => {
       const cursorPosition = ref<number>(0);
