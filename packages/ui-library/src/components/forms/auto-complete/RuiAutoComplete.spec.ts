@@ -480,6 +480,157 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     expect(submitFunc).toBeCalledTimes(1);
   });
 
+  it('should not submit form on enter when menu is open with no matches and customValue is false', async () => {
+    const form = document.createElement('form');
+    const submitFunc = vi.fn();
+    form.onsubmit = submitFunc;
+
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      attachTo: form,
+      props: {
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    // Open the menu and type text that matches no option.
+    const activator = wrapper.find('div[data-id="activator"]');
+    await activator.trigger('focus');
+    await activator.trigger('click');
+    await vi.advanceTimersToNextTimerAsync();
+
+    const input = wrapper.find('input');
+    await input.setValue('zzzzzzzz');
+    await vi.runAllTimersAsync();
+
+    await activator.trigger('keydown.enter');
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(submitFunc).not.toHaveBeenCalled();
+  });
+
+  it('should not submit form on enter when menu is open and no option is highlighted', async () => {
+    const form = document.createElement('form');
+    const submitFunc = vi.fn();
+    form.onsubmit = submitFunc;
+
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      attachTo: form,
+      props: {
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    // Open menu without typing or navigating; nothing is highlighted because
+    // autoSelectFirst is false and the user has not pressed arrow keys.
+    const activator = wrapper.find('div[data-id="activator"]');
+    await activator.trigger('focus');
+    await activator.trigger('click');
+    await vi.advanceTimersToNextTimerAsync();
+
+    await activator.trigger('keydown.enter');
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(submitFunc).not.toHaveBeenCalled();
+  });
+
+  it('should prevent default on enter when menu is open with no actionable selection', async () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      attachTo: document.body,
+      props: {
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    const activator = wrapper.find('div[data-id="activator"]');
+    await activator.trigger('focus');
+    await activator.trigger('click');
+    await vi.advanceTimersToNextTimerAsync();
+
+    const input = wrapper.find('input');
+    await input.setValue('zzzzzzzz');
+    await vi.runAllTimersAsync();
+
+    const enterEvent = new KeyboardEvent('keydown', {
+      bubbles: true,
+      cancelable: true,
+      key: 'Enter',
+    });
+    activator.element.dispatchEvent(enterEvent);
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(enterEvent.defaultPrevented).toBe(true);
+  });
+
+  it('should apply highlighted option (and not submit) on enter when menu is open and an option is highlighted', async () => {
+    const form = document.createElement('form');
+    const submitFunc = vi.fn();
+    form.onsubmit = submitFunc;
+
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      attachTo: form,
+      props: {
+        autoSelectFirst: true,
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    // Open the menu — autoSelectFirst will highlight the first option.
+    const activator = wrapper.find('div[data-id="activator"]');
+    await activator.trigger('focus');
+    await activator.trigger('click');
+    await vi.runAllTimersAsync();
+
+    await activator.trigger('keydown.enter');
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(wrapper.emitted()).toHaveProperty('update:modelValue');
+    expect(submitFunc).not.toHaveBeenCalled();
+  });
+
+  it('should apply custom value (and not submit) on enter when customValue is true and search has no match', async () => {
+    const form = document.createElement('form');
+    const submitFunc = vi.fn();
+    form.onsubmit = submitFunc;
+
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      attachTo: form,
+      props: {
+        customValue: true,
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    const activator = wrapper.find('div[data-id="activator"]');
+    await activator.trigger('focus');
+    await activator.trigger('click');
+    await vi.advanceTimersToNextTimerAsync();
+
+    const input = wrapper.find('input');
+    await input.setValue('zzzzzzzz');
+    await vi.runAllTimersAsync();
+
+    await activator.trigger('keydown.enter');
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(wrapper.emitted()).toHaveProperty('update:modelValue');
+    expect(submitFunc).not.toHaveBeenCalled();
+  });
+
   it('should only show placeholder when input is focused', async () => {
     wrapper = createWrapper<string | undefined, SelectOption>({
       attachTo: document.body,

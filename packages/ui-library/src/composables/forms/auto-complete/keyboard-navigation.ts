@@ -101,51 +101,74 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
     form?.dispatchEvent(new Event('submit'));
   }
 
-  function handleOpenMenuEnter(event: KeyboardEvent): boolean {
+  function tryApplyHighlight(event: KeyboardEvent): boolean {
     const filteredOptions = get(deps.filteredOptions);
     const highlightedIndex = get(deps.highlightedIndex);
+    if (highlightedIndex <= -1 || filteredOptions.length === 0)
+      return false;
+
+    deps.applyHighlighted();
+    event.preventDefault();
+    return true;
+  }
+
+  function tryApplyCustom(event: KeyboardEvent, requireEmptyOptions: boolean): boolean {
     const customValue = toValue(options.customValue);
-    const multiple = toValue(options.multiple);
     const internalSearch = get(deps.internalSearch);
+    if (!customValue || !internalSearch)
+      return false;
 
-    const userNavigated = get(deps.userNavigated);
-
-    if (userNavigated && highlightedIndex > -1 && filteredOptions.length > 0) {
-      deps.applyHighlighted();
-      event.preventDefault();
-      return true;
+    const filteredOptions = get(deps.filteredOptions);
+    if (requireEmptyOptions) {
+      if (filteredOptions.length > 0)
+        return false;
+    }
+    else {
+      const highlightedIndex = get(deps.highlightedIndex);
+      if (highlightedMatchesSearch(filteredOptions, highlightedIndex, internalSearch))
+        return false;
     }
 
-    if (customValue && internalSearch && !highlightedMatchesSearch(filteredOptions, highlightedIndex, internalSearch)) {
-      applyCustomValue(event, multiple);
-      return true;
-    }
+    applyCustomValue(event, toValue(options.multiple));
+    return true;
+  }
 
-    if (highlightedIndex > -1 && filteredOptions.length > 0) {
-      deps.applyHighlighted();
-      event.preventDefault();
+  function handleOpenMenuEnter(event: KeyboardEvent): boolean {
+    // Prefer the user's explicit navigation.
+    if (get(deps.userNavigated) && tryApplyHighlight(event))
       return true;
-    }
 
-    if (filteredOptions.length === 0 && customValue && internalSearch) {
-      applyCustomValue(event, multiple);
+    // Fall back to a typed custom value when it differs from the highlight.
+    if (tryApplyCustom(event, false))
       return true;
-    }
 
-    return false;
+    // Use the (auto-)highlighted option if there is one.
+    if (tryApplyHighlight(event))
+      return true;
+
+    // No options matched but custom values are allowed — accept the typed text.
+    return tryApplyCustom(event, true);
   }
 
   function onEnter(event: KeyboardEvent): void {
-    if (get(deps.isOpen) && handleOpenMenuEnter(event))
+    if (get(deps.isOpen)) {
+      if (handleOpenMenuEnter(event))
+        return;
+
+      // Menu is open but no actionable selection (e.g. typed text with no
+      // matches and customValue=false, or no highlighted option). Swallow
+      // Enter so it does not bubble up and submit a surrounding form.
+      event.preventDefault();
       return;
+    }
 
     // Nothing selected, menu closed: open menu
-    if (!get(deps.isOpen) && get(deps.value).length === 0) {
+    if (get(deps.value).length === 0) {
       set(deps.isOpen, true);
       return event.preventDefault();
     }
 
-    // Fallback: submit parent form
+    // Menu closed with a value selected: let Enter submit the parent form.
     submitClosestForm();
   }
 
