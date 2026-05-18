@@ -251,6 +251,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/file-uploads': RouteRecordInfo<
+      '/file-uploads',
+      '/file-uploads',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/icons': RouteRecordInfo<
       '/icons',
       '/icons',
@@ -621,6 +628,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/dividers.vue': {
       routes:
         | '/dividers'
+      views:
+        | never
+    }
+    'src/pages/file-uploads.vue': {
+      routes:
+        | '/file-uploads'
       views:
         | never
     }

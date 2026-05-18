@@ -19,6 +19,7 @@ const navigation = ref([
       { to: '/text-areas', title: 'Text Areas' },
       { to: '/sliders', title: 'Sliders' },
       { to: '/auto-completes', title: 'Auto Complete' },
+      { to: '/file-uploads', title: 'File Upload' },
       { to: '/steppers', title: 'Steppers' },
       { to: '/progress', title: 'Progress' },
       { to: '/loaders', title: 'Loaders' },

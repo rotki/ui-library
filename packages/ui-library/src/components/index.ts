@@ -24,6 +24,7 @@ import RuiDivider, { type Props as DividerProps } from '@/components/divider/Rui
 import RuiAutoComplete, { type AutoCompleteProps, type RuiAutoCompleteClassNames } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
 import RuiCheckboxGroup, { type Props as CheckboxGroupProps } from '@/components/forms/checkbox/checkbox-group/RuiCheckboxGroup.vue';
 import RuiCheckbox, { type Props as CheckboxProps } from '@/components/forms/checkbox/RuiCheckbox.vue';
+import RuiFileUpload, { type FileUploadProps } from '@/components/forms/file-upload/RuiFileUpload.vue';
 import RuiRadioGroup, { type Props as RadioGroupProps } from '@/components/forms/radio-button/radio-group/RuiRadioGroup.vue';
 import RuiRadio, { type RadioProps } from '@/components/forms/radio-button/radio/RuiRadio.vue';
 import RuiRevealableTextField, { type Props as RevealableTextFieldProps } from '@/components/forms/revealable-text-field/RuiRevealableTextField.vue';
@@ -81,6 +82,7 @@ export type {
   DialogProps,
   DividerProps,
   ExpandButtonProps,
+  FileUploadProps,
   FooterStepperProps,
   GroupData,
   IconProps,
@@ -145,6 +147,7 @@ export {
   RuiDateTimePicker,
   RuiDialog,
   RuiDivider,
+  RuiFileUpload,
   RuiFooterStepper,
   RuiIcon,
   RuiLogo,

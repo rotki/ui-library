@@ -108,3 +108,21 @@ export function transformPropsUnit(value?: string | number): string | undefined 
     return value;
   return `${value}px`;
 }
+
+/**
+ * Formats a byte count into a human-readable string (e.g. "1.2 MB").
+ */
+export function formatFileSize(bytes: number): string {
+  if (!Number.isFinite(bytes) || bytes < 0)
+    return '0 B';
+  if (bytes < 1024)
+    return `${bytes} B`;
+  const units = ['KB', 'MB', 'GB', 'TB'];
+  let value = bytes / 1024;
+  let unitIndex = 0;
+  while (value >= 1024 && unitIndex < units.length - 1) {
+    value /= 1024;
+    unitIndex++;
+  }
+  return `${value.toFixed(value >= 10 ? 0 : 1)} ${units[unitIndex]}`;
+}
