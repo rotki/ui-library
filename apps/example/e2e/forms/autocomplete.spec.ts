@@ -646,3 +646,138 @@ test.describe('auto-complete - advanced', () => {
     await expect(ac.locator('input')).toHaveValue('MyCustomBlur');
   });
 });
+
+test.describe('auto-complete - grouping', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/auto-completes/grouping');
+  });
+
+  test.afterEach(async ({ page }) => {
+    await page.keyboard.press('Escape');
+  });
+
+  test('should be reachable from the index navigation', async ({ page }) => {
+    await page.goto('/auto-completes');
+    await expect(page.locator('[data-id="link-/auto-completes/grouping"]')).toBeVisible();
+    await page.locator('[data-id="link-/auto-completes/grouping"]').click();
+    await expect(page.locator('[data-id=auto-completes-grouping]')).toBeVisible();
+  });
+
+  test('should render group headers when groupBy is a string key', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-grouping-string]');
+    await ac.locator('[data-id=activator]').click();
+
+    const menu = page.locator('div[role=menu]');
+    await expect(menu).toBeVisible();
+
+    const headers = menu.locator('[data-id=group-header]');
+    await expect(headers).toHaveCount(3);
+    await expect(headers.nth(0)).toContainText('Europe');
+    await expect(headers.nth(1)).toContainText('Asia');
+    await expect(headers.nth(2)).toContainText('Africa');
+  });
+
+  test('should render group headers when groupBy is a function', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-grouping-fn]');
+    const activator = ac.locator('[data-id=activator]');
+    await activator.focus();
+    await activator.click();
+
+    const headers = page.locator('div[role=menu] [data-id=group-header]');
+    await expect(headers).toHaveCount(3);
+    await expect(headers.nth(0)).toContainText('EUROPE');
+    await expect(headers.nth(1)).toContainText('ASIA');
+    await expect(headers.nth(2)).toContainText('AFRICA');
+  });
+
+  test('should render the custom #group-header slot with group and items', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-grouping-custom-header]');
+    await ac.locator('[data-id=activator]').click();
+
+    const customEurope = page.locator('[data-id="custom-header-Europe"]');
+    await expect(customEurope).toBeVisible();
+    await expect(customEurope).toContainText('Europe');
+    await expect(customEurope).toContainText('3');
+
+    const customAsia = page.locator('[data-id="custom-header-Asia"]');
+    await expect(customAsia).toContainText('Asia');
+    await expect(customAsia).toContainText('2');
+
+    const customAfrica = page.locator('[data-id="custom-header-Africa"]');
+    await expect(customAfrica).toContainText('Africa');
+    await expect(customAfrica).toContainText('1');
+  });
+
+  test('should select an option from inside a group', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-grouping-string]');
+    await ac.locator('[data-id=activator]').click();
+
+    const menu = page.locator('div[role=menu]');
+    await menu.locator('button', { hasText: 'Spain' }).click();
+
+    await expect(ac.locator('input')).toHaveValue('Spain');
+  });
+
+  test('should mark disabled items with data-disabled and prevent selection on click', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-grouping-disabled]');
+    await ac.locator('[data-id=activator]').click();
+
+    const menu = page.locator('div[role=menu]');
+    await expect(menu).toBeVisible();
+
+    const disabledItems = menu.locator('button[data-disabled="true"]');
+    await expect(disabledItems).toHaveCount(2);
+
+    // Clicking a disabled item should not select it (force needed because it's disabled).
+    await disabledItems.first().click({ force: true });
+
+    // Menu should remain open and input value should still be empty.
+    await expect(ac.locator('input')).toHaveValue('');
+  });
+
+  test('should skip disabled items when navigating with arrow keys', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-grouping-disabled]');
+    const activator = ac.locator('[data-id=activator]');
+    await activator.click();
+
+    const menu = page.locator('div[role=menu]');
+    await expect(menu).toBeVisible();
+
+    // First arrow down highlights Germany (first non-disabled).
+    await activator.press('ArrowDown');
+    let highlighted = menu.locator('button[data-highlighted="true"]');
+    await expect(highlighted).toContainText('Germany');
+
+    // Next arrow down should skip "France (disabled)" and land on Spain.
+    await activator.press('ArrowDown');
+    highlighted = menu.locator('button[data-highlighted="true"]');
+    await expect(highlighted).toContainText('Spain');
+
+    // Next arrow down should skip "India (disabled)" and land on Indonesia.
+    await activator.press('ArrowDown');
+    highlighted = menu.locator('button[data-highlighted="true"]');
+    await expect(highlighted).toContainText('Indonesia');
+
+    // Enter selects Indonesia.
+    await activator.press('Enter');
+    await expect(ac.locator('input')).toHaveValue('Indonesia');
+  });
+
+  test('should combine grouping with disabled items', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-grouping-grouped-disabled]');
+    await ac.locator('[data-id=activator]').click();
+
+    const menu = page.locator('div[role=menu]');
+    await expect(menu).toBeVisible();
+
+    // Two groups (Europe + Asia) are present.
+    await expect(menu.locator('[data-id=group-header]')).toHaveCount(2);
+
+    // Two disabled items.
+    await expect(menu.locator('button[data-disabled="true"]')).toHaveCount(2);
+
+    // Selecting an enabled item still works.
+    await menu.locator('button', { hasText: 'Indonesia' }).click();
+    await expect(ac.locator('input')).toHaveValue('Indonesia');
+  });
+});

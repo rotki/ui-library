@@ -7,6 +7,8 @@ import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import {
+  type GroupBy,
+  type ItemDisabled,
   type KeyOfType,
   useDropdownMenu,
   useDropdownOptionProperty,
@@ -69,6 +71,8 @@ export interface AutoCompleteProps<TValue, TItem> {
   required?: boolean;
   hideSearchInput?: boolean;
   hideSelectionWrapper?: boolean;
+  groupBy?: GroupBy<TItem>;
+  itemDisabled?: ItemDisabled<TItem>;
 }
 
 defineOptions({
@@ -114,6 +118,8 @@ const {
   required = false,
   hideSearchInput = false,
   hideSelectionWrapper = false,
+  groupBy,
+  itemDisabled,
 } = defineProps<AutoCompleteProps<TValue, TItem>>();
 
 const slots = defineSlots<{
@@ -133,6 +139,7 @@ const slots = defineSlots<{
   'item.prepend'?: (props: { disabled: boolean; item: TItem; active: boolean }) => any;
   'item'?: (props: { disabled: boolean; item: TItem; active: boolean }) => any;
   'item.append'?: (props: { disabled: boolean; item: TItem; active: boolean }) => any;
+  'group-header'?: (props: { group: string; items: TItem[] }) => any;
   'no-data'?: () => any;
 }>();
 
@@ -214,6 +221,9 @@ const {
   applyHighlighted,
   optionsWithSelectedHidden,
   userNavigated,
+  groupedOptions,
+  isGrouped,
+  isItemDisabled,
 } = useDropdownMenu<TValue, TItem>({
   itemHeight: resolvedItemHeight,
   keyAttr,
@@ -228,6 +238,8 @@ const {
   isOpen,
   getText,
   getIdentifier,
+  groupBy: () => groupBy,
+  itemDisabled: () => itemDisabled,
 });
 
 const {
@@ -663,6 +675,65 @@ defineExpose({
           @keydown.down.prevent="moveHighlight(false)"
         >
           <div
+            v-if="isGrouped"
+            ref="menuRef"
+          >
+            <template
+              v-for="(bucket, bucketIndex) in groupedOptions"
+              :key="bucket.group || `group-${bucketIndex}`"
+            >
+              <div
+                class="sticky top-0 z-10 bg-white dark:bg-rui-grey-900"
+                data-id="group-header"
+              >
+                <slot
+                  name="group-header"
+                  v-bind="{ group: bucket.group, items: bucket.items }"
+                >
+                  <div class="px-3 py-1 text-xs uppercase tracking-wide text-rui-text-secondary">
+                    {{ bucket.group }}
+                  </div>
+                </slot>
+              </div>
+              <RuiButton
+                v-for="item in bucket.items"
+                :key="getIdentifier(item)?.toString()"
+                :active="isActiveItem(item)"
+                :aria-selected="isActiveItem(item)"
+                :size="dense ? 'sm' : undefined"
+                :disabled="isItemDisabled(item)"
+                tabindex="0"
+                variant="list"
+                :data-highlighted="optionsWithSelectedHidden.indexOf(item) === highlightedIndex"
+                :data-disabled="isItemDisabled(item) || undefined"
+                :class="{
+                  [highlightedClass]: !isActiveItem(item) && optionsWithSelectedHidden.indexOf(item) === highlightedIndex,
+                }"
+                @click="!isItemDisabled(item) && setValue(item)"
+              >
+                <template #prepend>
+                  <slot
+                    name="item.prepend"
+                    v-bind="{ disabled: isItemDisabled(item), item, active: isActiveItem(item) }"
+                  />
+                </template>
+                <slot
+                  name="item"
+                  v-bind="{ disabled: isItemDisabled(item), item, active: isActiveItem(item) }"
+                >
+                  {{ getText(item) }}
+                </slot>
+                <template #append>
+                  <slot
+                    name="item.append"
+                    v-bind="{ disabled: isItemDisabled(item), item, active: isActiveItem(item) }"
+                  />
+                </template>
+              </RuiButton>
+            </template>
+          </div>
+          <div
+            v-else
             v-bind="wrapperProps"
             ref="menuRef"
           >
@@ -672,30 +743,32 @@ defineExpose({
               :active="isActiveItem(item)"
               :aria-selected="isActiveItem(item)"
               :size="dense ? 'sm' : undefined"
+              :disabled="isItemDisabled(item)"
               tabindex="0"
               variant="list"
               :data-highlighted="highlightedIndex === _index"
+              :data-disabled="isItemDisabled(item) || undefined"
               :class="{
                 [highlightedClass]: !isActiveItem(item) && highlightedIndex === _index,
               }"
-              @click="setValue(item)"
+              @click="!isItemDisabled(item) && setValue(item)"
             >
               <template #prepend>
                 <slot
                   name="item.prepend"
-                  v-bind="{ disabled, item, active: isActiveItem(item) }"
+                  v-bind="{ disabled: isItemDisabled(item), item, active: isActiveItem(item) }"
                 />
               </template>
               <slot
                 name="item"
-                v-bind="{ disabled, item, active: isActiveItem(item) }"
+                v-bind="{ disabled: isItemDisabled(item), item, active: isActiveItem(item) }"
               >
                 {{ getText(item) }}
               </slot>
               <template #append>
                 <slot
                   name="item.append"
-                  v-bind="{ disabled, item, active: isActiveItem(item) }"
+                  v-bind="{ disabled: isItemDisabled(item), item, active: isActiveItem(item) }"
                 />
               </template>
             </RuiButton>

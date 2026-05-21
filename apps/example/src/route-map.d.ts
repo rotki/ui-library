@@ -76,6 +76,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/auto-completes/grouping': RouteRecordInfo<
+      '/auto-completes/grouping',
+      '/auto-completes/grouping',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/auto-completes/keyboard': RouteRecordInfo<
       '/auto-completes/keyboard',
       '/auto-completes/keyboard',
@@ -478,6 +485,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/auto-completes/custom.vue': {
       routes:
         | '/auto-completes/custom'
+      views:
+        | never
+    }
+    'src/pages/auto-completes/grouping.vue': {
+      routes:
+        | '/auto-completes/grouping'
       views:
         | never
     }

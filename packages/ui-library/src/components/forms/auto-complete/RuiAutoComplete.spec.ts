@@ -1,6 +1,6 @@
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { options, type SelectOption } from '@/__test__/options';
+import { groupedOptions, type GroupedSelectOption, options, type SelectOption } from '@/__test__/options';
 import RuiChip from '@/components/chips/RuiChip.vue';
 import RuiAutoComplete from '@/components/forms/auto-complete/RuiAutoComplete.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
@@ -1249,5 +1249,217 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     wrapper.vm.closeMenu();
     await vi.runAllTimersAsync();
     expect(queryByRole('menu')).toBeFalsy();
+  });
+
+  describe('groupBy', () => {
+    it('should render group headers when groupBy is a string key', async () => {
+      wrapper = createWrapper<string | undefined, GroupedSelectOption>({
+        attachTo: document.body,
+        props: {
+          groupBy: 'category',
+          keyAttr: 'id',
+          modelValue: undefined,
+          options: groupedOptions,
+          textAttr: 'label',
+        },
+      });
+
+      await wrapper.find('[data-id=activator]').trigger('click');
+      await vi.advanceTimersToNextTimerAsync();
+      expect(queryByRole('menu')).toBeTruthy();
+
+      const headers = Array.from(document.body.querySelectorAll('[data-id="group-header"]'));
+      expect(headers).toHaveLength(3);
+      expect(headers.map(h => h.textContent?.trim())).toEqual(['Europe', 'Asia', 'Africa']);
+    });
+
+    it('should render group headers when groupBy is a function', async () => {
+      wrapper = createWrapper<string | undefined, GroupedSelectOption>({
+        attachTo: document.body,
+        props: {
+          groupBy: (item: GroupedSelectOption): string => item.category.toUpperCase(),
+          keyAttr: 'id',
+          modelValue: undefined,
+          options: groupedOptions,
+          textAttr: 'label',
+        },
+      });
+
+      await wrapper.find('[data-id=activator]').trigger('click');
+      await vi.advanceTimersToNextTimerAsync();
+
+      const headers = Array.from(document.body.querySelectorAll('[data-id="group-header"]'));
+      expect(headers.map(h => h.textContent?.trim())).toEqual(['EUROPE', 'ASIA', 'AFRICA']);
+    });
+
+    it('should not render group headers when groupBy is undefined', async () => {
+      wrapper = createWrapper<string | undefined, GroupedSelectOption>({
+        attachTo: document.body,
+        props: {
+          keyAttr: 'id',
+          modelValue: undefined,
+          options: groupedOptions,
+          textAttr: 'label',
+        },
+      });
+
+      await wrapper.find('[data-id=activator]').trigger('click');
+      await vi.advanceTimersToNextTimerAsync();
+      expect(queryByRole('menu')).toBeTruthy();
+
+      expect(queryByDataId('group-header')).toBeFalsy();
+    });
+
+    it('should render a custom #group-header slot', async () => {
+      wrapper = createWrapper<string | undefined, GroupedSelectOption>({
+        attachTo: document.body,
+        props: {
+          groupBy: 'category',
+          keyAttr: 'id',
+          modelValue: undefined,
+          options: groupedOptions,
+          textAttr: 'label',
+        },
+        slots: {
+          'group-header': '<span class="custom-header">{{ params.group }} ({{ params.items.length }})</span>',
+        },
+      });
+
+      await wrapper.find('[data-id=activator]').trigger('click');
+      await vi.advanceTimersToNextTimerAsync();
+
+      const customHeaders = Array.from(document.body.querySelectorAll('.custom-header'));
+      expect(customHeaders).toHaveLength(3);
+      expect(customHeaders[0]?.textContent).toBe('Europe (3)');
+      expect(customHeaders[1]?.textContent).toBe('Asia (2)');
+      expect(customHeaders[2]?.textContent).toBe('Africa (1)');
+    });
+  });
+
+  describe('itemDisabled', () => {
+    it('should not emit update:modelValue when clicking a disabled item', async () => {
+      const flatOptions: GroupedSelectOption[] = [
+        { category: 'A', id: '1', label: 'Alpha' },
+        { category: 'A', disabled: true, id: '2', label: 'Bravo' },
+        { category: 'A', id: '3', label: 'Charlie' },
+      ];
+
+      wrapper = createWrapper<string | undefined, GroupedSelectOption>({
+        attachTo: document.body,
+        props: {
+          itemDisabled: 'disabled',
+          keyAttr: 'id',
+          modelValue: undefined,
+          options: flatOptions,
+          textAttr: 'label',
+        },
+      });
+
+      await wrapper.find('[data-id=activator]').trigger('click');
+      await vi.advanceTimersToNextTimerAsync();
+
+      const disabledButton = queryBody<HTMLButtonElement>('[data-disabled="true"]');
+      assertExists(disabledButton);
+      disabledButton.click();
+      await vi.advanceTimersToNextTimerAsync();
+
+      expect(wrapper.emitted('update:modelValue')).toBeFalsy();
+    });
+
+    it('should skip disabled items when navigating with arrow keys', async () => {
+      const flatOptions: GroupedSelectOption[] = [
+        { category: 'A', id: '1', label: 'Alpha' },
+        { category: 'A', disabled: true, id: '2', label: 'Bravo' },
+        { category: 'A', id: '3', label: 'Charlie' },
+      ];
+
+      wrapper = createWrapper<string | undefined, GroupedSelectOption>({
+        attachTo: document.body,
+        props: {
+          itemDisabled: 'disabled',
+          keyAttr: 'id',
+          modelValue: undefined,
+          options: flatOptions,
+          textAttr: 'label',
+        },
+      });
+
+      const activator = wrapper.find('[data-id=activator]');
+      await activator.trigger('focus');
+      await activator.trigger('click');
+      await vi.runAllTimersAsync();
+
+      await activator.trigger('keydown.down');
+      await vi.advanceTimersToNextTimerAsync();
+
+      let highlighted = queryBody<HTMLButtonElement>('[data-highlighted="true"]');
+      assertExists(highlighted);
+      expect(highlighted.innerHTML).toContain('Alpha');
+
+      await activator.trigger('keydown.down');
+      await vi.advanceTimersToNextTimerAsync();
+
+      highlighted = queryBody<HTMLButtonElement>('[data-highlighted="true"]');
+      assertExists(highlighted);
+      expect(highlighted.innerHTML).toContain('Charlie');
+    });
+
+    it('should not infinite-loop when all items are disabled', async () => {
+      const flatOptions: GroupedSelectOption[] = [
+        { category: 'A', disabled: true, id: '1', label: 'Alpha' },
+        { category: 'A', disabled: true, id: '2', label: 'Bravo' },
+        { category: 'A', disabled: true, id: '3', label: 'Charlie' },
+      ];
+
+      wrapper = createWrapper<string | undefined, GroupedSelectOption>({
+        attachTo: document.body,
+        props: {
+          itemDisabled: 'disabled',
+          keyAttr: 'id',
+          modelValue: undefined,
+          options: flatOptions,
+          textAttr: 'label',
+        },
+      });
+
+      const activator = wrapper.find('[data-id=activator]');
+      await activator.trigger('click');
+      await vi.runAllTimersAsync();
+
+      await activator.trigger('keydown.down');
+      await vi.advanceTimersToNextTimerAsync();
+
+      const highlighted = queryBody<HTMLButtonElement>('[data-highlighted="true"]');
+      expect(highlighted).toBeFalsy();
+    });
+
+    it('should not emit update:modelValue when pressing Enter on a disabled highlighted row', async () => {
+      const flatOptions: GroupedSelectOption[] = [
+        { category: 'A', disabled: true, id: '1', label: 'Alpha' },
+        { category: 'A', id: '2', label: 'Bravo' },
+      ];
+
+      wrapper = createWrapper<string | undefined, GroupedSelectOption>({
+        attachTo: document.body,
+        props: {
+          autoSelectFirst: true,
+          itemDisabled: 'disabled',
+          keyAttr: 'id',
+          modelValue: undefined,
+          options: flatOptions,
+          textAttr: 'label',
+        },
+      });
+
+      const activator = wrapper.find('[data-id=activator]');
+      await activator.trigger('focus');
+      await activator.trigger('click');
+      await vi.runAllTimersAsync();
+
+      await activator.trigger('keydown.enter');
+      await vi.advanceTimersToNextTimerAsync();
+
+      expect(wrapper.emitted('update:modelValue')).toBeFalsy();
+    });
   });
 });

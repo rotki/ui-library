@@ -45,6 +45,12 @@ const sections = [
     route: '/auto-completes/advanced',
     icon: 'lu-settings',
   },
+  {
+    title: 'Grouping',
+    description: 'Group headers, custom group slot, disabled items',
+    route: '/auto-completes/grouping',
+    icon: 'lu-layers',
+  },
 ];
 </script>
 

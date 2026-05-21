@@ -13,6 +13,15 @@ export interface DropdownItemAttr<TValue, TItem> {
   textAttr?: keyof TItem | ((item: TItem) => string);
 }
 
+export type GroupBy<TItem> = keyof TItem | ((item: TItem) => string);
+
+export type ItemDisabled<TItem> = keyof TItem | ((item: TItem) => boolean);
+
+export interface DropdownOptionGroup<TItem> {
+  group: string;
+  items: TItem[];
+}
+
 export interface DropdownOptions<TValue, TItem> {
   options: MaybeRefOrGetter<TItem[]>;
   dense?: MaybeRefOrGetter<boolean>;
@@ -31,6 +40,8 @@ export interface DropdownOptions<TValue, TItem> {
   isOpen?: Ref<boolean>;
   getText?: (item: TItem) => string | undefined;
   getIdentifier?: (item: TItem) => any;
+  groupBy?: MaybeRefOrGetter<GroupBy<TItem> | undefined>;
+  itemDisabled?: MaybeRefOrGetter<ItemDisabled<TItem> | undefined>;
 }
 
 export function useDropdownOptionProperty<TValue, TItem>({
@@ -88,6 +99,8 @@ export function useDropdownMenu<TValue, TItem>({
   setValue,
   textAttr,
   value,
+  groupBy,
+  itemDisabled,
 }: DropdownOptions<TValue, TItem>) {
   const { getIdentifier: defaultGetIdentifier, getText: defaultGetText } = useDropdownOptionProperty({
     keyAttr,
@@ -117,6 +130,47 @@ export function useDropdownMenu<TValue, TItem>({
       return options;
 
     return options.filter(item => !isActiveItem(item));
+  });
+
+  function getGroupKey(item: TItem): string {
+    const group = toValue(groupBy);
+    if (!group)
+      return '';
+
+    if (typeof group === 'function')
+      return group(item);
+
+    return String(item[group] ?? '');
+  }
+
+  function isItemDisabled(item: TItem): boolean {
+    const itemDisabledValue = toValue(itemDisabled);
+    if (!itemDisabledValue)
+      return false;
+
+    if (typeof itemDisabledValue === 'function')
+      return itemDisabledValue(item);
+
+    return Boolean(item[itemDisabledValue]);
+  }
+
+  const isGrouped = computed<boolean>(() => toValue(groupBy) !== undefined);
+
+  const groupedOptions = computed<DropdownOptionGroup<TItem>[]>(() => {
+    if (!get(isGrouped))
+      return [];
+
+    const buckets = new Map<string, TItem[]>();
+    for (const item of get(options)) {
+      const key = getGroupKey(item);
+      const list = buckets.get(key);
+      if (list)
+        list.push(item);
+      else
+        buckets.set(key, [item]);
+    }
+
+    return Array.from(buckets.entries()).map(([group, items]) => ({ group, items }));
   });
 
   const { containerProps, list, scrollTo, wrapperProps } = useVirtualList<TItem>(options, {
@@ -269,18 +323,27 @@ export function useDropdownMenu<TValue, TItem>({
 
     set(userNavigated, true);
 
-    let position = get(highlightedIndex);
+    const items = get(options);
+    const total = items.length;
+    if (total === 0)
+      return;
+
     const move = up ? -1 : 1;
+    let position = get(highlightedIndex);
 
-    position += move;
+    for (let step = 0; step < total; step++) {
+      position += move;
+      if (position >= total)
+        position = 0;
+      else if (position < 0)
+        position = total - 1;
 
-    const total = get(options).length;
-
-    if (position >= total)
-      set(highlightedIndex, 0);
-    else if (position < 0)
-      set(highlightedIndex, total - 1);
-    else set(highlightedIndex, position);
+      const candidate = items[position];
+      if (candidate !== undefined && !isItemDisabled(candidate)) {
+        set(highlightedIndex, position);
+        return;
+      }
+    }
   };
 
   const applyHighlighted = (): void => {
@@ -292,7 +355,7 @@ export function useDropdownMenu<TValue, TItem>({
       return;
 
     const entry = get(options)[highlightedIndexVal];
-    if (entry !== undefined)
+    if (entry !== undefined && !isItemDisabled(entry))
       setValue(entry);
   };
 
@@ -301,8 +364,11 @@ export function useDropdownMenu<TValue, TItem>({
     containerProps,
     getIdentifier,
     getText,
+    groupedOptions,
     highlightedIndex,
     isActiveItem,
+    isGrouped,
+    isItemDisabled,
     isOpen,
     itemIndexInValue,
     menuWidth,
