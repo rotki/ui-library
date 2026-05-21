@@ -111,6 +111,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/auto-completes/slots': RouteRecordInfo<
+      '/auto-completes/slots',
+      '/auto-completes/slots',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/avatars': RouteRecordInfo<
       '/avatars',
       '/avatars',
@@ -515,6 +522,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/auto-completes/selection.vue': {
       routes:
         | '/auto-completes/selection'
+      views:
+        | never
+    }
+    'src/pages/auto-completes/slots.vue': {
+      routes:
+        | '/auto-completes/slots'
       views:
         | never
     }

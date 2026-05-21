@@ -1462,4 +1462,155 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
       expect(wrapper.emitted('update:modelValue')).toBeFalsy();
     });
   });
+
+  describe('placeholder slot', () => {
+    it('should render the placeholder slot when no value is set and input is not focused', () => {
+      wrapper = createWrapper<string | undefined, SelectOption>({
+        props: {
+          keyAttr: 'id',
+          modelValue: undefined,
+          options,
+          textAttr: 'label',
+        },
+        slots: {
+          placeholder: '<span class="custom-placeholder">Pick a country</span>',
+        },
+      });
+
+      const placeholder = wrapper.find('[data-id=placeholder] .custom-placeholder');
+      expect(placeholder.exists()).toBe(true);
+      expect(placeholder.text()).toBe('Pick a country');
+    });
+
+    it('should hide the placeholder slot when a value is set', () => {
+      const option4 = options[4];
+      assert(option4);
+      wrapper = createWrapper<string, SelectOption>({
+        props: {
+          keyAttr: 'id',
+          modelValue: option4.id,
+          options,
+          textAttr: 'label',
+        },
+        slots: {
+          placeholder: '<span class="custom-placeholder">Pick a country</span>',
+        },
+      });
+
+      expect(wrapper.find('[data-id=placeholder]').exists()).toBe(false);
+    });
+
+    it('should hide the placeholder slot when the input is focused', async () => {
+      wrapper = createWrapper<string | undefined, SelectOption>({
+        attachTo: document.body,
+        props: {
+          keyAttr: 'id',
+          modelValue: undefined,
+          options,
+          textAttr: 'label',
+        },
+        slots: {
+          placeholder: '<span class="custom-placeholder">Pick a country</span>',
+        },
+      });
+
+      expect(wrapper.find('[data-id=placeholder]').exists()).toBe(true);
+
+      await wrapper.find('[data-id=activator]').trigger('click');
+      await vi.runAllTimersAsync();
+
+      expect(wrapper.find('[data-id=placeholder]').exists()).toBe(false);
+    });
+
+    it('should expose disabled and readOnly to the placeholder slot', () => {
+      wrapper = createWrapper<string | undefined, SelectOption>({
+        props: {
+          disabled: true,
+          keyAttr: 'id',
+          modelValue: undefined,
+          options,
+          readOnly: true,
+          textAttr: 'label',
+        },
+        slots: {
+          placeholder: '<span class="custom-placeholder" :data-disabled="params.disabled" :data-readonly="params.readOnly">x</span>',
+        },
+      });
+
+      const placeholder = wrapper.find<HTMLElement>('.custom-placeholder');
+      expect(placeholder.exists()).toBe(true);
+      expect(placeholder.attributes('data-disabled')).toBe('true');
+      expect(placeholder.attributes('data-readonly')).toBe('true');
+    });
+  });
+
+  describe('footer slot', () => {
+    it('should render the footer slot below the menu list when the menu is open', async () => {
+      wrapper = createWrapper<string | undefined, SelectOption>({
+        attachTo: document.body,
+        props: {
+          keyAttr: 'id',
+          modelValue: undefined,
+          options,
+          textAttr: 'label',
+        },
+        slots: {
+          footer: '<div class="custom-footer">↑↓ navigate · ↵ select</div>',
+        },
+      });
+
+      expect(queryByDataId('footer')).toBeFalsy();
+
+      await wrapper.find('[data-id=activator]').trigger('click');
+      await vi.advanceTimersToNextTimerAsync();
+      expect(queryByRole('menu')).toBeTruthy();
+
+      const footer = queryByDataId('footer');
+      assertExists(footer);
+      expect(footer.querySelector('.custom-footer')?.textContent).toBe('↑↓ navigate · ↵ select');
+    });
+
+    it('should render the footer slot when there are no matching options', async () => {
+      wrapper = createWrapper<string | undefined, SelectOption>({
+        attachTo: document.body,
+        props: {
+          keyAttr: 'id',
+          modelValue: undefined,
+          options,
+          textAttr: 'label',
+        },
+        slots: {
+          footer: '<div class="custom-footer">hint</div>',
+        },
+      });
+
+      await wrapper.find('[data-id=activator]').trigger('click');
+      await vi.advanceTimersToNextTimerAsync();
+
+      await wrapper.find('input').setValue('zzzzznomatch');
+      await vi.runAllTimersAsync();
+
+      const footer = queryByDataId('footer');
+      assertExists(footer);
+      expect(footer.querySelector('.custom-footer')).toBeTruthy();
+    });
+
+    it('should not render footer container when slot is not provided', async () => {
+      wrapper = createWrapper<string | undefined, SelectOption>({
+        attachTo: document.body,
+        props: {
+          keyAttr: 'id',
+          modelValue: undefined,
+          options,
+          textAttr: 'label',
+        },
+      });
+
+      await wrapper.find('[data-id=activator]').trigger('click');
+      await vi.advanceTimersToNextTimerAsync();
+      expect(queryByRole('menu')).toBeTruthy();
+
+      expect(queryByDataId('footer')).toBeFalsy();
+    });
+  });
 });

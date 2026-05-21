@@ -1,7 +1,9 @@
 import type { ComponentPropsAndSlots, Decorator } from '@storybook/vue3-vite';
 import { expect, waitFor, within } from 'storybook/test';
-import { options, type SelectOption } from '@/__test__/options';
+import { groupedOptions, type GroupedSelectOption, options, type SelectOption } from '@/__test__/options';
+import RuiChip from '@/components/chips/RuiChip.vue';
 import RuiAutoComplete from '@/components/forms/auto-complete/RuiAutoComplete.vue';
+import RuiIcon from '@/components/icons/RuiIcon.vue';
 import preview from '~/.storybook/preview';
 
 type AutoCompleteProps = ComponentPropsAndSlots<typeof RuiAutoComplete<string, SelectOption>>;
@@ -416,6 +418,172 @@ export const Required = meta.story({
     required: true,
     textAttr: 'label',
     variant: 'outlined',
+  },
+});
+
+// @ts-expect-error Grouped uses GroupedSelectOption[] options instead of SelectOption[]
+export const Grouped = meta.story({
+  args: {
+    groupBy: 'category',
+    keyAttr: 'id',
+    modelValue: undefined,
+    options: groupedOptions,
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+  async play({ canvas, userEvent }) {
+    const body = within(document.body);
+    const combobox = canvas.getByRole('combobox');
+    await userEvent.click(combobox);
+    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+
+    const menu = body.getByRole('menu');
+    await waitFor(() => expect(within(menu).getByText('Europe')).toBeVisible());
+    expect(within(menu).getByText('Asia')).toBeVisible();
+    expect(within(menu).getByText('Africa')).toBeVisible();
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+  },
+});
+
+// @ts-expect-error GroupedCustomHeader uses GroupedSelectOption[] options
+export const GroupedCustomHeader = meta.story({
+  args: {
+    groupBy: 'category',
+    keyAttr: 'id',
+    modelValue: undefined,
+    options: groupedOptions,
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+  render: args => ({
+    components: { RuiAutoComplete: RuiAutoComplete<string, GroupedSelectOption>, RuiChip },
+    setup() {
+      const modelValue = computed({
+        get: () => args.modelValue,
+        // @ts-expect-error Storybook args are mutable but Vue extracts readonly props
+        set: (val) => { args.modelValue = val; },
+      });
+      return { args, modelValue };
+    },
+    template: `
+      <RuiAutoComplete v-bind="args" v-model="modelValue">
+        <template #group-header="{ group, items }">
+          <div class="px-3 py-2 bg-rui-primary/10 flex items-center justify-between">
+            <span class="font-bold text-rui-primary">{{ group }}</span>
+            <RuiChip size="sm">{{ items.length }}</RuiChip>
+          </div>
+        </template>
+      </RuiAutoComplete>
+    `,
+  }),
+});
+
+// @ts-expect-error WithDisabledItems uses GroupedSelectOption[] options with `disabled` field
+export const WithDisabledItems = meta.story({
+  args: {
+    itemDisabled: 'disabled',
+    keyAttr: 'id',
+    modelValue: undefined,
+    options: [
+      { category: 'A', id: '1', label: 'Available row' },
+      { category: 'A', disabled: true, id: '2', label: 'Disabled row' },
+      { category: 'A', id: '3', label: 'Another available row' },
+      { category: 'A', disabled: true, id: '4', label: 'Also disabled' },
+      { category: 'A', id: '5', label: 'Final available row' },
+    ] satisfies GroupedSelectOption[],
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+  async play({ canvas, userEvent }) {
+    const body = within(document.body);
+    const combobox = canvas.getByRole('combobox');
+    await userEvent.click(combobox);
+    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+
+    // ArrowDown should skip the disabled row and land on the next available.
+    await userEvent.keyboard('{ArrowDown}');
+    await userEvent.keyboard('{ArrowDown}');
+
+    const menu = body.getByRole('menu');
+    const highlighted = menu.querySelector('button[data-highlighted="true"]');
+    expect(highlighted?.textContent).toContain('Another available row');
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+  },
+});
+
+export const PlaceholderSlot = meta.story({
+  args: {
+    keyAttr: 'id',
+    modelValue: undefined,
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+  render: args => ({
+    components: { RuiAutoComplete: RuiAutoComplete<string, SelectOption>, RuiIcon },
+    setup() {
+      const modelValue = computed({
+        get: () => args.modelValue,
+        // @ts-expect-error Storybook args are mutable but Vue extracts readonly props
+        set: (val) => { args.modelValue = val; },
+      });
+      return { args, modelValue };
+    },
+    template: `
+      <RuiAutoComplete v-bind="args" v-model="modelValue">
+        <template #placeholder>
+          <span class="flex items-center gap-2 text-rui-text-secondary">
+            <RuiIcon name="lu-search" size="16" />
+            <span class="italic">Find a country…</span>
+          </span>
+        </template>
+      </RuiAutoComplete>
+    `,
+  }),
+});
+
+export const FooterSlot = meta.story({
+  args: {
+    keyAttr: 'id',
+    modelValue: undefined,
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+  render: args => ({
+    components: { RuiAutoComplete: RuiAutoComplete<string, SelectOption> },
+    setup() {
+      const modelValue = computed({
+        get: () => args.modelValue,
+        // @ts-expect-error Storybook args are mutable but Vue extracts readonly props
+        set: (val) => { args.modelValue = val; },
+      });
+      return { args, modelValue };
+    },
+    template: `
+      <RuiAutoComplete v-bind="args" v-model="modelValue">
+        <template #footer>
+          <div class="flex items-center justify-between px-3 py-2 text-xs text-rui-text-secondary">
+            <span>↑↓ navigate · ↵ select · esc close</span>
+            <span class="font-mono">{{ args.options.length }} items</span>
+          </div>
+        </template>
+      </RuiAutoComplete>
+    `,
+  }),
+  async play({ canvas, userEvent }) {
+    const body = within(document.body);
+    const combobox = canvas.getByRole('combobox');
+    await userEvent.click(combobox);
+    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+
+    const menu = body.getByRole('menu');
+    await waitFor(() => expect(within(menu).getByText(/navigate/)).toBeVisible());
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
   },
 });
 

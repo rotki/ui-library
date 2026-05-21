@@ -51,6 +51,12 @@ const sections = [
     route: '/auto-completes/grouping',
     icon: 'lu-layers',
   },
+  {
+    title: 'Slots',
+    description: 'Custom placeholder and footer slots',
+    route: '/auto-completes/slots',
+    icon: 'lu-puzzle',
+  },
 ];
 </script>
 

@@ -141,6 +141,8 @@ const slots = defineSlots<{
   'item.append'?: (props: { disabled: boolean; item: TItem; active: boolean }) => any;
   'group-header'?: (props: { group: string; items: TItem[] }) => any;
   'no-data'?: () => any;
+  'placeholder'?: (props: { disabled: boolean; readOnly: boolean }) => any;
+  'footer'?: () => any;
 }>();
 
 const { getText, getIdentifier } = useDropdownOptionProperty<TValue, TItem>({
@@ -309,6 +311,11 @@ const { hasError, hasSuccess } = useFormTextDetail(
 );
 
 const valueSet = computed<boolean>(() => get(value).length > 0);
+
+// True when the consumer's #placeholder slot is taking over the resting
+// content area, so the outlined/resting label must hide to avoid overlapping
+// the slot content.
+const placeholderSlotActive = computed<boolean>(() => Boolean(slots.placeholder) && !get(valueSet) && !get(searchInputFocused));
 
 const usedPlaceholder = computed<string>(() => {
   if (get(searchInputFocused))
@@ -523,7 +530,7 @@ defineExpose({
           @keydown.end.prevent="highlightedIndex = optionsWithSelectedHidden.length - 1"
         >
           <span
-            v-if="outlined || (!valueSet && !searchInputFocused)"
+            v-if="(outlined || (!valueSet && !searchInputFocused)) && !placeholderSlotActive"
             :class="[
               ui.label(),
               { 'pr-2': !valueSet && !open && outlined },
@@ -546,6 +553,23 @@ defineExpose({
             data-id="value"
             :class="ui.value()"
           >
+            <!--
+              Placeholder slot occupies the same flex space the input takes
+              when focused, so transitioning into the focused state doesn't
+              shift the activator's content. pointer-events-none is required
+              so clicks pass through to the activator (otherwise the slot
+              swallows the first click and the menu needs two taps to open).
+            -->
+            <div
+              v-if="!valueSet && !searchInputFocused && slots.placeholder"
+              data-id="placeholder"
+              class="flex-1 min-w-0 pointer-events-none"
+            >
+              <slot
+                name="placeholder"
+                v-bind="{ disabled, readOnly }"
+              />
+            </div>
             <template
               v-for="(item, i) in value"
               :key="getIdentifier(item)"
@@ -789,6 +813,20 @@ defineExpose({
               {{ noDataText }}
             </div>
           </slot>
+        </div>
+        <!--
+          The scroll container above reserves ~15px on the right for the
+          scrollbar gutter. We render an equivalent right-padding here so the
+          footer's content aligns with the option rows' content rather than
+          the menu's outer edge. `pr-[var(--rui-scrollbar-gutter,15px)]`
+          lets consumers override if their theme reserves a different width.
+        -->
+        <div
+          v-if="slots.footer"
+          class="bg-white dark:bg-rui-grey-900 border-t border-black/[0.12] dark:border-white/[0.12] pr-[var(--rui-scrollbar-gutter,15px)] -mb-2"
+          data-id="footer"
+        >
+          <slot name="footer" />
         </div>
       </div>
     </template>

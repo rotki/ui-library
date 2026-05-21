@@ -781,3 +781,78 @@ test.describe('auto-complete - grouping', () => {
     await expect(ac.locator('input')).toHaveValue('Indonesia');
   });
 });
+
+test.describe('auto-complete - slots (placeholder & footer)', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/auto-completes/slots');
+  });
+
+  test.afterEach(async ({ page }) => {
+    await page.keyboard.press('Escape');
+  });
+
+  test('should be reachable from the index navigation', async ({ page }) => {
+    await page.goto('/auto-completes');
+    await expect(page.locator('[data-id="link-/auto-completes/slots"]')).toBeVisible();
+    await page.locator('[data-id="link-/auto-completes/slots"]').click();
+    await expect(page.locator('[data-id=auto-completes-slots]')).toBeVisible();
+  });
+
+  test('should render the placeholder slot when no value is set and input is not focused', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-slots-placeholder]');
+    const placeholder = ac.locator('[data-id=placeholder]');
+    await expect(placeholder).toBeVisible();
+    await expect(placeholder).toContainText('Find a country…');
+  });
+
+  test('should hide the placeholder slot once the activator is focused', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-slots-placeholder]');
+    await expect(ac.locator('[data-id=placeholder]')).toBeVisible();
+
+    await ac.locator('[data-id=activator]').click();
+    await expect(ac.locator('[data-id=placeholder]')).toBeHidden();
+  });
+
+  test('should hide the placeholder slot after a value is selected', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-slots-placeholder]');
+    await ac.locator('[data-id=activator]').click();
+
+    const menu = page.locator('div[role=menu]');
+    await menu.locator('button', { hasText: 'Germany' }).first().click();
+
+    await expect(ac.locator('input')).toHaveValue('Germany');
+    // Blur back so the resting state is checked.
+    await page.locator('[data-id=auto-completes-slots] h2').click();
+    await expect(ac.locator('[data-id=placeholder]')).toBeHidden();
+  });
+
+  test('should render the footer slot when the menu is open', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-slots-footer]');
+    await expect(page.locator('div[role=menu] [data-id=footer]')).toHaveCount(0);
+
+    await ac.locator('[data-id=activator]').click();
+
+    const footer = page.locator('div[role=menu] [data-id=footer]');
+    await expect(footer).toBeVisible();
+    await expect(footer).toContainText('↑↓ navigate');
+    await expect(footer).toContainText('items');
+  });
+
+  test('should keep the footer visible when the search input has no matches', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-slots-footer]');
+    await ac.locator('[data-id=activator]').click();
+
+    await ac.locator('input').fill('zzzzzznomatch');
+
+    await expect(page.locator('div[role=menu] [data-id=footer]')).toBeVisible();
+  });
+
+  test('should render placeholder and footer slots together', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-slots-combined]');
+    await expect(ac.locator('[data-id=placeholder]')).toContainText('Search countries');
+
+    await ac.locator('[data-id=activator]').click();
+    const footer = page.locator('div[role=menu] [data-id=footer]');
+    await expect(footer).toContainText('Tip: start typing');
+  });
+});
