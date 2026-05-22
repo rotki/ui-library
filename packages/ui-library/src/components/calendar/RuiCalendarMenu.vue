@@ -9,6 +9,7 @@ import {
 } from '@/components/calendar/state';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
+import { type FloatingOptions, Placement } from '@/composables/floating';
 import { tv } from '@/utils/tv';
 import RuiButton from '../buttons/button/RuiButton.vue';
 
@@ -28,6 +29,8 @@ const { viewMonth, viewYear } = defineProps<{
 const emit = defineEmits<{
   select: [MonthYearSelection];
 }>();
+
+const MENU_OPTIONS: FloatingOptions = { placement: Placement.bottomStart };
 
 // Core reactive state - minimal
 const viewMode = ref<'months' | 'years'>('months');
@@ -234,7 +237,7 @@ watch(
   <RuiMenu
     v-model="modelValue"
     :anchor-el="anchorEl"
-    placement="bottom-start"
+    :options="MENU_OPTIONS"
   >
     <div class="w-64 shadow-lg overflow-hidden">
       <div class="flex items-center justify-center p-1 font-medium text-gray-800 dark:text-gray-200 border-b border-rui-grey-200 dark:border-rui-grey-800 cursor-pointer hover:bg-rui-grey-100 dark:hover:bg-rui-grey-800">

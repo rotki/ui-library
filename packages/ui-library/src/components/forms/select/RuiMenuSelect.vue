@@ -6,6 +6,7 @@ import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { type KeyOfType, useDropdownMenu } from '@/composables/dropdown-menu';
+import { type FloatingOptions, Placement } from '@/composables/floating';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 import { cn } from '@/utils/tv';
@@ -183,6 +184,11 @@ const highlightedClass = menuSelectStyles({}).highlighted();
 function clear(): void {
   set(modelValue, undefined);
 }
+
+const menuFloatingOptions = computed<FloatingOptions>(() => ({
+  placement: Placement.bottomStart,
+  ...menuOptions?.options,
+}));
 </script>
 
 <template>
@@ -190,7 +196,7 @@ function clear(): void {
     v-model="isOpen"
     v-bind="{ ...getRootAttrs($attrs, []), ...menuOptions }"
     :class="ui.wrapper({ class: cn($attrs.class) })"
-    placement="bottom-start"
+    :options="menuFloatingOptions"
     :close-on-content-click="true"
     :full-width="true"
     :error-messages="errorMessages"

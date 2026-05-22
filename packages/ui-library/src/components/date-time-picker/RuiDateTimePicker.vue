@@ -9,6 +9,7 @@ import { useInputHandler } from '@/components/date-time-picker/use-input-handler
 import { useKeyboardHandler } from '@/components/date-time-picker/use-keyboard-handler';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
+import { type FloatingOptions, Placement } from '@/composables/floating';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 import { cn } from '@/utils/tv';
@@ -74,6 +75,8 @@ const {
 defineSlots<{
   'menu-content': () => any;
 }>();
+
+const MENU_OPTIONS: FloatingOptions = { placement: Placement.bottomStart };
 
 const baseFormats: Record<DateFormat, string> = {
   'day-first': 'DD/MM/YYYY HH:mm',
@@ -300,7 +303,7 @@ watch(anyMenuOpen, (value) => {
     v-model="isOpen"
     v-bind="getRootAttrs($attrs, [])"
     :class="ui.wrapper({ class: cn($attrs.class) })"
-    placement="bottom-start"
+    :options="MENU_OPTIONS"
     :dense="dense"
     :hint="hint"
     :disabled="disabled"

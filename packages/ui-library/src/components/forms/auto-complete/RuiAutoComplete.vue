@@ -13,6 +13,7 @@ import {
   useDropdownMenu,
   useDropdownOptionProperty,
 } from '@/composables/dropdown-menu';
+import { type FloatingOptions, Placement } from '@/composables/floating';
 import {
   useAutoCompleteFocus,
   useAutoCompleteKeyboardNavigation,
@@ -466,6 +467,11 @@ watch(() => options, (curr, old) => {
   setSelected(get(value));
 });
 
+const menuFloatingOptions = computed<FloatingOptions>(() => ({
+  placement: Placement.bottomStart,
+  ...menuOptions?.options,
+}));
+
 defineExpose({
   closeMenu,
   focus: focusSetInputFocus,
@@ -479,7 +485,7 @@ defineExpose({
     v-model="isOpen"
     v-bind="{ ...getRootAttrs($attrs, []), ...menuOptions }"
     :class="ui.wrapper({ class: cn($attrs.class) })"
-    placement="bottom-start"
+    :options="menuFloatingOptions"
     :close-on-content-click="false"
     :full-width="true"
     :persist-on-activator-click="true"
