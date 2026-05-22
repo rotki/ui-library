@@ -39,6 +39,12 @@ export interface MenuProps {
   dense?: boolean;
   persistent?: boolean;
   disableAutoFocus?: boolean;
+  /**
+   * Optional external element to anchor the menu to, instead of the
+   * activator slot's wrapper. When set, the menu's position is computed
+   * against this element.
+   */
+  anchorEl?: HTMLElement;
 }
 
 defineOptions({
@@ -67,6 +73,7 @@ const {
   dense = false,
   persistent = false,
   disableAutoFocus = false,
+  anchorEl,
 } = defineProps<MenuProps>();
 
 defineSlots<{
@@ -103,6 +110,7 @@ const {
   () => disabled,
   () => openDelay,
   () => closeDelay,
+  () => anchorEl,
 );
 
 const { width } = useElementSize(activator);
