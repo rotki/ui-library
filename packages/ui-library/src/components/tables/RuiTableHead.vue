@@ -24,6 +24,16 @@ export interface BaseTableColumn<T> {
   tdClass?: string;
   colspan?: string | number;
   rowspan?: string | number;
+  /**
+   * hide this column when the table is rendered in its stacked mobile layout
+   */
+  mobileHidden?: boolean;
+  /**
+   * pin this column to the card header (top row) in the stacked mobile layout
+   * instead of rendering it as a label/value pair. Intended for action columns
+   * such as an overflow menu. Ignored on non-mobile layouts.
+   */
+  mobileHeader?: boolean;
 
   [key: string]: any;
 }

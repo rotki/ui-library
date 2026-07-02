@@ -10,12 +10,18 @@ defineSlots<{
   'expanded-item': (props: { row: T; index: number }) => any;
 }>();
 
-const { classes, colspan } = useDataTableStyling();
+const { classes, colspan, isMobile } = useDataTableStyling();
+
+// On mobile the expanded content attaches beneath its card: matching side
+// borders and a rounded, bordered bottom edge. The top border is intentionally
+// left off — the parent card's flattened bottom edge acts as the divider.
+// `!border-b` defeats the `divide-y-0` on the mobile tbody.
+const mobileExpandedClass = 'block border-x !border-b border-black/[0.12] dark:border-white/[0.12] rounded-b-lg mb-3 overflow-hidden';
 </script>
 
 <template>
   <tr
-    :class="classes.trExpandable"
+    :class="[classes.trExpandable, isMobile ? mobileExpandedClass : '']"
     data-id="row-expanded"
   >
     <td

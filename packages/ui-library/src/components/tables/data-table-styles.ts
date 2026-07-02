@@ -33,5 +33,15 @@ export const dataTableStyles = tv({
       expandable: { tr: 'bg-[#f9fafb] hover:bg-[#f9fafb] dark:bg-[#121212] dark:hover:bg-[#121212]' },
       group: { tr: 'bg-black/[0.02] dark:bg-white/[0.02]' },
     },
+    mobile: {
+      true: {
+        wrapper: 'divide-y-0 border-0 rounded-none overflow-visible',
+        scroller: 'overflow-visible [clip-path:none]',
+        table: 'block min-w-0 max-w-none w-full whitespace-normal divide-y-0 border-0',
+        tbody: 'block divide-y-0',
+        tr: 'block',
+        td: 'block px-4 py-2',
+      },
+    },
   },
 });

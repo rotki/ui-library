@@ -5,6 +5,18 @@ export interface TableOptions {
   globalItemsPerPage: MaybeRef<boolean>;
   limits: MaybeRef<number[]>;
   stickyOffset: MaybeRef<number>;
+  /**
+   * Global default width (px) below which every table switches to its stacked
+   * mobile card layout. A table's own `mobileBreakpoint` prop overrides this.
+   * Leave unset to keep the mobile layout opt-in per table.
+   */
+  mobileBreakpoint?: MaybeRef<number>;
+  /**
+   * Whether the mobile breakpoint is measured against the browser viewport
+   * (`viewport`, default) or each table's own container width (`container`).
+   * A table's own `mobileBreakpointBasis` prop overrides this.
+   */
+  mobileBreakpointBasis?: MaybeRef<'viewport' | 'container'>;
 }
 
 export const TableSymbol: InjectionKey<TableOptions> = Symbol.for('rui:table');

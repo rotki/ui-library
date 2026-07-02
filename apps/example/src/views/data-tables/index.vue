@@ -57,6 +57,12 @@ const sections = [
     route: '/data-tables/custom-slots',
     icon: 'lu-square-dashed-bottom-code',
   },
+  {
+    title: 'Mobile',
+    description: 'Stacked card layout, mobile sort menu, and compact pagination',
+    route: '/data-tables/mobile',
+    icon: 'lu-smartphone',
+  },
 ];
 </script>
 

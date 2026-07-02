@@ -14,6 +14,11 @@ export interface Props {
   disablePerPage?: boolean;
   loading?: boolean;
   /**
+   * Render a compact, touch-friendly layout: the sections spread across the
+   * full width and the first/last jump buttons are dropped to save space.
+   */
+  mobile?: boolean;
+  /**
    * Maximum number of pages before the jump-to-page dropdown is replaced
    * with a numeric input. Set to `0` to always use the input, or a very
    * large number to always use the dropdown. Defaults to `500` — past that
@@ -29,6 +34,7 @@ const {
   loading = false,
   disablePerPage = false,
   rangesThreshold = 500,
+  mobile = false,
 } = defineProps<Props>();
 
 const paginationStyles = tv({
@@ -47,10 +53,17 @@ const paginationStyles = tv({
         wrapper: 'gap-x-2',
       },
     },
+    mobile: {
+      true: {
+        wrapper: 'flex-nowrap justify-between gap-x-2 gap-y-0',
+        ranges: 'pr-0',
+        sectionLabel: 'hidden',
+      },
+    },
   },
 });
 
-const ui = computed<ReturnType<typeof paginationStyles>>(() => paginationStyles({ dense }));
+const ui = computed<ReturnType<typeof paginationStyles>>(() => paginationStyles({ dense, mobile }));
 
 const tableDefaults = useTable();
 
@@ -153,6 +166,7 @@ function commitPageInput(): void {
       data-id="table-pagination-navigation"
     >
       <RuiButton
+        v-if="!mobile"
         :size="dense ? 'sm' : undefined"
         :disabled="!hasPrev || loading"
         variant="text"
@@ -183,6 +197,7 @@ function commitPageInput(): void {
         <RuiIcon name="lu-chevron-right" />
       </RuiButton>
       <RuiButton
+        v-if="!mobile"
         :size="dense ? 'sm' : undefined"
         :disabled="!hasNext || loading"
         variant="text"

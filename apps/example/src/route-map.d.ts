@@ -223,6 +223,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/data-tables/mobile': RouteRecordInfo<
+      '/data-tables/mobile',
+      '/data-tables/mobile',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/data-tables/pagination': RouteRecordInfo<
       '/data-tables/pagination',
       '/data-tables/pagination',
@@ -625,6 +632,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/data-tables/grouping.vue': {
       routes:
         | '/data-tables/grouping'
+      views:
+        | never
+    }
+    'src/pages/data-tables/mobile.vue': {
+      routes:
+        | '/data-tables/mobile'
       views:
         | never
     }

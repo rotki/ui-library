@@ -1,7 +1,7 @@
-import type { DeepReadonly } from 'vue';
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { type DeepReadonly, h } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiDataTable from '@/components/tables/RuiDataTable.vue';
 import RuiTablePagination from '@/components/tables/RuiTablePagination.vue';
@@ -2185,6 +2185,342 @@ describe('components/tables/RuiDataTable.vue', () => {
       });
 
       expect(wrapper.find('table tbody').exists()).toBeTruthy();
+    });
+  });
+
+  describe('mobile stacked layout', () => {
+    it('should keep the default table layout when neither mobile prop is set', () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          rowAttr: 'id',
+          rows: data,
+        },
+      });
+
+      expect(wrapper.find('table thead').exists()).toBeTruthy();
+      expect(wrapper.find('[data-id=cell-label]').exists()).toBeFalsy();
+    });
+
+    it('should hide the header and render inline cell labels when mobile is forced on', () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          mobile: true,
+          rowAttr: 'id',
+          rows: data,
+        },
+      });
+
+      expect(wrapper.find('table thead').exists()).toBeFalsy();
+
+      const labels = wrapper.findAll('[data-id=cell-label]');
+      expect(labels.length).toBeGreaterThan(0);
+      expect(labels.map(label => label.text())).toContain('Full name');
+    });
+
+    it('should drop columns flagged mobileHidden in the stacked layout', () => {
+      const cols: TableColumn<User>[] = [
+        { key: 'id', label: 'ID' },
+        { key: 'name', label: 'Full name' },
+        { key: 'email', label: 'Email address', mobileHidden: true },
+      ];
+
+      wrapper = createWrapper({
+        props: {
+          cols,
+          mobile: true,
+          rowAttr: 'id',
+          rows: data,
+        },
+      });
+
+      const labels = wrapper.findAll('[data-id=cell-label]').map(label => label.text());
+      expect(labels).toContain('Full name');
+      expect(labels).not.toContain('Email address');
+    });
+
+    it('should pin columns flagged mobileHeader to the card header in the stacked layout', () => {
+      const cols: TableColumn<User>[] = [
+        { key: 'id', label: 'ID' },
+        { key: 'name', label: 'Full name' },
+        { key: 'action', mobileHeader: true },
+      ];
+
+      wrapper = createWrapper({
+        props: {
+          cols,
+          mobile: true,
+          rowAttr: 'id',
+          rows: data,
+        },
+        slots: {
+          'item.action': '<span data-id="row-action">action</span>',
+        },
+      });
+
+      const header = wrapper.find('[data-id=mobile-card-header]');
+      expect(header.exists()).toBeTruthy();
+      // The action lives in the header, not as a stacked label/value body row.
+      expect(header.find('[data-id=row-action]').exists()).toBeTruthy();
+    });
+
+    it('should not render a card header when there is nothing to pin', () => {
+      const cols: TableColumn<User>[] = [
+        { key: 'id', label: 'ID' },
+        { key: 'name', label: 'Full name' },
+      ];
+
+      wrapper = createWrapper({
+        props: {
+          cols,
+          mobile: true,
+          rowAttr: 'id',
+          rows: data,
+        },
+      });
+
+      expect(wrapper.find('[data-id=mobile-card-header]').exists()).toBeFalsy();
+    });
+
+    it('should expose a mobile sort control only when sorting is enabled', () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          mobile: true,
+          rowAttr: 'id',
+          rows: data,
+        },
+      });
+
+      // No `sort` model provided → no mobile sort control.
+      expect(wrapper.find('[data-id=table-mobile-sort]').exists()).toBeFalsy();
+    });
+
+    it('should render the mobile sort activator reflecting the active column', () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          mobile: true,
+          rowAttr: 'id',
+          rows: data,
+          sort: { column: 'name', direction: 'asc' },
+        },
+      });
+
+      const activator = wrapper.find('[data-id=table-mobile-sort-activator]');
+      expect(activator.exists()).toBeTruthy();
+      // Active single-column sort surfaces the column label on the activator.
+      expect(activator.text()).toContain('Full name');
+    });
+
+    it('should auto-switch to the stacked layout when the width is below mobileBreakpoint', () => {
+      // jsdom renders at ~1024px. A breakpoint far above that means the table
+      // should switch to cards on its own. Guards the auto-switch, which used
+      // to never fire because an absent Boolean `mobile` prop coerces to false.
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          mobileBreakpoint: 5000,
+          rowAttr: 'id',
+          rows: data,
+        },
+      });
+
+      expect(wrapper.find('table thead').exists()).toBeFalsy();
+      expect(wrapper.find('[data-id=cell-label]').exists()).toBeTruthy();
+    });
+
+    it('should stay a normal table when the width is above mobileBreakpoint', () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          mobileBreakpoint: 1,
+          rowAttr: 'id',
+          rows: data,
+        },
+      });
+
+      expect(wrapper.find('table thead').exists()).toBeTruthy();
+    });
+
+    it('should not render a card header for a mobileHeader column with no content', () => {
+      // Flagged mobileHeader, but no `item.action` slot is provided and `action`
+      // is not a row key, so there is nothing to pin: no empty header bar.
+      const cols: TableColumn<User>[] = [
+        { key: 'id', label: 'ID' },
+        { key: 'name', label: 'Full name' },
+        { key: 'action', mobileHeader: true },
+      ];
+
+      wrapper = createWrapper({
+        props: {
+          cols,
+          mobile: true,
+          rowAttr: 'id',
+          rows: data,
+        },
+      });
+
+      expect(wrapper.find('[data-id=mobile-card-header]').exists()).toBeFalsy();
+    });
+
+    it('should fall back to the global mobileBreakpoint default, overridable per table', () => {
+      const globalDefaults = createTableDefaults({ limits: [5, 10], mobileBreakpoint: 5000 });
+
+      // No per-table breakpoint → inherits the global 5000 → stacked cards.
+      const globalWrapper = mount(RuiDataTable<User>, {
+        props: { cols: columns, rowAttr: 'id', rows: data },
+        global: { provide: { [TableSymbol.valueOf()]: globalDefaults } },
+      });
+      expect(globalWrapper.find('table thead').exists()).toBeFalsy();
+      globalWrapper.unmount();
+
+      // Per-table breakpoint overrides the global → normal table.
+      const overrideWrapper = mount(RuiDataTable<User>, {
+        props: { cols: columns, mobileBreakpoint: 1, rowAttr: 'id', rows: data },
+        global: { provide: { [TableSymbol.valueOf()]: globalDefaults } },
+      });
+      expect(overrideWrapper.find('table thead').exists()).toBeTruthy();
+      overrideWrapper.unmount();
+    });
+
+    it('should keep only the outermost table toolbar sticky when tables are nested', () => {
+      const cols: TableColumn<User>[] = [
+        { key: 'id', label: 'ID' },
+        { key: 'name', label: 'Full name' },
+      ];
+
+      wrapper = createWrapper({
+        props: {
+          cols,
+          mobile: true,
+          stickyHeader: true,
+          expanded: data.slice(0, 1),
+          pagination: { limit: 5, page: 1, total: data.length },
+          rowAttr: 'id',
+          rows: data,
+        },
+        slots: {
+          'expanded-item': () => h(RuiDataTable<User>, {
+            cols,
+            mobile: true,
+            stickyHeader: true,
+            pagination: { limit: 5, page: 1, total: data.length },
+            rowAttr: 'id',
+            rows: data,
+          }),
+        },
+      });
+
+      const toolbars = wrapper.findAll('[data-id=table-mobile-toolbar-sticky]');
+      expect(toolbars).toHaveLength(2);
+
+      // The nested toolbar (inside the expanded row) does not pin.
+      const nested = wrapper.find('[data-id=row-expanded] [data-id=table-mobile-toolbar-sticky]');
+      expect(nested.classes()).toContain('contents');
+      expect(nested.classes()).not.toContain('sticky');
+
+      // The outermost toolbar pins.
+      const outer = toolbars.find(toolbar => !toolbar.element.closest('[data-id=row-expanded]'));
+      assert(outer);
+      expect(outer.classes()).toContain('sticky');
+    });
+
+    it('should render a custom item slot for a body column in the stacked layout', () => {
+      const cols: TableColumn<User>[] = [
+        { key: 'id', label: 'ID' },
+        { key: 'name', label: 'Full name' },
+      ];
+
+      wrapper = createWrapper({
+        props: {
+          cols,
+          mobile: true,
+          rowAttr: 'id',
+          rows: data,
+        },
+        slots: {
+          'item.name': '<span data-id="custom-name">custom cell</span>',
+        },
+      });
+
+      // The custom cell slot renders once per rendered card.
+      const rowCount = wrapper.findAll('[data-id=row]').length;
+      const custom = wrapper.findAll('[data-id=custom-name]');
+      expect(rowCount).toBeGreaterThan(0);
+      expect(custom).toHaveLength(rowCount);
+      expect(custom[0]?.text()).toBe('custom cell');
+
+      // It is a body cell, not the pinned header (nothing to pin here).
+      expect(wrapper.find('[data-id=mobile-card-header]').exists()).toBeFalsy();
+
+      // The column keeps its inline label alongside the custom content.
+      const labels = wrapper.findAll('[data-id=cell-label]').map(label => label.text());
+      expect(labels).toContain('Full name');
+    });
+
+    it('should route a mobileHeader column custom slot to the header, not the body', () => {
+      const cols: TableColumn<User>[] = [
+        { key: 'id', label: 'ID' },
+        { key: 'name', label: 'Full name' },
+        { key: 'action', mobileHeader: true },
+      ];
+
+      wrapper = createWrapper({
+        props: {
+          cols,
+          mobile: true,
+          rowAttr: 'id',
+          rows: data,
+        },
+        slots: {
+          'item.action': '<span data-id="row-action">action</span>',
+        },
+      });
+
+      const firstCard = wrapper.findAll('[data-id=row]')[0];
+      assert(firstCard);
+      const header = firstCard.find('[data-id=mobile-card-header]');
+      expect(header.exists()).toBeTruthy();
+      // The slot content lives in the header, not among the stacked body cells.
+      expect(header.find('[data-id=row-action]').exists()).toBeTruthy();
+      const bodyCells = firstCard.findAll('td:not([data-id=mobile-card-header]) [data-id=row-action]');
+      expect(bodyCells).toHaveLength(0);
+    });
+  });
+
+  describe('mobile pagination', () => {
+    it('should drop the first/last jump buttons in mobile mode', () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          mobile: true,
+          pagination: { limit: 5, page: 1, total: 50 },
+          rowAttr: 'id',
+          rows: data,
+        },
+      });
+
+      expect(wrapper.find('[data-id=table-pagination-first]').exists()).toBeFalsy();
+      expect(wrapper.find('[data-id=table-pagination-last]').exists()).toBeFalsy();
+      // Prev/next remain available.
+      expect(wrapper.find('[data-id=table-pagination-prev]').exists()).toBeTruthy();
+      expect(wrapper.find('[data-id=table-pagination-next]').exists()).toBeTruthy();
+    });
+
+    it('should keep the first/last jump buttons in the default layout', () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          pagination: { limit: 5, page: 1, total: 50 },
+          rowAttr: 'id',
+          rows: data,
+        },
+      });
+
+      expect(wrapper.find('[data-id=table-pagination-first]').exists()).toBeTruthy();
+      expect(wrapper.find('[data-id=table-pagination-last]').exists()).toBeTruthy();
     });
   });
 });

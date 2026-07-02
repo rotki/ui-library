@@ -21,7 +21,12 @@ defineSlots<{
   'group.header.content'?: (props: { header: GroupHeader<T>; groupKey: string }) => any;
 }>();
 
-const { classes, colspan } = useDataTableStyling();
+const { classes, colspan, isMobile } = useDataTableStyling();
+
+// On mobile the group header reads as a rounded section label: separated from
+// the previous group's cards above and its own cards below, aligned to the
+// card content padding.
+const mobileGroupClass = 'mt-6 first:mt-0 mb-2 rounded-lg';
 const {
   groupExpandButtonPosition,
   groupKey,
@@ -36,7 +41,7 @@ const isOpen = computed<boolean>(() => isExpandedGroup(row.group));
 
 <template>
   <tr
-    :class="classes.trGroup"
+    :class="[classes.trGroup, isMobile ? mobileGroupClass : '']"
     data-id="row-group"
   >
     <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
@@ -48,8 +53,7 @@ const isOpen = computed<boolean>(() => isExpandedGroup(row.group));
       :toggle="() => onToggleExpandGroup(row.group, row.identifier)"
     >
       <td
-        :class="classes.td"
-        class="!p-2"
+        :class="[classes.td, isMobile ? '!px-4 !py-2' : '!p-2']"
         :colspan="colspan"
       >
         <div class="flex items-center gap-2">

@@ -51,9 +51,11 @@ function stubFullContext(): DataTableContext<TestItem, 'id'> {
     classes: computed<DataTableClasses>(() => stubClasses()),
     colspan: computed<number>(() => 0),
     dense: false,
+    isMobile: computed<boolean>(() => false),
     columns: computed<[]>(() => []),
     cellValue: (_row, _key) => 0,
     itemSlotKeys: new Set<string>(),
+    columnAttr: 'label',
     selectedData: ref<number[] | undefined>(undefined),
     isSelected: () => false,
     isDisabledRow: () => false,
@@ -180,6 +182,7 @@ describe('dataTableContext', () => {
         classes: computed<DataTableClasses>(() => stubClasses()),
         colspan: computed<number>(() => 5),
         dense: true,
+        isMobile: computed<boolean>(() => false),
       };
       const injected = roundTrip(provideDataTableStyling, useDataTableStyling, context);
       expect(injected).toBe(context);
@@ -191,6 +194,7 @@ describe('dataTableContext', () => {
         columns: computed<[]>(() => []),
         cellValue: (_row, _key) => 0,
         itemSlotKeys: new Set<string>(['name']),
+        columnAttr: 'label',
       };
       const injected = roundTrip(provideDataTableColumns<TestItem>, useDataTableColumns<TestItem>, context);
       expect(injected).toBe(context);

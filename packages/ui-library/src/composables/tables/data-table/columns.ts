@@ -24,6 +24,8 @@ export interface UseTableColumnsOptions<T extends object, IdType extends keyof T
   slots: Record<string, any>;
   /** Pre-computes td class per column to avoid per-cell tv() calls. */
   tdResolver?: (options: { class?: string }) => string;
+  /** Whether the table is currently rendered in its stacked mobile layout. */
+  isMobile?: MaybeRefOrGetter<boolean>;
 }
 
 export interface UseTableColumnsReturn<T extends object> {
@@ -36,7 +38,7 @@ export interface UseTableColumnsReturn<T extends object> {
 export function useTableColumns<T extends object, IdType extends keyof T>(
   options: UseTableColumnsOptions<T, IdType>,
 ): UseTableColumnsReturn<T> {
-  const { cols, columnAttr, expandable, groupKeys, rows, selectedData, slots, tdResolver } = options;
+  const { cols, columnAttr, expandable, groupKeys, isMobile, rows, selectedData, slots, tdResolver } = options;
 
   function attachTdClass(columnList: TableColumn<T>[]): TableColumn<T>[] {
     if (!tdResolver)
@@ -51,7 +53,7 @@ export function useTableColumns<T extends object, IdType extends keyof T>(
   const columns = computed<TableColumn<T>[]>(() => {
     const currentCols = toValue(cols);
     const currentRows = toValue(rows);
-    const data =
+    const allColumns =
       currentCols ??
       getObjectKeys(currentRows[0] ?? {}).map(
         key =>
@@ -60,6 +62,10 @@ export function useTableColumns<T extends object, IdType extends keyof T>(
             [columnAttr]: String(key),
           }) satisfies NoneSortableTableColumn<T>,
       );
+
+    const data = toValue(isMobile)
+      ? allColumns.filter(column => !column.mobileHidden)
+      : allColumns;
 
     const hasExpandColumn = data.some(row => row.key === 'expand');
 

@@ -229,6 +229,7 @@ const columns: TableColumn<User>[] = [
   },
   {
     key: 'action',
+    mobileHeader: true,
   },
 ];
 
@@ -597,6 +598,23 @@ export const GroupedWithExpandButtonEnd = meta.story({
       { column: 'name', direction: 'asc' },
       { column: 'email', direction: 'asc' },
     ],
+  },
+});
+
+export const Mobile = meta.story({
+  args: {
+    cols: columns,
+    mobile: true,
+    modelValue: [],
+    pagination: { limit: 5, page: 1, total: 50 },
+    rows: data,
+    sort: [{ column: 'name', direction: 'asc' }],
+  },
+  async play({ canvas }) {
+    // Column headers are hidden in the stacked layout; each cell carries its
+    // own inline label instead, and sorting moves into the mobile sort menu.
+    await expect(canvas.queryByRole('columnheader')).toBeNull();
+    await expect(canvas.getAllByText('Full name')[0]).toBeVisible();
   },
 });
 

@@ -1,8 +1,9 @@
 <script lang="ts" setup generic="T extends object, IdType extends keyof T = keyof T">
 import type { GroupHeader } from '@/composables/tables/data-table/types';
 import { dataTableStyles } from '@/components/tables/data-table-styles';
-import { type DataTableClasses, provideDataTableContext } from '@/components/tables/data-table/context';
+import { type DataTableClasses, provideDataTableContext, provideDataTableNested, useDataTableNested } from '@/components/tables/data-table/context';
 import RuiDataTableBody from '@/components/tables/data-table/RuiDataTableBody.vue';
+import RuiDataTableMobileSort from '@/components/tables/data-table/RuiDataTableMobileSort.vue';
 import RuiTableHead, {
   type GroupData,
   type TableColumn,
@@ -110,6 +111,26 @@ export interface Props<T, K extends keyof T> {
   disabledRows?: readonly T[];
   multiPageSelect?: boolean;
   itemClass?: ((item: T) => string) | string;
+  /**
+   * Render each row as a stacked card instead of a table row once the measured
+   * width is narrower than this width (in pixels). Columns flagged with
+   * `mobileHidden` are dropped in this layout. Falls back to the global
+   * `mobileBreakpoint` table default; leave both unset to keep the default table
+   * layout at every width.
+   */
+  mobileBreakpoint?: number;
+  /**
+   * What the `mobileBreakpoint` is measured against: the browser `viewport`
+   * (default) or this table's own `container` width. Use `container` when the
+   * table lives in a narrow region of a wider window. Falls back to the global
+   * `mobileBreakpointBasis` table default.
+   */
+  mobileBreakpointBasis?: 'viewport' | 'container';
+  /**
+   * Force the stacked mobile card layout on (`true`) or off (`false`),
+   * regardless of `mobileBreakpoint`. Leave unset to derive it from the width.
+   */
+  mobile?: boolean;
 }
 
 defineOptions({
@@ -153,6 +174,9 @@ const {
   disabledRows,
   multiPageSelect = false,
   itemClass = '',
+  mobileBreakpoint,
+  mobileBreakpointBasis,
+  mobile,
 } = defineProps<Props<T, IdType>>();
 
 const emit = defineEmits<{
@@ -181,9 +205,55 @@ const slots = defineSlots<Partial<
 
 const tableDefaults = useTable();
 
+const tableWrapper = useTemplateRef<HTMLElement>('tableWrapper');
+const { width: windowWidth } = useWindowSize();
+const { width: containerWidth } = useElementSize(tableWrapper);
+
+// Per-table props win, then the global table defaults.
+const resolvedMobileBreakpoint = computed<number | undefined>(() => {
+  if (mobileBreakpoint !== undefined)
+    return mobileBreakpoint;
+  const globalBreakpoint = tableDefaults.mobileBreakpoint;
+  return globalBreakpoint === undefined ? undefined : get(globalBreakpoint);
+});
+const resolvedMobileBasis = computed<'viewport' | 'container'>(() => {
+  if (mobileBreakpointBasis !== undefined)
+    return mobileBreakpointBasis;
+  const globalBasis = tableDefaults.mobileBreakpointBasis;
+  return globalBasis === undefined ? 'viewport' : get(globalBasis);
+});
+
+const isMobile = computed<boolean>(() => {
+  const breakpoint = get(resolvedMobileBreakpoint);
+  // Vue coerces an absent Boolean prop to `false`, so `mobile` cannot be used to
+  // detect "unset". When no breakpoint is configured, `mobile` is the manual
+  // switch (defaulting to desktop). When a breakpoint is configured it drives
+  // the layout, and `mobile === true` can still force the stacked layout on.
+  if (breakpoint === undefined)
+    return mobile;
+  if (mobile)
+    return true;
+  // Before the container is measured, `containerWidth` is 0; fall back to the
+  // viewport so the layout does not flash to mobile on first paint.
+  const width = get(resolvedMobileBasis) === 'container'
+    ? (get(containerWidth) || get(windowWidth))
+    : get(windowWidth);
+  return width < breakpoint;
+});
+
 const stickyHeaderOffset = computed<number | undefined>(() =>
   stickyOffset !== undefined ? stickyOffset : get(tableDefaults.stickyOffset),
 );
+
+// Nested tables (e.g. rendered inside an expanded row) must not pin their own
+// toolbar: only the outermost table sticks, otherwise the bars stack and
+// collide. Detect nesting via inject, then mark descendants as nested.
+const isNestedTable = useDataTableNested();
+provideDataTableNested();
+
+// On mobile there is no column header to pin, so `stickyHeader` instead keeps
+// the pagination + sort toolbar pinned to the top while the card list scrolls.
+const stickyMobileToolbar = computed<boolean>(() => stickyHeader && get(isMobile) && !isNestedTable);
 
 const table = useTemplateRef<HTMLTableElement>('table');
 const tableScroller = useTemplateRef<HTMLElement>('tableScroller');
@@ -265,8 +335,13 @@ const { columns, colspan, headerSlots, cellValue } = useTableColumns<T, IdType>(
   groupKeys,
   selectedData,
   slots,
+  isMobile,
   tdResolver: options => get(ui).td(options),
 });
+
+const showMobileSort = computed<boolean>(() =>
+  get(isMobile) && !!get(sortData) && get(columns).some(column => column.sortable),
+);
 
 const ITEM_SLOT_PREFIX = 'item.';
 
@@ -330,6 +405,7 @@ const ui = computed<ReturnType<typeof dataTableStyles>>(() => dataTableStyles({
   rounded,
   dense,
   striped,
+  mobile: get(isMobile),
 }));
 
 const classes = computed<DataTableClasses>(() => {
@@ -355,9 +431,11 @@ provideDataTableContext<T, IdType>({
   colspan,
   expandable,
   groupKey,
+  isMobile,
   selectedData,
   // Static values
   cellValue,
+  columnAttr,
   dense,
   getRowId: (row: T) => row[rowAttr],
   itemSlotKeys,
@@ -378,22 +456,43 @@ provideDataTableContext<T, IdType>({
 
 <template>
   <div
+    ref="tableWrapper"
     :class="ui.wrapper()"
     data-id="table-wrapper"
   >
-    <RuiTablePagination
-      v-if="paginationData && !hideDefaultHeader"
-      v-model="paginationData"
-      :dense="dense"
-      :loading="loading"
-      :disable-per-page="disablePerPage"
-      :ranges-threshold="rangesThreshold"
-      data-id="table-pagination"
-      @update:model-value="onPaginate()"
-    />
+    <div
+      :class="stickyMobileToolbar ? 'sticky z-10 bg-white dark:bg-[#121212] pt-2' : 'contents'"
+      :style="stickyMobileToolbar ? { top: `${stickyHeaderOffset ?? 0}px` } : undefined"
+      data-id="table-mobile-toolbar-sticky"
+    >
+      <RuiTablePagination
+        v-if="paginationData && !hideDefaultHeader"
+        v-model="paginationData"
+        :dense="dense"
+        :loading="loading"
+        :mobile="isMobile"
+        :disable-per-page="disablePerPage"
+        :ranges-threshold="rangesThreshold"
+        data-id="table-pagination"
+        @update:model-value="onPaginate()"
+      />
+      <div
+        v-if="showMobileSort"
+        class="flex justify-end p-2"
+        data-id="table-mobile-toolbar"
+      >
+        <RuiDataTableMobileSort
+          :columns="columns"
+          :column-attr="columnAttr"
+          :sorted-map="sortedMap"
+          :dense="dense"
+          @sort="onSort($event)"
+        />
+      </div>
+    </div>
     <div
       ref="tableScroller"
-      :class="ui.scroller()"
+      :class="[ui.scroller(), isMobile && !showMobileSort ? 'pt-2' : '']"
       data-id="table-scroller"
     >
       <table
@@ -402,6 +501,7 @@ provideDataTableContext<T, IdType>({
         :aria-busy="loading"
       >
         <RuiTableHead
+          v-if="!isMobile"
           :loading="loading"
           :indeterminate="indeterminate"
           :capitalize-headers="!cols"
@@ -430,7 +530,7 @@ provideDataTableContext<T, IdType>({
           </template>
         </RuiTableHead>
         <RuiTableHead
-          v-if="stickyHeader"
+          v-if="stickyHeader && !isMobile"
           :loading="loading"
           :capitalize-headers="!cols"
           :colspan="colspan"
@@ -545,6 +645,7 @@ provideDataTableContext<T, IdType>({
       v-model="paginationData"
       :dense="dense"
       :loading="loading"
+      :mobile="isMobile"
       :disable-per-page="disablePerPage"
       :ranges-threshold="rangesThreshold"
       data-id="table-pagination"

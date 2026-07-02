@@ -22,12 +22,16 @@ export interface DataTableStylingContext {
   classes: ComputedRef<DataTableClasses>;
   colspan: ComputedRef<number>;
   dense: boolean;
+  /** whether the table is currently rendered in its stacked mobile layout */
+  isMobile: ComputedRef<boolean>;
 }
 
 export interface DataTableColumnsContext<T extends object = any> {
   columns: ComputedRef<TableColumn<T>[]>;
   cellValue: (row: T, key: TableColumn<T>['key']) => T[keyof T];
   itemSlotKeys: Set<string>;
+  /** the column definition attribute used as the visible label (e.g. `label`) */
+  columnAttr: keyof TableColumn<T>;
 }
 
 export interface DataTableSelectionContext<T extends object = any, IdType extends keyof T = keyof T> {
@@ -76,6 +80,7 @@ const DATA_TABLE_SELECTION = Symbol('data-table-selection');
 const DATA_TABLE_EXPANSION = Symbol('data-table-expansion');
 const DATA_TABLE_GROUPING = Symbol('data-table-grouping');
 const DATA_TABLE_ROW_IDENTITY = Symbol('data-table-row-identity');
+const DATA_TABLE_NESTED = Symbol('data-table-nested');
 
 // --- Per-concern provide/use pairs ---
 
@@ -135,11 +140,21 @@ export function useDataTableRowIdentity<T extends object = any, IdType extends k
   return injectOrThrow<DataTableRowIdentityContext<T, IdType>>(DATA_TABLE_ROW_IDENTITY, 'useDataTableRowIdentity');
 }
 
+/** Marks descendant data tables as nested (e.g. rendered inside an expanded row). */
+export function provideDataTableNested(): void {
+  provide(DATA_TABLE_NESTED, true);
+}
+
+/** True when this data table is rendered inside another data table. */
+export function useDataTableNested(): boolean {
+  return inject<boolean>(DATA_TABLE_NESTED, false);
+}
+
 // --- Backward-compatible facade ---
 
 export function provideDataTableContext<T extends object, IdType extends keyof T>(context: DataTableContext<T, IdType>): void {
-  provideDataTableStyling({ classes: context.classes, colspan: context.colspan, dense: context.dense });
-  provideDataTableColumns<T>({ columns: context.columns, cellValue: context.cellValue, itemSlotKeys: context.itemSlotKeys });
+  provideDataTableStyling({ classes: context.classes, colspan: context.colspan, dense: context.dense, isMobile: context.isMobile });
+  provideDataTableColumns<T>({ columns: context.columns, cellValue: context.cellValue, itemSlotKeys: context.itemSlotKeys, columnAttr: context.columnAttr });
   provideDataTableSelection<T, IdType>({ selectedData: context.selectedData, isSelected: context.isSelected, isDisabledRow: context.isDisabledRow, onSelect: context.onSelect, onCheckboxClick: context.onCheckboxClick });
   provideDataTableExpansion<T, IdType>({ expandable: context.expandable, isExpanded: context.isExpanded, onToggleExpand: context.onToggleExpand });
   provideDataTableGrouping<T>({ groupExpandButtonPosition: context.groupExpandButtonPosition, groupKey: context.groupKey, isExpandedGroup: context.isExpandedGroup, onToggleExpandGroup: context.onToggleExpandGroup, onUngroup: context.onUngroup, onCopyGroup: context.onCopyGroup });
