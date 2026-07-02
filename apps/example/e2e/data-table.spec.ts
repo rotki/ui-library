@@ -840,6 +840,66 @@ test.describe('data tables - empty states', () => {
   });
 });
 
+test.describe('data tables - custom slots', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/data-tables/custom-slots');
+  });
+
+  test('should render a custom column header via header.<key> slot', async ({ page }) => {
+    const table = page.locator('[data-id=table-custom-header] [data-id=table]');
+    await expect(table).toBeVisible();
+
+    const customHeader = table.locator('thead [data-id=custom-header-name]');
+    await expect(customHeader).toBeVisible();
+    await expect(customHeader).toContainText('Full name');
+  });
+
+  test('should render body.prepend and body.append rows', async ({ page }) => {
+    const tbody = page.locator('[data-id=table-custom-header] [data-id=table] tbody');
+    await expect(tbody).toBeVisible();
+
+    // Prepend row is the first row, append row is the last.
+    await expect(tbody.locator('tr').first()).toHaveAttribute('data-id', 'body-prepend-row');
+    await expect(tbody.locator('tr').last()).toHaveAttribute('data-id', 'body-append-row');
+
+    await expect(tbody.locator('[data-id=body-prepend-row]')).toContainText('Prepended body row');
+    await expect(tbody.locator('[data-id=body-append-row]')).toContainText('Appended body row');
+  });
+
+  test('should override group.header.content while keeping default group controls', async ({ page }) => {
+    const table = page.locator('[data-id=table-group-header-content] [data-id=table]');
+    await expect(table).toBeVisible();
+
+    // Custom content is rendered inside the group header.
+    const content = table.locator('[data-id=row-group] [data-id=custom-group-content]').first();
+    await expect(content).toBeVisible();
+    await expect(content).toContainText('username');
+
+    // Default ungroup control is still present because only the content slot was overridden.
+    await expect(table.locator('[data-id=row-group] [data-id=group-ungroup-button]').first()).toBeVisible();
+  });
+
+  test('should override the whole group.header row and toggle via the slot', async ({ page }) => {
+    const table = page.locator('[data-id=table-group-header-full] [data-id=table]');
+    await expect(table).toBeVisible();
+
+    const toggle = table.locator('[data-id=row-group] [data-id=custom-group-toggle]').first();
+    await expect(toggle).toBeVisible();
+
+    // Default controls are gone because the entire group.header row was replaced.
+    await expect(table.locator('[data-id=row-group] [data-id=group-ungroup-button]')).toHaveCount(0);
+
+    // Group starts open, so the slot reflects isOpen === true.
+    const header = table.locator('[data-id=row-group] [data-id=custom-group-header]').first();
+    await expect(header).toContainText('Hide');
+
+    await toggle.click();
+
+    // Toggling collapse flips isOpen, proving the slot scope is reactive.
+    await expect(header).toContainText('Show');
+  });
+});
+
 test.describe('data tables - index', () => {
   test('should render index page with navigation links', async ({ page }) => {
     await page.goto('/data-tables');
@@ -856,6 +916,7 @@ test.describe('data tables - index', () => {
     await expect(page.locator('[data-id="link-/data-tables/expandable"]')).toBeVisible();
     await expect(page.locator('[data-id="link-/data-tables/grouping"]')).toBeVisible();
     await expect(page.locator('[data-id="link-/data-tables/empty"]')).toBeVisible();
+    await expect(page.locator('[data-id="link-/data-tables/custom-slots"]')).toBeVisible();
   });
 
   test('should navigate to sub-pages', async ({ page }) => {

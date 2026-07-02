@@ -51,6 +51,12 @@ const sections = [
     route: '/data-tables/empty',
     icon: 'lu-inbox',
   },
+  {
+    title: 'Custom Slots',
+    description: 'Custom column headers, group headers, and body slots',
+    route: '/data-tables/custom-slots',
+    icon: 'lu-square-dashed-bottom-code',
+  },
 ];
 </script>
 

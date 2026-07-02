@@ -195,6 +195,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/data-tables/custom-slots': RouteRecordInfo<
+      '/data-tables/custom-slots',
+      '/data-tables/custom-slots',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/data-tables/empty': RouteRecordInfo<
       '/data-tables/empty',
       '/data-tables/empty',
@@ -594,6 +601,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/data-tables/basic.vue': {
       routes:
         | '/data-tables/basic'
+      views:
+        | never
+    }
+    'src/pages/data-tables/custom-slots.vue': {
+      routes:
+        | '/data-tables/custom-slots'
       views:
         | never
     }
