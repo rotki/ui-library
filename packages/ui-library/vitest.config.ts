@@ -1,3 +1,4 @@
+import { join } from 'node:path';
 import process from 'node:process';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { playwright } from '@vitest/browser-playwright';
@@ -41,7 +42,7 @@ const vitestConfig = defineConfig({
       },
       {
         extends: true,
-        plugins: [storybookTest({ configDir: `${import.meta.dirname}/.storybook` })],
+        plugins: [storybookTest({ configDir: join(import.meta.dirname, '.storybook') })],
         optimizeDeps: {
           include: [
             'storybook/test',

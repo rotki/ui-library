@@ -157,8 +157,7 @@ export function ruiIconsPlugin(options: RuiIconsPluginOptions = {}): Plugin {
 
     // Report invalid icons
     if (scanResult.invalidIcons.size > 0) {
-      const invalidList = [...scanResult.invalidIcons.entries()]
-        .map(([icon, files]) => `  - "${icon}" in: ${files.join(', ')}`)
+      const invalidList = Array.from(scanResult.invalidIcons.entries(), ([icon, files]) => `  - "${icon}" in: ${files.join(', ')}`)
         .join('\n');
 
       const message = `Found ${scanResult.invalidIcons.size} invalid icon name(s):\n${invalidList}`;

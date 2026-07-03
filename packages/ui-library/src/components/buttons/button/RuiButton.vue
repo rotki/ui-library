@@ -43,7 +43,7 @@ const {
 } = defineProps<Props<T>>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value?: T];
+  'update:model-value': [value?: T];
 }>();
 
 const slots = defineSlots<{
@@ -84,7 +84,7 @@ const ui = computed<ReturnType<typeof buttonStyles>>(() => buttonStyles({
     :data-color="color"
     :data-active="active || undefined"
     v-bind="{ ...$attrs, class: undefined }"
-    @click="emit('update:modelValue', btnValue)"
+    @click="emit('update:model-value', btnValue)"
   >
     <slot name="prepend" />
     <span

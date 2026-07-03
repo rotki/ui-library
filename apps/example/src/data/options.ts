@@ -13,7 +13,7 @@ export function createOptions(): SelectOption[] {
     { id: 6, label: 'India' },
     { id: 7, label: 'France' },
     { id: 8, label: 'Option with very long name to test and see truncate behaviour' },
-    ...[...new Array(100).keys()].map(index => ({
+    ...Array.from(new Array(100).keys(), index => ({
       id: index + 9,
       label: (index + 9).toString(),
     })),

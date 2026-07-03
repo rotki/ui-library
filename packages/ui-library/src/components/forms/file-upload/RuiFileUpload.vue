@@ -324,9 +324,9 @@ defineExpose({
         />
         <div
           v-if="progressLabel"
-          v-text="progressLabel"
           class="text-xs text-rui-text-secondary"
           data-id="progress-label"
+          v-text="progressLabel"
         />
       </div>
     </div>

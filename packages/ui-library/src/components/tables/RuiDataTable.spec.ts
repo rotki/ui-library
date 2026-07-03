@@ -35,7 +35,7 @@ describe('components/tables/RuiDataTable.vue', () => {
   let wrapper: ReturnType<typeof createWrapper>;
 
   const data: User[] = [
-    ...[...new Array(50)].map((_, index) => ({
+    ...Array.from(new Array(50), (_, index) => ({
       email: `lindsay.walton${index}@example.com`,
       id: index + 1,
       name: `Lindsay Walton ${index}`,

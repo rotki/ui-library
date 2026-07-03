@@ -30,7 +30,7 @@ function render(args: SimpleSelectProps) {
 const meta = preview.meta<typeof RuiSimpleSelect, Decorator, SimpleSelectMetaArgs>({
   args: {
     disabled: false,
-    options: [...new Array(10)].map((_, i) => `Option ${i}`),
+    options: Array.from(new Array(10), (_, i) => `Option ${i}`),
     variant: 'default',
   },
   argTypes: {

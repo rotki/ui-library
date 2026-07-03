@@ -30,7 +30,7 @@ function createWrapper(
       },
     },
     slots: {
-      default: [...new Array(4).keys()].map(item => (
+      default: Array.from(new Array(4).keys(), item => (
         {
           template: customTabValue
             ? `<RuiTab value="tab-${item}"><div>Tab ${item}</div></RuiTab>`

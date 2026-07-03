@@ -28,7 +28,7 @@ catalog:
   '@floating-ui/dom': 1.7.6
   '@fontsource/roboto': 5.2.10
   '@playwright/test': 1.61.1
-  '@rotki/eslint-config': 5.0.1
+  '@rotki/eslint-config': 6.2.0
   '@rotki/eslint-plugin': 1.4.0
   '@storybook/addon-a11y': 10.4.6
   '@storybook/addon-docs': 10.4.6
@@ -52,7 +52,7 @@ catalog:
   bumpp: 11.1.0
   cac: 7.0.0
   consola: 3.4.2
-  eslint: 9.39.4
+  eslint: 10.5.0
   eslint-plugin-storybook: 10.4.6
   fast-glob: 3.3.3
   fast-xml-parser: 5.9.3

@@ -36,7 +36,7 @@ function simulateUpload(): void {
       set(loadingState, false);
       set(uploadProgress, undefined);
       set(uploadedSuccess, true);
-      setTimeout(() => set(uploadedSuccess, false), 2000);
+      setTimeout(set, 2000, uploadedSuccess, false);
       return;
     }
     set(uploadProgress, next);

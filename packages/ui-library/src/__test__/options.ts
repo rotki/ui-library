@@ -20,7 +20,7 @@ export const options: SelectOption[] = [
   { id: '6', label: 'India' },
   { id: '7', label: 'France' },
   { id: '8', label: 'England' },
-  ...[...new Array(50).keys()].map(index => ({
+  ...Array.from(new Array(50).keys(), index => ({
     id: `${index + 9}`,
     label: `${index + 9}`,
   })),

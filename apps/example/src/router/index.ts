@@ -7,12 +7,12 @@ export const router = createRouter({
     if (savedPosition) {
       return new Promise((resolve) => {
         savedPosition.behavior = 'smooth';
-        setTimeout(() => resolve(savedPosition), 100);
+        setTimeout(resolve, 100, savedPosition);
       });
     }
 
     return new Promise((resolve) => {
-      setTimeout(() => resolve({ left: 0, top: 0, behavior: 'smooth' }), 100);
+      setTimeout(resolve, 100, { left: 0, top: 0, behavior: 'smooth' });
     });
   },
   routes,

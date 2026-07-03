@@ -14,6 +14,13 @@ export default rotki({
     },
   },
 }, {
+  // `__test__` is the established test-fixtures directory convention here
+  // (e.g. `@/__test__/options`); exempt it from the directory-name rule.
+  files: ['**/__test__/**'],
+  rules: {
+    'unicorn/filename-case': 'off',
+  },
+}, {
   files: ['**/*.stories.ts', '**/vue-shim.d.ts', '**/.storybook/**/*.ts'],
   rules: {
     'import/no-default-export': 'off',
