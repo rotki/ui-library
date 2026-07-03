@@ -23,8 +23,8 @@ allowBuilds:
   msw: false
 
 catalog:
-  '@commitlint/cli': 20.5.3
-  '@commitlint/config-conventional': 20.5.3
+  '@commitlint/cli': 21.1.0
+  '@commitlint/config-conventional': 21.1.0
   '@floating-ui/dom': 1.7.6
   '@fontsource/roboto': 5.2.10
   '@playwright/test': 1.61.1
@@ -59,7 +59,7 @@ catalog:
   fs-extra: 11.3.5
   happy-dom: 20.10.6
   husky: 9.1.7
-  lint-staged: 16.4.0
+  lint-staged: 17.0.8
   lucide: 0.577.0
   msw: 2.14.6
   pinia: 3.0.4

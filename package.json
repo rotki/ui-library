@@ -2,7 +2,7 @@
   "name": "@rotki/ui-library-monorepo",
   "version": "2.21.0",
   "private": true,
-  "packageManager": "pnpm@10.33.0",
+  "packageManager": "pnpm@11.9.0",
   "description": "A vue design system and component library for rotki - monorepo root",
   "type": "module",
   "license": "AGPL-3.0",
@@ -58,7 +58,7 @@
   },
   "engines": {
     "node": ">=24 <25",
-    "pnpm": ">=10 <11"
+    "pnpm": ">=11 <12"
   },
   "lint-staged": {
     "*.{js,cjs,ts,vue,yml,json,md}": "eslint"
