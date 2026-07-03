@@ -4,6 +4,7 @@
     "composite": false,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.build.tsbuildinfo",
     "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "rootDir": "src",
     "types": ["node", "vite/client"],
     "declaration": true,
     "emitDeclarationOnly": true,
