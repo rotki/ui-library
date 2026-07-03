@@ -86,10 +86,13 @@ function loadLibraryBaselineIcons(): string[] {
 export function ruiIconsPlugin(options: RuiIconsPluginOptions = {}): Plugin {
   const {
     include = [],
+    customIcons = [],
     scanPatterns = DEFAULT_SCAN_PATTERNS,
     strict = false,
     debug = false,
   } = options;
+
+  const customIconSet = new Set(customIcons);
 
   let validIcons: Set<string>;
   let libraryBaseline: string[];
@@ -135,7 +138,7 @@ export function ruiIconsPlugin(options: RuiIconsPluginOptions = {}): Plugin {
 
         if (detectedIcons.size > 0) {
           log(`Found ${detectedIcons.size} potential icons in ${filePath}`);
-          validateIcons(detectedIcons, validIcons, filePath, scanResult);
+          validateIcons(detectedIcons, validIcons, filePath, scanResult, customIconSet);
         }
       }
       catch {
@@ -189,7 +192,7 @@ export function ruiIconsPlugin(options: RuiIconsPluginOptions = {}): Plugin {
       const detectedIcons = extractIconsFromSource(content);
       const previousSize = scanResult.icons.size;
 
-      validateIcons(detectedIcons, validIcons, filePath, scanResult);
+      validateIcons(detectedIcons, validIcons, filePath, scanResult, customIconSet);
 
       // If new icons were detected, invalidate the virtual module
       if (scanResult.icons.size > previousSize) {

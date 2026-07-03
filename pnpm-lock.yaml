@@ -118,8 +118,8 @@ catalogs:
       specifier: 17.0.8
       version: 17.0.8
     lucide:
-      specifier: 0.577.0
-      version: 0.577.0
+      specifier: 1.21.0
+      version: 1.21.0
     msw:
       specifier: 2.14.6
       version: 2.14.6
@@ -382,7 +382,7 @@ importers:
         version: 20.10.6
       lucide:
         specifier: 'catalog:'
-        version: 0.577.0
+        version: 1.21.0
       msw:
         specifier: 'catalog:'
         version: 2.14.6(@types/node@24.13.2)(typescript@6.0.3)
@@ -3913,8 +3913,8 @@ packages:
     resolution: {integrity: sha512-MhWWlVnuab1RG5/zMRRcVGXZLCXrZTgfwMikgzCegsPnG62yDQo5JnqKkrK4jO5iKqDAZGItAqN5CtKBCBWRUA==}
     engines: {node: '>=16.14'}
 
-  lucide@0.577.0:
-    resolution: {integrity: sha512-PpC/m5eOItp/WU/GlQPFBXDOhq6HibL73KzYP37OX3LM7VmzWQF8voEj8QRWUFvy9FIKfeDQkWYoyS1D/MdWFA==}
+  lucide@1.21.0:
+    resolution: {integrity: sha512-m8g+tPjt1am9YBygKb36o2JOu5xOg7usbz0EORvPjn6MacIVy7desH1SNnV1ziMFHRGMGCcF5r1Jj80TxF2UTw==}
 
   lz-string@1.5.0:
     resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
@@ -8759,7 +8759,7 @@ snapshots:
 
   lru-cache@8.0.5: {}
 
-  lucide@0.577.0: {}
+  lucide@1.21.0: {}
 
   lz-string@1.5.0: {}
 

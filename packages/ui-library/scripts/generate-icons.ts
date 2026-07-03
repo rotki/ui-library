@@ -1,6 +1,6 @@
 // Generates `src/icons/icons_*.ts` and `src/icons/index.ts` from two sources:
 //
-//   1. Lucide icons in `node_modules/lucide/dist/esm/icons/*.js`. Each module
+//   1. Lucide icons in `node_modules/lucide/dist/esm/icons/*.mjs`. Each module
 //      already exports a `[ [tag, attrs], ... ]` array — exactly the shape
 //      `RuiIcon` expects — so we pass it through verbatim, one component
 //      entry per renderable primitive. Multi-path icons (e.g. eye-off) stay
@@ -21,11 +21,16 @@ import path from 'node:path';
 import consola from 'consola';
 import fg from 'fast-glob';
 import { XMLParser } from 'fast-xml-parser';
-import { pascalCase } from 'scule';
+import { kebabCase, pascalCase } from 'scule';
 
 const LUCIDE_PREFIX = 'lu-';
+const LUCIDE_EXT = '.mjs';
 const TARGET = 'src/icons';
 const CHUNK_SIZE = 500;
+// lucide ships every documented alias in this module: each line re-exports one
+// canonical icon's default under one or more names. We mine it so consumers can
+// use any official lucide name (and so pre-v1 renames like `waves` keep working).
+const LUCIDE_ALIASES_FILE = 'iconsAndAliases.mjs';
 
 const SVG_PRIMITIVES = new Set([
   'path',
@@ -102,9 +107,45 @@ async function loadCustomIcon(file: string): Promise<GeneratedIcon | null> {
 }
 
 async function loadLucideIcon(file: string): Promise<GeneratedIcon> {
-  const name = LUCIDE_PREFIX + path.basename(file, '.js');
+  const name = LUCIDE_PREFIX + path.basename(file, LUCIDE_EXT);
   const iconModule = await import(file) as { default: GeneratedIcon['components'] };
   return { name, components: iconModule.default };
+}
+
+// Emit every official lucide alias as its own icon pointing at the canonical
+// art, so consumers can use any documented lucide name (including pre-v1 names
+// that became aliases, e.g. `waves` -> `waves-horizontal`). Names already taken
+// by a canonical icon or a custom SVG win and are skipped.
+async function buildAliases(
+  byName: Map<string, GeneratedIcon['components']>,
+  existing: Set<string>,
+): Promise<GeneratedIcon[]> {
+  const file = resolveRoot('node_modules', 'lucide', 'dist', 'esm', LUCIDE_ALIASES_FILE);
+  const source = await readFile(file, 'utf8');
+  const out: GeneratedIcon[] = [];
+  const added = new Set<string>();
+  // Generated exports are keyed by `pascalCase(name)`, so two distinct kebab
+  // names that collapse to the same identifier (e.g. `arrow-down-0-1` and the
+  // alias `arrow-down-01` -> `LuArrowDown01`) would clash. Track taken export
+  // ids and skip such redundant formatting-variant aliases.
+  const takenIds = new Set(Array.from(existing, name => pascalCase(name)));
+  const lineRe = /export\s*\{([^}]*)\}\s*from\s*'\.\/icons\/([^']+)\.mjs'/g;
+  for (const line of source.matchAll(lineRe)) {
+    const canonicalName = LUCIDE_PREFIX + line[2];
+    const components = byName.get(canonicalName);
+    if (!components)
+      continue;
+    for (const name of line[1].matchAll(/default as (\w+)/g)) {
+      const aliasName = LUCIDE_PREFIX + kebabCase(name[1]);
+      const exportId = pascalCase(aliasName);
+      if (aliasName === canonicalName || existing.has(aliasName) || added.has(aliasName) || takenIds.has(exportId))
+        continue;
+      added.add(aliasName);
+      takenIds.add(exportId);
+      out.push({ name: aliasName, components });
+    }
+  }
+  return out;
 }
 
 async function loadAll(
@@ -135,13 +176,16 @@ async function collectAllIcons(): Promise<GeneratedIcon[]> {
   const lucideDir = resolveRoot('node_modules', 'lucide', 'dist', 'esm', 'icons');
   const [customFiles, lucideFiles] = await Promise.all([
     fg('**/*.svg', { cwd: customDir, absolute: true }),
-    fg('**/*.js', { cwd: lucideDir, absolute: true }),
+    fg(`**/*${LUCIDE_EXT}`, { cwd: lucideDir, absolute: true }),
   ]);
   const [customIcons, lucideIcons] = await Promise.all([
     loadAll(customFiles, loadCustomIcon),
     loadAll(lucideFiles, loadLucideIcon),
   ]);
-  return [...customIcons, ...lucideIcons];
+  const existing = new Set([...customIcons, ...lucideIcons].map(icon => icon.name));
+  const byName = new Map(lucideIcons.map(icon => [icon.name, icon.components]));
+  const aliasIcons = await buildAliases(byName, existing);
+  return [...customIcons, ...lucideIcons, ...aliasIcons];
 }
 
 function renderChunk(chunk: GeneratedIcon[]): string {

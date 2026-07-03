@@ -166,6 +166,39 @@ const RuiPlugin = createRui({
 app.use(RuiPlugin);
 ```
 
+#### App-provided (brand/custom) icons
+
+The library ships general-purpose icons only. Brand and logo icons (social,
+company, product marks) are intentionally **not** included — they are
+third-party trademarks with their own usage rules, so they belong in the
+application, not in the shared design system.
+
+To use one, register its data yourself and tell the plugin the name is
+app-provided so it is not reported as an unknown icon:
+
+```typescript
+// vite.config.ts — mark app-provided names as valid (not shipped by the library)
+ruiIconsPlugin({ customIcons: ['lu-example-logo'] });
+```
+
+```typescript
+// main.ts — supply the actual SVG data alongside the auto-detected icons
+import icons from 'virtual:rotki-icons';
+
+const exampleLogo = {
+  name: 'lu-example-logo',
+  components: [['path', { d: 'M…' }]], // one [tag, attrs] tuple per SVG primitive
+};
+
+const RuiPlugin = createRui({
+  theme: { icons: [...icons, exampleLogo] },
+});
+```
+
+Source brand logos from a dedicated, maintained set such as
+[Simple Icons](https://simpleicons.org), and follow each brand's usage
+guidelines. `<RuiIcon name="lu-example-logo" />` then renders as usual.
+
 #### Using Icons in Templates
 
 ```vue

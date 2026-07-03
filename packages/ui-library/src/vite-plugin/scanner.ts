@@ -45,8 +45,14 @@ export function validateIcons(
   validIcons: Set<string>,
   filePath: string,
   result: ScanResult,
+  ignore?: Set<string>,
 ): void {
   for (const icon of detectedIcons) {
+    if (ignore?.has(icon)) {
+      // App-provided custom icon: registered by the consumer, not shipped by
+      // the library — neither imported nor reported invalid.
+      continue;
+    }
     if (validIcons.has(icon)) {
       result.icons.add(icon);
     }

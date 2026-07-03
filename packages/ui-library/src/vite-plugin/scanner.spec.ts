@@ -140,6 +140,25 @@ describe('scanner', () => {
         '/test/file2.vue',
       ]);
     });
+
+    it('should skip app-provided custom icons: neither imported nor invalid', () => {
+      const detectedIcons = new Set(['lu-star', 'lu-github']);
+      const validIcons = new Set(['lu-star', 'lu-check']);
+      const ignore = new Set(['lu-github']);
+      const result: ScanResult = {
+        icons: new Set(),
+        invalidIcons: new Map(),
+      };
+
+      validateIcons(detectedIcons, validIcons, '/test/file.vue', result, ignore);
+
+      // library icon is imported
+      expect(result.icons).toContain('lu-star');
+      // custom icon is neither imported (library lacks it) nor flagged invalid
+      expect(result.icons.has('lu-github')).toBe(false);
+      expect(result.invalidIcons.has('lu-github')).toBe(false);
+      expect(result.invalidIcons.size).toBe(0);
+    });
   });
 
   describe('iconNameToExportName', () => {
