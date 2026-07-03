@@ -13,9 +13,11 @@ permissions: { }
 
 jobs:
   release:
+    name: Create GitHub release
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
-      contents: write
+      contents: write # create the GitHub release
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
@@ -32,11 +34,13 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
   publish:
+    name: Publish to npm
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     environment: npm
     permissions:
-      contents: read
-      id-token: write
+      contents: read # clone the repository
+      id-token: write # npm provenance via OIDC
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:

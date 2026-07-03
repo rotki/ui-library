@@ -13,10 +13,12 @@ permissions: { }
 
 jobs:
   build:
+    name: Build Storybook site
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
-      contents: read
-      actions: write
+      contents: read # clone the repository
+      actions: write # upload the Pages artifact
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -44,17 +46,19 @@ jobs:
           path: packages/ui-library/storybook-static/
 
   deploy:
+    name: Deploy to GitHub Pages
     needs: build
 
     permissions:
-      pages: write
-      id-token: write
+      pages: write # publish to GitHub Pages
+      id-token: write # OIDC token used by the Pages deployment
 
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

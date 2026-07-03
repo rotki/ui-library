@@ -26,11 +26,17 @@ permissions: { }
 # wall-time down by avoiding a serial `build` job that downstream tests
 # would have to wait on. Tests run while the build for the next test set
 # is still in flight.
+#
+# timeout-minutes on every job is generous headroom over observed run
+# times (~1-4m) so a genuine hang is killed quickly instead of running to
+# the 6h GitHub default.
 jobs:
   commit-lint:
+    name: Commit lint
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
-      contents: read
+      contents: read # clone the repository
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -65,9 +71,11 @@ jobs:
   # is implicit in the build:types step that runs as part of `build:prod` in
   # `unit`, `storybook`, `e2e` and `visual` — no need to repeat it here.
   validate:
+    name: Lint & typecheck
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
-      contents: read
+      contents: read # clone the repository
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -95,9 +103,11 @@ jobs:
   # Vitest unit tests in browser mode. Uploads the blob-format coverage
   # report so the `coverage` job can merge it with the storybook report.
   unit:
+    name: Unit tests
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
-      contents: read
+      contents: read # clone the repository
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -129,6 +139,7 @@ jobs:
 
       - name: Install Playwright Browsers
         working-directory: packages/ui-library
+        timeout-minutes: 10
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Run Unit Tests with Coverage
@@ -146,9 +157,11 @@ jobs:
   # the storybook build (~30-60s) and its test run parallelise with the
   # vitest run instead of stacking serially.
   storybook:
+    name: Storybook tests
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
-      contents: read
+      contents: read # clone the repository
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -183,6 +196,7 @@ jobs:
 
       - name: Install Playwright Browsers
         working-directory: packages/ui-library
+        timeout-minutes: 10
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Run Storybook Tests with Coverage
@@ -201,11 +215,13 @@ jobs:
   # (e.g. a future paths-filter), this job still attempts the merge from
   # whatever coverage is present.
   coverage:
+    name: Coverage report
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: [unit, storybook]
     permissions:
-      contents: read
-      actions: read
+      contents: read # clone the repository
+      actions: read # download the coverage artifacts uploaded by unit/storybook
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -252,9 +268,11 @@ jobs:
   # `fail-fast: false` so one shard's failure doesn't cancel the other —
   # we want to see every failing spec in the same run.
   e2e:
+    name: E2E tests
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
-      contents: read
+      contents: read # clone the repository
     strategy:
       fail-fast: false
       matrix:
@@ -293,11 +311,14 @@ jobs:
 
       - name: Install Playwright Browsers
         working-directory: apps/example
+        timeout-minutes: 10
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Run Playwright tests (shard ${{ matrix.shard }}/2)
         working-directory: apps/example
-        run: pnpm exec playwright test --shard=${{ matrix.shard }}/2
+        env:
+          SHARD: ${{ matrix.shard }}
+        run: pnpm exec playwright test --shard="${SHARD}/2"
 
       - name: Upload Playwright Report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -313,13 +334,16 @@ jobs:
   # rendering environment (browser binary + system fonts + freetype + arch)
   # matches what contributors get from `pnpm test:visual`. Without the pin,
   # snapshots captured locally and on CI would diverge by a handful of
-  # antialiasing pixels and every run would fail.
+  # antialiasing pixels and every run would fail. The image is pinned to its
+  # manifest-list digest (the tag is kept as a comment for readability).
   visual:
+    name: Visual regression
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     container:
-      image: mcr.microsoft.com/playwright:v1.61.1-noble
+      image: mcr.microsoft.com/playwright:v1.61.1-noble@sha256:5b8f294aff9041b7191c34a4bab3ac270157a28774d4b0660e9743297b697e48
     permissions:
-      contents: read
+      contents: read # clone the repository
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
