@@ -23,6 +23,7 @@ const searchInputText = ref<string>('');
 
 const multiClearValue = ref<string[]>(['Lorem', 'Ipsum', 'Dolor']);
 const customBlurValue = ref<string>();
+const chipToTextValue = ref<string[]>(['Lorem', 'Ipsum']);
 </script>
 
 <template>
@@ -128,6 +129,23 @@ const customBlurValue = ref<string>();
           label="Custom Value on Blur"
           data-id="ac-adv-custom-blur"
         />
+      </div>
+
+      <div class="py-4">
+        <RuiAutoComplete
+          v-model="chipToTextValue"
+          chips
+          custom-value
+          :options="primitiveOptions"
+          label="Chip to text (Alt+Delete)"
+          data-id="ac-adv-chip-to-text"
+        />
+        <div
+          data-id="ac-adv-chip-to-text-model"
+          class="mt-2 text-sm"
+        >
+          Model: {{ chipToTextValue.join(', ') }}
+        </div>
       </div>
     </div>
   </div>

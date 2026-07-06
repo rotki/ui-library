@@ -291,6 +291,58 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     expect(wrapper.emitted('update:modelValue')?.[2]).toEqual([newValue]);
   });
 
+  it('should convert a chip back to editable text on Alt+Delete when customValue is set', async () => {
+    wrapper = createWrapper<string[], SelectOption>({
+      attachTo: document.body,
+      props: {
+        chips: true,
+        customValue: true,
+        keyAttr: 'id',
+        modelValue: ['7', '8'],
+        options,
+        textAttr: 'label',
+      },
+    });
+    await vi.advanceTimersToNextTimerAsync();
+
+    const chips = wrapper.find('div[data-id=activator]').findAllComponents(RuiChip);
+    expect(chips).toHaveLength(2);
+    expect(chips[0].text()).toBe('France');
+    expect(chips[1].text()).toBe('England');
+
+    // Alt + Backspace on France restores its text into the input and removes
+    // only that chip, leaving the other selections untouched.
+    await chips[0].trigger('keydown', { altKey: true, key: 'Backspace' });
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([['8']]);
+    const input = wrapper.find<HTMLInputElement>('div[data-id=activator] input').element;
+    expect(input.value).toBe('France');
+  });
+
+  it('should just remove the chip on Alt+Delete when customValue is not set', async () => {
+    wrapper = createWrapper<string[], SelectOption>({
+      attachTo: document.body,
+      props: {
+        chips: true,
+        keyAttr: 'id',
+        modelValue: ['7'],
+        options,
+        textAttr: 'label',
+      },
+    });
+    await vi.advanceTimersToNextTimerAsync();
+
+    const chips = wrapper.find('div[data-id=activator]').findAllComponents(RuiChip);
+    await chips[0].trigger('keydown', { altKey: true, key: 'Backspace' });
+    await vi.advanceTimersToNextTimerAsync();
+
+    // No custom values allowed → the modifier has no special effect, chip is removed.
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([[]]);
+    const input = wrapper.find<HTMLInputElement>('div[data-id=activator] input').element;
+    expect(input.value).toBe('');
+  });
+
   it('should custom value', async () => {
     wrapper = createWrapper<string[], SelectOption>({
       attachTo: document.body,

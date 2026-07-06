@@ -422,7 +422,17 @@ function chipAttrs(item: TItem, index: number): Record<string, unknown> {
       if (['Backspace', 'Delete'].includes(key)) {
         event.stopPropagation();
         event.preventDefault();
-        setValue(item);
+        // Alt/Option + delete converts the chip back into editable search text
+        // instead of removing it outright. Only meaningful when custom values
+        // are accepted, since the restored text has to be re-selectable.
+        if (event.altKey && customValue) {
+          const text = getText(item) ?? '';
+          setValue(item);
+          updateInternalSearch(text);
+        }
+        else {
+          setValue(item);
+        }
       }
     },
     'onClick': (e: MouseEvent): void => {

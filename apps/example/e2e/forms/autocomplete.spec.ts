@@ -856,3 +856,29 @@ test.describe('auto-complete - slots (placeholder & footer)', () => {
     await expect(footer).toContainText('Tip: start typing');
   });
 });
+
+test.describe('auto-complete - advanced', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/auto-completes/advanced');
+  });
+
+  test.afterEach(async ({ page }) => {
+    await page.keyboard.press('Escape');
+  });
+
+  test('should convert a chip back to editable text on Alt+Delete with custom-value', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-adv-chip-to-text]');
+    const chips = ac.locator('[data-id=activator] [data-value]');
+    await expect(chips).toHaveCount(2);
+
+    // Focus the first chip (Lorem) and convert it back to editable text.
+    await chips.first().focus();
+    await page.keyboard.press('Alt+Backspace');
+
+    // Only that chip is removed, its text is restored into the input, and the
+    // other selection (Ipsum) is untouched.
+    await expect(ac.locator('[data-id=activator] input')).toHaveValue('Lorem');
+    await expect(ac.locator('[data-id=activator] [data-value]')).toHaveCount(1);
+    await expect(page.locator('[data-id=ac-adv-chip-to-text-model]')).toHaveText('Model: Ipsum');
+  });
+});
