@@ -22,6 +22,7 @@ import RuiDateTimePicker, { type RuiDateTimePickerProps } from '@/components/dat
 import RuiTimezoneSelect, { type RuiTimezoneSelectProps } from '@/components/date-time-picker/RuiTimezoneSelect.vue';
 import RuiDivider, { type Props as DividerProps } from '@/components/divider/RuiDivider.vue';
 import RuiAutoComplete, { type AutoCompleteProps, type RuiAutoCompleteClassNames } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
+import RuiCategoryPicker, { type RuiCategoryPickerClassNames, type RuiCategoryPickerProps } from '@/components/forms/category-picker/RuiCategoryPicker.vue';
 import RuiCheckboxGroup, { type Props as CheckboxGroupProps } from '@/components/forms/checkbox/checkbox-group/RuiCheckboxGroup.vue';
 import RuiCheckbox, { type Props as CheckboxProps } from '@/components/forms/checkbox/RuiCheckbox.vue';
 import RuiFileUpload, { type FileUploadProps } from '@/components/forms/file-upload/RuiFileUpload.vue';
@@ -98,6 +99,8 @@ export type {
   RuiAccordionClassNames,
   RuiAutoCompleteClassNames,
   RuiCardClassNames,
+  RuiCategoryPickerClassNames,
+  RuiCategoryPickerProps,
   RuiChipClassNames,
   RuiDateTimePickerProps,
   RuiDialogClassNames,
@@ -139,6 +142,7 @@ export {
   RuiCalendar,
   RuiCard,
   RuiCardHeader,
+  RuiCategoryPicker,
   RuiCheckbox,
   RuiCheckboxGroup,
   RuiChip,

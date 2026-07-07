@@ -164,6 +164,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/category-pickers': RouteRecordInfo<
+      '/category-pickers',
+      '/category-pickers',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/checkboxes': RouteRecordInfo<
       '/checkboxes',
       '/checkboxes',
@@ -618,6 +625,14 @@ declare module 'vue-router/auto-routes' {
     'src/pages/cards.vue': {
       routes:
         | '/cards'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/category-pickers.vue': {
+      routes:
+        | '/category-pickers'
       views:
         | never
       pathParamNames:
