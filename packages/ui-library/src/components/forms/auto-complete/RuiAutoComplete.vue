@@ -63,7 +63,12 @@ export interface AutoCompleteProps<TValue, TItem> {
   noFilter?: boolean;
   hideNoData?: boolean;
   noDataText?: string;
-  filter?: (item: TItem, queryText: string) => boolean;
+  /**
+   * Custom search predicate. Receives the resolved group label as a third
+   * argument when `groupBy` is set, so callers don't have to re-run the
+   * `groupBy` resolver themselves.
+   */
+  filter?: (item: TItem, queryText: string, group?: string) => boolean;
   hideSelected?: boolean;
   placeholder?: string;
   returnObject?: boolean;
@@ -74,6 +79,14 @@ export interface AutoCompleteProps<TValue, TItem> {
   hideSelectionWrapper?: boolean;
   groupBy?: GroupBy<TItem>;
   itemDisabled?: ItemDisabled<TItem>;
+  /**
+   * When true and `groupBy` is set, the default search predicate also matches
+   * against the resolved group label. Items belonging to a group whose label
+   * matches the query stay visible (group header included), even when the
+   * items themselves don't match. No effect when a custom `filter` is supplied
+   * or when `groupBy` is undefined.
+   */
+  searchIncludesGroupLabel?: boolean;
 }
 
 defineOptions({
@@ -121,6 +134,7 @@ const {
   hideSelectionWrapper = false,
   groupBy,
   itemDisabled,
+  searchIncludesGroupLabel = false,
 } = defineProps<AutoCompleteProps<TValue, TItem>>();
 
 const slots = defineSlots<{
@@ -178,6 +192,8 @@ const {
     customValue: () => customValue,
     hideCustomValue: () => hideCustomValue,
     returnObject: () => returnObject,
+    groupBy: () => groupBy,
+    searchIncludesGroupLabel: () => searchIncludesGroupLabel,
   },
 );
 

@@ -780,6 +780,24 @@ test.describe('auto-complete - grouping', () => {
     await menu.locator('button', { hasText: 'Indonesia' }).click();
     await expect(ac.locator('input')).toHaveValue('Indonesia');
   });
+
+  test('should surface every item in a group when searching the group label', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-grouping-search-label]');
+    await ac.locator('[data-id=activator]').click();
+
+    const menu = page.locator('div[role=menu]');
+    await expect(menu).toBeVisible();
+
+    // "Europe" is only a group label; no item text contains it.
+    await ac.locator('input').fill('Europe');
+
+    // Only the Europe group survives, with all three of its items.
+    await expect(menu.locator('[data-id=group-header]')).toHaveCount(1);
+    await expect(menu.locator('[data-id=group-header]')).toContainText('Europe');
+    await expect(menu.locator('button', { hasText: 'Germany' })).toBeVisible();
+    await expect(menu.locator('button', { hasText: 'France' })).toBeVisible();
+    await expect(menu.locator('button', { hasText: 'Spain' })).toBeVisible();
+  });
 });
 
 test.describe('auto-complete - slots (placeholder & footer)', () => {

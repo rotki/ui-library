@@ -34,6 +34,7 @@ function groupByContinentUpper(item: CountryOption): string {
 const customHeaderValue = ref<number>();
 const disabledValue = ref<number>();
 const groupedDisabledValue = ref<number>();
+const groupLabelSearchValue = ref<number>();
 </script>
 
 <template>
@@ -118,6 +119,20 @@ const groupedDisabledValue = ref<number>();
           text-attr="label"
           label="Grouped with disabled items"
           data-id="ac-grouping-grouped-disabled"
+        />
+      </div>
+
+      <div class="py-4">
+        <RuiAutoComplete
+          v-model="groupLabelSearchValue"
+          clearable
+          :options="countries"
+          group-by="continent"
+          search-includes-group-label
+          key-attr="id"
+          text-attr="label"
+          label="Search matches group label"
+          data-id="ac-grouping-search-label"
         />
       </div>
     </div>

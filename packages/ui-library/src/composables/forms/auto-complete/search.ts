@@ -1,4 +1,5 @@
 import type { MaybeRefOrGetter, Ref } from 'vue';
+import type { GroupBy } from '@/composables/dropdown-menu';
 import { get, set } from '@vueuse/shared';
 import { getTextToken } from '@/utils/helpers';
 
@@ -10,13 +11,17 @@ export interface UseAutoCompleteSearchOptions<TItem> {
   /** Whether to disable client-side filtering of options. */
   noFilter?: MaybeRefOrGetter<boolean>;
   /** Custom filter function to match items against the search query. */
-  filter?: MaybeRefOrGetter<((item: TItem, queryText: string) => boolean) | undefined>;
+  filter?: MaybeRefOrGetter<((item: TItem, queryText: string, group?: string) => boolean) | undefined>;
   /** Whether custom (free-text) values are allowed. */
   customValue?: MaybeRefOrGetter<boolean>;
   /** Whether to hide the custom value option from the dropdown. */
   hideCustomValue?: MaybeRefOrGetter<boolean>;
   /** Whether to return the full item object instead of just the key. */
   returnObject?: MaybeRefOrGetter<boolean>;
+  /** How items are grouped, used to resolve group labels for filtering. */
+  groupBy?: MaybeRefOrGetter<GroupBy<TItem> | undefined>;
+  /** When true and `groupBy` is set, the default filter also matches the resolved group label. */
+  searchIncludesGroupLabel?: MaybeRefOrGetter<boolean>;
 }
 
 export interface UseAutoCompleteSearchReturn<TItem> {
@@ -58,6 +63,19 @@ export function useAutoCompleteSearch<TItem>(
     return token;
   };
 
+  // Resolve the group label for an item. Mirrors `getGroupKey` in
+  // dropdown-menu.ts so the filter can match against the same labels the
+  // rendered group headers show.
+  const resolveGroup = (item: TItem, groupBy: GroupBy<TItem> | undefined): string | undefined => {
+    if (!groupBy)
+      return undefined;
+
+    if (typeof groupBy === 'function')
+      return groupBy(item);
+
+    return String((item as any)?.[groupBy] ?? '');
+  };
+
   const filteredOptions = computed<TItem[]>(() => {
     const search = get(debouncedInternalSearch);
     const optionsValue = toValue(options);
@@ -69,12 +87,14 @@ export function useAutoCompleteSearch<TItem>(
     const keyAttr = toValue(opts.keyAttr);
     const textAttr = toValue(opts.textAttr);
     const filter = toValue(opts.filter);
+    const groupBy = toValue(opts.groupBy);
+    const searchIncludesGroupLabel = toValue(opts.searchIncludesGroupLabel);
 
     // Cache the search token once
     const searchToken = getCachedTextToken(search);
 
     const filtered = filter
-      ? optionsValue.filter(item => filter(item, search))
+      ? optionsValue.filter(item => filter(item, search, resolveGroup(item, groupBy)))
       : optionsValue.filter((item) => {
           if (!item)
             return false;
@@ -83,6 +103,15 @@ export function useAutoCompleteSearch<TItem>(
 
           if (textAttr && typeof item === 'object')
             keywords.push(getCachedTextToken(String((item as any)[textAttr])));
+
+          // Widen the match to the group label so a query like "trade" surfaces
+          // every item under a "Trade" section, even when the items themselves
+          // (e.g. "Swap") don't contain the query.
+          if (searchIncludesGroupLabel && groupBy) {
+            const group = resolveGroup(item, groupBy);
+            if (group)
+              keywords.push(getCachedTextToken(group));
+          }
 
           return keywords.some(keyword => keyword.includes(searchToken));
         });

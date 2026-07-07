@@ -447,6 +447,36 @@ export const Grouped = meta.story({
   },
 });
 
+// @ts-expect-error GroupedSearchLabel uses GroupedSelectOption[] options
+export const GroupedSearchLabel = meta.story({
+  args: {
+    groupBy: 'category',
+    keyAttr: 'id',
+    modelValue: undefined,
+    options: groupedOptions,
+    searchIncludesGroupLabel: true,
+    textAttr: 'label',
+    variant: 'outlined',
+  },
+  async play({ canvas, userEvent }) {
+    const body = within(document.body);
+    const combobox = canvas.getByRole('combobox');
+    await userEvent.click(combobox);
+    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+
+    // Typing a group label surfaces every item in that group, even though
+    // none of the item labels contain the query.
+    await userEvent.keyboard('Europe');
+    const menu = body.getByRole('menu');
+    await waitFor(() => expect(within(menu).getByText('Germany')).toBeVisible());
+    expect(within(menu).getByText('France')).toBeVisible();
+    expect(within(menu).getByText('Spain')).toBeVisible();
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+  },
+});
+
 // @ts-expect-error GroupedCustomHeader uses GroupedSelectOption[] options
 export const GroupedCustomHeader = meta.story({
   args: {

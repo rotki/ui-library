@@ -1388,6 +1388,234 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     });
   });
 
+  describe('searchIncludesGroupLabel', () => {
+    it('should not match the group label by default', async () => {
+      wrapper = createWrapper<string | undefined, GroupedSelectOption>({
+        attachTo: document.body,
+        props: {
+          groupBy: 'category',
+          keyAttr: 'id',
+          modelValue: undefined,
+          options: groupedOptions,
+          textAttr: 'label',
+        },
+      });
+
+      await wrapper.find('[data-id=activator]').trigger('click');
+      await vi.advanceTimersToNextTimerAsync();
+
+      // "Europe" is only a group label, no item text contains it.
+      await wrapper.find('input').setValue('Europe');
+      await vi.advanceTimersToNextTimerAsync();
+
+      const menuButtons = queryAllMenuButtons();
+      const relevant = menuButtons.filter(btn =>
+        ['Germany', 'France', 'Spain'].some(label => btn.innerHTML.includes(label)),
+      );
+      expect(relevant).toHaveLength(0);
+    });
+
+    it('should show every item in a group whose label matches when enabled', async () => {
+      wrapper = createWrapper<string | undefined, GroupedSelectOption>({
+        attachTo: document.body,
+        props: {
+          groupBy: 'category',
+          keyAttr: 'id',
+          modelValue: undefined,
+          options: groupedOptions,
+          searchIncludesGroupLabel: true,
+          textAttr: 'label',
+        },
+      });
+
+      await wrapper.find('[data-id=activator]').trigger('click');
+      await vi.advanceTimersToNextTimerAsync();
+
+      await wrapper.find('input').setValue('Europe');
+      await vi.advanceTimersToNextTimerAsync();
+
+      const menuButtons = queryAllMenuButtons();
+      const relevant = menuButtons.filter(btn =>
+        ['Germany', 'France', 'Spain'].some(label => btn.innerHTML.includes(label)),
+      );
+      expect(relevant).toHaveLength(3);
+
+      // Group header for the matched group is still rendered.
+      const headers = Array.from(document.body.querySelectorAll('[data-id="group-header"]'));
+      expect(headers.map(h => h.textContent?.trim())).toEqual(['Europe']);
+    });
+
+    it('should still match item text when enabled and not duplicate items', async () => {
+      wrapper = createWrapper<string | undefined, GroupedSelectOption>({
+        attachTo: document.body,
+        props: {
+          groupBy: 'category',
+          keyAttr: 'id',
+          modelValue: undefined,
+          options: groupedOptions,
+          searchIncludesGroupLabel: true,
+          textAttr: 'label',
+        },
+      });
+
+      await wrapper.find('[data-id=activator]').trigger('click');
+      await vi.advanceTimersToNextTimerAsync();
+
+      // Matches item text only.
+      await wrapper.find('input').setValue('Germany');
+      await vi.advanceTimersToNextTimerAsync();
+
+      const menuButtons = queryAllMenuButtons();
+      const relevant = menuButtons.filter(btn => btn.innerHTML.includes('Germany'));
+      expect(relevant).toHaveLength(1);
+    });
+
+    it('should have no effect without groupBy', async () => {
+      wrapper = createWrapper<string | undefined, GroupedSelectOption>({
+        attachTo: document.body,
+        props: {
+          keyAttr: 'id',
+          modelValue: undefined,
+          options: groupedOptions,
+          searchIncludesGroupLabel: true,
+          textAttr: 'label',
+        },
+      });
+
+      await wrapper.find('[data-id=activator]').trigger('click');
+      await vi.advanceTimersToNextTimerAsync();
+
+      await wrapper.find('input').setValue('Europe');
+      await vi.advanceTimersToNextTimerAsync();
+
+      expect(queryAllMenuButtons()).toHaveLength(0);
+    });
+
+    it('should pass the resolved group label to a custom filter', async () => {
+      const customFilter = vi.fn(
+        (item: GroupedSelectOption, query: string, group?: string): boolean =>
+          item.label.toLowerCase().includes(query.toLowerCase())
+          || (group?.toLowerCase().includes(query.toLowerCase()) ?? false),
+      );
+
+      wrapper = createWrapper<string | undefined, GroupedSelectOption>({
+        attachTo: document.body,
+        props: {
+          filter: customFilter,
+          groupBy: 'category',
+          keyAttr: 'id',
+          modelValue: undefined,
+          options: groupedOptions,
+          textAttr: 'label',
+        },
+      });
+
+      await wrapper.find('[data-id=activator]').trigger('click');
+      await vi.advanceTimersToNextTimerAsync();
+
+      await wrapper.find('input').setValue('Asia');
+      await vi.advanceTimersToNextTimerAsync();
+
+      expect(customFilter).toHaveBeenCalledWith(
+        expect.objectContaining({ category: 'Asia' }),
+        'Asia',
+        'Asia',
+      );
+
+      const menuButtons = queryAllMenuButtons();
+      const relevant = menuButtons.filter(btn =>
+        ['India', 'Indonesia'].some(label => btn.innerHTML.includes(label)),
+      );
+      expect(relevant).toHaveLength(2);
+    });
+
+    it('should not duplicate an item that matches both its text and group label', async () => {
+      // "Asia" matches both the group label and the item's own text.
+      const overlappingOptions: GroupedSelectOption[] = [
+        { category: 'Asia', id: '1', label: 'Asia Pacific' },
+        { category: 'Asia', id: '2', label: 'India' },
+        { category: 'Europe', id: '3', label: 'Germany' },
+      ];
+
+      wrapper = createWrapper<string | undefined, GroupedSelectOption>({
+        attachTo: document.body,
+        props: {
+          groupBy: 'category',
+          keyAttr: 'id',
+          modelValue: undefined,
+          options: overlappingOptions,
+          searchIncludesGroupLabel: true,
+          textAttr: 'label',
+        },
+      });
+
+      await wrapper.find('[data-id=activator]').trigger('click');
+      await vi.advanceTimersToNextTimerAsync();
+
+      await wrapper.find('input').setValue('Asia');
+      await vi.advanceTimersToNextTimerAsync();
+
+      const menuButtons = queryAllMenuButtons();
+      // Both Asia items show (one via group, one via group; the first also via
+      // text) but neither is rendered twice.
+      expect(menuButtons.filter(btn => btn.innerHTML.includes('Asia Pacific'))).toHaveLength(1);
+      expect(menuButtons.filter(btn => btn.innerHTML.includes('India'))).toHaveLength(1);
+      expect(menuButtons.filter(btn => btn.innerHTML.includes('Germany'))).toHaveLength(0);
+    });
+
+    it('should return nothing when the query matches neither item nor group', async () => {
+      wrapper = createWrapper<string | undefined, GroupedSelectOption>({
+        attachTo: document.body,
+        props: {
+          groupBy: 'category',
+          keyAttr: 'id',
+          modelValue: undefined,
+          options: groupedOptions,
+          searchIncludesGroupLabel: true,
+          textAttr: 'label',
+        },
+      });
+
+      await wrapper.find('[data-id=activator]').trigger('click');
+      await vi.advanceTimersToNextTimerAsync();
+
+      await wrapper.find('input').setValue('zzzznomatch');
+      await vi.advanceTimersToNextTimerAsync();
+
+      expect(queryAllMenuButtons()).toHaveLength(0);
+      expect(queryByDataId('group-header')).toBeFalsy();
+    });
+
+    it('should match against a group label resolved by a function', async () => {
+      wrapper = createWrapper<string | undefined, GroupedSelectOption>({
+        attachTo: document.body,
+        props: {
+          groupBy: (item: GroupedSelectOption): string => item.category.toUpperCase(),
+          keyAttr: 'id',
+          modelValue: undefined,
+          options: groupedOptions,
+          searchIncludesGroupLabel: true,
+          textAttr: 'label',
+        },
+      });
+
+      await wrapper.find('[data-id=activator]').trigger('click');
+      await vi.advanceTimersToNextTimerAsync();
+
+      await wrapper.find('input').setValue('europe');
+      await vi.advanceTimersToNextTimerAsync();
+
+      const menuButtons = queryAllMenuButtons();
+      const relevant = menuButtons.filter(btn =>
+        ['Germany', 'France', 'Spain'].some(label => btn.innerHTML.includes(label)),
+      );
+      expect(relevant).toHaveLength(3);
+
+      const headers = Array.from(document.body.querySelectorAll('[data-id="group-header"]'));
+      expect(headers.map(h => h.textContent?.trim())).toEqual(['EUROPE']);
+    });
+  });
+
   describe('itemDisabled', () => {
     it('should not emit update:modelValue when clicking a disabled item', async () => {
       const flatOptions: GroupedSelectOption[] = [
