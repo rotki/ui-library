@@ -201,6 +201,25 @@ describe('components/forms/category-picker/RuiCategoryPicker.vue', () => {
     expect(optionLabels).toEqual(['Germany']);
   });
 
+  it('focuses the detail pane without scrolling the page when a category is picked', async () => {
+    wrapper = mountPicker();
+    const dialog = await openPicker(wrapper);
+
+    const detail = queryByDataId<HTMLElement>('detail', dialog);
+    assertExists(detail);
+    const focusSpy = vi.spyOn(detail, 'focus');
+
+    const europe = Array.from(dialog.querySelectorAll<HTMLElement>('[data-category]'))
+      .find(el => el.dataset.category === 'Europe');
+    assertExists(europe);
+    europe.click();
+    await vi.runAllTimersAsync();
+
+    // Focusing a teleported pane must pass preventScroll, or the browser scrolls
+    // the page behind the popover to bring the pane into view.
+    expect(focusSpy).toHaveBeenCalledWith({ preventScroll: true });
+  });
+
   it('renders the field label, required marker and error messages', async () => {
     wrapper = mountPicker({ errorMessages: 'This field is required', required: true });
 

@@ -315,7 +315,9 @@ function onCategoryClick(category: string | null): void {
 function focusPane(pane: 'rail' | 'detail'): void {
   set(focusedPane, pane);
   nextTick(() => {
-    (pane === 'rail' ? get(railRef) : get(detailRef))?.focus();
+    // preventScroll: focus moves between panes inside a teleported popover;
+    // without it the browser scrolls the page behind to reveal the pane.
+    (pane === 'rail' ? get(railRef) : get(detailRef))?.focus({ preventScroll: true });
   });
 }
 
@@ -403,13 +405,13 @@ watch(isOpen, (value) => {
     // Desktop is a combobox: keep focus in the field so the user can type
     // straight away (ArrowDown moves into the panes). The mobile sheet has no
     // typing field, so focus the rail instead.
-    nextTick(() => (get(canType) ? get(activatorRef) : get(railRef))?.focus());
+    nextTick(() => (get(canType) ? get(activatorRef) : get(railRef))?.focus({ preventScroll: true }));
   }
   else {
     // Reset the query so the field shows the selection again next time, and
     // return focus to the trigger (APG dialog contract).
     set(searchInput, '');
-    nextTick(() => get(activatorRef)?.focus());
+    nextTick(() => get(activatorRef)?.focus({ preventScroll: true }));
   }
 });
 </script>
