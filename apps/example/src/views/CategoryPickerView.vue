@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RuiCategoryPicker } from '@rotki/ui-library';
+import { RuiButton, RuiCategoryPicker } from '@rotki/ui-library';
 import ComponentView from '@/components/ComponentView.vue';
 
 interface CountryOption { id: number; label: string; continent: string }
@@ -90,7 +90,20 @@ const noSearchValue = ref<number>();
           label="Action"
           clearable
           data-id="cp-actions"
-        />
+        >
+          <template #footer="{ close }">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-caption text-rui-text-secondary">{{ actions.length }} actions</span>
+              <RuiButton
+                size="sm"
+                variant="text"
+                @click="close()"
+              >
+                Close
+              </RuiButton>
+            </div>
+          </template>
+        </RuiCategoryPicker>
       </div>
 
       <div>

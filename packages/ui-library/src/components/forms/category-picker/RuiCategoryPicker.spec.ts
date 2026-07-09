@@ -237,6 +237,21 @@ describe('components/forms/category-picker/RuiCategoryPicker.vue', () => {
     expect(body.className).not.toContain('max-h-[60vh]');
   });
 
+  it('gives the footer an opaque panel surface so a scrolled pane cannot bleed through', async () => {
+    wrapper = createWrapper<string, GroupedSelectOption>({
+      props: baseProps,
+      slots: { footer: '<button data-id="footer-action">Apply</button>' },
+    });
+    const panel = await openPicker(wrapper);
+
+    const footer = panel.querySelector<HTMLElement>('[data-id=footer-action]')?.parentElement;
+    assertExists(footer);
+    expect(footer.className).toContain('bg-white');
+    expect(footer.className).toContain('dark:bg-rui-grey-900');
+    // shrink-0 keeps the footer at its natural height inside the flex column.
+    expect(footer.className).toContain('shrink-0');
+  });
+
   it('renders the field label, required marker and error messages', async () => {
     wrapper = mountPicker({ errorMessages: 'This field is required', required: true });
 

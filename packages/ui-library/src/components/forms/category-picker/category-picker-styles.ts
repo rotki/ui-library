@@ -38,7 +38,8 @@ export const categoryPickerStyles = tv({
     highlighted: '!bg-rui-grey-100 dark:!bg-rui-grey-800',
     subheader: 'px-3 pt-3 pb-1 text-overline text-rui-text-secondary uppercase',
     empty: 'flex flex-1 items-center justify-center p-8 text-body-2 text-rui-text-secondary text-center',
-    footer: 'p-3 border-t border-rui-grey-200 dark:border-rui-grey-800',
+    // Opaque panel surface so a scrolled pane never bleeds through the footer.
+    footer: 'shrink-0 p-3 border-t border-rui-grey-200 dark:border-rui-grey-800 bg-white dark:bg-rui-grey-900',
     backButton: 'flex items-center gap-2',
   },
   variants: {
