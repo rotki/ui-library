@@ -23,10 +23,13 @@ export const categoryPickerActivatorStyles = tv({
  */
 export const categoryPickerStyles = tv({
   slots: {
-    root: 'flex flex-col min-w-0 bg-white dark:bg-rui-grey-900 rounded-md overflow-hidden',
+    // Cap to the space the floating layer measured toward the viewport edge
+    // (set as --rui-floating-max-height by the menu's size middleware), falling
+    // back to 60vh. The body flex-shrinks within this so the footer stays put.
+    root: 'flex flex-col min-w-0 max-h-[var(--rui-floating-max-height,60vh)] bg-white dark:bg-rui-grey-900 rounded-md overflow-hidden',
     header: 'flex flex-col gap-3 p-4 border-b border-rui-grey-200 dark:border-rui-grey-800',
     title: 'text-h6 text-rui-text',
-    body: 'grid min-h-0 max-h-[60vh]',
+    body: 'grid min-h-0 flex-1',
     rail: 'flex flex-col gap-0.5 p-2 overflow-y-auto outline-none border-rui-grey-200 dark:border-rui-grey-800',
     railCount: 'ml-auto pl-2 text-caption tabular-nums text-rui-text-secondary',
     detail: 'flex flex-col gap-0.5 p-2 overflow-y-auto outline-none min-w-0',

@@ -8,6 +8,7 @@ import {
   type Middleware,
   offset,
   shift,
+  size,
 } from '@floating-ui/dom';
 import { type MaybeElement, unrefElement } from '@vueuse/core';
 import { type MaybeRefOrGetter, onMounted, type Ref, ref, watchEffect } from 'vue';
@@ -52,7 +53,19 @@ export interface FloatingOptions {
   shiftPadding?: number;
   /** Whether to auto-update position on scroll/resize. @default true */
   autoUpdate?: boolean | { scroll?: boolean; resize?: boolean };
+  /**
+   * Cap the floating element to the space available toward the viewport edge so
+   * it never overflows the window. Exposes the measured space as the
+   * `--rui-floating-max-height` custom property on the floating element; the
+   * content is responsible for consuming it by capping its own max-height to
+   * that variable and scrolling internally.
+   * @default false
+   */
+  size?: boolean;
 }
+
+/** Custom property carrying the space-aware max height set by the size middleware. */
+export const FLOATING_MAX_HEIGHT_VAR = '--rui-floating-max-height';
 
 export const DEFAULT_FLOATING_OPTIONS: Required<FloatingOptions> = {
   autoUpdate: true,
@@ -60,6 +73,7 @@ export const DEFAULT_FLOATING_OPTIONS: Required<FloatingOptions> = {
   offset: 2,
   placement: Placement.bottom,
   shiftPadding: 8,
+  size: false,
   strategy: Strategy.absolute,
 };
 
@@ -75,6 +89,22 @@ export interface UseFloatingReturn {
   reference: Ref<HTMLElement | undefined>;
   updatePosition: () => Promise<void>;
   visible: Ref<boolean>;
+}
+
+/**
+ * Cap the floating element to the space available toward the viewport edge and
+ * expose it as {@link FLOATING_MAX_HEIGHT_VAR}. The content decides how to use
+ * it (cap its own height and scroll internally); writing a custom property
+ * instead of a hard max-height keeps this non-invasive for elements that opt in
+ * but size themselves differently.
+ */
+function buildSizeMiddleware(padding: number): Middleware {
+  return size({
+    padding,
+    apply({ availableHeight, elements }) {
+      elements.floating.style.setProperty(FLOATING_MAX_HEIGHT_VAR, `${Math.max(0, Math.floor(availableHeight))}px`);
+    },
+  });
 }
 
 function buildMiddleware(opts: FloatingOptions, arrowEl: HTMLElement | null): Middleware[] {
@@ -96,6 +126,9 @@ function buildMiddleware(opts: FloatingOptions, arrowEl: HTMLElement | null): Mi
 
   if (arrowEl)
     mw.push(arrow({ element: arrowEl, padding: 4 }));
+
+  if (opts.size === true)
+    mw.push(buildSizeMiddleware(opts.shiftPadding ?? DEFAULT_FLOATING_OPTIONS.shiftPadding));
 
   return mw;
 }

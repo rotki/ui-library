@@ -220,6 +220,23 @@ describe('components/forms/category-picker/RuiCategoryPicker.vue', () => {
     expect(focusSpy).toHaveBeenCalledWith({ preventScroll: true });
   });
 
+  it('caps the panel to the floating size middleware height and lets the body shrink', async () => {
+    wrapper = mountPicker();
+    const panel = await openPicker(wrapper);
+
+    // The size middleware writes the available viewport space into
+    // --rui-floating-max-height; the panel caps to it so the popover never
+    // overflows the window bottom, falling back to 60vh before it is measured.
+    expect(panel.className).toContain('max-h-[var(--rui-floating-max-height,60vh)]');
+
+    // The body flex-shrinks inside that cap (flex-1, not a fixed max-h) so the
+    // footer stays anchored and each pane scrolls internally instead.
+    const body = panel.querySelector<HTMLElement>('.grid');
+    assertExists(body);
+    expect(body.className).toContain('flex-1');
+    expect(body.className).not.toContain('max-h-[60vh]');
+  });
+
   it('renders the field label, required marker and error messages', async () => {
     wrapper = mountPicker({ errorMessages: 'This field is required', required: true });
 

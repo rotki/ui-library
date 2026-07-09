@@ -203,11 +203,14 @@ const shellProps = computed<Record<string, unknown>>(() => {
     // Anchor to the field box, not the wrapper, so the popover sits directly
     // under the input instead of below the reserved details row.
     anchorEl: get(fieldRef) ?? undefined,
-    classNames: { menu: 'z-[9999]' },
+    // Drop the menu's default vertical padding so the popover box equals our
+    // panel: the size middleware caps the panel to the available height, and
+    // any extra chrome padding would push the popover past the viewport edge.
+    classNames: { content: 'py-0', menu: 'z-[9999]' },
     closeOnContentClick: false,
     disableAutoFocus: true,
     fullWidth: true,
-    options: { placement: Placement.bottomStart },
+    options: { placement: Placement.bottomStart, size: true },
     persistent: dialogOptions?.persistent,
     persistOnActivatorClick: true,
   };

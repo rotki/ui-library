@@ -14,6 +14,8 @@ export interface RuiMenuClassNames {
   root?: VueClassValue;
   wrapper?: VueClassValue;
   menu?: VueClassValue;
+  /** Overrides applied to the popover content box (e.g. to drop its default padding). */
+  content?: VueClassValue;
 }
 
 export interface MenuProps {
@@ -297,7 +299,7 @@ onClickOutside(menu, () => {
             ref="menuContent"
             key="menu"
             data-id="content"
-            :class="ui.content()"
+            :class="ui.content({ class: cn(classNames?.content) })"
             tabindex="-1"
             v-bind="baseMenuAttrs"
           >
