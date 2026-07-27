@@ -68,7 +68,9 @@ const buttonGroupStyles = tv({
     variant: {
       default: {},
       outlined: {
-        root: 'outline-rui-text divide-rui-text',
+        // Matches RuiButton's colourless outlined treatment: a neutral edge at Material's
+        // 23%, rather than an outline and dividers as dark as the labels themselves.
+        root: 'outline-black/[0.23] divide-black/[0.23] dark:outline-white/[0.23] dark:divide-white/[0.23]',
       },
       text: {},
     },

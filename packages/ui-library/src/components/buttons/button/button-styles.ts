@@ -107,7 +107,11 @@ export const buttonStyles = tv({
     { color: 'grey', active: true, class: { root: 'bg-rui-grey-50' } },
     { color: 'grey', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-black/[.04] active:bg-black/10 dark:bg-transparent dark:active:bg-white/10 dark:hover:bg-white/[.04] dark:text-rui-text' } },
     { color: 'grey', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-black/10 dark:bg-white/30' } },
-    { color: 'grey', variant: 'outlined', class: { root: 'outline-rui-text' } },
+    // Material draws the colourless outlined button at 23% of the text colour, not at
+    // full strength: an outline as dark as the label reads as an error state and shouts
+    // next to the context colours, which are already at 50% (see below). The rest of the
+    // library uses the same restraint for neutral edges (cards and tables sit at 12%).
+    { color: 'grey', variant: 'outlined', class: { root: 'outline-black/[0.23] dark:outline-white/[0.23]' } },
     { color: 'grey', variant: 'text', class: { root: 'text-rui-text-secondary' } },
 
     // === Context colors — outlined/text variants ===
