@@ -151,3 +151,38 @@ test.describe('datetimepicker segment typing', () => {
     expect(await readValue(page)).toMatch(/^02\/01\/2023 01:45$/);
   });
 });
+
+test.describe('datetimepicker keyboard passthrough', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/datetimepickers');
+  });
+
+  test.afterEach(async ({ page }) => {
+    await page.keyboard.press('Escape');
+  });
+
+  test('ctrl+a reaches the input instead of being swallowed', async ({ page }) => {
+    const input = page.getByRole('textbox').first();
+    await input.click();
+
+    await page.keyboard.press('ControlOrMeta+a');
+
+    const selection = await input.evaluate((el) => {
+      if (!(el instanceof HTMLInputElement))
+        throw new TypeError('expected input element');
+      return { end: el.selectionEnd, length: el.value.length, start: el.selectionStart };
+    });
+
+    expect(selection.start).toBe(0);
+    expect(selection.end).toBe(selection.length);
+  });
+
+  test('escape closes the menu', async ({ page }) => {
+    await page.getByRole('textbox').first().click();
+    await expect(page.getByRole('menu')).toBeVisible();
+
+    await page.keyboard.press('Escape');
+
+    await expect(page.getByRole('menu')).toBeHidden();
+  });
+});

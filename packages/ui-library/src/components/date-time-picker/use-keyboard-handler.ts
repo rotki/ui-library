@@ -221,9 +221,11 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     if (disabled || readonly)
       return;
     const { key } = event;
-    if (key === 'Tab')
+    // Modifier combos belong to the browser: ctrl/cmd+c, ctrl/cmd+v, ctrl/cmd+a,
+    // reload, and so on. Swallowing them made copy and paste impossible.
+    if (event.ctrlKey || event.metaKey || event.altKey)
       return;
-    event.preventDefault();
+
     if (key === 'ArrowRight' || key === 'ArrowLeft')
       navigateSegments(key);
     else if (key === 'ArrowUp' || key === 'ArrowDown')
@@ -234,6 +236,12 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
       onInputDeletePressed(event);
     else if (/^\d$/.test(key))
       handleDigitPressed(event, key);
+    else
+      // Tab moves out of the field, Escape closes the menu, Enter submits the
+      // surrounding form: keys the picker does not own must keep their default.
+      return;
+
+    event.preventDefault();
   }
 
   // Track the segment that was clicked, so handleFocus can restore it after DOM updates

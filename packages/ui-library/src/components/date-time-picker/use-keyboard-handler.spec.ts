@@ -153,6 +153,66 @@ describe('use-keyboard-handler', () => {
 
       expect(preventDefaultSpy).toHaveBeenCalled();
     });
+
+    it.each([
+      ['ctrl+c', { ctrlKey: true, key: 'c' }],
+      ['ctrl+v', { ctrlKey: true, key: 'v' }],
+      ['ctrl+a', { ctrlKey: true, key: 'a' }],
+      ['meta+v', { key: 'v', metaKey: true }],
+      ['ctrl+r', { ctrlKey: true, key: 'r' }],
+    ])('should let %s through to the browser', (_name, init) => {
+      const { handler, mockInput, mockSetValue } = createMockOptions();
+
+      const event = new KeyboardEvent('keydown', init);
+      Object.defineProperty(event, 'target', { value: mockInput });
+      const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+
+      handler.handleKeyDown(event);
+
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+      expect(mockSetValue).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ['Escape'],
+      ['Enter'],
+      ['Home'],
+      ['End'],
+      ['F5'],
+      ['a'],
+    ])('should not swallow %s', (key) => {
+      const { handler, mockInput, mockSetValue } = createMockOptions();
+
+      const event = new KeyboardEvent('keydown', { key });
+      Object.defineProperty(event, 'target', { value: mockInput });
+      const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+
+      handler.handleKeyDown(event);
+
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+      expect(mockSetValue).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ['ArrowLeft'],
+      ['ArrowRight'],
+      ['ArrowUp'],
+      ['ArrowDown'],
+      ['Backspace'],
+      ['Delete'],
+    ])('should still own %s', (key) => {
+      const { handler, mockInput } = createMockOptions({
+        cursorPosition: ref<number>(1),
+      });
+
+      const event = new KeyboardEvent('keydown', { key });
+      Object.defineProperty(event, 'target', { value: mockInput });
+      const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+
+      handler.handleKeyDown(event);
+
+      expect(preventDefaultSpy).toHaveBeenCalled();
+    });
   });
 
   describe('clear', () => {
