@@ -706,4 +706,123 @@ describe('components/calendar/RuiCalendar.vue', () => {
       expect(emittedValue.getSeconds()).toBe(45);
     });
   });
+
+  describe('keyboard navigation', () => {
+    function gridCells(view: VueWrapper<InstanceType<typeof RuiCalendar>>) {
+      return view.findAll('[role=gridcell]');
+    }
+
+    function tabbableKey(view: VueWrapper<InstanceType<typeof RuiCalendar>>): string | undefined {
+      return gridCells(view).find(cell => cell.attributes('tabindex') === '0')?.attributes('data-id');
+    }
+
+    async function pressOnGrid(view: VueWrapper<InstanceType<typeof RuiCalendar>>, key: string): Promise<void> {
+      await view.find('[role=grid]').trigger('keydown', { key });
+      await nextTick();
+      await nextTick();
+    }
+
+    it('exposes the days as a grid with rows and column headers', () => {
+      wrapper = createWrapper({ props: { modelValue: new Date(2023, 0, 15) } });
+
+      expect(wrapper.find('[role=grid]').exists()).toBe(true);
+      // six week rows plus the weekday header row
+      expect(wrapper.findAll('[role=row]')).toHaveLength(7);
+      expect(wrapper.findAll('[role=columnheader]')).toHaveLength(7);
+      expect(gridCells(wrapper)).toHaveLength(42);
+    });
+
+    it('names every day and marks the selected one', () => {
+      wrapper = createWrapper({ props: { modelValue: new Date(2023, 0, 15) } });
+
+      const selected = gridCells(wrapper).find(cell => cell.attributes('data-id') === '2023-01-15');
+      assert(selected);
+      expect(selected.attributes('aria-label')).toBe('Sunday, January 15, 2023');
+      expect(selected.attributes('aria-selected')).toBe('true');
+
+      const other = gridCells(wrapper).find(cell => cell.attributes('data-id') === '2023-01-16');
+      expect(other?.attributes('aria-selected')).toBe('false');
+    });
+
+    it('keeps exactly one day in the tab order, starting at the selection', () => {
+      wrapper = createWrapper({ props: { modelValue: new Date(2023, 0, 15) } });
+
+      expect(gridCells(wrapper).filter(cell => cell.attributes('tabindex') === '0')).toHaveLength(1);
+      expect(tabbableKey(wrapper)).toBe('2023-01-15');
+    });
+
+    it('moves a day with the left and right arrows', async () => {
+      wrapper = createWrapper({ props: { modelValue: new Date(2023, 0, 15) } });
+
+      await pressOnGrid(wrapper, 'ArrowRight');
+      expect(tabbableKey(wrapper)).toBe('2023-01-16');
+
+      await pressOnGrid(wrapper, 'ArrowLeft');
+      expect(tabbableKey(wrapper)).toBe('2023-01-15');
+    });
+
+    it('moves a week with the up and down arrows', async () => {
+      wrapper = createWrapper({ props: { modelValue: new Date(2023, 0, 15) } });
+
+      await pressOnGrid(wrapper, 'ArrowDown');
+      expect(tabbableKey(wrapper)).toBe('2023-01-22');
+
+      await pressOnGrid(wrapper, 'ArrowUp');
+      expect(tabbableKey(wrapper)).toBe('2023-01-15');
+    });
+
+    it('moves to the start and end of the week with home and end', async () => {
+      wrapper = createWrapper({ props: { modelValue: new Date(2023, 0, 18) } });
+
+      await pressOnGrid(wrapper, 'End');
+      expect(tabbableKey(wrapper)).toBe('2023-01-21');
+
+      await pressOnGrid(wrapper, 'Home');
+      expect(tabbableKey(wrapper)).toBe('2023-01-15');
+    });
+
+    it('turns the page with pageup and pagedown', async () => {
+      wrapper = createWrapper({ props: { modelValue: new Date(2023, 0, 15) } });
+
+      await pressOnGrid(wrapper, 'PageDown');
+      expect(tabbableKey(wrapper)).toBe('2023-02-15');
+      expect(wrapper.find('[data-id=header-title]').text()).toContain('February');
+
+      await pressOnGrid(wrapper, 'PageUp');
+      expect(tabbableKey(wrapper)).toBe('2023-01-15');
+      expect(wrapper.find('[data-id=header-title]').text()).toContain('January');
+    });
+
+    it('turns the page when an arrow crosses into another month', async () => {
+      wrapper = createWrapper({ props: { modelValue: new Date(2023, 0, 2) } });
+
+      // 02/01/2023 is a Monday, so one week back lands in December
+      await pressOnGrid(wrapper, 'ArrowUp');
+
+      expect(tabbableKey(wrapper)).toBe('2022-12-26');
+      expect(wrapper.find('[data-id=header-title]').text()).toContain('December');
+    });
+
+    it('stops at a min date instead of walking past it', async () => {
+      wrapper = createWrapper({
+        props: {
+          minDate: new Date(2023, 0, 15),
+          modelValue: new Date(2023, 0, 15),
+        },
+      });
+
+      await pressOnGrid(wrapper, 'ArrowLeft');
+
+      expect(tabbableKey(wrapper)).toBe('2023-01-15');
+    });
+
+    it('emits the page title when the keyboard turns the month', async () => {
+      wrapper = createWrapper({ props: { modelValue: new Date(2023, 0, 15) } });
+
+      await pressOnGrid(wrapper, 'PageDown');
+
+      const pages = wrapper.emitted('update:pages');
+      expect(pages?.at(-1)).toEqual([[{ title: 'February 2023' }]]);
+    });
+  });
 });

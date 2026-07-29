@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { get, isDefined, set } from '@vueuse/core';
-import { inject, ref, watch } from 'vue';
+import { computed, inject, nextTick, ref, useTemplateRef, watch } from 'vue';
 import {
   CalendarStateSymbol,
   getDaysOfWeek,
@@ -180,58 +180,184 @@ function selectDate(dayData: { date: Date; isInRange: boolean; isSelected: boole
   set(model, updateModel);
 }
 
+// --- keyboard navigation -------------------------------------------------
+// The grid is a roving tabindex: one day is tabbable and the arrows move it,
+// so crossing the calendar costs one Tab instead of 42.
+
+const gridRef = useTemplateRef<HTMLDivElement>('grid');
+const activeKey = ref<string>('');
+
+const dayLabelFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'full' });
+
+const KEY_DAY_OFFSETS: Record<string, number> = {
+  ArrowDown: 7,
+  ArrowLeft: -1,
+  ArrowRight: 1,
+  ArrowUp: -7,
+};
+
+const weeks = computed<Array<typeof calendarDays.value>>(() => {
+  const days = get(calendarDays);
+  const result = [];
+  for (let i = 0; i < days.length; i += 7)
+    result.push(days.slice(i, i + 7));
+  return result;
+});
+
+function preferredActiveKey(): string {
+  const days = get(calendarDays);
+  const selected = days.find(day => day.isSelected && day.isInRange);
+  const todayInView = days.find(day => day.isToday && day.isCurrentMonth && day.isInRange);
+  const firstSelectable = days.find(day => day.isCurrentMonth && day.isInRange);
+  return (selected ?? todayInView ?? firstSelectable ?? days[0])?.key ?? '';
+}
+
+function syncActiveKey(): void {
+  const days = get(calendarDays);
+  if (!days.some(day => day.key === get(activeKey)))
+    set(activeKey, preferredActiveKey());
+}
+
+function keyToDate(key: string): Date {
+  const [year, month, day] = key.split('-').map(Number);
+  return new Date(year ?? 0, (month ?? 1) - 1, day ?? 1, 12, 0, 0, 0);
+}
+
+function focusKey(key: string): void {
+  set(activeKey, key);
+  nextTick(() => {
+    get(gridRef)?.querySelector<HTMLButtonElement>(`[data-id="${key}"]`)?.focus();
+  });
+}
+
+function moveTo(target: Date): void {
+  const { maxDate, minDate } = calendarState;
+  const maxDateValue = isDefined(maxDate) ? get(maxDate) : null;
+  const minDateValue = isDefined(minDate) ? get(minDate) : null;
+
+  // min/max bound a contiguous range, so a blocked step means the edge is here
+  if (!isDateInRangeCheck(target, maxDateValue, minDateValue))
+    return;
+
+  const key = createDateKey(target);
+
+  // Landing on another month turns the page, even when that day happens to be
+  // rendered as a spill day in the current window — otherwise the header and
+  // the focused day disagree about which month is being edited.
+  if (target.getMonth() === viewMonth && target.getFullYear() === viewYear) {
+    focusKey(key);
+    return;
+  }
+
+  set(calendarState.viewMonth, target.getMonth());
+  set(calendarState.viewYear, target.getFullYear());
+  nextTick(() => {
+    focusKey(key);
+  });
+}
+
+function onKeydown(event: KeyboardEvent): void {
+  const active = get(activeKey);
+  if (!active)
+    return;
+
+  const current = keyToDate(active);
+  const dayOffset = KEY_DAY_OFFSETS[event.key];
+
+  if (dayOffset !== undefined) {
+    event.preventDefault();
+    moveTo(new Date(current.getFullYear(), current.getMonth(), current.getDate() + dayOffset, 12, 0, 0, 0));
+  }
+  else if (event.key === 'Home' || event.key === 'End') {
+    event.preventDefault();
+    const offset = event.key === 'Home' ? -current.getDay() : 6 - current.getDay();
+    moveTo(new Date(current.getFullYear(), current.getMonth(), current.getDate() + offset, 12, 0, 0, 0));
+  }
+  else if (event.key === 'PageUp' || event.key === 'PageDown') {
+    event.preventDefault();
+    const delta = event.key === 'PageUp' ? -1 : 1;
+    moveTo(new Date(current.getFullYear(), current.getMonth() + delta, current.getDate(), 12, 0, 0, 0));
+  }
+}
+
 // Initial calculation
 calculateCalendarDays();
+syncActiveKey();
 
 // Watchers for recalculation only when needed
 watch([() => viewMonth, () => viewYear], () => {
   calculateCalendarDays();
+  syncActiveKey();
 });
 
 watch(model, () => {
   calculateCalendarDays();
+  syncActiveKey();
 });
 
 watch(
   [() => calendarState.maxDate, () => calendarState.minDate],
   () => {
     calculateCalendarDays();
+    syncActiveKey();
   },
 );
 </script>
 
 <template>
   <div class="w-full p-2 pt-0">
-    <div class="grid grid-cols-7 pb-2">
-      <span
-        v-for="day in daysOfWeek"
-        :key="day"
-        class="py-2 text-xs font-medium text-center text-gray-500 dark:text-gray-400"
+    <div
+      ref="grid"
+      role="grid"
+      class="grid grid-cols-7 gap-0.5"
+      @keydown="onKeydown($event)"
+    >
+      <div
+        role="row"
+        class="contents"
       >
-        {{ day }}
-      </span>
-    </div>
+        <span
+          v-for="day in daysOfWeek"
+          :key="day"
+          role="columnheader"
+          class="py-2 pb-4 text-xs font-medium text-center text-gray-500 dark:text-gray-400"
+        >
+          {{ day }}
+        </span>
+      </div>
 
-    <div class="grid grid-cols-7 gap-0.5">
-      <button
-        v-for="dayData in get(calendarDays)"
-        :key="dayData.key"
-        type="button"
-        :data-id="dayData.key"
-        :data-current-month="dayData.isCurrentMonth || undefined"
-        :data-selected="dayData.isSelected || undefined"
-        :data-today="(dayData.isToday && !dayData.isSelected) || undefined"
-        :class="dayButton({
-          selected: dayData.isSelected,
-          currentMonth: !dayData.isSelected && dayData.isCurrentMonth,
-          inRange: dayData.isInRange,
-          today: dayData.isToday && !dayData.isSelected,
-        })"
-        :disabled="!dayData.isInRange"
-        @click.stop="selectDate(dayData)"
+      <div
+        v-for="(week, index) in weeks"
+        :key="index"
+        role="row"
+        class="contents"
       >
-        {{ dayData.dayNumber }}
-      </button>
+        <button
+          v-for="dayData in week"
+          :key="dayData.key"
+          type="button"
+          role="gridcell"
+          :data-id="dayData.key"
+          :data-current-month="dayData.isCurrentMonth || undefined"
+          :data-selected="dayData.isSelected || undefined"
+          :data-today="(dayData.isToday && !dayData.isSelected) || undefined"
+          :class="dayButton({
+            selected: dayData.isSelected,
+            currentMonth: !dayData.isSelected && dayData.isCurrentMonth,
+            inRange: dayData.isInRange,
+            today: dayData.isToday && !dayData.isSelected,
+          })"
+          :disabled="!dayData.isInRange"
+          :tabindex="dayData.key === activeKey ? 0 : -1"
+          :aria-label="dayLabelFormatter.format(dayData.date)"
+          :aria-selected="dayData.isSelected"
+          :aria-current="dayData.isToday ? 'date' : undefined"
+          @click.stop="selectDate(dayData)"
+          @focus="activeKey = dayData.key"
+        >
+          {{ dayData.dayNumber }}
+        </button>
+      </div>
     </div>
   </div>
 </template>

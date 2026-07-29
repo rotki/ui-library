@@ -65,6 +65,12 @@ provide(CalendarStateSymbol.valueOf(), {
   allowEmpty,
 } satisfies RuiCalendarState);
 
+// The view also turns from the grid's keyboard navigation, so the page title
+// follows the view instead of being emitted by whoever changed it.
+watch(monthTitle, (title) => {
+  emit('update:pages', [{ title }]);
+});
+
 function moveMonth(delta: number): void {
   let newMonth = get(viewMonth) + delta;
   let newYear = get(viewYear);
@@ -80,8 +86,6 @@ function moveMonth(delta: number): void {
 
   set(viewMonth, newMonth);
   set(viewYear, newYear);
-
-  emit('update:pages', [{ title: get(monthTitle) }]);
 }
 
 function move(date: Date | number): void {

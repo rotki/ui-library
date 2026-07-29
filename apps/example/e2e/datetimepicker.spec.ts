@@ -268,6 +268,60 @@ test.describe('datetimepicker keyboard passthrough', () => {
   });
 });
 
+test.describe('datetimepicker calendar keyboard', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/datetimepickers');
+  });
+
+  test.afterEach(async ({ page }) => {
+    await page.keyboard.press('Escape');
+  });
+
+  test('the whole calendar is reachable and usable without a mouse', async ({ page }) => {
+    const input = page.getByRole('textbox').first();
+    await input.focus();
+    await page.keyboard.press('Alt+ArrowDown');
+
+    const grid = page.getByRole('grid');
+    await expect(grid).toBeVisible();
+
+    // opening from the keyboard hands focus to the calendar, which is
+    // teleported to the body and therefore never adjacent in the tab order
+    await expect(grid.locator('[role=gridcell][tabindex="0"]')).toBeFocused();
+
+    // the initial value is 02/01/2023, so a week back lands in December
+    await page.keyboard.press('ArrowUp');
+    await expect(page.getByTestId('header-title')).toHaveText('December 2022');
+    await expect(grid.getByTestId('2022-12-26')).toBeFocused();
+
+    await page.keyboard.press('ArrowRight');
+    await expect(grid.getByTestId('2022-12-27')).toBeFocused();
+
+    await page.keyboard.press('Enter');
+    await expect(input).toHaveValue('27/12/2022 20:20');
+  });
+
+  test('escape from the calendar closes it and returns focus to the field', async ({ page }) => {
+    const input = page.getByRole('textbox').first();
+    await input.focus();
+    await page.keyboard.press('Alt+ArrowDown');
+    await expect(page.getByRole('grid')).toBeVisible();
+
+    await page.keyboard.press('Escape');
+
+    await expect(page.getByRole('menu')).toBeHidden();
+    await expect(input).toBeFocused();
+  });
+
+  test('only one day of the grid is in the tab order', async ({ page }) => {
+    await page.getByRole('textbox').first().focus();
+    await page.keyboard.press('Alt+ArrowDown');
+
+    const tabbable = page.getByRole('grid').locator('[role=gridcell][tabindex="0"]');
+    await expect(tabbable).toHaveCount(1);
+  });
+});
+
 test.describe('datetimepicker across a DST boundary', () => {
   // Berlin is +01:00 in January and +02:00 in July
   test.use({ timezoneId: 'Europe/Berlin' });

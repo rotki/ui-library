@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { ComponentPublicInstance } from 'vue';
 import type { DateTimePickerAction, DateTimeSegmentType } from '@/components/date-time-picker/types';
 import type { TimePickerSelection } from '@/components/time-picker/RuiTimePicker.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
@@ -116,7 +117,7 @@ const toggleLabel = computed<string>(() => (get(isOpen)
 
 const textInput = useTemplateRef<HTMLInputElement>('textInput');
 const activator = useTemplateRef<HTMLDivElement>('activator');
-const menuWrapperRef = useTemplateRef<HTMLDivElement>('menuWrapperRef');
+const menuWrapperRef = useTemplateRef<ComponentPublicInstance>('menuWrapperRef');
 const calendarMenuOpen = ref<boolean>(false);
 
 const { focused: activatorFocusedWithin } = useFocusWithin(activator);
@@ -312,6 +313,43 @@ function handleInputClick(event: MouseEvent): void {
 }
 
 /**
+ * The menu is teleported to the body, so it never sits next to the field in
+ * the tab sequence. Opening it from the keyboard therefore moves focus into
+ * the calendar; opening it with the mouse leaves focus in the field, which is
+ * what `disable-auto-focus` on the menu is there for.
+ */
+const focusCalendarOnOpen = ref<boolean>(false);
+
+function focusCalendar(): void {
+  // the menu is teleported and mounts a frame later, so this waits for the
+  // wrapper to appear rather than guessing at a number of ticks
+  set(focusCalendarOnOpen, true);
+}
+
+watch(menuWrapperRef, (menu) => {
+  if (!menu || !get(focusCalendarOnOpen))
+    return;
+
+  set(focusCalendarOnOpen, false);
+  nextTick(() => {
+    const el = menu.$el as HTMLElement | undefined;
+    el?.querySelector<HTMLButtonElement>('[role="gridcell"][tabindex="0"]')?.focus({ preventScroll: true });
+  });
+});
+
+function focusField(): void {
+  nextTick(() => {
+    get(textInput)?.focus({ preventScroll: true });
+  });
+}
+
+/** Escape inside the calendar closes it and hands focus back to the field. */
+function closeFromMenu(): void {
+  set(isOpen, false);
+  focusField();
+}
+
+/**
  * The menu used to be mouse-only: the activator carried no key handlers, so
  * there was no way to reach the calendar from the keyboard. Alt+ArrowDown
  * opens it and Escape closes it, following the combobox convention, and the
@@ -324,6 +362,7 @@ function onKeyDown(event: KeyboardEvent): void {
   if (event.altKey && event.key === 'ArrowDown') {
     event.preventDefault();
     set(isOpen, true);
+    focusCalendar();
     return;
   }
 
@@ -508,6 +547,7 @@ watch(anyMenuOpen, (value) => {
         :min-date="minAllowedDate"
         :show-timezone="showTimezone"
         :actions="menuActions"
+        @keydown.escape="closeFromMenu()"
         @set-now="setNow()"
         @set-today="setToday()"
         @clear="clear()"
