@@ -334,6 +334,24 @@ test.describe('datetimepicker across a DST boundary', () => {
     await page.keyboard.press('Escape');
   });
 
+  test('the repeated hour of the fall back stays put when picked twice', async ({ page }) => {
+    // 02:30 happens twice on 29/10/2023 in Berlin. Whichever instant gets
+    // chosen, re-picking the same day must not walk the value by an hour.
+    const input = page.getByRole('textbox').first();
+    await input.focus();
+    // focus starts on the first segment, and each full segment auto-advances
+    await page.keyboard.type('291020230230');
+    await expect(input).toHaveValue('29/10/2023 02:30');
+
+    await page.keyboard.press('Alt+ArrowDown');
+    const day = page.getByRole('grid').getByTestId('2023-10-29');
+    await day.click();
+    await expect(input).toHaveValue('29/10/2023 02:30');
+
+    await day.click();
+    await expect(input).toHaveValue('29/10/2023 02:30');
+  });
+
   test('picking a summer date from a winter value keeps the time', async ({ page }) => {
     const input = page.getByRole('textbox').first();
     await expect(input).toHaveValue('02/01/2023 20:20');
