@@ -2,7 +2,7 @@ import type { ComputedRef, Ref, WritableComputedRef } from 'vue';
 import type { SegmentData } from '@/components/date-time-picker/types';
 import type { TimeAccuracy } from '@/consts/time-accuracy';
 import dayjs, { type Dayjs } from 'dayjs';
-import { guessTimezone, includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
+import { formatWallClock, guessTimezone, includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
 import { useRuiI8n } from '@/composables/use-rui-i18n';
 import { RUI_I18N_KEYS } from '@/i18n/keys';
 import '@/components/date-time-picker/dayjs-setup';
@@ -250,14 +250,14 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
       const date = get(selectedDate);
       const time = get(selectedTime);
 
-      const updatedModel = dayjs.tz(isDefined(modelValue) ? get(modelValue) : undefined, get(selectedTimezone))
-        .year(date.getFullYear())
-        .month(date.getMonth())
-        .date(date.getDate())
-        .hour(time.getHours())
-        .minute(time.getMinutes())
-        .second(includeSeconds(accuracy) ? time.getSeconds() : 0)
-        .millisecond(includeMilliseconds(accuracy) ? time.getMilliseconds() : 0);
+      // The segments are a wall-clock reading, so they are formatted and parsed
+      // in the selected timezone. Mutating a `dayjs.tz()` built from the old
+      // value instead would keep that value's UTC offset, and moving the date
+      // across a DST boundary then shifted the time by an hour.
+      const updatedModel = dayjs.tz(
+        formatWallClock(date, time, accuracy),
+        get(selectedTimezone),
+      );
 
       if (!isDateValid(updatedModel)) {
         return;

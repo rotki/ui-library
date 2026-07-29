@@ -186,3 +186,32 @@ test.describe('datetimepicker keyboard passthrough', () => {
     await expect(page.getByRole('menu')).toBeHidden();
   });
 });
+
+test.describe('datetimepicker across a DST boundary', () => {
+  // Berlin is +01:00 in January and +02:00 in July
+  test.use({ timezoneId: 'Europe/Berlin' });
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/datetimepickers');
+  });
+
+  test.afterEach(async ({ page }) => {
+    await page.keyboard.press('Escape');
+  });
+
+  test('picking a summer date from a winter value keeps the time', async ({ page }) => {
+    const input = page.getByRole('textbox').first();
+    await expect(input).toHaveValue('02/01/2023 20:20');
+
+    await input.click();
+
+    // January 2023 -> July 2023
+    for (let i = 0; i < 6; i++)
+      await page.getByTestId('nav-next').click();
+    await expect(page.getByTestId('header-title')).toHaveText('July 2023');
+
+    await page.getByTestId('2023-07-15').click();
+
+    await expect(input).toHaveValue('15/07/2023 20:20');
+  });
+});
