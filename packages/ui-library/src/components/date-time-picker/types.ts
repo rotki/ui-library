@@ -17,3 +17,7 @@ export function isDateTimeSegmentType(value: string): value is DateTimeSegmentTy
 }
 
 export type SegmentData = Record<DateTimeSegmentType, Ref<number | undefined>>;
+
+export const DATE_TIME_PICKER_ACTIONS = ['now', 'today', 'clear'] as const;
+
+export type DateTimePickerAction = typeof DATE_TIME_PICKER_ACTIONS[number];

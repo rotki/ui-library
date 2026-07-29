@@ -2,6 +2,7 @@ import type { ComputedRef, Ref, WritableComputedRef } from 'vue';
 import type { SegmentData } from '@/components/date-time-picker/types';
 import type { TimeAccuracy } from '@/consts/time-accuracy';
 import dayjs, { type Dayjs } from 'dayjs';
+import { buildDateTime } from '@/components/date-time-picker/segment-utils';
 import { formatWallClock, guessTimezone, includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
 import { useRuiI8n } from '@/composables/use-rui-i18n';
 import { RUI_I18N_KEYS } from '@/i18n/keys';
@@ -43,6 +44,7 @@ interface DateTimeSelectionReturn {
   maxAllowedDate: ComputedRef<Date | undefined>;
   getDateTime: () => Dayjs;
   setNow: () => void;
+  setToday: () => void;
   clear: () => void;
   isDateValid: (date: Dayjs) => boolean;
 }
@@ -157,49 +159,15 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
   const valueSet = computed<boolean>(() => isDefined(selectedDate) && isDefined(selectedTime));
 
   function getDateTime(): Dayjs {
-    let dateTime = dayjs();
-
-    if (isDefined(selectedYear)) {
-      dateTime = dateTime.year(get(selectedYear));
-    }
-
-    if (isDefined(selectedMonth)) {
-      dateTime = dateTime.month(get(selectedMonth) - 1);
-    }
-
-    if (isDefined(selectedDay)) {
-      const daysInMonth = dateTime.daysInMonth();
-      const day = Math.min(get(selectedDay), daysInMonth);
-      dateTime = dateTime.date(day);
-    }
-
-    if (isDefined(selectedHour)) {
-      dateTime = dateTime.hour(get(selectedHour));
-    }
-
-    if (isDefined(selectedMinute)) {
-      dateTime = dateTime.minute(get(selectedMinute));
-    }
-
-    // Anything the accuracy does not expose as a segment is zeroed rather than
-    // inherited from the clock `dayjs()` started from, otherwise the current
-    // second/millisecond leaks into the value and an `epoch` comes out
-    // fractional.
-    if (isDefined(selectedSecond)) {
-      dateTime = dateTime.second(get(selectedSecond));
-    }
-    else if (!includeSeconds(accuracy)) {
-      dateTime = dateTime.second(0);
-    }
-
-    if (isDefined(selectedMillisecond)) {
-      dateTime = dateTime.millisecond(get(selectedMillisecond));
-    }
-    else if (!includeMilliseconds(accuracy)) {
-      dateTime = dateTime.millisecond(0);
-    }
-
-    return dateTime;
+    return buildDateTime({
+      day: get(selectedDay),
+      hour: get(selectedHour),
+      millisecond: get(selectedMillisecond),
+      minute: get(selectedMinute),
+      month: get(selectedMonth),
+      second: get(selectedSecond),
+      year: get(selectedYear),
+    }, accuracy);
   }
 
   function isDateValid(date: Dayjs): boolean {
@@ -291,6 +259,33 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
     set(selectedMinute, date.minute());
     set(selectedSecond, includeSeconds(accuracy) ? date.second() : 0);
     set(selectedMillisecond, includeMilliseconds(accuracy) ? date.millisecond() : 0);
+
+    nextTick(() => {
+      updateModelValue();
+    });
+  }
+
+  /**
+   * Moves the date part to today and leaves the time part alone, so a picked
+   * time survives. Falls back to midnight when no time has been entered yet.
+   */
+  function setToday(): void {
+    set(internalErrorMessages, []);
+
+    const date = dayjs();
+    set(now, date);
+    set(selectedYear, date.year());
+    set(selectedMonth, date.month() + 1);
+    set(selectedDay, date.date());
+
+    if (!isDefined(selectedHour))
+      set(selectedHour, 0);
+    if (!isDefined(selectedMinute))
+      set(selectedMinute, 0);
+    if (includeSeconds(accuracy) && !isDefined(selectedSecond))
+      set(selectedSecond, 0);
+    if (includeMilliseconds(accuracy) && !isDefined(selectedMillisecond))
+      set(selectedMillisecond, 0);
 
     nextTick(() => {
       updateModelValue();
@@ -394,6 +389,7 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
     selectedTimezone,
     selectedYear,
     setNow,
+    setToday,
     valueSet,
   };
 }

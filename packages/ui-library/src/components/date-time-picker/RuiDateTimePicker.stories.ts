@@ -168,6 +168,34 @@ export const HideDetails = meta.story({
   },
 });
 
+export const WithTimezone = meta.story({
+  args: {
+    accuracy: TimeAccuracy.SECOND,
+    modelValue: new Date(),
+    showTimezone: true,
+    variant: 'outlined',
+  },
+});
+
+export const AllActions = meta.story({
+  args: {
+    accuracy: TimeAccuracy.SECOND,
+    actions: ['now', 'today', 'clear'],
+    allowEmpty: true,
+    modelValue: new Date(),
+    variant: 'outlined',
+  },
+});
+
+export const NoActions = meta.story({
+  args: {
+    accuracy: TimeAccuracy.SECOND,
+    actions: [],
+    modelValue: new Date(),
+    variant: 'outlined',
+  },
+});
+
 export const Required = meta.story({
   args: {
     modelValue: new Date(),

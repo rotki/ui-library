@@ -152,6 +152,66 @@ test.describe('datetimepicker segment typing', () => {
   });
 });
 
+test.describe('datetimepicker menu footer actions', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/datetimepickers');
+  });
+
+  test.afterEach(async ({ page }) => {
+    await page.keyboard.press('Escape');
+  });
+
+  // The "All footer actions" picker starts at 02/01/2023 20:20:00
+  function actionsInput(page: Page) {
+    return page.getByTestId('picker-all-actions').locator('input');
+  }
+
+  test('today moves the date and keeps the picked time', async ({ page }) => {
+    const input = actionsInput(page);
+    await expect(input).toHaveValue('02/01/2023 20:20:00');
+
+    await input.click();
+    await page.getByTestId('action-today').click();
+
+    await expect(input).not.toHaveValue('02/01/2023 20:20:00');
+    // only the date part moved
+    await expect(input).toHaveValue(/ 20:20:00$/);
+  });
+
+  test('now replaces both the date and the time', async ({ page }) => {
+    const input = actionsInput(page);
+    await input.click();
+    await page.getByTestId('action-now').click();
+
+    await expect(input).not.toHaveValue(/ 20:20:00$/);
+    await expect(input).toHaveValue(/^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}$/);
+  });
+
+  test('clear empties an allowEmpty picker', async ({ page }) => {
+    const input = actionsInput(page);
+    await input.click();
+    await page.getByTestId('action-clear').click();
+
+    // a cleared picker falls back to rendering the bare format
+    await expect(input).toHaveValue('DD/MM/YYYY HH:mm:ss');
+  });
+
+  test('the default picker shows no timezone select and only the now action', async ({ page }) => {
+    await page.getByRole('textbox').first().click();
+
+    const menu = page.getByRole('menu');
+    await expect(menu.getByTestId('action-now')).toBeVisible();
+    await expect(menu.getByTestId('action-today')).toBeHidden();
+    await expect(menu.getByTestId('timezone-select')).toBeHidden();
+  });
+
+  test('the timezone select is rendered when showTimezone is set', async ({ page }) => {
+    await page.getByTestId('picker-timezone').locator('input').first().click();
+
+    await expect(page.getByRole('menu').getByTestId('timezone-select')).toBeVisible();
+  });
+});
+
 test.describe('datetimepicker keyboard passthrough', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/datetimepickers');

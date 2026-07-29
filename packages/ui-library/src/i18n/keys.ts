@@ -1,8 +1,11 @@
 export const RUI_I18N_KEYS = {
   dateTimePicker: {
+    clear: 'rui.date_time_picker.clear',
     dateAfterMax: 'rui.date_time_picker.date_after_max',
     dateBeforeMin: 'rui.date_time_picker.date_before_min',
     dateInFuture: 'rui.date_time_picker.date_in_future',
+    now: 'rui.date_time_picker.now',
+    today: 'rui.date_time_picker.today',
   },
 } as const;
 

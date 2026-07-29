@@ -10,6 +10,8 @@ const timePickers = ref<RuiDateTimePickerProps[]>([{
   modelValue: new Date(2023, 0, 2, 20, 20),
 }]);
 
+const allActionsValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
+const timezoneValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
 const parentMenuOpen = ref<boolean>(false);
 const pickerMenuOpen = ref<boolean>(false);
 const insideMenuValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
@@ -26,6 +28,37 @@ const insideMenuValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
         :key="i"
         v-model="field.modelValue"
         v-bind="objectOmit(field, ['modelValue'])"
+      />
+    </div>
+    <div
+      class="mt-8"
+      data-id="picker-all-actions-section"
+    >
+      <h3 class="text-lg font-semibold mb-4">
+        All footer actions
+      </h3>
+      <RuiDateTimePicker
+        v-model="allActionsValue"
+        data-id="picker-all-actions"
+        accuracy="second"
+        :actions="['now', 'today', 'clear']"
+        allow-empty
+        variant="outlined"
+      />
+    </div>
+    <div
+      class="mt-8"
+      data-id="picker-timezone-section"
+    >
+      <h3 class="text-lg font-semibold mb-4">
+        Timezone shown
+      </h3>
+      <RuiDateTimePicker
+        v-model="timezoneValue"
+        data-id="picker-timezone"
+        accuracy="second"
+        show-timezone
+        variant="outlined"
       />
     </div>
     <div

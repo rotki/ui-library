@@ -10,6 +10,7 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiDateTimePick
     },
     props: {
       accuracy: TimeAccuracy.MINUTE,
+      actions: ['now'],
       calendarMenuOpen: false,
       selectedDate: undefined,
       selectedHour: undefined,
@@ -18,6 +19,7 @@ function createWrapper(options?: ComponentMountingOptions<typeof RuiDateTimePick
       selectedSecond: undefined,
       selectedTime: undefined,
       selectedTimezone: 'UTC',
+      showTimezone: true,
       timeSelection: 'hour',
     },
     ...options,
@@ -42,12 +44,103 @@ describe('ruiDateTimePickerMenu', () => {
 
   it('renders set-now button', () => {
     const wrapper = createWrapper();
-    expect(wrapper.find('[data-id=set-now]').exists()).toBe(true);
+    expect(wrapper.find('[data-id=action-now]').exists()).toBe(true);
   });
 
-  it('renders timezone autocomplete', () => {
+  it('renders timezone autocomplete when showTimezone is set', () => {
     const wrapper = createWrapper();
     expect(wrapper.findComponent({ name: 'RuiAutoComplete' }).exists()).toBe(true);
+  });
+
+  describe('timezone', () => {
+    it('does not render the timezone select unless showTimezone is set', () => {
+      const wrapper = createWrapper({
+        props: {
+          accuracy: TimeAccuracy.MINUTE,
+          calendarMenuOpen: false,
+          selectedDate: undefined,
+          selectedHour: undefined,
+          selectedMillisecond: undefined,
+          selectedMinute: undefined,
+          selectedSecond: undefined,
+          selectedTime: undefined,
+          selectedTimezone: 'UTC',
+          timeSelection: 'hour',
+        },
+      });
+
+      expect(wrapper.findComponent({ name: 'RuiTimezoneSelect' }).exists()).toBe(false);
+    });
+  });
+
+  describe('actions', () => {
+    it('renders no footer when actions is empty', () => {
+      const wrapper = createWrapper({
+        props: {
+          accuracy: TimeAccuracy.MINUTE,
+          actions: [],
+          calendarMenuOpen: false,
+          selectedDate: undefined,
+          selectedHour: undefined,
+          selectedMillisecond: undefined,
+          selectedMinute: undefined,
+          selectedSecond: undefined,
+          selectedTime: undefined,
+          selectedTimezone: 'UTC',
+          timeSelection: 'hour',
+        },
+      });
+
+      expect(wrapper.find('[data-id=actions]').exists()).toBe(false);
+    });
+
+    it('renders the actions in the order they are passed', () => {
+      const wrapper = createWrapper({
+        props: {
+          accuracy: TimeAccuracy.MINUTE,
+          actions: ['today', 'now', 'clear'],
+          calendarMenuOpen: false,
+          selectedDate: undefined,
+          selectedHour: undefined,
+          selectedMillisecond: undefined,
+          selectedMinute: undefined,
+          selectedSecond: undefined,
+          selectedTime: undefined,
+          selectedTimezone: 'UTC',
+          timeSelection: 'hour',
+        },
+      });
+
+      const rendered = wrapper.findAll('[data-id=actions] [data-id^=action-]');
+      expect(rendered.map(button => button.attributes('data-id')))
+        .toEqual(['action-today', 'action-now', 'action-clear']);
+    });
+
+    it.each([
+      ['now', 'set-now'],
+      ['today', 'set-today'],
+      ['clear', 'clear'],
+    ])('emits %s action', async (action, event) => {
+      const wrapper = createWrapper({
+        props: {
+          accuracy: TimeAccuracy.MINUTE,
+          actions: [action as 'now' | 'today' | 'clear'],
+          calendarMenuOpen: false,
+          selectedDate: undefined,
+          selectedHour: undefined,
+          selectedMillisecond: undefined,
+          selectedMinute: undefined,
+          selectedSecond: undefined,
+          selectedTime: undefined,
+          selectedTimezone: 'UTC',
+          timeSelection: 'hour',
+        },
+      });
+
+      await wrapper.find(`[data-id=action-${action}]`).trigger('click');
+
+      expect(wrapper.emitted(event)).toHaveLength(1);
+    });
   });
 
   describe('props', () => {
@@ -199,7 +292,7 @@ describe('ruiDateTimePickerMenu', () => {
     it('should emit set-now event when clicked', async () => {
       const wrapper = createWrapper();
 
-      await wrapper.find('[data-id=set-now]').trigger('click');
+      await wrapper.find('[data-id=action-now]').trigger('click');
 
       expect(wrapper.emitted('set-now')).toBeTruthy();
       expect(wrapper.emitted('set-now')?.length).toBe(1);

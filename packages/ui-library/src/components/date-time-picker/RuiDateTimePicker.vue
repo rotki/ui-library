@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { DateTimeSegmentType } from '@/components/date-time-picker/types';
+import type { DateTimePickerAction, DateTimeSegmentType } from '@/components/date-time-picker/types';
 import type { TimePickerSelection } from '@/components/time-picker/RuiTimePicker.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import { dateTimePickerStyles, type DateTimePickerVariant } from '@/components/date-time-picker/date-time-picker-styles';
@@ -43,6 +43,17 @@ export interface RuiDateTimePickerProps {
   successMessages?: string | string[];
   hideDetails?: boolean;
   required?: boolean;
+  /**
+   * Renders the timezone selector in the menu. Off by default: the value is
+   * emitted as a date or an epoch, so the picked timezone does not survive a
+   * round trip and most consumers work in local time.
+   */
+  showTimezone?: boolean;
+  /**
+   * Actions rendered in the menu footer. `clear` is only rendered when the
+   * picker is `allowEmpty`. Pass an empty array to drop the footer entirely.
+   */
+  actions?: DateTimePickerAction[];
 }
 
 defineOptions({
@@ -70,6 +81,8 @@ const {
   errorMessages = [],
   successMessages = [],
   required = false,
+  showTimezone = false,
+  actions = ['now'],
 } = defineProps<RuiDateTimePickerProps>();
 
 defineSlots<{
@@ -118,6 +131,7 @@ const {
   selectedTimezone,
   selectedYear,
   setNow,
+  setToday,
   valueSet,
 } = useDateTimeSelection({
   accuracy,
@@ -291,6 +305,10 @@ function arrowClicked(event: MouseEvent): void {
   }
 }
 
+const menuActions = computed<DateTimePickerAction[]>(
+  () => actions.filter(action => action !== 'clear' || allowEmpty),
+);
+
 const anyMenuOpen = computed<boolean>(() => get(isOpen) || get(calendarMenuOpen));
 
 watch(anyMenuOpen, (value) => {
@@ -434,7 +452,11 @@ watch(anyMenuOpen, (value) => {
         :accuracy="accuracy"
         :max-date="maxAllowedDate"
         :min-date="minAllowedDate"
+        :show-timezone="showTimezone"
+        :actions="menuActions"
         @set-now="setNow()"
+        @set-today="setToday()"
+        @clear="clear()"
       >
         <slot name="menu-content" />
       </RuiDateTimePickerMenu>

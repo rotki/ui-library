@@ -284,7 +284,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     await vi.runOnlyPendingTimersAsync();
     await wrapper.find('[data-id=activator]').trigger('click');
     await vi.runOnlyPendingTimersAsync();
-    await wrapper.find('[data-id=set-now]').trigger('click');
+    await wrapper.find('[data-id=action-now]').trigger('click');
 
     const modelValue = wrapper.emitted('update:modelValue');
     expect(modelValue).toBeTruthy();
@@ -314,7 +314,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     await vi.runOnlyPendingTimersAsync();
     await wrapper.find('[data-id=activator]').trigger('click');
     await vi.runOnlyPendingTimersAsync();
-    await wrapper.find('[data-id=set-now]').trigger('click');
+    await wrapper.find('[data-id=action-now]').trigger('click');
 
     const modelValue = wrapper.emitted('update:modelValue');
     expect(modelValue).toBeTruthy();
@@ -545,7 +545,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     await vi.runOnlyPendingTimersAsync();
     await wrapper.find('[data-id=activator]').trigger('click');
     await vi.runOnlyPendingTimersAsync();
-    await wrapper.find('[data-id=set-now]').trigger('click');
+    await wrapper.find('[data-id=action-now]').trigger('click');
 
     const modelValue = wrapper.emitted('update:modelValue');
     expect(modelValue).toBeTruthy();
@@ -1133,7 +1133,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       await wrapper.find('[data-id=activator]').trigger('click');
       await vi.runOnlyPendingTimersAsync();
       const expectedSeconds = new Date().getSeconds();
-      await wrapper.find('[data-id=set-now]').trigger('click');
+      await wrapper.find('[data-id=action-now]').trigger('click');
       await vi.runOnlyPendingTimersAsync();
 
       const modelValue = wrapper.emitted('update:modelValue');
@@ -1159,7 +1159,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       await vi.runOnlyPendingTimersAsync();
       await wrapper.find('[data-id=activator]').trigger('click');
       await vi.runOnlyPendingTimersAsync();
-      await wrapper.find('[data-id=set-now]').trigger('click');
+      await wrapper.find('[data-id=action-now]').trigger('click');
       await vi.runOnlyPendingTimersAsync();
 
       const modelValue = wrapper.emitted('update:modelValue');
@@ -2427,6 +2427,60 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     });
   });
 
+  describe('showTimezone', () => {
+    it('does not render the timezone select by default', async () => {
+      wrapper = createWrapper({
+        props: {
+          modelValue: new Date(),
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      await wrapper.find('[data-id="activator"]').trigger('click');
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(wrapper.findComponent({ name: 'RuiDateTimePickerMenu' }).exists()).toBe(true);
+      expect(wrapper.findComponent({ name: 'RuiTimezoneSelect' }).exists()).toBe(false);
+    });
+
+    it('renders the timezone select when showTimezone is set', async () => {
+      wrapper = createWrapper({
+        props: {
+          modelValue: new Date(),
+          showTimezone: true,
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      await wrapper.find('[data-id="activator"]').trigger('click');
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(wrapper.findComponent({ name: 'RuiTimezoneSelect' }).exists()).toBe(true);
+    });
+
+    it('keeps emitting the same value with the timezone select hidden', async () => {
+      const epoch = Math.floor(new Date(2023, 5, 15, 14, 30).getTime() / 1000);
+
+      wrapper = createWrapper({
+        props: {
+          accuracy: 'second',
+          modelValue: epoch,
+          type: 'epoch',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      await wrapper.find('[data-id="activator"]').trigger('click');
+      await vi.runOnlyPendingTimersAsync();
+      await wrapper.find('[data-id=action-now]').trigger('click');
+
+      const lastEmittedValue = wrapper.emitted('update:modelValue')?.at(-1)?.[0];
+      assert(typeof lastEmittedValue === 'number');
+      expect(Number.isInteger(lastEmittedValue)).toBe(true);
+      expect(dayjs.unix(lastEmittedValue).format('DD/MM/YYYY HH:mm')).toBe('15/01/2023 10:30');
+    });
+  });
+
   describe('epoch precision', () => {
     it.each([
       ['minute' as const],
@@ -2474,6 +2528,95 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       // the fake clock sits at 10:30:45.500 — none of that may leak in
       expect(lastEmittedValue.getSeconds()).toBe(0);
       expect(lastEmittedValue.getMilliseconds()).toBe(0);
+    });
+  });
+
+  describe('actions', () => {
+    it('renders only the now action by default', async () => {
+      wrapper = createWrapper({
+        props: {
+          modelValue: new Date(),
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      await wrapper.find('[data-id="activator"]').trigger('click');
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(wrapper.find('[data-id=action-now]').exists()).toBe(true);
+      expect(wrapper.find('[data-id=action-today]').exists()).toBe(false);
+      expect(wrapper.find('[data-id=action-clear]').exists()).toBe(false);
+    });
+
+    it('moves the date to today and keeps the picked time', async () => {
+      wrapper = createWrapper({
+        props: {
+          actions: ['today'],
+          modelValue: new Date(2023, 0, 5, 8, 15),
+          type: 'date',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      await wrapper.find('[data-id="activator"]').trigger('click');
+      await vi.runOnlyPendingTimersAsync();
+      await wrapper.find('[data-id=action-today]').trigger('click');
+      await vi.runOnlyPendingTimersAsync();
+
+      const lastEmittedValue = wrapper.emitted('update:modelValue')?.at(-1)?.[0];
+      assert(lastEmittedValue instanceof Date);
+      // fixedDate is 15/01/2023 10:30, the picked time 08:15 must survive
+      expect(dayjs(lastEmittedValue).format('DD/MM/YYYY HH:mm')).toBe('15/01/2023 08:15');
+    });
+
+    it('clears the value from the clear action', async () => {
+      wrapper = createWrapper({
+        props: {
+          actions: ['clear'],
+          allowEmpty: true,
+          modelValue: new Date(2023, 0, 5, 8, 15),
+          type: 'date',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      await wrapper.find('[data-id="activator"]').trigger('click');
+      await vi.runOnlyPendingTimersAsync();
+      await wrapper.find('[data-id=action-clear]').trigger('click');
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toBeUndefined();
+    });
+
+    it('drops the clear action when the picker is not allowEmpty', async () => {
+      wrapper = createWrapper({
+        props: {
+          actions: ['now', 'clear'],
+          modelValue: new Date(),
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      await wrapper.find('[data-id="activator"]').trigger('click');
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(wrapper.find('[data-id=action-now]').exists()).toBe(true);
+      expect(wrapper.find('[data-id=action-clear]').exists()).toBe(false);
+    });
+
+    it('renders no footer when actions is empty', async () => {
+      wrapper = createWrapper({
+        props: {
+          actions: [],
+          modelValue: new Date(),
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      await wrapper.find('[data-id="activator"]').trigger('click');
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(wrapper.find('[data-id=actions]').exists()).toBe(false);
     });
   });
 });

@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { describe, expect, it, vi } from 'vitest';
 import { TimeAccuracy } from '@/consts/time-accuracy';
-import { getClickPosition, parseAndSetDateValues } from './segment-utils';
+import { buildDateTime, getClickPosition, parseAndSetDateValues } from './segment-utils';
 
 dayjs.extend(customParseFormat);
 
@@ -145,6 +145,50 @@ describe('date-time-picker/segment-utils', () => {
 
       const monthCall = calls.find(([seg]) => seg === 'MM');
       expect(monthCall).toEqual(['MM', 12]);
+    });
+  });
+
+  describe('buildDateTime', () => {
+    const base = dayjs('2026-07-29T10:30:45.500');
+
+    it('applies every segment that is set', () => {
+      const result = buildDateTime(
+        { day: 15, hour: 14, millisecond: 250, minute: 5, month: 6, second: 30, year: 2023 },
+        TimeAccuracy.MILLISECOND,
+        base,
+      );
+
+      expect(result.format('YYYY-MM-DD HH:mm:ss.SSS')).toBe('2023-06-15 14:05:30.250');
+    });
+
+    it('zeroes the second and millisecond below minute accuracy', () => {
+      const result = buildDateTime({ day: 15, hour: 14, minute: 5, month: 6, year: 2023 }, TimeAccuracy.MINUTE, base);
+
+      expect(result.second()).toBe(0);
+      expect(result.millisecond()).toBe(0);
+    });
+
+    it('zeroes only the millisecond at second accuracy', () => {
+      const result = buildDateTime(
+        { day: 15, hour: 14, minute: 5, month: 6, second: 30, year: 2023 },
+        TimeAccuracy.SECOND,
+        base,
+      );
+
+      expect(result.second()).toBe(30);
+      expect(result.millisecond()).toBe(0);
+    });
+
+    it('keeps the base values for segments that are not set', () => {
+      const result = buildDateTime({ hour: 8 }, TimeAccuracy.MILLISECOND, base);
+
+      expect(result.format('YYYY-MM-DD HH:mm')).toBe('2026-07-29 08:30');
+    });
+
+    it('clamps a day past the end of the target month', () => {
+      const result = buildDateTime({ day: 31, month: 2, year: 2023 }, TimeAccuracy.MINUTE, base);
+
+      expect(result.format('YYYY-MM-DD')).toBe('2023-02-28');
     });
   });
 });
