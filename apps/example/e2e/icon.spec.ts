@@ -29,7 +29,8 @@ test.describe('icons', () => {
   test('should render multiple icons', async ({ page }) => {
     const contentArea = page.locator('h2[data-id=icons] + div[data-id=content]');
     const icons = contentArea.locator('svg[aria-hidden="true"]');
-    const count = await icons.count();
-    expect(count).toBeGreaterThanOrEqual(3);
+    // `count()` resolves immediately, so under load it read 0 before the page
+    // had rendered. Wait for the icons through a web-first assertion instead.
+    await expect(icons.nth(2)).toBeAttached();
   });
 });

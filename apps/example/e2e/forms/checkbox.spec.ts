@@ -25,7 +25,9 @@ test.describe('forms/Checkbox', () => {
 
   test('should have role="group" on checkbox group containers', async ({ page }) => {
     const groups = page.locator('[data-id=checkbox-group-wrapper] [role=group]');
-    expect(await groups.count()).toBeGreaterThanOrEqual(3);
+    // `count()` resolves immediately, so under load it read 0 before the page
+    // had rendered. Wait for the groups through a web-first assertion instead.
+    await expect(groups.nth(2)).toBeAttached();
   });
 
   test('toggles values into the checkbox group v-model', async ({ page }) => {
