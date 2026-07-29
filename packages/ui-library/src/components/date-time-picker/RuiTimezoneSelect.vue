@@ -3,6 +3,8 @@ import type { AutoCompleteVariant } from '@/components/forms/auto-complete/auto-
 import type { MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import { timezones } from '@/components/date-time-picker/timezones';
 import RuiAutoComplete, { type RuiAutoCompleteClassNames } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
+import { useRuiI8n } from '@/composables/use-rui-i18n';
+import { RUI_I18N_KEYS } from '@/i18n/keys';
 
 export interface RuiTimezoneSelectProps {
   disabled?: boolean;
@@ -32,7 +34,7 @@ const {
   readOnly = false,
   dense = false,
   clearable = false,
-  label = 'Timezone',
+  label,
   variant = 'outlined',
   hint,
   errorMessages,
@@ -43,6 +45,10 @@ const {
   classNames,
   menuOptions,
 } = defineProps<RuiTimezoneSelectProps>();
+
+const { t } = useRuiI8n();
+
+const fieldLabel = computed<string>(() => label ?? t(RUI_I18N_KEYS.timezoneSelect.label, 'Timezone'));
 
 interface TimezoneOption {
   value: string;
@@ -62,7 +68,7 @@ const options: TimezoneOption[] = timezones.map(value => ({
     text-attr="label"
     auto-select-first
     :options="options"
-    :label="label"
+    :label="fieldLabel"
     :variant="variant"
     :disabled="disabled"
     :read-only="readOnly"

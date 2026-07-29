@@ -10,6 +10,8 @@ import { useKeyboardHandler } from '@/components/date-time-picker/use-keyboard-h
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
 import { type FloatingOptions, Placement } from '@/composables/floating';
+import { useRuiI8n } from '@/composables/use-rui-i18n';
+import { RUI_I18N_KEYS } from '@/i18n/keys';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 import { cn } from '@/utils/tv';
@@ -71,7 +73,7 @@ const {
   dense = false,
   type = 'epoch-ms',
   hideDetails = false,
-  label = 'Pick a date',
+  label,
   variant = 'default',
   hint,
   maxDate,
@@ -101,6 +103,16 @@ const isOpen = ref<boolean>(false);
 const isHovered = ref<boolean>(false);
 const cursorPosition = ref<number>(0);
 const currentValue = ref<number>();
+
+const { t } = useRuiI8n();
+
+const keys = RUI_I18N_KEYS.dateTimePicker;
+
+const fieldLabel = computed<string>(() => label ?? t(keys.label, 'Pick a date'));
+const clearLabel = computed<string>(() => t(keys.clearValue, 'Clear the date'));
+const toggleLabel = computed<string>(() => (get(isOpen)
+  ? t(keys.closeCalendar, 'Close the calendar')
+  : t(keys.openCalendar, 'Open the calendar')));
 
 const textInput = useTemplateRef<HTMLInputElement>('textInput');
 const activator = useTemplateRef<HTMLDivElement>('activator');
@@ -243,9 +255,10 @@ const timeSelection = computed<TimePickerSelection>({
 const float = computed<boolean>(() => (get(isOpen) || get(valueSet) || get(searchInputFocused)) && get(isOutlined));
 
 const legendText = computed<string>(() => {
-  if (!get(float) || !label)
+  if (!get(float))
     return '';
-  return required ? `${label} ﹡` : label;
+  const resolved = get(fieldLabel);
+  return required ? `${resolved} ﹡` : resolved;
 });
 
 const ui = computed<ReturnType<typeof dateTimePickerStyles>>(() => dateTimePickerStyles({
@@ -298,6 +311,30 @@ function handleInputClick(event: MouseEvent): void {
   }
 }
 
+/**
+ * The menu used to be mouse-only: the activator carried no key handlers, so
+ * there was no way to reach the calendar from the keyboard. Alt+ArrowDown
+ * opens it and Escape closes it, following the combobox convention, and the
+ * append chevron is a real button for anyone who tabs to it instead.
+ */
+function onKeyDown(event: KeyboardEvent): void {
+  if (disabled || readonly)
+    return;
+
+  if (event.altKey && event.key === 'ArrowDown') {
+    event.preventDefault();
+    set(isOpen, true);
+    return;
+  }
+
+  if (event.key === 'Escape' && get(isOpen)) {
+    set(isOpen, false);
+    return;
+  }
+
+  handleKeyDown(event);
+}
+
 function arrowClicked(event: MouseEvent): void {
   if (get(isOpen)) {
     set(isOpen, false);
@@ -343,7 +380,6 @@ watch(anyMenuOpen, (value) => {
         }"
         data-id="activator"
         :aria-invalid="hasError"
-        :tabindex="disabled || readonly ? -1 : 0"
         @mouseenter="isHovered = true"
         @mouseleave="isHovered = false"
         @click="setInputFocus()"
@@ -356,7 +392,7 @@ watch(anyMenuOpen, (value) => {
             { 'pr-2': !valueSet && !open && isOutlined },
           ]"
         >
-          {{ label }}
+          {{ fieldLabel }}
           <span
             v-if="required"
             data-id="required-indicator"
@@ -384,12 +420,14 @@ watch(anyMenuOpen, (value) => {
             :placeholder="dateFormat"
             :readonly="readonly"
             :aria-invalid="hasError"
+            :aria-label="fieldLabel"
+            :aria-required="required || undefined"
             @mousedown="handleMouseDown($event)"
             @focus="handleFocus()"
             @blur="handleBlur()"
             @select="handleInputSelection($event)"
             @click.stop="handleInputClick($event)"
-            @keydown="handleKeyDown($event)"
+            @keydown="onKeyDown($event)"
             @paste="handlePaste($event)"
             @input="handleInput($event)"
           />
@@ -401,8 +439,8 @@ watch(anyMenuOpen, (value) => {
           icon
           data-id="clear-button"
           size="sm"
-          tabindex="-1"
           color="error"
+          :aria-label="clearLabel"
           :class="[
             ui.clear(),
             anyFocused && '!visible',
@@ -416,10 +454,26 @@ watch(anyMenuOpen, (value) => {
           />
         </RuiButton>
 
-        <span
+        <button
+          v-if="!disabled && !readonly"
+          type="button"
           :class="ui.iconWrapper()"
           data-id="append"
+          :aria-label="toggleLabel"
+          :aria-expanded="isOpen"
+          aria-haspopup="dialog"
           @click="arrowClicked($event)"
+        >
+          <RuiIcon
+            :class="ui.icon()"
+            :size="dense ? 16 : 24"
+            name="lu-chevron-down"
+          />
+        </button>
+        <span
+          v-else
+          :class="ui.iconWrapper()"
+          data-id="append"
         >
           <RuiIcon
             :class="ui.icon()"

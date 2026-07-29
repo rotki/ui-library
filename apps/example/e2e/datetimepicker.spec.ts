@@ -237,6 +237,27 @@ test.describe('datetimepicker keyboard passthrough', () => {
     expect(selection.end).toBe(selection.length);
   });
 
+  test('the field can be opened and closed without a mouse', async ({ page }) => {
+    const input = page.getByRole('textbox').first();
+    await input.focus();
+    await expect(page.getByRole('menu')).toBeHidden();
+
+    await page.keyboard.press('Alt+ArrowDown');
+    await expect(page.getByRole('menu')).toBeVisible();
+
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('menu')).toBeHidden();
+  });
+
+  test('the append chevron is a real button that toggles the menu', async ({ page }) => {
+    const toggle = page.getByTestId('append').first();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+
+    await toggle.click();
+    await expect(page.getByRole('menu')).toBeVisible();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  });
+
   test('escape closes the menu', async ({ page }) => {
     await page.getByRole('textbox').first().click();
     await expect(page.getByRole('menu')).toBeVisible();

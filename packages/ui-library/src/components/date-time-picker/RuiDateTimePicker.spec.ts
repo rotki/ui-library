@@ -98,11 +98,13 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       },
     });
 
+    // the wrapper is not a tab stop, the input carries the focus
     const activator = wrapper.find('[data-id="activator"]');
-    expect(activator.attributes('tabindex')).toBe('-1');
+    expect(activator.attributes('tabindex')).toBeUndefined();
 
     const input = wrapper.find('input');
     expect(input.attributes('disabled')).toBeDefined();
+    expect(wrapper.find('button[data-id="append"]').exists()).toBe(false);
   });
 
   it('should apply readonly state correctly', () => {
@@ -114,10 +116,11 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     });
 
     const activator = wrapper.find('[data-id="activator"]');
-    expect(activator.attributes('tabindex')).toBe('-1');
+    expect(activator.attributes('tabindex')).toBeUndefined();
 
     const input = wrapper.find('input');
     expect(input.attributes('readonly')).toBeDefined();
+    expect(wrapper.find('button[data-id="append"]').exists()).toBe(false);
   });
 
   it('should apply dense state correctly', () => {
@@ -2617,6 +2620,127 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       await vi.runOnlyPendingTimersAsync();
 
       expect(wrapper.find('[data-id=actions]').exists()).toBe(false);
+    });
+  });
+
+  describe('accessibility', () => {
+    it('exposes a single tab stop for the field plus the toggle button', () => {
+      wrapper = createWrapper({
+        props: {
+          modelValue: new Date(),
+        },
+      });
+
+      const activator = wrapper.find('[data-id="activator"]');
+      expect(activator.attributes('tabindex')).toBeUndefined();
+      expect(wrapper.find('input').attributes('tabindex')).toBeUndefined();
+      expect(wrapper.find('button[data-id="append"]').exists()).toBe(true);
+    });
+
+    it('names the input even when the visible label is not rendered', () => {
+      wrapper = createWrapper({
+        props: {
+          label: 'Start date',
+          modelValue: new Date(),
+          variant: 'default',
+        },
+      });
+
+      // the visible label only renders in the outlined variant
+      expect(wrapper.find('[data-id="label"]').exists()).toBe(false);
+      expect(wrapper.find('input').attributes('aria-label')).toBe('Start date');
+    });
+
+    it('falls back to the default label', () => {
+      wrapper = createWrapper({
+        props: {
+          modelValue: new Date(),
+        },
+      });
+
+      expect(wrapper.find('input').attributes('aria-label')).toBe('Pick a date');
+    });
+
+    it('marks a required field', () => {
+      wrapper = createWrapper({
+        props: {
+          modelValue: new Date(),
+          required: true,
+        },
+      });
+
+      expect(wrapper.find('input').attributes('aria-required')).toBe('true');
+    });
+
+    it('reflects the menu state on the toggle button', async () => {
+      wrapper = createWrapper({
+        props: {
+          modelValue: new Date(),
+        },
+      });
+
+      const toggle = wrapper.find('button[data-id="append"]');
+      expect(toggle.attributes('aria-expanded')).toBe('false');
+      expect(toggle.attributes('aria-haspopup')).toBe('dialog');
+      expect(toggle.attributes('aria-label')).toBe('Open the calendar');
+
+      await wrapper.find('[data-id="activator"]').trigger('click');
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(wrapper.find('button[data-id="append"]').attributes('aria-expanded')).toBe('true');
+      expect(wrapper.find('button[data-id="append"]').attributes('aria-label')).toBe('Close the calendar');
+    });
+
+    it('leaves the clear button in the tab order', async () => {
+      wrapper = createWrapper({
+        props: {
+          allowEmpty: true,
+          modelValue: new Date(),
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+
+      const clear = wrapper.find('[data-id="clear-button"]');
+      expect(clear.exists()).toBe(true);
+      expect(clear.attributes('tabindex')).toBeUndefined();
+      expect(clear.attributes('aria-label')).toBe('Clear the date');
+    });
+
+    it('opens the menu on alt+arrowdown and closes it on escape', async () => {
+      wrapper = createWrapper({
+        props: {
+          modelValue: new Date(),
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      const input = wrapper.find('input');
+
+      await input.trigger('keydown', { altKey: true, key: 'ArrowDown' });
+      await vi.runOnlyPendingTimersAsync();
+      expect(wrapper.findComponent({ name: 'RuiDateTimePickerMenu' }).exists()).toBe(true);
+
+      await wrapper.find('input').trigger('keydown', { key: 'Escape' });
+      await vi.runOnlyPendingTimersAsync();
+      expect(wrapper.findComponent({ name: 'RuiDateTimePickerMenu' }).exists()).toBe(false);
+    });
+
+    it('does not change the value when alt+arrowdown opens the menu', async () => {
+      wrapper = createWrapper({
+        props: {
+          modelValue: new Date(2023, 5, 15, 14, 30),
+          type: 'date',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      const before = wrapper.find('input').element.value;
+
+      await wrapper.find('input').trigger('keydown', { altKey: true, key: 'ArrowDown' });
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(wrapper.find('input').element.value).toBe(before);
     });
   });
 });
