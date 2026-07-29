@@ -2426,4 +2426,54 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       expect(events?.every(e => e[0] === true)).toBe(true);
     });
   });
+
+  describe('epoch precision', () => {
+    it.each([
+      ['minute' as const],
+      ['second' as const],
+      ['millisecond' as const],
+    ])('emits a whole number of seconds with %s accuracy', async (accuracy) => {
+      wrapper = createWrapper({
+        props: {
+          accuracy,
+          modelValue: Math.floor(new Date(2023, 5, 15, 14, 30).getTime() / 1000),
+          type: 'epoch',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+
+      const input = wrapper.find('input');
+      await input.trigger('focus');
+      await input.trigger('keydown', { key: 'ArrowUp' });
+      await vi.runOnlyPendingTimersAsync();
+
+      const lastEmittedValue = wrapper.emitted('update:modelValue')?.at(-1)?.[0];
+      assert(typeof lastEmittedValue === 'number');
+      expect(Number.isInteger(lastEmittedValue)).toBe(true);
+    });
+
+    it('does not carry the current second into a minute-accuracy value', async () => {
+      wrapper = createWrapper({
+        props: {
+          accuracy: 'minute',
+          modelValue: new Date(2023, 5, 15, 14, 30),
+          type: 'date',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+
+      const input = wrapper.find('input');
+      await input.trigger('focus');
+      await input.trigger('keydown', { key: 'ArrowUp' });
+      await vi.runOnlyPendingTimersAsync();
+
+      const lastEmittedValue = wrapper.emitted('update:modelValue')?.at(-1)?.[0];
+      assert(lastEmittedValue instanceof Date);
+      // the fake clock sits at 10:30:45.500 — none of that may leak in
+      expect(lastEmittedValue.getSeconds()).toBe(0);
+      expect(lastEmittedValue.getMilliseconds()).toBe(0);
+    });
+  });
 });

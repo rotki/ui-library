@@ -181,12 +181,22 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
       dateTime = dateTime.minute(get(selectedMinute));
     }
 
+    // Anything the accuracy does not expose as a segment is zeroed rather than
+    // inherited from the clock `dayjs()` started from, otherwise the current
+    // second/millisecond leaks into the value and an `epoch` comes out
+    // fractional.
     if (isDefined(selectedSecond)) {
       dateTime = dateTime.second(get(selectedSecond));
+    }
+    else if (!includeSeconds(accuracy)) {
+      dateTime = dateTime.second(0);
     }
 
     if (isDefined(selectedMillisecond)) {
       dateTime = dateTime.millisecond(get(selectedMillisecond));
+    }
+    else if (!includeMilliseconds(accuracy)) {
+      dateTime = dateTime.millisecond(0);
     }
 
     return dateTime;
@@ -220,7 +230,8 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
   function emitUpdate(updatedModel: Dayjs): void {
     const typeMap = {
       'date': () => updatedModel.toDate(),
-      'epoch': () => updatedModel.valueOf() / MILLISECONDS,
+      // an epoch is whole seconds; `millisecond` accuracy would otherwise emit a fraction
+      'epoch': () => Math.floor(updatedModel.valueOf() / MILLISECONDS),
       'epoch-ms': () => updatedModel.valueOf(),
     } as const;
 
