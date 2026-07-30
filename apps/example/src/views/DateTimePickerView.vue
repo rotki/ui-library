@@ -12,6 +12,8 @@ const timePickers = ref<RuiDateTimePickerProps[]>([{
 
 const allActionsValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
 const timezoneValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
+const boundedValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
+const boundedMax = new Date(2023, 0, 10, 12, 0);
 const parentMenuOpen = ref<boolean>(false);
 const pickerMenuOpen = ref<boolean>(false);
 const insideMenuValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
@@ -58,6 +60,23 @@ const insideMenuValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
         data-id="picker-timezone"
         accuracy="second"
         show-timezone
+        variant="outlined"
+      />
+    </div>
+    <div
+      class="mt-8"
+      data-id="picker-bounded-section"
+    >
+      <h3 class="text-lg font-semibold mb-4">
+        Bounded by maxDate
+      </h3>
+      <RuiDateTimePicker
+        v-model="boundedValue"
+        data-id="picker-bounded"
+        accuracy="second"
+        :actions="['now', 'today', 'clear']"
+        allow-empty
+        :max-date="boundedMax"
         variant="outlined"
       />
     </div>

@@ -374,3 +374,38 @@ test.describe('datetimepicker across a DST boundary', () => {
     await expect(input).toHaveValue('15/07/2023 20:20');
   });
 });
+
+test.describe('datetimepicker footer actions against a bound', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/datetimepickers');
+  });
+
+  test.afterEach(async ({ page }) => {
+    await page.keyboard.press('Escape');
+  });
+
+  // The bounded picker starts at 02/01/2023 20:20:00 with maxDate 10/01/2023 12:00
+  function boundedInput(page: Page) {
+    return page.getByTestId('picker-bounded').locator('input');
+  }
+
+  test('now clamps to maxDate instead of leaving the field ahead of the model', async ({ page }) => {
+    const input = boundedInput(page);
+    await input.click();
+    await page.getByTestId('action-now').click();
+
+    await expect(input).toHaveValue('10/01/2023 12:00:00');
+  });
+
+  test('today clamps when the kept time would cross maxDate', async ({ page }) => {
+    const input = boundedInput(page);
+    await input.click();
+    await page.getByTestId('action-today').click();
+
+    await expect(input).toHaveValue('10/01/2023 12:00:00');
+  });
+
+  test('the field is not spellchecked', async ({ page }) => {
+    await expect(boundedInput(page)).toHaveAttribute('spellcheck', 'false');
+  });
+});
