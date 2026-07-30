@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { describe, expect, it, vi } from 'vitest';
 import { TimeAccuracy } from '@/consts/time-accuracy';
-import { buildDateTime, clampToBounds, getClickPosition, parseAndSetDateValues } from './segment-utils';
+import { buildDateTime, clampToBounds, getClickPosition, parseAndSetDateValues, resolveBound } from './segment-utils';
 
 dayjs.extend(customParseFormat);
 
@@ -216,6 +216,34 @@ describe('date-time-picker/segment-utils', () => {
 
     it('should apply the minimum even without a maximum', () => {
       expect(clampToBounds(dayjs('1999-01-01T00:00:00'), min).valueOf()).toBe(min.getTime());
+    });
+  });
+
+  describe('resolveBound', () => {
+    it('should return undefined when there is no bound', () => {
+      expect(resolveBound(undefined, false)).toBeUndefined();
+      expect(resolveBound(undefined, true)).toBeUndefined();
+    });
+
+    it('should pass a Date through', () => {
+      const date = new Date(2023, 5, 15, 10, 30);
+      expect(resolveBound(date, false)?.getTime()).toBe(date.getTime());
+    });
+
+    it('should treat a number as milliseconds by default', () => {
+      const ms = new Date(2023, 5, 15).getTime();
+      expect(resolveBound(ms, false)?.getTime()).toBe(ms);
+    });
+
+    // an `epoch` picker states its bounds in whole seconds
+    it('should widen a number to milliseconds for an epoch picker', () => {
+      const ms = new Date(2023, 5, 15).getTime();
+      expect(resolveBound(Math.floor(ms / 1000), true)?.getTime()).toBe(ms);
+    });
+
+    it('should not widen a Date even for an epoch picker', () => {
+      const date = new Date(2023, 5, 15);
+      expect(resolveBound(date, true)?.getTime()).toBe(date.getTime());
     });
   });
 });

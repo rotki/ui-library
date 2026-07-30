@@ -133,6 +133,17 @@ const { focused: searchInputFocused } = useFocus(textInput);
 
 const anyFocused = computed<boolean>(() => get(activatorFocusedWithin) || get(menuWrapperFocusedWithin));
 
+const dateFormat = computed<string>(() => {
+  const fmt = baseFormats[format];
+  if (accuracy === 'second') {
+    return fmt.replace('HH:mm', 'HH:mm:ss');
+  }
+  else if (accuracy === 'millisecond') {
+    return fmt.replace('HH:mm', 'HH:mm:ss.SSS');
+  }
+  return fmt;
+});
+
 const {
   clear: clearSelection,
   getDateTime,
@@ -156,6 +167,7 @@ const {
 } = useDateTimeSelection({
   accuracy,
   allowEmpty,
+  dateFormat,
   maxDate,
   minDate,
   modelValue,
@@ -163,17 +175,6 @@ const {
 });
 
 const { setValue, getCurrent } = useInputHandler(segmentData, currentValue);
-
-const dateFormat = computed<string>(() => {
-  const fmt = baseFormats[format];
-  if (accuracy === 'second') {
-    return fmt.replace('HH:mm', 'HH:mm:ss');
-  }
-  else if (accuracy === 'millisecond') {
-    return fmt.replace('HH:mm', 'HH:mm:ss.SSS');
-  }
-  return fmt;
-});
 
 const {
   clear: clearSegment,

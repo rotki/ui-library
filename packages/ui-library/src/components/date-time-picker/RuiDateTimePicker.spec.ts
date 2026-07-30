@@ -37,6 +37,12 @@ function createWrapper(
   });
 }
 
+// bound errors are written in the field's own format; these pickers all use the
+// defaults, so DD/MM/YYYY HH:mm
+function boundLabel(date: Date): string {
+  return dayjs(date).format('DD/MM/YYYY HH:mm');
+}
+
 describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
   let wrapper: VueWrapper<InstanceType<typeof RuiDateTimePicker>>;
 
@@ -345,7 +351,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     expect(menu.exists()).toBeTruthy();
 
     // Verify the constraint is enforced by checking the error message
-    expect(wrapper.find('.details').text()).toContain(`Date cannot be before ${minDate.toLocaleDateString()}`);
+    expect(wrapper.find('.details').text()).toContain(`Date cannot be before ${boundLabel(minDate)}`);
   });
 
   it('should respect max date constraint', async () => {
@@ -366,7 +372,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     expect(menu.exists()).toBeTruthy();
 
     // Verify the constraint is enforced by checking the error message
-    expect(wrapper.find('.details').text()).toContain(`Date cannot be after ${maxDate.toLocaleDateString()}`);
+    expect(wrapper.find('.details').text()).toContain(`Date cannot be after ${boundLabel(maxDate)}`);
   });
 
   it('should show error message when date is below minAllowedDate', async () => {
@@ -382,7 +388,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
 
     await vi.runOnlyPendingTimersAsync();
 
-    expect(wrapper.find('.details').text()).toContain(`Date cannot be before ${minDate.toLocaleDateString()}`);
+    expect(wrapper.find('.details').text()).toContain(`Date cannot be before ${boundLabel(minDate)}`);
   });
 
   it('should show error message when date is above maxAllowedDate', async () => {
@@ -397,7 +403,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     });
 
     await vi.runOnlyPendingTimersAsync();
-    expect(wrapper.find('.details').text()).toContain(`Date cannot be after ${maxDate.toLocaleDateString()}`);
+    expect(wrapper.find('.details').text()).toContain(`Date cannot be after ${boundLabel(maxDate)}`);
   });
 
   it('should show an error when now is used as mas an the date is in the future', async () => {
@@ -451,7 +457,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     await vi.runOnlyPendingTimersAsync();
 
     // Verify the constraint works by checking the error message
-    expect(wrapper.find('.details').text()).toContain(`Date cannot be before ${testDate.toLocaleDateString()}`);
+    expect(wrapper.find('.details').text()).toContain(`Date cannot be before ${boundLabel(testDate)}`);
   });
 
   it('should respect max date constraint with epoch type', async () => {
@@ -469,7 +475,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     await vi.runOnlyPendingTimersAsync();
 
     // Verify the constraint works by checking the error message
-    expect(wrapper.find('.details').text()).toContain(`Date cannot be after ${testDate.toLocaleDateString()}`);
+    expect(wrapper.find('.details').text()).toContain(`Date cannot be after ${boundLabel(testDate)}`);
   });
 
   it('should show error message when date is below minAllowedDate with epoch type', async () => {
@@ -487,7 +493,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
 
     await vi.runOnlyPendingTimersAsync();
 
-    expect(wrapper.find('.details').text()).toContain(`Date cannot be before ${testDate.toLocaleDateString()}`);
+    expect(wrapper.find('.details').text()).toContain(`Date cannot be before ${boundLabel(testDate)}`);
   });
 
   it('should show error message when date is above maxAllowedDate with epoch type', async () => {
@@ -505,7 +511,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
 
     await vi.runOnlyPendingTimersAsync();
 
-    expect(wrapper.find('.details').text()).toContain(`Date cannot be after ${testDate.toLocaleDateString()}`);
+    expect(wrapper.find('.details').text()).toContain(`Date cannot be after ${boundLabel(testDate)}`);
   });
 
   it('should clear the value when clear button is clicked', async () => {

@@ -408,4 +408,22 @@ test.describe('datetimepicker footer actions against a bound', () => {
   test('the field is not spellchecked', async ({ page }) => {
     await expect(boundedInput(page)).toHaveAttribute('spellcheck', 'false');
   });
+
+  // the message used to come from toLocaleDateString(), which follows the
+  // browser locale rather than the field, and dropped the bound's time
+  test('the bound error is written in the field format, with its time', async ({ page }) => {
+    const input = boundedInput(page);
+    await expect(input).toHaveValue('02/01/2023 20:20:00');
+
+    // click the left edge so the day segment is selected, then type a day past the bound
+    const box = await input.boundingBox();
+    if (!box)
+      throw new Error('input bounding box unavailable');
+    await page.mouse.click(box.x + 12, box.y + box.height / 2);
+    await page.keyboard.press('2');
+    await page.keyboard.press('0');
+
+    await expect(input).toHaveValue('20/01/2023 20:20:00');
+    await expect(page.getByText('Date cannot be after 10/01/2023 12:00:00')).toBeVisible();
+  });
 });

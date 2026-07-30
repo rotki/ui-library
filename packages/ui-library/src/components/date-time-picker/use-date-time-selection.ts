@@ -2,7 +2,7 @@ import type { ComputedRef, Ref, WritableComputedRef } from 'vue';
 import type { SegmentData } from '@/components/date-time-picker/types';
 import type { TimeAccuracy } from '@/consts/time-accuracy';
 import dayjs, { type Dayjs } from 'dayjs';
-import { buildDateTime, clampToBounds } from '@/components/date-time-picker/segment-utils';
+import { buildDateTime, clampToBounds, resolveBound } from '@/components/date-time-picker/segment-utils';
 import { formatWallClock, guessTimezone, includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
 import { useRuiI8n } from '@/composables/use-rui-i18n';
 import { RUI_I18N_KEYS } from '@/i18n/keys';
@@ -23,6 +23,11 @@ interface DateTimeSelectionOptions<T extends DateTimeModelType> {
   minDate: Date | number | undefined;
   maxDate: Date | number | 'now' | undefined;
   allowEmpty: boolean;
+  /**
+   * The field's own format, so a bound named in an error message is written the
+   * same way round as the value the user is looking at.
+   */
+  dateFormat: Ref<string>;
 }
 
 interface DateTimeSelectionReturn {
@@ -57,6 +62,7 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
   const {
     accuracy,
     allowEmpty,
+    dateFormat,
     maxDate,
     minDate,
     modelValue,
@@ -78,30 +84,15 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
   const internalErrorMessages = ref<string[]>([]);
   const now = ref<Dayjs>(dayjs.tz(undefined, guessTimezone()));
 
-  const minAllowedDate = computed<Date>(() => {
-    if (minDate === undefined) {
-      return new Date(1970, 0, 1);
-    }
+  const epochSeconds = type === 'epoch';
 
-    if (type === 'epoch' && typeof minDate === 'number') {
-      return new Date(minDate * MILLISECONDS);
-    }
+  const minAllowedDate = computed<Date>(
+    () => resolveBound(minDate, epochSeconds) ?? new Date(1970, 0, 1),
+  );
 
-    return new Date(minDate);
-  });
-
-  const maxAllowedDate = computed<Date | undefined>(() => {
-    if (maxDate === undefined) {
-      return undefined;
-    }
-    if (maxDate === 'now') {
-      return get(now).toDate();
-    }
-    if (type === 'epoch' && typeof maxDate === 'number') {
-      return new Date(maxDate * MILLISECONDS);
-    }
-    return new Date(maxDate);
-  });
+  const maxAllowedDate = computed<Date | undefined>(
+    () => (maxDate === 'now' ? get(now).toDate() : resolveBound(maxDate, epochSeconds)),
+  );
 
   const segmentData: SegmentData = {
     DD: selectedDay,
@@ -170,6 +161,16 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
     }, accuracy);
   }
 
+  /**
+   * Writes a bound the way the field writes its value. `toLocaleDateString()`
+   * followed the browser locale and ignored the picker's own format, so a
+   * day-first field could report its limit month-first, and it dropped the time
+   * entirely, which left a mid-day bound unable to explain itself.
+   */
+  function formatBound(bound: Date): string {
+    return dayjs(bound).format(get(dateFormat));
+  }
+
   function isDateValid(date: Dayjs): boolean {
     const min = get(minAllowedDate);
     const max = get(maxAllowedDate);
@@ -177,16 +178,18 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
     set(internalErrorMessages, []);
 
     if (min && date.isBefore(min)) {
+      const formatted = formatBound(min);
       const errorMessage = t(RUI_I18N_KEYS.dateTimePicker.dateBeforeMin, {
-        date: min.toLocaleDateString(),
-      }, `Date cannot be before ${min.toLocaleDateString()}`);
+        date: formatted,
+      }, `Date cannot be before ${formatted}`);
       set(internalErrorMessages, [...get(internalErrorMessages), errorMessage]);
       return false;
     }
 
     if (max && date.isAfter(max)) {
+      const formatted = formatBound(max);
       const nowError = t(RUI_I18N_KEYS.dateTimePicker.dateInFuture, 'The selected date cannot be in the future');
-      const maxError = t(RUI_I18N_KEYS.dateTimePicker.dateAfterMax, { date: max.toLocaleDateString() }, `Date cannot be after ${max.toLocaleDateString()}`);
+      const maxError = t(RUI_I18N_KEYS.dateTimePicker.dateAfterMax, { date: formatted }, `Date cannot be after ${formatted}`);
       const errorMessage = maxDate === 'now' ? nowError : maxError;
       set(internalErrorMessages, [...get(internalErrorMessages), errorMessage]);
       return false;

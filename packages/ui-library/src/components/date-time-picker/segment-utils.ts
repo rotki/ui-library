@@ -52,6 +52,24 @@ export function buildDateTime(segments: SegmentValues, accuracy: TimeAccuracy, b
   return dateTime;
 }
 
+const MILLISECONDS = 1000;
+
+/**
+ * Turns a `minDate` / `maxDate` prop into a Date. An `epoch` picker states its
+ * bounds in whole seconds, so those are widened to milliseconds first.
+ */
+export function resolveBound(bound: Date | number | undefined, epochSeconds: boolean): Date | undefined {
+  if (bound === undefined) {
+    return undefined;
+  }
+
+  if (epochSeconds && typeof bound === 'number') {
+    return new Date(bound * MILLISECONDS);
+  }
+
+  return new Date(bound);
+}
+
 /**
  * Pulls a date inside the allowed range. Used by the `now` and `today` actions,
  * which have no partial state: typed input is left to diverge and explain
