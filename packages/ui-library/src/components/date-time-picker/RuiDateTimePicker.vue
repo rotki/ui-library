@@ -57,6 +57,12 @@ export interface RuiDateTimePickerProps {
    * picker is `allowEmpty`. Pass an empty array to drop the footer entirely.
    */
   actions?: DateTimePickerAction[];
+  /**
+   * Focuses the field once it is mounted. The native attribute is ignored for
+   * an input inserted into an already loaded document, which is the usual case
+   * for a picker revealed by an editor or a dialog.
+   */
+  autofocus?: boolean;
 }
 
 defineOptions({
@@ -86,6 +92,7 @@ const {
   required = false,
   showTimezone = false,
   actions = ['now'],
+  autofocus = false,
 } = defineProps<RuiDateTimePickerProps>();
 
 defineSlots<{
@@ -337,11 +344,19 @@ watch(menuWrapperRef, (menu) => {
   });
 });
 
-function focusField(): void {
-  nextTick(() => {
-    get(textInput)?.focus({ preventScroll: true });
-  });
+/** Moves focus to the field. Exposed so a consumer can drive it from a ref. */
+function focus(): void {
+  get(textInput)?.focus({ preventScroll: true });
 }
+
+function focusField(): void {
+  nextTick(focus);
+}
+
+onMounted(() => {
+  if (autofocus && !disabled)
+    focusField();
+});
 
 /** Escape inside the calendar closes it and hands focus back to the field. */
 function closeFromMenu(): void {
@@ -389,6 +404,10 @@ const anyMenuOpen = computed<boolean>(() => get(isOpen) || get(calendarMenuOpen)
 
 watch(anyMenuOpen, (value) => {
   set(menuOpen, value);
+});
+
+defineExpose({
+  focus,
 });
 </script>
 

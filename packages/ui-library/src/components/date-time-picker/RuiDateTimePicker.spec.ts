@@ -2743,4 +2743,69 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       expect(wrapper.find('input').element.value).toBe(before);
     });
   });
+
+  describe('focus', () => {
+    it('focuses the field on mount when autofocus is set', async () => {
+      wrapper = createWrapper({
+        attachTo: document.body,
+        props: {
+          autofocus: true,
+          modelValue: new Date(2023, 5, 15, 14, 30),
+          type: 'date',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(document.activeElement).toBe(wrapper.find('input').element);
+    });
+
+    it('leaves focus alone without autofocus', async () => {
+      wrapper = createWrapper({
+        attachTo: document.body,
+        props: {
+          modelValue: new Date(2023, 5, 15, 14, 30),
+          type: 'date',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(document.activeElement).not.toBe(wrapper.find('input').element);
+    });
+
+    it('does not focus a disabled field', async () => {
+      wrapper = createWrapper({
+        attachTo: document.body,
+        props: {
+          autofocus: true,
+          disabled: true,
+          modelValue: new Date(2023, 5, 15, 14, 30),
+          type: 'date',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(document.activeElement).not.toBe(wrapper.find('input').element);
+    });
+
+    it('exposes focus() so a consumer can drive it from a ref', async () => {
+      wrapper = createWrapper({
+        attachTo: document.body,
+        props: {
+          modelValue: new Date(2023, 5, 15, 14, 30),
+          type: 'date',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      expect(document.activeElement).not.toBe(wrapper.find('input').element);
+
+      wrapper.vm.focus();
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(document.activeElement).toBe(wrapper.find('input').element);
+    });
+  });
 });
