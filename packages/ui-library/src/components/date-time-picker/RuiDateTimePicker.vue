@@ -207,7 +207,29 @@ const { hasError, hasSuccess } = useFormTextDetail(
 
 const isOutlined = computed<boolean>(() => variant === 'outlined');
 
+/** True once any segment holds a digit, even a partially typed date. */
+const anySegmentSet = computed<boolean>(() => [
+  selectedYear,
+  selectedMonth,
+  selectedDay,
+  selectedHour,
+  selectedMinute,
+  selectedSecond,
+  selectedMillisecond,
+].some(segment => isDefined(segment)));
+
 const formattedDisplay = computed<string>(() => {
+  // An untouched field shows its format through the placeholder rather than
+  // holding the tokens as its value, where a screen reader reads them as
+  // content and select-all copies them. The tokens stay while the field is
+  // focused: that is when the segment machinery highlights them, and
+  // collapsing the value mid-edit would blank the field under the cursor.
+  // The guard is "no segment set" and not `valueSet`, so blurring a half
+  // typed date keeps what was entered on screen.
+  if (!get(anySegmentSet) && !get(searchInputFocused)) {
+    return '';
+  }
+
   let result = get(dateFormat);
 
   const replacements = [

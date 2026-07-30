@@ -192,7 +192,13 @@ test.describe('datetimepicker menu footer actions', () => {
     await input.click();
     await page.getByTestId('action-clear').click();
 
-    // a cleared picker falls back to rendering the bare format
+    // focus sits on the footer button, so the emptied field shows its format
+    // through the placeholder rather than holding the tokens as a value
+    await expect(input).toHaveValue('');
+    await expect(input).toHaveAttribute('placeholder', 'DD/MM/YYYY HH:mm:ss');
+
+    // clicking back in restores the tokens the segment machinery works against
+    await input.click();
     await expect(input).toHaveValue('DD/MM/YYYY HH:mm:ss');
   });
 

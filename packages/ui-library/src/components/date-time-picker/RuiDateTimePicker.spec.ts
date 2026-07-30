@@ -2744,6 +2744,108 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     });
   });
 
+  describe('empty display', () => {
+    it('shows an empty value and the format as a placeholder when untouched', async () => {
+      wrapper = createWrapper({
+        props: {
+          allowEmpty: true,
+          modelValue: undefined,
+          type: 'date',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      const input = wrapper.find('input');
+
+      expect(input.element.value).toBe('');
+      expect(input.attributes('placeholder')).toBe('DD/MM/YYYY HH:mm');
+    });
+
+    it('restores the tokens once the field is focused', async () => {
+      wrapper = createWrapper({
+        attachTo: document.body,
+        props: {
+          allowEmpty: true,
+          modelValue: undefined,
+          type: 'date',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      expect(wrapper.find('input').element.value).toBe('');
+
+      await wrapper.find('input').trigger('focus');
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(wrapper.find('input').element.value).toBe('DD/MM/YYYY HH:mm');
+    });
+
+    // the guard is "no segment set" rather than `valueSet`, so a half typed
+    // date is not wiped off the screen when the field loses focus
+    it('keeps a partially typed date visible after blur', async () => {
+      wrapper = createWrapper({
+        attachTo: document.body,
+        props: {
+          allowEmpty: true,
+          modelValue: undefined,
+          type: 'date',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      const input = wrapper.find('input');
+
+      await input.trigger('focus');
+      await vi.runOnlyPendingTimersAsync();
+      await input.trigger('keydown', { key: '1' });
+      await input.trigger('keydown', { key: '5' });
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(input.element.value).toBe('15/MM/YYYY HH:mm');
+
+      await input.trigger('blur');
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(input.element.value).toBe('15/MM/YYYY HH:mm');
+    });
+
+    it('does not collapse the value while the field is still focused', async () => {
+      wrapper = createWrapper({
+        attachTo: document.body,
+        props: {
+          allowEmpty: true,
+          modelValue: undefined,
+          type: 'date',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      const input = wrapper.find('input');
+
+      await input.trigger('focus');
+      await vi.runOnlyPendingTimersAsync();
+      await input.trigger('keydown', { key: '1' });
+      await vi.runOnlyPendingTimersAsync();
+      await input.trigger('keydown', { key: 'Backspace' });
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(input.element.value).toBe('DD/MM/YYYY HH:mm');
+    });
+
+    it('shows the value normally when the model holds a date', async () => {
+      wrapper = createWrapper({
+        props: {
+          modelValue: new Date(2023, 5, 15, 14, 30),
+          type: 'date',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(wrapper.find('input').element.value).toBe('15/06/2023 14:30');
+    });
+  });
+
   describe('focus', () => {
     it('focuses the field on mount when autofocus is set', async () => {
       wrapper = createWrapper({
