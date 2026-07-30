@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { describe, expect, it, vi } from 'vitest';
 import { TimeAccuracy } from '@/consts/time-accuracy';
-import { buildDateTime, getClickPosition, parseAndSetDateValues } from './segment-utils';
+import { buildDateTime, clampToBounds, getClickPosition, parseAndSetDateValues } from './segment-utils';
 
 dayjs.extend(customParseFormat);
 
@@ -189,6 +189,33 @@ describe('date-time-picker/segment-utils', () => {
       const result = buildDateTime({ day: 31, month: 2, year: 2023 }, TimeAccuracy.MINUTE, base);
 
       expect(result.format('YYYY-MM-DD')).toBe('2023-02-28');
+    });
+  });
+
+  describe('clampToBounds', () => {
+    const min = new Date(2023, 0, 1, 8, 0);
+    const max = new Date(2023, 11, 31, 18, 0);
+
+    it('should return the date untouched when it sits inside the bounds', () => {
+      const date = dayjs('2023-06-15T10:00:00');
+      expect(clampToBounds(date, min, max).valueOf()).toBe(date.valueOf());
+    });
+
+    it('should pull a date before the minimum up to it', () => {
+      expect(clampToBounds(dayjs('2020-01-01T00:00:00'), min, max).valueOf()).toBe(min.getTime());
+    });
+
+    it('should pull a date after the maximum down to it', () => {
+      expect(clampToBounds(dayjs('2030-01-01T00:00:00'), min, max).valueOf()).toBe(max.getTime());
+    });
+
+    it('should leave a late date alone when there is no maximum', () => {
+      const date = dayjs('2030-01-01T00:00:00');
+      expect(clampToBounds(date, min).valueOf()).toBe(date.valueOf());
+    });
+
+    it('should apply the minimum even without a maximum', () => {
+      expect(clampToBounds(dayjs('1999-01-01T00:00:00'), min).valueOf()).toBe(min.getTime());
     });
   });
 });

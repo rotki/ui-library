@@ -52,6 +52,25 @@ export function buildDateTime(segments: SegmentValues, accuracy: TimeAccuracy, b
   return dateTime;
 }
 
+/**
+ * Pulls a date inside the allowed range. Used by the `now` and `today` actions,
+ * which have no partial state: typed input is left to diverge and explain
+ * itself through the error message instead, since clamping a keystroke would
+ * rewrite a year the moment its first digit landed below the minimum.
+ */
+export function clampToBounds(date: Dayjs, min: Date, max?: Date): Dayjs {
+  const lower = dayjs(min);
+  if (date.isBefore(lower)) {
+    return lower;
+  }
+
+  if (max && date.isAfter(max)) {
+    return dayjs(max);
+  }
+
+  return date;
+}
+
 export function getClickPosition(
   event: MouseEvent,
   input: HTMLInputElement,

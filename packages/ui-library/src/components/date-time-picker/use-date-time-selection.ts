@@ -2,7 +2,7 @@ import type { ComputedRef, Ref, WritableComputedRef } from 'vue';
 import type { SegmentData } from '@/components/date-time-picker/types';
 import type { TimeAccuracy } from '@/consts/time-accuracy';
 import dayjs, { type Dayjs } from 'dayjs';
-import { buildDateTime } from '@/components/date-time-picker/segment-utils';
+import { buildDateTime, clampToBounds } from '@/components/date-time-picker/segment-utils';
 import { formatWallClock, guessTimezone, includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
 import { useRuiI8n } from '@/composables/use-rui-i18n';
 import { RUI_I18N_KEYS } from '@/i18n/keys';
@@ -211,28 +211,20 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
       return;
     }
 
-    if (!(isDefined(selectedDate) && isDefined(selectedTime))) {
-      set(modelValue, undefined as ModelValueType<T>);
+    // The segments are a wall-clock reading, so they are formatted and parsed
+    // in the selected timezone. Mutating a `dayjs.tz()` built from the old
+    // value instead would keep that value's UTC offset, and moving the date
+    // across a DST boundary then shifted the time by an hour.
+    const updatedModel = dayjs.tz(
+      formatWallClock(get(selectedDate), get(selectedTime), accuracy),
+      get(selectedTimezone),
+    );
+
+    if (!isDateValid(updatedModel)) {
+      return;
     }
-    else {
-      const date = get(selectedDate);
-      const time = get(selectedTime);
 
-      // The segments are a wall-clock reading, so they are formatted and parsed
-      // in the selected timezone. Mutating a `dayjs.tz()` built from the old
-      // value instead would keep that value's UTC offset, and moving the date
-      // across a DST boundary then shifted the time by an hour.
-      const updatedModel = dayjs.tz(
-        formatWallClock(date, time, accuracy),
-        get(selectedTimezone),
-      );
-
-      if (!isDateValid(updatedModel)) {
-        return;
-      }
-
-      emitUpdate(updatedModel);
-    }
+    emitUpdate(updatedModel);
   }
 
   function clear(): void {
@@ -247,11 +239,11 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
     set(modelValue, undefined as ModelValueType<T>);
   }
 
-  function setNow(): void {
-    set(internalErrorMessages, []);
+  function clampToAllowed(date: Dayjs): Dayjs {
+    return clampToBounds(date, get(minAllowedDate), get(maxAllowedDate));
+  }
 
-    const date = dayjs();
-    set(now, date);
+  function applySegments(date: Dayjs): void {
     set(selectedYear, date.year());
     set(selectedMonth, date.month() + 1);
     set(selectedDay, date.date());
@@ -259,6 +251,14 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
     set(selectedMinute, date.minute());
     set(selectedSecond, includeSeconds(accuracy) ? date.second() : 0);
     set(selectedMillisecond, includeMilliseconds(accuracy) ? date.millisecond() : 0);
+  }
+
+  function setNow(): void {
+    set(internalErrorMessages, []);
+
+    const date = dayjs();
+    set(now, date);
+    applySegments(clampToAllowed(date));
 
     nextTick(() => {
       updateModelValue();
@@ -274,18 +274,18 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
 
     const date = dayjs();
     set(now, date);
-    set(selectedYear, date.year());
-    set(selectedMonth, date.month() + 1);
-    set(selectedDay, date.date());
 
-    if (!isDefined(selectedHour))
-      set(selectedHour, 0);
-    if (!isDefined(selectedMinute))
-      set(selectedMinute, 0);
-    if (includeSeconds(accuracy) && !isDefined(selectedSecond))
-      set(selectedSecond, 0);
-    if (includeMilliseconds(accuracy) && !isDefined(selectedMillisecond))
-      set(selectedMillisecond, 0);
+    const target = buildDateTime({
+      day: date.date(),
+      hour: get(selectedHour) ?? 0,
+      millisecond: get(selectedMillisecond) ?? 0,
+      minute: get(selectedMinute) ?? 0,
+      month: date.month() + 1,
+      second: get(selectedSecond) ?? 0,
+      year: date.year(),
+    }, accuracy, date);
+
+    applySegments(clampToAllowed(target));
 
     nextTick(() => {
       updateModelValue();

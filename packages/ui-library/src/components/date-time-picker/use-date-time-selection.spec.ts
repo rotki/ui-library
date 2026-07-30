@@ -1006,4 +1006,140 @@ describe('use-date-time-selection', () => {
       unmount();
     });
   });
+
+  describe('footer actions against a bound', () => {
+    it('should clamp now to maxDate instead of emitting nothing', async () => {
+      const maxDate = new Date(2023, 5, 10, 9, 0);
+      const modelValue = ref<number | undefined>(undefined);
+
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
+        accuracy: 'minute',
+        allowEmpty: true,
+        maxDate,
+        minDate: undefined,
+        modelValue,
+        type: 'epoch-ms',
+      }));
+
+      result.setNow();
+      await nextTick();
+
+      expect(get(result.selectedDay)).toBe(10);
+      expect(get(result.selectedHour)).toBe(9);
+      expect(get(result.selectedMinute)).toBe(0);
+      // the field and the model agree, so no error is raised
+      expect(get(result.internalErrorMessages)).toEqual([]);
+      expect(get(modelValue)).toBe(maxDate.getTime());
+
+      unmount();
+    });
+
+    it('should clamp now up to minDate', async () => {
+      const minDate = new Date(2024, 0, 1, 8, 15);
+      const modelValue = ref<number | undefined>(undefined);
+
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
+        accuracy: 'minute',
+        allowEmpty: true,
+        maxDate: undefined,
+        minDate,
+        modelValue,
+        type: 'epoch-ms',
+      }));
+
+      result.setNow();
+      await nextTick();
+
+      expect(get(result.selectedYear)).toBe(2024);
+      expect(get(result.selectedMonth)).toBe(1);
+      expect(get(result.selectedDay)).toBe(1);
+      expect(get(result.internalErrorMessages)).toEqual([]);
+      expect(get(modelValue)).toBe(minDate.getTime());
+
+      unmount();
+    });
+
+    it('should clamp today when the kept time crosses maxDate', async () => {
+      const maxDate = new Date(2023, 5, 15, 12, 0);
+      const modelValue = ref<number | undefined>(undefined);
+
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
+        accuracy: 'minute',
+        allowEmpty: true,
+        maxDate,
+        minDate: undefined,
+        modelValue,
+        type: 'epoch-ms',
+      }));
+
+      // a time later in the day than the bound allows
+      set(result.selectedHour, 23);
+      set(result.selectedMinute, 45);
+      await nextTick();
+
+      result.setToday();
+      await nextTick();
+
+      expect(get(result.selectedHour)).toBe(12);
+      expect(get(result.selectedMinute)).toBe(0);
+      expect(get(result.internalErrorMessages)).toEqual([]);
+      expect(get(modelValue)).toBe(maxDate.getTime());
+
+      unmount();
+    });
+
+    it('should leave today alone when it sits inside the bounds', async () => {
+      const modelValue = ref<number | undefined>(undefined);
+
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
+        accuracy: 'minute',
+        allowEmpty: true,
+        maxDate: new Date(2023, 11, 31),
+        minDate: undefined,
+        modelValue,
+        type: 'epoch-ms',
+      }));
+
+      set(result.selectedHour, 8);
+      set(result.selectedMinute, 5);
+      await nextTick();
+
+      result.setToday();
+      await nextTick();
+
+      expect(get(result.selectedDay)).toBe(15);
+      expect(get(result.selectedHour)).toBe(8);
+      expect(get(result.selectedMinute)).toBe(5);
+
+      unmount();
+    });
+
+    it('should keep typed input diverging rather than clamping it', async () => {
+      const maxDate = new Date(2023, 5, 20);
+      const modelValue = ref<number | undefined>(undefined);
+
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
+        accuracy: 'minute',
+        allowEmpty: true,
+        maxDate,
+        minDate: undefined,
+        modelValue,
+        type: 'epoch-ms',
+      }));
+
+      set(result.selectedYear, 2030);
+      set(result.selectedMonth, 6);
+      set(result.selectedDay, 15);
+      set(result.selectedHour, 10);
+      set(result.selectedMinute, 0);
+      await nextTick();
+
+      // the segments keep what was typed and the error explains the refusal
+      expect(get(result.selectedYear)).toBe(2030);
+      expect(get(modelValue)).toBeUndefined();
+      expect(get(result.internalErrorMessages).length).toBeGreaterThan(0);
+
+      unmount();
+    });
+  });
 });
