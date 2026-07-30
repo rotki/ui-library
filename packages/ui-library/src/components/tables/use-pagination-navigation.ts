@@ -30,7 +30,6 @@ export interface UsePaginationNavigationReturn {
 }
 
 export function usePaginationNavigation(
-  // eslint-disable-next-line @rotki/composable-input-flexibility
   modelValue: Ref<TablePaginationData>,
   tableDefaults: TableOptions,
   rangesThreshold: MaybeRefOrGetter<number> = 500,

@@ -27,7 +27,7 @@ export interface UseAutoCompleteValueDeps<TItem> {
 }
 
 export function useAutoCompleteValue<TValue, TItem>(
-  modelValue: Ref<TValue | undefined>, // eslint-disable-line @rotki/composable-input-flexibility -- needs write access
+  modelValue: Ref<TValue | undefined>,
   options: MaybeRefOrGetter<TItem[]>,
   opts: UseAutoCompleteValueOptions<TItem>,
   deps: UseAutoCompleteValueDeps<TItem>,

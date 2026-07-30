@@ -35,7 +35,7 @@ export interface UseAutoCompleteSearchReturn<TItem> {
 
 export function useAutoCompleteSearch<TItem>(
   options: MaybeRefOrGetter<TItem[]>,
-  searchModel: Ref<string>, // eslint-disable-line @rotki/composable-input-flexibility -- needs write access
+  searchModel: Ref<string>,
   opts: UseAutoCompleteSearchOptions<TItem>,
 ): UseAutoCompleteSearchReturn<TItem> {
   const internalSearch = shallowRef<string>('');
