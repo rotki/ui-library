@@ -278,6 +278,12 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     set(cursorPosition, target.selectionStart ?? 0);
   }
 
+  function selectFirstSegment(): void {
+    const firstSegment = get(segmentPositions)[0];
+    if (firstSegment)
+      setCursorPosition(firstSegment);
+  }
+
   function handleFocus(): void {
     // If we just clicked on a segment, restore that selection
     // (the selection may have been lost due to menu opening/DOM updates)
@@ -291,9 +297,7 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     const input = get(textInput);
     if (input && input.selectionStart !== input.selectionEnd)
       return;
-    const firstSegment = get(segmentPositions)[0];
-    if (firstSegment)
-      setCursorPosition(firstSegment);
+    selectFirstSegment();
   }
 
   function handleBlur(): void {
@@ -348,6 +352,7 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     handleKeyDown,
     handleMouseDown,
     handlePaste,
+    selectFirstSegment,
     setSegment,
   };
 }

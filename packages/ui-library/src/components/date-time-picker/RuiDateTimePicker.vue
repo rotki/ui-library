@@ -187,6 +187,7 @@ const {
   handleKeyDown,
   handleMouseDown,
   handlePaste,
+  selectFirstSegment,
   setSegment,
 } = useKeyboardHandler({
   accuracy,
@@ -251,6 +252,18 @@ const formattedDisplay = computed<string>(() => {
 
   return result;
 });
+
+/**
+ * An untouched field holds no value until focus expands the format tokens into
+ * it. That patch overwrites the input's value, and writing a value drops any
+ * selection with it, so the highlight `handleFocus` just set is gone by the
+ * time the tokens are on screen and the caret ends up after them. Re-select
+ * the first segment once the tokens have actually landed.
+ */
+watch(formattedDisplay, (value, previous) => {
+  if (previous === '' && value !== '' && get(searchInputFocused))
+    selectFirstSegment();
+}, { flush: 'post' });
 
 const timeSelection = computed<TimePickerSelection>({
   get() {

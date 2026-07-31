@@ -2915,5 +2915,42 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
 
       expect(document.activeElement).toBe(wrapper.find('input').element);
     });
+
+    it('highlights the first segment of a filled field', async () => {
+      wrapper = createWrapper({
+        attachTo: document.body,
+        props: {
+          autofocus: true,
+          modelValue: new Date(2023, 0, 15, 10, 30),
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+
+      const input = wrapper.find('input').element;
+      expect(input.value).toBe('15/01/2023 10:30');
+      expect(input.selectionStart).toBe(0);
+      expect(input.selectionEnd).toBe(2);
+    });
+
+    it('highlights the first segment of an empty field, once the tokens land', async () => {
+      wrapper = createWrapper({
+        attachTo: document.body,
+        props: {
+          allowEmpty: true,
+          autofocus: true,
+          modelValue: undefined,
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+
+      // focusing expands the format tokens into the value; the caret must end
+      // up on the first segment rather than after the tokens
+      const input = wrapper.find('input').element;
+      expect(input.value).toBe('DD/MM/YYYY HH:mm');
+      expect(input.selectionStart).toBe(0);
+      expect(input.selectionEnd).toBe(2);
+    });
   });
 });
