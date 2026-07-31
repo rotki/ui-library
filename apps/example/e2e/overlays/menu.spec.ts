@@ -135,6 +135,26 @@ test.describe('menu', () => {
     await expect(activator).toBeFocused();
   });
 
+  test('escape closes a nested menu one level at a time', async ({ page }) => {
+    const outer = page.locator('div[data-id=menu-nested]');
+    const innerContent = page.locator('[data-id=inner-content]');
+
+    await outer.locator('[data-id=activator]').click();
+    await expect(page.locator(menuContent)).toBeVisible();
+
+    await page.locator('[data-id=inner-activator]').click();
+    await expect(innerContent).toBeVisible();
+
+    // the first escape closes the inner menu only
+    await page.keyboard.press('Escape');
+    await expect(innerContent).toHaveCount(0);
+    await expect(page.locator(menuContent)).toBeVisible();
+
+    // the second closes the outer one
+    await page.keyboard.press('Escape');
+    await expect(page.locator(menuContent)).toHaveCount(0);
+  });
+
   test('menu should be closed by clicking the menu content', async ({ page }) => {
     const menu = page.locator('div[data-id=menu-12]');
     const activator = menu.locator('[data-id=activator]');

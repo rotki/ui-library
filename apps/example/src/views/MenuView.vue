@@ -156,5 +156,50 @@ const menus = ref<SimpleMenu[]>([
         </RuiMenu>
       </div>
     </div>
+
+    <h6 class="text-h6 mt-8 mb-4">
+      Nested menu
+    </h6>
+
+    <div class="py-4">
+      <RuiMenu
+        data-id="menu-nested"
+        :open-delay="10"
+        :popper="{ placement: 'bottom' }"
+      >
+        <template #activator="{ attrs }">
+          <RuiButton
+            color="primary"
+            v-bind="{ ...attrs, 'data-id': 'activator' }"
+          >
+            Open outer menu
+          </RuiButton>
+        </template>
+        <div class="px-3 py-2 flex flex-col items-start gap-2">
+          <span>This is the outer menu</span>
+          <RuiMenu
+            data-id="menu-nested-inner"
+            :open-delay="10"
+            :popper="{ placement: 'right' }"
+          >
+            <template #activator="{ attrs }">
+              <RuiButton
+                color="secondary"
+                size="sm"
+                v-bind="{ ...attrs, 'data-id': 'inner-activator' }"
+              >
+                Open inner menu
+              </RuiButton>
+            </template>
+            <div
+              class="px-3 py-2"
+              data-id="inner-content"
+            >
+              This is the inner menu
+            </div>
+          </RuiMenu>
+        </div>
+      </RuiMenu>
+    </div>
   </ComponentView>
 </template>
