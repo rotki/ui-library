@@ -18,6 +18,12 @@ export interface RuiMenuClassNames {
   content?: VueClassValue;
 }
 
+/**
+ * Roles a popover container may take. These are the values `aria-haspopup`
+ * accepts, which keeps the activator and the popover in agreement.
+ */
+export type RuiMenuRole = 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog';
+
 export interface MenuProps {
   openOnHover?: boolean;
   fullWidth?: boolean;
@@ -47,6 +53,13 @@ export interface MenuProps {
    * against this element.
    */
   anchorEl?: HTMLElement;
+  /**
+   * Role of the teleported popover. Defaults to `menu`, which is correct when
+   * the content is made of `menuitem`s. Set it to `listbox` (or `tree`, `grid`,
+   * `dialog`) when the content follows a different ARIA model, e.g. a selection
+   * list opened by a `combobox`. The activator's `aria-haspopup` follows it.
+   */
+  role?: RuiMenuRole;
 }
 
 defineOptions({
@@ -76,6 +89,7 @@ const {
   persistent = false,
   disableAutoFocus = false,
   anchorEl,
+  role = 'menu',
 } = defineProps<MenuProps>();
 
 defineSlots<{
@@ -145,6 +159,10 @@ const ui = computed<ReturnType<typeof menuStyles>>(() => menuStyles({
   fullWidth,
   dense,
 }));
+
+// `aria-haspopup="true"` is equivalent to `"menu"`; keep emitting `true` for
+// the default so nothing changes for existing callers.
+const ariaHasPopup = computed<RuiMenuRole | 'true'>(() => role === 'menu' ? 'true' : role);
 
 // NOTE: both computed functions must return the *same* object shape from
 // every branch — otherwise vue-tsc infers the slot's `attrs` type as a
@@ -262,7 +280,7 @@ onClickOutside(menu, () => {
       ref="activator"
       :class="ui.wrapper({ class: cn(classNames?.wrapper) ?? cn(wrapperClass as VueClassValue) })"
       :data-menu-disabled="disabled"
-      aria-haspopup="true"
+      :aria-haspopup="ariaHasPopup"
       :aria-expanded="open"
     >
       <slot
@@ -278,7 +296,7 @@ onClickOutside(menu, () => {
         v-if="visible"
         ref="menu"
         :class="ui.popover({ class: cn(classNames?.menu) ?? cn(menuClass as VueClassValue) })"
-        role="menu"
+        :role="role"
         :data-placement="currentPlacement"
         @click="closeOnContentClick ? onLeave() : undefined"
         @keydown.esc.stop="onLeave()"

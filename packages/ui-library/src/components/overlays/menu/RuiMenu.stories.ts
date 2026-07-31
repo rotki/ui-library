@@ -48,6 +48,10 @@ const meta = preview.meta({
     openOnHover: { control: 'boolean' },
     persistOnActivatorClick: { control: 'boolean' },
     popper: { control: 'object' },
+    role: {
+      control: 'select',
+      options: ['menu', 'listbox', 'tree', 'grid', 'dialog'],
+    },
   },
   component: RuiMenu,
   parameters: {

@@ -290,6 +290,42 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
     expect(activatorWrapper.attributes('aria-expanded')).toBe('false');
   });
 
+  describe('role', () => {
+    it('should default the popover to role="menu"', async () => {
+      wrapper = createWrapper();
+
+      await wrapper.find('#trigger').trigger('click');
+      await vi.runAllTimersAsync();
+
+      expect(queryByRole('menu')).toBeTruthy();
+    });
+
+    it('should apply a custom role to the popover', async () => {
+      wrapper = createWrapper({
+        props: {
+          role: 'listbox',
+        },
+      });
+
+      await wrapper.find('#trigger').trigger('click');
+      await vi.runAllTimersAsync();
+
+      expect(queryByRole('listbox')).toBeTruthy();
+      expect(queryByRole('menu')).toBeFalsy();
+    });
+
+    it('should match aria-haspopup on the activator wrapper to the role', () => {
+      wrapper = createWrapper({
+        props: {
+          role: 'listbox',
+        },
+      });
+
+      const activatorWrapper = wrapper.find('[data-menu-disabled]');
+      expect(activatorWrapper.attributes('aria-haspopup')).toBe('listbox');
+    });
+  });
+
   it('should not close when persistent and clicking outside', async () => {
     wrapper = createWrapper({
       props: {
