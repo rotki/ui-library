@@ -272,9 +272,14 @@ onClickOutside(menu, () => {
 </script>
 
 <template>
+  <!--
+    Escape is swallowed only while the menu is open (`onLeave` stops the event
+    itself); a closed menu must let it through, or a consumer that closes its
+    own editor on Escape never sees the key.
+  -->
   <div
     :class="classNames?.root"
-    @keydown.esc.stop="onLeave()"
+    @keydown.esc="onLeave($event)"
   >
     <div
       ref="activator"
@@ -299,7 +304,7 @@ onClickOutside(menu, () => {
         :role="role"
         :data-placement="currentPlacement"
         @click="closeOnContentClick ? onLeave() : undefined"
-        @keydown.esc.stop="onLeave()"
+        @keydown.esc="onLeave($event)"
       >
         <TransitionGroup
           enter-active-class="transition ease-out duration-200"

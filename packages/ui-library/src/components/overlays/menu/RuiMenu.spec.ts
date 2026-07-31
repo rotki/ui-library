@@ -326,6 +326,71 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
     });
   });
 
+  describe('escape propagation', () => {
+    const Host = defineComponent({
+      components: { RuiButton, RuiMenu },
+      emits: ['ancestor-keydown'],
+      template: `
+        <div @keydown="$emit('ancestor-keydown')">
+          <RuiMenu>
+            <template #activator="{ attrs }">
+              <RuiButton id="trigger" v-bind="attrs">Click me!</RuiButton>
+            </template>
+            <div>${text}</div>
+          </RuiMenu>
+        </div>`,
+    });
+
+    function createHost(): VueWrapper<InstanceType<typeof Host>> {
+      return mount(Host);
+    }
+
+    function ancestorKeydowns(host: VueWrapper<InstanceType<typeof Host>>): number {
+      return host.emitted('ancestor-keydown')?.length ?? 0;
+    }
+
+    it('should let escape through to an ancestor while closed', async () => {
+      const host = createHost();
+
+      await host.find('#trigger').trigger('keydown', { key: 'Escape' });
+
+      expect(ancestorKeydowns(host)).toBe(1);
+
+      host.unmount();
+    });
+
+    it('should swallow escape while open and close the menu', async () => {
+      const host = createHost();
+
+      await host.find('#trigger').trigger('click');
+      await vi.runAllTimersAsync();
+      expect(document.body.innerHTML).toMatch(new RegExp(text));
+
+      const before = ancestorKeydowns(host);
+      await host.find('#trigger').trigger('keydown', { key: 'Escape' });
+      await vi.runAllTimersAsync();
+
+      expect(ancestorKeydowns(host)).toBe(before);
+      expect(document.body.innerHTML).not.toMatch(new RegExp(text));
+
+      host.unmount();
+    });
+
+    it('should let other keys through while open', async () => {
+      const host = createHost();
+
+      await host.find('#trigger').trigger('click');
+      await vi.runAllTimersAsync();
+
+      const before = ancestorKeydowns(host);
+      await host.find('#trigger').trigger('keydown', { key: 'a' });
+
+      expect(ancestorKeydowns(host)).toBe(before + 1);
+
+      host.unmount();
+    });
+  });
+
   it('should not close when persistent and clicking outside', async () => {
     wrapper = createWrapper({
       props: {
