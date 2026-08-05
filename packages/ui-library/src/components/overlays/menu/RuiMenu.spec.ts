@@ -329,20 +329,26 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
   describe('escape propagation', () => {
     const Host = defineComponent({
       components: { RuiButton, RuiMenu },
+      props: {
+        persistent: { default: false, type: Boolean },
+      },
       emits: ['ancestor-keydown'],
       template: `
         <div @keydown="$emit('ancestor-keydown')">
-          <RuiMenu>
+          <RuiMenu v-model="open" :persistent="persistent">
             <template #activator="{ attrs }">
               <RuiButton id="trigger" v-bind="attrs">Click me!</RuiButton>
             </template>
             <div>${text}</div>
           </RuiMenu>
         </div>`,
+      setup() {
+        return { open: ref(false) };
+      },
     });
 
-    function createHost(): VueWrapper<InstanceType<typeof Host>> {
-      return mount(Host);
+    function createHost(persistent = false): VueWrapper<InstanceType<typeof Host>> {
+      return mount(Host, { props: { persistent } });
     }
 
     function ancestorKeydowns(host: VueWrapper<InstanceType<typeof Host>>): number {
@@ -371,6 +377,40 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
       await vi.runAllTimersAsync();
 
       expect(ancestorKeydowns(host)).toBe(before);
+      expect(document.body.innerHTML).not.toMatch(new RegExp(text));
+
+      host.unmount();
+    });
+
+    it('should keep a persistent menu open on escape and let the key through', async () => {
+      const host = createHost(true);
+
+      await host.find('#trigger').trigger('click');
+      await vi.runAllTimersAsync();
+      expect(document.body.innerHTML).toMatch(new RegExp(text));
+
+      const before = ancestorKeydowns(host);
+      await host.find('#trigger').trigger('keydown', { key: 'Escape' });
+      await vi.runAllTimersAsync();
+
+      // An inner popover that closed on the same press leaves the menu
+      // standing, and nothing consumed the key, so the ancestor still sees it.
+      expect(document.body.innerHTML).toMatch(new RegExp(text));
+      expect(ancestorKeydowns(host)).toBe(before + 1);
+
+      host.unmount();
+    });
+
+    it('should still close a persistent menu through its model', async () => {
+      const host = createHost(true);
+
+      await host.find('#trigger').trigger('click');
+      await vi.runAllTimersAsync();
+      expect(document.body.innerHTML).toMatch(new RegExp(text));
+
+      host.vm.open = false;
+      await vi.runAllTimersAsync();
+
       expect(document.body.innerHTML).not.toMatch(new RegExp(text));
 
       host.unmount();

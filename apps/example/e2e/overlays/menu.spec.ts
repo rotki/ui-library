@@ -1,6 +1,15 @@
-import { expect, test } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 const menuContent = 'div[role=menu] [data-id=content]';
+
+/**
+ * A menu that stays open is an absence of change, and the leave transition runs
+ * for 150ms, so asserting straight after the key press sees the content still
+ * on the page mid-fade and passes for the wrong reason.
+ */
+async function settle(page: Page): Promise<void> {
+  await page.waitForTimeout(300);
+}
 
 test.describe('menu', () => {
   test.beforeEach(async ({ page }) => {
@@ -152,6 +161,34 @@ test.describe('menu', () => {
 
     // the second closes the outer one
     await page.keyboard.press('Escape');
+    await expect(page.locator(menuContent)).toHaveCount(0);
+  });
+
+  test('escape closes an inner menu without closing a persistent outer one', async ({ page }) => {
+    const outer = page.locator('div[data-id=menu-persistent-nested]');
+    const outerContent = page.locator('[data-id=persistent-close]');
+    const innerContent = page.locator('[data-id=persistent-inner-content]');
+
+    await outer.locator('[data-id=activator]').click();
+    await expect(outerContent).toBeVisible();
+
+    await page.locator('[data-id=persistent-inner-activator]').click();
+    await expect(innerContent).toBeVisible();
+
+    // the inner menu goes, the persistent outer one stays
+    await page.keyboard.press('Escape');
+    await expect(innerContent).toHaveCount(0);
+    await settle(page);
+    await expect(outerContent).toBeVisible();
+
+    // and a second press does not reach it either — this one lands on the inner
+    // activator, which sits inside the outer menu's own popover
+    await page.keyboard.press('Escape');
+    await settle(page);
+    await expect(outerContent).toBeVisible();
+
+    // only its own model closes it — also leaves the page clean for the next test
+    await outerContent.click();
     await expect(page.locator(menuContent)).toHaveCount(0);
   });
 

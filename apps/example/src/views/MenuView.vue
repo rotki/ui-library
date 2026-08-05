@@ -122,6 +122,8 @@ const menus = ref<SimpleMenu[]>([
     persistent: true,
   },
 ]);
+
+const persistentNestedOpen = ref<boolean>(false);
 </script>
 
 <template>
@@ -198,6 +200,61 @@ const menus = ref<SimpleMenu[]>([
               This is the inner menu
             </div>
           </RuiMenu>
+        </div>
+      </RuiMenu>
+    </div>
+
+    <h6 class="text-h6 mt-8 mb-4">
+      Persistent nested menu
+    </h6>
+
+    <div class="py-4">
+      <RuiMenu
+        v-model="persistentNestedOpen"
+        data-id="menu-persistent-nested"
+        persistent
+        :open-delay="10"
+        :popper="{ placement: 'bottom' }"
+      >
+        <template #activator="{ attrs }">
+          <RuiButton
+            color="primary"
+            v-bind="{ ...attrs, 'data-id': 'activator' }"
+          >
+            Open persistent outer menu
+          </RuiButton>
+        </template>
+        <div class="px-3 py-2 flex flex-col items-start gap-2">
+          <span>Escape leaves this one open</span>
+          <RuiMenu
+            data-id="menu-persistent-nested-inner"
+            :open-delay="10"
+            :popper="{ placement: 'right' }"
+          >
+            <template #activator="{ attrs }">
+              <RuiButton
+                color="secondary"
+                size="sm"
+                v-bind="{ ...attrs, 'data-id': 'persistent-inner-activator' }"
+              >
+                Open inner menu
+              </RuiButton>
+            </template>
+            <div
+              class="px-3 py-2"
+              data-id="persistent-inner-content"
+            >
+              This is the inner menu
+            </div>
+          </RuiMenu>
+          <RuiButton
+            color="error"
+            size="sm"
+            data-id="persistent-close"
+            @click="persistentNestedOpen = false"
+          >
+            Close
+          </RuiButton>
         </div>
       </RuiMenu>
     </div>

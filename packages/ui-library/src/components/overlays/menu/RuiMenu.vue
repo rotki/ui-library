@@ -45,6 +45,11 @@ export interface MenuProps {
   successMessages?: string | string[];
   showDetails?: boolean;
   dense?: boolean;
+  /**
+   * Keeps the menu open through the interactions that would otherwise dismiss
+   * it: a click outside and an Escape press. A programmatic close (`v-model`
+   * set to `false`) still applies.
+   */
   persistent?: boolean;
   disableAutoFocus?: boolean;
   /**
@@ -234,6 +239,20 @@ function onLeave(event?: KeyboardEvent): void {
   nextTick(() => focusOnActivator());
 }
 
+// `persistent` blocks the outside interactions that would close the menu, and
+// Escape is one of them — `RuiDialog` and `RuiBottomSheet` already read it that
+// way. The guard sits here rather than in `onLeave` because `onLeave` also runs
+// for a programmatic close (`v-model` set to `false`), which must keep working.
+// A persistent menu leaves the key alone instead of swallowing it, so an inner
+// popover can close on Escape while the menu stays open, and an ancestor still
+// sees a key nothing consumed.
+function onEscape(event: KeyboardEvent): void {
+  if (persistent)
+    return;
+
+  onLeave(event);
+}
+
 function checkClick(): void {
   if (get(open) && get(click)) {
     if (!persistOnActivatorClick)
@@ -273,13 +292,14 @@ onClickOutside(menu, () => {
 
 <template>
   <!--
-    Escape is swallowed only while the menu is open (`onLeave` stops the event
-    itself); a closed menu must let it through, or a consumer that closes its
-    own editor on Escape never sees the key.
+    Escape is swallowed only while the menu is open and not persistent
+    (`onLeave` stops the event itself); a closed or persistent menu must let it
+    through, or a consumer that closes its own editor on Escape never sees the
+    key.
   -->
   <div
     :class="classNames?.root"
-    @keydown.esc="onLeave($event)"
+    @keydown.esc="onEscape($event)"
   >
     <div
       ref="activator"
@@ -304,7 +324,7 @@ onClickOutside(menu, () => {
         :role="role"
         :data-placement="currentPlacement"
         @click="closeOnContentClick ? onLeave() : undefined"
-        @keydown.esc="onLeave($event)"
+        @keydown.esc="onEscape($event)"
       >
         <TransitionGroup
           enter-active-class="transition ease-out duration-200"
