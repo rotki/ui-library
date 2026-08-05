@@ -249,6 +249,11 @@ const legendText = computed<string>(() => {
   return required ? `${label} ﹡` : label;
 });
 
+// Drives both the clear button itself and the room the selection overlay has
+// to leave for it, so the two can never disagree.
+const showClear = computed<boolean>(() =>
+  clearable && get(selectedItem) !== undefined && !disabled && !readOnly);
+
 const activatorUi = computed<ReturnType<typeof categoryPickerActivatorStyles>>(() => categoryPickerActivatorStyles({
   dense,
   disabled,
@@ -260,6 +265,7 @@ const activatorUi = computed<ReturnType<typeof categoryPickerActivatorStyles>>((
   opened: get(isOpen),
   outlined: get(outlined),
   readonly: readOnly,
+  withClear: get(showClear),
 }));
 
 const activeRailIndex = computed<number>(() =>
@@ -467,8 +473,8 @@ watch(isOpen, (value) => {
             </span>
             <span
               v-if="selectedItem && !isTyping && $slots.selection"
-              class="absolute inset-y-0 left-4 right-8 flex items-center gap-2 pointer-events-none"
-              :class="[activatorUi.value()]"
+              data-id="selection"
+              :class="activatorUi.selection()"
             >
               <slot
                 name="selection.prepend"
@@ -495,9 +501,9 @@ watch(isOpen, (value) => {
               @keydown.esc="close()"
             />
             <span
-              v-if="clearable && selectedItem && !disabled && !readOnly"
+              v-if="showClear"
               data-id="clear"
-              :class="[activatorUi.clear(), focused && '!visible']"
+              :class="[activatorUi.clear(), focused && '!visible', { 'mr-2': !dense }]"
               @click.stop.prevent="clearSelection()"
             >
               <RuiIcon
@@ -506,7 +512,10 @@ watch(isOpen, (value) => {
                 size="18"
               />
             </span>
-            <span :class="activatorUi.iconWrapper()">
+            <span
+              data-id="chevron"
+              :class="activatorUi.iconWrapper()"
+            >
               <RuiIcon
                 :class="activatorUi.icon()"
                 :size="dense ? 16 : 24"

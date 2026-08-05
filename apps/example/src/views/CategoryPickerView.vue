@@ -52,6 +52,8 @@ const countryValue = ref<number>();
 const actionValue = ref<string>();
 const denseValue = ref<number>();
 const noSearchValue = ref<number>();
+const badgeValue = ref<number>(1);
+const badgeClearableValue = ref<number>(1);
 </script>
 
 <template>
@@ -120,6 +122,63 @@ const noSearchValue = ref<number>();
           dense
           data-id="cp-dense"
         />
+      </div>
+
+      <div>
+        <h3 class="text-subtitle-1 mb-2">
+          Selection slot, right-aligned badge
+        </h3>
+        <RuiCategoryPicker
+          v-model="badgeValue"
+          :items="countries"
+          category-attr="continent"
+          key-attr="id"
+          text-attr="label"
+          label="Country"
+          data-id="cp-selection-badge"
+        >
+          <template #selection="{ item }">
+            <span class="font-medium truncate">{{ item.label }}</span>
+            <!--
+              `ml-auto` content is the shape that exposed rotki/ui-library#559:
+              the selection layer used to take `w-full` on top of its own left
+              and right offsets, so it overflowed the field and this badge
+              landed on the chevron.
+            -->
+            <span
+              data-id="selection-badge"
+              class="ml-auto shrink-0 px-2 py-0.5 rounded text-caption bg-rui-primary/10 text-rui-primary"
+            >
+              {{ item.continent }}
+            </span>
+          </template>
+        </RuiCategoryPicker>
+      </div>
+
+      <div>
+        <h3 class="text-subtitle-1 mb-2">
+          Selection slot, right-aligned badge + clearable
+        </h3>
+        <RuiCategoryPicker
+          v-model="badgeClearableValue"
+          :items="countries"
+          category-attr="continent"
+          key-attr="id"
+          text-attr="label"
+          label="Country"
+          clearable
+          data-id="cp-selection-badge-clearable"
+        >
+          <template #selection="{ item }">
+            <span class="font-medium truncate">{{ item.label }}</span>
+            <span
+              data-id="selection-badge"
+              class="ml-auto shrink-0 px-2 py-0.5 rounded text-caption bg-rui-primary/10 text-rui-primary"
+            >
+              {{ item.continent }}
+            </span>
+          </template>
+        </RuiCategoryPicker>
       </div>
 
       <div>

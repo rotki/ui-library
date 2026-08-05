@@ -10,9 +10,31 @@ export type CategoryPickerVariant = TextInputVariant;
  */
 export const categoryPickerActivatorStyles = tv({
   extend: activatorStyles,
+  slots: {
+    // The `#selection` slot draws over the emptied input, so it is positioned
+    // rather than laid out: `inset-y-0 left-4` lines it up with the field's own
+    // `pl-4` text box, and the right offset reserves the trailing controls.
+    // It must NOT take the `value` slot's `w-full` — a width of 100% beats the
+    // right offset, so the layer would end up full field-width shifted right by
+    // `left-4`, overflowing the field and covering the chevron it meant to
+    // clear (rotki/ui-library#559).
+    selection: 'absolute inset-y-0 left-4 flex items-center gap-2 pointer-events-none truncate transition-all duration-75',
+  },
   variants: {
     // Re-declare for type inference — actual styles live in activatorStyles.
     filled: { true: {} },
+    // The chevron sits at `right-3` and is 24px wide, so it reaches 36px in;
+    // `right-10` clears it. The clear button ends at the activator's `pr-8`
+    // padding edge plus its own `mr-2`, so its 18px icon reaches 58px in and
+    // `right-16` clears that. Right-aligned selection content (`ml-auto`) then
+    // lands just left of whichever control is showing.
+    withClear: {
+      false: { selection: 'right-10' },
+      true: { selection: 'right-16' },
+    },
+  },
+  defaultVariants: {
+    withClear: false,
   },
 });
 

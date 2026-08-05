@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 test.describe('category-picker', () => {
   test.beforeEach(async ({ page }) => {
@@ -109,5 +109,51 @@ test.describe('category-picker - narrow (drill-in)', () => {
 
     await expect(page.getByRole('dialog')).toBeHidden();
     await expect(page.locator('[data-id=cp-default] [data-id=search-input]')).toHaveValue('France');
+  });
+});
+
+test.describe('category-picker - selection slot geometry', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/category-pickers');
+  });
+
+  // jsdom has no layout, so the only honest check for rotki/ui-library#559 is
+  // a measured one: the overlay must stay inside the field and leave the
+  // trailing controls alone.
+  async function box(page: Page, selector: string): Promise<{ left: number; right: number }> {
+    const rect = await page.locator(selector).boundingBox();
+    if (!rect)
+      throw new Error(`no box for ${selector}`);
+    return { left: rect.x, right: rect.x + rect.width };
+  }
+
+  test('keeps the overlay inside the field and clear of the chevron', async ({ page }) => {
+    const picker = '[data-id=cp-selection-badge]';
+
+    const field = await box(page, `${picker} [data-id=activator]`);
+    const selection = await box(page, `${picker} [data-id=selection]`);
+    const badge = await box(page, `${picker} [data-id=selection-badge]`);
+    const chevron = await box(page, `${picker} [data-id=chevron]`);
+
+    // Before the fix the layer was full field-width shifted right by `left-4`,
+    // so its right edge sat ~16px past the field's.
+    expect(selection.right).toBeLessThanOrEqual(field.right);
+    // And the right-aligned badge rode on top of the chevron.
+    expect(badge.right).toBeLessThanOrEqual(chevron.left);
+  });
+
+  test('leaves room for the clear button too', async ({ page }) => {
+    const picker = '[data-id=cp-selection-badge-clearable]';
+
+    // The clear button only shows on hover or focus.
+    await page.locator(`${picker} [data-id=activator]`).hover();
+
+    const field = await box(page, `${picker} [data-id=activator]`);
+    const selection = await box(page, `${picker} [data-id=selection]`);
+    const badge = await box(page, `${picker} [data-id=selection-badge]`);
+    const clear = await box(page, `${picker} [data-id=clear]`);
+
+    expect(selection.right).toBeLessThanOrEqual(field.right);
+    expect(badge.right).toBeLessThanOrEqual(clear.left);
   });
 });
