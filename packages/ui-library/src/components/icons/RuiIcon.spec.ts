@@ -1,6 +1,8 @@
+import type { GeneratedIcon } from '@/types/icons';
 import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
+import { createIconDefaults, IconsSymbol } from '@/composables/icons';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiIcon>): VueWrapper<InstanceType<typeof RuiIcon>> {
   return mount(RuiIcon, options);
@@ -143,6 +145,51 @@ describe('components/icons/RuiIcon.vue', () => {
     });
 
     expect(wrapper.classes()).toContain('rui-icon');
+  });
+
+  describe('app-registered icons', () => {
+    // A brand logo of the shape an app registers itself: a name the generated
+    // `RuiIcons` list can never contain.
+    const customIcon: GeneratedIcon = {
+      components: [['path', { d: 'M4 4h16v16H4z' }]],
+      name: 'lu-not-a-library-icon',
+    };
+
+    function createWithCustomIcon(
+      name: string,
+    ): VueWrapper<InstanceType<typeof RuiIcon>> {
+      return mount(RuiIcon, {
+        global: {
+          provide: {
+            [IconsSymbol]: createIconDefaults({ registeredIcons: [customIcon] }),
+          },
+        },
+        props: { name },
+      });
+    }
+
+    it('should render a registered icon without complaining about it', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      wrapper = createWithCustomIcon(customIcon.name);
+
+      // It is registered and it renders, so nothing is wrong with it — the
+      // regression guard for rotki/ui-library#568, where the name-list check
+      // warned on every render, in production builds too.
+      expect(wrapper.find('path').attributes('d')).toBe('M4 4h16v16H4z');
+      expect(warn).not.toHaveBeenCalled();
+      expect(error).not.toHaveBeenCalled();
+    });
+
+    it('should still report a name that is registered nowhere', () => {
+      const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      wrapper = createWithCustomIcon('lu-registered-nowhere');
+
+      expect(error).toHaveBeenCalledOnce();
+      expect(wrapper.find('path').exists()).toBe(false);
+    });
   });
 
   it('should render svg element', () => {

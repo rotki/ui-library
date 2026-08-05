@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { ContextColorsType } from '@/consts/colors';
+import type { RuiIcons } from '@/icons';
 import { useIcons } from '@/composables/icons';
-import { isRuiIcon, type RuiIcons } from '@/icons';
 import { tv } from '@/utils/tv';
 
 export interface Props {
@@ -62,10 +62,13 @@ const sizeStyle = computed<Record<string, string> | undefined>(() => {
 
 const isFill = computed<boolean>(() => name.endsWith('-fill'));
 
+// What is registered is the only thing that matters here. An app may register
+// its own icons through `createRui({ theme: { icons } })` — brand logos, since
+// the library carries none — and those names can never appear in the generated
+// `RuiIcons` list, so validating against that list warned for precisely the
+// icons the registration API exists to support. A genuinely unknown name is
+// still caught below, by the check that decides whether anything renders.
 const components = computed<SvgComponent[] | undefined>(() => {
-  if (!isRuiIcon(name)) {
-    console.warn(`icon ${name} must be a valid RuiIcon`);
-  }
   const found = registeredIcons[name];
 
   if (!found) {
