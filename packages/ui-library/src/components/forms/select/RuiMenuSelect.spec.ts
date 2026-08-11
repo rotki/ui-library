@@ -195,6 +195,27 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
     expect(wrapper.emitted('update:modelValue')).toEqual([[undefined]]);
   });
 
+  it('should keep the clear button clear of the chevron unless dense', async () => {
+    const option0 = options[0];
+    assert(option0);
+    wrapper = createWrapper({
+      props: {
+        clearable: true,
+        keyAttr: 'id',
+        modelValue: option0.id,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    // the 24px chevron sits at `right-3`, so the clear icon needs the gap
+    expect(wrapper.find('[data-id=clear]').classes()).toContain('mr-2');
+
+    // the dense chevron is 16px and leaves room on its own
+    await wrapper.setProps({ dense: true });
+    expect(wrapper.find('[data-id=clear]').classes()).not.toContain('mr-2');
+  });
+
   it('should not open menu when readOnly', async () => {
     wrapper = createWrapper({
       props: {
