@@ -40,6 +40,8 @@ test.describe('progress indicators', () => {
     await expect(determinateProgress).toBeVisible();
     await expect(indeterminateProgress).toBeVisible();
     await expect(bufferProgress).toBeVisible();
-    await expect(circularProgress.locator('svg circle')).toBeVisible();
+    // A determinate circle renders a track plus the arc on top of it.
+    await expect(circularProgress.locator('svg circle')).toHaveCount(2);
+    await expect(circularProgress.locator('svg circle').last()).toBeVisible();
   });
 });

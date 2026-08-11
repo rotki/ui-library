@@ -86,6 +86,56 @@ describe('components/progress/RuiProgress.vue', () => {
     expect(wrapper.find('div[role=progressbar] svg circle').exists()).toBeTruthy();
   });
 
+  it('should render a track behind the arc for determinate circular progress', async () => {
+    wrapper = createWrapper({
+      props: {
+        circular: true,
+        value: 50,
+      },
+    });
+
+    expect(wrapper.findAll('div[role=progressbar] svg circle')).toHaveLength(2);
+
+    // the spinning variant has no track, a full ring would just sit there
+    await wrapper.setProps({ variant: 'indeterminate' });
+    expect(wrapper.findAll('div[role=progressbar] svg circle')).toHaveLength(1);
+  });
+
+  it('should scale the circular label with size and thickness', async () => {
+    function labelFontSize(): number {
+      const style = wrapper.find('div[role=progressbar] > div').attributes('style') ?? '';
+      return Number.parseFloat(/font-size:\s*([\d.]+)px/.exec(style)?.[1] ?? '0');
+    }
+
+    wrapper = createWrapper({
+      props: {
+        circular: true,
+        showLabel: true,
+        size: 30,
+        thickness: 2,
+        value: 94,
+      },
+    });
+
+    const label = wrapper.find('div[role=progressbar] > div');
+    expect(label.text()).toBe('94%');
+    // the value is already exposed through aria-valuenow
+    expect(label.attributes('aria-hidden')).toBe('true');
+    expect(labelFontSize()).toBeCloseTo(8.21, 2);
+
+    // the label is sized for `100%`, so it does not jump as the value climbs
+    await wrapper.setProps({ value: 100 });
+    expect(labelFontSize()).toBeCloseTo(8.21, 2);
+
+    // large rings are capped by the sublinear curve rather than the fit
+    await wrapper.setProps({ size: 100 });
+    expect(labelFontSize()).toBeCloseTo(21, 1);
+
+    // a fatter stroke leaves less room inside, and the fit takes over again
+    await wrapper.setProps({ size: 30, thickness: 10 });
+    expect(labelFontSize()).toBeCloseTo(3.16, 1);
+  });
+
   it('should show label when showLabel is true', () => {
     wrapper = createWrapper({
       props: {

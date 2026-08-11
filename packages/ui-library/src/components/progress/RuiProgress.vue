@@ -47,6 +47,10 @@ defineSlots<Record<string, never>>();
 
 const CIRCLE_RADIUS = 20;
 const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS; // ~125.66
+/** approximate width of `100%` in ems */
+const LABEL_WIDTH_EM = 2.5;
+/** keeps the label off the stroke rather than merely inside it */
+const LABEL_BREATHING_ROOM = 0.85;
 
 function clampPercent(val: number | undefined): number {
   return Math.max(0, Math.min(val ?? 100, 100));
@@ -64,7 +68,8 @@ const progressStyles = tv({
     circularContainer: 'inline-block relative',
     svg: 'block',
     circle: 'stroke-current',
-    label: 'dark:text-white',
+    circleTrack: 'stroke-current opacity-20',
+    label: 'text-rui-text',
   },
   variants: {
     color: {
@@ -95,8 +100,8 @@ const progressStyles = tv({
   compoundVariants: [
     // Linear label
     { circular: false, hasLabel: true, class: { label: 'block text-sm ml-4' } },
-    // Circular label (overlays the circle)
-    { circular: true, hasLabel: true, class: { label: 'absolute inset-0 flex items-center justify-center text-[0.6rem] leading-none' } },
+    // Circular label (overlays the circle, font size derived from `size`)
+    { circular: true, hasLabel: true, class: { label: 'absolute inset-0 flex items-center justify-center leading-none tabular-nums whitespace-nowrap' } },
   ],
   compoundSlots: [
     // Rail background (track behind the bar)
@@ -156,6 +161,18 @@ const circularGeometry = computed<{ scaledThickness: number; viewSize: number }>
   return { scaledThickness, viewSize: 40 + scaledThickness };
 });
 
+/**
+ * The circular label lives inside the ring, so it scales with both `size` and `thickness`.
+ * `fit` solves for the widest label (`100%`) fitting the chord it spans, always computed
+ * for that widest label so the text does not resize as the value climbs. It is capped by
+ * a sublinear curve so large rings do not end up with an oversized number in the middle.
+ */
+const circularLabelStyle = computed<Record<string, string>>(() => {
+  const innerRadius = Math.max((+size - 2 * +thickness) / 2, 0);
+  const fit = (LABEL_BREATHING_ROOM * 2 * innerRadius) / Math.sqrt(LABEL_WIDTH_EM ** 2 + 1);
+  return { fontSize: `${Math.min(fit, +size * 0.15 + 6)}px` };
+});
+
 const circularStrokeStyle = computed<Record<string, string>>(() => ({
   strokeDasharray: `${CIRCLE_CIRCUMFERENCE}`,
   strokeDashoffset: `${(get(progress) / 100) * -CIRCLE_CIRCUMFERENCE}`,
@@ -181,6 +198,16 @@ const circularStrokeStyle = computed<Record<string, string>>(() => ({
         :class="ui.svg()"
         :viewBox="`0 0 ${circularGeometry.viewSize} ${circularGeometry.viewSize}`"
       >
+        <!-- Track behind the arc, mirroring the linear rail. Indeterminate spins, so it gets no track. -->
+        <circle
+          v-if="variant === ProgressVariant.determinate"
+          cx="50%"
+          cy="50%"
+          fill="none"
+          :r="CIRCLE_RADIUS"
+          :class="ui.circleTrack()"
+          :stroke-width="circularGeometry.scaledThickness"
+        />
         <circle
           cx="50%"
           cy="50%"
@@ -194,6 +221,8 @@ const circularStrokeStyle = computed<Record<string, string>>(() => ({
       <div
         v-if="hasLabel"
         :class="ui.label()"
+        :style="circularLabelStyle"
+        aria-hidden="true"
       >
         {{ label }}
       </div>

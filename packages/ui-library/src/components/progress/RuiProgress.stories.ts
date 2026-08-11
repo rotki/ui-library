@@ -142,6 +142,22 @@ export const CircularWithLabel = meta.story({
   },
 });
 
+export const CircularWithLabelSizes = meta.story({
+  render(args) {
+    return {
+      components: { Progress: RuiProgress },
+      setup: () => ({ args, sizes: [24, 30, 40, 64, 100] }),
+      template: `
+        <div class="flex flex-wrap items-center gap-6 p-4 text-black dark:text-white">
+          <div v-for="size in sizes" :key="size" class="flex flex-col items-center gap-2">
+            <Progress circular show-label color="primary" :value="100" :size="size" :thickness="2" />
+            <span class="text-xs">{{ size }}px</span>
+          </div>
+        </div>`,
+    };
+  },
+});
+
 export const Colors = meta.story({
   render(args) {
     return {
