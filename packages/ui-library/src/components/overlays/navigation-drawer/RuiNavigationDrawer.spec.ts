@@ -234,6 +234,41 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
     assertExists(drawer);
   });
 
+  it('should let a consumer class replace the conflicting variant class', async () => {
+    wrapper = createWrapper({
+      attrs: {
+        class: 'z-[6]',
+      },
+    });
+    await vi.runAllTimersAsync();
+
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    const drawer = queryBody<HTMLElement>('aside[data-visible]');
+    assertExists(drawer);
+    expect(drawer.classList.contains('z-[6]')).toBe(true);
+    // the variant's own z-index must be gone, not merely outranked
+    expect(drawer.classList.contains('z-[7]')).toBe(false);
+  });
+
+  it('should still apply the variant class when the consumer passes none', async () => {
+    wrapper = createWrapper({
+      attrs: {
+        class: 'custom-drawer',
+      },
+    });
+    await vi.runAllTimersAsync();
+
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    const drawer = queryBody<HTMLElement>('aside[data-visible]');
+    assertExists(drawer);
+    expect(drawer.classList.contains('custom-drawer')).toBe(true);
+    expect(drawer.classList.contains('z-[7]')).toBe(true);
+  });
+
   it('should keep DOM element when miniVariant is true and modelValue is false', async () => {
     wrapper = createWrapper({
       props: {

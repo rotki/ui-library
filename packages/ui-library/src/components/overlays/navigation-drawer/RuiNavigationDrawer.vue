@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { MaybeElement } from '@vueuse/core';
+import type { ClassValue } from 'vue';
 import type { VueClassValue } from '@/types/class-value';
 import { useTimeoutManager } from '@/composables/timeout-manager';
 import { getRootAttrs, transformPropsUnit } from '@/utils/helpers';
-import { tv } from '@/utils/tv';
+import { cn, tv } from '@/utils/tv';
 
 export interface RuiNavigationDrawerClassNames {
   root?: VueClassValue;
@@ -94,7 +95,26 @@ const drawer = tv({
   defaultVariants: { position: 'left', visible: false, mini: false, withOverlay: false },
 });
 
-const ui = computed<string>(() => drawer({ position, visible: modelValue.value, mini: miniVariant, withOverlay: overlay }));
+/**
+ * Consumer classes go through `drawer()` rather than alongside it, so
+ * tailwind-variants' twMerge resolves conflicts in the consumer's favour.
+ * Passed as an argument instead of read off `$attrs` here, so the template
+ * keeps using `$attrs` directly.
+ */
+function rootClass(attrsClass: ClassValue): string {
+  return drawer({
+    position,
+    visible: modelValue.value,
+    mini: miniVariant,
+    withOverlay: overlay,
+    class: cn([
+      temporary && modelValue.value && 'shadow-5',
+      classNames?.content ?? contentClass,
+      classNames?.root,
+      attrsClass,
+    ]),
+  });
+}
 
 function toggle(): void {
   set(modelValue, !get(modelValue));
@@ -160,15 +180,10 @@ onClickOutside(content, () => {
         :data-visible="modelValue || undefined"
         :data-position="position"
         :data-mini="miniVariant || undefined"
-        :class="[
-          ui,
-          temporary && modelValue && 'shadow-5',
-          classNames?.content ?? contentClass,
-          classNames?.root,
-        ]"
+        :class="rootClass($attrs.class)"
         :aria-label="ariaLabel"
         :aria-hidden="miniVariant && !modelValue ? 'true' : undefined"
-        v-bind="getRootAttrs($attrs)"
+        v-bind="getRootAttrs($attrs, [])"
       >
         <slot v-bind="{ attrs: activatorAttrs, close }" />
       </aside>
