@@ -25,6 +25,43 @@ describe('components/icons/RuiIcon.vue', () => {
     expect(wrapper.classes()).toContain('text-rui-primary');
   });
 
+  it('should let a consumer class replace the conflicting variant class', () => {
+    wrapper = createWrapper({
+      attrs: {
+        class: 'text-rui-error size-4',
+      },
+      props: {
+        color: 'primary',
+        name: 'lu-circle-arrow-down',
+      },
+    });
+
+    const classes = wrapper.classes();
+    expect(classes).toContain('text-rui-error');
+    expect(classes).toContain('size-4');
+    // the variant colour and the base box must be gone, not merely outranked
+    expect(classes).not.toContain('text-rui-primary');
+    expect(classes).not.toContain('w-[var(--rui-icon-size,1.5rem)]');
+    // untouched base classes stay
+    expect(classes).toContain('shrink-0');
+    expect(classes).toContain('rui-icon');
+  });
+
+  it('should still forward non-class attributes to the svg', () => {
+    wrapper = createWrapper({
+      attrs: {
+        'data-id': 'my-icon',
+        'role': 'img',
+      },
+      props: {
+        name: 'lu-circle-arrow-down',
+      },
+    });
+
+    expect(wrapper.attributes('data-id')).toBe('my-icon');
+    expect(wrapper.attributes('role')).toBe('img');
+  });
+
   it('should have aria-hidden="true" on svg', () => {
     wrapper = createWrapper({
       props: {

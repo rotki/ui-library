@@ -1,8 +1,10 @@
 <script lang="ts" setup>
+import type { ClassValue } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
+import { objectOmit } from '@vueuse/shared';
 import { useIcons } from '@/composables/icons';
-import { tv } from '@/utils/tv';
+import { cn, tv } from '@/utils/tv';
 
 export interface Props {
   name: RuiIcons;
@@ -12,6 +14,9 @@ export interface Props {
 
 defineOptions({
   name: 'RuiIcon',
+  // the svg is the only root, so a fallthrough class would land beside the
+  // variant classes and leave the cascade to break the tie; `ui` merges instead
+  inheritAttrs: false,
 });
 
 const { name, size, color } = defineProps<Props>();
@@ -42,7 +47,10 @@ const iconStyles = tv({
 });
 
 const hasExplicitSize = computed<boolean>(() => size !== undefined);
-const ui = computed<string>(() => iconStyles({ color }));
+
+function ui(attrsClass: ClassValue): string {
+  return iconStyles({ color, class: cn(attrsClass) });
+}
 
 // Render the `size` prop as an inline CSS custom property on the svg. Because
 // inline style wins against any inherited value for the same property on this
@@ -84,10 +92,11 @@ const components = computed<SvgComponent[] | undefined>(() => {
   <svg
     aria-hidden="true"
     class="rui-icon"
-    :class="ui"
+    :class="ui($attrs.class)"
     :style="sizeStyle"
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
+    v-bind="objectOmit($attrs, ['class'])"
   >
     <component
       :is="component[0]"
