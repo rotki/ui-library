@@ -14,6 +14,8 @@ export interface UseAutoCompleteValueOptions<TItem> {
 export interface UseAutoCompleteValueReturn<TItem> {
   value: ComputedRef<TItem[]>;
   setSelected: (selected: TItem[]) => void;
+  /** Resolves the current model value against an arbitrary options list. */
+  resolveIn: (options: TItem[]) => TItem[];
 }
 
 export interface UseAutoCompleteValueDeps<TItem> {
@@ -32,15 +34,16 @@ export function useAutoCompleteValue<TValue, TItem>(
   opts: UseAutoCompleteValueOptions<TItem>,
   deps: UseAutoCompleteValueDeps<TItem>,
 ): UseAutoCompleteValueReturn<TItem> {
-  // Create maps for O(1) lookup performance
-  const optionsMap = computed<Map<any, TItem>>(() => {
+  function buildOptionsMap(optionsData: TItem[]): Map<any, TItem> {
     const map = new Map<any, TItem>();
-    const optionsData = toValue(options);
     for (const item of optionsData) {
       map.set(deps.getIdentifier(item), item);
     }
     return map;
-  });
+  }
+
+  // Create maps for O(1) lookup performance
+  const optionsMap = computed<Map<any, TItem>>(() => buildOptionsMap(toValue(options)));
 
   function convertModelValueToArray(modelValueData: TValue | undefined): any[] {
     if (modelValueData === null || modelValueData === undefined)
@@ -112,19 +115,24 @@ export function useAutoCompleteValue<TValue, TItem>(
     return onUpdateModelValue(selection[0] as TValue);
   }
 
+  function resolveAgainst(optionsMapData: Map<any, TItem>): TItem[] {
+    const modelValueData = get(modelValue);
+    const keyAttr = toValue(opts.keyAttr);
+    const returnObject = toValue(opts.returnObject) ?? false;
+    const customValue = toValue(opts.customValue) ?? false;
+
+    if (keyAttr && returnObject)
+      return processReturnObjectValue(modelValueData, optionsMapData, returnObject, customValue);
+
+    return processStandardValue(modelValueData, optionsMapData, returnObject, customValue);
+  }
+
+  function resolveIn(optionsData: TItem[]): TItem[] {
+    return resolveAgainst(buildOptionsMap(optionsData));
+  }
+
   const value = computed<TItem[]>({
-    get: () => {
-      const modelValueData = get(modelValue);
-      const keyAttr = toValue(opts.keyAttr);
-      const returnObject = toValue(opts.returnObject) ?? false;
-      const customValue = toValue(opts.customValue) ?? false;
-      const optionsMapData = get(optionsMap);
-
-      if (keyAttr && returnObject)
-        return processReturnObjectValue(modelValueData, optionsMapData, returnObject, customValue);
-
-      return processStandardValue(modelValueData, optionsMapData, returnObject, customValue);
-    },
+    get: () => resolveAgainst(get(optionsMap)),
     set: (selected: TItem[]): void => {
       setSelected(selected);
     },
@@ -148,6 +156,7 @@ export function useAutoCompleteValue<TValue, TItem>(
   }, { immediate: true });
 
   return {
+    resolveIn,
     setSelected,
     value,
   };
