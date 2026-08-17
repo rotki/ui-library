@@ -218,6 +218,59 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     });
   });
 
+  it('should not clear the selection when options load after the value', async () => {
+    // Async option lists start empty, so the value is set before its option exists.
+    wrapper = createWrapper<string, string>({
+      props: {
+        modelValue: 'Alice',
+        options: [],
+      },
+    });
+
+    // A first batch arrives that does not contain the selected value yet.
+    await wrapper.setProps({ options: ['Bob'] });
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+
+    // Once the value's own option arrives, it resolves and renders.
+    await wrapper.setProps({ options: ['Alice', 'Bob'] });
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+    expect(wrapper.find<HTMLInputElement>('div[data-id=activator] input').element.value).toBe('Alice');
+  });
+
+  it('should not overwrite an empty-string model when options load', async () => {
+    // A consumer whose model is a plain `string` starts at '', which is never a valid
+    // option. Overwriting it with `undefined` breaks that model's declared type.
+    wrapper = createWrapper<string, string>({
+      props: {
+        modelValue: '',
+        options: [],
+      },
+    });
+
+    await wrapper.setProps({ options: ['Alice', 'Bob'] });
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+  });
+
+  it('should clear the selection when its option is removed from a loaded list', async () => {
+    wrapper = createWrapper<string, string>({
+      props: {
+        modelValue: 'Alice',
+        options: ['Alice', 'Bob'],
+      },
+    });
+
+    await wrapper.setProps({ options: ['Bob'] });
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([undefined]);
+  });
+
   it('should multiple values', async () => {
     wrapper = createWrapper<string[], SelectOption>({
       props: {

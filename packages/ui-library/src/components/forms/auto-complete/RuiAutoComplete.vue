@@ -207,7 +207,7 @@ const shouldApplyValueAsSearch = computed<boolean>(
   () => !(slots.selection || get(multiple) || chips),
 );
 
-const { value, setSelected } = useAutoCompleteValue<AutoCompleteModelValue<TValue>, TItem>(
+const { resolveIn, value, setSelected } = useAutoCompleteValue<AutoCompleteModelValue<TValue>, TItem>(
   modelValue,
   () => options,
   {
@@ -488,6 +488,12 @@ watch(() => options, (curr, old) => {
 
   // Only do deep comparison if reference changed
   if (isEqual(curr, old))
+    return;
+
+  // Only reconcile a selection the previous options could actually resolve. A value
+  // that was already unresolvable is one the consumer set before its options arrived
+  // (async lists start empty), so clearing it here would discard a legitimate value.
+  if (!get(multiple) && resolveIn(old).length === 0)
     return;
 
   setSelected(get(value));
