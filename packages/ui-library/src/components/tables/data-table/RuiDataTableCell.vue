@@ -14,9 +14,15 @@ defineSlots<{
   default?: (props: { column: TableColumn<T>; row: T; index: number }) => any;
 }>();
 
-const { cellValue, columnAttr } = useDataTableColumns<T>();
+const { cellValue, columnAttr, itemSlotKeys } = useDataTableColumns<T>();
 const { isExpanded, onToggleExpand } = useDataTableExpansion<T>();
 const { isMobile } = useDataTableStyling();
+
+// The built-in toggle is only a fallback for consumers that do not drive the
+// expand column themselves. A consumer that provides `#item.expand` owns the
+// decision per row, including rendering nothing for a row that cannot expand,
+// so slot emptiness must not fall back to a toggle they deliberately withheld.
+const ownsExpandColumn = computed<boolean>(() => itemSlotKeys.has('expand'));
 
 const mobileLabel = computed<string>(() => {
   const label = column[columnAttr];
@@ -50,11 +56,11 @@ const showMobileLabel = computed<boolean>(() => get(isMobile) && column.key !== 
         :index="index"
       >
         <RuiExpandButton
-          v-if="column.key === 'expand'"
+          v-if="column.key === 'expand' && !ownsExpandColumn"
           :expanded="rowId !== undefined && isExpanded(rowId)"
           @click="onToggleExpand(row)"
         />
-        <template v-else>
+        <template v-else-if="column.key !== 'expand'">
           {{ cellValue(row, column.key) }}
         </template>
       </slot>
