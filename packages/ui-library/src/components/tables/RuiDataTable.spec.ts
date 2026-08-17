@@ -267,6 +267,100 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(wrapper.find('tr[data-id=row-expanded] div[data-id=expanded-content]').exists()).toBeTruthy();
   });
 
+  describe('consumer-owned expand column', () => {
+    // A consumer that provides `#item.expand` decides per row whether a toggle
+    // exists. The built-in toggle is a fallback for consumers that provide no
+    // slot at all, so it must not reappear on the rows the consumer left empty.
+    const expandSlots = {
+      'expanded-item': '<div data-id="expanded-content">Expanded content</div>',
+      // Only the first row is expandable; on every other row the `v-if` leaves
+      // the slot rendering a comment, which is what used to trip the fallback.
+      'item.expand': `<template #item.expand="{ row }">
+        <button
+          v-if="row.id === 1"
+          data-id="custom-expander"
+        >toggle</button>
+      </template>`,
+    };
+
+    it('should render the built-in toggle when no item.expand slot is provided', () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          expanded: [],
+          rowAttr: 'id',
+          rows: data,
+        },
+        slots: {
+          'expanded-item': '<div data-id="expanded-content">Expanded content</div>',
+        },
+      });
+
+      // Negative control for the two tests below: without a consumer slot the
+      // fallback is still the only thing that renders a toggle.
+      expect(wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"]').exists()).toBeTruthy();
+      expect(wrapper.find('tbody tr:nth-child(2) button[data-id="expand-button"]').exists()).toBeTruthy();
+    });
+
+    it('should not fall back to the built-in toggle on a row the item.expand slot leaves empty', () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          expanded: [],
+          rowAttr: 'id',
+          rows: data,
+        },
+        slots: expandSlots,
+      });
+
+      const expandable = wrapper.find('tbody tr:nth-child(1)');
+      expect(expandable.find('button[data-id="custom-expander"]').exists()).toBeTruthy();
+      expect(expandable.find('button[data-id="expand-button"]').exists()).toBeFalsy();
+
+      // The row the consumer withheld a toggle from must have no toggle at all.
+      const notExpandable = wrapper.find('tbody tr:nth-child(2)');
+      expect(notExpandable.find('button[data-id="custom-expander"]').exists()).toBeFalsy();
+      expect(notExpandable.find('button[data-id="expand-button"]').exists()).toBeFalsy();
+    });
+
+    it('should leave the expand cell empty rather than printing the row value', () => {
+      // A row that happens to carry an `expand` field proves the empty case
+      // renders nothing at all, instead of falling through to the cell value.
+      const rowsWithExpandField = data.map(user => ({ ...user, expand: 'leaked' }));
+
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          expanded: [],
+          rowAttr: 'id',
+          rows: rowsWithExpandField,
+        },
+        slots: expandSlots,
+      });
+
+      const cells = wrapper.find('tbody tr:nth-child(2)').findAll('td');
+      expect(cells.at(-1)!.text()).toBe('');
+    });
+
+    it('should let the item.expand slot win over the built-in toggle in the mobile card header', () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          expanded: [],
+          mobile: true,
+          rowAttr: 'id',
+          rows: data,
+        },
+        slots: expandSlots,
+      });
+
+      const header = wrapper.find('tbody tr:nth-child(1) [data-id=mobile-card-header]');
+      expect(header.exists()).toBeTruthy();
+      expect(header.find('button[data-id="custom-expander"]').exists()).toBeTruthy();
+      expect(header.find('button[data-id="expand-button"]').exists()).toBeFalsy();
+    });
+  });
+
   it('should sticky header behaves as expected', async () => {
     wrapper = createWrapper({
       props: {

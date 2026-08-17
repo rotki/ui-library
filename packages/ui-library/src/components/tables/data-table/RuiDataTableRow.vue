@@ -113,17 +113,17 @@ const mobileCardClass = computed<string>(() => {
           v-for="(column, headerIndex) in mobileHeaderColumns"
           :key="`header-${headerIndex}`"
         >
-          <RuiExpandButton
-            v-if="column.key === 'expand'"
-            :expanded="isExpanded(rowId)"
-            @click="onToggleExpand(row)"
-          />
           <slot
-            v-else-if="itemSlotKeys.has(column.key.toString())"
+            v-if="itemSlotKeys.has(column.key.toString())"
             :name="`item.${column.key.toString()}`"
             :column="column"
             :row="row"
             :index="index"
+          />
+          <RuiExpandButton
+            v-else-if="column.key === 'expand'"
+            :expanded="isExpanded(rowId)"
+            @click="onToggleExpand(row)"
           />
           <template v-else>
             {{ cellValue(row, column.key) }}
