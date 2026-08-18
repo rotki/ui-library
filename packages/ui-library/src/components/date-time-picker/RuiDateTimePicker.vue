@@ -63,6 +63,22 @@ export interface RuiDateTimePickerProps {
    * for a picker revealed by an editor or a dialog.
    */
   autofocus?: boolean;
+  /**
+   * Accepts an entry that stops short of the full format, filling the segments
+   * it never reached from one end of the day: `start` gives a bare date
+   * 00:00:00.000 and `end` gives it 23:59:59.999. Meant for a range, where the
+   * two bounds want opposite ends. Left unset, an entry missing its time is not
+   * a value and nothing is emitted.
+   *
+   * The fill runs when the user is done with the field - leaving it, pressing
+   * enter, or closing the calendar - and is written back into the segments, so
+   * what it decided on is on screen.
+   *
+   * Spelled out rather than written as `PartialTimeMode`: a consumer that hands
+   * this whole interface to its own `defineProps` needs every member resolvable
+   * by the SFC compiler, which does not follow the type into the package.
+   */
+  partialTime?: 'start' | 'end';
 }
 
 defineOptions({
@@ -93,6 +109,7 @@ const {
   showTimezone = false,
   actions = ['now'],
   autofocus = false,
+  partialTime,
 } = defineProps<RuiDateTimePickerProps>();
 
 defineSlots<{
@@ -146,6 +163,7 @@ const dateFormat = computed<string>(() => {
 
 const {
   clear: clearSelection,
+  commitPartialTime,
   getDateTime,
   internalErrorMessages,
   maxAllowedDate,
@@ -171,6 +189,7 @@ const {
   maxDate,
   minDate,
   modelValue,
+  partialTime,
   type,
 });
 
@@ -346,6 +365,23 @@ function clear(segmentType?: string): void {
   clearSegment(segmentType);
 }
 
+/**
+ * An entry left incomplete is completed once the user is done with the field,
+ * never while they are still filling it in: a half typed hour is not a segment
+ * they left out. Leaving the field counts, unless the calendar is open, since
+ * then the focus is only moving into it and the menu closing covers that.
+ */
+function onBlur(): void {
+  handleBlur();
+  if (!get(isOpen))
+    commitPartialTime();
+}
+
+watch(isOpen, (open) => {
+  if (!open && !get(searchInputFocused))
+    commitPartialTime();
+});
+
 function handleInputClick(event: MouseEvent): void {
   // Handle segment selection first, before any DOM changes from menu opening
   handleClick(event);
@@ -421,6 +457,15 @@ function onKeyDown(event: KeyboardEvent): void {
     set(isOpen, false);
     return;
   }
+
+  // Enter and Escape are the other ways to be done with the field, and the keys
+  // a consumer tends to close its editor on. Escape reaches here only once the
+  // calendar is already shut, and it discards nothing - the segments stay on
+  // screen either way - so it commits what was entered rather than dropping it
+  // when the field goes. Both write the value before the key carries on
+  // bubbling, so it survives that close.
+  if (event.key === 'Enter' || event.key === 'Escape')
+    commitPartialTime();
 
   handleKeyDown(event);
 }
@@ -523,7 +568,7 @@ defineExpose({
             :aria-required="required || undefined"
             @mousedown="handleMouseDown($event)"
             @focus="handleFocus()"
-            @blur="handleBlur()"
+            @blur="onBlur()"
             @select="handleInputSelection($event)"
             @click.stop="handleInputClick($event)"
             @keydown="onKeyDown($event)"

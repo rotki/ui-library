@@ -14,6 +14,11 @@ const allActionsValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
 const timezoneValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
 const boundedValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
 const boundedMax = new Date(2023, 0, 10, 12, 0);
+// left empty so a test can type an entry that stops short of the full format; the strict one is
+// the control, with no partial-time at all
+const partialStartValue = ref<number>();
+const partialEndValue = ref<number>();
+const partialStrictValue = ref<number>();
 const parentMenuOpen = ref<boolean>(false);
 const pickerMenuOpen = ref<boolean>(false);
 const insideMenuValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
@@ -79,6 +84,45 @@ const insideMenuValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
         :max-date="boundedMax"
         variant="outlined"
       />
+    </div>
+    <div
+      class="mt-8"
+      data-id="picker-partial-section"
+    >
+      <h3 class="text-lg font-semibold mb-4">
+        Partial entries
+      </h3>
+      <RuiDateTimePicker
+        v-model="partialStartValue"
+        data-id="picker-partial-start"
+        accuracy="second"
+        allow-empty
+        partial-time="start"
+        type="epoch"
+        variant="outlined"
+      />
+      <span data-id="picker-partial-start-value">{{ partialStartValue ?? '' }}</span>
+      <RuiDateTimePicker
+        v-model="partialEndValue"
+        class="mt-4"
+        data-id="picker-partial-end"
+        accuracy="second"
+        allow-empty
+        partial-time="end"
+        type="epoch"
+        variant="outlined"
+      />
+      <span data-id="picker-partial-end-value">{{ partialEndValue ?? '' }}</span>
+      <RuiDateTimePicker
+        v-model="partialStrictValue"
+        class="mt-4"
+        data-id="picker-partial-strict"
+        accuracy="second"
+        allow-empty
+        type="epoch"
+        variant="outlined"
+      />
+      <span data-id="picker-partial-strict-value">{{ partialStrictValue ?? '' }}</span>
     </div>
     <div
       class="mt-8"

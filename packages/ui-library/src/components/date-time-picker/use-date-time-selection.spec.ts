@@ -1236,4 +1236,259 @@ describe('use-date-time-selection', () => {
       unmount();
     });
   });
+
+  describe('partial time', () => {
+    function setDate(result: ReturnType<typeof useDateTimeSelection>): void {
+      set(result.selectedYear, 2023);
+      set(result.selectedMonth, 6);
+      set(result.selectedDay, 15);
+    }
+
+    it('should leave an incomplete entry uncommitted without the option', async () => {
+      const modelValue = ref<number | undefined>(undefined);
+
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
+        accuracy: 'second',
+        allowEmpty: true,
+        dateFormat,
+        maxDate: undefined,
+        minDate: undefined,
+        modelValue,
+        type: 'epoch-ms',
+      }));
+
+      setDate(result);
+      await nextTick();
+      result.commitPartialTime();
+      await nextTick();
+
+      expect(get(modelValue)).toBeUndefined();
+      expect(get(result.selectedHour)).toBeUndefined();
+
+      unmount();
+    });
+
+    it('should give a bare date the start of its day', async () => {
+      const modelValue = ref<number | undefined>(undefined);
+
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
+        accuracy: 'second',
+        allowEmpty: true,
+        dateFormat,
+        maxDate: undefined,
+        minDate: undefined,
+        modelValue,
+        partialTime: 'start',
+        type: 'epoch-ms',
+      }));
+
+      setDate(result);
+      await nextTick();
+      result.commitPartialTime();
+      await nextTick();
+
+      expect(get(modelValue)).toBe(new Date(2023, 5, 15, 0, 0, 0).getTime());
+      // the fill is written back, so the field shows the value it decided on
+      expect(get(result.selectedHour)).toBe(0);
+      expect(get(result.selectedMinute)).toBe(0);
+      expect(get(result.selectedSecond)).toBe(0);
+
+      unmount();
+    });
+
+    it('should give a bare date the end of its day', async () => {
+      const modelValue = ref<number | undefined>(undefined);
+
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
+        accuracy: 'second',
+        allowEmpty: true,
+        dateFormat,
+        maxDate: undefined,
+        minDate: undefined,
+        modelValue,
+        partialTime: 'end',
+        type: 'epoch-ms',
+      }));
+
+      setDate(result);
+      await nextTick();
+      result.commitPartialTime();
+      await nextTick();
+
+      expect(get(modelValue)).toBe(new Date(2023, 5, 15, 23, 59, 59).getTime());
+      expect(get(result.selectedHour)).toBe(23);
+      expect(get(result.selectedMinute)).toBe(59);
+      expect(get(result.selectedSecond)).toBe(59);
+
+      unmount();
+    });
+
+    it('should fill only the segments left out', async () => {
+      const modelValue = ref<number | undefined>(undefined);
+
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
+        accuracy: 'second',
+        allowEmpty: true,
+        dateFormat,
+        maxDate: undefined,
+        minDate: undefined,
+        modelValue,
+        partialTime: 'end',
+        type: 'epoch-ms',
+      }));
+
+      setDate(result);
+      set(result.selectedHour, 9);
+      await nextTick();
+      result.commitPartialTime();
+      await nextTick();
+
+      // the typed hour stands; the minute and second it stopped short of run to the end
+      expect(get(modelValue)).toBe(new Date(2023, 5, 15, 9, 59, 59).getTime());
+
+      unmount();
+    });
+
+    // hour and minute are already enough to make a value, which is emitted and read back with a
+    // zero second, so from here on the second is a value the entry holds rather than one it left
+    // out. The fill only covers the segments an entry never reached.
+    it('should treat a time entered down to the minute as complete', async () => {
+      const modelValue = ref<number | undefined>(undefined);
+
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
+        accuracy: 'second',
+        allowEmpty: true,
+        dateFormat,
+        maxDate: undefined,
+        minDate: undefined,
+        modelValue,
+        partialTime: 'end',
+        type: 'epoch-ms',
+      }));
+
+      setDate(result);
+      set(result.selectedHour, 9);
+      set(result.selectedMinute, 30);
+      await nextTick();
+
+      expect(get(modelValue)).toBe(new Date(2023, 5, 15, 9, 30, 0).getTime());
+
+      result.commitPartialTime();
+      await nextTick();
+
+      expect(get(modelValue)).toBe(new Date(2023, 5, 15, 9, 30, 0).getTime());
+      expect(get(result.selectedSecond)).toBe(0);
+
+      unmount();
+    });
+
+    it('should not touch an entry that is already complete', async () => {
+      const modelValue = ref<number | undefined>(undefined);
+
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
+        accuracy: 'second',
+        allowEmpty: true,
+        dateFormat,
+        maxDate: undefined,
+        minDate: undefined,
+        modelValue,
+        partialTime: 'end',
+        type: 'epoch-ms',
+      }));
+
+      setDate(result);
+      set(result.selectedHour, 9);
+      set(result.selectedMinute, 30);
+      set(result.selectedSecond, 15);
+      await nextTick();
+      result.commitPartialTime();
+      await nextTick();
+
+      expect(get(modelValue)).toBe(new Date(2023, 5, 15, 9, 30, 15).getTime());
+      expect(get(result.selectedSecond)).toBe(15);
+
+      unmount();
+    });
+
+    it('should ignore a date that is still incomplete', async () => {
+      const modelValue = ref<number | undefined>(undefined);
+
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
+        accuracy: 'second',
+        allowEmpty: true,
+        dateFormat,
+        maxDate: undefined,
+        minDate: undefined,
+        modelValue,
+        partialTime: 'start',
+        type: 'epoch-ms',
+      }));
+
+      set(result.selectedDay, 15);
+      set(result.selectedMonth, 6);
+      await nextTick();
+      result.commitPartialTime();
+      await nextTick();
+
+      expect(get(modelValue)).toBeUndefined();
+      expect(get(result.selectedHour)).toBeUndefined();
+
+      unmount();
+    });
+
+    it('should pull the fill back to a bound it overshot', async () => {
+      const modelValue = ref<number | undefined>(undefined);
+
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
+        accuracy: 'second',
+        allowEmpty: true,
+        dateFormat,
+        maxDate: 'now',
+        minDate: undefined,
+        modelValue,
+        partialTime: 'end',
+        type: 'epoch-ms',
+      }));
+
+      // today, so the end of the day the fill asks for sits in the future
+      setDate(result);
+      await nextTick();
+      result.commitPartialTime();
+      await nextTick();
+
+      expect(get(modelValue)).toBe(new Date(2023, 5, 15, 14, 30, 45).getTime());
+      expect(get(result.internalErrorMessages)).toEqual([]);
+
+      unmount();
+    });
+
+    it('should refuse a date out of range rather than move it', async () => {
+      const modelValue = ref<number | undefined>(undefined);
+
+      const { result, unmount } = withSetup(() => useDateTimeSelection({
+        accuracy: 'second',
+        allowEmpty: true,
+        dateFormat,
+        maxDate: 'now',
+        minDate: undefined,
+        modelValue,
+        partialTime: 'end',
+        type: 'epoch-ms',
+      }));
+
+      set(result.selectedYear, 2030);
+      set(result.selectedMonth, 6);
+      set(result.selectedDay, 15);
+      await nextTick();
+      result.commitPartialTime();
+      await nextTick();
+
+      // the day is the user's to fix, so it keeps its error instead of being pulled to now
+      expect(get(modelValue)).toBeUndefined();
+      expect(get(result.selectedYear)).toBe(2030);
+      expect(get(result.internalErrorMessages).length).toBeGreaterThan(0);
+
+      unmount();
+    });
+  });
 });

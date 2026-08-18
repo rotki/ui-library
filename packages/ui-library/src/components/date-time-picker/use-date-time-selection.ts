@@ -2,10 +2,10 @@ import type { ComputedRef, Ref, WritableComputedRef } from 'vue';
 import type { SegmentData } from '@/components/date-time-picker/types';
 import type { TimeAccuracy } from '@/consts/time-accuracy';
 import dayjs, { type Dayjs } from 'dayjs';
-import { buildDateTime, clampToBounds, resolveBound } from '@/components/date-time-picker/segment-utils';
+import { completePartialEntry, type PartialTimeMode } from '@/components/date-time-picker/partial-time';
+import { buildDateTime, clampToBounds } from '@/components/date-time-picker/segment-utils';
+import { useDateBounds } from '@/components/date-time-picker/use-date-bounds';
 import { formatWallClock, guessTimezone, includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
-import { useRuiI8n } from '@/composables/use-rui-i18n';
-import { RUI_I18N_KEYS } from '@/i18n/keys';
 import '@/components/date-time-picker/dayjs-setup';
 
 type DateTimeModelType = 'date' | 'epoch-ms' | 'epoch';
@@ -28,6 +28,8 @@ interface DateTimeSelectionOptions<T extends DateTimeModelType> {
    * same way round as the value the user is looking at.
    */
   dateFormat: Ref<string>;
+  /** See {@link completePartialEntry}; unset, an incomplete entry is not a value. */
+  partialTime?: PartialTimeMode;
 }
 
 interface DateTimeSelectionReturn {
@@ -50,6 +52,7 @@ interface DateTimeSelectionReturn {
   getDateTime: () => Dayjs;
   setNow: () => void;
   setToday: () => void;
+  commitPartialTime: () => void;
   clear: () => void;
   isDateValid: (date: Dayjs) => boolean;
 }
@@ -66,10 +69,9 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
     maxDate,
     minDate,
     modelValue,
+    partialTime,
     type,
   } = options;
-
-  const { t } = useRuiI8n();
 
   const selectedYear = ref<number | undefined>();
   const selectedMonth = ref<number | undefined>();
@@ -81,18 +83,15 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
   const selectedMillisecond = ref<number | undefined>();
   const selectedTimezone = ref<string | undefined>(guessTimezone());
 
-  const internalErrorMessages = ref<string[]>([]);
   const now = ref<Dayjs>(dayjs.tz(undefined, guessTimezone()));
 
-  const epochSeconds = type === 'epoch';
-
-  const minAllowedDate = computed<Date>(
-    () => resolveBound(minDate, epochSeconds) ?? new Date(1970, 0, 1),
-  );
-
-  const maxAllowedDate = computed<Date | undefined>(
-    () => (maxDate === 'now' ? get(now).toDate() : resolveBound(maxDate, epochSeconds)),
-  );
+  const { internalErrorMessages, isDateValid, maxAllowedDate, minAllowedDate } = useDateBounds({
+    dateFormat,
+    epochSeconds: type === 'epoch',
+    maxDate,
+    minDate,
+    now,
+  });
 
   const segmentData: SegmentData = {
     DD: selectedDay,
@@ -159,43 +158,6 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
       second: get(selectedSecond),
       year: get(selectedYear),
     }, accuracy);
-  }
-
-  /**
-   * Writes a bound the way the field writes its value. `toLocaleDateString()`
-   * followed the browser locale and ignored the picker's own format, so a
-   * day-first field could report its limit month-first, and it dropped the time
-   * entirely, which left a mid-day bound unable to explain itself.
-   */
-  function formatBound(bound: Date): string {
-    return dayjs(bound).format(get(dateFormat));
-  }
-
-  function isDateValid(date: Dayjs): boolean {
-    const min = get(minAllowedDate);
-    const max = get(maxAllowedDate);
-
-    set(internalErrorMessages, []);
-
-    if (min && date.isBefore(min)) {
-      const formatted = formatBound(min);
-      const errorMessage = t(RUI_I18N_KEYS.dateTimePicker.dateBeforeMin, {
-        date: formatted,
-      }, `Date cannot be before ${formatted}`);
-      set(internalErrorMessages, [...get(internalErrorMessages), errorMessage]);
-      return false;
-    }
-
-    if (max && date.isAfter(max)) {
-      const formatted = formatBound(max);
-      const nowError = t(RUI_I18N_KEYS.dateTimePicker.dateInFuture, 'The selected date cannot be in the future');
-      const maxError = t(RUI_I18N_KEYS.dateTimePicker.dateAfterMax, { date: formatted }, `Date cannot be after ${formatted}`);
-      const errorMessage = maxDate === 'now' ? nowError : maxError;
-      set(internalErrorMessages, [...get(internalErrorMessages), errorMessage]);
-      return false;
-    }
-
-    return true;
   }
 
   function emitUpdate(updatedModel: Dayjs): void {
@@ -335,6 +297,42 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
     updateModelValue();
   });
 
+  /**
+   * Fills in the segments an incomplete entry never reached and commits it, so
+   * a bare date can become a value. Called when the user is done with the field
+   * rather than on every keystroke, since a segment still being typed is not
+   * yet one they left out. The fill is written back into the field, so the
+   * value it decided on is the one on screen.
+   */
+  function commitPartialTime(): void {
+    if (partialTime === undefined)
+      return;
+
+    const target = completePartialEntry({
+      day: get(selectedDay),
+      hour: get(selectedHour),
+      millisecond: get(selectedMillisecond),
+      minute: get(selectedMinute),
+      month: get(selectedMonth),
+      second: get(selectedSecond),
+      year: get(selectedYear),
+    }, {
+      accuracy,
+      maxDate: get(maxAllowedDate),
+      minDate: get(minAllowedDate),
+      mode: partialTime,
+    });
+
+    if (!target)
+      return;
+
+    // The model is written here rather than left to the watcher: this runs on blur and on enter,
+    // and a consumer that closes the field on that key would drop a value the watcher only emits
+    // on the next tick.
+    ignoreUpdates(() => applySegments(target));
+    updateModelValue();
+  }
+
   function updateInternalModel(value: ModelValueType<T>): void {
     ignoreUpdates(() => {
       const updatedValue = type === 'epoch' && typeof value === 'number'
@@ -374,6 +372,7 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
 
   return {
     clear,
+    commitPartialTime,
     getDateTime,
     internalErrorMessages,
     isDateValid,

@@ -375,6 +375,112 @@ test.describe('datetimepicker across a DST boundary', () => {
   });
 });
 
+test.describe('datetimepicker partial entries', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/datetimepickers');
+  });
+
+  test.afterEach(async ({ page }) => {
+    await page.keyboard.press('Escape');
+  });
+
+  // the three partial pickers start empty and emit an epoch, written out next to each field
+  function partialInput(page: Page, mode: 'start' | 'end' | 'strict') {
+    return page.getByTestId(`picker-partial-${mode}`).locator('input');
+  }
+
+  // computed in the browser, so the expectation follows the timezone the page runs in
+  async function epochOf(page: Page, hour: number, minute: number, second: number): Promise<string> {
+    return page.evaluate(
+      ([h, m, s]) => String(new Date(2023, 0, 15, h, m, s).getTime() / 1000),
+      [hour, minute, second],
+    );
+  }
+
+  test('a bare date becomes the start of its day when the field is left', async ({ page }) => {
+    const input = partialInput(page, 'start');
+    // focused rather than clicked, so the caret starts on the first segment and no calendar opens
+    await input.focus();
+    await page.keyboard.type('15012023');
+
+    // nothing is committed while the user is still in the field
+    await expect(page.getByTestId('picker-partial-start-value')).toHaveText('');
+
+    await page.getByTestId('picker-partial-section').getByRole('heading').click();
+
+    await expect(input).toHaveValue('15/01/2023 00:00:00');
+    await expect(page.getByTestId('picker-partial-start-value')).toHaveText(await epochOf(page, 0, 0, 0));
+  });
+
+  test('a bare date becomes the end of its day for the other bound', async ({ page }) => {
+    const input = partialInput(page, 'end');
+    await input.focus();
+    await page.keyboard.type('15012023');
+
+    await page.getByTestId('picker-partial-section').getByRole('heading').click();
+
+    await expect(input).toHaveValue('15/01/2023 23:59:59');
+    await expect(page.getByTestId('picker-partial-end-value')).toHaveText(await epochOf(page, 23, 59, 59));
+  });
+
+  test('enter commits without waiting for the field to be left', async ({ page }) => {
+    const input = partialInput(page, 'start');
+    await input.focus();
+    await page.keyboard.type('15012023');
+
+    await page.keyboard.press('Enter');
+
+    await expect(page.getByTestId('picker-partial-start-value')).toHaveText(await epochOf(page, 0, 0, 0));
+    await expect(input).toBeFocused();
+  });
+
+  test('an hour entered on its own keeps its hour and fills the rest', async ({ page }) => {
+    const input = partialInput(page, 'end');
+    await input.focus();
+    await page.keyboard.type('1501202309');
+
+    await page.getByTestId('picker-partial-section').getByRole('heading').click();
+
+    await expect(input).toHaveValue('15/01/2023 09:59:59');
+    await expect(page.getByTestId('picker-partial-end-value')).toHaveText(await epochOf(page, 9, 59, 59));
+  });
+
+  // the mouse path leaves the time out just as typing does: the field starts empty, so the
+  // calendar opens on the current month and today is the day that is there to be clicked
+  test('a day picked in the calendar is committed once the user leaves the field', async ({ page }) => {
+    const input = partialInput(page, 'start');
+    await input.click();
+
+    const today = await page.evaluate(() => {
+      const now = new Date();
+      const pad = (value: number): string => value.toString().padStart(2, '0');
+      return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+    });
+    await page.getByRole('grid').getByTestId(today).click();
+
+    // a date on its own is not yet a value
+    await expect(page.getByTestId('picker-partial-start-value')).toHaveText('');
+
+    await page.keyboard.press('Escape');
+    await page.getByTestId('picker-partial-section').getByRole('heading').click();
+
+    await expect(input).toHaveValue(/^\d{2}\/\d{2}\/\d{4} 00:00:00$/);
+    await expect(page.getByTestId('picker-partial-start-value')).not.toHaveText('');
+  });
+
+  // the control: without partial-time the same entry is still not a value
+  test('a bare date stays uncommitted without the prop', async ({ page }) => {
+    const input = partialInput(page, 'strict');
+    await input.focus();
+    await page.keyboard.type('15012023');
+
+    await page.getByTestId('picker-partial-section').getByRole('heading').click();
+
+    await expect(input).toHaveValue('15/01/2023 HH:mm:ss');
+    await expect(page.getByTestId('picker-partial-strict-value')).toHaveText('');
+  });
+});
+
 test.describe('datetimepicker footer actions against a bound', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/datetimepickers');

@@ -2356,6 +2356,167 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     });
   });
 
+  describe('partial entries', () => {
+    async function typeDigits(input: ReturnType<VueWrapper['find']>, digits: string): Promise<void> {
+      await input.trigger('focus');
+      await vi.runOnlyPendingTimersAsync();
+      for (const key of digits) {
+        await input.trigger('keydown', { key });
+      }
+      await vi.runOnlyPendingTimersAsync();
+    }
+
+    function lastEmitted(): number | undefined {
+      const emitted = wrapper.emitted('update:modelValue');
+      return emitted?.at(-1)?.[0] as number | undefined;
+    }
+
+    // the field is useless as a filter bound if a date typed on its own is silently dropped
+    it('should commit a bare date on blur', async () => {
+      wrapper = createWrapper({
+        attachTo: document.body,
+        props: {
+          accuracy: 'second',
+          allowEmpty: true,
+          modelValue: undefined,
+          partialTime: 'start',
+          type: 'epoch',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      const input = wrapper.find('input');
+      await typeDigits(input, '15012023');
+
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+
+      await input.trigger('blur');
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(lastEmitted()).toBe(dayjs(new Date(2023, 0, 15, 0, 0, 0)).unix());
+      // the filled time is on screen rather than left for the user to infer
+      expect(input.element.value).toBe('15/01/2023 00:00:00');
+    });
+
+    it('should commit a bare date to the end of the day', async () => {
+      wrapper = createWrapper({
+        attachTo: document.body,
+        props: {
+          accuracy: 'second',
+          allowEmpty: true,
+          modelValue: undefined,
+          partialTime: 'end',
+          type: 'epoch',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      const input = wrapper.find('input');
+      await typeDigits(input, '15012023');
+      await input.trigger('blur');
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(lastEmitted()).toBe(dayjs(new Date(2023, 0, 15, 23, 59, 59)).unix());
+      expect(input.element.value).toBe('15/01/2023 23:59:59');
+    });
+
+    // a consumer that closes its editor on enter unmounts the field before a blur can arrive
+    it('should commit on enter', async () => {
+      wrapper = createWrapper({
+        attachTo: document.body,
+        props: {
+          accuracy: 'second',
+          allowEmpty: true,
+          modelValue: undefined,
+          partialTime: 'start',
+          type: 'epoch',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      const input = wrapper.find('input');
+      await typeDigits(input, '15012023');
+
+      await input.trigger('keydown', { key: 'Enter' });
+
+      // synchronously, while the key is still bubbling towards that editor
+      expect(lastEmitted()).toBe(dayjs(new Date(2023, 0, 15, 0, 0, 0)).unix());
+    });
+
+    // escape closes a consumer's editor as readily as enter, and it discards nothing here
+    it('should commit on escape once the calendar is shut', async () => {
+      wrapper = createWrapper({
+        attachTo: document.body,
+        props: {
+          accuracy: 'second',
+          allowEmpty: true,
+          modelValue: undefined,
+          partialTime: 'end',
+          type: 'epoch',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      const input = wrapper.find('input');
+      await typeDigits(input, '15012023');
+
+      await input.trigger('keydown', { key: 'Escape' });
+
+      expect(lastEmitted()).toBe(dayjs(new Date(2023, 0, 15, 23, 59, 59)).unix());
+    });
+
+    // blurring into the open calendar is not the user being done with the field
+    it('should wait for the calendar to close rather than commit on the blur into it', async () => {
+      wrapper = createWrapper({
+        attachTo: document.body,
+        props: {
+          accuracy: 'second',
+          allowEmpty: true,
+          modelValue: undefined,
+          partialTime: 'start',
+          type: 'epoch',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      const input = wrapper.find('input');
+      await typeDigits(input, '15012023');
+
+      await input.trigger('click');
+      await vi.runOnlyPendingTimersAsync();
+      await input.trigger('blur');
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+
+      await input.trigger('keydown', { key: 'Escape' });
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(lastEmitted()).toBe(dayjs(new Date(2023, 0, 15, 0, 0, 0)).unix());
+    });
+
+    it('should leave a bare date uncommitted without the prop', async () => {
+      wrapper = createWrapper({
+        attachTo: document.body,
+        props: {
+          accuracy: 'second',
+          allowEmpty: true,
+          modelValue: undefined,
+          type: 'epoch',
+        },
+      });
+
+      await vi.runOnlyPendingTimersAsync();
+      const input = wrapper.find('input');
+      await typeDigits(input, '15012023');
+      await input.trigger('blur');
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+      expect(input.element.value).toBe('15/01/2023 HH:mm:ss');
+    });
+  });
+
   describe('hide details', () => {
     it('should hide details when hideDetails is true', async () => {
       wrapper = createWrapper({
