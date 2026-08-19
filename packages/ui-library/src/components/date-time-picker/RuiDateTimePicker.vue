@@ -598,9 +598,15 @@ defineExpose({
           />
         </RuiButton>
 
+        <!-- Out of the tab sequence, following the combobox pattern: the button only duplicates
+             Alt+ArrowDown on the field, so leaving it in cost two stops to cross one date field
+             and four to cross a from/to pair, for nothing a keyboard user could not already do.
+             It stays a real button, so it keeps its label and its expanded state for anyone
+             reaching it by any other means. -->
         <button
           v-if="!disabled && !readonly"
           type="button"
+          tabindex="-1"
           :class="ui.iconWrapper()"
           data-id="append"
           :aria-label="toggleLabel"

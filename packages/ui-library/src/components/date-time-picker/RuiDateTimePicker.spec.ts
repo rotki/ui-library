@@ -2858,6 +2858,24 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       expect(wrapper.find('button[data-id="append"]').attributes('aria-label')).toBe('Close the calendar');
     });
 
+    // Tabbing through a form should cross a date field in one stop, not two, and a from/to pair
+    // in two rather than four. The button is safe to skip because alt+arrowdown on the field
+    // does the same job, which the test below pins.
+    it('keeps the calendar toggle out of the tab order', () => {
+      wrapper = createWrapper({
+        props: {
+          modelValue: new Date(),
+        },
+      });
+
+      const toggle = wrapper.find('button[data-id="append"]');
+      expect(toggle.exists()).toBe(true);
+      expect(toggle.attributes('tabindex')).toBe('-1');
+      // still a real button, so it keeps announcing what it is and whether it is open
+      expect(toggle.attributes('aria-haspopup')).toBe('dialog');
+      expect(toggle.attributes('aria-label')).toBe('Open the calendar');
+    });
+
     it('leaves the clear button in the tab order', async () => {
       wrapper = createWrapper({
         props: {

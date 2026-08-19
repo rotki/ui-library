@@ -479,6 +479,39 @@ test.describe('datetimepicker partial entries', () => {
     await expect(input).toHaveValue('15/01/2023 HH:mm:ss');
     await expect(page.getByTestId('picker-partial-strict-value')).toHaveText('');
   });
+
+  // The attribute is easy to assert in a unit test and proves nothing about what tab actually
+  // does, so the real key is pressed here against three fields standing in a row.
+  test('tab crosses a field in one stop rather than landing on its calendar toggle', async ({ page }) => {
+    const start = partialInput(page, 'start');
+    await start.focus();
+
+    await page.keyboard.press('Tab');
+
+    await expect(partialInput(page, 'end')).toBeFocused();
+  });
+
+  // What makes skipping the toggle acceptable: the field itself still opens the calendar.
+  test('the calendar is still reachable from the field without the toggle', async ({ page }) => {
+    const input = partialInput(page, 'start');
+    await input.focus();
+
+    await page.keyboard.press('Alt+ArrowDown');
+
+    await expect(page.getByRole('menu')).toBeVisible();
+  });
+
+  // A bound typed as a bare date is committed by tabbing out, the same as by clicking away.
+  test('tabbing out of the field commits a bare date', async ({ page }) => {
+    const input = partialInput(page, 'start');
+    await input.focus();
+    await page.keyboard.type('15012023');
+
+    await page.keyboard.press('Tab');
+
+    await expect(input).toHaveValue('15/01/2023 00:00:00');
+    await expect(page.getByTestId('picker-partial-start-value')).toHaveText(await epochOf(page, 0, 0, 0));
+  });
 });
 
 test.describe('datetimepicker footer actions against a bound', () => {
