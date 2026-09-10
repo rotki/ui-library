@@ -75,6 +75,8 @@ const {
   keyAttr,
   textAttr,
   itemHeight,
+  prependWidth,
+  appendWidth,
   errorMessages = [],
   successMessages = [],
   autoSelectFirst = false,
@@ -155,6 +157,8 @@ const {
   disabled: () => disabled,
   autoSelectFirst,
   setValue,
+  prependWidth,
+  appendWidth,
 });
 
 const outlined = computed<boolean>(() => variant === 'outlined');
@@ -197,8 +201,8 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
     v-bind="{ ...getRootAttrs($attrs, []), ...menuOptions }"
     :class="ui.wrapper({ class: cn($attrs.class) })"
     :options="menuFloatingOptions"
-    :close-on-content-click="true"
-    :full-width="true"
+    close-on-content-click
+    full-width
     :error-messages="errorMessages"
     :success-messages="successMessages"
     :hint="hint"

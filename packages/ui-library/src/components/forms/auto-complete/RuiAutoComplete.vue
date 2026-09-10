@@ -117,6 +117,8 @@ const {
   keyAttr,
   textAttr,
   itemHeight,
+  prependWidth,
+  appendWidth,
   errorMessages = [],
   successMessages = [],
   autoSelectFirst = false,
@@ -259,6 +261,8 @@ const {
   getIdentifier,
   groupBy: () => groupBy,
   itemDisabled: () => itemDisabled,
+  prependWidth,
+  appendWidth,
 });
 
 const {
@@ -519,8 +523,8 @@ defineExpose({
     :class="ui.wrapper({ class: cn($attrs.class) })"
     :options="menuFloatingOptions"
     :close-on-content-click="false"
-    :full-width="true"
-    :persist-on-activator-click="true"
+    full-width
+    persist-on-activator-click
     :menu-class="[
       { hidden: optionsWithSelectedHidden.length === 0 && customValue && !slots['no-data'] },
       menuOptions?.menuClass,
