@@ -327,6 +327,14 @@ const {
 
 const noData = computed<boolean>(() => get(filtered).length === 0);
 
+const ui = computed<ReturnType<typeof dataTableStyles>>(() => dataTableStyles({
+  outlined,
+  rounded,
+  dense,
+  striped,
+  mobile: get(isMobile),
+}));
+
 const { columns, colspan, headerSlots, cellValue } = useTableColumns<T, IdType>({
   cols: () => cols,
   columnAttr,
@@ -399,14 +407,6 @@ watch(sorted, (items) => {
 onMounted(() => {
   setInternalTotal(get(sorted));
 });
-
-const ui = computed<ReturnType<typeof dataTableStyles>>(() => dataTableStyles({
-  outlined,
-  rounded,
-  dense,
-  striped,
-  mobile: get(isMobile),
-}));
 
 const classes = computed<DataTableClasses>(() => {
   const s = get(ui);

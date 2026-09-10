@@ -14,9 +14,9 @@ if (!existsSync(dist)) {
 }
 
 const iconsSource = readFileSync(resolve(root, 'src/icons/index.ts'), 'utf-8');
-// eslint-disable-next-line regexp/strict
+// eslint-disable-next-line regexp/strict -- the unescaped `]` closes the generated array literal and reads better than `\]` here
 const validIconsMatch = iconsSource.match(/export const RuiIcons = \[(.*?)] as const/s)
-  // eslint-disable-next-line regexp/strict
+  // eslint-disable-next-line regexp/strict -- same literal, without the `as const` the older generator emitted
   ?? iconsSource.match(/export const RuiIcons = \[(.*?)]/s);
 if (!validIconsMatch?.[1]) {
   consola.error('could not parse RuiIcons from src/icons/index.ts');

@@ -202,7 +202,7 @@ describe('scanner', () => {
       const result = generateVirtualModule(icons);
 
       // Should be sorted: arrow-down, check, star
-      // eslint-disable-next-line regexp/strict
+      // eslint-disable-next-line regexp/strict -- the unescaped braces read better than `\{`/`\}` for an import statement
       const importMatch = result.match(/import {([^}]+)}/);
       assert(importMatch);
       const importContent = importMatch[1];

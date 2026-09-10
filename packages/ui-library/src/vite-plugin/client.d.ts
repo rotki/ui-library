@@ -1,4 +1,4 @@
-/* eslint-disable import/no-default-export */
+/* eslint-disable import/no-default-export -- a virtual module's shape is fixed by the plugin that serves it */
 declare module 'virtual:rotki-icons' {
   /**
    * Auto-detected icons from your source files.

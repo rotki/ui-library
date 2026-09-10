@@ -1,4 +1,4 @@
-/* eslint-disable max-lines */
+/* eslint-disable max-lines -- one entry per IANA zone; the list is data, not logic */
 
 export const timezones: string[] = [
   'Africa/Abidjan',

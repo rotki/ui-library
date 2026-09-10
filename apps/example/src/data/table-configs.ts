@@ -70,6 +70,11 @@ const streets: string[] = ['Maple Avenue', 'Oak Boulevard', 'Pine Street', 'Ceda
 const cities: string[] = ['Springfield', 'Riverside', 'Lakewood', 'Fairview', 'Georgetown'];
 const websites: string[] = ['alice.dev', 'bobchen.io', 'carol.codes', 'dave.net', 'eve.tech'];
 
+function firstName(name: string): string {
+  const separator = name.indexOf(' ');
+  return separator === -1 ? name : name.slice(0, separator);
+}
+
 export const fixedRows: ExtendedUser[] = Array.from({ length: 13 }, (_, i): ExtendedUser => {
   const name = userNames[i % userNames.length]!;
   const username = usernames[i % usernames.length]!;
@@ -77,7 +82,7 @@ export const fixedRows: ExtendedUser[] = Array.from({ length: 13 }, (_, i): Exte
     'id': i + 1,
     'name': name,
     'username': username,
-    'email': `${name.split(' ')[0]!.toLowerCase()}.${i + 1}@example.com`,
+    'email': `${firstName(name).toLowerCase()}.${i + 1}@example.com`,
     'website': websites[i % websites.length]!,
     'address.street': streets[i % streets.length]!,
     'address.city': cities[i % cities.length]!,

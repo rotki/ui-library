@@ -31,7 +31,7 @@ function loadValidIcons(): Set<string> {
     if (existsSync(distPath)) {
       // Read and parse the file to extract the RuiIcons array
       const content = readFileSync(distPath, 'utf-8');
-      // eslint-disable-next-line regexp/strict
+      // eslint-disable-next-line regexp/strict -- the unescaped `]` closes the built array literal and reads better than `\]`
       const match = content.match(/(?:const|var|let) RuiIcons = \[(.*?)];?/s);
       if (match?.[1]) {
         const iconsStr = match[1];
@@ -48,7 +48,7 @@ function loadValidIcons(): Set<string> {
   const sourcePath = resolve(__dirname, '../icons/index.ts');
   if (existsSync(sourcePath)) {
     const content = readFileSync(sourcePath, 'utf-8');
-    // eslint-disable-next-line regexp/strict
+    // eslint-disable-next-line regexp/strict -- the unescaped `]` closes the generated array literal and reads better than `\]`
     const match = content.match(/export const RuiIcons = \[(.*?)] as const/s);
     if (match?.[1]) {
       const iconsStr = match[1];
@@ -102,7 +102,7 @@ export function ruiIconsPlugin(options: RuiIconsPluginOptions = {}): Plugin {
 
   const log = (message: string): void => {
     if (debug) {
-      // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console -- the plugin's debug output belongs on the build console
       console.log(`[@rotki/ui-library/icons] ${message}`);
     }
   };
@@ -257,5 +257,5 @@ export function ruiIconsPlugin(options: RuiIconsPluginOptions = {}): Plugin {
 
 export type { RuiIconsPluginOptions } from './types';
 
-// eslint-disable-next-line import/no-default-export
+// eslint-disable-next-line import/no-default-export -- vite plugins are consumed as default imports
 export default ruiIconsPlugin;

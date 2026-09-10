@@ -265,9 +265,9 @@ const meta = preview.meta<typeof RuiDataTable<User>, Decorator, DataTableMetaArg
           'tfoot',
           'no-data',
           'empty-description',
-          // eslint-disable-next-line no-template-curly-in-string
+          // eslint-disable-next-line no-template-curly-in-string -- documents the dynamic slot name, it is not an interpolation
           '`header.${column.key.toString()}`',
-          // eslint-disable-next-line no-template-curly-in-string
+          // eslint-disable-next-line no-template-curly-in-string -- documents the dynamic slot name, it is not an interpolation
           '`item.${column.key.toString()}`',
           'body.append',
           'item.expand',

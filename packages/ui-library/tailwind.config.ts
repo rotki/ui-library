@@ -32,7 +32,7 @@ export default {
   safelist: [
     // Shadows
     {
-      // eslint-disable-next-line regexp/no-dupe-disjunctions
+      // eslint-disable-next-line regexp/no-dupe-disjunctions -- the overlap is what keeps the 1-24 range readable as three parts
       pattern: /shadow-(?:[1-9]|1\d|2[0-4])/,
     },
     ...(isDevelopment

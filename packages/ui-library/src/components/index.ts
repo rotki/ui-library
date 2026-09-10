@@ -1,4 +1,4 @@
-/* eslint-disable @rotki/max-dependencies */
+/* eslint-disable @rotki/max-dependencies -- the package entry point re-exports every component by design */
 import type {
   TableColumn as DataTableColumn,
   GroupKeys as DataTableGroupKeys,

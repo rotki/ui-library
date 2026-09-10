@@ -12,18 +12,31 @@ const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'
 /**
  * Replaces the double quotes in a string with single quotes and returns it.
  *
- * @param {string|undefined} text
- * @returns {string|undefined}
+ * @param text
+ * @returns
  */
 function replaceDoubleQuote(text) {
   return text?.replaceAll('"', '\'');
 }
 
 /**
+ * The part of a component's path that follows `src`, which is what the published
+ * package exposes as its module path.
+ *
+ * @param {string} filePath - path to a component file
+ * @returns {string} the path from `src` onwards, or the whole path when it holds no `src`
+ */
+function pathUnderSrc(filePath) {
+  const marker = 'src';
+  const index = filePath.indexOf(marker);
+  return index === -1 ? filePath : filePath.slice(index + marker.length);
+}
+
+/**
  * @typedef {import('vue-component-meta').MetaCheckerOptions} MetaCheckerOptions
  */
 
-/** @type MetaCheckerOptions **/
+/** @type MetaCheckerOptions */
 const checkerOptions = {
   forceUseTs: true,
   noDeclarations: false,
@@ -158,7 +171,7 @@ for (const component of filteredComponents) {
     name: componentName,
     description: component.docs,
     source: {
-      module: `@rotki/ui-library${component.path.split('src')[1]}`,
+      module: `@rotki/ui-library${pathUnderSrc(component.path)}`,
       symbol: componentName,
     },
     attributes,
