@@ -85,8 +85,8 @@ catalogs:
       specifier: 10.5.4
       version: 10.5.4
     bumpp:
-      specifier: 11.1.0
-      version: 11.1.0
+      specifier: 12.3.0
+      version: 12.3.0
     cac:
       specifier: 7.0.0
       version: 7.0.0
@@ -212,7 +212,7 @@ importers:
         version: 24.0.5
       bumpp:
         specifier: 'catalog:'
-        version: 11.1.0
+        version: 12.3.0
       eslint:
         specifier: 'catalog:'
         version: 10.9.1(jiti@2.6.1)
@@ -2687,9 +2687,9 @@ packages:
     resolution: {integrity: sha512-bkXY9WsVpY7CvMhKSR6pZilZu9Ln5WDrKVBUXf2S443etkmEO4V58heTecXcUIsNsi4Rx8JUO4NfX1IcQl4deg==}
     engines: {node: '>=18.20'}
 
-  bumpp@11.1.0:
-    resolution: {integrity: sha512-jdwOGMyX8JIqpQ0N2RMRR87DHZaoJnUtui5lU9LqFfFK5JC0H8qY9uWqXoa+dEWt/K7rOmmsoyiZB8RBM7RPBQ==}
-    engines: {node: '>=20.19.0'}
+  bumpp@12.3.0:
+    resolution: {integrity: sha512-YgW09sgbIGQmAD/Jk7FEGP0tm0PeDz+Zgk+IAk+MOHhb/98pj/l3CgkxSjd7C1O99JPxTNwS+bPOTNaHuNh6lQ==}
+    engines: {node: ^22.18.0 || ^24.11.0 || >=26.0.0}
     hasBin: true
 
   bundle-name@4.1.0:
@@ -4181,9 +4181,6 @@ packages:
     resolution: {integrity: sha512-MyIV3ZA/PmyBN/ud8vV9XzwTrNtR4jFrObymZYnZqMmW0zA8Z17vnT0rBgFE/TlohB+YCHqXMgZzb3Csp49vqg==}
     engines: {node: '>=14.16'}
 
-  package-manager-detector@1.6.0:
-    resolution: {integrity: sha512-61A5ThoTiDG/C8s8UMZwSorAGwMJ0ERVGj2OjoW5pAalsNOg15+iQiPzrLJ4jhZ1HJzmC2PIHT2oEiH3R5fzNA==}
-
   package-manager-detector@1.8.0:
     resolution: {integrity: sha512-yQA4H19AmPEoMUeavPMDIe1higySl/gH/yaQrkT/s07Qp+7pp2hYz30N3z2l5BkjVkF9Ow6o0wjJamm2y7Sn0A==}
 
@@ -4557,11 +4554,6 @@ packages:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
     hasBin: true
 
-  semver@7.7.4:
-    resolution: {integrity: sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA==}
-    engines: {node: '>=10'}
-    hasBin: true
-
   semver@7.8.5:
     resolution: {integrity: sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA==}
     engines: {node: '>=10'}
@@ -4766,10 +4758,6 @@ packages:
 
   tinyrainbow@2.0.0:
     resolution: {integrity: sha512-op4nsTR47R6p0vMUUoYl/a+ljLFVtlfaXkLQmqfLR1qHma1h/ysYk4hEXZ880bf2CYgTskvTa/e196Vd5dDQXw==}
-    engines: {node: '>=14.0.0'}
-
-  tinyrainbow@3.1.0:
-    resolution: {integrity: sha512-Bf+ILmBgretUrdJxzXM0SgXLZ3XfiaUuOj/IKQHuTXip+05Xn+uyEYdVg0kYDipTBcLrCVyUzAPz7QmArb0mmw==}
     engines: {node: '>=14.0.0'}
 
   tinyrainbow@3.1.1:
@@ -4992,6 +4980,10 @@ packages:
 
   verkit@0.3.2:
     resolution: {integrity: sha512-zj/ob3UsvJGN0whEAKFp53REA5X66hvffVqoCtVQAakJKnKlH+/PcOfMoFwIG/o4rElqLv/ycAFlx8ZlXUorCg==}
+    engines: {node: '>=18.12.0'}
+
+  verkit@0.4.0:
+    resolution: {integrity: sha512-sXMwN6DMHeouPfCxkxWkKAmxphWKEenHYY5H1nIBzU3PmDsmJp6kBXJdshjVdpMZuWCmL9SH7KFRx29AylpP6g==}
     engines: {node: '>=18.12.0'}
 
   vite-dev-rpc@1.1.0:
@@ -7134,7 +7126,7 @@ snapshots:
 
   '@vitest/pretty-format@4.1.11':
     dependencies:
-      tinyrainbow: 3.1.0
+      tinyrainbow: 3.1.1
     optional: true
 
   '@vitest/pretty-format@5.0.0':
@@ -7173,7 +7165,7 @@ snapshots:
     dependencies:
       '@vitest/pretty-format': 4.1.11
       convert-source-map: 2.0.0
-      tinyrainbow: 3.1.0
+      tinyrainbow: 3.1.1
     optional: true
 
   '@vitest/utils@5.0.0':
@@ -7520,16 +7512,16 @@ snapshots:
 
   builtin-modules@5.0.0: {}
 
-  bumpp@11.1.0:
+  bumpp@12.3.0:
     dependencies:
       args-tokenizer: 0.3.0
       cac: 7.0.0
       jsonc-parser: 3.3.1
-      package-manager-detector: 1.6.0
-      semver: 7.7.4
-      tinyexec: 1.2.4
+      package-manager-detector: 1.8.0
+      tinyexec: 1.3.1
       tinyglobby: 0.2.17
       unconfig: 7.5.0
+      verkit: 0.4.0
       yaml: 2.9.0
 
   bundle-name@4.1.0:
@@ -9327,8 +9319,6 @@ snapshots:
 
   p-timeout@6.1.4: {}
 
-  package-manager-detector@1.6.0: {}
-
   package-manager-detector@1.8.0: {}
 
   parent-module@1.0.1:
@@ -9723,8 +9713,6 @@ snapshots:
 
   semver@6.3.1: {}
 
-  semver@7.7.4: {}
-
   semver@7.8.5: {}
 
   set-cookie-parser@3.1.1: {}
@@ -9929,9 +9917,6 @@ snapshots:
   tinypool@2.1.0: {}
 
   tinyrainbow@2.0.0: {}
-
-  tinyrainbow@3.1.0:
-    optional: true
 
   tinyrainbow@3.1.1: {}
 
@@ -10158,6 +10143,8 @@ snapshots:
   util-deprecate@1.0.2: {}
 
   verkit@0.3.2: {}
+
+  verkit@0.4.0: {}
 
   vite-dev-rpc@1.1.0(vite@8.2.2(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.98.0)(tsx@4.23.13)(yaml@2.9.0)):
     dependencies:

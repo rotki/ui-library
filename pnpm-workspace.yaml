@@ -58,7 +58,7 @@ catalog:
   '@vueuse/core': 14.4.0
   '@vueuse/shared': 14.4.0
   autoprefixer: 10.5.4
-  bumpp: 11.1.0
+  bumpp: 12.3.0
   cac: 7.0.0
   consola: 3.4.2
   eslint: 10.9.1
