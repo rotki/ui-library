@@ -155,17 +155,15 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     }
   }
 
-  function handleDigitPressed(event: KeyboardEvent, digit: string): void {
-    if (!(event.target instanceof HTMLInputElement))
-      return;
-    const position = event.target.selectionStart ?? 0;
-    const currentSegment = getCurrentSegment(position);
-    if (!currentSegment || isNaN(parseInt(digit)))
-      return;
-    const segmentType = currentSegment.type;
-    if (!isDateTimeSegmentType(segmentType))
-      return;
-
+  /**
+   * Adds a typed digit to the segment under the caret, moving on to the next
+   * segment once this one can hold no more.
+   *
+   * @param segment - the segment the caret sits in
+   * @param segmentType - that segment's type, which states its value range
+   * @param digit - the digit that was typed
+   */
+  function applyDigit(segment: Segment, segmentType: DateTimeSegmentType, digit: string): void {
     const config = SEGMENT_CONFIG[segmentType];
     const value = get(currentValue) ?? '';
     const combinedStr = `${value}${digit}`;
@@ -175,7 +173,7 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
 
     if (combinedValue >= minValue && combinedValue <= config.maxValue) {
       setValue(segmentType, combinedValue);
-      setCursorPosition(currentSegment);
+      setCursorPosition(segment);
     }
     else if (combinedValue < minValue && combinedStr.length < maxLength) {
       // Track digit even if below minValue, so next digit can combine (e.g., "0" allows "01")
@@ -186,6 +184,21 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     // Use string length of typed digits, not parsed number length (e.g., "01" has length 2)
     if (willExceedMax || combinedStr.length >= maxLength)
       navigateSegments('ArrowRight');
+  }
+
+  function handleDigitPressed(event: KeyboardEvent, digit: string): void {
+    if (!(event.target instanceof HTMLInputElement))
+      return;
+
+    const currentSegment = getCurrentSegment(event.target.selectionStart ?? 0);
+    if (!currentSegment || isNaN(parseInt(digit)))
+      return;
+
+    const segmentType = currentSegment.type;
+    if (!isDateTimeSegmentType(segmentType))
+      return;
+
+    applyDigit(currentSegment, segmentType, digit);
   }
 
   function handleKeyboardNavigation(event: KeyboardEvent): void {
@@ -217,15 +230,16 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     }
   }
 
-  function handleKeyDown(event: KeyboardEvent): void {
-    if (disabled || readonly)
-      return;
-    const { key } = event;
-    // Modifier combos belong to the browser: ctrl/cmd+c, ctrl/cmd+v, ctrl/cmd+a,
-    // reload, and so on. Swallowing them made copy and paste impossible.
-    if (event.ctrlKey || event.metaKey || event.altKey)
-      return;
-
+  /**
+   * Runs the picker's own handling for a key.
+   *
+   * @param event - the keydown being handled
+   * @param key - the key that was pressed
+   * @returns whether the picker handled it, which decides if the browser's own
+   * handling is kept: Tab moves out of the field, Escape closes the menu and
+   * Enter submits the surrounding form.
+   */
+  function dispatchKey(event: KeyboardEvent, key: string): boolean {
     if (key === 'ArrowRight' || key === 'ArrowLeft')
       navigateSegments(key);
     else if (key === 'ArrowUp' || key === 'ArrowDown')
@@ -237,11 +251,22 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     else if (/^\d$/.test(key))
       handleDigitPressed(event, key);
     else
-      // Tab moves out of the field, Escape closes the menu, Enter submits the
-      // surrounding form: keys the picker does not own must keep their default.
+      return false;
+
+    return true;
+  }
+
+  function handleKeyDown(event: KeyboardEvent): void {
+    if (disabled || readonly)
       return;
 
-    event.preventDefault();
+    // Modifier combos belong to the browser: ctrl/cmd+c, ctrl/cmd+v, ctrl/cmd+a,
+    // reload, and so on. Swallowing them made copy and paste impossible.
+    if (event.ctrlKey || event.metaKey || event.altKey)
+      return;
+
+    if (dispatchKey(event, event.key))
+      event.preventDefault();
   }
 
   // Track the segment that was clicked, so handleFocus can restore it after DOM updates

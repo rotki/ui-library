@@ -107,17 +107,22 @@ function buildSizeMiddleware(padding: number): Middleware {
   });
 }
 
-function buildMiddleware(opts: FloatingOptions, arrowEl: HTMLElement | null): Middleware[] {
-  const mw: Middleware[] = [];
-
+/**
+ * The offset middleware, from either the shorthand distance or the per-axis
+ * form, falling back to the default distance on the main axis.
+ */
+function buildOffsetMiddleware(opts: FloatingOptions): Middleware {
   const off = opts.offset ?? DEFAULT_FLOATING_OPTIONS.offset;
-  if (typeof off === 'number') {
-    mw.push(offset(off));
-  }
-  else {
-    const defaultOffset = typeof DEFAULT_FLOATING_OPTIONS.offset === 'number' ? DEFAULT_FLOATING_OPTIONS.offset : 0;
-    mw.push(offset({ mainAxis: off.mainAxis ?? defaultOffset, crossAxis: off.crossAxis ?? 0 }));
-  }
+
+  if (typeof off === 'number')
+    return offset(off);
+
+  const defaultOffset = typeof DEFAULT_FLOATING_OPTIONS.offset === 'number' ? DEFAULT_FLOATING_OPTIONS.offset : 0;
+  return offset({ mainAxis: off.mainAxis ?? defaultOffset, crossAxis: off.crossAxis ?? 0 });
+}
+
+function buildMiddleware(opts: FloatingOptions, arrowEl: HTMLElement | null): Middleware[] {
+  const mw: Middleware[] = [buildOffsetMiddleware(opts)];
 
   if (opts.flip !== false)
     mw.push(flip());

@@ -16,12 +16,14 @@ export interface SegmentValues {
 }
 
 /**
- * Builds a date from the segments that have been entered so far. Segments the
- * accuracy does not expose are zeroed rather than inherited from the clock the
- * base date started at, so a value cannot pick up a stray second.
+ * Applies the entered date segments, keeping the day inside the month the year
+ * and month land on.
+ *
+ * @param base - the date to apply them to
+ * @param segments - the segments entered so far
+ * @returns the date with its year, month and day set
  */
-export function buildDateTime(segments: SegmentValues, accuracy: TimeAccuracy, base: Dayjs = dayjs()): Dayjs {
-  const { day, hour, millisecond, minute, month, second, year } = segments;
+function applyDateSegments(base: Dayjs, { day, month, year }: SegmentValues): Dayjs {
   let dateTime = base;
 
   if (year !== undefined)
@@ -32,6 +34,18 @@ export function buildDateTime(segments: SegmentValues, accuracy: TimeAccuracy, b
 
   if (day !== undefined)
     dateTime = dateTime.date(Math.min(day, dateTime.daysInMonth()));
+
+  return dateTime;
+}
+
+/**
+ * Builds a date from the segments that have been entered so far. Segments the
+ * accuracy does not expose are zeroed rather than inherited from the clock the
+ * base date started at, so a value cannot pick up a stray second.
+ */
+export function buildDateTime(segments: SegmentValues, accuracy: TimeAccuracy, base: Dayjs = dayjs()): Dayjs {
+  const { hour, millisecond, minute, second } = segments;
+  let dateTime = applyDateSegments(base, segments);
 
   if (hour !== undefined)
     dateTime = dateTime.hour(hour);

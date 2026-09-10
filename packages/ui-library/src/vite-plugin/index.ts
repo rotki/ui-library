@@ -20,42 +20,42 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 /**
- * Loads the valid RuiIcons array from the library
+ * Pulls the quoted icon names out of a `RuiIcons = [...]` array literal.
+ *
+ * @param path - file that may hold the array
+ * @param pattern - matches the array literal in that file, capturing its body
+ * @returns the names, or undefined when the file is absent or holds no array
+ */
+function readIconNames(path: string, pattern: RegExp): Set<string> | undefined {
+  if (!existsSync(path))
+    return undefined;
+
+  const body = readFileSync(path, 'utf-8').match(pattern)?.[1];
+  if (!body)
+    return undefined;
+
+  return new Set(body.match(/"([^"]+)"/g)?.map(name => name.slice(1, -1)) ?? []);
+}
+
+/**
+ * Loads the valid RuiIcons array from the library, preferring the built dist
+ * that consumers install and falling back to the source the repo generates.
  */
 function loadValidIcons(): Set<string> {
-  // Import the RuiIcons array from the icons module
-  // This will be resolved at build time
   try {
-    // Try to load from the built dist first (for consumers)
-    const distPath = resolve(__dirname, '../icons/index.js');
-    if (existsSync(distPath)) {
-      // Read and parse the file to extract the RuiIcons array
-      const content = readFileSync(distPath, 'utf-8');
-      // eslint-disable-next-line regexp/strict -- the unescaped `]` closes the built array literal and reads better than `\]`
-      const match = content.match(/(?:const|var|let) RuiIcons = \[(.*?)];?/s);
-      if (match?.[1]) {
-        const iconsStr = match[1];
-        const icons = iconsStr.match(/"([^"]+)"/g)?.map(s => s.slice(1, -1)) || [];
-        return new Set(icons);
-      }
-    }
+    // eslint-disable-next-line regexp/strict -- the unescaped `]` closes the built array literal and reads better than `\]`
+    const built = readIconNames(resolve(__dirname, '../icons/index.js'), /(?:const|var|let) RuiIcons = \[(.*?)];?/s);
+    if (built)
+      return built;
   }
   catch {
-    // Fallback: parse the icons source file directly
+    // A dist that cannot be read falls through to the source below
   }
 
-  // Fallback: read and parse the source file
-  const sourcePath = resolve(__dirname, '../icons/index.ts');
-  if (existsSync(sourcePath)) {
-    const content = readFileSync(sourcePath, 'utf-8');
-    // eslint-disable-next-line regexp/strict -- the unescaped `]` closes the generated array literal and reads better than `\]`
-    const match = content.match(/export const RuiIcons = \[(.*?)] as const/s);
-    if (match?.[1]) {
-      const iconsStr = match[1];
-      const icons = iconsStr.match(/"([^"]+)"/g)?.map(s => s.slice(1, -1)) || [];
-      return new Set(icons);
-    }
-  }
+  // eslint-disable-next-line regexp/strict -- the unescaped `]` closes the generated array literal and reads better than `\]`
+  const source = readIconNames(resolve(__dirname, '../icons/index.ts'), /export const RuiIcons = \[(.*?)] as const/s);
+  if (source)
+    return source;
 
   console.warn('[@rotki/ui-library] Could not load RuiIcons list, validation disabled');
   return new Set();

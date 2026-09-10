@@ -189,16 +189,17 @@ const mode = computed<'twoPane' | 'drill'>(() => (get(isMobile) ? 'drill' : 'two
 // its own shell's props so the other component's props never leak as attrs.
 const shell = computed<typeof RuiMenu | typeof RuiDialog>(() => (get(isMobile) ? RuiDialog : RuiMenu));
 
-const shellProps = computed<Record<string, unknown>>(() => {
-  if (get(isMobile)) {
-    return {
-      ariaLabel: dialogOptions?.ariaLabel ?? label,
-      bottomSheet: dialogOptions?.bottomSheet ?? true,
-      maxWidth: dialogOptions?.maxWidth,
-      persistent: dialogOptions?.persistent,
-      width: dialogOptions?.width ?? '100%',
-    };
-  }
+function dialogShellProps(): Record<string, unknown> {
+  return {
+    ariaLabel: dialogOptions?.ariaLabel ?? label,
+    bottomSheet: dialogOptions?.bottomSheet ?? true,
+    maxWidth: dialogOptions?.maxWidth,
+    persistent: dialogOptions?.persistent,
+    width: dialogOptions?.width ?? '100%',
+  };
+}
+
+function menuShellProps(): Record<string, unknown> {
   return {
     // Anchor to the field box, not the wrapper, so the popover sits directly
     // under the input instead of below the reserved details row.
@@ -214,7 +215,10 @@ const shellProps = computed<Record<string, unknown>>(() => {
     persistent: dialogOptions?.persistent,
     persistOnActivatorClick: true,
   };
-});
+}
+
+const shellProps = computed<Record<string, unknown>>(() =>
+  get(isMobile) ? dialogShellProps() : menuShellProps());
 
 const ui = computed<ReturnType<typeof categoryPickerStyles>>(() => categoryPickerStyles({
   dense,

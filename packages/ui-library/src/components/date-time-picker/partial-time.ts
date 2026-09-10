@@ -40,6 +40,22 @@ function timeSegments(segments: SegmentValues, accuracy: TimeAccuracy): TimeSegm
 }
 
 /**
+ * Answers each time segment the entry left out with the mode's fallback.
+ *
+ * @param time - the segments the entry holds
+ * @param fallback - the values to fill the missing ones with
+ * @returns a complete set of time segments
+ */
+function filledTime(time: TimeSegments, fallback: Required<TimeSegments>): Required<TimeSegments> {
+  return {
+    hour: time.hour ?? fallback.hour,
+    millisecond: time.millisecond ?? fallback.millisecond,
+    minute: time.minute ?? fallback.minute,
+    second: time.second ?? fallback.second,
+  };
+}
+
+/**
  * Completes an entry that stopped short of the full format, so a bare date - or
  * a date and an hour - can still become a value. Returns nothing when there is
  * nothing to complete: no date to build on, or every segment already entered.
@@ -71,15 +87,11 @@ export function completePartialEntry(
   if (complete)
     return undefined;
 
-  const fallback = FALLBACKS[mode];
   const candidate = buildDateTime({
     day,
-    hour: time.hour ?? fallback.hour,
-    millisecond: time.millisecond ?? fallback.millisecond,
-    minute: time.minute ?? fallback.minute,
     month,
-    second: time.second ?? fallback.second,
     year,
+    ...filledTime(time, FALLBACKS[mode]),
   }, accuracy);
 
   const clamped = clampToBounds(candidate, minDate, maxDate);

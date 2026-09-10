@@ -1,45 +1,40 @@
+function arraysEqual(value: unknown[], other: unknown): boolean {
+  if (!Array.isArray(other) || value.length !== other.length)
+    return false;
+
+  return value.every((element, index) => isEqual(element, other[index]));
+}
+
+function objectsEqual(value: object, other: object): boolean {
+  const valueEntries = Object.entries(value);
+
+  if (valueEntries.length !== Object.keys(other).length)
+    return false;
+
+  const otherEntries = Object.fromEntries(Object.entries(other));
+
+  return valueEntries.every(([key, entry]) =>
+    Object.hasOwn(otherEntries, key) && isEqual(entry, otherEntries[key]));
+}
+
 export function isEqual(value: unknown, other: unknown): boolean {
-  // Check if the values are identical (covers primitives and functions)
+  // Identical values cover primitives and functions
   if (value === other)
     return true;
 
-  // Check if the values are null or undefined
-  if (value == null || other == null)
-    return value === other;
+  // A null or undefined only equals itself, which the check above settled
+  if (value === null || value === undefined || other === null || other === undefined)
+    return false;
 
-  // Check if the values are of different types
   if (typeof value !== typeof other)
     return false;
 
-  // Compare arrays
-  if (Array.isArray(value)) {
-    if (!Array.isArray(other) || value.length !== other.length)
-      return false;
+  if (Array.isArray(value))
+    return arraysEqual(value, other);
 
-    for (const [i, element] of value.entries()) {
-      if (!isEqual(element, other[i]))
-        return false;
-    }
-    return true;
-  }
+  if (typeof value === 'object' && typeof other === 'object')
+    return objectsEqual(value, other);
 
-  // Compare objects
-  if (typeof value === 'object') {
-    const valueRecord = value as Record<string, unknown>;
-    const otherRecord = other as Record<string, unknown>;
-    const valueKeys = Object.keys(valueRecord);
-    const otherKeys = Object.keys(otherRecord);
-
-    if (valueKeys.length !== otherKeys.length)
-      return false;
-
-    for (const key of valueKeys) {
-      if (!isEqual(valueRecord[key], otherRecord[key]))
-        return false;
-    }
-    return true;
-  }
-
-  // If the values are neither primitives, arrays, nor objects, return false
+  // Neither a primitive that matched, nor an array, nor an object
   return false;
 }
