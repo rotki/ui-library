@@ -2,6 +2,7 @@
 import type { ContextColorsType } from '@/consts/colors';
 import type { VueClassValue } from '@/types/class-value';
 import { HIGHLIGHT_COLOR_MAP, HIGHLIGHT_DEFAULT, SliderInteraction, sliderStyles } from '@/components/forms/slider/slider-styles';
+import RuiSliderTicks from '@/components/forms/slider/RuiSliderTicks.vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
@@ -210,27 +211,18 @@ function isHighlightedTick(index: number): boolean {
                   :style="{ width: trackWidth }"
                   data-id="slider-track"
                 />
-                <div
+                <RuiSliderTicks
                   v-if="showTicks && !disabled"
-                  :class="trackUi.ticks()"
-                  :style="ticksStyle"
-                  data-id="slider-ticks"
-                >
-                  <span
-                    v-for="i in totalTicks + 1"
-                    :key="i"
-                    :class="[
-                      trackUi.tick(),
-                      hideTrack
-                        ? tickClassOverride
-                        : [
-                          isHighlightedTick(i - 1) && highlightClass,
-                          !isHighlightedTick(i - 1) && tickClassOverride,
-                        ],
-                    ]"
-                    :style="tickStyle"
-                  />
-                </div>
+                  :count="totalTicks"
+                  :container-class="trackUi.ticks()"
+                  :container-style="ticksStyle"
+                  :tick-class="trackUi.tick()"
+                  :tick-style="tickStyle"
+                  :hide-track="hideTrack"
+                  :highlight-class="highlightClass"
+                  :tick-class-override="tickClassOverride"
+                  :is-highlighted="isHighlightedTick"
+                />
               </div>
               <div
                 :class="[trackUi.thumb(), trackUi.thumbRipple()]"

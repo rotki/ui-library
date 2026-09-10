@@ -55,14 +55,13 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
               <RuiButton
                 variant="text"
                 size="sm"
+                class="gap-1"
               >
                 create users
-                <template #append>
-                  <RuiIcon
-                    name="lu-plus"
-                    color="primary"
-                  />
-                </template>
+                <RuiIcon
+                  name="lu-plus"
+                  color="primary"
+                />
               </RuiButton>
             </div>
           </template>

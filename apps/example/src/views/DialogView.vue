@@ -54,17 +54,15 @@ const dialogs = ref<DialogData[]>([
                 Contents {{ i }}
               </div>
 
-              <div class="border-t border-default py-4">
-                <div class="flex gap-2 w-full justify-end">
-                  <RuiButton
-                    data-id="close"
-                    variant="outlined"
-                    color="primary"
-                    @click="close()"
-                  >
-                    Close
-                  </RuiButton>
-                </div>
+              <div class="border-t border-default py-4 flex gap-2 w-full justify-end">
+                <RuiButton
+                  data-id="close"
+                  variant="outlined"
+                  color="primary"
+                  @click="close()"
+                >
+                  Close
+                </RuiButton>
               </div>
             </div>
           </RuiCard>
