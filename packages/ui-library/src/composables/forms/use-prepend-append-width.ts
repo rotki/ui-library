@@ -1,9 +1,9 @@
-import type { Ref, ShallowRef } from 'vue';
+import type { ShallowRef } from 'vue';
 import { assert } from '@/utils/assert';
 
 export interface PrependAppendWidth {
-  prependWidth: Ref<string>;
-  appendWidth: Ref<string>;
+  prependWidth: Readonly<ShallowRef<string>>;
+  appendWidth: Readonly<ShallowRef<string>>;
 }
 
 export function usePrependAppendWidth(
@@ -33,5 +33,8 @@ export function usePrependAppendWidth(
     set(appendWidth, `${target.offsetWidth + offset}px`);
   });
 
-  return { prependWidth, appendWidth };
+  return {
+    appendWidth: readonly(appendWidth),
+    prependWidth: readonly(prependWidth),
+  };
 }

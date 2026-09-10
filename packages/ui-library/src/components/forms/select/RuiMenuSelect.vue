@@ -140,7 +140,7 @@ const {
   getText,
   getIdentifier,
   isActiveItem,
-  highlightedIndex,
+  modelHighlightedIndex,
   moveHighlight,
   applyHighlighted,
   valueKey,
@@ -235,8 +235,8 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
           @keydown.down.prevent="moveHighlight(false)"
           @keydown.enter.prevent="applyHighlighted()"
           @keydown.space.prevent="applyHighlighted()"
-          @keydown.home.prevent="highlightedIndex = 0"
-          @keydown.end.prevent="highlightedIndex = options.length - 1"
+          @keydown.home.prevent="modelHighlightedIndex = 0"
+          @keydown.end.prevent="modelHighlightedIndex = options.length - 1"
         >
           <span
             v-if="outlined || !value"
@@ -339,9 +339,9 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
             :aria-selected="isActiveItem(item)"
             :size="dense ? 'sm' : undefined"
             variant="list"
-            :data-highlighted="highlightedIndex === _index"
+            :data-highlighted="modelHighlightedIndex === _index"
             :class="{
-              [highlightedClass]: !isActiveItem(item) && highlightedIndex === _index,
+              [highlightedClass]: !isActiveItem(item) && modelHighlightedIndex === _index,
             }"
             @click="setValue(item)"
           >

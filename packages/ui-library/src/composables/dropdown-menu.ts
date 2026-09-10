@@ -189,8 +189,8 @@ export function useDropdownMenu<TValue, TItem>({
     return Array.isArray(selected) ? selected.map(item => item[keyAttr]) : selected[keyAttr];
   });
 
-  const highlightedIndex: Ref<number> = ref(get(autoSelectFirst) ? 0 : -1);
-  const userNavigated = shallowRef<boolean>(false);
+  const modelHighlightedIndex: Ref<number> = ref(get(autoSelectFirst) ? 0 : -1);
+  const modelUserNavigated = shallowRef<boolean>(false);
 
   const optionWidthBounds = computed<{ min: number; max: number }>(() => {
     let min = 0;
@@ -252,7 +252,7 @@ export function useDropdownMenu<TValue, TItem>({
   }
 
   async function adjustScrollByHighlightedIndex(): Promise<void> {
-    const index = get(highlightedIndex);
+    const index = get(modelHighlightedIndex);
     if (index === -1)
       return;
 
@@ -279,7 +279,7 @@ export function useDropdownMenu<TValue, TItem>({
     if ((Array.isArray(val) && val.length > 0) || (val !== null && val !== undefined)) {
       const index = get(options).findIndex(isActiveItem);
       if (index > -1)
-        set(highlightedIndex, index);
+        set(modelHighlightedIndex, index);
     }
 
     await adjustScrollByHighlightedIndex();
@@ -289,19 +289,19 @@ export function useDropdownMenu<TValue, TItem>({
     await updateOpen(open);
   });
 
-  watch(highlightedIndex, async () => {
+  watch(modelHighlightedIndex, async () => {
     await adjustScrollByHighlightedIndex();
   });
 
   watch(options, async () => {
-    set(userNavigated, false);
-    if (get(highlightedIndex) !== -1) {
+    set(modelUserNavigated, false);
+    if (get(modelHighlightedIndex) !== -1) {
       if (get(autoSelectFirst)) {
-        set(highlightedIndex, 0);
+        set(modelHighlightedIndex, 0);
         await adjustScrollByHighlightedIndex();
       }
       else {
-        set(highlightedIndex, -1);
+        set(modelHighlightedIndex, -1);
         scrollTo(0);
       }
     }
@@ -312,7 +312,7 @@ export function useDropdownMenu<TValue, TItem>({
 
   watch(isOpen, (open) => {
     if (!open)
-      set(userNavigated, false);
+      set(modelUserNavigated, false);
   });
 
   const moveHighlight = (up: boolean): void => {
@@ -321,7 +321,7 @@ export function useDropdownMenu<TValue, TItem>({
       return;
     }
 
-    set(userNavigated, true);
+    set(modelUserNavigated, true);
 
     const items = get(options);
     const total = items.length;
@@ -329,7 +329,7 @@ export function useDropdownMenu<TValue, TItem>({
       return;
 
     const move = up ? -1 : 1;
-    let position = get(highlightedIndex);
+    let position = get(modelHighlightedIndex);
 
     for (let step = 0; step < total; step++) {
       position += move;
@@ -340,7 +340,7 @@ export function useDropdownMenu<TValue, TItem>({
 
       const candidate = items[position];
       if (candidate !== undefined && !isItemDisabled(candidate)) {
-        set(highlightedIndex, position);
+        set(modelHighlightedIndex, position);
         return;
       }
     }
@@ -350,7 +350,7 @@ export function useDropdownMenu<TValue, TItem>({
     if (!setValue || !get(isOpen))
       return;
 
-    const highlightedIndexVal = get(highlightedIndex);
+    const highlightedIndexVal = get(modelHighlightedIndex);
     if (highlightedIndexVal === -1)
       return;
 
@@ -365,7 +365,7 @@ export function useDropdownMenu<TValue, TItem>({
     getIdentifier,
     getText,
     groupedOptions,
-    highlightedIndex,
+    modelHighlightedIndex,
     isActiveItem,
     isGrouped,
     isItemDisabled,
@@ -376,7 +376,7 @@ export function useDropdownMenu<TValue, TItem>({
     optionsWithSelectedHidden: options,
     renderedData,
     toggle,
-    userNavigated,
+    modelUserNavigated,
     valueKey,
     wrapperProps,
   };

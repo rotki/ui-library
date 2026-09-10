@@ -235,11 +235,11 @@ const {
   menuWidth,
   isActiveItem,
   itemIndexInValue,
-  highlightedIndex,
+  modelHighlightedIndex,
   moveHighlight,
   applyHighlighted,
   optionsWithSelectedHidden,
-  userNavigated,
+  modelUserNavigated,
   groupedOptions,
   isGrouped,
   isItemDisabled,
@@ -280,13 +280,13 @@ const {
     clear,
     filteredOptions,
     getText,
-    highlightedIndex,
+    highlightedIndex: modelHighlightedIndex,
     internalSearch,
     isOpen,
     removeValue: (item: TItem): void => { setValue(item); },
     searchInputFocused,
     setSearchAsValue,
-    userNavigated,
+    userNavigated: modelUserNavigated,
     value,
   },
 );
@@ -564,8 +564,8 @@ defineExpose({
           @keydown.right="moveSelectedValueHighlight($event, true)"
           @keydown.up.prevent="moveHighlight(true)"
           @keydown.down.prevent="moveHighlight(false)"
-          @keydown.home.prevent="highlightedIndex = 0"
-          @keydown.end.prevent="highlightedIndex = optionsWithSelectedHidden.length - 1"
+          @keydown.home.prevent="modelHighlightedIndex = 0"
+          @keydown.end.prevent="modelHighlightedIndex = optionsWithSelectedHidden.length - 1"
         >
           <span
             v-if="(outlined || (!valueSet && !searchInputFocused)) && !placeholderSlotActive"
@@ -766,10 +766,10 @@ defineExpose({
                 :disabled="isItemDisabled(item)"
                 tabindex="0"
                 variant="list"
-                :data-highlighted="optionsWithSelectedHidden.indexOf(item) === highlightedIndex"
+                :data-highlighted="optionsWithSelectedHidden.indexOf(item) === modelHighlightedIndex"
                 :data-disabled="isItemDisabled(item) || undefined"
                 :class="{
-                  [highlightedClass]: !isActiveItem(item) && optionsWithSelectedHidden.indexOf(item) === highlightedIndex,
+                  [highlightedClass]: !isActiveItem(item) && optionsWithSelectedHidden.indexOf(item) === modelHighlightedIndex,
                 }"
                 @click="!isItemDisabled(item) && setValue(item)"
               >
@@ -808,10 +808,10 @@ defineExpose({
               :disabled="isItemDisabled(item)"
               tabindex="0"
               variant="list"
-              :data-highlighted="highlightedIndex === _index"
+              :data-highlighted="modelHighlightedIndex === _index"
               :data-disabled="isItemDisabled(item) || undefined"
               :class="{
-                [highlightedClass]: !isActiveItem(item) && highlightedIndex === _index,
+                [highlightedClass]: !isActiveItem(item) && modelHighlightedIndex === _index,
               }"
               @click="!isItemDisabled(item) && setValue(item)"
             >

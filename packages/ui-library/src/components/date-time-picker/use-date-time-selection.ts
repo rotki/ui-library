@@ -33,19 +33,19 @@ interface DateTimeSelectionOptions<T extends DateTimeModelType> {
 }
 
 interface DateTimeSelectionReturn {
-  selectedYear: Ref<number | undefined>;
-  selectedMonth: Ref<number | undefined>;
-  selectedDay: Ref<number | undefined>;
-  selectedHour: Ref<number | undefined>;
-  selectedMinute: Ref<number | undefined>;
-  selectedSecond: Ref<number | undefined>;
-  selectedMillisecond: Ref<number | undefined>;
-  selectedTimezone: Ref<string | undefined>;
+  modelYear: Ref<number | undefined>;
+  modelMonth: Ref<number | undefined>;
+  modelDay: Ref<number | undefined>;
+  modelHour: Ref<number | undefined>;
+  modelMinute: Ref<number | undefined>;
+  modelSecond: Ref<number | undefined>;
+  modelMillisecond: Ref<number | undefined>;
+  modelTimezone: Ref<string | undefined>;
   selectedDate: WritableComputedRef<Date | undefined>;
   selectedTime: WritableComputedRef<Date | undefined>;
   valueSet: ComputedRef<boolean>;
-  internalErrorMessages: Ref<string[]>;
-  now: Ref<Dayjs>;
+  internalErrorMessages: Readonly<Ref<string[]>>;
+  now: Readonly<Ref<Dayjs>>;
   segmentData: SegmentData;
   minAllowedDate: ComputedRef<Date>;
   maxAllowedDate: ComputedRef<Date | undefined>;
@@ -73,19 +73,19 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
     type,
   } = options;
 
-  const selectedYear = ref<number | undefined>();
-  const selectedMonth = ref<number | undefined>();
-  const selectedDay = ref<number | undefined>();
+  const modelYear = ref<number | undefined>();
+  const modelMonth = ref<number | undefined>();
+  const modelDay = ref<number | undefined>();
 
-  const selectedHour = ref<number | undefined>();
-  const selectedMinute = ref<number | undefined>();
-  const selectedSecond = ref<number | undefined>();
-  const selectedMillisecond = ref<number | undefined>();
-  const selectedTimezone = ref<string | undefined>(guessTimezone());
+  const modelHour = ref<number | undefined>();
+  const modelMinute = ref<number | undefined>();
+  const modelSecond = ref<number | undefined>();
+  const modelMillisecond = ref<number | undefined>();
+  const modelTimezone = ref<string | undefined>(guessTimezone());
 
   const now = ref<Dayjs>(dayjs.tz(undefined, guessTimezone()));
 
-  const { internalErrorMessages, isDateValid, maxAllowedDate, minAllowedDate } = useDateBounds({
+  const { clearErrors, internalErrorMessages, isDateValid, maxAllowedDate, minAllowedDate } = useDateBounds({
     dateFormat,
     epochSeconds: type === 'epoch',
     maxDate,
@@ -94,55 +94,55 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
   });
 
   const segmentData: SegmentData = {
-    DD: selectedDay,
-    HH: selectedHour,
-    MM: selectedMonth,
-    SSS: selectedMillisecond,
-    YYYY: selectedYear,
-    mm: selectedMinute,
-    ss: selectedSecond,
+    DD: modelDay,
+    HH: modelHour,
+    MM: modelMonth,
+    SSS: modelMillisecond,
+    YYYY: modelYear,
+    mm: modelMinute,
+    ss: modelSecond,
   };
 
   const selectedDate = computed<Date | undefined>({
     get() {
-      if (!(isDefined(selectedYear) && isDefined(selectedMonth) && isDefined(selectedDay))) {
+      if (!(isDefined(modelYear) && isDefined(modelMonth) && isDefined(modelDay))) {
         return undefined;
       }
       const date = new Date();
-      date.setFullYear(get(selectedYear));
+      date.setFullYear(get(modelYear));
       // Set day to 1 first to prevent month overflow when today's day > days in target month
       // e.g., if today is Dec 30 and we set month to Feb, day 30 would overflow to March
       date.setDate(1);
-      date.setMonth(get(selectedMonth) - 1);
-      date.setDate(get(selectedDay));
+      date.setMonth(get(modelMonth) - 1);
+      date.setDate(get(modelDay));
       return date;
     },
     set(value?: Date) {
-      set(selectedYear, value?.getFullYear());
-      set(selectedMonth, value ? value.getMonth() + 1 : undefined);
-      set(selectedDay, value?.getDate());
+      set(modelYear, value?.getFullYear());
+      set(modelMonth, value ? value.getMonth() + 1 : undefined);
+      set(modelDay, value?.getDate());
     },
   });
 
   const selectedTime = computed<Date | undefined>({
     get() {
-      if (!(isDefined(selectedHour) && isDefined(selectedMinute))) {
+      if (!(isDefined(modelHour) && isDefined(modelMinute))) {
         return undefined;
       }
       const date = new Date();
       date.setHours(
-        get(selectedHour),
-        get(selectedMinute),
-        get(selectedSecond) ?? 0,
-        get(selectedMillisecond) ?? 0,
+        get(modelHour),
+        get(modelMinute),
+        get(modelSecond) ?? 0,
+        get(modelMillisecond) ?? 0,
       );
       return date;
     },
     set(value?: Date) {
-      set(selectedHour, value?.getHours());
-      set(selectedMinute, value?.getMinutes());
-      set(selectedSecond, value?.getSeconds());
-      set(selectedMillisecond, value?.getMilliseconds());
+      set(modelHour, value?.getHours());
+      set(modelMinute, value?.getMinutes());
+      set(modelSecond, value?.getSeconds());
+      set(modelMillisecond, value?.getMilliseconds());
     },
   });
 
@@ -150,13 +150,13 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
 
   function getDateTime(): Dayjs {
     return buildDateTime({
-      day: get(selectedDay),
-      hour: get(selectedHour),
-      millisecond: get(selectedMillisecond),
-      minute: get(selectedMinute),
-      month: get(selectedMonth),
-      second: get(selectedSecond),
-      year: get(selectedYear),
+      day: get(modelDay),
+      hour: get(modelHour),
+      millisecond: get(modelMillisecond),
+      minute: get(modelMinute),
+      month: get(modelMonth),
+      second: get(modelSecond),
+      year: get(modelYear),
     }, accuracy);
   }
 
@@ -182,7 +182,7 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
     // across a DST boundary then shifted the time by an hour.
     const updatedModel = dayjs.tz(
       formatWallClock(get(selectedDate), get(selectedTime), accuracy),
-      get(selectedTimezone),
+      get(modelTimezone),
     );
 
     if (!isDateValid(updatedModel)) {
@@ -193,14 +193,14 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
   }
 
   function clear(): void {
-    set(internalErrorMessages, []);
-    set(selectedYear, undefined);
-    set(selectedMonth, undefined);
-    set(selectedDay, undefined);
-    set(selectedHour, undefined);
-    set(selectedMinute, undefined);
-    set(selectedSecond, undefined);
-    set(selectedMillisecond, undefined);
+    clearErrors();
+    set(modelYear, undefined);
+    set(modelMonth, undefined);
+    set(modelDay, undefined);
+    set(modelHour, undefined);
+    set(modelMinute, undefined);
+    set(modelSecond, undefined);
+    set(modelMillisecond, undefined);
     set(modelValue, undefined as ModelValueType<T>);
   }
 
@@ -209,17 +209,17 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
   }
 
   function applySegments(date: Dayjs): void {
-    set(selectedYear, date.year());
-    set(selectedMonth, date.month() + 1);
-    set(selectedDay, date.date());
-    set(selectedHour, date.hour());
-    set(selectedMinute, date.minute());
-    set(selectedSecond, includeSeconds(accuracy) ? date.second() : 0);
-    set(selectedMillisecond, includeMilliseconds(accuracy) ? date.millisecond() : 0);
+    set(modelYear, date.year());
+    set(modelMonth, date.month() + 1);
+    set(modelDay, date.date());
+    set(modelHour, date.hour());
+    set(modelMinute, date.minute());
+    set(modelSecond, includeSeconds(accuracy) ? date.second() : 0);
+    set(modelMillisecond, includeMilliseconds(accuracy) ? date.millisecond() : 0);
   }
 
   function setNow(): void {
-    set(internalErrorMessages, []);
+    clearErrors();
 
     const date = dayjs();
     set(now, date);
@@ -235,18 +235,18 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
    * time survives. Falls back to midnight when no time has been entered yet.
    */
   function setToday(): void {
-    set(internalErrorMessages, []);
+    clearErrors();
 
     const date = dayjs();
     set(now, date);
 
     const target = buildDateTime({
       day: date.date(),
-      hour: get(selectedHour) ?? 0,
-      millisecond: get(selectedMillisecond) ?? 0,
-      minute: get(selectedMinute) ?? 0,
+      hour: get(modelHour) ?? 0,
+      millisecond: get(modelMillisecond) ?? 0,
+      minute: get(modelMinute) ?? 0,
       month: date.month() + 1,
-      second: get(selectedSecond) ?? 0,
+      second: get(modelSecond) ?? 0,
       year: date.year(),
     }, accuracy, date);
 
@@ -266,24 +266,24 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
     const second = includeSeconds(accuracy) ? date.second() : undefined;
     const millisecond = includeMilliseconds(accuracy) ? date.millisecond() : undefined;
 
-    if (get(selectedYear) !== year)
-      set(selectedYear, year);
-    if (get(selectedMonth) !== month)
-      set(selectedMonth, month);
-    if (get(selectedDay) !== day)
-      set(selectedDay, day);
-    if (get(selectedHour) !== hour)
-      set(selectedHour, hour);
-    if (get(selectedMinute) !== minute)
-      set(selectedMinute, minute);
-    if (get(selectedSecond) !== second)
-      set(selectedSecond, second);
-    if (get(selectedMillisecond) !== millisecond)
-      set(selectedMillisecond, millisecond);
+    if (get(modelYear) !== year)
+      set(modelYear, year);
+    if (get(modelMonth) !== month)
+      set(modelMonth, month);
+    if (get(modelDay) !== day)
+      set(modelDay, day);
+    if (get(modelHour) !== hour)
+      set(modelHour, hour);
+    if (get(modelMinute) !== minute)
+      set(modelMinute, minute);
+    if (get(modelSecond) !== second)
+      set(modelSecond, second);
+    if (get(modelMillisecond) !== millisecond)
+      set(modelMillisecond, millisecond);
   }
 
   const { ignoreUpdates } = watchIgnorable([selectedDate, selectedTime], ([newSelectedDate, newSelectedTime], [prevSelectedDate, prevSelectedTime]) => {
-    const currentTimezone = get(selectedTimezone);
+    const currentTimezone = get(modelTimezone);
     const newDate = dayjs.tz(newSelectedDate, currentTimezone);
     const oldDate = dayjs.tz(prevSelectedDate, currentTimezone);
     const newTime = dayjs.tz(newSelectedTime, currentTimezone);
@@ -309,13 +309,13 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
       return;
 
     const target = completePartialEntry({
-      day: get(selectedDay),
-      hour: get(selectedHour),
-      millisecond: get(selectedMillisecond),
-      minute: get(selectedMinute),
-      month: get(selectedMonth),
-      second: get(selectedSecond),
-      year: get(selectedYear),
+      day: get(modelDay),
+      hour: get(modelHour),
+      millisecond: get(modelMillisecond),
+      minute: get(modelMinute),
+      month: get(modelMonth),
+      second: get(modelSecond),
+      year: get(modelYear),
     }, {
       accuracy,
       maxDate: get(maxAllowedDate),
@@ -338,13 +338,13 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
       const updatedValue = type === 'epoch' && typeof value === 'number'
         ? value * MILLISECONDS
         : value;
-      const date = dayjs.tz(updatedValue, get(selectedTimezone));
+      const date = dayjs.tz(updatedValue, get(modelTimezone));
       isDateValid(date);
       updateSegments(date);
     });
   }
 
-  watch(selectedTimezone, (newTimezone: string | undefined) => {
+  watch(modelTimezone, (newTimezone: string | undefined) => {
     if (newTimezone && isDefined(selectedDate) && isDefined(selectedTime)) {
       set(now, dayjs());
       updateModelValue();
@@ -378,18 +378,18 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
     isDateValid,
     maxAllowedDate,
     minAllowedDate,
-    now,
+    modelDay,
+    modelHour,
+    modelMillisecond,
+    modelMinute,
+    modelMonth,
+    modelSecond,
+    modelTimezone,
+    modelYear,
+    now: shallowReadonly(now),
     segmentData,
     selectedDate,
-    selectedDay,
-    selectedHour,
-    selectedMillisecond,
-    selectedMinute,
-    selectedMonth,
-    selectedSecond,
     selectedTime,
-    selectedTimezone,
-    selectedYear,
     setNow,
     setToday,
     valueSet,

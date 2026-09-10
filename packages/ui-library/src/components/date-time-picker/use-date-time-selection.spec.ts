@@ -61,11 +61,11 @@ describe('use-date-time-selection', () => {
         type: 'epoch-ms',
       }));
 
-      expect(get(result.selectedYear)).toBeUndefined();
-      expect(get(result.selectedMonth)).toBeUndefined();
-      expect(get(result.selectedDay)).toBeUndefined();
-      expect(get(result.selectedHour)).toBeUndefined();
-      expect(get(result.selectedMinute)).toBeUndefined();
+      expect(get(result.modelYear)).toBeUndefined();
+      expect(get(result.modelMonth)).toBeUndefined();
+      expect(get(result.modelDay)).toBeUndefined();
+      expect(get(result.modelHour)).toBeUndefined();
+      expect(get(result.modelMinute)).toBeUndefined();
       expect(get(result.valueSet)).toBe(false);
 
       unmount();
@@ -111,11 +111,11 @@ describe('use-date-time-selection', () => {
 
       await nextTick();
 
-      expect(get(result.selectedYear)).toBe(2022);
-      expect(get(result.selectedMonth)).toBe(4); // April (1-indexed)
-      expect(get(result.selectedDay)).toBe(20);
-      expect(get(result.selectedHour)).toBe(10);
-      expect(get(result.selectedMinute)).toBe(15);
+      expect(get(result.modelYear)).toBe(2022);
+      expect(get(result.modelMonth)).toBe(4); // April (1-indexed)
+      expect(get(result.modelDay)).toBe(20);
+      expect(get(result.modelHour)).toBe(10);
+      expect(get(result.modelMinute)).toBe(15);
 
       unmount();
     });
@@ -137,11 +137,11 @@ describe('use-date-time-selection', () => {
 
       await nextTick();
 
-      expect(get(result.selectedYear)).toBe(2022);
-      expect(get(result.selectedMonth)).toBe(4);
-      expect(get(result.selectedDay)).toBe(20);
-      expect(get(result.selectedHour)).toBe(10);
-      expect(get(result.selectedMinute)).toBe(15);
+      expect(get(result.modelYear)).toBe(2022);
+      expect(get(result.modelMonth)).toBe(4);
+      expect(get(result.modelDay)).toBe(20);
+      expect(get(result.modelHour)).toBe(10);
+      expect(get(result.modelMinute)).toBe(15);
 
       unmount();
     });
@@ -162,11 +162,11 @@ describe('use-date-time-selection', () => {
 
       await nextTick();
 
-      expect(get(result.selectedYear)).toBe(2022);
-      expect(get(result.selectedMonth)).toBe(4);
-      expect(get(result.selectedDay)).toBe(20);
-      expect(get(result.selectedHour)).toBe(10);
-      expect(get(result.selectedMinute)).toBe(15);
+      expect(get(result.modelYear)).toBe(2022);
+      expect(get(result.modelMonth)).toBe(4);
+      expect(get(result.modelDay)).toBe(20);
+      expect(get(result.modelHour)).toBe(10);
+      expect(get(result.modelMinute)).toBe(15);
 
       unmount();
     });
@@ -187,7 +187,7 @@ describe('use-date-time-selection', () => {
 
       await nextTick();
 
-      expect(get(result.selectedSecond)).toBe(30);
+      expect(get(result.modelSecond)).toBe(30);
 
       unmount();
     });
@@ -208,8 +208,8 @@ describe('use-date-time-selection', () => {
 
       await nextTick();
 
-      expect(get(result.selectedSecond)).toBe(30);
-      expect(get(result.selectedMillisecond)).toBe(456);
+      expect(get(result.modelSecond)).toBe(30);
+      expect(get(result.modelMillisecond)).toBe(456);
 
       unmount();
     });
@@ -229,9 +229,9 @@ describe('use-date-time-selection', () => {
         type: 'epoch-ms',
       }));
 
-      set(result.selectedYear, 2023);
-      set(result.selectedMonth, 6);
-      // selectedDay is not set
+      set(result.modelYear, 2023);
+      set(result.modelMonth, 6);
+      // modelDay is not set
 
       expect(get(result.selectedDate)).toBeUndefined();
 
@@ -251,9 +251,9 @@ describe('use-date-time-selection', () => {
         type: 'epoch-ms',
       }));
 
-      set(result.selectedYear, 2023);
-      set(result.selectedMonth, 6);
-      set(result.selectedDay, 15);
+      set(result.modelYear, 2023);
+      set(result.modelMonth, 6);
+      set(result.modelDay, 15);
 
       const selectedDate = get(result.selectedDate);
       expect(selectedDate).toBeInstanceOf(Date);
@@ -278,15 +278,15 @@ describe('use-date-time-selection', () => {
       }));
 
       // Setting December 30, 2023 then changing to February
-      set(result.selectedYear, 2023);
-      set(result.selectedMonth, 12); // December
-      set(result.selectedDay, 30);
+      set(result.modelYear, 2023);
+      set(result.modelMonth, 12); // December
+      set(result.modelDay, 30);
 
       // Now change to February - should not overflow
       set(result.selectedDate, new Date(2023, 1, 15)); // February 15
 
-      expect(get(result.selectedMonth)).toBe(2); // February (1-indexed)
-      expect(get(result.selectedDay)).toBe(15);
+      expect(get(result.modelMonth)).toBe(2); // February (1-indexed)
+      expect(get(result.modelDay)).toBe(15);
 
       unmount();
     });
@@ -306,8 +306,8 @@ describe('use-date-time-selection', () => {
         type: 'epoch-ms',
       }));
 
-      set(result.selectedHour, 14);
-      // selectedMinute is not set
+      set(result.modelHour, 14);
+      // modelMinute is not set
 
       expect(get(result.selectedTime)).toBeUndefined();
 
@@ -327,8 +327,8 @@ describe('use-date-time-selection', () => {
         type: 'epoch-ms',
       }));
 
-      set(result.selectedHour, 14);
-      set(result.selectedMinute, 30);
+      set(result.modelHour, 14);
+      set(result.modelMinute, 30);
 
       const selectedTime = get(result.selectedTime);
       expect(selectedTime).toBeInstanceOf(Date);
@@ -353,9 +353,9 @@ describe('use-date-time-selection', () => {
         type: 'epoch-ms',
       }));
 
-      set(result.selectedYear, 2023);
-      set(result.selectedMonth, 6);
-      set(result.selectedDay, 15);
+      set(result.modelYear, 2023);
+      set(result.modelMonth, 6);
+      set(result.modelDay, 15);
       // Time is not set
 
       expect(get(result.valueSet)).toBe(false);
@@ -376,11 +376,11 @@ describe('use-date-time-selection', () => {
         type: 'epoch-ms',
       }));
 
-      set(result.selectedYear, 2023);
-      set(result.selectedMonth, 6);
-      set(result.selectedDay, 15);
-      set(result.selectedHour, 14);
-      set(result.selectedMinute, 30);
+      set(result.modelYear, 2023);
+      set(result.modelMonth, 6);
+      set(result.modelDay, 15);
+      set(result.modelHour, 14);
+      set(result.modelMinute, 30);
 
       expect(get(result.valueSet)).toBe(true);
 
@@ -641,19 +641,19 @@ describe('use-date-time-selection', () => {
       await nextTick();
 
       // Verify values are set (via onMounted)
-      expect(get(result.selectedYear)).toBe(2022);
-      expect(get(result.selectedMonth)).toBe(4);
+      expect(get(result.modelYear)).toBe(2022);
+      expect(get(result.modelMonth)).toBe(4);
 
       // Clear
       result.clear();
 
-      expect(get(result.selectedYear)).toBeUndefined();
-      expect(get(result.selectedMonth)).toBeUndefined();
-      expect(get(result.selectedDay)).toBeUndefined();
-      expect(get(result.selectedHour)).toBeUndefined();
-      expect(get(result.selectedMinute)).toBeUndefined();
-      expect(get(result.selectedSecond)).toBeUndefined();
-      expect(get(result.selectedMillisecond)).toBeUndefined();
+      expect(get(result.modelYear)).toBeUndefined();
+      expect(get(result.modelMonth)).toBeUndefined();
+      expect(get(result.modelDay)).toBeUndefined();
+      expect(get(result.modelHour)).toBeUndefined();
+      expect(get(result.modelMinute)).toBeUndefined();
+      expect(get(result.modelSecond)).toBeUndefined();
+      expect(get(result.modelMillisecond)).toBeUndefined();
       expect(get(modelValue)).toBeUndefined();
 
       unmount();
@@ -704,11 +704,11 @@ describe('use-date-time-selection', () => {
       result.setNow();
       await nextTick();
 
-      expect(get(result.selectedYear)).toBe(2023);
-      expect(get(result.selectedMonth)).toBe(6); // June (1-indexed)
-      expect(get(result.selectedDay)).toBe(15);
-      expect(get(result.selectedHour)).toBe(14);
-      expect(get(result.selectedMinute)).toBe(30);
+      expect(get(result.modelYear)).toBe(2023);
+      expect(get(result.modelMonth)).toBe(6); // June (1-indexed)
+      expect(get(result.modelDay)).toBe(15);
+      expect(get(result.modelHour)).toBe(14);
+      expect(get(result.modelMinute)).toBe(30);
 
       unmount();
     });
@@ -729,7 +729,7 @@ describe('use-date-time-selection', () => {
       result.setNow();
       await nextTick();
 
-      expect(get(result.selectedSecond)).toBe(45);
+      expect(get(result.modelSecond)).toBe(45);
 
       unmount();
     });
@@ -750,8 +750,8 @@ describe('use-date-time-selection', () => {
       result.setNow();
       await nextTick();
 
-      expect(get(result.selectedSecond)).toBe(45);
-      expect(get(result.selectedMillisecond)).toBe(500);
+      expect(get(result.modelSecond)).toBe(45);
+      expect(get(result.modelMillisecond)).toBe(500);
 
       unmount();
     });
@@ -840,13 +840,13 @@ describe('use-date-time-selection', () => {
         type: 'epoch-ms',
       }));
 
-      set(result.selectedYear, 2023);
-      set(result.selectedMonth, 6);
-      set(result.selectedDay, 15);
-      set(result.selectedHour, 14);
-      set(result.selectedMinute, 30);
-      set(result.selectedSecond, 45);
-      set(result.selectedMillisecond, 500);
+      set(result.modelYear, 2023);
+      set(result.modelMonth, 6);
+      set(result.modelDay, 15);
+      set(result.modelHour, 14);
+      set(result.modelMinute, 30);
+      set(result.modelSecond, 45);
+      set(result.modelMillisecond, 500);
 
       const dateTime = result.getDateTime();
       expect(dateTime.year()).toBe(2023);
@@ -873,9 +873,9 @@ describe('use-date-time-selection', () => {
         type: 'epoch-ms',
       }));
 
-      set(result.selectedYear, 2023);
-      set(result.selectedMonth, 2); // February
-      set(result.selectedDay, 31); // Invalid for February
+      set(result.modelYear, 2023);
+      set(result.modelMonth, 2); // February
+      set(result.modelDay, 31); // Invalid for February
 
       const dateTime = result.getDateTime();
       // Should clamp to max days in February
@@ -930,7 +930,7 @@ describe('use-date-time-selection', () => {
       set(result.segmentData.DD, 25);
       await nextTick();
 
-      expect(get(result.selectedDay)).toBe(25);
+      expect(get(result.modelDay)).toBe(25);
 
       unmount();
     });
@@ -954,18 +954,18 @@ describe('use-date-time-selection', () => {
       await nextTick();
 
       // Verify initial values
-      expect(get(result.selectedYear)).toBe(2022);
+      expect(get(result.modelYear)).toBe(2022);
 
       // Update modelValue externally
       const newDate = new Date(2024, 7, 10, 16, 45);
       set(modelValue, newDate.getTime());
       await nextTick();
 
-      expect(get(result.selectedYear)).toBe(2024);
-      expect(get(result.selectedMonth)).toBe(8); // August (1-indexed)
-      expect(get(result.selectedDay)).toBe(10);
-      expect(get(result.selectedHour)).toBe(16);
-      expect(get(result.selectedMinute)).toBe(45);
+      expect(get(result.modelYear)).toBe(2024);
+      expect(get(result.modelMonth)).toBe(8); // August (1-indexed)
+      expect(get(result.modelDay)).toBe(10);
+      expect(get(result.modelHour)).toBe(16);
+      expect(get(result.modelMinute)).toBe(45);
 
       unmount();
     });
@@ -987,15 +987,15 @@ describe('use-date-time-selection', () => {
       await nextTick();
 
       // Verify values are set
-      expect(get(result.selectedYear)).toBe(2022);
+      expect(get(result.modelYear)).toBe(2022);
 
       // Clear modelValue
       set(modelValue, undefined);
       await nextTick();
 
-      expect(get(result.selectedYear)).toBeUndefined();
-      expect(get(result.selectedMonth)).toBeUndefined();
-      expect(get(result.selectedDay)).toBeUndefined();
+      expect(get(result.modelYear)).toBeUndefined();
+      expect(get(result.modelMonth)).toBeUndefined();
+      expect(get(result.modelDay)).toBeUndefined();
 
       unmount();
     });
@@ -1044,7 +1044,7 @@ describe('use-date-time-selection', () => {
         type: 'epoch-ms',
       }));
 
-      expect(get(result.selectedTimezone)).toBe('UTC');
+      expect(get(result.modelTimezone)).toBe('UTC');
 
       unmount();
     });
@@ -1114,9 +1114,9 @@ describe('use-date-time-selection', () => {
       result.setNow();
       await nextTick();
 
-      expect(get(result.selectedDay)).toBe(10);
-      expect(get(result.selectedHour)).toBe(9);
-      expect(get(result.selectedMinute)).toBe(0);
+      expect(get(result.modelDay)).toBe(10);
+      expect(get(result.modelHour)).toBe(9);
+      expect(get(result.modelMinute)).toBe(0);
       // the field and the model agree, so no error is raised
       expect(get(result.internalErrorMessages)).toEqual([]);
       expect(get(modelValue)).toBe(maxDate.getTime());
@@ -1141,9 +1141,9 @@ describe('use-date-time-selection', () => {
       result.setNow();
       await nextTick();
 
-      expect(get(result.selectedYear)).toBe(2024);
-      expect(get(result.selectedMonth)).toBe(1);
-      expect(get(result.selectedDay)).toBe(1);
+      expect(get(result.modelYear)).toBe(2024);
+      expect(get(result.modelMonth)).toBe(1);
+      expect(get(result.modelDay)).toBe(1);
       expect(get(result.internalErrorMessages)).toEqual([]);
       expect(get(modelValue)).toBe(minDate.getTime());
 
@@ -1165,15 +1165,15 @@ describe('use-date-time-selection', () => {
       }));
 
       // a time later in the day than the bound allows
-      set(result.selectedHour, 23);
-      set(result.selectedMinute, 45);
+      set(result.modelHour, 23);
+      set(result.modelMinute, 45);
       await nextTick();
 
       result.setToday();
       await nextTick();
 
-      expect(get(result.selectedHour)).toBe(12);
-      expect(get(result.selectedMinute)).toBe(0);
+      expect(get(result.modelHour)).toBe(12);
+      expect(get(result.modelMinute)).toBe(0);
       expect(get(result.internalErrorMessages)).toEqual([]);
       expect(get(modelValue)).toBe(maxDate.getTime());
 
@@ -1193,16 +1193,16 @@ describe('use-date-time-selection', () => {
         type: 'epoch-ms',
       }));
 
-      set(result.selectedHour, 8);
-      set(result.selectedMinute, 5);
+      set(result.modelHour, 8);
+      set(result.modelMinute, 5);
       await nextTick();
 
       result.setToday();
       await nextTick();
 
-      expect(get(result.selectedDay)).toBe(15);
-      expect(get(result.selectedHour)).toBe(8);
-      expect(get(result.selectedMinute)).toBe(5);
+      expect(get(result.modelDay)).toBe(15);
+      expect(get(result.modelHour)).toBe(8);
+      expect(get(result.modelMinute)).toBe(5);
 
       unmount();
     });
@@ -1221,15 +1221,15 @@ describe('use-date-time-selection', () => {
         type: 'epoch-ms',
       }));
 
-      set(result.selectedYear, 2030);
-      set(result.selectedMonth, 6);
-      set(result.selectedDay, 15);
-      set(result.selectedHour, 10);
-      set(result.selectedMinute, 0);
+      set(result.modelYear, 2030);
+      set(result.modelMonth, 6);
+      set(result.modelDay, 15);
+      set(result.modelHour, 10);
+      set(result.modelMinute, 0);
       await nextTick();
 
       // the segments keep what was typed and the error explains the refusal
-      expect(get(result.selectedYear)).toBe(2030);
+      expect(get(result.modelYear)).toBe(2030);
       expect(get(modelValue)).toBeUndefined();
       expect(get(result.internalErrorMessages).length).toBeGreaterThan(0);
 
@@ -1239,9 +1239,9 @@ describe('use-date-time-selection', () => {
 
   describe('partial time', () => {
     function setDate(result: ReturnType<typeof useDateTimeSelection>): void {
-      set(result.selectedYear, 2023);
-      set(result.selectedMonth, 6);
-      set(result.selectedDay, 15);
+      set(result.modelYear, 2023);
+      set(result.modelMonth, 6);
+      set(result.modelDay, 15);
     }
 
     it('should leave an incomplete entry uncommitted without the option', async () => {
@@ -1263,7 +1263,7 @@ describe('use-date-time-selection', () => {
       await nextTick();
 
       expect(get(modelValue)).toBeUndefined();
-      expect(get(result.selectedHour)).toBeUndefined();
+      expect(get(result.modelHour)).toBeUndefined();
 
       unmount();
     });
@@ -1289,9 +1289,9 @@ describe('use-date-time-selection', () => {
 
       expect(get(modelValue)).toBe(new Date(2023, 5, 15, 0, 0, 0).getTime());
       // the fill is written back, so the field shows the value it decided on
-      expect(get(result.selectedHour)).toBe(0);
-      expect(get(result.selectedMinute)).toBe(0);
-      expect(get(result.selectedSecond)).toBe(0);
+      expect(get(result.modelHour)).toBe(0);
+      expect(get(result.modelMinute)).toBe(0);
+      expect(get(result.modelSecond)).toBe(0);
 
       unmount();
     });
@@ -1316,9 +1316,9 @@ describe('use-date-time-selection', () => {
       await nextTick();
 
       expect(get(modelValue)).toBe(new Date(2023, 5, 15, 23, 59, 59).getTime());
-      expect(get(result.selectedHour)).toBe(23);
-      expect(get(result.selectedMinute)).toBe(59);
-      expect(get(result.selectedSecond)).toBe(59);
+      expect(get(result.modelHour)).toBe(23);
+      expect(get(result.modelMinute)).toBe(59);
+      expect(get(result.modelSecond)).toBe(59);
 
       unmount();
     });
@@ -1338,7 +1338,7 @@ describe('use-date-time-selection', () => {
       }));
 
       setDate(result);
-      set(result.selectedHour, 9);
+      set(result.modelHour, 9);
       await nextTick();
       result.commitPartialTime();
       await nextTick();
@@ -1367,8 +1367,8 @@ describe('use-date-time-selection', () => {
       }));
 
       setDate(result);
-      set(result.selectedHour, 9);
-      set(result.selectedMinute, 30);
+      set(result.modelHour, 9);
+      set(result.modelMinute, 30);
       await nextTick();
 
       expect(get(modelValue)).toBe(new Date(2023, 5, 15, 9, 30, 0).getTime());
@@ -1377,7 +1377,7 @@ describe('use-date-time-selection', () => {
       await nextTick();
 
       expect(get(modelValue)).toBe(new Date(2023, 5, 15, 9, 30, 0).getTime());
-      expect(get(result.selectedSecond)).toBe(0);
+      expect(get(result.modelSecond)).toBe(0);
 
       unmount();
     });
@@ -1397,15 +1397,15 @@ describe('use-date-time-selection', () => {
       }));
 
       setDate(result);
-      set(result.selectedHour, 9);
-      set(result.selectedMinute, 30);
-      set(result.selectedSecond, 15);
+      set(result.modelHour, 9);
+      set(result.modelMinute, 30);
+      set(result.modelSecond, 15);
       await nextTick();
       result.commitPartialTime();
       await nextTick();
 
       expect(get(modelValue)).toBe(new Date(2023, 5, 15, 9, 30, 15).getTime());
-      expect(get(result.selectedSecond)).toBe(15);
+      expect(get(result.modelSecond)).toBe(15);
 
       unmount();
     });
@@ -1424,14 +1424,14 @@ describe('use-date-time-selection', () => {
         type: 'epoch-ms',
       }));
 
-      set(result.selectedDay, 15);
-      set(result.selectedMonth, 6);
+      set(result.modelDay, 15);
+      set(result.modelMonth, 6);
       await nextTick();
       result.commitPartialTime();
       await nextTick();
 
       expect(get(modelValue)).toBeUndefined();
-      expect(get(result.selectedHour)).toBeUndefined();
+      expect(get(result.modelHour)).toBeUndefined();
 
       unmount();
     });
@@ -1476,16 +1476,16 @@ describe('use-date-time-selection', () => {
         type: 'epoch-ms',
       }));
 
-      set(result.selectedYear, 2030);
-      set(result.selectedMonth, 6);
-      set(result.selectedDay, 15);
+      set(result.modelYear, 2030);
+      set(result.modelMonth, 6);
+      set(result.modelDay, 15);
       await nextTick();
       result.commitPartialTime();
       await nextTick();
 
       // the day is the user's to fix, so it keeps its error instead of being pulled to now
       expect(get(modelValue)).toBeUndefined();
-      expect(get(result.selectedYear)).toBe(2030);
+      expect(get(result.modelYear)).toBe(2030);
       expect(get(result.internalErrorMessages).length).toBeGreaterThan(0);
 
       unmount();

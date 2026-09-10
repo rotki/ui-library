@@ -21,8 +21,9 @@ interface DateBoundsOptions {
 interface DateBoundsReturn {
   minAllowedDate: ComputedRef<Date>;
   maxAllowedDate: ComputedRef<Date | undefined>;
-  internalErrorMessages: Ref<string[]>;
+  internalErrorMessages: Readonly<Ref<string[]>>;
   isDateValid: (date: Dayjs) => boolean;
+  clearErrors: () => void;
 }
 
 /**
@@ -58,11 +59,15 @@ export function useDateBounds({
     return dayjs(bound).format(get(dateFormat));
   }
 
+  function clearErrors(): void {
+    set(internalErrorMessages, []);
+  }
+
   function isDateValid(date: Dayjs): boolean {
     const min = get(minAllowedDate);
     const max = get(maxAllowedDate);
 
-    set(internalErrorMessages, []);
+    clearErrors();
 
     if (min && date.isBefore(min)) {
       const formatted = formatBound(min);
@@ -86,7 +91,8 @@ export function useDateBounds({
   }
 
   return {
-    internalErrorMessages,
+    clearErrors,
+    internalErrorMessages: shallowReadonly(internalErrorMessages),
     isDateValid,
     maxAllowedDate,
     minAllowedDate,

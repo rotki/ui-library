@@ -170,15 +170,15 @@ const {
   minAllowedDate,
   segmentData,
   selectedDate,
-  selectedDay,
-  selectedHour,
-  selectedMillisecond,
-  selectedMinute,
-  selectedMonth,
-  selectedSecond,
+  modelDay,
+  modelHour,
+  modelMillisecond,
+  modelMinute,
+  modelMonth,
+  modelSecond,
   selectedTime,
-  selectedTimezone,
-  selectedYear,
+  modelTimezone,
+  modelYear,
   setNow,
   setToday,
   valueSet,
@@ -230,13 +230,13 @@ const isOutlined = computed<boolean>(() => variant === 'outlined');
 
 /** True once any segment holds a digit, even a partially typed date. */
 const anySegmentSet = computed<boolean>(() => [
-  selectedYear,
-  selectedMonth,
-  selectedDay,
-  selectedHour,
-  selectedMinute,
-  selectedSecond,
-  selectedMillisecond,
+  modelYear,
+  modelMonth,
+  modelDay,
+  modelHour,
+  modelMinute,
+  modelSecond,
+  modelMillisecond,
 ].some(segment => isDefined(segment)));
 
 const formattedDisplay = computed<string>(() => {
@@ -254,13 +254,13 @@ const formattedDisplay = computed<string>(() => {
   let result = get(dateFormat);
 
   const replacements = [
-    { pattern: 'YYYY', value: getDisplayValue(selectedYear, 4) },
-    { pattern: 'MM', value: getDisplayValue(selectedMonth, 2) },
-    { pattern: 'DD', value: getDisplayValue(selectedDay, 2) },
-    { pattern: 'HH', value: getDisplayValue(selectedHour, 2) },
-    { pattern: 'mm', value: getDisplayValue(selectedMinute, 2) },
-    { pattern: 'ss', value: getDisplayValue(selectedSecond, 2) },
-    { pattern: 'SSS', value: getDisplayValue(selectedMillisecond, 3) },
+    { pattern: 'YYYY', value: getDisplayValue(modelYear, 4) },
+    { pattern: 'MM', value: getDisplayValue(modelMonth, 2) },
+    { pattern: 'DD', value: getDisplayValue(modelDay, 2) },
+    { pattern: 'HH', value: getDisplayValue(modelHour, 2) },
+    { pattern: 'mm', value: getDisplayValue(modelMinute, 2) },
+    { pattern: 'ss', value: getDisplayValue(modelSecond, 2) },
+    { pattern: 'SSS', value: getDisplayValue(modelMillisecond, 3) },
   ];
 
   for (const { pattern, value } of replacements) {
@@ -646,12 +646,12 @@ defineExpose({
         ref="menuWrapperRef"
         v-model:selected-date="selectedDate"
         v-model:selected-time="selectedTime"
-        v-model:selected-hour="selectedHour"
-        v-model:selected-minute="selectedMinute"
-        v-model:selected-second="selectedSecond"
-        v-model:selected-millisecond="selectedMillisecond"
+        v-model:selected-hour="modelHour"
+        v-model:selected-minute="modelMinute"
+        v-model:selected-second="modelSecond"
+        v-model:selected-millisecond="modelMillisecond"
         v-model:time-selection="timeSelection"
-        v-model:selected-timezone="selectedTimezone"
+        v-model:selected-timezone="modelTimezone"
         v-model:calendar-menu-open="calendarMenuOpen"
         :accuracy="accuracy"
         :max-date="maxAllowedDate"
