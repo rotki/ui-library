@@ -610,7 +610,7 @@ defineExpose({
             </div>
             <template
               v-for="(item, i) in value"
-              :key="getIdentifier(item)"
+              :key="getIdentifier(item)?.toString()"
             >
               <RuiChip
                 v-if="chips"
