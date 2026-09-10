@@ -21,7 +21,7 @@ set -euo pipefail
 
 # Keep this in sync with `pnpm-workspace.yaml -> @playwright/test` so the
 # image's bundled browser matches the test runner version.
-PLAYWRIGHT_IMAGE="${PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.59.1-noble}"
+PLAYWRIGHT_IMAGE="${PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.62.1-noble}"
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 
@@ -35,23 +35,41 @@ fi
 # `--network=host` lets the dev/preview server bind on the same loopback
 # Playwright connects to without a separate compose stack.
 #
+# Corepack installs its shims into a writable `/tmp/bin` on PATH rather than
+# the default `/usr/bin`, which the non-root `--user` below cannot write to.
+#
 # `--user $UID:$GID` keeps any files written into the bind-mounted repo
 # (dist/, test-results/, playwright-report/, baselines, etc.) owned by the
 # host user so subsequent local commands like `pnpm build` or
 # `pnpm test:e2e` can rewrite them without sudo. We still need a writable
 # $HOME for corepack/pnpm caches, so we point HOME at /tmp inside the
 # container (the user-namespaced uid won't have /root or /home/pwuser).
+#
+# The `node_modules/` shadows and pnpm's store are host directories created
+# here rather than anonymous volumes, because docker creates those root-owned
+# and the non-root user above cannot write into them. Creating them from the
+# host gets the invoking user's ownership, and keeping them out of the repo
+# leaves the mounted tree untouched by the container's install. They persist
+# between runs, so only the first run pays for a full download.
+CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/rotki-ui-library-visual"
+mkdir -p \
+  "$CACHE_DIR/node_modules" \
+  "$CACHE_DIR/example-node_modules" \
+  "$CACHE_DIR/library-node_modules" \
+  "$CACHE_DIR/pnpm-store"
+
 exec docker run --rm \
   --ipc=host \
   --network=host \
   --user "$(id -u):$(id -g)" \
   -v "$REPO_ROOT:/work" \
-  -v /work/node_modules \
-  -v /work/apps/example/node_modules \
-  -v /work/packages/ui-library/node_modules \
+  -v "$CACHE_DIR/node_modules:/work/node_modules" \
+  -v "$CACHE_DIR/example-node_modules:/work/apps/example/node_modules" \
+  -v "$CACHE_DIR/library-node_modules:/work/packages/ui-library/node_modules" \
+  -v "$CACHE_DIR/pnpm-store:/pnpm-store" \
   -e HOME=/tmp \
   -e PLAYWRIGHT_VISUAL=1 \
   -e CI="${CI:-}" \
   -w /work \
   "$PLAYWRIGHT_IMAGE" \
-  bash -c "set -euo pipefail; corepack enable >/dev/null 2>&1; pnpm install --frozen-lockfile; pnpm --filter @rotki/ui-library build:prod >/dev/null; pnpm --filter example build:app >/dev/null; cd apps/example; pnpm exec playwright test e2e/visual $*"
+  bash -c "set -euo pipefail; mkdir -p /tmp/bin; corepack enable --install-directory /tmp/bin; export PATH=/tmp/bin:\$PATH; pnpm install --frozen-lockfile --store-dir /pnpm-store; pnpm --filter @rotki/ui-library build:prod >/dev/null; pnpm --filter example build:app >/dev/null; cd apps/example; pnpm exec playwright test e2e/visual $*"
