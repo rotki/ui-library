@@ -1,8 +1,9 @@
 <script lang="ts" setup generic="TValue, TItem">
 import type { VueClassValue } from '@/types/class-value';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
-import RuiChip from '@/components/chips/RuiChip.vue';
 import { autoCompleteStyles, type AutoCompleteVariant } from '@/components/forms/auto-complete/auto-complete-styles';
+import RuiAutoCompleteOptionList from '@/components/forms/auto-complete/RuiAutoCompleteOptionList.vue';
+import RuiAutoCompleteSelection from '@/components/forms/auto-complete/RuiAutoCompleteSelection.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
@@ -21,7 +22,7 @@ import {
   useAutoCompleteValue,
 } from '@/composables/forms/auto-complete';
 import { useFormTextDetail } from '@/utils/form-text-detail';
-import { getNonRootAttrs, getRootAttrs, getTextToken } from '@/utils/helpers';
+import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 import { isEqual } from '@/utils/is-equal';
 import { cn } from '@/utils/tv';
 
@@ -169,7 +170,13 @@ const { getText, getIdentifier } = useDropdownOptionProperty<TValue, TItem>({
 
 const textInput = useTemplateRef<HTMLInputElement>('textInput');
 const activator = useTemplateRef<HTMLDivElement>('activator');
-const menuRef = useTemplateRef<HTMLDivElement>('menuRef');
+// The option list owns this element, so it is handed back through a ref
+// callback rather than resolved from this component's own template.
+const menuRef = shallowRef<HTMLElement | null>(null);
+
+function setMenuRef(element: Element | ComponentPublicInstance | null): void {
+  set(menuRef, element instanceof HTMLElement ? element : null);
+}
 const menuWrapperRef = useTemplateRef<HTMLDivElement>('menuWrapperRef');
 
 const { focused: activatorFocusedWithin } = useFocusWithin(activator);
@@ -612,57 +619,36 @@ defineExpose({
                 v-bind="{ disabled, readOnly }"
               />
             </div>
-            <template
-              v-for="(item, i) in value"
-              :key="getIdentifier(item)?.toString()"
+            <RuiAutoCompleteSelection
+              :items="value"
+              :chips="chips"
+              :dense="dense"
+              :multiple="multiple"
+              :search-input-focused="searchInputFocused"
+              :hide-selection-wrapper="hideSelectionWrapper"
+              :get-identifier="getIdentifier"
+              :get-text="getText"
+              :chip-attrs="chipAttrs"
             >
-              <RuiChip
-                v-if="chips"
-                :key="getTextToken(getIdentifier(item))"
-                tabindex="-1"
-                :size="dense ? 'sm' : 'md'"
-                closeable
-                :class="{ 'leading-3': dense }"
-                clickable
-                v-bind="chipAttrs(item, i)"
-              >
-                <div class="flex">
-                  <slot
-                    name="selection.prepend"
-                    :index="i"
-                    v-bind="{ item }"
-                  />
-                  <slot
-                    :index="i"
-                    name="selection"
-                    v-bind="{ item, chipAttrs: chipAttrs(item, i) }"
-                  >
-                    {{ getText(item) }}
-                  </slot>
-                </div>
-              </RuiChip>
-              <div
-                v-else-if="
-                  multiple
-                    || (!searchInputFocused && (slots['selection.prepend'] || slots.selection))
-                "
-                :class="hideSelectionWrapper ? 'contents' : 'flex'"
+              <template
+                v-if="slots['selection.prepend']"
+                #prepend="slotProps"
               >
                 <slot
                   name="selection.prepend"
-                  :index="i"
-                  v-bind="{ item }"
+                  v-bind="slotProps"
                 />
+              </template>
+              <template
+                v-if="slots.selection"
+                #default="slotProps"
+              >
                 <slot
-                  v-if="multiple || slots.selection"
-                  :index="i"
                   name="selection"
-                  v-bind="{ item, chipAttrs: chipAttrs(item, i) }"
-                >
-                  {{ getText(item) }}
-                </slot>
-              </div>
-            </template>
+                  v-bind="slotProps"
+                />
+              </template>
+            </RuiAutoCompleteSelection>
             <input
               ref="textInput"
               :disabled="disabled"
@@ -731,115 +717,64 @@ defineExpose({
     </template>
     <template #default="{ width }">
       <div ref="menuWrapperRef">
-        <div
+        <RuiAutoCompleteOptionList
           v-if="optionsWithSelectedHidden.length > 0"
-          :ref="containerProps.ref"
-          :class="ui.menu({ class: cn(classNames?.menu) ?? menuClass })"
-          :style="[containerProps.style, { width: `${width}px`, minWidth: menuWidth, minHeight: `${menuMinHeight}px` }]"
-          @scroll="containerProps.onScroll"
-          @keydown.up.prevent="moveHighlight(true)"
-          @keydown.down.prevent="moveHighlight(false)"
+          :container-props="containerProps"
+          :wrapper-props="wrapperProps"
+          :set-menu-ref="setMenuRef"
+          :is-grouped="isGrouped"
+          :grouped-options="groupedOptions"
+          :rendered-data="renderedData"
+          :options="optionsWithSelectedHidden"
+          :highlighted-index="modelHighlightedIndex"
+          :highlighted-class="highlightedClass"
+          :dense="dense"
+          :menu-class="ui.menu({ class: cn(classNames?.menu) ?? menuClass })"
+          :menu-style="{ width: `${width}px`, minWidth: menuWidth, minHeight: `${menuMinHeight}px` }"
+          :get-identifier="getIdentifier"
+          :get-text="getText"
+          :is-active-item="isActiveItem"
+          :is-item-disabled="isItemDisabled"
+          @select="setValue($event)"
+          @move-highlight="moveHighlight($event)"
         >
-          <div
-            v-if="isGrouped"
-            ref="menuRef"
+          <template
+            v-if="slots['group-header']"
+            #group-header="slotProps"
           >
-            <template
-              v-for="(bucket, bucketIndex) in groupedOptions"
-              :key="bucket.group || `group-${bucketIndex}`"
-            >
-              <div
-                class="sticky top-0 z-10 bg-white dark:bg-rui-grey-900"
-                data-id="group-header"
-              >
-                <slot
-                  name="group-header"
-                  v-bind="{ group: bucket.group, items: bucket.items }"
-                >
-                  <div class="px-3 py-1 text-xs uppercase tracking-wide text-rui-text-secondary">
-                    {{ bucket.group }}
-                  </div>
-                </slot>
-              </div>
-              <RuiButton
-                v-for="item in bucket.items"
-                :key="getIdentifier(item)?.toString()"
-                :active="isActiveItem(item)"
-                :aria-selected="isActiveItem(item)"
-                :size="dense ? 'sm' : undefined"
-                :disabled="isItemDisabled(item)"
-                tabindex="0"
-                variant="list"
-                :data-highlighted="optionsWithSelectedHidden.indexOf(item) === modelHighlightedIndex"
-                :data-disabled="isItemDisabled(item) || undefined"
-                :class="{
-                  [highlightedClass]: !isActiveItem(item) && optionsWithSelectedHidden.indexOf(item) === modelHighlightedIndex,
-                }"
-                @click="!isItemDisabled(item) && setValue(item)"
-              >
-                <template #prepend>
-                  <slot
-                    name="item.prepend"
-                    v-bind="{ disabled: isItemDisabled(item), item, active: isActiveItem(item) }"
-                  />
-                </template>
-                <slot
-                  name="item"
-                  v-bind="{ disabled: isItemDisabled(item), item, active: isActiveItem(item) }"
-                >
-                  {{ getText(item) }}
-                </slot>
-                <template #append>
-                  <slot
-                    name="item.append"
-                    v-bind="{ disabled: isItemDisabled(item), item, active: isActiveItem(item) }"
-                  />
-                </template>
-              </RuiButton>
-            </template>
-          </div>
-          <div
-            v-else
-            v-bind="wrapperProps"
-            ref="menuRef"
+            <slot
+              name="group-header"
+              v-bind="slotProps"
+            />
+          </template>
+          <template
+            v-if="slots['item.prepend']"
+            #item.prepend="slotProps"
           >
-            <RuiButton
-              v-for="{ item, _index } in renderedData"
-              :key="getIdentifier(item)?.toString()"
-              :active="isActiveItem(item)"
-              :aria-selected="isActiveItem(item)"
-              :size="dense ? 'sm' : undefined"
-              :disabled="isItemDisabled(item)"
-              tabindex="0"
-              variant="list"
-              :data-highlighted="modelHighlightedIndex === _index"
-              :data-disabled="isItemDisabled(item) || undefined"
-              :class="{
-                [highlightedClass]: !isActiveItem(item) && modelHighlightedIndex === _index,
-              }"
-              @click="!isItemDisabled(item) && setValue(item)"
-            >
-              <template #prepend>
-                <slot
-                  name="item.prepend"
-                  v-bind="{ disabled: isItemDisabled(item), item, active: isActiveItem(item) }"
-                />
-              </template>
-              <slot
-                name="item"
-                v-bind="{ disabled: isItemDisabled(item), item, active: isActiveItem(item) }"
-              >
-                {{ getText(item) }}
-              </slot>
-              <template #append>
-                <slot
-                  name="item.append"
-                  v-bind="{ disabled: isItemDisabled(item), item, active: isActiveItem(item) }"
-                />
-              </template>
-            </RuiButton>
-          </div>
-        </div>
+            <slot
+              name="item.prepend"
+              v-bind="slotProps"
+            />
+          </template>
+          <template
+            v-if="slots.item"
+            #item="slotProps"
+          >
+            <slot
+              name="item"
+              v-bind="slotProps"
+            />
+          </template>
+          <template
+            v-if="slots['item.append']"
+            #item.append="slotProps"
+          >
+            <slot
+              name="item.append"
+              v-bind="slotProps"
+            />
+          </template>
+        </RuiAutoCompleteOptionList>
 
         <div
           v-else-if="!hideNoData"
