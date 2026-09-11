@@ -1743,6 +1743,11 @@ describe('components/tables/RuiDataTable.vue', () => {
 
       const loader = wrapper.find('td[data-id="tbody-loader"]');
       expect(loader.exists()).toBeTruthy();
+
+      // The loader reserves the same height as the empty state, so a table does not resize as it swaps between them
+      const content = loader.find('[data-id="table-loading"]');
+      expect(content.classes()).toContain('min-h-56');
+      expect(content.classes()).not.toContain('py-6');
     });
 
     it('should show progress bar when loading with data', async () => {

@@ -428,7 +428,6 @@ const classes = computed<DataTableClasses>(() => {
     checkbox: s.checkbox(),
     tbody: s.tbody(),
     tbodyLoader: s.tbodyLoader(),
-    tbodyLoaderContent: s.tbodyLoaderContent(),
   };
 });
 

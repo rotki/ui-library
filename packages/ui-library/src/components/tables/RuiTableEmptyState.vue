@@ -7,13 +7,18 @@ import noDataPlaceholderDark from './table_no_data_placeholder_dark.svg';
 export interface TableEmptyStateProps {
   label?: string;
   description?: string;
+  /**
+   * Drops the illustration and the reserved height, for a table that only has
+   * room to say the row count is zero.
+   */
+  compact?: boolean;
 }
 
 defineOptions({
   name: 'RuiTableEmptyState',
 });
 
-const { label, description } = defineProps<TableEmptyStateProps>();
+const { label, description, compact = false } = defineProps<TableEmptyStateProps>();
 
 defineSlots<{
   description?: () => any;
@@ -23,18 +28,30 @@ const { isDark } = useRotkiTheme();
 
 const emptyStyles = tv({
   slots: {
-    root: 'flex flex-col gap-3 items-center justify-center flex-1 min-h-56 my-4',
+    root: 'flex flex-col items-center justify-center flex-1',
     title: 'text-body-1 leading-none font-bold text-center text-current pb-0 mb-0',
     subtitle: 'text-body-2 text-center text-rui-text-secondary pb-0 mb-0',
   },
+  variants: {
+    compact: {
+      true: {
+        root: 'gap-1 py-6',
+        title: 'font-normal text-rui-text-secondary',
+      },
+      false: {
+        root: 'gap-3 min-h-56 my-4',
+      },
+    },
+  },
 });
 
-const ui = emptyStyles();
+const ui = computed<ReturnType<typeof emptyStyles>>(() => emptyStyles({ compact }));
 </script>
 
 <template>
   <div :class="ui.root()">
     <img
+      v-if="!compact"
       :src="isDark ? noDataPlaceholderDark : noDataPlaceholder"
       :alt="label"
       class="h-32"

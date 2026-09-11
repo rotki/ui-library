@@ -13,6 +13,8 @@ const nodes: Node[] = [
   { name: 'ankr', status: 'connected', weight: '35%' },
   { name: 'llamanodes', status: 'disconnected', weight: '25%' },
 ];
+
+const retries = ref<number>(0);
 </script>
 
 <template>
@@ -145,6 +147,78 @@ const nodes: Node[] = [
               </td>
             </tr>
           </tbody>
+        </RuiTable>
+      </div>
+
+      <div>
+        <h4 class="text-h6 mb-3">
+          Loading
+        </h4>
+        <RuiTable
+          data-id="table-loading-state"
+          loading
+        >
+          <thead>
+            <tr>
+              <th scope="col">
+                Node
+              </th>
+              <th scope="col">
+                Weight
+              </th>
+            </tr>
+          </thead>
+        </RuiTable>
+      </div>
+
+      <div>
+        <h4 class="text-h6 mb-3">
+          A read that failed
+        </h4>
+        <RuiTable
+          data-id="table-error-state"
+          error="Connection refused by the remote node"
+          error-title="Could not read the nodes for ethereum"
+          retry-text="Retry"
+          @retry="retries++"
+        >
+          <thead>
+            <tr>
+              <th scope="col">
+                Node
+              </th>
+              <th scope="col">
+                Weight
+              </th>
+            </tr>
+          </thead>
+        </RuiTable>
+        <p
+          class="text-body-2 text-rui-text-secondary mt-2"
+          data-id="retry-count"
+        >
+          Retried {{ retries }} times
+        </p>
+      </div>
+
+      <div>
+        <h4 class="text-h6 mb-3">
+          Genuinely empty
+        </h4>
+        <RuiTable
+          data-id="table-empty-state"
+          :empty="{ label: 'No nodes for this chain' }"
+        >
+          <thead>
+            <tr>
+              <th scope="col">
+                Node
+              </th>
+              <th scope="col">
+                Weight
+              </th>
+            </tr>
+          </thead>
         </RuiTable>
       </div>
 

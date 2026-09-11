@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { useDataTableStyling } from '@/components/tables/data-table/context';
+import RuiTableLoadingState from '@/components/tables/RuiTableLoadingState.vue';
 
 const { classes, colspan } = useDataTableStyling();
 </script>
@@ -12,13 +12,7 @@ const { classes, colspan } = useDataTableStyling();
       :colspan="colspan"
       data-id="tbody-loader"
     >
-      <div :class="classes.tbodyLoaderContent">
-        <RuiProgress
-          color="primary"
-          variant="indeterminate"
-          circular
-        />
-      </div>
+      <RuiTableLoadingState />
     </td>
   </tr>
 </template>

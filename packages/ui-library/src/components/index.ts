@@ -50,7 +50,10 @@ import RuiFooterStepper, { type Props as FooterStepperProps } from '@/components
 import RuiStepper, { type RuiStepperClassNames, type Props as StepperProps } from '@/components/steppers/RuiStepper.vue';
 import RuiDataTable, { type TableOptions as DataTableOptions, type Props as DataTableProps } from '@/components/tables/RuiDataTable.vue';
 import RuiTableRowExpander, { type Props as ExpandButtonProps } from '@/components/tables/RuiExpandButton.vue';
-import RuiTable, { type Props as TableProps } from '@/components/tables/RuiTable.vue';
+import RuiTable, { type TableEmpty, type Props as TableProps } from '@/components/tables/RuiTable.vue';
+import RuiTableEmptyState, { type TableEmptyStateProps } from '@/components/tables/RuiTableEmptyState.vue';
+import RuiTableErrorState, { type TableErrorStateProps } from '@/components/tables/RuiTableErrorState.vue';
+import RuiTableLoadingState, { type TableLoadingStateProps } from '@/components/tables/RuiTableLoadingState.vue';
 import RuiTablePagination, { type TablePaginationData, type Props as TablePaginationProps } from '@/components/tables/RuiTablePagination.vue';
 import RuiTabItem, { type Props as TabItemProps } from '@/components/tabs/tab-item/RuiTabItem.vue';
 import RuiTabItems from '@/components/tabs/tab-items/RuiTabItems.vue';
@@ -121,6 +124,10 @@ export type {
   StepperProps,
   SwitchProps,
   TabItemProps,
+  TableEmpty,
+  TableEmptyStateProps,
+  TableErrorStateProps,
+  TableLoadingStateProps,
   TablePaginationData,
   TablePaginationProps,
   TableProps,
@@ -175,6 +182,9 @@ export {
   RuiTabItem,
   RuiTabItems,
   RuiTable,
+  RuiTableEmptyState,
+  RuiTableErrorState,
+  RuiTableLoadingState,
   RuiTablePagination,
   RuiTableRowExpander,
   RuiTabs,

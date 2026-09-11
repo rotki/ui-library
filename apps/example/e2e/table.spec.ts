@@ -49,6 +49,31 @@ test.describe('table', () => {
     await expect(dense).toHaveCSS('padding-left', '8px');
   });
 
+  test('should show a spinner under the header while loading', async ({ page }) => {
+    const table = page.getByTestId('table-loading-state');
+
+    await expect(table.getByTestId('table-loading')).toBeVisible();
+    await expect(table.locator('thead th')).toHaveCount(2);
+  });
+
+  test('should explain a failed read and retry on demand', async ({ page }) => {
+    const table = page.getByTestId('table-error-state');
+
+    await expect(table.getByTestId('table-error')).toContainText('Could not read the nodes for ethereum');
+    await expect(table.getByTestId('table-error')).toContainText('Connection refused by the remote node');
+    await expect(page.getByTestId('retry-count')).toHaveText('Retried 0 times');
+
+    await table.getByRole('button', { name: 'Retry' }).click();
+    await expect(page.getByTestId('retry-count')).toHaveText('Retried 1 times');
+  });
+
+  test('should say a table is empty without the illustration', async ({ page }) => {
+    const table = page.getByTestId('table-empty-state');
+
+    await expect(table.getByTestId('empty-label')).toHaveText('No nodes for this chain');
+    await expect(table.locator('img')).toHaveCount(0);
+  });
+
   test('should scroll the wrapper rather than the page', async ({ page }) => {
     const wrapper = page.getByTestId('table-scroll');
 

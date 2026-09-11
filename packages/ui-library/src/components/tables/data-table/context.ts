@@ -13,7 +13,6 @@ export interface DataTableClasses {
   checkbox: string;
   tbody: string;
   tbodyLoader: string;
-  tbodyLoaderContent: string;
 }
 
 // --- Per-concern context interfaces ---

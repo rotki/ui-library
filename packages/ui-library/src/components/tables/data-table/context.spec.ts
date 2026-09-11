@@ -42,7 +42,6 @@ function stubClasses(): DataTableClasses {
     checkbox: '',
     tbody: '',
     tbodyLoader: '',
-    tbodyLoaderContent: '',
   };
 }
 

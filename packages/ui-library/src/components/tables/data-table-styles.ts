@@ -10,7 +10,6 @@ export const dataTableStyles = tv({
     td: 'p-4 text-rui-text text-body-2 [text-wrap:initial]',
     checkbox: 'px-2 w-[3.625rem] max-w-[3.625rem] [&_label]:ml-0',
     tbodyLoader: 'text-center',
-    tbodyLoaderContent: 'flex items-center justify-center min-h-56 py-8',
   },
   variants: {
     outlined: {
