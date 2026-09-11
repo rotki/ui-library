@@ -171,7 +171,7 @@ const retries = ref<number>(0);
         </RuiTable>
       </div>
 
-      <div>
+      <div class="lg:col-span-2">
         <h4 class="text-h6 mb-3">
           A read that failed
         </h4>

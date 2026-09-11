@@ -105,6 +105,14 @@ describe('components/tables/RuiTable.vue', () => {
     expect(wrapper.emitted('retry')).toHaveLength(1);
   });
 
+  it('should centre and cap the failure, rather than let it span a wide table', () => {
+    wrapper = createWrapper({ props: { error: 'Connection refused' } });
+
+    const error = wrapper.find('[data-id=table-error]');
+    expect(error.classes()).toContain('justify-center');
+    expect(error.find('div').classes()).toContain('max-w-2xl');
+  });
+
   it('should leave out the retry control when no label was given for it', () => {
     wrapper = createWrapper({ props: { error: 'Connection refused' } });
 

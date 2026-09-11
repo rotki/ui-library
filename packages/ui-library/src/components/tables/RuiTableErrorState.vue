@@ -29,9 +29,15 @@ defineSlots<{
   default?: () => any;
 }>();
 
+/**
+ * Centred and capped, like the loading and empty states beside it. Left to
+ * span the table, a wide one puts the reason hard left and the retry hard
+ * right, with the whole width between them.
+ */
 const errorStyles = tv({
   slots: {
-    root: 'p-4',
+    root: 'flex justify-center p-4',
+    alert: 'w-full max-w-2xl',
   },
 });
 
@@ -45,6 +51,7 @@ const ui = errorStyles();
   >
     <RuiAlert
       :action-text="actionText"
+      :class="ui.alert()"
       :title="title"
       type="error"
       @action="emit('action')"

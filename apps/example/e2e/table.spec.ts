@@ -67,6 +67,19 @@ test.describe('table', () => {
     await expect(page.getByTestId('retry-count')).toHaveText('Retried 1 times');
   });
 
+  test('should centre the failure in a table wider than it', async ({ page }) => {
+    const gutters = await page.getByTestId('table-error-state').evaluate((host) => {
+      const alert = host.querySelector('[data-id=table-error] > *');
+      const outer = host.getBoundingClientRect();
+      const inner = alert.getBoundingClientRect();
+      return { left: Math.round(inner.left - outer.left), right: Math.round(outer.right - inner.right), width: Math.round(inner.width) };
+    });
+
+    expect(gutters.width).toBeLessThan(700);
+    expect(Math.abs(gutters.left - gutters.right)).toBeLessThanOrEqual(1);
+    expect(gutters.left).toBeGreaterThan(0);
+  });
+
   test('should say a table is empty without the illustration', async ({ page }) => {
     const table = page.getByTestId('table-empty-state');
 
