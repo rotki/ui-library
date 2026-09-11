@@ -416,6 +416,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/tables': RouteRecordInfo<
+      '/tables',
+      '/tables',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/tabs': RouteRecordInfo<
       '/tabs',
       '/tabs',
@@ -913,6 +920,14 @@ declare module 'vue-router/auto-routes' {
     'src/pages/switches.vue': {
       routes:
         | '/switches'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/tables.vue': {
+      routes:
+        | '/tables'
       views:
         | never
       pathParamNames:
