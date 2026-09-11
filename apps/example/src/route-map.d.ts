@@ -374,6 +374,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/overlay-stack': RouteRecordInfo<
+      '/overlay-stack',
+      '/overlay-stack',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/progress': RouteRecordInfo<
       '/progress',
       '/progress',
@@ -872,6 +879,14 @@ declare module 'vue-router/auto-routes' {
     'src/pages/notification.vue': {
       routes:
         | '/notification'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/overlay-stack.vue': {
+      routes:
+        | '/overlay-stack'
       views:
         | never
       pathParamNames:

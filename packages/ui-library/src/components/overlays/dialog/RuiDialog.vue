@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { VueClassValue } from '@/types/class-value';
+import { useDismissableOverlay } from '@/composables/overlay-stack';
 import { useTimeoutManager } from '@/composables/timeout-manager';
 import { getNonRootAttrs, getRootAttrs, transformPropsUnit } from '@/utils/helpers';
 import { cn, tv } from '@/utils/tv';
@@ -43,6 +44,12 @@ const emit = defineEmits<{
   'closed': [];
   'click:outside': [];
   'click:esc': [];
+  /**
+   * The overlay stack asked this dialog to go, which is what a back gesture
+   * reaches it as. Closes unless persistent, like escape does, so a dialog that
+   * has to ask before discarding should bind `persistent` and answer here.
+   */
+  'dismiss': [];
 }>();
 
 defineSlots<{
@@ -126,6 +133,22 @@ function onClickOutside(): void {
   }
   emit('click:outside');
 }
+
+function onDismiss(): void {
+  if (!persistent) {
+    close();
+  }
+  emit('dismiss');
+}
+
+/**
+ * Registration follows `modelValue` alone, never `persistent`: a dialog that
+ * turns persistent partway through its life has to stay in the stack and refuse
+ * in `onDismiss`, or the gesture starts passing through exactly once there is
+ * work to lose. A dialog playing its leave transition is already on its way out
+ * and does not hold the stack.
+ */
+useDismissableOverlay(modelValue, onDismiss);
 
 function onLeaveComplete(): void {
   leaveTimeout.clear();
