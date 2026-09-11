@@ -77,8 +77,8 @@ const showMobileHeader = computed<boolean>(() =>
  * card flattens its bottom edge so the expanded panel attaches flush beneath
  * it.
  *
- * These bindings do not run through tailwind-merge, so each state picks its own
- * utilities rather than emitting conflicting ones.
+ * These bindings do not run through the class merger, so each state picks its
+ * own utilities rather than emitting conflicting ones.
  */
 const mobileCardClass = computed<string>(() => {
   const shared = 'relative flex flex-col border !border-y border-black/[0.12] dark:border-white/[0.12] overflow-hidden';

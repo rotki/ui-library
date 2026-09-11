@@ -119,7 +119,6 @@
     "@vueuse/core": "catalog:",
     "@vueuse/shared": "catalog:",
     "scule": "catalog:",
-    "tailwind-merge": "catalog:",
     "tailwind-variants": "catalog:",
     "tinycolor2": "catalog:"
   },

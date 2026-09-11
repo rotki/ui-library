@@ -93,6 +93,22 @@ describe('tv', () => {
       // class prop should override base
       expect(button({ class: 'px-8' })).toBe('py-2 px-8');
     });
+
+    it('should keep a colour paired with a Tailwind 3 opacity utility the Tailwind 4 groups read as a colour', () => {
+      const rail = tv({ base: 'bg-rui-primary bg-opacity-40' });
+      expect(rail()).toBe('bg-rui-primary bg-opacity-40');
+      expect(tv({ base: 'text-rui-error text-opacity-40' })()).toBe('text-rui-error text-opacity-40');
+      expect(tv({ base: 'border-rui-info border-opacity-40' })()).toBe('border-rui-info border-opacity-40');
+      expect(tv({ base: 'ring-rui-primary ring-opacity-50' })()).toBe('ring-rui-primary ring-opacity-50');
+    });
+
+    it('should keep a bare `outline` beside a width, since Tailwind 3 means the style by it', () => {
+      expect(tv({ base: 'outline outline-1 outline-transparent' })()).toBe('outline outline-1 outline-transparent');
+      // Widths still replace one another, and the style keywords still conflict with each other
+      expect(tv({ base: 'outline-1 outline-2' })()).toBe('outline-2');
+      expect(tv({ base: 'outline outline-dashed' })()).toBe('outline-dashed');
+      expect(tv({ base: 'outline outline-none' })()).toBe('outline-none');
+    });
   });
 
   describe('slotted', () => {
