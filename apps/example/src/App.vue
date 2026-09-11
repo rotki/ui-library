@@ -32,6 +32,7 @@ const navigation = ref([
       { to: '/simple-selects', title: 'Simple Selects' },
       { to: '/data-tables', title: 'Data Tables' },
       { to: '/tables', title: 'Tables' },
+      { to: '/overlay-stack', title: 'Overlay stack' },
       { to: '/dividers', title: 'Dividers' },
       { to: '/cards', title: 'Cards' },
       { to: '/tabs', title: 'Tabs' },
