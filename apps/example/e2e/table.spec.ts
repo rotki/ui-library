@@ -70,6 +70,9 @@ test.describe('table', () => {
   test('should centre the failure in a table wider than it', async ({ page }) => {
     const gutters = await page.getByTestId('table-error-state').evaluate((host) => {
       const alert = host.querySelector('[data-id=table-error] > *');
+      if (!alert)
+        throw new Error('the error state rendered nothing to measure');
+
       const outer = host.getBoundingClientRect();
       const inner = alert.getBoundingClientRect();
       return { left: Math.round(inner.left - outer.left), right: Math.round(outer.right - inner.right), width: Math.round(inner.width) };
