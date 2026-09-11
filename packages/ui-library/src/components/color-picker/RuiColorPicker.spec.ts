@@ -3,17 +3,26 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiColorPicker from '@/components/color-picker/RuiColorPicker.vue';
 import { roundTwoDecimal } from '@/components/color-picker/utils';
 
-window.HTMLDivElement.prototype.getBoundingClientRect = () => ({
-  bottom: 0,
-  height: 200,
-  left: 0,
-  right: 0,
-  toJSON: vi.fn(),
-  top: 0,
-  width: 300,
-  x: 0,
-  y: 0,
-});
+/**
+ * The picker reads the saturation area's size to turn a pointer position into a colour, and
+ * happy-dom reports every box as zero-sized. The stub goes through `vi.spyOn` inside `beforeEach`
+ * rather than a prototype assignment at module scope: `restoreAllMocks` can undo the spy, while an
+ * assignment outlives the file and, on a pool that shares one DOM across files, hands every later
+ * spec's `div` a fabricated rect.
+ */
+function stubDivRect(): void {
+  vi.spyOn(window.HTMLDivElement.prototype, 'getBoundingClientRect').mockReturnValue({
+    bottom: 0,
+    height: 200,
+    left: 0,
+    right: 0,
+    toJSON: vi.fn(),
+    top: 0,
+    width: 300,
+    x: 0,
+    y: 0,
+  });
+}
 
 function createWrapper(
   options?: ComponentMountingOptions<typeof RuiColorPicker>,
@@ -26,6 +35,7 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
+    stubDivRect();
   });
 
   afterEach(() => {

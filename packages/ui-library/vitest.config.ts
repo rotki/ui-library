@@ -9,11 +9,19 @@ import viteConfig from './vite.config.js';
 const chromiumPath = process.env.PLAYWRIGHT_CHROMIUM_PATH;
 const isCI = process.env.CI === 'true';
 
+/*
+ * `test.env` is applied inside the worker, which is too late for a `vmThreads` V8 context: the
+ * context builds its `Date` from the timezone the process started with, so a spec pinning the
+ * clock reads host-local hours and drifts by the local offset. Setting it here, on the parent,
+ * means every worker inherits it before its context exists. `test.env` keeps it for the runtime.
+ */
+process.env.TZ = 'UTC';
+
 const vitestConfig = defineConfig({
   test: {
-    reporters: ['default', 'html', 'json', ...(isCI ? ['github-actions'] : [])],
+    // The html reporter takes a directory of its own, and ignores `outputFile`
+    reporters: ['default', ['html', { outputDir: './tests/html' }], 'json', ...(isCI ? ['github-actions'] : [])],
     outputFile: {
-      html: './tests/html/index.html',
       json: './tests/json/index.json',
     },
     coverage: {
@@ -33,7 +41,30 @@ const vitestConfig = defineConfig({
           },
           globals: true,
           environment: 'happy-dom',
-          setupFiles: ['./tests/setup-files/setup.ts'],
+          /*
+           * `vmThreads` builds the happy-dom environment once per worker rather than once per
+           * file, which is where a quarter of the run went. `vmMemoryLimit` is not optional with
+           * it: the pool does not reclaim contexts reliably, and it is a top-level option rather
+           * than a `poolOptions` one, so a misplaced key silently does nothing.
+           */
+          pool: 'vmThreads',
+          vmMemoryLimit: '512MB',
+          /*
+           * A V8 context takes its own timers, so the set to fake is spelled out rather than left
+           * to the default: without it the debounced search never fires and its specs fail.
+           */
+          fakeTimers: {
+            toFake: [
+              'setTimeout',
+              'clearTimeout',
+              'setInterval',
+              'clearInterval',
+              'setImmediate',
+              'clearImmediate',
+              'Date',
+            ],
+          },
+          setupFiles: ['./tests/setup-files/vm-globals.ts', './tests/setup-files/setup.ts'],
           exclude: [...configDefaults.exclude, '**/*.stories.ts'],
           typecheck: {
             tsconfig: './tsconfig.vitest.json',
