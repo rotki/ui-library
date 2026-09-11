@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { RuiButton, RuiCard, RuiDialog, useOverlayStack } from '@rotki/ui-library';
+import { RuiBottomSheet, RuiButton, RuiCard, RuiDialog, useOverlayStack } from '@rotki/ui-library';
 import ComponentView from '@/components/ComponentView.vue';
 
 const outer = ref<boolean>(false);
 const inner = ref<boolean>(false);
 const guarded = ref<boolean>(false);
+const sheet = ref<boolean>(false);
 const refusals = ref<number>(0);
 
 const { hasOverlay } = useOverlayStack();
@@ -42,6 +43,13 @@ function onGuardedDismiss(): void {
           @click="guarded = true"
         >
           Open a persistent one
+        </RuiButton>
+        <RuiButton
+          color="secondary"
+          data-id="open-sheet"
+          @click="sheet = true"
+        >
+          Open a bottom sheet
         </RuiButton>
       </div>
 
@@ -96,6 +104,20 @@ function onGuardedDismiss(): void {
         </RuiDialog>
       </RuiCard>
     </RuiDialog>
+
+    <RuiBottomSheet
+      v-model="sheet"
+      data-id="sheet"
+    >
+      <RuiCard>
+        <template #header>
+          Bottom sheet
+        </template>
+        <p data-id="sheet-body">
+          A sheet is a dialog, so back reaches it the same way.
+        </p>
+      </RuiCard>
+    </RuiBottomSheet>
 
     <RuiDialog
       v-model="guarded"

@@ -59,6 +59,18 @@ test.describe('overlay stack', () => {
     await expect(page).toHaveURL(/\/cards$/);
   });
 
+  test('should take a bottom sheet down before leaving the page', async ({ page }) => {
+    await page.getByTestId('open-sheet').click();
+    await expect(page.getByTestId('sheet-body')).toBeVisible();
+
+    await page.goBack();
+    await expect(page.getByTestId('sheet-body')).toHaveCount(0);
+    await expect(page).toHaveURL(/\/overlay-stack$/);
+
+    await page.goBack();
+    await expect(page).toHaveURL(/\/cards$/);
+  });
+
   test('should let a forward navigation through while a dialog is open', async ({ page }) => {
     await page.getByTestId('open-outer').click();
 

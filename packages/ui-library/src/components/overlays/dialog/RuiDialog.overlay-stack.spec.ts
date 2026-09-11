@@ -104,6 +104,87 @@ describe('components/overlays/dialog/RuiDialog.vue overlay stack', () => {
     wrapper.unmount();
   });
 
+  it('should let go of the stack the moment it closes, not when it finishes leaving', async () => {
+    const wrapper = mount(RuiDialog, {
+      props: { modelValue: true },
+      slots: { default: '<p>content</p>' },
+    });
+    await nextTick();
+
+    const { dismissTop, hasOverlay } = useOverlayStack();
+    await wrapper.setProps({ modelValue: false });
+
+    /**
+     * A closing dialog is on its way out rather than covering the page, so it holds the
+     * stack no longer than `modelValue` says. How that overlaps its leave transition is
+     * not observable here: happy-dom runs no CSS, so Vue resolves the leave at once.
+     */
+    expect(get(hasOverlay)).toBe(false);
+    expect(dismissTop()).toBe(false);
+
+    wrapper.unmount();
+  });
+
+  it('should keep escape and dismissal apart, so neither fires the other', async () => {
+    const wrapper = mount(RuiDialog, {
+      props: { modelValue: true },
+      slots: { default: '<p>content</p>' },
+    });
+    await nextTick();
+
+    const { dismissTop } = useOverlayStack();
+    dismissTop();
+    await nextTick();
+
+    expect(wrapper.emitted('dismiss')).toHaveLength(1);
+    expect(wrapper.emitted('click:esc')).toBeUndefined();
+    expect(wrapper.emitted('click:outside')).toBeUndefined();
+
+    wrapper.unmount();
+  });
+
+  it('should keep handing gestures to a refusing dialog rather than the one underneath', async () => {
+    const lower = mount(RuiDialog, { props: { modelValue: true }, slots: { default: '<p>lower</p>' } });
+    await nextTick();
+    const upper = mount(RuiDialog, {
+      props: { modelValue: true, persistent: true },
+      slots: { default: '<p>upper</p>' },
+    });
+    await nextTick();
+
+    const { dismissTop } = useOverlayStack();
+
+    expect(dismissTop()).toBe(true);
+    await nextTick();
+    expect(upper.emitted('dismiss')).toHaveLength(1);
+
+    // A persistent dialog never closes, so it never leaves the stack to be passed
+    expect(dismissTop()).toBe(true);
+    await nextTick();
+    expect(upper.emitted('dismiss')).toHaveLength(2);
+    expect(lower.emitted('dismiss')).toBeUndefined();
+
+    upper.unmount();
+    lower.unmount();
+  });
+
+  it('should hand a bottom sheet consumer the dismissal through attribute fallthrough', async () => {
+    const wrapper = mount(RuiBottomSheet, {
+      props: { modelValue: true, persistent: true },
+      slots: { default: '<p>content</p>' },
+    });
+    await nextTick();
+
+    const { dismissTop } = useOverlayStack();
+    expect(dismissTop()).toBe(true);
+    await nextTick();
+
+    expect(wrapper.findComponent(RuiDialog).emitted('dismiss')).toHaveLength(1);
+    expect(wrapper.props('modelValue')).toBe(true);
+
+    wrapper.unmount();
+  });
+
   it('should leave the stack when the dialog is torn down while open', async () => {
     const wrapper = mount(RuiDialog, {
       props: { modelValue: true },
