@@ -83,22 +83,20 @@ describe('composables/forms/auto-complete/value', () => {
     expect(h.result.value.value).toEqual(['apple']);
   });
 
+  /*
+   * Reproduces the LoginForm race where loadSettings() sets the username
+   * before loadProfiles() fills the options list, which used to leave the
+   * input empty while the model still pointed at an option that by then
+   * existed.
+   */
   it('should sync displayed text when options arrive after modelValue is set', async () => {
-    // Reproduces the LoginForm race where loadSettings() sets username before
-    // loadProfiles() populates the options list. The watcher must re-sync the
-    // input text once options arrive and the value can be resolved — otherwise
-    // the input renders empty while modelValue is still pointing at a valid
-    // (now-existing) option.
     const h = setup<string, string>('alice', [], {});
     unmount = h.unmount;
 
-    // Initial watch fires with empty options — value cannot resolve, search
-    // gets cleared (called with no argument).
+    // The first watch runs against empty options, so the value cannot resolve and the search is cleared
     expect(h.updateInternalSearch).toHaveBeenCalledTimes(1);
     expect(h.updateInternalSearch).toHaveBeenLastCalledWith();
 
-    // Options arrive later; value should re-resolve and the displayed text
-    // should be updated to the option's label.
     set(h.options, ['alice', 'bob']);
     await nextTick();
 

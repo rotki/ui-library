@@ -31,8 +31,8 @@ function mountWithRouting(): SetupResult {
   const wrapper = mount(Wrapper, {
     global: {
       plugins: [{
-        install(app) {
-          // Minimal stub — composable only checks `$router !== undefined`
+        // A stub is enough: the composable only checks that `$router` is there
+        install: (app) => {
           Object.defineProperty(app.config.globalProperties, '$router', { value: true });
         },
       }],

@@ -49,8 +49,7 @@ test.describe('forms/Radio', () => {
     await expect(page.locator('h2[data-id=radio-group-buttons]')).toContainText('Radio Groups');
 
     const contentWrapper = page.locator('[data-id=radio-group-wrapper]');
-    // Radio group is rendered as a plain div, find the first radio within wrapper
-    // The first 6 radios belong to the first radio group
+    // The group renders as a plain div, and the first six radios inside the wrapper are its own
     const firstRadio = contentWrapper.locator('input[type="radio"]').first();
     const secondRadio = contentWrapper.locator('input[type="radio"]').nth(1);
     const thirdRadio = contentWrapper.locator('input[type="radio"]').nth(2);

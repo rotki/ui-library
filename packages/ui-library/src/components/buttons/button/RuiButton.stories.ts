@@ -34,9 +34,7 @@ const meta = preview.meta({
     label: { control: 'text' },
     loading: { control: 'boolean', table: { category: 'State' } },
     rounded: { control: 'boolean', table: { category: 'Shape' } },
-    // `md` is the default and is represented by an unset `size` — clear the
-    // control to see it. The enum intentionally omits `md`; ButtonSize only
-    // lists the opt-in deltas.
+    // ButtonSize lists only the opt-in sizes: `md` is an unset `size`, so clear the control to see it
     size: { control: 'select', options: ['xs', 'sm', 'lg', 'xl', '2xl'] },
     type: { control: 'select', options: ['button', 'submit'] },
     variant: {

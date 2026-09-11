@@ -14,16 +14,15 @@ import { type ClassValue, normalizeClass } from 'vue';
 
 const isAny: (v: string) => boolean = () => true;
 
-export const tv = /* @__PURE__ */ createTV({
+/** The library's tailwind-variants instance, with its own tw-merge groups. */
+export const tv = /* #__PURE__ */ createTV({
   twMergeConfig: {
     classGroups: {
       'bg-tint': [{ 'bg-tint': [isAny] }],
       'bg-shade': [{ 'bg-shade': [isAny] }],
       'text-tint': [{ 'text-tint': [isAny] }],
       'text-shade': [{ 'text-shade': [isAny] }],
-      // Custom theme colors (text-rui-*) belong to the text-color group so
-      // they don't conflict with the custom typography utilities below, which
-      // tw-merge would otherwise both classify as font-size.
+      // `text-rui-*` is a text colour, so tw-merge stops classifying it as a font size like the typography utilities below
       'text-color': [{ 'text-rui': [isAny] }],
       'font-size': [
         { 'text-body': [isAny] },

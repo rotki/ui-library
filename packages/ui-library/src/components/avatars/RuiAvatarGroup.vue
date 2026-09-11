@@ -94,11 +94,8 @@ const spacingPx = computed<number>(() => {
   return AVATAR_GROUP_SPACING_PX[spacing];
 });
 
-const ringOffsetPx = computed<number>(() =>
-  // ring-2 is 2px. Keep items overlapping by the configured spacing
-  // (negative margin). spacing is already negative for tokens.
-  get(spacingPx),
-);
+// The configured spacing, which is already negative, so the items overlap
+const ringOffsetPx = computed<number>(() => get(spacingPx));
 
 const itemStyle = computed<Record<string, string>>(() => ({
   marginInlineStart: `${get(ringOffsetPx)}px`,

@@ -25,7 +25,7 @@ function flattenKeys(obj: Record<string, any>): string[] {
 /**
  * Retrieves all translation keys available in the library.
  *
- * @return {string[]} An array of strings representing flattened translation keys.
+ * @returns the flattened translation keys
  */
 export function translationKeys(): string[] {
   return flattenKeys(RUI_I18N_KEYS);

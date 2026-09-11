@@ -23,9 +23,11 @@ defineSlots<{
 
 const { classes, colspan, isMobile } = useDataTableStyling();
 
-// On mobile the group header reads as a rounded section label: separated from
-// the previous group's cards above and its own cards below, aligned to the
-// card content padding.
+/**
+ * On mobile the group header reads as a rounded section label, separated from
+ * the previous group's cards above and its own below, aligned to the card
+ * content padding.
+ */
 const mobileGroupClass = 'mt-6 first:mt-0 mb-2 rounded-lg';
 const {
   groupExpandButtonPosition,

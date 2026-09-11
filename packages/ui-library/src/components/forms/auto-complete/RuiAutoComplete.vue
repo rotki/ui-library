@@ -170,8 +170,7 @@ const { getText, getIdentifier } = useDropdownOptionProperty<TValue, TItem>({
 
 const textInput = useTemplateRef<HTMLInputElement>('textInput');
 const activator = useTemplateRef<HTMLDivElement>('activator');
-// The option list owns this element, so it is handed back through a ref
-// callback rather than resolved from this component's own template.
+// Owned by the option list, so it arrives through a ref callback rather than this template
 const menuRef = shallowRef<HTMLElement | null>(null);
 
 function setMenuRef(element: Element | ComponentPublicInstance | null): void {
@@ -340,9 +339,10 @@ const { hasError, hasSuccess } = useFormTextDetail(
 
 const valueSet = computed<boolean>(() => get(value).length > 0);
 
-// True when the consumer's #placeholder slot is taking over the resting
-// content area, so the outlined/resting label must hide to avoid overlapping
-// the slot content.
+/**
+ * True while the consumer's `#placeholder` slot holds the resting content
+ * area, where the resting label would overlap it and so hides instead.
+ */
 const placeholderSlotActive = computed<boolean>(() => Boolean(slots.placeholder) && !get(valueSet) && !get(searchInputFocused));
 
 const usedPlaceholder = computed<string>(() => {
@@ -449,9 +449,7 @@ function chipAttrs(item: TItem, index: number): Record<string, unknown> {
       if (['Backspace', 'Delete'].includes(key)) {
         event.stopPropagation();
         event.preventDefault();
-        // Alt/Option + delete converts the chip back into editable search text
-        // instead of removing it outright. Only meaningful when custom values
-        // are accepted, since the restored text has to be re-selectable.
+        // Alt + delete restores the chip as search text, which only helps where custom values are accepted
         if (event.altKey && customValue) {
           const text = getText(item) ?? '';
           setValue(item);
@@ -492,23 +490,26 @@ function closeMenu(): void {
   set(isOpen, false);
 }
 
-// Optimize options watcher with shallow comparison first
-watch(() => options, (curr, old) => {
-  if (curr === old || customValue)
+/**
+ * Reconciles the selection against a new set of options, comparing by
+ * reference before by value so an unchanged list costs nothing.
+ *
+ * Only a selection the previous options could resolve is reconciled: a value
+ * that was already unresolvable is one the consumer set before its options
+ * arrived, since an async list starts empty, and clearing it here would
+ * discard a legitimate value.
+ */
+function onOptionsChanged(curr: TItem[], old: TItem[]): void {
+  if (curr === old || customValue || isEqual(curr, old))
     return;
 
-  // Only do deep comparison if reference changed
-  if (isEqual(curr, old))
-    return;
-
-  // Only reconcile a selection the previous options could actually resolve. A value
-  // that was already unresolvable is one the consumer set before its options arrived
-  // (async lists start empty), so clearing it here would discard a legitimate value.
   if (!get(multiple) && resolveIn(old).length === 0)
     return;
 
   setSelected(get(value));
-});
+}
+
+watch(() => options, onOptionsChanged);
 
 const menuFloatingOptions = computed<FloatingOptions>(() => ({
   placement: Placement.bottomStart,

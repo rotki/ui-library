@@ -35,7 +35,15 @@ export const underlinePseudo = [
  * ## Legend content
  *
  * The legend's `after:content` uses CSS variable `--rui-legend`.
- * Bind via `:style="{ '--rui-legend': labelWithQuote }"` on the legend element.
+ * Bind via `:style="\{ '--rui-legend': labelWithQuote \}"` on the legend element.
+ *
+ * ## Compositing
+ *
+ * The fieldset is forced onto its own GPU layer so the focused border is
+ * rasterized on integer pixel boundaries. Without it, at fractional
+ * y-coordinates with a non-integer device pixel ratio such as 1.25, Chromium
+ * anti-aliases the 1.6-2px focus border across two physical pixel rows behind
+ * the floated label, which shows up as two thin lines crossing it.
  */
 export const textInputBase = tv({
   slots: {
@@ -45,13 +53,7 @@ export const textInputBase = tv({
       'rounded pointer-events-none px-2 transition-all -mt-2',
       'border border-black/[0.23]',
       'dark:border-white/[0.23]',
-      // Force the fieldset onto its own GPU compositing layer so the
-      // focused border is rasterized on integer pixel boundaries. Without
-      // this, at fractional y-coordinates with non-integer device pixel
-      // ratios (e.g. DPR 1.25), Chromium anti-aliases the 1.6px-2px focus
-      // border across two physical pixel rows behind the floated label,
-      // appearing as "two thin lines crossing the label". translateZ(0)
-      // promotes to a layer; the layer's raster snaps to integer pixels.
+      // translateZ(0) promotes this to its own layer, whose raster snaps to integer pixels
       'transform-gpu',
     ].join(' '),
     legend: 'invisible text-[0.75rem] truncate [max-width:calc(100%-1rem)] leading-[0]',
@@ -123,6 +125,13 @@ export const textInputBase = tv({
  *
  * State-driven via JS refs: `outlined`, `float` (open || hasValue),
  * `opened`, `disabled`, `readonly`, `dense`.
+ *
+ * The wrapper is `w-full inline-flex flex-col` so an activator fills its
+ * parent whatever the context. A consumer's own width utility would normally
+ * collide with `w-full` on the same element and lose to cascade order, so
+ * RuiAutoComplete, RuiMenuSelect and RuiDateTimePicker route consumer classes
+ * through `ui.wrapper(\{ class \})`, where twMerge deduplicates them and the
+ * consumer's width wins.
  */
 export const activatorStyles = tv({
   extend: textInputBase,
@@ -130,13 +139,6 @@ export const activatorStyles = tv({
     // Re-declare base slots for type inference
     fieldset: '',
     legend: '',
-    // `w-full inline-flex flex-col` so the activator fills its parent
-    // regardless of context (block, flex-row, grid). A consumer-passed
-    // width utility like `w-[20rem]` would normally collide with `w-full`
-    // on the same element and lose to cascade order; RuiAutoComplete /
-    // RuiMenuSelect / RuiDateTimePicker route consumer classes through
-    // `ui.wrapper({ class })` so tailwind-variants' twMerge deduplicates
-    // and the consumer's width wins.
     wrapper: 'w-full inline-flex flex-col',
     activator: [
       'group relative inline-flex items-center w-full',

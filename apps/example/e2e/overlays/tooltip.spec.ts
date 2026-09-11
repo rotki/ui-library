@@ -45,21 +45,17 @@ test.describe('tooltip', () => {
   });
 
   test('disabled should not trigger tooltip', async ({ page }) => {
-    // Disabled tooltips are at indices 12-15 (4th attribute set)
-    // tooltip-12 is the first disabled tooltip
-    const disabledTooltip = page.locator('div[data-id=tooltip-12]');
+    const disabledTooltip = page.locator('div[data-id=tooltip-12]'); // the first of the disabled ones
     await disabledTooltip.scrollIntoViewIfNeeded();
 
-    // Move mouse to a safe area first
+    // Parked in a corner, so any tooltip left open from before closes
     await page.mouse.move(0, 0);
-    // Wait for any open tooltips to close
     await expect(page.locator(tooltipContent)).toHaveCount(0, { timeout: 2000 });
 
     await expect(disabledTooltip.locator('#activator')).toBeVisible();
     await disabledTooltip.locator('#activator').hover();
 
-    // Verify no tooltip appears for disabled - use assertion with timeout instead of waitForTimeout
-    // The tooltip would normally appear quickly if enabled, so we check it stays at 0
+    // An enabled tooltip would be up well inside this window, so staying at zero is the assertion
     await expect(page.locator(tooltipContent)).toHaveCount(0, { timeout: 1000 });
   });
 

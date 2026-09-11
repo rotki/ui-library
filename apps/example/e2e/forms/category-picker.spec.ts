@@ -117,9 +117,17 @@ test.describe('category-picker - selection slot geometry', () => {
     await page.goto('/category-pickers');
   });
 
-  // jsdom has no layout, so the only honest check for rotki/ui-library#559 is
-  // a measured one: the overlay must stay inside the field and leave the
-  // trailing controls alone.
+  /**
+   * The horizontal edges of an element.
+   *
+   * jsdom has no layout, so the only honest check for rotki/ui-library#559 is
+   * a measured one: the selection overlay must stay inside the field and leave
+   * the trailing controls alone.
+   *
+   * @param page - the page under test
+   * @param selector - the element to measure
+   * @returns its left and right edge, in page coordinates
+   */
   async function box(page: Page, selector: string): Promise<{ left: number; right: number }> {
     const rect = await page.locator(selector).boundingBox();
     if (!rect)
@@ -135,8 +143,7 @@ test.describe('category-picker - selection slot geometry', () => {
     const badge = await box(page, `${picker} [data-id=selection-badge]`);
     const chevron = await box(page, `${picker} [data-id=chevron]`);
 
-    // Before the fix the layer was full field-width shifted right by `left-4`,
-    // so its right edge sat ~16px past the field's.
+    // The layer used to be a full field width shifted right by `left-4`, overhanging the field
     expect(selection.right).toBeLessThanOrEqual(field.right);
     // And the right-aligned badge rode on top of the chevron.
     expect(badge.right).toBeLessThanOrEqual(chevron.left);

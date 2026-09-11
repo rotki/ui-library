@@ -441,10 +441,8 @@ describe('composables/tables/data-table/pagination', () => {
 
       result.setInternalTotal(groupedData);
 
+      // Page 2 at limit 2 holds rows 3 and 4, one from each group, so both headers come with them
       const filtered = get(result.filtered);
-      // Page 2 with limit 2: data rows 3 and 4
-      // Row 3 (id:3) belongs to group A, so group A header should be prepended
-      // Row 4 (id:4) belongs to group B, so group B header should also appear
       expect(filtered).toHaveLength(4);
       expect(filtered[0]).toHaveProperty('identifier', 'A');
       expect(filtered[1]).toHaveProperty('id', 3);
@@ -475,16 +473,13 @@ describe('composables/tables/data-table/pagination', () => {
 
       result.setInternalTotal(groupedData);
 
+      // Page 1 at limit 3 holds rows 1 to 3, all group A, so group B's header has nothing to head
       const filtered = get(result.filtered);
-      // Page 1 with limit 3: data rows 1, 2, 3 (all group A)
-      // The algorithm collects group A header + rows 1,2,3, then group B header
-      // But group B header has no data rows on this page, so it should be removed
       expect(filtered).toHaveLength(4);
       expect(filtered[0]).toHaveProperty('identifier', 'A');
       expect(filtered[1]).toHaveProperty('id', 1);
       expect(filtered[2]).toHaveProperty('id', 2);
       expect(filtered[3]).toHaveProperty('id', 3);
-      // Group B header should NOT be present
       const hasTrailingBHeader = filtered.some(
         item => 'identifier' in item && item.identifier === 'B',
       );
@@ -493,9 +488,7 @@ describe('composables/tables/data-table/pagination', () => {
 
     it('should handle group header exactly at page boundary start', () => {
       const tableDefaults = createTableDefaults({ limits: [2, 5, 10] });
-      // Group A has 3 data rows, Group B has 2 data rows
-      // With limit 3, page 2 starts at data row index 3, which is id:4 (group B)
-      // The group B header sits exactly before data row 4
+      // Group A holds 3 rows and group B 2, so at limit 3 page 2 starts on row 4, right after B's header
       const pagination = ref<{ limit: number; page: number; total: number } | undefined>({
         limit: 3,
         page: 2,
@@ -517,10 +510,8 @@ describe('composables/tables/data-table/pagination', () => {
 
       result.setInternalTotal(groupedData);
 
+      // The header is already inside the page slice here, so nothing needs prepending
       const filtered = get(result.filtered);
-      // Page 2: data rows 4 and 5 (group B)
-      // Group B header falls at exactly the page boundary (dataCount === start when header is seen)
-      // so it should be included naturally (not prepended)
       expect(filtered).toHaveLength(3);
       expect(filtered[0]).toHaveProperty('identifier', 'B');
       expect(filtered[1]).toHaveProperty('id', 4);
@@ -550,9 +541,8 @@ describe('composables/tables/data-table/pagination', () => {
 
       result.setInternalTotal(groupedData);
 
+      // Rows 1 to 4 at limit 4 cross out of group A into B, which holds 3 and 2 rows
       const filtered = get(result.filtered);
-      // Page 1 with limit 4: data rows 1, 2, 3, 4
-      // Group A header + rows 1,2,3 + Group B header + row 4
       expect(filtered).toHaveLength(6);
       expect(filtered[0]).toHaveProperty('identifier', 'A');
       expect(filtered[1]).toHaveProperty('id', 1);
@@ -589,10 +579,8 @@ describe('composables/tables/data-table/pagination', () => {
 
       result.setInternalTotal(groupedData);
 
+      // All 5 rows fit on page 1, and isHiddenRow hides the first three; both headers stay, since it never hides a header
       const filtered = get(result.filtered);
-      // All 5 data rows fit on page 1. isHiddenRow hides rows with id <= 3.
-      // Remaining visible: group A header, group B header, row 4, row 5
-      // Group A header stays because isHiddenRow returns false for headers
       const dataRows = filtered.filter(item => 'id' in item);
       expect(dataRows).toHaveLength(2);
       expect(dataRows[0]).toHaveProperty('id', 4);

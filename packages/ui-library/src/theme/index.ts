@@ -92,7 +92,7 @@ const adaptiveSurfaceColorsCombination = {
 
 const themePlugin = plugin(
   ({ addBase, addUtilities, addVariant, matchUtilities }) => {
-    // Adaptive theme variable aliases
+    /** Aliases every context colour to the given theme's own variable. */
     const themeVariables = (theme: 'light' | 'dark'): Record<string, string> =>
       Object.fromEntries([
         ...contextColors.flatMap(color => [

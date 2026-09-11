@@ -291,10 +291,8 @@ export const Default = meta.story({
   },
   async play({ canvas, userEvent }) {
     await expect(canvas.getByRole('table')).toBeVisible();
-    // The deterministic fixture cycles through 10 names over 50 rows, so
-    // "Alice" matches multiple cells — assert the first is visible.
+    // The fixture cycles 10 names over 50 rows, so "Alice" matches several cells
     await expect(canvas.getAllByText('Alice')[0]).toBeVisible();
-    // Click sortable column header to toggle sort
     const fullNameHeader = canvas.getByRole('columnheader', { name: /Full name/ });
     await userEvent.click(fullNameHeader);
   },
@@ -611,9 +609,7 @@ export const Mobile = meta.story({
     sort: [{ column: 'name', direction: 'asc' }],
   },
   async play({ canvas }) {
-    // Column headers are hidden in the stacked layout; each cell carries its
-    // own inline label instead, and sorting moves into the mobile sort menu.
-    await expect(canvas.queryByRole('columnheader')).toBeNull();
+    await expect(canvas.queryByRole('columnheader')).toBeNull(); // the stacked layout labels each cell inline instead
     await expect(canvas.getAllByText('Full name')[0]).toBeVisible();
   },
 });

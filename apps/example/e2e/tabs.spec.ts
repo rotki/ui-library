@@ -62,8 +62,7 @@ test.describe('tabs', () => {
   });
 
   test('should render vertical tabs', async ({ page }) => {
-    // wrapper-1 is the first vertical tab set (primary color, vertical=true)
-    const wrapper = page.locator('[data-id=wrapper-1]');
+    const wrapper = page.locator('[data-id=wrapper-1]'); // the sets alternate horizontal then vertical, so the odd indices are the vertical ones
     const tablist = wrapper.locator('[data-id=tabs] [role=tablist]');
     await expect(tablist).toBeVisible();
 

@@ -193,8 +193,7 @@ describe('components/forms/category-picker/RuiCategoryPicker.vue', () => {
     await wrapper.find('[data-id=search-input]').setValue('germany');
     await vi.runAllTimersAsync();
 
-    // Even though Asia was the active category, the query jumps to "All" so the
-    // Europe match shows instead of an empty Asia pane.
+    // The query jumps to "All", so the Europe match shows rather than an empty Asia pane
     const detail = queryByDataId<HTMLElement>('detail', dialog);
     assertExists(detail);
     const optionLabels = Array.from(detail.querySelectorAll('[role=option]')).map(el => el.textContent?.trim());
@@ -215,8 +214,7 @@ describe('components/forms/category-picker/RuiCategoryPicker.vue', () => {
     europe.click();
     await vi.runAllTimersAsync();
 
-    // Focusing a teleported pane must pass preventScroll, or the browser scrolls
-    // the page behind the popover to bring the pane into view.
+    // Without preventScroll the browser scrolls the page behind the popover to reveal the pane
     expect(focusSpy).toHaveBeenCalledWith({ preventScroll: true });
   });
 
@@ -224,13 +222,10 @@ describe('components/forms/category-picker/RuiCategoryPicker.vue', () => {
     wrapper = mountPicker();
     const panel = await openPicker(wrapper);
 
-    // The size middleware writes the available viewport space into
-    // --rui-floating-max-height; the panel caps to it so the popover never
-    // overflows the window bottom, falling back to 60vh before it is measured.
+    // The var is unset until the middleware has measured, which is what the 60vh fallback covers
     expect(panel.className).toContain('max-h-[var(--rui-floating-max-height,60vh)]');
 
-    // The body flex-shrinks inside that cap (flex-1, not a fixed max-h) so the
-    // footer stays anchored and each pane scrolls internally instead.
+    // A fixed height on the body would push the footer off the bottom of the panel
     const body = panel.querySelector<HTMLElement>('.grid');
     assertExists(body);
     expect(body.className).toContain('flex-1');

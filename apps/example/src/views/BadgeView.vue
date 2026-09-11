@@ -63,7 +63,10 @@ onBeforeMount(() => {
       Badges
     </template>
 
-    <div class="grid gap-6 grid-cols-3 lg:grid-cols-7">
+    <div
+      :data-color-count="colors.length"
+      class="grid gap-6 grid-cols-3 lg:grid-cols-7"
+    >
       <div
         v-for="(badge, i) in badges"
         :key="i"

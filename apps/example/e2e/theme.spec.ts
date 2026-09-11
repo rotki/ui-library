@@ -1,14 +1,20 @@
 import { expect, test } from '@playwright/test';
 
+/**
+ * Reads one adaptive theme variable off the document.
+ *
+ * A variable holding raw RGB channels, such as `78, 91, 166`, is not a CSS
+ * colour and comes back as it is. A full colour is normalised through a
+ * throwaway element, so the format holds whichever CSS minifier produced it:
+ * LightningCSS writes hex, esbuild keeps rgb and rgba.
+ *
+ * @param variableName - the custom property to read
+ * @returns a function that reads it from a page
+ */
 function getAdaptiveVariable(variableName: string): (page: import('@playwright/test').Page) => Promise<string> {
   return async page =>
     page.evaluate((name) => {
       const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-      // Some variables store raw RGB channels (e.g. "78, 91, 166") which are
-      // not valid CSS colors — return them as-is.
-      // For full color values (hex, rgb, rgba), normalize via a temporary
-      // element so the format is consistent regardless of CSS minifier
-      // (LightningCSS outputs hex, esbuild preserves rgb/rgba).
       if (/^[\d\s,.]+$/.test(raw))
         return raw;
 
@@ -31,7 +37,6 @@ test.describe('theme', () => {
   });
 
   test('should set adaptive CSS variables matching light theme defaults', async ({ page }) => {
-    // Ensure we're in light mode
     const lightButton = page.locator('header button').first();
     await lightButton.click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
@@ -44,7 +49,6 @@ test.describe('theme', () => {
   });
 
   test('should update adaptive CSS variables when switching to dark theme', async ({ page }) => {
-    // Switch to dark mode
     const darkButton = page.locator('header button').nth(1);
     await darkButton.click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
@@ -57,7 +61,6 @@ test.describe('theme', () => {
   });
 
   test('should switch adaptive CSS variables back when toggling light to dark to light', async ({ page }) => {
-    // Start in light mode
     const lightButton = page.locator('header button').first();
     const darkButton = page.locator('header button').nth(1);
 

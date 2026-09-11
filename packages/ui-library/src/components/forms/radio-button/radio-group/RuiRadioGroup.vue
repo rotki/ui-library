@@ -46,8 +46,7 @@ const radioGroupName = useId();
 const children = computed<VNode[]>(() => {
   const slotContent = slots.default?.() ?? [];
 
-  // When using dynamic content with v-for the slot content is a single fragment
-  // containing the children components.
+  // A `v-for` in the slot arrives as a single fragment holding the children
   if (slotContent.length === 1) {
     const firstChild = slotContent[0];
     assert(firstChild);

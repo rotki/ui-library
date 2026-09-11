@@ -14,8 +14,7 @@ const allActionsValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
 const timezoneValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
 const boundedValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
 const boundedMax = new Date(2023, 0, 10, 12, 0);
-// left empty so a test can type an entry that stops short of the full format; the strict one is
-// the control, with no partial-time at all
+// Left empty so a test can type a short entry; the strict one is the control, with no partial-time
 const partialStartValue = ref<number>();
 const partialEndValue = ref<number>();
 const partialStrictValue = ref<number>();

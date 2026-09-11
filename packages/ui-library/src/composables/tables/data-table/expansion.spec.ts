@@ -25,9 +25,7 @@ describe('composables/tables/data-table/expansion', () => {
     expect(get(result.expandable)).toBe(false);
   });
 
-  it('should return expandable as true when expanded is a defined array', () => {
-    // Slot presence is no longer checked here — the template does
-    // `!!$slots['expanded-item']` inline so conditional slots stay reactive.
+  it('should return expandable as true from the bound model alone, since the template checks the slot itself', () => {
     const { result, unmount: u } = withSetup(() =>
       useTableExpansion<TestItem, 'id'>(
         { rowAttr: 'id', singleExpand: false },

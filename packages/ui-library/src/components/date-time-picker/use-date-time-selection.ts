@@ -110,8 +110,7 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
       }
       const date = new Date();
       date.setFullYear(get(modelYear));
-      // Set day to 1 first to prevent month overflow when today's day > days in target month
-      // e.g., if today is Dec 30 and we set month to Feb, day 30 would overflow to March
+      // Day 1 first, so a later month with fewer days cannot overflow into the next one
       date.setDate(1);
       date.setMonth(get(modelMonth) - 1);
       date.setDate(get(modelDay));
@@ -171,15 +170,19 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
     set(modelValue, typeMap[type]() as ModelValueType<T>);
   }
 
+  /**
+   * Writes the segments back to the model.
+   *
+   * The segments are a wall-clock reading, so they are formatted and parsed in
+   * the selected timezone. Mutating a `dayjs.tz()` built from the old value
+   * instead would keep that value's UTC offset, and moving the date across a
+   * DST boundary then shifted the time by an hour.
+   */
   function updateModelValue(): void {
     if (!isDefined(selectedDate) || !isDefined(selectedTime)) {
       return;
     }
 
-    // The segments are a wall-clock reading, so they are formatted and parsed
-    // in the selected timezone. Mutating a `dayjs.tz()` built from the old
-    // value instead would keep that value's UTC offset, and moving the date
-    // across a DST boundary then shifted the time by an hour.
     const updatedModel = dayjs.tz(
       formatWallClock(get(selectedDate), get(selectedTime), accuracy),
       get(modelTimezone),
@@ -302,7 +305,9 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
    * a bare date can become a value. Called when the user is done with the field
    * rather than on every keystroke, since a segment still being typed is not
    * yet one they left out. The fill is written back into the field, so the
-   * value it decided on is the one on screen.
+   * value it decided on is the one on screen, and into the model directly:
+   * running on blur and on enter, it would otherwise lose the value to a
+   * consumer that closes the field on that key before the watcher emits.
    */
   function commitPartialTime(): void {
     if (partialTime === undefined)
@@ -326,9 +331,6 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
     if (!target)
       return;
 
-    // The model is written here rather than left to the watcher: this runs on blur and on enter,
-    // and a consumer that closes the field on that key would drop a value the watcher only emits
-    // on the next tick.
     ignoreUpdates(() => applySegments(target));
     updateModelValue();
   }

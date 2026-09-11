@@ -6,13 +6,15 @@ defineOptions({
   inheritAttrs: false,
 });
 
-// Default matches RuiTabs' `defineModel<... >({ default: 0 })`. Without a
-// default, consumers that bind both components to the same ref (e.g.
-// `v-model="item.modelValue"` on both RuiTabs and RuiTabItems, where the
-// ref starts as `undefined`) leave RuiTabItems with `modelValue === undefined`.
-// The `active = modelValue === value` check then fails for every tab — the
-// panel renders but stays height:0, so e2e `toHaveText` and `toBeVisible`
-// assertions pass the element but see no content.
+/**
+ * The tab whose panel is showing.
+ *
+ * The default matches RuiTabs. Without one, binding both components to the
+ * same ref that starts as `undefined` leaves this component with
+ * `modelValue === undefined`, so the `active = modelValue === value` check
+ * fails for every tab: the panel renders but stays at height 0, which reads as
+ * an element with no content.
+ */
 const modelValue = defineModel<T>({ default: () => 0 as T });
 
 const slots = useSlots();
@@ -56,8 +58,13 @@ const children = computed<VNode[]>(() => {
   return children;
 });
 
-// When using dynamic content with v-for the slot content can contain fragment,
-// Go through the fragment and always return RuiTabItem only
+/**
+ * Unwraps the fragments a `v-for` in the slot produces, so only tab items come
+ * back.
+ *
+ * @param children - the slot's vnodes
+ * @returns the tab items among them
+ */
 function getChildrenTabs(children: VNode[]): VNode[] {
   return children
     .flatMap((item) => {

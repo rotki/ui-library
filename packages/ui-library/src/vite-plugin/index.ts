@@ -175,10 +175,12 @@ export function ruiIconsPlugin(options: RuiIconsPluginOptions = {}): Plugin {
   }
 
   /**
-   * Handles file changes in dev mode
+   * Handles a file change in dev mode, ignoring files the scan patterns do not
+   * cover.
+   *
+   * @param filePath - the file that changed
    */
   function handleFileChange(filePath: string): void {
-    // Check if the changed file matches our scan patterns
     const isRelevantFile = scanPatterns.some((pattern) => {
       const ext = filePath.split('.').pop();
       return pattern.includes(`*.${ext}`);

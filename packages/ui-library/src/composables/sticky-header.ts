@@ -108,8 +108,7 @@ export function useStickyTableHeader(
   function scheduleSyncWidths(cloneColumns: HTMLElement[], mainColumns: HTMLElement[]): void {
     cancelPendingSync();
 
-    // Single-frame sync: the main thead is position absolute/fixed so clearing
-    // its widths is unnecessary — clone widths are independent of main widths.
+    // One frame is enough: the main thead is positioned, so its widths never feed back into the clone's
     syncRafId = requestAnimationFrame(() => {
       syncRafId = null;
       applyColumnWidths(mainColumns, readColumnWidths(cloneColumns));

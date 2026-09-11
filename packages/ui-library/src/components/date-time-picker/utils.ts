@@ -23,8 +23,7 @@ export function includeMilliseconds(accuracy: TimeAccuracy): boolean {
 export function formatWallClock(date: Date, time: Date, accuracy: TimeAccuracy): string {
   const pad = (value: number, length = 2): string => value.toString().padStart(length, '0');
 
-  // the year has to be padded too: while a year is being typed it is briefly 2,
-  // 20 or 202, and `2-01-15T…` is not a date string any parser accepts
+  // A year being typed is briefly 2, 20 or 202, and `2-01-15T...` is a date string no parser accepts
   const day = `${pad(date.getFullYear(), 4)}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
   const seconds = includeSeconds(accuracy) ? time.getSeconds() : 0;
   const milliseconds = includeMilliseconds(accuracy) ? time.getMilliseconds() : 0;

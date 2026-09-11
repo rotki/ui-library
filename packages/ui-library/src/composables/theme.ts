@@ -12,8 +12,10 @@ import {
 const config: Ref<ThemeConfig> = ref({ ...defaultTheme });
 
 /**
- * Theme manager
- * @returns {ThemeContent}
+ * The theme manager: the current mode and palette, and the calls that change
+ * them. Shared, so every caller reads and writes the same theme.
+ *
+ * @returns the theme state and the operations on it
  */
 export const useRotkiTheme = createSharedComposable<() => ThemeContent>(() => {
   const updateHTMLAttrs = getSSRHandler(
@@ -37,28 +39,16 @@ export const useRotkiTheme = createSharedComposable<() => ThemeContent>(() => {
     },
   });
 
-  /**
-   * whether the current theme is controlled by system or user
-   * @type {ComputedRef<boolean>}
-   */
+  /** Whether the system picks the theme rather than the user. */
   const isAutoControlled: ComputedRef<boolean> = computed(() => get(store) === ThemeMode.auto);
 
-  /**
-   * truthy for light theme
-   * @type {ComputedRef<boolean>}
-   */
+  /** Whether the light theme is showing. */
   const isLight: ComputedRef<boolean> = computed(() => get(state) === ThemeMode.light);
 
-  /**
-   * truthy for dark theme
-   * @type {ComputedRef<boolean>}
-   */
+  /** Whether the dark theme is showing. */
   const isDark: ComputedRef<boolean> = computed(() => get(state) === ThemeMode.dark);
 
-  /**
-   * current theme based on light or dark mode
-   * @type {ComputedRef<ThemeData>}
-   */
+  /** The palette the current mode reads from. */
   const theme: ComputedRef<ThemeData> = computed(() => {
     if (get(isLight))
       return get(config).light;
@@ -67,8 +57,9 @@ export const useRotkiTheme = createSharedComposable<() => ThemeContent>(() => {
   });
 
   /**
-   * switch theme through dark/light/auto modes
-   * @param {ThemeMode} mode
+   * Switches the theme.
+   *
+   * @param mode - the mode to switch to; an empty mode falls back to auto
    */
   const switchThemeScheme = (mode: ThemeMode): void => {
     set(store, mode || ThemeMode.auto);
@@ -87,16 +78,19 @@ export const useRotkiTheme = createSharedComposable<() => ThemeContent>(() => {
   };
 
   /**
-   * sets the configuration for the theme
-   * @param {ThemeConfig} newConfig
+   * Replaces the palettes the theme draws from.
+   *
+   * @param newConfig - the light and dark palettes to use
    */
   const setThemeConfig = (newConfig: ThemeConfig): void => {
     set(config, newConfig);
   };
 
   /**
-   * theme initializer, must be called once from the app's entry
-   * @param {InitThemeOptions} options
+   * Sets the theme up. Call once, from the app's entry point.
+   *
+   * @param options - the starting mode and palettes; each falls back to its
+   * default when left out
    */
   const init = (options: InitThemeOptions): void => {
     switchThemeScheme(options.mode ?? ThemeMode.auto);

@@ -22,7 +22,12 @@ const { viewMonth, viewYear } = defineProps<{
 
 const calendarState = inject<RuiCalendarState>(CalendarStateSymbol) as RuiCalendarState;
 
-// Helper functions to reduce duplication
+/**
+ * The `YYYY-MM-DD` key a day is tracked and focused by.
+ *
+ * @param date - the day to key
+ * @returns its key
+ */
 function createDateKey(date: Date): string {
   return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 }
@@ -97,7 +102,7 @@ function createDayData(
   };
 }
 
-// Pre-calculation functions using VueUse get/set
+/** Rebuilds the days the grid draws for the current view month. */
 function calculateCalendarDays(): void {
   const firstDayOfMonth = new Date(viewYear, viewMonth, 1);
   const lastDayOfMonth = new Date(viewYear, viewMonth + 1, 0);
@@ -180,10 +185,7 @@ function selectDate(dayData: { date: Date; isInRange: boolean; isSelected: boole
   set(model, updateModel);
 }
 
-// --- keyboard navigation -------------------------------------------------
-// The grid is a roving tabindex: one day is tabbable and the arrows move it,
-// so crossing the calendar costs one Tab instead of 42.
-
+// Keyboard navigation: a roving tabindex, so crossing the calendar costs one Tab instead of 42
 const gridRef = useTemplateRef<HTMLDivElement>('grid');
 const activeKey = ref<string>('');
 
@@ -241,9 +243,7 @@ function moveTo(target: Date): void {
 
   const key = createDateKey(target);
 
-  // Landing on another month turns the page, even when that day happens to be
-  // rendered as a spill day in the current window — otherwise the header and
-  // the focused day disagree about which month is being edited.
+  // Even a day drawn as a spill day turns the page, so header and focus agree on the month
   if (target.getMonth() === viewMonth && target.getFullYear() === viewYear) {
     focusKey(key);
     return;

@@ -51,7 +51,12 @@ export interface NormalizedUser extends Omit<UserProfile, 'address' | 'company'>
   'company.bs': string;
 }
 
-// Helper function to normalize user data
+/**
+ * Flattens a user's nested address and company into top-level fields.
+ *
+ * @param user - the profile to flatten
+ * @returns the flattened user
+ */
 export function normalize(user: UserProfile): NormalizedUser {
   const { address, company } = user;
   return {

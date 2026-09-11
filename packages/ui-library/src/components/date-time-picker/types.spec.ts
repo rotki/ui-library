@@ -13,8 +13,7 @@ describe('date-time-picker/types', () => {
       expect(DATE_TIME_SEGMENT_TYPES).toContain('SSS');
     });
 
-    it('should be a non-empty array', () => {
-      // Verify the array has at least the expected types without hardcoding exact count
+    it('should be a non-empty array, without pinning a count a new segment type would break', () => {
       expect(DATE_TIME_SEGMENT_TYPES.length).toBeGreaterThan(0);
     });
   });

@@ -16,21 +16,17 @@ export interface RuiIconsPluginOptions {
   customIcons?: string[];
 
   /**
-   * Glob patterns for files to scan
-   * @default ['** /*.vue', '** /*.ts', '** /*.tsx'] (without spaces)
+   * Glob patterns for files to scan. Defaults to every `.vue`, `.ts` and
+   * `.tsx` file.
    */
   scanPatterns?: string[];
 
   /**
-   * Strict mode - fail build on invalid icon names
-   * @default false
+   * Strict mode: fails the build on an invalid icon name. Defaults to false.
    */
   strict?: boolean;
 
-  /**
-   * Enable debug logging
-   * @default false
-   */
+  /** Logs what the scan found and registered. Defaults to false. */
   debug?: boolean;
 }
 

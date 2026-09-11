@@ -378,8 +378,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
       const calendarMenu = wrapper.findComponent({ name: 'RuiCalendarMenu' });
       expect(calendarMenu.exists()).toBeTruthy();
 
-      // Navigate backward multiple years (beyond the initial 12-year range)
-      // Initial year range would be around 2017-2028, so going to 2010 tests beyond that
+      // 2010 is outside the roughly 2017-2028 the picker starts with, so the range has to move
       for (let year = 2022; year >= 2010; year--) {
         await calendarMenu.vm.$emit('select', { month: 0, year });
         await nextTick();
@@ -411,8 +410,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
       const calendarMenu = wrapper.findComponent({ name: 'RuiCalendarMenu' });
       expect(calendarMenu.exists()).toBeTruthy();
 
-      // Navigate forward multiple years (beyond the initial 12-year range)
-      // Initial year range would be around 2017-2028, so going to 2035 tests beyond that
+      // 2035 is past the roughly 2017-2028 the picker starts with, so the range has to move
       for (let year = 2024; year <= 2035; year++) {
         await calendarMenu.vm.$emit('select', { month: 0, year });
         await nextTick();
@@ -530,8 +528,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
       expect(grayedDays.length).toBeGreaterThan(0);
     });
 
-    it('should allow selection of previous/next month days when in range', async () => {
-      // Use February 2023 — starts on Wednesday, so Jan 29-31 appear as prev-month days
+    it('should allow selection of the spill days a Wednesday-starting February 2023 shows', async () => {
       wrapper = createWrapper({
         props: {
           modelValue: new Date(2023, 1, 15), // February 15, 2023

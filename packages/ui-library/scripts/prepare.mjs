@@ -6,14 +6,12 @@ consola.info('Generating icons');
 execSync('pnpm run generate-icons', { stdio: 'inherit' });
 
 const env = process.env;
-if (
-  // if INIT_CWD (yarn/npm/pnpm install invocation path) and PWD
-  // are the same, then local (dev) install/add is taking place
-  env.INIT_CWD === env.PWD
-  // local (dev) yarn install may have been run
-  // from a project sub-folder
-  || env.INIT_CWD.indexOf(env.PWD) === 0
-) {
+/*
+ * INIT_CWD is where the install was invoked from. Matching PWD means a local
+ * dev install, as does sitting under it, which is what an install run from a
+ * project sub-folder looks like.
+ */
+if (env.INIT_CWD === env.PWD || env.INIT_CWD.indexOf(env.PWD) === 0) {
   consola.info('Skipping `prepare` script on local installs');
   process.exit(0);
 }

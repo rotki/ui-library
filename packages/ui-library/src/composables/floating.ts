@@ -41,25 +41,24 @@ export const Strategy = {
 export type Strategy = (typeof Strategy)[keyof typeof Strategy];
 
 export interface FloatingOptions {
-  /** Preferred placement relative to the reference element. @default Placement.bottom */
+  /** Preferred placement relative to the reference element; defaults to `Placement.bottom`. */
   placement?: Placement;
-  /** CSS positioning strategy. @default Strategy.absolute */
+  /** CSS positioning strategy; defaults to `Strategy.absolute`. */
   strategy?: Strategy;
-  /** Main-axis and/or cross-axis offset from the reference element. @default 2 */
+  /** Main-axis and/or cross-axis offset from the reference element; defaults to 2. */
   offset?: number | { mainAxis?: number; crossAxis?: number };
-  /** Whether to flip to the opposite side when overflowing. @default true */
+  /** Whether to flip to the opposite side when overflowing; defaults to true. */
   flip?: boolean;
-  /** Padding from viewport edges for shift middleware. @default 8 */
+  /** Padding from viewport edges for shift middleware; defaults to 8. */
   shiftPadding?: number;
-  /** Whether to auto-update position on scroll/resize. @default true */
+  /** Whether to auto-update position on scroll/resize; defaults to true. */
   autoUpdate?: boolean | { scroll?: boolean; resize?: boolean };
   /**
    * Cap the floating element to the space available toward the viewport edge so
    * it never overflows the window. Exposes the measured space as the
    * `--rui-floating-max-height` custom property on the floating element; the
    * content is responsible for consuming it by capping its own max-height to
-   * that variable and scrolling internally.
-   * @default false
+   * that variable and scrolling internally. Defaults to false.
    */
   size?: boolean;
 }

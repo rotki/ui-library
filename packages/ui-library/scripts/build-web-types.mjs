@@ -10,10 +10,10 @@ const __dirname = import.meta.dirname;
 const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), { encoding: 'utf8' }));
 
 /**
- * Replaces the double quotes in a string with single quotes and returns it.
+ * Replaces the double quotes in a string with single quotes.
  *
- * @param text
- * @returns
+ * @param text - the string to rewrite, which may be undefined
+ * @returns the rewritten string, or undefined when nothing was given
  */
 function replaceDoubleQuote(text) {
   return text?.replaceAll('"', '\'');
@@ -23,8 +23,8 @@ function replaceDoubleQuote(text) {
  * The part of a component's path that follows `src`, which is what the published
  * package exposes as its module path.
  *
- * @param {string} filePath - path to a component file
- * @returns {string} the path from `src` onwards, or the whole path when it holds no `src`
+ * @param filePath - path to a component file
+ * @returns the path from `src` onwards, or the whole path when it holds no `src`
  */
 function pathUnderSrc(filePath) {
   const marker = 'src';

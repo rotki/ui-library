@@ -14,8 +14,7 @@ export default rotki({
     },
   },
 }, {
-  // `__test__` is the established test-fixtures directory convention here
-  // (e.g. `@/__test__/options`); exempt it from the directory-name rule.
+  // `__test__` is this repo's test-fixtures directory convention, so the directory-name rule skips it
   files: ['**/__test__/**'],
   rules: {
     'unicorn/filename-case': 'off',

@@ -37,7 +37,6 @@ test.describe('steppers', () => {
   });
 
   test('should render vertical stepper', async ({ page }) => {
-    // Stepper at index 1 is vertical
     const stepper = page.locator('[data-id=stepper-1]');
     await expect(stepper).toBeVisible();
 
@@ -46,7 +45,6 @@ test.describe('steppers', () => {
   });
 
   test('should render icon-top stepper', async ({ page }) => {
-    // Stepper at index 2 has iconTop=true
     const stepper = page.locator('[data-id=stepper-2]');
     await expect(stepper).toBeVisible();
 
@@ -55,7 +53,6 @@ test.describe('steppers', () => {
   });
 
   test('should render custom stepper variant', async ({ page }) => {
-    // Stepper at index 4 has custom=true
     const stepper = page.locator('[data-id=stepper-4]');
     await expect(stepper).toBeVisible();
 

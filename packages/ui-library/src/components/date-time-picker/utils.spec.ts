@@ -67,8 +67,7 @@ describe('date-time-picker/utils', () => {
         .toBe('2024-01-05T09:07:03.042');
     });
 
-    // typing a year goes through 2, 20 and 202 before it reads 2024, and an
-    // unpadded `2-01-05T…` made `dayjs.tz()` throw a RangeError
+    // A year being typed goes 2, 20, 202, and an unpadded `2-01-05T...` made `dayjs.tz()` throw
     it.each([
       [2, '0002-01-05T09:07:03.042'],
       [20, '0020-01-05T09:07:03.042'],

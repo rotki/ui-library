@@ -37,8 +37,13 @@ function createWrapper(
   });
 }
 
-// bound errors are written in the field's own format; these pickers all use the
-// defaults, so DD/MM/YYYY HH:mm
+/**
+ * A bound as an error message writes it: in the field's own format, which for
+ * every picker here is the default `DD/MM/YYYY HH:mm`.
+ *
+ * @param date - the minimum or maximum the picker was given
+ * @returns that date as the message spells it out
+ */
 function boundLabel(date: Date): string {
   return dayjs(date).format('DD/MM/YYYY HH:mm');
 }
@@ -420,8 +425,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     expect(wrapper.find('.details').text()).toContain('The selected date cannot be in the future');
   });
 
-  it('should handle "now" as maxDate correctly', async () => {
-    // Set model value to the current time (fixedDate) which should be valid
+  it('should accept a value at the current time under a "now" maxDate', async () => {
     wrapper = createWrapper({
       props: {
         maxDate: 'now',
@@ -797,8 +801,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     let modelValue = wrapper.emitted('update:modelValue');
     const emissionsBeforeZero = modelValue?.length ?? 0;
 
-    // Type "0" for month - should be rejected (minValue = 1)
-    // Before the fix: typing "0" would set month to 0 (December of previous year) and auto-advance
+    // "0" is below the month's minimum of 1, and used to set month 0, December of the year before
     await inputField.trigger('keydown', { code: 'Digit0', key: '0' });
     await vi.runOnlyPendingTimersAsync();
 
@@ -807,8 +810,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     const emissionsAfterZero = modelValue?.length ?? 0;
     expect(emissionsAfterZero).toBe(emissionsBeforeZero);
 
-    // Type "9" - since "0" was rejected and didn't set any value,
-    // this should set month to 9 (September) directly, not "09"
+    // The rejected "0" left nothing behind, so "9" is September rather than "09"
     await inputField.trigger('keydown', { code: 'Digit9', key: '9' });
     await vi.runOnlyPendingTimersAsync();
 
@@ -846,8 +848,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     await inputField.trigger('focus');
     await vi.runOnlyPendingTimersAsync();
 
-    // Simulate clicking on the month segment by setting selectionStart to position 4
-    // Position 4 is in the "MM" segment for "15/06/2023 14:30" format (DD/MM/YYYY HH:mm)
+    // Position 4 sits in the MM segment of `15/06/2023 14:30`, so this stands in for clicking it
     inputElement.selectionStart = 4;
     inputElement.selectionEnd = 4;
 
@@ -954,8 +955,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
 
   describe('edge cases', () => {
     it('should handle leap year February correctly', async () => {
-      // 2024 is a leap year
-      const leapYearFeb = new Date(2024, 1, 29, 12, 0); // Feb 29, 2024
+      const leapYearFeb = new Date(2024, 1, 29, 12, 0); // 29 February, which only a leap year has
       wrapper = createWrapper({
         props: {
           modelValue: leapYearFeb,
@@ -970,8 +970,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     });
 
     it('should handle non-leap year February correctly', async () => {
-      // 2023 is not a leap year - Feb 28 is the last day
-      const nonLeapYearFeb = new Date(2023, 1, 28, 12, 0);
+      const nonLeapYearFeb = new Date(2023, 1, 28, 12, 0); // 28 February, the last day of a common year
       wrapper = createWrapper({
         props: {
           modelValue: nonLeapYearFeb,
@@ -1154,8 +1153,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     });
 
     it('should emit milliseconds with millisecond accuracy', async () => {
-      // Reset system time to ensure exact millisecond value
-      vi.setSystemTime(fixedDate);
+      vi.setSystemTime(fixedDate); // pins the millisecond the emission is compared against
 
       wrapper = createWrapper({
         props: {
@@ -1279,8 +1277,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       await inputField.trigger('keydown', { code: 'Digit4', key: '4' });
       await vi.runOnlyPendingTimersAsync();
 
-      // Typing 4 moves to next segment since 40+ is invalid
-      // So it should have set day to 4
+      // 4 moves on to the next segment, since no day starts with a 4
       const modelValue = wrapper.emitted('update:modelValue');
       expect(modelValue).toBeTruthy();
 
@@ -1683,8 +1680,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       await inputField.trigger('focus');
       await vi.runOnlyPendingTimersAsync();
 
-      // In month-first format (MM/DD/YYYY), first segment is month
-      // Type "0101" - should set month=01 and day=01
+      // The first segment of MM/DD/YYYY is the month, so "0101" is January the 1st
       await inputField.trigger('keydown', { code: 'Digit0', key: '0' });
       await vi.runOnlyPendingTimersAsync();
       await inputField.trigger('keydown', { code: 'Digit1', key: '1' });
@@ -1723,8 +1719,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       await inputField.trigger('keydown', { code: 'Digit3', key: '3' });
       await vi.runOnlyPendingTimersAsync();
 
-      // After typing "3" for day, cursor should stay on day to allow "30" or "31"
-      // Or auto-advance if "30" exceeds max possibility
+      // A day of "3" can still become 30 or 31, so the caret stays unless the month rules those out
       const modelValue = wrapper.emitted('update:modelValue');
       expect(modelValue).toBeTruthy();
     });
@@ -2287,8 +2282,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       await inputField.trigger('keydown', { key: '5' });
       await vi.runOnlyPendingTimersAsync();
 
-      // RuiFormTextDetail only displays the first error message
-      // When both prop errors and validation errors exist, prop error is shown first
+      // The details row shows one message, and a prop error comes before a validation one
       const detailsText = wrapper.find('.details').text();
       expect(detailsText).toContain(propError);
     });
@@ -2858,9 +2852,12 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       expect(wrapper.find('button[data-id="append"]').attributes('aria-label')).toBe('Close the calendar');
     });
 
-    // Tabbing through a form should cross a date field in one stop, not two, and a from/to pair
-    // in two rather than four. The button is safe to skip because alt+arrowdown on the field
-    // does the same job, which the test below pins.
+    /*
+     * Tabbing through a form crosses a date field in one stop rather than two,
+     * and a from/to pair in two rather than four. Skipping the button costs
+     * nothing, because alt+arrowdown on the field opens the calendar just as
+     * well, which the test below pins.
+     */
     it('keeps the calendar toggle out of the tab order', () => {
       wrapper = createWrapper({
         props: {
@@ -2965,8 +2962,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       expect(wrapper.find('input').element.value).toBe('DD/MM/YYYY HH:mm');
     });
 
-    // the guard is "no segment set" rather than `valueSet`, so a half typed
-    // date is not wiped off the screen when the field loses focus
+    // The guard is "no segment set" rather than `valueSet`, which is what keeps this on screen
     it('keeps a partially typed date visible after blur', async () => {
       wrapper = createWrapper({
         attachTo: document.body,
@@ -3124,8 +3120,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
 
       await vi.runOnlyPendingTimersAsync();
 
-      // focusing expands the format tokens into the value; the caret must end
-      // up on the first segment rather than after the tokens
+      // Focus expands the format tokens into the value, with the caret on the first segment
       const input = wrapper.find('input').element;
       expect(input.value).toBe('DD/MM/YYYY HH:mm');
       expect(input.selectionStart).toBe(0);

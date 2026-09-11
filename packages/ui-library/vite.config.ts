@@ -46,10 +46,13 @@ export default defineConfig({
       cssFileName: 'style',
     },
     rolldownOptions: {
+      /**
+       * Everything declared in package.json, dependencies and peers alike,
+       * stays external: a runtime dependency has to resolve from the
+       * consumer's own node_modules rather than ship with pnpm peer-hash paths
+       * baked in.
+       */
       external: (id: string) => {
-        // Anything declared in package.json (deps + peerDeps) is always externalized —
-        // runtime deps must be installed by the consumer and resolved from their
-        // node_modules, never bundled with pnpm peer-hash paths baked in.
         const extraExternals = [
           // Transitive runtime deps not listed in package.json but referenced directly
           '@floating-ui/core',

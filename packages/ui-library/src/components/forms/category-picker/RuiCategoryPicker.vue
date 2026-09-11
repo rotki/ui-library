@@ -184,11 +184,16 @@ const isMobile = computed<boolean>(() => get(breakpoints.smaller(mobileBreakpoin
 
 const mode = computed<'twoPane' | 'drill'>(() => (get(isMobile) ? 'drill' : 'twoPane'));
 
-// Desktop anchors an outside-click popover under the field (RuiMenu); narrow
-// width shows a full-width bottom sheet (RuiDialog). Each branch returns only
-// its own shell's props so the other component's props never leak as attrs.
+/**
+ * Desktop anchors an outside-click popover under the field (RuiMenu); narrow
+ * width shows a full-width bottom sheet (RuiDialog).
+ */
 const shell = computed<typeof RuiMenu | typeof RuiDialog>(() => (get(isMobile) ? RuiDialog : RuiMenu));
 
+/**
+ * The bottom sheet's props. Each shell is given only its own props, so the
+ * other component's never leak through as attributes.
+ */
 function dialogShellProps(): Record<string, unknown> {
   return {
     ariaLabel: dialogOptions?.ariaLabel ?? label,
@@ -199,14 +204,16 @@ function dialogShellProps(): Record<string, unknown> {
   };
 }
 
+/**
+ * The popover's props. It anchors to the field box rather than the wrapper, so
+ * it sits directly under the input instead of below the reserved details row,
+ * and drops the menu's default vertical padding so the popover box equals the
+ * panel: the size middleware caps the panel to the available height, and any
+ * extra chrome padding would push the popover past the viewport edge.
+ */
 function menuShellProps(): Record<string, unknown> {
   return {
-    // Anchor to the field box, not the wrapper, so the popover sits directly
-    // under the input instead of below the reserved details row.
     anchorEl: get(fieldRef) ?? undefined,
-    // Drop the menu's default vertical padding so the popover box equals our
-    // panel: the size middleware caps the panel to the available height, and
-    // any extra chrome padding would push the popover past the viewport edge.
     classNames: { content: 'py-0', menu: 'z-[9999]' },
     closeOnContentClick: false,
     disableAutoFocus: true,
@@ -239,8 +246,10 @@ const selectedText = computed<string | undefined>(() => {
 
 const outlined = computed<boolean>(() => variant === 'outlined');
 
-// Desktop lets the user type in the field itself (no separate search box);
-// narrow width keeps a read-only trigger that opens the sheet's own search.
+/**
+ * Desktop lets the user type in the field itself (no separate search box);
+ * narrow width keeps a read-only trigger that opens the sheet's own search.
+ */
 const canType = computed<boolean>(() => searchable && !get(isMobile) && !readOnly && !disabled);
 
 const isTyping = computed<boolean>(() => get(isOpen) && get(canType));
@@ -253,8 +262,10 @@ const legendText = computed<string>(() => {
   return required ? `${label} ﹡` : label;
 });
 
-// Drives both the clear button itself and the room the selection overlay has
-// to leave for it, so the two can never disagree.
+/**
+ * Drives both the clear button itself and the room the selection overlay has
+ * to leave for it, so the two can never disagree.
+ */
 const showClear = computed<boolean>(() =>
   clearable && get(selectedItem) !== undefined && !disabled && !readOnly);
 
@@ -325,11 +336,14 @@ function onCategoryClick(category: string | null): void {
     focusPane('detail');
 }
 
+/**
+ * Moves focus to one of the panes. The focus call prevents scrolling because
+ * the panes sit inside a teleported popover, and without it the browser
+ * scrolls the page behind to reveal the pane.
+ */
 function focusPane(pane: 'rail' | 'detail'): void {
   set(focusedPane, pane);
   nextTick(() => {
-    // preventScroll: focus moves between panes inside a teleported popover;
-    // without it the browser scrolls the page behind to reveal the pane.
     (pane === 'rail' ? get(railRef) : get(detailRef))?.focus({ preventScroll: true });
   });
 }
@@ -364,9 +378,11 @@ function selectHighlighted(): void {
     selectItem(item);
 }
 
-// Enter from the field commits the best match for the current query, so a
-// type-to-pick flow (type a few letters, press Enter) works without leaving the
-// input. Does nothing when the field is empty.
+/**
+ * Enter from the field commits the best match for the current query, so a
+ * type-to-pick flow (type a few letters, press Enter) works without leaving
+ * the input. Does nothing when the field is empty.
+ */
 function selectTopResult(): void {
   if (!get(searchInput).trim())
     return;
@@ -409,24 +425,28 @@ watch(activeRailIndex, (index) => {
     scrollActiveDescendantIntoView(get(railRef), `${baseId}-cat-${index}`);
 });
 
-watch(isOpen, (value) => {
+/**
+ * Opening takes focus where the user types next: desktop is a combobox, so
+ * focus stays in the field and ArrowDown moves into the panes, while the
+ * mobile sheet has no typing field and focuses the rail instead. Closing
+ * resets the query, so the field shows the selection again next time, and
+ * returns focus to the trigger, which the APG dialog contract asks for.
+ */
+function onOpenChanged(value: boolean): void {
   if (value) {
     syncActiveToSelection();
     set(focusedPane, 'rail');
     set(drillStep, 'category');
     resetHighlightToSelection();
-    // Desktop is a combobox: keep focus in the field so the user can type
-    // straight away (ArrowDown moves into the panes). The mobile sheet has no
-    // typing field, so focus the rail instead.
     nextTick(() => (get(canType) ? get(activatorRef) : get(railRef))?.focus({ preventScroll: true }));
   }
   else {
-    // Reset the query so the field shows the selection again next time, and
-    // return focus to the trigger (APG dialog contract).
     set(searchInput, '');
     nextTick(() => get(activatorRef)?.focus({ preventScroll: true }));
   }
-});
+}
+
+watch(isOpen, onOpenChanged);
 </script>
 
 <template>

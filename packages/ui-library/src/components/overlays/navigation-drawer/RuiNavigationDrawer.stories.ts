@@ -104,8 +104,7 @@ export const MiniVariant = meta.story({
     miniVariant: true,
   },
   async play({ canvas, userEvent }) {
-    // Mini variant is always visible (collapsed)
-    const drawer = document.querySelector('aside[data-id=drawer-content]');
+    const drawer = document.querySelector('aside[data-id=drawer-content]'); // the mini variant stays on screen, collapsed
     expect(drawer).toBeTruthy();
     expect(drawer).toHaveAttribute('data-mini');
     expect(drawer).not.toHaveAttribute('data-visible');

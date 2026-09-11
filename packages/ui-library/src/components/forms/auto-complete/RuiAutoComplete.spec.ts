@@ -218,8 +218,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     });
   });
 
-  it('should not clear the selection when options load after the value', async () => {
-    // Async option lists start empty, so the value is set before its option exists.
+  it('should not clear the selection when options load after the value, as an async list makes them', async () => {
     wrapper = createWrapper<string, string>({
       props: {
         modelValue: 'Alice',
@@ -241,9 +240,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     expect(wrapper.find<HTMLInputElement>('div[data-id=activator] input').element.value).toBe('Alice');
   });
 
-  it('should not overwrite an empty-string model when options load', async () => {
-    // A consumer whose model is a plain `string` starts at '', which is never a valid
-    // option. Overwriting it with `undefined` breaks that model's declared type.
+  it('should not overwrite an empty-string model with undefined, which breaks a plain `string` model', async () => {
     wrapper = createWrapper<string, string>({
       props: {
         modelValue: '',
@@ -363,8 +360,6 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     expect(chips[0].text()).toBe('France');
     expect(chips[1].text()).toBe('England');
 
-    // Alt + Backspace on France restores its text into the input and removes
-    // only that chip, leaving the other selections untouched.
     await chips[0].trigger('keydown', { altKey: true, key: 'Backspace' });
     await vi.advanceTimersToNextTimerAsync();
 
@@ -422,11 +417,9 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     // The menu is teleported to document.body, so we need to query it there
     expect(queryByRole('menu')).toBeTruthy();
 
-    // Find all buttons in the menu that is specific to this test
-    // We need to be more specific to avoid catching buttons from other tests
     let menuButtons = queryAllMenuButtons();
 
-    // Filter only the buttons from the current menu (should contain our search terms)
+    // Narrowed to this test's own search terms, since a menu from another test may still be mounted
     let relevantButtons = menuButtons.filter(btn =>
       btn.innerHTML.includes('German') || btn.innerHTML.includes('Germany'),
     );
@@ -528,8 +521,6 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     await wrapper.find('input').setValue('Ger');
     await vi.advanceTimersToNextTimerAsync();
 
-    // No arrow navigation — autoSelectFirst auto-highlights, but user expects
-    // their typed text to be committed as a custom value.
     await wrapper.find('[data-id=activator]').trigger('keydown.enter');
     await vi.advanceTimersToNextTimerAsync();
 
@@ -631,8 +622,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
       },
     });
 
-    // Open menu without typing or navigating; nothing is highlighted because
-    // autoSelectFirst is false and the user has not pressed arrow keys.
+    // Opened without typing or navigating, so with autoSelectFirst false nothing is highlighted
     const activator = wrapper.find('div[data-id="activator"]');
     await activator.trigger('focus');
     await activator.trigger('click');
@@ -1109,8 +1099,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     await wrapper.find('input').trigger('keydown.delete');
     await vi.advanceTimersToNextTimerAsync();
 
-    // In multi-select, Delete focuses the last chip (doesn't remove directly)
-    // Then pressing Delete on the focused chip removes it
+    // In multi-select the first Delete only focuses the last chip; a second one removes it
     const lastChip = chips[1];
     assert(lastChip);
     await lastChip.trigger('keydown', { key: 'Delete' });
@@ -1583,8 +1572,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     });
 
     it('should not duplicate an item that matches both its text and group label', async () => {
-      // "Asia" matches both the group label and the item's own text.
-      const overlappingOptions: GroupedSelectOption[] = [
+      const overlappingOptions: GroupedSelectOption[] = [ // "Asia" is both a group and part of an item's text
         { category: 'Asia', id: '1', label: 'Asia Pacific' },
         { category: 'Asia', id: '2', label: 'India' },
         { category: 'Europe', id: '3', label: 'Germany' },
@@ -1608,9 +1596,8 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
       await wrapper.find('input').setValue('Asia');
       await vi.advanceTimersToNextTimerAsync();
 
+      // Both Asia items show, the first matching by text as well as by group, and neither twice
       const menuButtons = queryAllMenuButtons();
-      // Both Asia items show (one via group, one via group; the first also via
-      // text) but neither is rendered twice.
       expect(menuButtons.filter(btn => btn.innerHTML.includes('Asia Pacific'))).toHaveLength(1);
       expect(menuButtons.filter(btn => btn.innerHTML.includes('India'))).toHaveLength(1);
       expect(menuButtons.filter(btn => btn.innerHTML.includes('Germany'))).toHaveLength(0);

@@ -32,9 +32,11 @@ test.describe('badge', () => {
     await expect(dotBadge.locator('span')).toHaveCount(0);
   });
 
-  test('should render different color variants', async ({ page }) => {
-    // badge-0 = default, badge-1 = primary, badge-2 = secondary, badge-3 = error
-    for (const index of [0, 1, 2, 3, 4, 5, 6]) {
+  test('should render the leading run of one badge per colour', async ({ page }) => {
+    const colorCount = Number(await page.locator('[data-color-count]').getAttribute('data-color-count'));
+    expect(colorCount).toBeGreaterThan(0);
+
+    for (let index = 0; index < colorCount; index++) {
       const badge = page.locator(`div[data-id=badge-${index}] div[role=status]`);
       await expect(badge).toBeVisible();
     }

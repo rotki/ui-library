@@ -31,9 +31,7 @@ test.describe('buttons', () => {
 
     await expect(button).toBeVisible();
 
-    // Label line-height collapses to the md icon size (1.125rem = 18px) so the
-    // label's line-box matches the icon's bounding box; without the fix the
-    // label inherits leading-5 (20px) and visually drifts above the icon.
+    // 18px matches the md icon box; the inherited 20px drifted the label above the icon
     await expect(label).toHaveCSS('line-height', '18px');
 
     const labelBox = await label.boundingBox();

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import RuiDialog from '@/components/overlays/dialog/RuiDialog.vue';
 
-// keep these props in sync with Dialog props
+/** The sheet's props, which stay in step with RuiDialog's. */
 export interface BottomSheetProps {
   persistent?: boolean;
   width?: string | number;

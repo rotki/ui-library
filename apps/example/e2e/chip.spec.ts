@@ -12,26 +12,25 @@ test.describe('chips', () => {
   });
 
   test('should render closeable chip with close button', async ({ page }) => {
-    // chip-0 is closeable (grey, filled)
     const closeableChip = page.locator('[data-id=chip-0]');
     await expect(closeableChip.locator('button')).toBeVisible();
 
-    // chip-14 is non-closeable
     const nonCloseableChip = page.locator('[data-id=chip-14]');
     await expect(nonCloseableChip.locator('button')).toHaveCount(0);
   });
 
-  test('should render different color variants', async ({ page }) => {
-    // First 7 chips are the 7 colors (grey, primary, secondary, error, warning, info, success)
-    for (let i = 0; i < 7; i++) {
+  test('should render the leading run of one chip per colour', async ({ page }) => {
+    const colorCount = Number(await page.locator('[data-color-count]').getAttribute('data-color-count'));
+    expect(colorCount).toBeGreaterThan(0);
+
+    for (let i = 0; i < colorCount; i++) {
       const chip = page.locator(`[data-id=chip-${i}]`);
       await expect(chip).toBeVisible();
     }
   });
 
   test('should render small size chips', async ({ page }) => {
-    // chip-35 to chip-41 are closeable+sm (attribute[5], 7 colors)
-    const smChip = page.locator('[data-id=chip-35]');
+    const smChip = page.locator('[data-id=chip-35]'); // the first of the closeable small ones
     await expect(smChip).toBeVisible();
     await expect(smChip.locator('button')).toBeVisible();
   });

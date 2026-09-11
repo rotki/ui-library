@@ -15,10 +15,8 @@ export const handlers = [
   // Mock GitHub raw content API for asset mappings
   http.get('https://raw.githubusercontent.com/rotki/data/:branch/constants/asset-mappings.json', () => HttpResponse.json(mockAssetMappings)),
 
-  // Mock GitHub raw content API for logo images
+  // Logo images: an empty 200 stands in for the image itself, which no test reads
   http.get('https://raw.githubusercontent.com/rotki/data/:branch/assets/icons/:filename', () =>
-    // Return a mock response for logo images
-    // In real tests, this would return actual image data or a data URL
     new HttpResponse(null, {
       status: 200,
       headers: {

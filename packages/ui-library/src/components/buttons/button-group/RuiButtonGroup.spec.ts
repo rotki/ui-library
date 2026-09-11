@@ -87,8 +87,7 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
     expectWrapperToHaveClass(wrapper, 'button', /leading-6/);
   });
 
-  it('should let child size override group size', () => {
-    // Group is lg but the first child explicitly sets sm; sm should win for that child only.
+  it('should let a child that sets its own size keep it, without changing its siblings', () => {
     const wrapperWithOverride = mount(RuiButtonGroup, {
       props: { size: 'lg' },
       slots: {

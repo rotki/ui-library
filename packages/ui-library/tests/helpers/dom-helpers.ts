@@ -147,9 +147,11 @@ export function expectWrapperNotToHaveClass(
 }
 
 /**
- * Get the value of an input element
- * @param input - The input element
- * @returns The input value
+ * Reads what an input holds, answering an element that is missing or is not an
+ * input with an empty string, so a test can assert on it either way.
+ *
+ * @param input - the element to read
+ * @returns its value, or an empty string
  */
 export function getInputValue(input: Element | null | undefined): string {
   return (input as HTMLInputElement | null)?.value ?? '';

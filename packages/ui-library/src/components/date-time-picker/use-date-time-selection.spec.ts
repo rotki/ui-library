@@ -19,7 +19,13 @@ vi.mock('@/components/date-time-picker/utils', async (importOriginal) => {
   };
 });
 
-// Helper to test composable with proper lifecycle hooks
+/**
+ * Runs a composable inside a component, so it gets the lifecycle hooks it
+ * expects.
+ *
+ * @param composable - the composable to run
+ * @returns what it returned, and a way to unmount the component holding it
+ */
 function withSetup<T>(composable: () => T): { result: T; unmount: () => void } {
   let result!: T;
   const TestComponent = defineComponent({
@@ -216,7 +222,7 @@ describe('use-date-time-selection', () => {
   });
 
   describe('selectedDate computed', () => {
-    it('should return undefined when not all date fields are set', () => {
+    it('should return undefined when the day is left unset', () => {
       const modelValue = ref<number | undefined>(undefined);
 
       const { result, unmount } = withSetup(() => useDateTimeSelection({
@@ -231,7 +237,6 @@ describe('use-date-time-selection', () => {
 
       set(result.modelYear, 2023);
       set(result.modelMonth, 6);
-      // modelDay is not set
 
       expect(get(result.selectedDate)).toBeUndefined();
 
@@ -279,7 +284,7 @@ describe('use-date-time-selection', () => {
 
       // Setting December 30, 2023 then changing to February
       set(result.modelYear, 2023);
-      set(result.modelMonth, 12); // December
+      set(result.modelMonth, 12);
       set(result.modelDay, 30);
 
       // Now change to February - should not overflow
@@ -293,7 +298,7 @@ describe('use-date-time-selection', () => {
   });
 
   describe('selectedTime computed', () => {
-    it('should return undefined when hour or minute are not set', () => {
+    it('should return undefined when the minute is left unset', () => {
       const modelValue = ref<number | undefined>(undefined);
 
       const { result, unmount } = withSetup(() => useDateTimeSelection({
@@ -307,7 +312,6 @@ describe('use-date-time-selection', () => {
       }));
 
       set(result.modelHour, 14);
-      // modelMinute is not set
 
       expect(get(result.selectedTime)).toBeUndefined();
 
@@ -874,7 +878,7 @@ describe('use-date-time-selection', () => {
       }));
 
       set(result.modelYear, 2023);
-      set(result.modelMonth, 2); // February
+      set(result.modelMonth, 2);
       set(result.modelDay, 31); // Invalid for February
 
       const dateTime = result.getDateTime();
@@ -1051,8 +1055,7 @@ describe('use-date-time-selection', () => {
   });
 
   describe('bound errors follow the field format', () => {
-    // 06/07 is the giveaway pair: it reads as 6 July day-first and 7 June
-    // month-first, so a message built from the browser locale cannot pass these
+    // 06/07 reads as 6 July day-first and 7 June month-first, so a locale-built message cannot pass
     const bound = new Date(2023, 6, 6, 9, 5);
 
     function errorFor(format: string, min: boolean): string {
@@ -1089,8 +1092,7 @@ describe('use-date-time-selection', () => {
       expect(errorFor('MM/DD/YYYY HH:mm', true)).toBe('Date cannot be before 07/06/2023 09:05');
     });
 
-    // toLocaleDateString() dropped the clock, so a mid-day bound could not
-    // explain why a time later that same day was refused
+    // toLocaleDateString() dropped the clock, leaving a mid-day bound unable to explain itself
     it('should keep the time of the bound', () => {
       expect(errorFor('DD/MM/YYYY HH:mm:ss', false)).toBe('Date cannot be after 06/07/2023 09:05:00');
     });
@@ -1349,9 +1351,12 @@ describe('use-date-time-selection', () => {
       unmount();
     });
 
-    // hour and minute are already enough to make a value, which is emitted and read back with a
-    // zero second, so from here on the second is a value the entry holds rather than one it left
-    // out. The fill only covers the segments an entry never reached.
+    /*
+     * An hour and a minute already make a value, which is emitted and read
+     * back with a zero second, so from there on the second is a value the
+     * entry holds rather than one it left out: the fill only covers segments
+     * an entry never reached.
+     */
     it('should treat a time entered down to the minute as complete', async () => {
       const modelValue = ref<number | undefined>(undefined);
 

@@ -8,9 +8,8 @@ import { getAlignClass, getSortButtonAlignClass, SortDirection, TableAlign } fro
 import { tv } from '@/utils/tv';
 
 /**
- * Represents a sortable column name for a given type.
- * The column name must be a key of the passed data object type.
- * @template T - The type of the data in the column.
+ * A sortable column name for `T`, the type of the data in the column: the name
+ * must be a key of that object type.
  */
 export type TableRowKey<T> = keyof T extends string ? keyof T : never;
 
@@ -39,11 +38,8 @@ export interface BaseTableColumn<T> {
 }
 
 /**
- * Represents a sortable table column.
- * This is used to ensure that when using sortable with a true value,
- * the key matches to an actual property of the object passed.
- *
- * @template T - The type of data in the table column.
+ * A sortable table column, which ties `sortable: true` to a key that is a real
+ * property of `T`, the type of data in the table.
  */
 export interface SortableTableColumn<T> extends BaseTableColumn<T> {
   sortable: true;

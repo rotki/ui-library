@@ -100,10 +100,8 @@ describe('use-keyboard-handler', () => {
         cursorPosition: ref<number>(2),
       });
 
-      // Position 2 is the "/" separator
+      // Position 2 is the "/" separator, which the DD segment still claims: its range ends there
       const segment = handler.getCurrentSegment(2);
-      // Depending on implementation, this might return undefined or the adjacent segment
-      // The implementation shows it uses >= start && <= end, so position 2 might match DD (end is 2)
       expect(segment).toBeDefined();
     });
   });

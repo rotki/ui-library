@@ -32,17 +32,22 @@ const disabled = computed<boolean>(() => isDisabledRow(get(rowId)));
 const expanded = computed<boolean>(() => get(expandable) && !!slots['expanded-item'] && isExpanded(get(rowId)));
 const rowClass = computed<string>(() => typeof itemClass === 'string' ? itemClass : itemClass(row));
 
-// A column is pinned to the mobile card header when it is flagged `mobileHeader`
-// (typically an action column) or when it is the auto-generated expand column.
+/**
+ * A column is pinned to the mobile card header when it is flagged
+ * `mobileHeader`, typically an action column, or when it is the
+ * auto-generated expand column.
+ */
 function isMobileHeaderColumn(column: TableColumn<T>): boolean {
   return !!column.mobileHeader || column.key === 'expand';
 }
 
-// A pinned column only earns a spot in the header if it actually renders
-// something: the expand toggle, a provided item slot, or a non-empty cell value.
-// Without this, a pinned column with no content (e.g. an action column whose
-// `#item.action` slot is not provided in a nested table) would leave an empty
-// header bar with just its divider line.
+/**
+ * A pinned column only earns a spot in the header if it renders something: the
+ * expand toggle, a provided item slot, or a non-empty cell value. Without this,
+ * a pinned column with no content, such as an action column whose
+ * `#item.action` slot a nested table does not provide, leaves an empty header
+ * bar with just its divider line.
+ */
 function mobileHeaderColumnHasContent(column: TableColumn<T>): boolean {
   if (column.key === 'expand')
     return true;
@@ -52,8 +57,10 @@ function mobileHeaderColumnHasContent(column: TableColumn<T>): boolean {
   return value !== undefined && value !== null && value !== '';
 }
 
-// In the stacked mobile layout, header columns render in the card header row
-// instead of as a label/value pair. Everything else stacks below in the body.
+/**
+ * In the stacked mobile layout, header columns render in the card header row
+ * instead of as a label/value pair. Everything else stacks below in the body.
+ */
 const mobileHeaderColumns = computed<TableColumn<T>[]>(() =>
   get(isMobile) ? get(columns).filter(column => isMobileHeaderColumn(column) && mobileHeaderColumnHasContent(column)) : [],
 );
@@ -64,15 +71,17 @@ const showMobileHeader = computed<boolean>(() =>
   get(isMobile) && (!!get(selectedData) || get(mobileHeaderColumns).length > 0),
 );
 
-// `!border-y` defeats the `divide-y-0` on the mobile tbody, which otherwise
-// zeroes the top/bottom border on every card except the first one. When the
-// card is expanded, its bottom edge flattens so the expanded panel attaches
-// flush beneath it.
+/**
+ * `!border-y` defeats the `divide-y-0` on the mobile tbody, which otherwise
+ * zeroes the top and bottom border on every card except the first. An expanded
+ * card flattens its bottom edge so the expanded panel attaches flush beneath
+ * it.
+ *
+ * These bindings do not run through tailwind-merge, so each state picks its own
+ * utilities rather than emitting conflicting ones.
+ */
 const mobileCardClass = computed<string>(() => {
   const shared = 'relative flex flex-col border !border-y border-black/[0.12] dark:border-white/[0.12] overflow-hidden';
-  // These bindings are not run through tailwind-merge, so avoid emitting
-  // conflicting utilities (mb-0 vs mb-3, rounded-b-none vs rounded-lg): pick the
-  // right one per state instead.
   return get(expanded)
     ? `${shared} rounded-t-lg mb-0`
     : `${shared} rounded-lg mb-3 last:mb-0`;

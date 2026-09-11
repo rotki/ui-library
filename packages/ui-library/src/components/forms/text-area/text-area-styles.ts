@@ -136,17 +136,11 @@ export const textAreaStyles = tv({
     // --- Outlined variant ---
     { variant: 'outlined', active: true, class: {
       textarea: 'border-t-transparent',
-      // Same rationale as RuiTextField's outlined+active rule: a percentage
-      // translate gets recomputed against the *current* label height, which
-      // jumps the moment !h-auto is removed on blur, producing a visible
-      // upward overshoot before the transition settles. Anchor in rem.
+      // Anchored in rem for the reason textFieldStyles gives: a percentage overshoots on blur
       label: '!h-auto -translate-y-[0.5rem] pl-4',
     } },
     { variant: 'outlined', dense: true, class: { label: 'leading-[2.5]' } },
-    // Re-assert `leading-tight` for outlined+dense+active. The dense rule
-    // above sets `leading-[2.5]` which twMerge keeps as the winning leading,
-    // inflating the floated label's line-box and pushing its visual centre
-    // below the fieldset border.
+    // Re-asserted because the dense rule's later `leading-[2.5]` wins in twMerge otherwise
     { variant: 'outlined', dense: true, active: true, class: { label: '!leading-tight' } },
 
     // --- Focus label color (per color) ---

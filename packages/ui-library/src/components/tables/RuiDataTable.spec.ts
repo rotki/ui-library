@@ -241,8 +241,6 @@ describe('components/tables/RuiDataTable.vue', () => {
 
     await nextTick();
 
-    // Row is expanded and `expandable` is true (expanded model is bound), but with no
-    // `expanded-item` slot there is nothing to show, so no expanded row should render.
     expect(wrapper.find('tr[data-id=row-expanded]').exists()).toBeFalsy();
 
     // Providing the slot restores the expanded row.
@@ -268,13 +266,15 @@ describe('components/tables/RuiDataTable.vue', () => {
   });
 
   describe('consumer-owned expand column', () => {
-    // A consumer that provides `#item.expand` decides per row whether a toggle
-    // exists. The built-in toggle is a fallback for consumers that provide no
-    // slot at all, so it must not reappear on the rows the consumer left empty.
+    /**
+     * A consumer providing `#item.expand` decides per row whether a toggle
+     * exists, so the built-in fallback must not reappear on the rows they left
+     * empty. Only the first row is expandable here; on every other row the
+     * `v-if` leaves the slot rendering a comment, which is what used to trip
+     * that fallback.
+     */
     const expandSlots = {
       'expanded-item': '<div data-id="expanded-content">Expanded content</div>',
-      // Only the first row is expandable; on every other row the `v-if` leaves
-      // the slot rendering a comment, which is what used to trip the fallback.
       'item.expand': `<template #item.expand="{ row }">
         <button
           v-if="row.id === 1"
@@ -296,8 +296,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      // Negative control for the two tests below: without a consumer slot the
-      // fallback is still the only thing that renders a toggle.
+      // Control for the two tests below: with no consumer slot, only the fallback renders a toggle
       expect(wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"]').exists()).toBeTruthy();
       expect(wrapper.find('tbody tr:nth-child(2) button[data-id="expand-button"]').exists()).toBeTruthy();
     });
@@ -323,9 +322,7 @@ describe('components/tables/RuiDataTable.vue', () => {
       expect(notExpandable.find('button[data-id="expand-button"]').exists()).toBeFalsy();
     });
 
-    it('should leave the expand cell empty rather than printing the row value', () => {
-      // A row that happens to carry an `expand` field proves the empty case
-      // renders nothing at all, instead of falling through to the cell value.
+    it('should leave the expand cell empty rather than printing an `expand` field the row carries', () => {
       const rowsWithExpandField = data.map(user => ({ ...user, expand: 'leaked' }));
 
       wrapper = createWrapper({
@@ -1785,8 +1782,7 @@ describe('components/tables/RuiDataTable.vue', () => {
 
   describe('array group keys', () => {
     it('should support array of group keys', async () => {
-      // Create data with two potential group keys
-      const groupableData: User[] = [
+      const groupableData: User[] = [ // two fields either of which could group
         { email: 'a@test.com', id: 1, name: 'Alice', title: 'Developer' },
         { email: 'b@test.com', id: 2, name: 'Bob', title: 'Developer' },
         { email: 'c@test.com', id: 3, name: 'Charlie', title: 'Manager' },
@@ -2408,14 +2404,11 @@ describe('components/tables/RuiDataTable.vue', () => {
       expect(activator.text()).toContain('Full name');
     });
 
-    it('should auto-switch to the stacked layout when the width is below mobileBreakpoint', () => {
-      // jsdom renders at ~1024px. A breakpoint far above that means the table
-      // should switch to cards on its own. Guards the auto-switch, which used
-      // to never fire because an absent Boolean `mobile` prop coerces to false.
+    it('should auto-switch to the stacked layout below mobileBreakpoint, which an absent Boolean `mobile` prop used to prevent', () => {
       wrapper = createWrapper({
         props: {
           cols: columns,
-          mobileBreakpoint: 5000,
+          mobileBreakpoint: 5000, // jsdom renders at ~1024px, so this is always below the breakpoint
           rowAttr: 'id',
           rows: data,
         },
@@ -2438,9 +2431,7 @@ describe('components/tables/RuiDataTable.vue', () => {
       expect(wrapper.find('table thead').exists()).toBeTruthy();
     });
 
-    it('should not render a card header for a mobileHeader column with no content', () => {
-      // Flagged mobileHeader, but no `item.action` slot is provided and `action`
-      // is not a row key, so there is nothing to pin: no empty header bar.
+    it('should not render a card header for a mobileHeader column with neither a slot nor a row value', () => {
       const cols: TableColumn<User>[] = [
         { key: 'id', label: 'ID' },
         { key: 'name', label: 'Full name' },

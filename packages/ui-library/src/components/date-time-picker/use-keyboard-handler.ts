@@ -260,8 +260,7 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     if (disabled || readonly)
       return;
 
-    // Modifier combos belong to the browser: ctrl/cmd+c, ctrl/cmd+v, ctrl/cmd+a,
-    // reload, and so on. Swallowing them made copy and paste impossible.
+    // Modifier combos belong to the browser: swallowing them made copy and paste impossible
     if (event.ctrlKey || event.metaKey || event.altKey)
       return;
 
@@ -272,15 +271,19 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
   // Track the segment that was clicked, so handleFocus can restore it after DOM updates
   let clickedSegment: Segment | undefined;
 
-  // Capture clicked segment on mousedown (fires before focus event)
+  /**
+   * Captures the clicked segment on mousedown, which fires before focus.
+   *
+   * The in-progress digit buffer is reset because switching segments must not
+   * carry typed digits over, otherwise a leftover digit from another segment
+   * combines with the next keystroke (type "1" in HH, click mm, type "3" and
+   * mm would become 13 instead of 3).
+   */
   function handleMouseDown(event: MouseEvent): void {
     if (disabled || readonly || !(event.target instanceof HTMLInputElement))
       return;
     const currentSegment = getCurrentSegment(getClickPosition(event, event.target, true));
     if (currentSegment) {
-      // Reset in-progress digit buffer: switching segments must not carry typed digits over,
-      // otherwise a leftover digit from another segment combines with the next keystroke
-      // (e.g. type "1" in HH, click mm, type "3" → mm becomes 13 instead of 3).
       set(currentValue, undefined);
       clickedSegment = currentSegment;
     }
@@ -309,25 +312,29 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
       setCursorPosition(firstSegment);
   }
 
+  /**
+   * Restores the selection a click asked for, which opening the menu and the
+   * DOM updates that follow can lose. With no click to restore, focus selects
+   * the first segment, unless the user is already selecting text themselves.
+   */
   function handleFocus(): void {
-    // If we just clicked on a segment, restore that selection
-    // (the selection may have been lost due to menu opening/DOM updates)
     if (clickedSegment) {
       setCursorPosition(clickedSegment);
       clickedSegment = undefined;
       return;
     }
 
-    // Only select first segment if no text is currently selected in the input
     const input = get(textInput);
     if (input && input.selectionStart !== input.selectionEnd)
       return;
     selectFirstSegment();
   }
 
+  /**
+   * Forgets the cursor position and the clicked segment, so re-focusing on
+   * another segment does not blink through the one left behind.
+   */
   function handleBlur(): void {
-    // Reset cursor position and clicked segment when input loses focus
-    // This prevents "blinking" when re-focusing on a different segment
     set(cursorPosition, 0);
     set(currentValue, undefined);
     clickedSegment = undefined;

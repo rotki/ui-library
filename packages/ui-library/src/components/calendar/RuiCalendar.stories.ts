@@ -51,8 +51,8 @@ const meta = preview.meta({
 export const Default = meta.story({
   args: {},
   async play({ canvas, userEvent }) {
-    // Day 15 exists in every month, verify calendar renders and is clickable
-    await expect(canvas.getByText('15')).toBeVisible();
+    await expect(canvas.getByText('15')).toBeVisible(); // day 15 is in every month
+
     await userEvent.click(canvas.getByText('15'));
   },
 });

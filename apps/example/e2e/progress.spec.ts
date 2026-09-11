@@ -14,8 +14,7 @@ test.describe('progress indicators', () => {
   });
 
   test('should render linear and circular variants', async ({ page }) => {
-    // Linear progress bars
-    const linearProgress = page.locator('div[role=progressbar][data-variant=determinate]:not(:has(svg))').first();
+    const linearProgress = page.locator('div[role=progressbar][data-variant=determinate]:not(:has(svg))').first(); // linear bars hold no svg
     await expect(linearProgress).toBeVisible();
 
     // Circular progress bars

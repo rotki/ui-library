@@ -330,8 +330,7 @@ describe('composables/tables/data-table/selection', () => {
   });
 
   it('should deselect on other pages when multi-page toggle off', () => {
-    // Page 1 has rows 2,3. Row 1 is from another page.
-    const selectedData = ref<number[]>([1, 2, 3]);
+    const selectedData = ref<number[]>([1, 2, 3]); // row 1 is on another page than the visible 2 and 3
     const { result, unmount: u } = withSetup(() =>
       useTableSelection<TestItem, 'id'>(
         { rowAttr: 'id', multiPageSelect: true, disabledRows: () => undefined },
@@ -379,13 +378,10 @@ describe('composables/tables/data-table/selection', () => {
     );
     unmount = u;
 
-    // Simulate internal shiftClicked state by calling resetCheckboxShiftState
-    // then select normally to verify the baseline works
+    // The shiftClicked flag is internal, so this covers the ordinary select either side of it
     result.onSelect(true, 1, true);
     expect(get(selectedData)).toContain(1);
 
-    // The shiftClicked flag is internal — we can't set it directly,
-    // but we test that normal userAction select works
     result.onSelect(true, 2, true);
     expect(get(selectedData)).toContain(2);
   });
@@ -687,10 +683,7 @@ describe('composables/tables/data-table/selection', () => {
 
       vi.advanceTimersByTime(2);
 
-      // When lastSelectedIndex is -1, it falls back to lastIndex = index,
-      // so it toggles just the single row at that index.
-      // Row at index 1 is id:2, and since it's not selected, isSelected returns false,
-      // so valueToApply is false, and it calls onSelect(!false, value) = onSelect(true, 2)
+      // With no prior click the range collapses to this row alone, which was unselected and so becomes selected
       expect(get(selectedData)).toContain(2);
       expect(get(selectedData)).toHaveLength(1);
     });

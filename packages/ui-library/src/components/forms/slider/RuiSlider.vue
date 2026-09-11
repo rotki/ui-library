@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { ContextColorsType } from '@/consts/colors';
 import type { VueClassValue } from '@/types/class-value';
-import { HIGHLIGHT_COLOR_MAP, HIGHLIGHT_DEFAULT, SliderInteraction, sliderStyles } from '@/components/forms/slider/slider-styles';
 import RuiSliderTicks from '@/components/forms/slider/RuiSliderTicks.vue';
+import { HIGHLIGHT_COLOR_MAP, HIGHLIGHT_DEFAULT, SliderInteraction, sliderStyles } from '@/components/forms/slider/slider-styles';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';

@@ -1,30 +1,50 @@
 import { tv } from '@/utils/tv';
 
+/**
+ * The button's classes.
+ *
+ * Three decisions the class lists cannot state themselves:
+ *
+ * `position: relative` is not in the base root: it is only a positioning
+ * context for the loading spinner, so the `loading` variant applies it.
+ * Basing it here would collide with consumers pinning the button with
+ * `fixed`/`absolute`, since cascade order picks the later utility, usually
+ * `relative`, and turns their `right-*`/`bottom-*` into relative offsets,
+ * which misplaces FABs.
+ *
+ * Icon sizing flows through the `--rui-icon-size` custom property, seeded at
+ * the md value in the base root and redefined per size variant with `!` so a
+ * variant beats the baseline on the same element regardless of source order.
+ * RuiIcon's own `size` prop stamps an inline style on the svg, which beats the
+ * inherited value, so a consumer always wins. See rotki/ui-library#512.
+ *
+ * `disabled` on the element covers two states: actually disabled, and loading,
+ * since RuiButton sets `disabled = disabled || loading`. Only the cursor is
+ * shared between them; the grey disabled palette lives in the `loading: false`
+ * compounds, so a loading button keeps its variant color behind the spinner.
+ *
+ * An icon-only button matches the height of the text button of the same size,
+ * with a 60-70% glyph ratio, which is a larger glyph than the same size gives
+ * a prepend/append icon so it does not look lost in the square. xs pads by an
+ * arbitrary 0.1875rem because no Tailwind token holds the ratio at a 14px
+ * glyph:
+ *
+ * ```
+ * xs            p-[0.1875rem] + 0.875rem icon = 1.25rem (20px)   70%
+ * sm            p-1           + 1.25rem  icon = 1.75rem (28px)   71%
+ * md (default)  p-1.5         + 1.25rem  icon = 2rem    (32px)   63%
+ * lg            p-1.5         + 1.5rem   icon = 2.25rem (36px)   67%
+ * xl            p-2           + 1.5rem   icon = 2.5rem  (40px)   60%
+ * 2xl           p-2           + 1.75rem  icon = 2.75rem (44px)   64%
+ * ```
+ */
 export const buttonStyles = tv({
   slots: {
     root: [
       'text-sm leading-5 font-medium outline outline-1 outline-transparent outline-offset-[-1px]',
-      // `position: relative` is only needed as a positioning context for the
-      // absolute-positioned loading spinner; applied via the `loading` variant
-      // below. Putting it here would collide with consumers that need to pin
-      // the button with `fixed`/`absolute` (cascade order picks the later
-      // utility — usually `relative` — and the consumer's `right-*`/`bottom-*`
-      // end up as relative offsets, which misplaces FABs).
       'flex items-center justify-center gap-x-2',
       'px-4 py-1.5 rounded transition-all',
-      // Default (md) icon sizing is driven by a CSS custom property so that
-      // RuiIcon's `size` prop (stamped as inline `style="--rui-icon-size"` on
-      // the svg) can override it cleanly. Size variants below redefine the
-      // property with `!` so they beat this baseline on the same element;
-      // inline style on the svg then beats the inherited value when a
-      // consumer supplies their own size. See rotki/ui-library#512.
       '[--rui-icon-size:1.125rem]',
-      // `disabled` on the element covers two states: actually disabled and
-      // loading (RuiButton sets `disabled = disabled || loading`). The
-      // color/bg/text overrides for the "grey disabled" look live in the
-      // `loading: false` compounds below so they skip firing on loading
-      // buttons — where we want the variant color to stay visible behind
-      // the spinner. Cursor stays here since both states are non-clickable.
       'disabled:cursor-not-allowed',
       'focus-visible:!ring-2',
     ].join(' '),
@@ -37,29 +57,14 @@ export const buttonStyles = tv({
       outlined: {},
       text: { root: 'px-2' },
       fab: { root: 'rounded-full py-2' },
-      // `leading-[1.125rem]` on the label collapses the 20px line-box (inherited
-      // from the root's `leading-5`) down to 18px so it matches the md icon box
-      // (`--rui-icon-size: 1.125rem`). Without it, `flex items-center` centers
-      // the 20px line-box against the 18px icon box and the baseline-aligned
-      // glyphs visually drift above the icon's optical center — most readable
-      // in tight list rows. See rotki/ui-library#515.
+      // The label's 18px line-box matches the md icon box, so the two share an optical center (rotki/ui-library#515)
       list: { root: 'p-3 px-3 rounded-none w-full justify-start text-left', label: 'w-full leading-[1.125rem]' },
     },
     size: {
-      // Each size variant redefines `--rui-icon-size` on the button so the
-      // value inherits into RuiIcons in button slots (prepend/append/default)
-      // and drives their `width: var(--rui-icon-size, 1.5rem)` class. `!` on
-      // the arbitrary property makes the variant beat the md baseline in the
-      // base root regardless of CSS source order. A consumer passing `size`
-      // on RuiIcon still wins: that path stamps an inline style on the svg
-      // element itself, which beats the inherited value from the button.
       'xs': { root: 'px-2 py-[0.125rem] text-[.75rem] leading-4 ![--rui-icon-size:0.75rem]' },
       'sm': { root: 'px-2.5 py-1 text-[.8125rem] leading-5 ![--rui-icon-size:1rem]' },
       'lg': { root: 'px-6 py-2 text-[1rem] leading-5 ![--rui-icon-size:1.25rem]' },
-      // `xl` targets the 40px input height — the common toolbar case where a
-      // RuiButton needs to line up with RuiTextField / RuiMenuSelect. For a
-      // 44px jumbo-CTA button (auth screens, empty-state primaries), reach for
-      // `2xl` instead.
+      // 40px, to line up with RuiTextField / RuiMenuSelect in a toolbar; a 44px jumbo CTA is `2xl`
       'xl': { root: 'px-6 py-2 text-[1rem] leading-6 ![--rui-icon-size:1.375rem]' },
       '2xl': { root: 'px-6 py-2.5 text-[1rem] leading-6 ![--rui-icon-size:1.375rem]' },
     },
@@ -76,9 +81,7 @@ export const buttonStyles = tv({
       true: { root: 'rounded-full' },
     },
     icon: {
-      // Padding and icon sizing live in the `icon + size` compound variants
-      // below so every size resolves to a height matching its text-button
-      // counterpart; this base only contributes the round shape.
+      // Only the round shape; the `icon + size` compounds below carry padding and icon sizing
       true: { root: 'rounded-full' },
     },
     active: {
@@ -94,10 +97,7 @@ export const buttonStyles = tv({
     },
   },
   compoundVariants: [
-    // === Disabled (not loading) appearance ===
-    // Applied only when `loading: false` so that loading buttons keep their
-    // variant color/outline visible behind the spinner; pure disabled buttons
-    // fade to the Material disabled palette.
+    // Disabled appearance: the Material disabled palette, skipped while loading so the variant color shows behind the spinner
     { loading: false, class: { root: 'disabled:!bg-black/[.12] dark:disabled:!bg-white/[.12] disabled:!text-rui-text-disabled disabled:active:!text-rui-text-disabled' } },
     { loading: false, variant: 'outlined', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent disabled:outline-rui-text-disabled' } },
     { loading: false, variant: 'text', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent' } },
@@ -107,18 +107,11 @@ export const buttonStyles = tv({
     { color: 'grey', active: true, class: { root: 'bg-rui-grey-50' } },
     { color: 'grey', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-black/[.04] active:bg-black/10 dark:bg-transparent dark:active:bg-white/10 dark:hover:bg-white/[.04] dark:text-rui-text' } },
     { color: 'grey', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-black/10 dark:bg-white/30' } },
-    // Material draws the colourless outlined button at 23% of the text colour, not at
-    // full strength: an outline as dark as the label reads as an error state and shouts
-    // next to the context colours, which are already at 50% (see below). The rest of the
-    // library uses the same restraint for neutral edges (cards and tables sit at 12%).
+    // Material's 23% outline: at full strength a neutral edge reads as an error state next to the 50% context colours
     { color: 'grey', variant: 'outlined', class: { root: 'outline-black/[0.23] dark:outline-white/[0.23]' } },
     { color: 'grey', variant: 'text', class: { root: 'text-rui-text-secondary' } },
 
-    // === Context colors — outlined/text variants ===
-    // `dark:text-rui-<color>` is required to beat `dark:text-rui-text` set by
-    // the base color variant (meant for filled buttons where text sits on a
-    // colored bg). Without the override, outlined/text/list buttons in dark
-    // mode render white text against a themed outline/underline.
+    // Context colors: `dark:text-rui-<color>` beats the base variant's `dark:text-rui-text`, which is meant for filled buttons
     { color: 'primary', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-primary-lighter/[.04] active:bg-rui-primary-lighter/10 text-rui-primary dark:text-rui-primary' } },
     { color: 'secondary', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-secondary-lighter/[.04] active:bg-rui-secondary-lighter/10 text-rui-secondary dark:text-rui-secondary' } },
     { color: 'error', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-error-lighter/[.04] active:bg-rui-error-lighter/10 text-rui-error dark:text-rui-error' } },
@@ -161,21 +154,7 @@ export const buttonStyles = tv({
     { variant: 'fab', size: 'lg', class: { root: 'py-3' } },
     { variant: 'list', size: 'xs', class: { root: 'px-3 py-0.5' } },
     { variant: 'list', size: 'sm', class: { root: 'px-3 py-1' } },
-    // Icon-only button sizing — every size lands at the same height as the
-    // text button of the matching size, with a ~60–70% icon ratio (Material-3
-    // style). The `size` rule sizes icons to 12/16/20/22px for text-button
-    // prepend/append slots; here icon-only buttons get a larger glyph so they
-    // don't look lost in the square. Values are rem-based throughout: p-1 =
-    // 0.25rem, p-1.5 = 0.375rem, p-2 = 0.5rem; glyph sizes use rem literals.
-    // xs uses an arbitrary 0.1875rem (3px) padding — no Tailwind token hits
-    // it cleanly — to keep the 70% icon ratio with a 14px glyph.
-    //
-    // xs:           p-[0.1875rem] + 0.875rem icon = 0.375 + 0.875 = 1.25rem (20px) — 70%
-    // sm:           p-1           + 1.25rem icon  = 0.5   + 1.25  = 1.75rem (28px) — 71%
-    // md (default): p-1.5         + 1.25rem icon  = 0.75  + 1.25  = 2rem    (32px) — 63%
-    // lg:           p-1.5         + 1.5rem  icon  = 0.75  + 1.5   = 2.25rem (36px) — 67%
-    // xl:           p-2           + 1.5rem  icon  = 1     + 1.5   = 2.5rem  (40px) — 60%
-    // 2xl:          p-2           + 1.75rem icon  = 1     + 1.75  = 2.75rem (44px) — 64%
+    // Icon-only sizing, per the padding and glyph table on buttonStyles above
     { icon: true, class: { root: 'p-1.5 ![--rui-icon-size:1.25rem]' } },
     { icon: true, size: 'xs', class: { root: 'p-[0.1875rem] ![--rui-icon-size:0.875rem]' } },
     { icon: true, size: 'sm', class: { root: 'p-1 ![--rui-icon-size:1.25rem]' } },

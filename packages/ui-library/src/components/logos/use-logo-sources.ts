@@ -5,8 +5,10 @@ const ASSET_MAPPINGS_URL = 'https://raw.githubusercontent.com/rotki/data';
 const SESSION_SOURCES_PREFIX = 'rui-logo-sources';
 const SESSION_VERIFIED_PREFIX = 'rui-logo-verified';
 
-// Module-level cache: deduplicates asset-mappings fetches across all RuiLogo instances.
-// Keyed by branch so different branches don't share stale data.
+/**
+ * Deduplicates asset-mappings fetches across every RuiLogo, keyed by branch so
+ * two branches never share stale data.
+ */
 const sourcesCache = new Map<string, Promise<ExternalLinks | undefined>>();
 
 function isExternalLinks(value: unknown): value is ExternalLinks {

@@ -239,14 +239,18 @@ const anySegmentSet = computed<boolean>(() => [
   modelMillisecond,
 ].some(segment => isDefined(segment)));
 
+/**
+ * The field's text.
+ *
+ * An untouched field shows its format through the placeholder rather than
+ * holding the tokens as its value, where a screen reader reads them as content
+ * and select-all copies them. The tokens stay while the field is focused: that
+ * is when the segment machinery highlights them, and collapsing the value
+ * mid-edit would blank the field under the cursor. The guard is "no segment
+ * set" rather than `valueSet`, so blurring a half-typed date keeps what was
+ * entered on screen.
+ */
 const formattedDisplay = computed<string>(() => {
-  // An untouched field shows its format through the placeholder rather than
-  // holding the tokens as its value, where a screen reader reads them as
-  // content and select-all copies them. The tokens stay while the field is
-  // focused: that is when the segment machinery highlights them, and
-  // collapsing the value mid-edit would blank the field under the cursor.
-  // The guard is "no segment set" and not `valueSet`, so blurring a half
-  // typed date keeps what was entered on screen.
   if (!get(anySegmentSet) && !get(searchInputFocused)) {
     return '';
   }
@@ -382,10 +386,12 @@ watch(isOpen, (open) => {
     commitPartialTime();
 });
 
+/**
+ * Selects the clicked segment before opening the menu, so the selection is not
+ * lost to the DOM changes that opening brings.
+ */
 function handleInputClick(event: MouseEvent): void {
-  // Handle segment selection first, before any DOM changes from menu opening
   handleClick(event);
-  // Open menu if not already open
   if (!get(isOpen)) {
     set(isOpen, true);
   }
@@ -399,9 +405,12 @@ function handleInputClick(event: MouseEvent): void {
  */
 const focusCalendarOnOpen = ref<boolean>(false);
 
+/**
+ * Asks for focus to move into the calendar. The menu is teleported and mounts
+ * a frame later, so the watcher below waits for the wrapper to appear rather
+ * than guessing at a number of ticks.
+ */
 function focusCalendar(): void {
-  // the menu is teleported and mounts a frame later, so this waits for the
-  // wrapper to appear rather than guessing at a number of ticks
   set(focusCalendarOnOpen, true);
 }
 
@@ -441,6 +450,13 @@ function closeFromMenu(): void {
  * there was no way to reach the calendar from the keyboard. Alt+ArrowDown
  * opens it and Escape closes it, following the combobox convention, and the
  * append chevron is a real button for anyone who tabs to it instead.
+ *
+ * Enter and Escape are the other ways to be done with the field, and the keys
+ * a consumer tends to close its editor on. Escape reaches that point only once
+ * the calendar is already shut, and discards nothing, since the segments stay
+ * on screen either way, so it commits what was entered rather than dropping it
+ * when the field goes. Both write the value before the key carries on
+ * bubbling, so it survives that close.
  */
 function onKeyDown(event: KeyboardEvent): void {
   if (disabled || readonly)
@@ -458,12 +474,6 @@ function onKeyDown(event: KeyboardEvent): void {
     return;
   }
 
-  // Enter and Escape are the other ways to be done with the field, and the keys
-  // a consumer tends to close its editor on. Escape reaches here only once the
-  // calendar is already shut, and it discards nothing - the segments stay on
-  // screen either way - so it commits what was entered rather than dropping it
-  // when the field goes. Both write the value before the key carries on
-  // bubbling, so it survives that close.
   if (event.key === 'Enter' || event.key === 'Escape')
     commitPartialTime();
 

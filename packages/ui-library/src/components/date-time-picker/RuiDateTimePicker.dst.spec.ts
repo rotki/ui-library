@@ -11,8 +11,11 @@ import RuiDateTimePicker from './RuiDateTimePicker.vue';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-// The rest of the picker specs run in UTC, which never changes offset. Berlin is
-// +01:00 in January and +02:00 in July, so it is the only place these can fail.
+/**
+ * The rest of the picker specs run in UTC, which never changes offset. Berlin
+ * is +01:00 in January and +02:00 in July, so it is the only place these can
+ * fail.
+ */
 const DST_TIMEZONE = 'Europe/Berlin';
 
 vi.mock('@/components/date-time-picker/utils', async (importOriginal) => {
@@ -72,8 +75,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue — DST', () => {
   }
 
   it('keeps the time when the date moves from standard time into DST', async () => {
-    // 02/01/2023 20:20 is +01:00, 15/07/2023 is +02:00
-    wrapper = createWrapper({
+    wrapper = createWrapper({ // 02/01/2023 20:20 is +01:00 and 15/07/2023 is +02:00
       props: {
         modelValue: dayjs.tz('2023-01-02T20:20:00', DST_TIMEZONE).toDate(),
         type: 'date',
@@ -116,12 +118,14 @@ describe('components/date-time-picker/RuiDateTimePicker.vue — DST', () => {
     expect(dayjs.unix(value).tz(DST_TIMEZONE).format('DD/MM/YYYY HH:mm:ss')).toBe('15/07/2023 20:20:30');
   });
 
+  /**
+   * Berlin springs forward on 2023-03-26, where 02:00 becomes 03:00 and 02:30
+   * never happens, and falls back on 2023-10-29, where 03:00 becomes 02:00 and
+   * 02:30 happens twice. Neither reads as a plain wall clock, so the contract
+   * is that the value stays valid and round trips, not that it survives
+   * literally.
+   */
   describe('transition days', () => {
-    // Berlin springs forward on 2023-03-26 (02:00 -> 03:00, so 02:30 never
-    // happens) and falls back on 2023-10-29 (03:00 -> 02:00, so 02:30 happens
-    // twice). Neither can be represented as a plain wall clock, so the contract
-    // is that the value stays valid and round trips, not that it is preserved
-    // literally.
     it('normalises a time that the spring forward skips', async () => {
       wrapper = createWrapper({
         props: {
@@ -168,9 +172,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue — DST', () => {
       const emitted = lastEmittedDate();
       expect(emitted.format('DD/MM/YYYY HH:mm')).toBe('29/10/2023 02:30');
       expect(wrapper.find('input').element.value).toBe('29/10/2023 02:30');
-      // 02:30 happens twice; either instant is correct, but it has to be one of
-      // them. Which one gets picked depends on the host timezone, so the offset
-      // is not pinned here — the e2e covers that in a real Berlin browser.
+      // Either instant of the repeated 02:30 is correct, and which one depends on the host timezone
       expect([60, 120]).toContain(emitted.utcOffset());
       expect(['2023-10-29T00:30:00.000Z', '2023-10-29T01:30:00.000Z'])
         .toContain(emitted.toISOString());

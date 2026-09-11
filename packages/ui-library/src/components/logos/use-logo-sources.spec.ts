@@ -132,12 +132,10 @@ describe('use-logo-sources', () => {
   });
 
   it('should return cached sources synchronously from sessionStorage', async () => {
-    // First fetch populates sessionStorage
-    await getLogoSources('develop');
-    // Clear in-memory cache but keep sessionStorage
+    await getLogoSources('develop'); // the first fetch fills sessionStorage
     clearLogoSourcesCache();
 
-    // Re-populate sessionStorage for the test (clearLogoSourcesCache clears it too)
+    // Written back because clearing the in-memory cache empties sessionStorage as well
     sessionStorage.setItem('rui-logo-sources:develop', JSON.stringify({ website: 'cached.svg' }));
 
     const cached = getCachedLogoSources('develop');

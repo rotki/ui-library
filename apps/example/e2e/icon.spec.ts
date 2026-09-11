@@ -18,10 +18,7 @@ test.describe('icons', () => {
   test('should render icons with correct dimensions', async ({ page }) => {
     const contentArea = page.locator('h2[data-id=icons] + div[data-id=content]');
     const icon = contentArea.locator('svg[aria-hidden="true"]').first();
-    // Icon sizing flows through `--rui-icon-size` (fallback 1.5rem = 24px).
-    // Assert the computed box instead of the deprecated `width`/`height`
-    // presentation attrs — this tests what actually renders and survives
-    // any future shift in the mechanism (see rotki/ui-library#512).
+    // The computed box, not the presentation attrs #512 dropped: 24px is the `--rui-icon-size` fallback
     await expect(icon).toHaveCSS('width', '24px');
     await expect(icon).toHaveCSS('height', '24px');
   });
@@ -29,8 +26,7 @@ test.describe('icons', () => {
   test('should render multiple icons', async ({ page }) => {
     const contentArea = page.locator('h2[data-id=icons] + div[data-id=content]');
     const icons = contentArea.locator('svg[aria-hidden="true"]');
-    // `count()` resolves immediately, so under load it read 0 before the page
-    // had rendered. Wait for the icons through a web-first assertion instead.
+    // A web-first assertion waits; `count()` resolves at once and read 0 under load
     await expect(icons.nth(2)).toBeAttached();
   });
 });

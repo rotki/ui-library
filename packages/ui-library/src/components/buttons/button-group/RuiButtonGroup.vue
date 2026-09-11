@@ -68,8 +68,7 @@ const buttonGroupStyles = tv({
     variant: {
       default: {},
       outlined: {
-        // Matches RuiButton's colourless outlined treatment: a neutral edge at Material's
-        // 23%, rather than an outline and dividers as dark as the labels themselves.
+        // Material's 23% neutral edge, matching RuiButton's colourless outlined treatment
         root: 'outline-black/[0.23] divide-black/[0.23] dark:outline-white/[0.23] dark:divide-white/[0.23]',
       },
       text: {},
@@ -126,32 +125,40 @@ const ui = computed<ReturnType<typeof buttonGroupStyles>>(() => buttonGroupStyle
   color,
 }));
 
+/**
+ * Applies the group's state to one of its buttons: which button is active,
+ * the group's disabled flag and colour, and the group's size, that last one
+ * only when the button did not set a size of its own, so a consumer can still
+ * size a single button.
+ *
+ * @param child - the button's vnode, whose props are keyed in kebab-case
+ * @param index - its place in the group, which stands in for a missing value
+ * @param selectedValue - what the group's model currently holds
+ * @returns the same vnode, with the group's props written onto it
+ */
+function applyGroupProps(child: VNode, index: number, selectedValue: T | T[] | undefined): VNode {
+  const value = child.props?.['model-value'];
+  const active = isActive(value ?? index, selectedValue);
+  const resolvedColor = active && activeColor ? activeColor : color;
+  const childSize = child.props?.size;
+
+  child.props = {
+    ...child.props,
+    active,
+    ...(disabled && { disabled: true }),
+    ...(resolvedColor && { color: resolvedColor }),
+    ...(!childSize && size && { size }),
+  };
+
+  return child;
+}
+
 const children = computed<VNode[]>(() => {
   const selectedValue: T | T[] | undefined = get(modelValue);
   const slotContent = slots.default?.() ?? [];
-  const resolved = flattenSlotContent(slotContent);
 
-  return resolved.map((child, i) => {
-    // child props are in kebab-case
-    const value = child.props?.['model-value'];
-    const active = isActive(value ?? i, selectedValue);
-    const resolvedColor = active && activeColor ? activeColor : color;
-
-    // Only fall back to the group's size when the child did not set one itself.
-    // This lets consumers override size per-button while still benefiting from
-    // the group-level default.
-    const childSize = child.props?.size;
-
-    child.props = {
-      ...child.props,
-      active,
-      ...(disabled && { disabled: true }),
-      ...(resolvedColor && { color: resolvedColor }),
-      ...(!childSize && size && { size }),
-    };
-
-    return child;
-  });
+  return flattenSlotContent(slotContent)
+    .map((child, index) => applyGroupProps(child, index, selectedValue));
 });
 
 /**

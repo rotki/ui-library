@@ -6,12 +6,12 @@ import { tv } from '@/utils/tv';
 export interface Props {
   /**
    * in percentage value, required when variant === determinate or buffer
-   * @example - 0 <= value <= 100
+   * Ranges from 0 to 100.
    */
   value?: number;
   /**
    * in percentage value, required when variant === buffer
-   * @example - 0 <= value <= 100
+   * Ranges from 0 to 100.
    */
   bufferValue?: number;
   variant?: ProgressVariant;

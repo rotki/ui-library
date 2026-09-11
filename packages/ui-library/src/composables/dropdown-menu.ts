@@ -262,8 +262,7 @@ export function useDropdownMenu<TValue, TItem>({
       return;
     }
 
-    // Highlighted item is outside the virtual list's rendered window —
-    // kick the virtual scroll to render it, then nudge it fully into view.
+    // Outside the virtual list's rendered window, so render it first, then nudge it fully into view
     scrollTo(index);
     await nextTick();
     scrollHighlightedIntoView();

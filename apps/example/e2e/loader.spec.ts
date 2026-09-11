@@ -22,8 +22,7 @@ test.describe('loaders', () => {
   });
 
   test('should render article skeleton loader', async ({ page }) => {
-    // Article has a heading (h-6 with mb-1) + 3 text lines (h-3)
-    const articleWrapper = page.locator('div.flex.flex-col.gap-2').nth(1);
+    const articleWrapper = page.locator('div.flex.flex-col.gap-2').nth(1); // a heading and three text lines
 
     await expect(articleWrapper.locator('div[role=alert]').first()).toBeVisible();
     const allElements = articleWrapper.locator('div[role=alert]');

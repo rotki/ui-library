@@ -80,9 +80,11 @@ export function useAutoCompleteFocus(
     }
   }
 
-  // Capture the search value immediately when focus is lost, before the debounced
-  // handler fires. Other watchers (value.ts) may clear internalSearch when isOpen
-  // changes, so we need to preserve it for the custom value blur flow.
+  /**
+   * The search text as it stood when focus was lost, kept for the custom-value
+   * blur flow: it is captured before the debounced handler runs, because the
+   * watchers in value.ts clear the search when the menu closes.
+   */
   let pendingCustomSearch = '';
 
   watch(anyFocused, (focused) => {
@@ -91,8 +93,7 @@ export function useAutoCompleteFocus(
     }
   });
 
-  // Close menu if the activator is not focused anymore
-  // Using debounced to avoid the menu closing momentarily while focus switches.
+  // Debounced, so the menu does not close for a moment while focus moves between its own elements
   watchDebounced(
     anyFocused,
     (focused) => {

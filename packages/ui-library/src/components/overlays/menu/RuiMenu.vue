@@ -165,15 +165,18 @@ const ui = computed<ReturnType<typeof menuStyles>>(() => menuStyles({
   dense,
 }));
 
-// `aria-haspopup="true"` is equivalent to `"menu"`; keep emitting `true` for
-// the default so nothing changes for existing callers.
+// `aria-haspopup="true"` means `"menu"`, and the default keeps emitting `true` for existing callers
 const ariaHasPopup = computed<RuiMenuRole | 'true'>(() => role === 'menu' ? 'true' : role);
 
-// NOTE: both computed functions must return the *same* object shape from
-// every branch — otherwise vue-tsc infers the slot's `attrs` type as a
-// discriminated union where each key is either "all defined" or "all
-// undefined", which breaks consumer code that types its own `attrs`
-// handler with individually-optional keys.
+/**
+ * The activator attributes.
+ *
+ * This and the computed below it must return the same object shape from every
+ * branch. Otherwise vue-tsc infers the slot's `attrs` type as a discriminated
+ * union where each key is either all defined or all undefined, which breaks
+ * consumer code typing its own `attrs` handler with individually optional
+ * keys.
+ */
 const baseMenuAttrs = computed<BaseMenuAttrs>(() => {
   const clickVal = get(click);
   return {
@@ -239,13 +242,17 @@ function onLeave(event?: KeyboardEvent): void {
   nextTick(() => focusOnActivator());
 }
 
-// `persistent` blocks the outside interactions that would close the menu, and
-// Escape is one of them — `RuiDialog` and `RuiBottomSheet` already read it that
-// way. The guard sits here rather than in `onLeave` because `onLeave` also runs
-// for a programmatic close (`v-model` set to `false`), which must keep working.
-// A persistent menu leaves the key alone instead of swallowing it, so an inner
-// popover can close on Escape while the menu stays open, and an ancestor still
-// sees a key nothing consumed.
+/**
+ * `persistent` blocks the outside interactions that would close the menu, and
+ * Escape is one of them, which is how `RuiDialog` and `RuiBottomSheet` already
+ * read it. The guard sits here rather than in `onLeave`, because `onLeave`
+ * also runs for a programmatic close through `v-model`, which must keep
+ * working.
+ *
+ * A persistent menu leaves the key alone instead of swallowing it, so an inner
+ * popover can close on Escape while the menu stays open, and an ancestor still
+ * sees a key nothing consumed.
+ */
 function onEscape(event: KeyboardEvent): void {
   if (persistent)
     return;

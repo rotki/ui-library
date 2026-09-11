@@ -116,9 +116,7 @@ test.describe('data tables - mobile', () => {
     await page.setViewportSize({ width: 1280, height: 720 });
   });
 
-  test('should switch to cards based on container width, independent of the window', async ({ page }) => {
-    // The window is 1280px wide, but this table sits in a 360px box and uses
-    // mobileBreakpointBasis="container", so it renders as stacked cards.
+  test('should switch to cards for a 360px container while the window stays 1280px wide', async ({ page }) => {
     const container = page.locator('[data-id=table-mobile-container] [data-id=table-container]');
     await expect(container.locator('thead')).toHaveCount(0);
     await expect(container.locator('[data-id=mobile-card-header]').first()).toBeVisible();

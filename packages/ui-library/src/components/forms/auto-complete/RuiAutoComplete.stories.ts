@@ -464,8 +464,7 @@ export const GroupedSearchLabel = meta.story({
     await userEvent.click(combobox);
     await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
 
-    // Typing a group label surfaces every item in that group, even though
-    // none of the item labels contain the query.
+    // A group label surfaces every item under it, none of whose own labels hold the query
     await userEvent.keyboard('Europe');
     const menu = body.getByRole('menu');
     await waitFor(() => expect(within(menu).getByText('Germany')).toBeVisible());

@@ -21,37 +21,42 @@ function formatNumber(
 }
 
 /**
- * Format number value without fraction
- * @param {number} amount
+ * Formats a number without a fractional part.
+ *
+ * @param amount - the value to format
+ * @returns the value with no decimals, grouped for the current locale
  */
 export function formatInteger(amount: number | string): string {
   return formatNumber(amount, { fractionDigits: 0 });
 }
 
 /**
- * Generates and returns the array of root allowed attributes
- * @param {SetupContextAttrs} data
- * @returns {SetupContextAttrsKeys}
+ * The attribute keys that belong on a component's root element.
+ *
+ * @param data - the attributes handed to the component
+ * @returns every `data-` key among them
  */
 function getRootKeys(data: SetupContextAttrs): SetupContextAttrsKeys {
   return Object.keys(data).filter(key => key.startsWith('data-')) as SetupContextAttrsKeys;
 }
 
 /**
- * Picks only required attributes for root element
- * @param {SetupContextAttrs} data
- * @param {SetupContextAttrsKeys} include
- * @returns {Pick<SetupContextAttrs, any>}
+ * Picks the attributes that belong on the root element.
+ *
+ * @param data - the attributes handed to the component
+ * @param include - keys to keep besides the `data-` ones
+ * @returns the attributes to bind on the root element
  */
 export function getRootAttrs(data: SetupContextAttrs, include: SetupContextAttrsKeys = ['class']) {
   return objectPick(data, [...getRootKeys(data), ...include]);
 }
 
 /**
- * Omits root attributes from component's attributes
- * @param {SetupContextAttrs} data
- * @param {SetupContextAttrsKeys} exclude
- * @returns {Omit<SetupContextAttrs, any>}
+ * Drops the root element's attributes, leaving what the inner element takes.
+ *
+ * @param data - the attributes handed to the component
+ * @param exclude - keys to drop besides the `data-` ones
+ * @returns the remaining attributes
  */
 export function getNonRootAttrs(
   data: SetupContextAttrs,
@@ -61,10 +66,11 @@ export function getNonRootAttrs(
 }
 
 /**
- * Transforms the keys of an object to either camelCase or snake_case
- * @param {T} item
- * @param {"camelCase" | "snake_case"} to
- * @returns {Record<string, any>}
+ * Rewrites an object's keys in another case.
+ *
+ * @param item - the object whose keys to rewrite
+ * @param to - the case to write them in
+ * @returns a new object holding the same values under the rewritten keys
  */
 export function transformCase<T extends object>(
   item: T,
@@ -86,13 +92,13 @@ export function transformCase<T extends object>(
 }
 
 /**
+ * Reduces a value to a token that keyword matching can compare, dropping the
+ * spacing and case a reader would otherwise have to match exactly.
  *
- * @param {string} string - String to convert
- * @return {string} - String converted to text token, mostly used to matching keyword
- * @example
- * getTextToken('this is a sentence'); // thisisasentence
+ * @param string - the value to convert
+ * @returns the token, e.g. `getTextToken('this is a sentence')` gives
+ * `thisisasentence`
  */
-
 export function getTextToken(string: unknown): string {
   if (!string)
     return '';

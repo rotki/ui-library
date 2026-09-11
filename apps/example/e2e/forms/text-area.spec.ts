@@ -47,8 +47,7 @@ test.describe('forms/TextArea', () => {
   test('should show clear button on clearable textarea with value', async ({ page }) => {
     const content = page.locator('[data-id=content]');
 
-    // The clearable textarea with pre-filled value 'lorem ipsum dolor' renders a clear button
-    // Verify the clear button is present when the textarea has focus and a value
+    // The first clear button belongs to the clearable textarea that starts with a value
     const clearButton = content.locator('[data-id=clear-btn]').first();
     await expect(clearButton).toBeAttached();
   });

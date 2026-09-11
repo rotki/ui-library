@@ -108,7 +108,6 @@ test.describe('menu', () => {
   });
 
   test('should not close persistent menu when clicking outside', async ({ page }) => {
-    // Persistent menu is at index 16
     const menu = page.locator('div[data-id=menu-16]');
     await menu.scrollIntoViewIfNeeded();
     await menu.locator('[data-id=activator]').click();
@@ -181,8 +180,7 @@ test.describe('menu', () => {
     await settle(page);
     await expect(outerContent).toBeVisible();
 
-    // and a second press does not reach it either — this one lands on the inner
-    // activator, which sits inside the outer menu's own popover
+    // A second press lands on the inner activator, inside the outer menu's popover, and is no different
     await page.keyboard.press('Escape');
     await settle(page);
     await expect(outerContent).toBeVisible();

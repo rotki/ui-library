@@ -31,10 +31,11 @@ defineOptions({
   name: 'RuiTabs',
 });
 
-// Default 0 (first tab) matches the existing internal fallback on line 163.
-// Providing a default narrows the `update:modelValue` emit payload from
-// `value?: number | string` to `value: number | string`, so consumers can
-// type their handler signatures without undefined unions.
+/**
+ * The selected tab, defaulting to the first one. The default also narrows the
+ * `update:modelValue` payload to `number | string`, so a consumer's handler
+ * needs no undefined in its signature.
+ */
 const modelValue = defineModel<number | string>({ default: 0 });
 
 const {
@@ -133,8 +134,13 @@ const children = computed<ChildNode[]>(() => {
   });
 });
 
-// When using dynamic content with v-for the slot content can contain fragment,
-// Go through the fragment and always return RuiTab only
+/**
+ * Unwraps the fragments a `v-for` in the slot produces, so only tabs come
+ * back.
+ *
+ * @param children - the slot's vnodes
+ * @returns the tabs among them
+ */
 function getChildrenTabs(children: VNode[]): VNode[] {
   return children.flatMap((item) => {
     if (item.type === Fragment && Array.isArray(item.children) && item.children.length > 0)

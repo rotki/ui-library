@@ -5,7 +5,13 @@ import { defineComponent, nextTick } from 'vue';
 import { useRotkiTheme } from '@/composables/theme';
 import { ThemeMode } from '@/types/theme';
 
-// Helper to test composable with proper lifecycle hooks
+/**
+ * Runs a composable inside a component, so it gets the lifecycle hooks it
+ * expects.
+ *
+ * @param composable - the composable to run
+ * @returns what it returned, and a way to unmount the component holding it
+ */
 function withSetup<T>(composable: () => T): { result: T; unmount: () => void } {
   let result!: T;
   const TestComponent = defineComponent({

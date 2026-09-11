@@ -1,19 +1,20 @@
-// Generates `src/icons/icons_*.ts` and `src/icons/index.ts` from two sources:
-//
-//   1. Lucide icons in `node_modules/lucide/dist/esm/icons/*.mjs`. Each module
-//      already exports a `[ [tag, attrs], ... ]` array — exactly the shape
-//      `RuiIcon` expects — so we pass it through verbatim, one component
-//      entry per renderable primitive. Multi-path icons (e.g. eye-off) stay
-//      multi-path; we do not collapse them into a single concatenated `d`.
-//
-//   2. Custom SVGs in `src/custom-icons/*.svg`. We parse the XML and emit
-//      one `[tag, attrs]` tuple per renderable primitive (path, rect,
-//      circle, ellipse, line, polyline, polygon), recursing into wrapper
-//      elements like <g>.
-//
-// Output is chunked by `CHUNK_SIZE` so each generated file stays small
-// enough for IDE indexing. The chunked files are gitignored and rebuilt
-// by `pnpm run build` (or directly via `pnpm run generate-icons`).
+/**
+ * Generates `src/icons/icons_*.ts` and `src/icons/index.ts` from two sources:
+ *
+ * 1. Lucide icons in `node_modules/lucide/dist/esm/icons/*.mjs`. Each module
+ *    already exports a `[ [tag, attrs], ... ]` array, exactly the shape
+ *    `RuiIcon` expects, so it passes through verbatim, one component entry per
+ *    renderable primitive. A multi-path icon such as eye-off stays
+ *    multi-path rather than collapsing into one concatenated `d`.
+ *
+ * 2. Custom SVGs in `src/custom-icons/*.svg`, parsed into one `[tag, attrs]`
+ *    tuple per renderable primitive (path, rect, circle, ellipse, line,
+ *    polyline, polygon), recursing into wrapper elements like `g`.
+ *
+ * Output is chunked by `CHUNK_SIZE` so each generated file stays small enough
+ * for IDE indexing. The chunked files are gitignored and rebuilt by
+ * `pnpm run build`, or directly by `pnpm run generate-icons`.
+ */
 import type { GeneratedIcon } from '../src/types/icons.js';
 import { mkdirSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
@@ -27,9 +28,12 @@ const LUCIDE_PREFIX = 'lu-';
 const LUCIDE_EXT = '.mjs';
 const TARGET = 'src/icons';
 const CHUNK_SIZE = 500;
-// lucide ships every documented alias in this module: each line re-exports one
-// canonical icon's default under one or more names. We mine it so consumers can
-// use any official lucide name (and so pre-v1 renames like `waves` keep working).
+/**
+ * The module lucide ships every documented alias in: each line re-exports one
+ * canonical icon's default under one or more names. Mining it lets consumers
+ * use any official lucide name, and keeps pre-v1 names such as `waves`
+ * working.
+ */
 const LUCIDE_ALIASES_FILE = 'iconsAndAliases.mjs';
 
 const SVG_PRIMITIVES = new Set([
@@ -51,7 +55,12 @@ function chunkArray<T>(a: T[], n: number): T[][] {
     a.slice(n * i, n * i + n));
 }
 
-// Strip fast-xml-parser's `@_` prefix from attribute keys.
+/**
+ * Strips fast-xml-parser's `@_` prefix from attribute keys.
+ *
+ * @param item - a parsed XML node
+ * @returns its attributes under their plain names
+ */
 function stripAttrPrefix(item: unknown): Record<string, string> {
   const attrs: Record<string, string> = {};
   if (!item || typeof item !== 'object')
@@ -112,10 +121,17 @@ async function loadLucideIcon(file: string): Promise<GeneratedIcon> {
   return { name, components: iconModule.default };
 }
 
-// Emit every official lucide alias as its own icon pointing at the canonical
-// art, so consumers can use any documented lucide name (including pre-v1 names
-// that became aliases, e.g. `waves` -> `waves-horizontal`). Names already taken
-// by a canonical icon or a custom SVG win and are skipped.
+/**
+ * Emits every official lucide alias as its own icon pointing at the canonical
+ * art, so consumers can use any documented lucide name, pre-v1 names that
+ * became aliases included, such as `waves` for `waves-horizontal`. A name
+ * already taken by a canonical icon or a custom SVG wins, and its alias is
+ * skipped.
+ *
+ * @param byName - the canonical icons, keyed by name
+ * @param existing - names already taken by a canonical icon or custom SVG
+ * @returns one icon per alias that earned a name of its own
+ */
 async function buildAliases(
   byName: Map<string, GeneratedIcon['components']>,
   existing: Set<string>,
@@ -124,10 +140,7 @@ async function buildAliases(
   const source = await readFile(file, 'utf8');
   const out: GeneratedIcon[] = [];
   const added = new Set<string>();
-  // Generated exports are keyed by `pascalCase(name)`, so two distinct kebab
-  // names that collapse to the same identifier (e.g. `arrow-down-0-1` and the
-  // alias `arrow-down-01` -> `LuArrowDown01`) would clash. Track taken export
-  // ids and skip such redundant formatting-variant aliases.
+  // Exports are keyed by `pascalCase(name)`, so `arrow-down-0-1` and `arrow-down-01` would clash as `LuArrowDown01`
   const takenIds = new Set(Array.from(existing, name => pascalCase(name)));
   const lineRe = /export\s*\{([^}]*)\}\s*from\s*'\.\/icons\/([^']+)\.mjs'/g;
   for (const line of source.matchAll(lineRe)) {

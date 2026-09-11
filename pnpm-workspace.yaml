@@ -1,14 +1,23 @@
 blockExoticSubdeps: true
 minimumReleaseAge: 10080
-saveExact: true
-shamefullyHoist: true
-shellEmulator: true
-strictDepBuilds: true
+# First-party rotki packages: the maturity gate guards against third-party
+# supply-chain surprises, and waiting a week on our own lint rules only
+# delays fixing what they flag.
+minimumReleaseAgeExclude:
+  - '@rotki/eslint-config'
+  - '@rotki/eslint-plugin'
 trustPolicy: no-downgrade
 trustPolicyExclude:
   - tailwind-merge@2.6.1
   - 'semver@5.7.2 || 6.3.1'
 
+peerDependencyRules:
+  allowedVersions:
+    tailwind-variants>tailwind-merge: '>=2.0.0 <3.0.0'
+shamefullyHoist: true
+shellEmulator: true
+strictDepBuilds: true
+saveExact: true
 packages:
   - 'packages/*'
   - 'apps/*'
@@ -28,8 +37,8 @@ catalog:
   '@floating-ui/dom': 1.8.0
   '@fontsource/roboto': 5.3.0
   '@playwright/test': 1.62.1
-  '@rotki/eslint-config': 6.2.0
-  '@rotki/eslint-plugin': 1.5.0
+  '@rotki/eslint-config': 8.3.0
+  '@rotki/eslint-plugin': 1.8.0
   '@storybook/addon-a11y': 10.6.0
   '@storybook/addon-docs': 10.6.0
   '@storybook/addon-links': 10.6.0
@@ -54,6 +63,7 @@ catalog:
   consola: 3.4.2
   eslint: 10.9.1
   eslint-plugin-storybook: 10.6.0
+  eslint-plugin-tsdoc: 0.5.2
   fast-glob: 3.3.3
   fast-xml-parser: 5.11.1
   fs-extra: 11.4.0
@@ -82,7 +92,3 @@ catalog:
   vue-i18n: 11.4.10
   vue-router: 5.3.1
   vue-tsc: 3.3.11
-
-peerDependencyRules:
-  allowedVersions:
-    tailwind-variants>tailwind-merge: '>=2.0.0 <3.0.0'

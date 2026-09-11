@@ -1,5 +1,7 @@
-// Source: https://github.com/ethereum/blockies
-// The random number is a js implementation of the Xorshift PRNG
+/**
+ * Options for a blockie, the identicon from https://github.com/ethereum/blockies.
+ * Its randomness comes from a JS implementation of the Xorshift PRNG.
+ */
 interface BlockieOptions {
   /** seed used to generate icon data, default: random */
   seed: string;
@@ -30,8 +32,11 @@ function seedRand(seed: string): void {
     randSeed[i % 4] = (randSeed[i % 4] << 5) - randSeed[i % 4] + seed.charCodeAt(i);
 }
 
+/**
+ * The next random number, from a hash based on Java's String.hashCode()
+ * expanded to four 32-bit values.
+ */
 function rand(): number {
-  // based on Java's String.hashCode(), expanded to 4 32bit values
   const t = randSeed[0] ^ (randSeed[0] << 11);
 
   randSeed[0] = randSeed[1];
@@ -42,12 +47,13 @@ function rand(): number {
   return (randSeed[3] >>> 0) / ((1 << 31) >>> 0);
 }
 
+/**
+ * A random colour: any hue, a saturation from 40 to 100 that keeps it out of
+ * the greys, and a lightness drawn from a bell curve around 50%.
+ */
 function createColor(): string {
-  // saturation is the whole color spectrum
   const h = Math.floor(rand() * 360);
-  // saturation goes from 40 to 100, it avoids greyish colors
   const s = `${rand() * 60 + 40}%`;
-  // lightness can be anything from 0 to 100, but probabilities are a bell curve around 50%
   const l = `${(rand() + rand() + rand() + rand()) * 25}%`;
 
   return `hsl(${h},${s},${l})`;
@@ -64,8 +70,7 @@ function createImageData(size: number): number[] {
   for (let y = 0; y < height; y++) {
     let row = [];
     for (let x = 0; x < dataWidth; x++) {
-      // this makes foreground and background color to have a 43% (1/2.3) probability
-      // spot color has 13% chance
+      // 43% (1/2.3) each for foreground and background, leaving 13% for the spot colour
       row[x] = Math.floor(rand() * 2.3);
     }
     const r = row.slice(0, mirrorWidth);

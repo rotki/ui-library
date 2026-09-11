@@ -34,8 +34,7 @@ test.describe('data tables - basic', () => {
   });
 
   test('should render dense table', async ({ page }) => {
-    // Dense applies py-[0.38rem] on td cells
-    const td = page.locator('[data-id=table-dense] [data-id=table] tbody td').first();
+    const td = page.locator('[data-id=table-dense] [data-id=table] tbody td').first(); // dense tightens the cell padding
     await expect(td).toBeVisible();
     await expect(td).toHaveClass(/py-/);
   });
@@ -146,10 +145,7 @@ test.describe('data tables - pagination', () => {
     // Trigger pagination
     await container.locator('[data-id=table-pagination-next]').first().click();
 
-    // No expand button should appear after page change (regression: #onPaginate
-    // used to unconditionally reset `expanded` to [], flipping `expandable` to
-    // true and auto-adding an expand column even though no `expanded-item` slot
-    // was provided).
+    // Paginating used to reset `expanded` to [], which turned on an expand column with no slot behind it
     await expect(table.locator('tbody [data-id="expand-button"]')).toHaveCount(0);
   });
 
@@ -186,8 +182,7 @@ test.describe('data tables - pagination', () => {
     const perPageSelect = container.locator('[data-id=table-pagination-limit] [data-id=activator]').first();
     await perPageSelect.click();
 
-    // Select a different limit (e.g., 10) — scope to the opened menu content,
-    // otherwise the activator buttons of sibling pagination sections collide.
+    // Scoped to the open menu, or the activator buttons of the sibling pagination sections collide
     const option = page.getByTestId('content').getByRole('button', { name: '10', exact: true });
     await option.click();
 

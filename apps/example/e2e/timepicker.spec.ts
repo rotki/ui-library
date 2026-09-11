@@ -44,7 +44,6 @@ test.describe('timepickers', () => {
   });
 
   test('should have aria-label on time picker root', async ({ page }) => {
-    // data-id is on the same root div as role="group"
     const picker = page.locator('[data-id=timepicker-0]');
 
     await expect(picker).toHaveAttribute('role', 'group');
@@ -82,8 +81,7 @@ test.describe('timepickers', () => {
     await picker.locator('.rui-hour-06').click();
     await expect(clockFace).toHaveAttribute('aria-label', 'Select minute');
 
-    // Click minute digit selector to go back to minute mode (already there)
-    // Click hour digit selector to go back to hour mode
+    // The hour digit takes the face back to hour mode
     await picker.locator('[role=button][aria-label="Select hours"]').click();
     await expect(clockFace).toHaveAttribute('aria-label', 'Select hour');
   });

@@ -23,8 +23,7 @@ test.describe('navigation drawer', () => {
     // Wait for the aside element with visible attribute to appear (drawer is open)
     await expect(page.locator('aside[data-visible]')).toBeVisible();
 
-    // should close the drawer by clicking outside (temporary drawer uses onClickOutside)
-    // clicking on h2 closes the drawer since it's outside the aside content
+    // The heading sits outside the drawer, so clicking it is a click outside, which closes a temporary drawer
     await page.locator('h2[data-id=navigation-drawers]').click();
     // After closing, there should be no visible drawer
     await expect(page.locator('aside[data-visible]')).toHaveCount(0);

@@ -68,8 +68,7 @@ test.describe('footer steppers', () => {
   });
 
   test('should have aria-current="step" on active bullet', async ({ page }) => {
-    // Footer stepper at index 1 is bullet variant with value=2
-    const stepper = page.locator('[data-id=footer-stepper-1]');
+    const stepper = page.locator('[data-id=footer-stepper-1]'); // the bullet variant, on step 2
     const activeBullet = stepper.locator('[aria-current=step]');
     await expect(activeBullet).toHaveCount(1);
 
@@ -80,7 +79,6 @@ test.describe('footer steppers', () => {
   });
 
   test('should hide buttons when hideButtons is true', async ({ page }) => {
-    // Footer stepper at index 2 has hideButtons=true
     const stepper = page.locator('[data-id=footer-stepper-2]');
     await expect(stepper.locator('button')).toHaveCount(0);
   });

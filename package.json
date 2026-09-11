@@ -52,6 +52,7 @@
     "bumpp": "catalog:",
     "eslint": "catalog:",
     "eslint-plugin-storybook": "catalog:",
+    "eslint-plugin-tsdoc": "catalog:",
     "husky": "catalog:",
     "lint-staged": "catalog:",
     "typescript": "catalog:"

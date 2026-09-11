@@ -177,8 +177,7 @@ describe('components/tabs/tab/RuiTab.vue', () => {
   });
 
   it('should set tabindex to -1 for all tab variations', async () => {
-    // Test disabled tab
-    let wrapper = createWrapper({
+    let wrapper = createWrapper({ // starting with a disabled tab
       props: {
         disabled: true,
       },

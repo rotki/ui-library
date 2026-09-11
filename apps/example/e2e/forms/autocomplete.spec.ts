@@ -293,8 +293,7 @@ test.describe('auto-complete - search', () => {
     await activator.click();
     await ac.locator('input').fill('MyCustom');
 
-    // With hideCustomValue, only exact matches from options should appear, not the typed custom text
-    // Since "MyCustom" doesn't match any option, menu should show no-data or be hidden
+    // With hideCustomValue the typed text is not offered, and "MyCustom" matches no option either
     await expect(page.locator('div[role=menu] button')).toHaveCount(0);
   });
 
@@ -893,8 +892,7 @@ test.describe('auto-complete - advanced', () => {
     await chips.first().focus();
     await page.keyboard.press('Alt+Backspace');
 
-    // Only that chip is removed, its text is restored into the input, and the
-    // other selection (Ipsum) is untouched.
+    // Only that chip goes, its text returns to the input, and the other selection stays
     await expect(ac.locator('[data-id=activator] input')).toHaveValue('Lorem');
     await expect(ac.locator('[data-id=activator] [data-value]')).toHaveCount(1);
     await expect(page.locator('[data-id=ac-adv-chip-to-text-model]')).toHaveText('Model: Ipsum');

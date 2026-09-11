@@ -133,7 +133,14 @@ const stepper = tv({
 // Shared UI for layout props (no per-item state)
 const ui = computed<ReturnType<typeof stepper>>(() => stepper({ orientation, custom, iconTop }));
 
-// Per-item UI that includes the step's state
+/**
+ * Resolves the stepper's classes for one step, which vary with the state that
+ * step is in, which the shared `ui` above cannot carry because it resolves
+ * once for the whole stepper.
+ *
+ * @param state - the state that step is in
+ * @returns the stepper's classes with that state applied
+ */
 function stepUi(state: StepperState): ReturnType<typeof stepper> {
   return stepper({ orientation, custom, iconTop, state });
 }

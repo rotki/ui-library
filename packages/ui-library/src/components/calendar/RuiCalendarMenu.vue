@@ -66,7 +66,7 @@ const title = ref<string>('');
 const canGoToNext = ref<boolean>(true);
 const canGoToPrev = ref<boolean>(true);
 
-// Pre-calculation functions using VueUse get/set
+/** Rebuilds the years the picker offers around the current start year. */
 function calculateYearRange(): void {
   const start = get(startYear);
   set(

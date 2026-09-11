@@ -233,8 +233,7 @@ const i18n = createI18n({
   locale: 'en',
   messages: {
     en: {
-      // Your app translations
-      // UI library translations (see below)
+      // Your app translations, then the UI library's own (see below)
       rui: {
         date_time_picker: {
           date_after_max: 'Date cannot be after {date}',

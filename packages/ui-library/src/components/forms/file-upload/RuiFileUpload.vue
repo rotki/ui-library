@@ -25,7 +25,7 @@ export interface FileUploadProps {
   hint?: string;
   /** Disable drag-and-drop; the dropzone becomes click-only (matches rotki.com use case). */
   noDrop?: boolean;
-  /** Replace the default "Drag and drop or {button}" copy. */
+  /** Replace the default "Drag and drop or \{button\}" copy. */
   uploadText?: string;
   /** Label shown on the inline button when no file is selected. */
   clickToUploadText?: string;

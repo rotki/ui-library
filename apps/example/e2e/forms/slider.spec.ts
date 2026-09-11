@@ -22,18 +22,15 @@ test.describe('forms/Slider', () => {
   });
 
   test('should display label text', async ({ page }) => {
-    // Slider at index 2 has label "With Label"
     const slider = page.locator('[data-id=slider-2]');
     await expect(slider).toContainText('With Label');
 
-    // Slider at index 0 has no label
     const noLabelSlider = page.locator('[data-id=slider-0]');
     const labelDiv = noLabelSlider.locator('div[class*=label]');
     await expect(labelDiv).toHaveCount(0);
   });
 
   test('should show thumb label when showThumbLabel is true', async ({ page }) => {
-    // Sliders at index 8-9 have showThumbLabel: true
     const slider = page.locator('[data-id=slider-8]');
     await expect(slider).toContainText('Show Thumb Label');
 
@@ -43,13 +40,11 @@ test.describe('forms/Slider', () => {
   });
 
   test('should display hint text', async ({ page }) => {
-    // Slider at index 12 has hint "Slider hints"
     const slider = page.locator('[data-id=slider-12]');
     await expect(slider).toContainText('Slider hints');
   });
 
   test('should display error messages', async ({ page }) => {
-    // Slider at index 14 has errorMessages
     const slider = page.locator('[data-id=slider-14]');
     await expect(slider).toContainText('Slider error messages');
 
@@ -58,13 +53,11 @@ test.describe('forms/Slider', () => {
   });
 
   test('should display success messages', async ({ page }) => {
-    // Slider at index 15 has successMessages
     const slider = page.locator('[data-id=slider-15]');
     await expect(slider).toContainText('Slider success messages');
   });
 
   test('should have aria-label on input when label is provided', async ({ page }) => {
-    // Slider at index 2 has label "With Label"
     const input = page.locator('[data-id=slider-2] input[type="range"]');
     await expect(input).toHaveAttribute('aria-label', 'With Label');
 
@@ -82,7 +75,6 @@ test.describe('forms/Slider', () => {
   });
 
   test('should not be interactable when disabled', async ({ page }) => {
-    // Slider at index 4 is disabled
     const slider = page.locator('[data-id=slider-4]');
     const input = slider.locator('input[type="range"]');
 

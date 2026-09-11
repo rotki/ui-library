@@ -133,8 +133,11 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
     return true;
   }
 
+  /**
+   * Enter with the menu open, which takes the option the user navigated to
+   * before anything the component highlighted on its own.
+   */
   function handleOpenMenuEnter(event: KeyboardEvent): boolean {
-    // Prefer the user's explicit navigation.
     if (get(deps.userNavigated) && tryApplyHighlight(event))
       return true;
 
@@ -155,9 +158,7 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
       if (handleOpenMenuEnter(event))
         return;
 
-      // Menu is open but no actionable selection (e.g. typed text with no
-      // matches and customValue=false, or no highlighted option). Swallow
-      // Enter so it does not bubble up and submit a surrounding form.
+      // Open with nothing to act on, so Enter is swallowed rather than submitting a surrounding form
       event.preventDefault();
       return;
     }

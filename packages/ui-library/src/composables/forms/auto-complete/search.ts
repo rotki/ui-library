@@ -42,9 +42,7 @@ export function useAutoCompleteSearch<TItem>(
   const debouncedInternalSearch = refDebounced(internalSearch, 50);
   const justOpened = shallowRef<boolean>(false);
 
-  // Memoize token computation to avoid repeated string processing.
-  // Map iteration order is insertion order, so deleting the first key
-  // gives us simple LRU eviction without a separate data structure.
+  // Map iteration order is insertion order, so deleting the first key evicts the oldest token
   const MAX_CACHE_SIZE = 100;
   const tokenCache = new Map<string, string>();
   const getCachedTextToken = (text: string): string => {
@@ -63,9 +61,11 @@ export function useAutoCompleteSearch<TItem>(
     return token;
   };
 
-  // Resolve the group label for an item. Mirrors `getGroupKey` in
-  // dropdown-menu.ts so the filter can match against the same labels the
-  // rendered group headers show.
+  /**
+   * The group label an item sits under. Mirrors `getGroupKey` in
+   * dropdown-menu.ts, so the filter matches the labels the rendered group
+   * headers show.
+   */
   const resolveGroup = (item: TItem, groupBy: GroupBy<TItem> | undefined): string | undefined => {
     if (!groupBy)
       return undefined;
@@ -104,9 +104,7 @@ export function useAutoCompleteSearch<TItem>(
           if (textAttr && typeof item === 'object')
             keywords.push(getCachedTextToken(String((item as any)[textAttr])));
 
-          // Widen the match to the group label so a query like "trade" surfaces
-          // every item under a "Trade" section, even when the items themselves
-          // (e.g. "Swap") don't contain the query.
+          // Matching the group label too surfaces every item under a "Trade" section for "trade"
           if (searchIncludesGroupLabel && groupBy) {
             const group = resolveGroup(item, groupBy);
             if (group)

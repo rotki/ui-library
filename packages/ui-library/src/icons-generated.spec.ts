@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { isRuiIcon, RuiIcons } from '@/icons';
 
-// Guardrail for the generated lucide icon set. The generation itself is
-// gitignored and rebuilt from the `lucide` dependency, so nothing else catches
-// a version bump that silently drops icons consumers rely on (`RuiIcons` is
-// typed as plain `string`). These assertions fail the build if that happens.
+/**
+ * Guardrail for the generated lucide icon set. The generation is gitignored
+ * and rebuilt from the `lucide` dependency, and `RuiIcons` is typed as plain
+ * `string`, so nothing else catches a version bump that silently drops icons
+ * consumers rely on.
+ */
 describe('generated icons', () => {
-  it('exposes a large icon set', () => {
-    // lucide ships ~1700 icons plus official aliases and custom SVGs; a sharp
-    // drop below this floor means a bump removed a large chunk of the set.
+  it('should keep the icon count above the floor a version bump must not cross', () => {
     expect(RuiIcons.length).toBeGreaterThan(1900);
   });
 
@@ -33,17 +33,12 @@ describe('generated icons', () => {
       expect(RuiIcons, name).toContain(name);
   });
 
-  it('keeps pre-v1 lucide names available via official aliases', () => {
-    // Renamed in lucide v1 but kept as official aliases; consumers using the
-    // old names must keep working.
+  it('should keep the pre-v1 names lucide renamed, so consumers using them keep working', () => {
     for (const name of ['lu-waves', 'lu-text-select', 'lu-x-circle'])
       expect(RuiIcons, name).toContain(name);
   });
 
-  it('ships no third-party brand logos (registered per-app instead)', () => {
-    // The library is intentionally brand-free: brand/logo marks are third-party
-    // trademarks and belong in the consuming app (see README "App-provided
-    // (brand/custom) icons"). Crypto network marks are kept.
+  it('should ship no third-party brand logo, which an app registers itself', () => {
     for (const name of [
       'lu-github',
       'lu-discord',

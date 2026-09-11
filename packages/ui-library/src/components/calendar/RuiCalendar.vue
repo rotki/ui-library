@@ -65,8 +65,7 @@ provide(CalendarStateSymbol.valueOf(), {
   allowEmpty,
 } satisfies RuiCalendarState);
 
-// The view also turns from the grid's keyboard navigation, so the page title
-// follows the view instead of being emitted by whoever changed it.
+// The grid's keyboard navigation also turns the view, so the title follows the view itself
 watch(monthTitle, (title) => {
   emit('update:pages', [{ title }]);
 });

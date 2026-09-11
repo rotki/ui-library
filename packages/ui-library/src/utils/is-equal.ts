@@ -17,8 +17,16 @@ function objectsEqual(value: object, other: object): boolean {
     Object.hasOwn(otherEntries, key) && isEqual(entry, otherEntries[key]));
 }
 
+/**
+ * Compares two values structurally: arrays element by element and objects key
+ * by key, with everything else compared by identity, which is what a primitive
+ * or a function needs.
+ *
+ * @param value - the first value
+ * @param other - the value to compare it with
+ * @returns whether the two are equal
+ */
 export function isEqual(value: unknown, other: unknown): boolean {
-  // Identical values cover primitives and functions
   if (value === other)
     return true;
 

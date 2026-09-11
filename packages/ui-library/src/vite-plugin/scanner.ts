@@ -49,8 +49,7 @@ export function validateIcons(
 ): void {
   for (const icon of detectedIcons) {
     if (ignore?.has(icon)) {
-      // App-provided custom icon: registered by the consumer, not shipped by
-      // the library — neither imported nor reported invalid.
+      // The consumer registers this one themselves, so it is neither imported nor reported invalid
       continue;
     }
     if (validIcons.has(icon)) {
@@ -66,8 +65,11 @@ export function validateIcons(
 }
 
 /**
- * Converts icon name to export constant name
- * e.g., 'lu-arrow-down' -> 'LuArrowDown'
+ * Names the generated constant an icon is exported as, which is its kebab-case
+ * name in pascal case: `lu-arrow-down` is exported as `LuArrowDown`.
+ *
+ * @param iconName - kebab-case name, as it is written in a template
+ * @returns the constant the generated module exports it under
  */
 export function iconNameToExportName(iconName: string): string {
   return iconName

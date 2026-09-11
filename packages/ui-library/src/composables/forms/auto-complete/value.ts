@@ -138,8 +138,7 @@ export function useAutoCompleteValue<TValue, TItem>(
     },
   });
 
-  // Watching `value` (not `modelValue`) so the search text resyncs once
-  // `options` arrives later and the lookup can finally resolve.
+  // Watches `value` rather than `modelValue`, so the search text resyncs once late `options` resolve it
   watch([value, () => toValue(deps.isOpen)], () => {
     if (toValue(deps.isOpen) || !toValue(deps.shouldApplyValueAsSearch))
       return;

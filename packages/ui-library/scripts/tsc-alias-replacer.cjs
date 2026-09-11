@@ -3,8 +3,7 @@ const consola = require('consola');
 /**
  * Handles tsc-alias failing to remove aliases properly from specific files.
  *
- * @param orig - the import
- * @param _file - the file where the import comes from
+ * @param importInfo - the import and the file it comes from
  * @returns the new import
  */
 module.exports.default = ({ orig, _file }) => {

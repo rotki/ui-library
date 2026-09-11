@@ -18,10 +18,12 @@ const { cellValue, columnAttr, itemSlotKeys } = useDataTableColumns<T>();
 const { isExpanded, onToggleExpand } = useDataTableExpansion<T>();
 const { isMobile } = useDataTableStyling();
 
-// The built-in toggle is only a fallback for consumers that do not drive the
-// expand column themselves. A consumer that provides `#item.expand` owns the
-// decision per row, including rendering nothing for a row that cannot expand,
-// so slot emptiness must not fall back to a toggle they deliberately withheld.
+/**
+ * The built-in toggle is only a fallback for a consumer that does not drive
+ * the expand column itself. One that provides `#item.expand` owns the decision
+ * per row, rendering nothing for a row that cannot expand among them, so an
+ * empty slot must not fall back to a toggle they deliberately withheld.
+ */
 const ownsExpandColumn = computed<boolean>(() => itemSlotKeys.has('expand'));
 
 const mobileLabel = computed<string>(() => {

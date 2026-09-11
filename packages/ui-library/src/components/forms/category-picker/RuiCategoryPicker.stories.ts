@@ -6,8 +6,10 @@ import preview from '~/.storybook/preview';
 
 interface ActionOption { id: string; label: string; category: string }
 
-// A catalogue at the scale that motivated the component: 16 categories of
-// history-event verbs (~4 each ≈ 64 options), from rotki/ui-library#544.
+/**
+ * A catalogue at the scale that motivated the component: 16 categories of
+ * history-event verbs, around 4 each, from rotki/ui-library#544.
+ */
 const actionCategories: Record<string, string[]> = {
   Deposit: ['Deposit asset', 'Deposit collateral', 'Bridge in', 'Fund account'],
   Withdrawal: ['Withdraw asset', 'Withdraw collateral', 'Bridge out', 'Redeem'],
@@ -159,8 +161,10 @@ export const Validation = meta.story({
   },
 });
 
-// Force the mobile bottom-sheet + single-pane drill-in on a desktop canvas by
-// treating everything below 2xl as "mobile".
+/**
+ * The mobile bottom sheet and its single-pane drill-in, forced onto a desktop
+ * canvas by treating everything below 2xl as mobile.
+ */
 export const DrillIn = meta.story({
   args: {
     label: 'Country',

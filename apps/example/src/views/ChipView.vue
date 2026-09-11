@@ -67,6 +67,7 @@ onBeforeMount(() => {
     </template>
 
     <ComponentGroup
+      :data-color-count="colors.length"
       :items="chips"
       class="grid gap-6 grid-cols-7"
     >

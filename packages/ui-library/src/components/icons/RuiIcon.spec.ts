@@ -79,11 +79,9 @@ describe('components/icons/RuiIcon.vue', () => {
       },
     });
 
-    // Numeric sizes are normalized to px so the custom property has a valid
-    // CSS length for the svg's `width: var(--rui-icon-size, 1.5rem)` class.
+    // A numeric size becomes px, so the custom property holds a valid CSS length
     expect(wrapper.attributes('style')).toContain('--rui-icon-size: 32px');
-    // Presentation attrs are intentionally gone — they had specificity 0 and
-    // lost the cascade inside RuiButton (see rotki/ui-library#512).
+    // Presentation attrs are gone: at specificity 0 they lost the cascade inside RuiButton (#512)
     expect(wrapper.attributes('width')).toBeUndefined();
     expect(wrapper.attributes('height')).toBeUndefined();
 
@@ -94,10 +92,7 @@ describe('components/icons/RuiIcon.vue', () => {
     expect(wrapper.attributes('style')).toContain('--rui-icon-size: 1.25rem');
   });
 
-  it('should coerce a bare-number size string to px', async () => {
-    // `:size="16"` in a template binds as a string; before the fix this
-    // produced `--rui-icon-size: 16` (no unit), an invalid CSS length that
-    // computed to 0 width. Assert the numeric-string path stays px-coerced.
+  it('should coerce the numeric string a `:size="16"` binding produces to px, not a unitless 0-width length', async () => {
     wrapper = createWrapper({
       props: {
         name: 'lu-circle-arrow-down',
@@ -138,9 +133,6 @@ describe('components/icons/RuiIcon.vue', () => {
       },
     });
 
-    // No size prop → no inline `--rui-icon-size` → the var() fallback of
-    // 1.5rem drives width/height. A parent (e.g. RuiButton) can still inject
-    // `--rui-icon-size` to shrink the icon in lockstep with its own size.
     expect(wrapper.attributes('style')).toBeUndefined();
     expect(wrapper.classes()).toContain('w-[var(--rui-icon-size,1.5rem)]');
     expect(wrapper.classes()).toContain('h-[var(--rui-icon-size,1.5rem)]');
@@ -166,11 +158,7 @@ describe('components/icons/RuiIcon.vue', () => {
       },
     });
 
-    // Regression guard: in `RuiButton variant="list"` the label is `w-full`
-    // and `text-nowrap`. With a long label inside a width-bounded menu, a
-    // shrinkable SVG sibling collapses on the main axis (the height stays at
-    // the var-driven box, so the glyph renders as a sliver). `shrink-0`
-    // pins the icon at its `--rui-icon-size` regardless of sibling pressure.
+    // A `w-full text-nowrap` label in a bounded menu would otherwise squeeze the glyph to a sliver
     expect(wrapper.classes()).toContain('shrink-0');
   });
 
@@ -185,8 +173,7 @@ describe('components/icons/RuiIcon.vue', () => {
   });
 
   describe('app-registered icons', () => {
-    // A brand logo of the shape an app registers itself: a name the generated
-    // `RuiIcons` list can never contain.
+    /** A brand logo of the shape an app registers itself, under a name the generated list cannot hold. */
     const customIcon: GeneratedIcon = {
       components: [['path', { d: 'M4 4h16v16H4z' }]],
       name: 'lu-not-a-library-icon',
@@ -211,9 +198,7 @@ describe('components/icons/RuiIcon.vue', () => {
 
       wrapper = createWithCustomIcon(customIcon.name);
 
-      // It is registered and it renders, so nothing is wrong with it — the
-      // regression guard for rotki/ui-library#568, where the name-list check
-      // warned on every render, in production builds too.
+      // Guards rotki/ui-library#568, where the name-list check warned on every render
       expect(wrapper.find('path').attributes('d')).toBe('M4 4h16v16H4z');
       expect(warn).not.toHaveBeenCalled();
       expect(error).not.toHaveBeenCalled();

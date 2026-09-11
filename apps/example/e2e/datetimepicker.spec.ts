@@ -22,9 +22,7 @@ test.describe('datetimepicker inside parent menu', () => {
     // Open the calendar's teleported month/year sub-menu by clicking the header title
     await page.getByTestId('header-title').click();
 
-    // Click somewhere outside the calendar sub-menu but on the page body —
-    // because the picker exposes menu-open and the page binds :persistent to it,
-    // the parent menu must NOT close.
+    // The page binds :persistent to the picker's menu-open, so a click on the body leaves it open
     await page.mouse.click(5, 5);
 
     await expect(parentContent).toBeVisible();
@@ -38,8 +36,7 @@ test.describe('datetimepicker inside parent menu', () => {
     // Open the picker but do NOT open the calendar's year/month sub-menu
     await parentContent.getByRole('textbox').click();
 
-    // Click outside — picker exposes menu-open while its own menu is open,
-    // so parent stays open.
+    // The picker reports menu-open while its own menu is open, so the parent stays
     await page.mouse.click(5, 5);
 
     await expect(parentContent).toBeVisible();
@@ -67,19 +64,31 @@ test.describe('datetimepicker segment typing', () => {
     await page.keyboard.press('Escape');
   });
 
-  // Helper to read the visible input value
+  /**
+   * The value the field currently shows.
+   *
+   * @param page - the page under test
+   * @returns the input's value
+   */
   async function readValue(page: Page): Promise<string> {
     return page.getByRole('textbox').first().inputValue();
   }
 
-  // Helper to click on a specific segment of the visible input by character offset.
-  // Range is computed from the format "DD/MM/YYYY HH:mm":
-  //   DD=0..2, MM=3..5, YYYY=6..10, HH=11..13, mm=14..16
+  /**
+   * Clicks one segment of the field, named by its character offsets in the
+   * `DD/MM/YYYY HH:mm` format: DD is 0 to 2, MM 3 to 5, YYYY 6 to 10, HH 11 to
+   * 13 and mm 14 to 16.
+   *
+   * The click lands on the pixel midpoint between the two offsets, because the
+   * component resolves it through `document.caretPositionFromPoint`, which
+   * makes the coordinates matter.
+   *
+   * @param page - the page under test
+   * @param start - the segment's first character offset
+   * @param end - the offset one past its last character
+   */
   async function selectSegment(page: Page, start: number, end: number): Promise<void> {
     const input = page.getByRole('textbox').first();
-    // Measure the pixel x-offset of the midpoint between `start` and `end` so the click
-    // lands inside the desired segment. The component reads the click position via
-    // document.caretPositionFromPoint, so accurate coordinates matter.
     const offsetX = await input.evaluate((el, args) => {
       if (!(el instanceof HTMLInputElement))
         throw new Error('expected input element');
@@ -101,12 +110,10 @@ test.describe('datetimepicker segment typing', () => {
   }
 
   test('typing "12" in hour with existing value yields hour 12, not 13', async ({ page }) => {
-    // Initial value is "02/01/2023 20:20"
     await expect(page.getByRole('textbox').first()).toHaveValue('02/01/2023 20:20');
 
     await page.getByRole('textbox').first().click();
-    // Select the HH segment ("20")
-    await selectSegment(page, 11, 13);
+    await selectSegment(page, 11, 13); // the HH segment, holding "20"
 
     await page.keyboard.press('1');
     expect(await readValue(page)).toMatch(/01:20$/);
@@ -128,8 +135,7 @@ test.describe('datetimepicker segment typing', () => {
     // Click into the minute segment instead of letting HH auto-advance
     await selectSegment(page, 14, 16);
 
-    // Typing "3" must set mm=3 (not 13). Before the fix the leftover "1" from HH
-    // would combine with "3" and produce mm=13.
+    // "3" is minute 3: the leftover "1" from HH used to combine with it into 13
     await page.keyboard.press('3');
     expect(await readValue(page)).toMatch(/01:03$/);
   });
@@ -161,7 +167,13 @@ test.describe('datetimepicker menu footer actions', () => {
     await page.keyboard.press('Escape');
   });
 
-  // The "All footer actions" picker starts at 02/01/2023 20:20:00
+  /**
+   * The field of the "All footer actions" picker, which starts at
+   * 02/01/2023 20:20:00.
+   *
+   * @param page - the page under test
+   * @returns that picker's input
+   */
   function actionsInput(page: Page) {
     return page.getByTestId('picker-all-actions').locator('input');
   }
@@ -192,8 +204,7 @@ test.describe('datetimepicker menu footer actions', () => {
     await input.click();
     await page.getByTestId('action-clear').click();
 
-    // focus sits on the footer button, so the emptied field shows its format
-    // through the placeholder rather than holding the tokens as a value
+    // Focus sits on the footer button, so the emptied field shows its format as a placeholder
     await expect(input).toHaveValue('');
     await expect(input).toHaveAttribute('placeholder', 'DD/MM/YYYY HH:mm:ss');
 
@@ -291,8 +302,7 @@ test.describe('datetimepicker calendar keyboard', () => {
     const grid = page.getByRole('grid');
     await expect(grid).toBeVisible();
 
-    // opening from the keyboard hands focus to the calendar, which is
-    // teleported to the body and therefore never adjacent in the tab order
+    // Opening from the keyboard hands focus to the calendar, which is teleported out of tab order
     await expect(grid.locator('[role=gridcell][tabindex="0"]')).toBeFocused();
 
     // the initial value is 02/01/2023, so a week back lands in December
@@ -340,12 +350,10 @@ test.describe('datetimepicker across a DST boundary', () => {
     await page.keyboard.press('Escape');
   });
 
-  test('the repeated hour of the fall back stays put when picked twice', async ({ page }) => {
-    // 02:30 happens twice on 29/10/2023 in Berlin. Whichever instant gets
-    // chosen, re-picking the same day must not walk the value by an hour.
+  test('the repeated 02:30 of the Berlin fall back stays put when the same day is picked twice', async ({ page }) => {
     const input = page.getByRole('textbox').first();
     await input.focus();
-    // focus starts on the first segment, and each full segment auto-advances
+    // Focus starts on the first segment, and each full segment advances to the next
     await page.keyboard.type('291020230230');
     await expect(input).toHaveValue('29/10/2023 02:30');
 
@@ -384,12 +392,28 @@ test.describe('datetimepicker partial entries', () => {
     await page.keyboard.press('Escape');
   });
 
-  // the three partial pickers start empty and emit an epoch, written out next to each field
+  /**
+   * One of the three partial pickers, each starting empty and emitting an
+   * epoch that the page writes out beside the field.
+   *
+   * @param page - the page under test
+   * @param mode - which of the three to reach for
+   * @returns that picker's input
+   */
   function partialInput(page: Page, mode: 'start' | 'end' | 'strict') {
     return page.getByTestId(`picker-partial-${mode}`).locator('input');
   }
 
-  // computed in the browser, so the expectation follows the timezone the page runs in
+  /**
+   * The epoch a time on 15/01/2023 has, computed in the browser so the
+   * expectation follows the timezone the page runs in.
+   *
+   * @param page - the page under test
+   * @param hour - the hour to convert
+   * @param minute - the minute to convert
+   * @param second - the second to convert
+   * @returns that instant in whole seconds, as the page prints it
+   */
   async function epochOf(page: Page, hour: number, minute: number, second: number): Promise<string> {
     return page.evaluate(
       ([h, m, s]) => String(new Date(2023, 0, 15, h, m, s).getTime() / 1000),
@@ -445,8 +469,7 @@ test.describe('datetimepicker partial entries', () => {
     await expect(page.getByTestId('picker-partial-end-value')).toHaveText(await epochOf(page, 9, 59, 59));
   });
 
-  // the mouse path leaves the time out just as typing does: the field starts empty, so the
-  // calendar opens on the current month and today is the day that is there to be clicked
+  // The empty field opens the calendar on the current month, so today is the day there to click
   test('a day picked in the calendar is committed once the user leaves the field', async ({ page }) => {
     const input = partialInput(page, 'start');
     await input.click();
@@ -480,8 +503,7 @@ test.describe('datetimepicker partial entries', () => {
     await expect(page.getByTestId('picker-partial-strict-value')).toHaveText('');
   });
 
-  // The attribute is easy to assert in a unit test and proves nothing about what tab actually
-  // does, so the real key is pressed here against three fields standing in a row.
+  // A unit test can assert the attribute, but only the real key says where tab goes
   test('tab crosses a field in one stop rather than landing on its calendar toggle', async ({ page }) => {
     const start = partialInput(page, 'start');
     await start.focus();
@@ -523,7 +545,13 @@ test.describe('datetimepicker footer actions against a bound', () => {
     await page.keyboard.press('Escape');
   });
 
-  // The bounded picker starts at 02/01/2023 20:20:00 with maxDate 10/01/2023 12:00
+  /**
+   * The field of the bounded picker, which starts at 02/01/2023 20:20:00 under
+   * a maxDate of 10/01/2023 12:00.
+   *
+   * @param page - the page under test
+   * @returns that picker's input
+   */
   function boundedInput(page: Page) {
     return page.getByTestId('picker-bounded').locator('input');
   }
@@ -548,8 +576,7 @@ test.describe('datetimepicker footer actions against a bound', () => {
     await expect(boundedInput(page)).toHaveAttribute('spellcheck', 'false');
   });
 
-  // the message used to come from toLocaleDateString(), which follows the
-  // browser locale rather than the field, and dropped the bound's time
+  // The message came from toLocaleDateString(), which follows the browser locale and drops the time
   test('the bound error is written in the field format, with its time', async ({ page }) => {
     const input = boundedInput(page);
     await expect(input).toHaveValue('02/01/2023 20:20:00');

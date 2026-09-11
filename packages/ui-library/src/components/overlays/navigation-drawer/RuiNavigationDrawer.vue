@@ -140,8 +140,7 @@ watch(modelValue, (value) => {
   }
 });
 
-// Debounce prevents activator click from immediately triggering close
-// (click bubbles to body → onClickOutside fires in the same tick)
+// Debounced, so the activator's own click, which bubbles to the body, does not close it again
 onClickOutside(content, () => {
   if (get(modelValue) && temporary && !stateless) {
     clickOutsideTimeout.create(close, 50);

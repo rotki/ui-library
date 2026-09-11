@@ -5,8 +5,8 @@ import { defineComponent } from 'vue';
  * Mount a composable inside a minimal host component so that Vue's
  * lifecycle (provide/inject, watchers, etc.) is available.
  *
- * @param composable — factory that calls the composable under test
- * @param options    — optional Vue Test Utils mounting options (e.g. `global.provide`)
+ * @param composable - — factory that calls the composable under test
+ * @param options    - — optional Vue Test Utils mounting options (e.g. `global.provide`)
  * @returns `{ result, unmount }` — the composable's return value and a teardown function
  */
 export function withSetup<T>(

@@ -393,8 +393,6 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
       await host.find('#trigger').trigger('keydown', { key: 'Escape' });
       await vi.runAllTimersAsync();
 
-      // An inner popover that closed on the same press leaves the menu
-      // standing, and nothing consumed the key, so the ancestor still sees it.
       expect(document.body.innerHTML).toMatch(new RegExp(text));
       expect(ancestorKeydowns(host)).toBe(before + 1);
 

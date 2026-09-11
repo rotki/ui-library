@@ -75,9 +75,8 @@ export interface Props<T, K extends keyof T> {
    */
   rangesThreshold?: number;
   /**
-   * data to display for empty state
-   * text and icon
-   * @example :empty="{ icon: 'transactions-line', label: 'No transactions found' }"
+   * The text and icon shown when there are no rows, e.g.
+   * `:empty="\{ icon: 'transactions-line', label: 'No transactions found' \}"`
    */
   empty?: {
     label?: string;
@@ -223,18 +222,21 @@ const resolvedMobileBasis = computed<'viewport' | 'container'>(() => {
   return globalBasis === undefined ? 'viewport' : get(globalBasis);
 });
 
+/**
+ * Whether the stacked card layout is showing.
+ *
+ * Vue coerces an absent Boolean prop to `false`, so `mobile` cannot say
+ * "unset": with no breakpoint configured it is the manual switch, defaulting
+ * to desktop, and with one configured the breakpoint drives the layout while
+ * `mobile === true` can still force the stacked layout on.
+ */
 const isMobile = computed<boolean>(() => {
   const breakpoint = get(resolvedMobileBreakpoint);
-  // Vue coerces an absent Boolean prop to `false`, so `mobile` cannot be used to
-  // detect "unset". When no breakpoint is configured, `mobile` is the manual
-  // switch (defaulting to desktop). When a breakpoint is configured it drives
-  // the layout, and `mobile === true` can still force the stacked layout on.
   if (breakpoint === undefined)
     return mobile;
   if (mobile)
     return true;
-  // Before the container is measured, `containerWidth` is 0; fall back to the
-  // viewport so the layout does not flash to mobile on first paint.
+  // `containerWidth` is 0 until measured; the viewport keeps the first paint off mobile
   const width = get(resolvedMobileBasis) === 'container'
     ? (get(containerWidth) || get(windowWidth))
     : get(windowWidth);
@@ -245,14 +247,17 @@ const stickyHeaderOffset = computed<number | undefined>(() =>
   stickyOffset !== undefined ? stickyOffset : get(tableDefaults.stickyOffset),
 );
 
-// Nested tables (e.g. rendered inside an expanded row) must not pin their own
-// toolbar: only the outermost table sticks, otherwise the bars stack and
-// collide. Detect nesting via inject, then mark descendants as nested.
+/**
+ * A table rendered inside an expanded row must not pin its own toolbar: only
+ * the outermost table sticks, otherwise the bars stack and collide.
+ */
 const isNestedTable = useDataTableNested();
 provideDataTableNested();
 
-// On mobile there is no column header to pin, so `stickyHeader` instead keeps
-// the pagination + sort toolbar pinned to the top while the card list scrolls.
+/**
+ * On mobile there is no column header to pin, so `stickyHeader` pins the
+ * pagination and sort toolbar instead while the card list scrolls.
+ */
 const stickyMobileToolbar = computed<boolean>(() => stickyHeader && get(isMobile) && !isNestedTable);
 
 const table = useTemplateRef<HTMLTableElement>('table');
@@ -375,7 +380,10 @@ const {
   { selectedData, filtered },
 );
 
-// Sort triggers selection reset — handled here to avoid circular dependency between sort and selection
+/**
+ * Sorting clears the selection. That lives here rather than in either
+ * composable, which would make sort and selection depend on each other.
+ */
 function onSort(payload: Parameters<typeof applySort>[0]): void {
   applySort(payload);
   if (!multiPageSelect)

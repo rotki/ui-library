@@ -149,9 +149,7 @@ export function useCategoryPicker<TValue, TItem>(
     set(activeCategory, category);
   }
 
-  // Keep the active category valid as the search narrows the rail. If the
-  // active category disappears, fall back to "All" (when shown) or the first
-  // remaining category.
+  // A category the search narrows away falls back to "All", where it is shown, or the first remaining one
   watch(filteredGroups, (groups) => {
     const active = get(activeCategory);
     if (active === null)
@@ -160,8 +158,7 @@ export function useCategoryPicker<TValue, TItem>(
       set(activeCategory, fallbackCategory());
   });
 
-  // When the user starts typing, surface matches across every category so the
-  // top hit is global rather than scoped to whatever category was active.
+  // Typing searches every category, so the top hit is global rather than scoped to the active one
   watch(query, (current, previous) => {
     if (current && !previous && toValue(showAll))
       set(activeCategory, null);
@@ -201,7 +198,7 @@ export function useCategoryPicker<TValue, TItem>(
     return getIdentifier(item) === value;
   }
 
-  // Point the rail at the selected item's category so it is visible on open.
+  /** Points the rail at the selected item's category, so it shows on open. */
   function syncActiveToSelection(): void {
     const value = get(modelValue);
     if (value === undefined) {

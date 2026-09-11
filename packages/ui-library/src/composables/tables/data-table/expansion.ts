@@ -24,12 +24,13 @@ export function useTableExpansion<T extends object, IdType extends keyof T>(
   const { rowAttr, singleExpand } = options;
   const { expanded } = deps;
 
-  // `expandable` only tracks whether the consumer has wired a two-way
-  // `expanded` model. Whether an `#expanded-item` slot is present is
-  // checked fresh in the template (`!!$slots['expanded-item']`) so that
-  // consumers which gate the slot with `v-if` (e.g. only after data
-  // loads) don't get stuck on the first-render slot snapshot — Vue's
-  // `slots` object is not reactive to property access inside a computed.
+  /**
+   * Whether the consumer wired a two-way `expanded` model. Whether the
+   * `#expanded-item` slot is there is checked fresh in the template instead,
+   * so a consumer gating that slot with `v-if`, until data loads say, is not
+   * stuck on the first render's snapshot: Vue's `slots` object is not reactive
+   * to property access inside a computed.
+   */
   const expandable = computed<boolean>(() => !!get(expanded));
 
   const expandedSet = computed<Set<T[IdType]>>(() => {

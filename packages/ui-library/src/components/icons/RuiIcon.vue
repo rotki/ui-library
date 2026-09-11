@@ -14,8 +14,7 @@ export interface Props {
 
 defineOptions({
   name: 'RuiIcon',
-  // the svg is the only root, so a fallthrough class would land beside the
-  // variant classes and leave the cascade to break the tie; `ui` merges instead
+  // A fallthrough class would land beside the variant classes and leave the cascade to break the tie; `ui` merges instead
   inheritAttrs: false,
 });
 
@@ -25,14 +24,14 @@ const { registeredIcons } = useIcons();
 
 type SvgComponent = [tag: string, attrs: Record<string, string>];
 
+/**
+ * The icon's box is always driven by `--rui-icon-size`, so flex shrinking is
+ * never wanted: `shrink-0` keeps the size beside a long flex-grow sibling,
+ * such as a `w-full` button label in `variant="list"`. Without it the svg is
+ * compressed along the main axis while its height stays put, drawing a sliver
+ * of a glyph.
+ */
 const iconStyles = tv({
-  // `shrink-0` keeps the icon at its declared `--rui-icon-size` when it sits
-  // in a flex container next to a long flex-grow sibling (e.g. a `w-full`
-  // button label in `variant="list"`). Without it, the SVG — even with an
-  // explicit width — gets compressed along the main axis when the row is
-  // narrower than the label's intrinsic width, while the height stays put,
-  // producing a sliver glyph. The icon's box is always intentionally driven
-  // by `--rui-icon-size`, so flex shrinking is never the desired behavior.
   base: 'shrink-0 w-[var(--rui-icon-size,1.5rem)] h-[var(--rui-icon-size,1.5rem)]',
   variants: {
     color: {
@@ -52,14 +51,16 @@ function ui(attrsClass: ClassValue): string {
   return iconStyles({ color, class: cn(attrsClass) });
 }
 
-// Render the `size` prop as an inline CSS custom property on the svg. Because
-// inline style wins against any inherited value for the same property on this
-// element, the consumer-supplied size beats the button's `--rui-icon-size`
-// assignment without needing !important. A bare number (or numeric string —
-// `:size="16"` resolves to a string in the template binding) is coerced to px;
-// values that already include a unit (`1rem`, `18px`, `calc(...)`) pass
-// through unchanged. The previous SVG-attr path accepted bare numbers because
-// `width`/`height` presentation attrs treat them as px; CSS does not.
+/**
+ * The `size` prop as an inline CSS custom property on the svg. Inline style
+ * beats any inherited value for the same property on this element, so a
+ * consumer's size beats the button's `--rui-icon-size` without !important.
+ *
+ * A bare number is coerced to px, including the numeric string a template
+ * binding like `:size="16"` resolves to, while a value that already carries a
+ * unit passes through. CSS needs that coercion; the `width`/`height`
+ * presentation attributes this replaced treated bare numbers as px themselves.
+ */
 const sizeStyle = computed<Record<string, string> | undefined>(() => {
   if (!get(hasExplicitSize))
     return undefined;
@@ -70,12 +71,15 @@ const sizeStyle = computed<Record<string, string> | undefined>(() => {
 
 const isFill = computed<boolean>(() => name.endsWith('-fill'));
 
-// What is registered is the only thing that matters here. An app may register
-// its own icons through `createRui({ theme: { icons } })` — brand logos, since
-// the library carries none — and those names can never appear in the generated
-// `RuiIcons` list, so validating against that list warned for precisely the
-// icons the registration API exists to support. A genuinely unknown name is
-// still caught below, by the check that decides whether anything renders.
+/**
+ * What is registered is the only thing that matters here. An app may register
+ * its own icons through `createRui(\{ theme: \{ icons \} \})`, brand logos
+ * among them since the library carries none, and those names never appear in
+ * the generated `RuiIcons` list. Validating against that list warned for
+ * precisely the icons the registration API exists to support. A genuinely
+ * unknown name is still caught by the check that decides whether anything
+ * renders.
+ */
 const components = computed<SvgComponent[] | undefined>(() => {
   const found = registeredIcons[name];
 

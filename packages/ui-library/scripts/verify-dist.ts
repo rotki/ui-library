@@ -4,10 +4,12 @@ import process from 'node:process';
 
 const DIST = join(import.meta.dirname, '..', 'dist');
 
-// Any of these markers in shipped code means a runtime dependency got bundled
-// with pnpm peer-hash paths baked in, instead of being left as a bare specifier.
-// That breaks consumers whose peer resolution produces a different hash (e.g.
-// a different yaml version in the tailwindcss chain).
+/**
+ * Any of these markers in shipped code means a runtime dependency was bundled
+ * with pnpm peer-hash paths baked in rather than left as a bare specifier.
+ * That breaks a consumer whose peer resolution produces a different hash, such
+ * as a different yaml version in the tailwindcss chain.
+ */
 const FORBIDDEN: readonly string[] = [
   'node_modules/.pnpm/',
   '../node_modules/.pnpm/',

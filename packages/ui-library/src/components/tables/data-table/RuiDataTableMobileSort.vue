@@ -45,8 +45,10 @@ const activeLabel = computed<string>(() => {
   return `${active.length} sorts`;
 });
 
-// Mirror RuiTableHead: emit the column's configured default direction so the
-// sort composable performs the same asc → desc → none cycle on repeat taps.
+/**
+ * Emits the column's configured default direction, as RuiTableHead does, so
+ * the sort composable runs the same asc, desc, none cycle on repeat taps.
+ */
 function onSelect(column: TableColumn<T>): void {
   emit('sort', {
     key: column.key as TableRowKey<T>,
