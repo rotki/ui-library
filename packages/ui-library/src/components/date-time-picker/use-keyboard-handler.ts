@@ -20,6 +20,7 @@ interface KeyboardHandlerOptions {
   disabled: boolean;
   readonly: boolean;
   accuracy: TimeAccuracy;
+  timezone: Readonly<Ref<string | undefined>>;
 }
 
 export function useKeyboardHandler(options: KeyboardHandlerOptions) {
@@ -34,7 +35,10 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     readonly,
     setValue,
     textInput,
+    timezone,
   } = options;
+
+  const pasteRejected = shallowRef<boolean>(false);
 
   const formatSegments = computed<string[]>(() => {
     const format = get(dateFormat);
@@ -260,6 +264,7 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     if (disabled || readonly)
       return;
 
+    set(pasteRejected, false);
     // Modifier combos belong to the browser: swallowing them made copy and paste impossible
     if (event.ctrlKey || event.metaKey || event.altKey)
       return;
@@ -337,9 +342,11 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
   function handleBlur(): void {
     set(cursorPosition, 0);
     set(currentValue, undefined);
+    set(pasteRejected, false);
     clickedSegment = undefined;
   }
 
+  /** Text that is no date raises `pasteRejected` until the next key, paste, input or blur. */
   function handlePaste(event: ClipboardEvent): void {
     if (disabled || readonly)
       return;
@@ -354,12 +361,14 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     if (!pastedText) {
       return;
     }
-    parseAndSetDateValues(pastedText, get(dateFormat), accuracy, setValue);
+    const parsed = parseAndSetDateValues(pastedText, get(dateFormat), accuracy, setValue, get(timezone));
+    set(pasteRejected, !parsed);
   }
 
   function handleInput(event: Event): void {
     if (disabled || readonly)
       return;
+    set(pasteRejected, false);
 
     if (!(event.target instanceof HTMLInputElement)) {
       return;
@@ -384,6 +393,7 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
     handleKeyDown,
     handleMouseDown,
     handlePaste,
+    pasteRejected: shallowReadonly(pasteRejected),
     selectFirstSegment,
     setSegment,
   };

@@ -3,7 +3,14 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { describe, expect, it, vi } from 'vitest';
 import { TimeAccuracy } from '@/consts/time-accuracy';
-import { buildDateTime, clampToBounds, getClickPosition, parseAndSetDateValues, resolveBound } from './segment-utils';
+import {
+  buildDateTime,
+  clampToBounds,
+  getClickPosition,
+  parseAndSetDateValues,
+  parsePastedDate,
+  resolveBound,
+} from './segment-utils';
 
 dayjs.extend(customParseFormat);
 
@@ -145,6 +152,51 @@ describe('date-time-picker/segment-utils', () => {
 
       const monthCall = calls.find(([seg]) => seg === 'MM');
       expect(monthCall).toEqual(['MM', 12]);
+    });
+
+    it('should zero the segments a shorter paste leaves out', () => {
+      const { calls, setValue } = createSetValueSpy();
+      parseAndSetDateValues('16/09/2026 10:20', 'DD/MM/YYYY HH:mm:ss.SSS', TimeAccuracy.MILLISECOND, setValue);
+
+      expect(calls).toContainEqual(['mm', 20]);
+      expect(calls).toContainEqual(['ss', 0]);
+      expect(calls).toContainEqual(['SSS', 0]);
+    });
+  });
+
+  describe('parsePastedDate', () => {
+    const format = 'DD/MM/YYYY HH:mm:ss.SSS';
+    const timezone = 'Europe/Berlin';
+
+    it.each([
+      ['the full field format', '16/09/2026 10:20:30.123', '2026-09-16 10:20:30.123'],
+      ['the field format without milliseconds', '16/09/2026 10:20:30', '2026-09-16 10:20:30.000'],
+      ['the field format without seconds', '16/09/2026 10:20', '2026-09-16 10:20:00.000'],
+      ['the field format without a time', '16/09/2026', '2026-09-16 00:00:00.000'],
+      ['surrounding whitespace', ' 16/09/2026 10:20:30.123\n', '2026-09-16 10:20:30.123'],
+      ['an ISO date and time', '2026-09-16 10:20:30', '2026-09-16 10:20:30.000'],
+      ['an ISO date and time with a T', '2026-09-16T10:20', '2026-09-16 10:20:00.000'],
+      ['an ISO date', '2026-09-16', '2026-09-16 00:00:00.000'],
+      ['a zone name it cannot resolve as wall-clock time', '16/09/2026 10:20:30 CEST', '2026-09-16 10:20:30.000'],
+      ['a UTC instant', '2026-09-16T10:20:30Z', '2026-09-16 12:20:30.000'],
+      ['a numeric offset', '2026-09-16T10:20:30+01:00', '2026-09-16 11:20:30.000'],
+      ['a UTC zone name', '16/09/2026 10:20:30 UTC', '2026-09-16 12:20:30.000'],
+      ['a unix timestamp in seconds', '1757000000', '2025-09-04 17:33:20.000'],
+      ['a unix timestamp in milliseconds', '1757000000123', '2025-09-04 17:33:20.123'],
+    ])('should read %s', (_, text, expected) => {
+      expect(parsePastedDate(text, format, timezone)?.format('YYYY-MM-DD HH:mm:ss.SSS')).toBe(expected);
+    });
+
+    it.each([
+      'not-a-date',
+      '31/02/2026',
+      '16/09/2026 25:00',
+      '2026-13-45T10:20:30Z',
+      'not-a-date UTC',
+      '2026',
+      '',
+    ])('should reject %j', (text) => {
+      expect(parsePastedDate(text, format, timezone)).toBeUndefined();
     });
   });
 

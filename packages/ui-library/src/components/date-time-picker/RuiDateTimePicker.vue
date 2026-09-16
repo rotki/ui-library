@@ -206,6 +206,7 @@ const {
   handleKeyDown,
   handleMouseDown,
   handlePaste,
+  pasteRejected,
   selectFirstSegment,
   setSegment,
 } = useKeyboardHandler({
@@ -219,6 +220,7 @@ const {
   readonly,
   setValue,
   textInput,
+  timezone: modelTimezone,
 });
 
 const { hasError, hasSuccess } = useFormTextDetail(
@@ -341,12 +343,21 @@ const ui = computed<ReturnType<typeof dateTimePickerStyles>>(() => dateTimePicke
   hasSuccess: get(hasSuccess) && !get(hasError),
 }));
 
+const pasteMessage = computed<string>(() => (get(pasteRejected)
+  ? t(keys.pasteUnreadable, 'Could not read a date from the pasted text')
+  : ''));
+
+/**
+ * The paste message goes first: the details show one message, and it answers
+ * what the user just did, which a standing validation error does not.
+ */
 const combinedErrorMessages = computed<string[]>(() => {
+  const paste = get(pasteMessage) ? [get(pasteMessage)] : [];
   if (!errorMessages)
-    return get(internalErrorMessages);
+    return [...paste, ...get(internalErrorMessages)];
 
   const propErrors = Array.isArray(errorMessages) ? errorMessages : [errorMessages];
-  return [...propErrors, ...get(internalErrorMessages)];
+  return [...paste, ...propErrors, ...get(internalErrorMessages)];
 });
 
 function getDisplayValue(digit: Ref<number | undefined>, padding: number): string | undefined {
@@ -585,6 +596,14 @@ defineExpose({
             @paste="handlePaste($event)"
             @input="handleInput($event)"
           />
+          <!-- The details line is not a live region, so a rejected paste is announced from here -->
+          <span
+            class="sr-only"
+            aria-live="polite"
+            data-id="paste-status"
+          >
+            {{ pasteMessage }}
+          </span>
         </div>
 
         <RuiButton

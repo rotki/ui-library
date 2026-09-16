@@ -38,6 +38,7 @@ function createMockOptions(overrides: Partial<Parameters<typeof useKeyboardHandl
       readonly: false,
       setValue: mockSetValue,
       textInput: ref<HTMLInputElement | undefined>(mockInput),
+      timezone: ref<string | undefined>('UTC'),
       ...overrides,
     }),
     mockGetCurrent,
@@ -568,6 +569,64 @@ describe('use-keyboard-handler', () => {
 
       // Should not throw
       expect(() => handler.handlePaste(event)).not.toThrow();
+    });
+
+    function pasteEvent(text: string): ClipboardEvent {
+      return {
+        clipboardData: { getData: () => text },
+        preventDefault: vi.fn(),
+        target: document.createElement('input'),
+      } as unknown as ClipboardEvent;
+    }
+
+    it('should flag a paste it cannot read and leave the value alone', () => {
+      const { handler, mockSetValue } = createMockOptions();
+
+      handler.handlePaste(pasteEvent('invalid date'));
+
+      expect(handler.pasteRejected.value).toBe(true);
+      expect(mockSetValue).not.toHaveBeenCalled();
+    });
+
+    it('should read a pasted instant in its own timezone', () => {
+      const { handler, mockSetValue } = createMockOptions({
+        timezone: ref<string | undefined>('Europe/Berlin'),
+      });
+
+      handler.handlePaste(pasteEvent('2023-12-25T18:45:00Z'));
+
+      expect(mockSetValue).toHaveBeenCalledWith('HH', 19);
+      expect(mockSetValue).toHaveBeenCalledWith('mm', 45);
+    });
+
+    it('should drop the flag once a later paste is read', () => {
+      const { handler } = createMockOptions();
+
+      handler.handlePaste(pasteEvent('invalid date'));
+      handler.handlePaste(pasteEvent('25/12/2023 18:45'));
+
+      expect(handler.pasteRejected.value).toBe(false);
+    });
+
+    it.each([
+      ['a key', (handler: ReturnType<typeof useKeyboardHandler>) => handler.handleKeyDown(new KeyboardEvent('keydown', { key: 'Shift' }))],
+      ['blur', (handler: ReturnType<typeof useKeyboardHandler>) => handler.handleBlur()],
+      ['input', (handler: ReturnType<typeof useKeyboardHandler>) => handler.handleInput({ target: document.createElement('input') } as unknown as Event)],
+    ])('should drop the flag on %s', (_, act) => {
+      const { handler } = createMockOptions();
+
+      handler.handlePaste(pasteEvent('invalid date'));
+      act(handler);
+
+      expect(handler.pasteRejected.value).toBe(false);
+    });
+
+    it('should not flag an empty clipboard', () => {
+      const { handler } = createMockOptions();
+
+      handler.handlePaste(pasteEvent(''));
+
+      expect(handler.pasteRejected.value).toBe(false);
     });
 
     it('should not process paste without clipboardData', () => {

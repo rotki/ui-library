@@ -2178,6 +2178,54 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       assert(lastEmittedValue instanceof Date);
       expect(dayjs(lastEmittedValue).format('DD/MM/YYYY HH:mm')).toBe('25/12/2024 18:30');
     });
+
+    it('should accept a paste shorter than the field accuracy', async () => {
+      wrapper = createWrapper({
+        props: {
+          accuracy: 'millisecond',
+          modelValue: dayjs('2022-01-01 09:09').toDate(),
+          type: 'date',
+          format: 'day-first',
+        },
+      });
+      await vi.runOnlyPendingTimersAsync();
+
+      const inputField = wrapper.find('input');
+      await inputField.trigger('focus');
+      await inputField.trigger('paste', { clipboardData: { getData: () => '16/09/2026 10:20:30' } });
+      await vi.runOnlyPendingTimersAsync();
+
+      const lastEmittedValue = wrapper.emitted('update:modelValue')?.at(-1)?.[0];
+      assert(lastEmittedValue instanceof Date);
+      expect(dayjs(lastEmittedValue).format('DD/MM/YYYY HH:mm:ss.SSS')).toBe('16/09/2026 10:20:30.000');
+    });
+
+    it('should explain a paste it cannot read until the next key', async () => {
+      const unreadable = 'Could not read a date from the pasted text';
+      wrapper = createWrapper({
+        props: {
+          modelValue: dayjs('2022-01-01 09:09').toDate(),
+          type: 'date',
+          errorMessages: 'A form error',
+        },
+      });
+      await vi.runOnlyPendingTimersAsync();
+
+      const inputField = wrapper.find('input');
+      await inputField.trigger('focus');
+      await inputField.trigger('paste', { clipboardData: { getData: () => 'not a date' } });
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(wrapper.find('.details').text()).toBe(unreadable);
+      expect(wrapper.find('[data-id="paste-status"]').text()).toBe(unreadable);
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+
+      await inputField.trigger('keydown', { key: 'ArrowRight' });
+      await vi.runOnlyPendingTimersAsync();
+
+      expect(wrapper.find('.details').text()).toBe('A form error');
+      expect(wrapper.find('[data-id="paste-status"]').text()).toBe('');
+    });
   });
 
   describe('date format variations', () => {

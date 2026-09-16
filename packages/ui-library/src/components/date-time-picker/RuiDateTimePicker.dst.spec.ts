@@ -200,4 +200,40 @@ describe('components/date-time-picker/RuiDateTimePicker.vue — DST', () => {
       expect(dayjs.unix(first).tz(DST_TIMEZONE).format('DD/MM/YYYY HH:mm')).toBe('29/10/2023 02:30');
     });
   });
+
+  describe('paste', () => {
+    async function paste(text: string): Promise<void> {
+      wrapper = createWrapper({
+        props: {
+          accuracy: 'second',
+          modelValue: dayjs.tz('2023-01-02T20:20:00', DST_TIMEZONE).toDate(),
+          type: 'date',
+        },
+      });
+      await vi.runOnlyPendingTimersAsync();
+
+      const input = wrapper.find('input');
+      await input.trigger('focus');
+      await input.trigger('paste', { clipboardData: { getData: () => text } });
+      await vi.runOnlyPendingTimersAsync();
+    }
+
+    it.each([
+      ['a UTC instant', '2023-07-15T10:20:30Z'],
+      ['a numeric offset', '2023-07-15T11:20:30+01:00'],
+      ['a unix timestamp', '1689416430'],
+    ])('moves %s into the picker timezone', async (_, text) => {
+      await paste(text);
+
+      expect(lastEmittedDate().toISOString()).toBe('2023-07-15T10:20:30.000Z');
+      expect(wrapper.find('input').element.value).toBe('15/07/2023 12:20:30');
+    });
+
+    it('reads a date without an offset as wall-clock time in the picker timezone', async () => {
+      await paste('15/07/2023 10:20:30 CEST');
+
+      expect(lastEmittedDate().toISOString()).toBe('2023-07-15T08:20:30.000Z');
+      expect(wrapper.find('input').element.value).toBe('15/07/2023 10:20:30');
+    });
+  });
 });

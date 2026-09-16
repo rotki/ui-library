@@ -206,6 +206,7 @@ const i18n = createI18n({
           date_after_max: 'Date cannot be after {date}',
           date_before_min: 'Date cannot be before {date}',
           date_in_future: 'The selected date cannot be in the future',
+          paste_unreadable: 'Could not read a date from the pasted text',
         },
       },
     },
@@ -238,6 +239,7 @@ export const RUI_I18N_KEYS = {
     dateAfterMax: 'rui.date_time_picker.date_after_max',
     dateBeforeMin: 'rui.date_time_picker.date_before_min',
     dateInFuture: 'rui.date_time_picker.date_in_future',
+    pasteUnreadable: 'rui.date_time_picker.paste_unreadable',
   },
 } as const;
 ```

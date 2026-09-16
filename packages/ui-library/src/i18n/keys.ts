@@ -9,6 +9,7 @@ export const RUI_I18N_KEYS = {
     label: 'rui.date_time_picker.label',
     now: 'rui.date_time_picker.now',
     openCalendar: 'rui.date_time_picker.open_calendar',
+    pasteUnreadable: 'rui.date_time_picker.paste_unreadable',
     today: 'rui.date_time_picker.today',
   },
   timezoneSelect: {
