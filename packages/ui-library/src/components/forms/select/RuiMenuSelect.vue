@@ -174,6 +174,7 @@ const ui = computed<ReturnType<typeof menuSelectStyles>>(() => menuSelectStyles(
   filled: variant === 'filled',
   outlined: get(outlined),
   float: get(float),
+  showLabel: !!get(legendText),
   opened: get(isOpen),
   hovered: get(isHovered),
   dense,

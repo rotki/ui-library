@@ -759,6 +759,24 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     expect(input.element.placeholder).toBe('');
   });
 
+  it('should only notch the outlined border when a floated label has text', async () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      props: {
+        keyAttr: 'id',
+        label: '',
+        modelValue: options[0]?.id,
+        options,
+        textAttr: 'label',
+        variant: 'outlined',
+      },
+    });
+
+    expect(wrapper.find('legend').classes()).not.toContain('px-2');
+
+    await wrapper.setProps({ label: 'Pick' });
+    expect(wrapper.find('legend').classes()).toContain('px-2');
+  });
+
   it('should show required asterisk when required prop is true', async () => {
     wrapper = createWrapper<string | undefined, SelectOption>({
       props: {

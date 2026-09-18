@@ -364,6 +364,7 @@ const ui = computed<ReturnType<typeof autoCompleteStyles>>(() => autoCompleteSty
   filled: variant === 'filled',
   outlined: get(outlined),
   float: get(float),
+  showLabel: !!get(legendText),
   opened: get(isOpen),
   hovered: get(isHovered),
   dense,
