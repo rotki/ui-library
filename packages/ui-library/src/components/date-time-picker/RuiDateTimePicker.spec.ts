@@ -101,6 +101,22 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     expect(wrapper.find('[data-id="label"]').text()).toBe(customLabel);
   });
 
+  it('should only notch the outlined border when a floated label has text', async () => {
+    wrapper = createWrapper({
+      props: {
+        label: '',
+        modelValue: new Date(),
+        variant: 'outlined',
+      },
+    });
+
+    await vi.runOnlyPendingTimersAsync();
+    expect(wrapper.find('legend').classes()).not.toContain('px-2');
+
+    await wrapper.setProps({ label: 'Pick' });
+    expect(wrapper.find('legend').classes()).toContain('px-2');
+  });
+
   it('should apply disabled state correctly', () => {
     wrapper = createWrapper({
       props: {

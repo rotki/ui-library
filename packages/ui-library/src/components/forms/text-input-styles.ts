@@ -220,10 +220,11 @@ export const activatorStyles = tv({
     },
     // Re-declare for type inference — actual styles are in textInputBase
     hovered: { true: {} },
+    showLabel: { true: {} },
   },
   compoundVariants: [
-    // Legend padding when label is floated
-    { float: true, class: { legend: 'px-2' } },
+    // Legend padding when a label is floated; without text it would cut an empty notch
+    { float: true, showLabel: true, class: { legend: 'px-2' } },
 
     // Non-outlined + opened → underline scales up
     { outlined: false, opened: true, class: { activator: 'after:scale-x-100 after:border-rui-primary' } },

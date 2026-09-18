@@ -359,6 +359,24 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
     expect(wrapper.find('fieldset').exists()).toBeTruthy();
   });
 
+  it('should only notch the outlined border when a floated label has text', async () => {
+    wrapper = createWrapper({
+      props: {
+        keyAttr: 'id',
+        label: '',
+        modelValue: options[0]?.id,
+        options,
+        textAttr: 'label',
+        variant: 'outlined',
+      },
+    });
+
+    expect(wrapper.find('legend').classes()).not.toContain('px-2');
+
+    await wrapper.setProps({ label: 'Pick' });
+    expect(wrapper.find('legend').classes()).toContain('px-2');
+  });
+
   it('should apply dense styling', () => {
     wrapper = createWrapper({
       props: {
