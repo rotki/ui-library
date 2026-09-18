@@ -43,6 +43,22 @@ describe('components/tables/RuiTablePagination.vue', () => {
     expect(wrapper.find('[data-id="table-pagination-ranges-section"]').text()).toContain('Items #');
   });
 
+  it('hides the range and navigation sections with perPageOnly but keeps their space', () => {
+    const modelValue = { page: 1, total: 8, limit: 10 };
+    wrapper = createWrapper(modelValue, { props: { modelValue, perPageOnly: true } });
+
+    expect(wrapper.find('[data-id="table-pagination-limit-section"]').classes()).not.toContain('invisible');
+    expect(wrapper.find('[data-id="table-pagination-ranges-section"]').classes()).toContain('invisible');
+    expect(wrapper.find('[data-id="table-pagination-navigation"]').classes()).toContain('invisible');
+  });
+
+  it('shows the range and navigation sections without perPageOnly', () => {
+    wrapper = createWrapper({ page: 1, total: 8, limit: 10 });
+
+    expect(wrapper.find('[data-id="table-pagination-ranges-section"]').classes()).not.toContain('invisible');
+    expect(wrapper.find('[data-id="table-pagination-navigation"]').classes()).not.toContain('invisible');
+  });
+
   it('renders all navigation buttons', () => {
     wrapper = createWrapper({ page: 2, total: 50, limit: 10 });
 

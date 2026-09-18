@@ -1728,6 +1728,24 @@ describe('components/tables/RuiDataTable.vue', () => {
       const paginator = wrapper.findComponent(RuiTablePagination);
       expect(paginator.props('disablePerPage')).toBe(true);
     });
+
+    it('should pass perPageOnly prop to pagination component', () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          hideDefaultHeader: true,
+          pagination: { limit: 10, page: 1, total: 5 },
+          perPageOnly: true,
+          rowAttr: 'id',
+          rows: data,
+        },
+      });
+
+      const paginators = wrapper.findAllComponents(RuiTablePagination);
+      expect(paginators).toHaveLength(1);
+      expect(paginators[0]?.props('perPageOnly')).toBe(true);
+      expect(wrapper.find('[data-id="table-pagination-navigation"]').classes()).toContain('invisible');
+    });
   });
 
   describe('loading state', () => {
