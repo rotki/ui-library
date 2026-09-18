@@ -1136,7 +1136,7 @@ describe('components/tables/RuiDataTable.vue', () => {
     await nextTick();
 
     expect(limits.vm.modelValue).toBe(5);
-    expect(limits.find('[data-id="activator"] span').text()).toBe('5');
+    expect(limits.find('[data-id="activator"]').text()).toBe('5');
     expect(limits.find('input[type=hidden]').element).toHaveProperty('value', '5');
     expect(navButtons.filter(b => b.attributes('disabled') === '')).toHaveLength(2);
     expect(navButtons.filter(b => b.attributes('disabled') === undefined)).toHaveLength(2);
@@ -1146,7 +1146,7 @@ describe('components/tables/RuiDataTable.vue', () => {
     await nextTick();
 
     expect(ranges.props().modelValue).toBe(2);
-    expect(ranges.find('[data-id="activator"] span').text()).toBe('6 - 10');
+    expect(ranges.find('[data-id="activator"]').text()).toBe('6 - 10');
     expect(ranges.find('input[type=hidden]').element).toHaveProperty('value', '2');
 
     limits.vm.$emit('update:modelValue', 10);
@@ -1154,11 +1154,11 @@ describe('components/tables/RuiDataTable.vue', () => {
     await nextTick();
 
     expect(limits.props().modelValue).toBe(10);
-    expect(limits.find('[data-id="activator"] span').text()).toBe('10');
+    expect(limits.find('[data-id="activator"]').text()).toBe('10');
     expect(limits.find('input[type=hidden]').element).toHaveProperty('value', '10');
 
     expect(ranges.props().modelValue).toBe(1);
-    expect(ranges.find('[data-id="activator"] span').text()).toBe('1 - 10');
+    expect(ranges.find('[data-id="activator"]').text()).toBe('1 - 10');
     expect(ranges.find('input[type=hidden]').element).toHaveProperty('value', '1');
   });
 
@@ -1727,6 +1727,24 @@ describe('components/tables/RuiDataTable.vue', () => {
 
       const paginator = wrapper.findComponent(RuiTablePagination);
       expect(paginator.props('disablePerPage')).toBe(true);
+    });
+
+    it('should pass perPageOnly prop to pagination component', () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          hideDefaultHeader: true,
+          pagination: { limit: 10, page: 1, total: 5 },
+          perPageOnly: true,
+          rowAttr: 'id',
+          rows: data,
+        },
+      });
+
+      const paginators = wrapper.findAllComponents(RuiTablePagination);
+      expect(paginators).toHaveLength(1);
+      expect(paginators[0]?.props('perPageOnly')).toBe(true);
+      expect(wrapper.find('[data-id="table-pagination-navigation"]').classes()).toContain('invisible');
     });
   });
 

@@ -334,6 +334,7 @@ const ui = computed<ReturnType<typeof dateTimePickerStyles>>(() => dateTimePicke
   filled: variant === 'filled',
   outlined: get(isOutlined),
   float: get(float),
+  showLabel: !!get(legendText),
   opened: get(isOpen),
   hovered: get(isHovered),
   dense,

@@ -19,6 +19,12 @@ export interface Props {
    */
   mobile?: boolean;
   /**
+   * Show only the rows-per-page select, e.g. when every row already fits on
+   * one page. The range and navigation sections are hidden but keep their
+   * space, so the select does not move when the mode flips.
+   */
+  perPageOnly?: boolean;
+  /**
    * Maximum number of pages before the jump-to-page dropdown is replaced
    * with a numeric input. Set to `0` to always use the input, or a very
    * large number to always use the dropdown. Defaults to `500` — past that
@@ -35,6 +41,7 @@ const {
   disablePerPage = false,
   rangesThreshold = 500,
   mobile = false,
+  perPageOnly = false,
 } = defineProps<Props>();
 
 const paginationStyles = tv({
@@ -42,15 +49,22 @@ const paginationStyles = tv({
     wrapper: 'relative flex flex-wrap items-center justify-end gap-x-4 gap-y-0',
     limit: 'flex items-center space-x-2 text-caption',
     ranges: 'flex items-center space-x-2 text-caption pr-2',
-    pageInput: 'w-14 [&_input]:text-center',
+    pageInput: 'w-14 [&_input]:text-center [&_input]:!px-1 [&_input]:!text-xs [&_input]:!leading-5',
     sectionLabel: 'text-rui-text-secondary whitespace-nowrap py-3',
+    select: '!text-xs !pl-3',
     indicator: 'text-rui-text text-caption whitespace-nowrap',
     navigation: 'flex items-center',
   },
   variants: {
+    // the selects match the icon buttons, 28px with `size="sm"` and 32px without
     dense: {
       true: {
-        wrapper: 'gap-x-2',
+        select: '!min-h-7',
+        pageInput: '[&_input]:!py-1',
+      },
+      false: {
+        select: '!min-h-8',
+        pageInput: '[&_input]:!py-1.5',
       },
     },
     mobile: {
@@ -60,10 +74,16 @@ const paginationStyles = tv({
         sectionLabel: 'hidden',
       },
     },
+    perPageOnly: {
+      true: {
+        ranges: 'invisible',
+        navigation: 'invisible',
+      },
+    },
   },
 });
 
-const ui = computed<ReturnType<typeof paginationStyles>>(() => paginationStyles({ dense, mobile }));
+const ui = computed<ReturnType<typeof paginationStyles>>(() => paginationStyles({ dense, mobile, perPageOnly }));
 
 const tableDefaults = useTable();
 
@@ -101,6 +121,9 @@ function commitPageInput(): void {
     set(currentRange, clamped);
   set(pageDraft, String(clamped));
 }
+
+const limitId = useId();
+const rangesId = useId();
 </script>
 
 <template>
@@ -109,12 +132,20 @@ function commitPageInput(): void {
       :class="ui.limit()"
       data-id="table-pagination-limit-section"
     >
-      <span :class="ui.sectionLabel()">Rows per page:</span>
+      <label
+        :for="limitId"
+        :class="ui.sectionLabel()"
+      >
+        Rows per page:
+      </label>
       <RuiMenuSelect
+        :id="limitId"
         v-model="currentLimit"
         :options="limits"
         :disabled="loading || disablePerPage"
-        label-class="!text-xs !min-h-8"
+        :class-names="{ label: ui.select() }"
+        variant="outlined"
+        label=""
         name="limit"
         key-attr="limit"
         text-attr="limit"
@@ -127,13 +158,19 @@ function commitPageInput(): void {
       :class="ui.ranges()"
       data-id="table-pagination-ranges-section"
     >
-      <span :class="ui.sectionLabel()">{{ useInputJump ? 'Page' : 'Items #' }}</span>
+      <label
+        :for="rangesId"
+        :class="ui.sectionLabel()"
+      >
+        {{ useInputJump ? 'Page' : 'Items #' }}
+      </label>
       <RuiTextField
         v-if="useInputJump"
+        :id="rangesId"
         v-model="pageDraft"
+        variant="outlined"
         :disabled="loading"
         :class="[ui.pageInput()]"
-        class="[&_input]:!pr-0"
         type="number"
         min="1"
         :max="pages"
@@ -146,10 +183,13 @@ function commitPageInput(): void {
       />
       <RuiMenuSelect
         v-else-if="ranges.length > 0"
+        :id="rangesId"
         v-model="currentRange"
         :options="ranges"
         :disabled="loading"
-        label-class="!text-xs !min-h-8"
+        :class-names="{ label: ui.select() }"
+        variant="outlined"
+        label=""
         name="ranges"
         key-attr="page"
         text-attr="text"
@@ -171,6 +211,7 @@ function commitPageInput(): void {
         :disabled="!hasPrev || loading"
         variant="text"
         icon
+        aria-label="First page"
         data-id="table-pagination-first"
         @click="onFirst()"
       >
@@ -181,6 +222,7 @@ function commitPageInput(): void {
         :disabled="!hasPrev || loading"
         variant="text"
         icon
+        aria-label="Previous page"
         data-id="table-pagination-prev"
         @click="onPrev()"
       >
@@ -191,6 +233,7 @@ function commitPageInput(): void {
         :disabled="!hasNext || loading"
         variant="text"
         icon
+        aria-label="Next page"
         data-id="table-pagination-next"
         @click="onNext()"
       >
@@ -202,6 +245,7 @@ function commitPageInput(): void {
         :disabled="!hasNext || loading"
         variant="text"
         icon
+        aria-label="Last page"
         data-id="table-pagination-last"
         @click="onLast()"
       >
