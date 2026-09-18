@@ -116,14 +116,41 @@ describe('components/tables/RuiTablePagination.vue', () => {
     expect(rangesSection.text()).toContain('0 of 0');
   });
 
-  it('applies dense mode styles to the wrapper', () => {
+  it('keeps the section gap in dense mode and shrinks the selects to the button height', () => {
     wrapper = createWrapper(
       { page: 1, total: 50, limit: 10 },
       { props: { modelValue: { page: 1, total: 50, limit: 10 }, dense: true } },
     );
 
     const wrapperEl = wrapper.find('[data-id="table-pagination-navigation"]').element.parentElement;
-    expect(wrapperEl?.className).toContain('gap-x-2');
+    expect(wrapperEl?.className).toContain('gap-x-4');
+    expect(wrapper.find('[data-id="table-pagination-limit"] [data-id="activator"]').classes()).toContain('!min-h-7');
+  });
+
+  it('uses 32px selects outside dense mode', () => {
+    wrapper = createWrapper({ page: 1, total: 50, limit: 10 });
+
+    expect(wrapper.find('[data-id="table-pagination-limit"] [data-id="activator"]').classes()).toContain('!min-h-8');
+  });
+
+  it('links each section label to its control', () => {
+    wrapper = createWrapper({ page: 1, total: 50, limit: 10 });
+
+    for (const section of ['limit', 'ranges']) {
+      const label = wrapper.find(`[data-id="table-pagination-${section}-section"] label`);
+      const activator = wrapper.find(`[data-id="table-pagination-${section}"] [data-id="activator"]`);
+      expect(label.attributes('for')).toBeTruthy();
+      expect(activator.attributes('id')).toBe(label.attributes('for'));
+    }
+  });
+
+  it('names the icon-only navigation buttons', () => {
+    wrapper = createWrapper({ page: 2, total: 50, limit: 10 });
+
+    expect(wrapper.find('[data-id="table-pagination-first"]').attributes('aria-label')).toBe('First page');
+    expect(wrapper.find('[data-id="table-pagination-prev"]').attributes('aria-label')).toBe('Previous page');
+    expect(wrapper.find('[data-id="table-pagination-next"]').attributes('aria-label')).toBe('Next page');
+    expect(wrapper.find('[data-id="table-pagination-last"]').attributes('aria-label')).toBe('Last page');
   });
 
   it('does not apply dense gap class by default', () => {
