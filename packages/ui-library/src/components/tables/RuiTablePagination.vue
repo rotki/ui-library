@@ -19,6 +19,12 @@ export interface Props {
    */
   mobile?: boolean;
   /**
+   * Show only the rows-per-page select, e.g. when every row already fits on
+   * one page. The range and navigation sections are hidden but keep their
+   * space, so the select does not move when the mode flips.
+   */
+  perPageOnly?: boolean;
+  /**
    * Maximum number of pages before the jump-to-page dropdown is replaced
    * with a numeric input. Set to `0` to always use the input, or a very
    * large number to always use the dropdown. Defaults to `500` — past that
@@ -35,6 +41,7 @@ const {
   disablePerPage = false,
   rangesThreshold = 500,
   mobile = false,
+  perPageOnly = false,
 } = defineProps<Props>();
 
 const paginationStyles = tv({
@@ -60,10 +67,16 @@ const paginationStyles = tv({
         sectionLabel: 'hidden',
       },
     },
+    perPageOnly: {
+      true: {
+        ranges: 'invisible',
+        navigation: 'invisible',
+      },
+    },
   },
 });
 
-const ui = computed<ReturnType<typeof paginationStyles>>(() => paginationStyles({ dense, mobile }));
+const ui = computed<ReturnType<typeof paginationStyles>>(() => paginationStyles({ dense, mobile, perPageOnly }));
 
 const tableDefaults = useTable();
 
