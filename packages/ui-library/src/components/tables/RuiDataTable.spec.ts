@@ -1950,7 +1950,10 @@ describe('components/tables/RuiDataTable.vue', () => {
       });
 
       const td = wrapper.find('tbody td');
-      expect(td.classes()).toContain('py-[0.38rem]');
+      expect(td.classes()).toContain('[:where(&)]:py-1');
+      expect(td.classes()).not.toContain('[:where(&)]:py-3');
+      expect(td.classes()).toContain('[:where(&)]:h-9');
+      expect(td.classes()).not.toContain('[:where(&)]:h-[3.25rem]');
     });
 
     it('should not apply dense styling when dense is false', () => {
@@ -1964,7 +1967,45 @@ describe('components/tables/RuiDataTable.vue', () => {
       });
 
       const td = wrapper.find('tbody td');
-      expect(td.classes().some(c => c.includes('py-[0.38rem]'))).toBeFalsy();
+      expect(td.classes()).toContain('[:where(&)]:py-3');
+      expect(td.classes()).not.toContain('[:where(&)]:py-1');
+      expect(td.classes()).toContain('[:where(&)]:h-[3.25rem]');
+      expect(td.classes()).not.toContain('[:where(&)]:h-9');
+    });
+
+    it('should keep cell padding and height at zero specificity so a column cellClass wins', () => {
+      const withCellClass: TableColumn<User>[] = columns.map(column => ({ ...column, cellClass: 'py-0', class: 'py-0' }));
+      wrapper = createWrapper({
+        props: {
+          cols: withCellClass,
+          rowAttr: 'id',
+          rows: data.slice(0, 3),
+        },
+      });
+
+      // a plain `py-3` would outrank a consumer's `py-0` by stylesheet order alone
+      const layoutRule = /^(?:\[:where\(&\)\]:)?(?:p|px|py|h)-/;
+      for (const cell of [wrapper.find('tbody td'), wrapper.find('thead th')]) {
+        const ownRules = cell.classes().filter(name => layoutRule.test(name) && name !== 'py-0');
+        expect(ownRules.length).toBeGreaterThan(0);
+        expect(ownRules.every(name => name.startsWith('[:where(&)]:'))).toBe(true);
+        expect(cell.classes()).toContain('py-0');
+      }
+    });
+
+    it('should not put a height floor on stacked mobile cells', () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          mobile: true,
+          rowAttr: 'id',
+          rows: data.slice(0, 3),
+        },
+      });
+
+      const td = wrapper.find('tbody td:not([data-id=mobile-card-header])');
+      expect(td.classes()).toContain('block');
+      expect(td.classes().some(c => c.startsWith('[:where(&)]:h-'))).toBe(false);
     });
   });
 

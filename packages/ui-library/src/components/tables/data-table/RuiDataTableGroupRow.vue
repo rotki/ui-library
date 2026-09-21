@@ -67,12 +67,15 @@ const groupParts = computed<{ key: string; label: string; value: string }[]>(() 
       :toggle="() => onToggleExpandGroup(row.group, row.identifier)"
     >
       <td
-        :class="[classes.td, isMobile ? '!px-4 !py-2' : '!p-2']"
+        class="!px-4 !py-2"
+        :class="[classes.td, { 'h-auto': !isMobile }]"
         :colspan="colspan"
       >
         <div class="flex items-center gap-2">
+          <!-- the edge controls pull in by their own padding so their icons sit on the cell grid -->
           <RuiExpandButton
             v-if="groupExpandButtonPosition === GroupExpandButtonPosition.start"
+            class="-ml-1.5"
             :expanded="isOpen"
             @click="onToggleExpandGroup(row.group, row.identifier)"
           />
@@ -115,7 +118,8 @@ const groupParts = computed<{ key: string; label: string; value: string }[]>(() 
           </slot>
           <RuiTooltip
             :options="{ placement: 'top' }"
-            class="ml-auto mr-2"
+            class="ml-auto"
+            :class="{ '-mr-1.5': groupExpandButtonPosition !== GroupExpandButtonPosition.end }"
           >
             <template #activator>
               <RuiButton
@@ -135,6 +139,7 @@ const groupParts = computed<{ key: string; label: string; value: string }[]>(() 
           </RuiTooltip>
           <RuiExpandButton
             v-if="groupExpandButtonPosition === GroupExpandButtonPosition.end"
+            class="-mr-1.5"
             :expanded="isOpen"
             @click="onToggleExpandGroup(row.group, row.identifier)"
           />

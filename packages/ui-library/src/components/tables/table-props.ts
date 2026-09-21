@@ -26,21 +26,11 @@ const ALIGN_CLASSES: Record<TableAlign, string> = {
   [TableAlign.end]: 'text-right rtl:text-left',
 };
 
-const SORTABLE_ALIGN_CLASSES: Record<TableAlign, string> = {
-  [TableAlign.start]: 'pl-3',
-  [TableAlign.center]: 'px-3',
-  [TableAlign.end]: 'pr-3',
-};
-
 /**
  * Returns alignment Tailwind classes for a table cell.
- * When sortable, adds reduced padding for the sort button.
  */
-export function getAlignClass(align: TableAlign = TableAlign.start, sortable?: boolean): string {
-  const classes = ALIGN_CLASSES[align];
-  if (sortable)
-    return `${classes} ${SORTABLE_ALIGN_CLASSES[align]}`;
-  return classes;
+export function getAlignClass(align: TableAlign = TableAlign.start): string {
+  return ALIGN_CLASSES[align];
 }
 
 /**

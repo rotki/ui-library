@@ -120,9 +120,10 @@ const tableHeadStyles = tv({
   slots: {
     thead: 'divide-y divide-black/[0.12] dark:divide-white/[0.12]',
     checkbox: 'px-2 w-[3.625rem] max-w-[3.625rem] [&_label]:ml-0',
-    th: 'p-4',
+    th: '[:where(&)]:px-4',
     columnText: 'text-rui-text font-medium text-[0.875rem] leading-6',
-    sortButton: 'inline-flex group/sort',
+    // the negative margin cancels the button's own padding so the label lines up with the cells below
+    sortButton: 'inline-flex group/sort -mx-1.5',
     // a faint resting arrow marks sortable columns for keyboard and touch users
     sortIcon: 'transition opacity-30 rotate-180 group-hover/sort:opacity-60 group-focus-visible/sort:opacity-60',
     loaderRow: 'border-none',
@@ -138,12 +139,15 @@ const tableHeadStyles = tv({
         th: 'bg-white dark:bg-[#121212] border-b border-b-black/[0.12] dark:border-b-white/[0.12]',
       },
     },
+    // a fixed height evens out rows with and without sort buttons; `:where()` lets a column's `class` win
     dense: {
-      true: { th: 'py-[0.38rem]' },
+      true: { th: '[:where(&)]:py-1 [:where(&)]:h-10' },
+      false: { th: '[:where(&)]:py-3 [:where(&)]:h-14' },
     },
   },
   defaultVariants: {
     position: 'default',
+    dense: false,
   },
 });
 
@@ -234,7 +238,7 @@ function getAriaSort(column: TableColumn<T>): 'ascending' | 'descending' | 'none
         v-for="column in columns"
         :key="column.key"
         :class="[
-          ui.th({ class: getAlignClass(column.align, column.sortable) }),
+          ui.th({ class: getAlignClass(column.align) }),
           column.class,
           { capitalize: !capitalizeHeaders },
         ]"

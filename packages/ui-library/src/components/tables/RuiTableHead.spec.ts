@@ -209,7 +209,8 @@ describe('components/tables/RuiTableHead.vue', () => {
     });
 
     const th = wrapper.find('th');
-    expect(th.classes()).toContain('py-[0.38rem]');
+    expect(th.classes()).toContain('[:where(&)]:py-1');
+    expect(th.classes()).toContain('[:where(&)]:h-10');
   });
 
   it('uses custom columnAttr for header text', () => {
