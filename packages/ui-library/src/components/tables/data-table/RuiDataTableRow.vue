@@ -32,6 +32,15 @@ const disabled = computed<boolean>(() => isDisabledRow(get(rowId)));
 const expanded = computed<boolean>(() => get(expandable) && !!slots['expanded-item'] && isExpanded(get(rowId)));
 const rowClass = computed<string>(() => typeof itemClass === 'string' ? itemClass : itemClass(row));
 
+/** Selection wins over the open-panel shade, so a selected row still reads as selected. */
+const stateClass = computed<string>(() => {
+  if (get(selected))
+    return get(classes).trSelected;
+  if (get(expanded))
+    return get(classes).trExpandedParent;
+  return get(classes).tr;
+});
+
 /**
  * A column is pinned to the mobile card header when it is flagged
  * `mobileHeader`, typically an action column, or when it is the
@@ -90,7 +99,7 @@ const mobileCardClass = computed<string>(() => {
 
 <template>
   <tr
-    :class="[selected ? classes.trSelected : classes.tr, rowClass, isMobile ? mobileCardClass : '']"
+    :class="[stateClass, rowClass, isMobile ? mobileCardClass : '']"
     :aria-selected="selectedData ? selected : undefined"
     data-id="row"
   >

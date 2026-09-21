@@ -265,6 +265,28 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(wrapper.find('tr[data-id=row-expanded] div[data-id=expanded-content]').exists()).toBeTruthy();
   });
 
+  it('should shade an expanded row to match its panel', async () => {
+    wrapper = createWrapper({
+      props: {
+        expanded: [data[0]!],
+        rowAttr: 'id',
+        rows: data,
+      },
+      slots: {
+        'expanded-item': {
+          template: '<div data-id="expanded-content">Expanded content</div>',
+        },
+      },
+    });
+
+    await nextTick();
+
+    const rows = wrapper.findAll('tr[data-id=row]');
+    expect(rows[0]?.classes()).toContain('bg-rui-grey-50');
+    expect(rows[1]?.classes()).not.toContain('bg-rui-grey-50');
+    expect(wrapper.find('tr[data-id=row-expanded]').classes()).toContain('!border-t-0');
+  });
+
   describe('consumer-owned expand column', () => {
     /**
      * A consumer providing `#item.expand` decides per row whether a toggle
@@ -959,7 +981,7 @@ describe('components/tables/RuiDataTable.vue', () => {
       const itemsPerPage = ref(25);
       const stickyOffset = ref(64);
       const wrapperComponent = {
-        template: '<div><RuiDataTable :rows=\'[]\' row-attr=\'id\'/><RuiDataTable :rows=\'[]\' row-attr=\'id\'/></div>',
+        template: '<div><RuiDataTable :rows=\'[{ id: 1 }]\' row-attr=\'id\'/><RuiDataTable :rows=\'[{ id: 1 }]\' row-attr=\'id\'/></div>',
       };
 
       const wrapper = mount(wrapperComponent, {
@@ -1005,7 +1027,7 @@ describe('components/tables/RuiDataTable.vue', () => {
       const itemsPerPage = ref(25);
       const wrapperComponent = {
         template:
-          '<div><RuiDataTable :rows=\'[]\' row-attr=\'id\'/><RuiDataTable :globalItemsPerPage=\'false\' :rows=\'[]\' row-attr=\'id\'/></div>',
+          '<div><RuiDataTable :rows=\'[{ id: 1 }]\' row-attr=\'id\'/><RuiDataTable :globalItemsPerPage=\'false\' :rows=\'[{ id: 1 }]\' row-attr=\'id\'/></div>',
       };
 
       const wrapper = mount(wrapperComponent, {
@@ -1053,7 +1075,7 @@ describe('components/tables/RuiDataTable.vue', () => {
       const itemsPerPage = ref(25);
       const wrapperComponent = {
         template:
-          '<div><RuiDataTable :rows=\'[]\' row-attr=\'id\'/><RuiDataTable :globalItemsPerPage=\'true\' :rows=\'[]\' row-attr=\'id\'/></div>',
+          '<div><RuiDataTable :rows=\'[{ id: 1 }]\' row-attr=\'id\'/><RuiDataTable :globalItemsPerPage=\'true\' :rows=\'[{ id: 1 }]\' row-attr=\'id\'/></div>',
       };
 
       const wrapper = mount(wrapperComponent, {
@@ -1204,6 +1226,48 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(children.indexOf(pagination)).toBeLessThan(children.indexOf(scroller));
   });
 
+  it('should drop the footer pagination of an empty table', () => {
+    wrapper = createWrapper({
+      props: {
+        cols: columns,
+        rowAttr: 'id',
+        rows: [],
+      },
+    });
+
+    expect(wrapper.findAllComponents(RuiTablePagination)).toHaveLength(1);
+  });
+
+  it('should keep the footer pagination of an empty table without a header bar', () => {
+    wrapper = createWrapper({
+      props: {
+        cols: columns,
+        hideDefaultHeader: true,
+        rowAttr: 'id',
+        rows: [],
+      },
+    });
+
+    expect(wrapper.findAllComponents(RuiTablePagination)).toHaveLength(1);
+  });
+
+  it('should set aria-sort on sortable column headers', () => {
+    wrapper = createWrapper({
+      props: {
+        cols: columns,
+        rowAttr: 'id',
+        rows: data,
+        sort: { column: 'name', direction: 'desc' },
+      },
+    });
+
+    const headers = wrapper.findAll('thead th');
+    const byText = (text: string) => headers.find(th => th.text().includes(text));
+    expect(byText('ID')?.attributes('aria-sort')).toBeUndefined();
+    expect(byText('Full name')?.attributes('aria-sort')).toBe('descending');
+    expect(byText('Job position')?.attributes('aria-sort')).toBe('none');
+  });
+
   describe('row grouping', () => {
     it('should render grouped rows with group headers', async () => {
       wrapper = createWrapper({
@@ -1219,6 +1283,21 @@ describe('components/tables/RuiDataTable.vue', () => {
 
       const groupHeaders = wrapper.findAll('tr[data-id="row-group"]');
       expect(groupHeaders.length).toBeGreaterThan(0);
+    });
+
+    it('should label a group header with the column label and its row count', () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          group: 'title',
+          rowAttr: 'id',
+          rows: data,
+        },
+      });
+
+      const header = wrapper.find('tr[data-id="row-group"]');
+      expect(header.find('[data-id="group-label"]').text()).toMatch(/^Job position:\s*Back-end Developer$/);
+      expect(header.find('[data-id="group-size"]').text()).toBe('25');
     });
 
     it('should collapse and expand groups', async () => {

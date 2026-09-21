@@ -1,7 +1,7 @@
 <script lang="ts" setup generic="T extends object, IdType extends keyof T = keyof T">
 import type { GroupHeader } from '@/composables/tables/data-table/types';
 import { dataTableStyles } from '@/components/tables/data-table-styles';
-import { type DataTableClasses, provideDataTableContext, provideDataTableNested, useDataTableNested } from '@/components/tables/data-table/context';
+import { type DataTableClasses, type DataTableGroupLabel, provideDataTableContext, provideDataTableNested, useDataTableNested } from '@/components/tables/data-table/context';
 import RuiDataTableBody from '@/components/tables/data-table/RuiDataTableBody.vue';
 import RuiDataTableMobileSort from '@/components/tables/data-table/RuiDataTableMobileSort.vue';
 import RuiTableHead, {
@@ -302,6 +302,7 @@ const {
   groupKeys,
   groupKey,
   grouped,
+  mappedGroups,
   isExpandedGroup,
   isHiddenRow,
   onToggleExpandGroup,
@@ -337,6 +338,33 @@ const {
 );
 
 const noData = computed<boolean>(() => get(filtered).length === 0);
+
+/**
+ * With the header bar showing, an empty table drops its footer bar: two rows
+ * of disabled controls around an empty state only add noise.
+ */
+const showFooter = computed<boolean>(() => {
+  const data = get(paginationData);
+  if (!data || hideDefaultFooter)
+    return false;
+  return data.total > 0 || hideDefaultHeader;
+});
+
+/**
+ * Grouped columns leave the column list, so their labels come from `cols`.
+ */
+const groupLabels = computed<DataTableGroupLabel[]>(() => get(groupKeys).map((key) => {
+  const label = cols?.find(column => column.key === key)?.[columnAttr];
+  return {
+    key: String(key),
+    label: label === undefined || label === null ? String(key) : String(label),
+  };
+}));
+
+/** Each group's list starts with its header entry, which is not a row. */
+function getGroupSize(identifier: string): number {
+  return Math.max((get(mappedGroups)[identifier]?.length ?? 0) - 1, 0);
+}
 
 const ui = computed<ReturnType<typeof dataTableStyles>>(() => dataTableStyles({
   outlined,
@@ -429,6 +457,7 @@ const classes = computed<DataTableClasses>(() => {
     tr: s.tr(),
     trSelected: s.tr({ rowVariant: 'selected' }),
     trExpandable: s.tr({ rowVariant: 'expandable' }),
+    trExpandedParent: s.tr({ rowVariant: 'expandedParent' }),
     trGroup: s.tr({ rowVariant: 'group' }),
     trEmpty: s.tr({ rowVariant: 'empty' }),
     checkbox: s.checkbox(),
@@ -444,12 +473,14 @@ provideDataTableContext<T, IdType>({
   colspan,
   expandable,
   groupKey,
+  groupLabels,
   isMobile,
   selectedData,
   // Static values
   cellValue,
   columnAttr,
   dense,
+  getGroupSize,
   getRowId: (row: T) => row[rowAttr],
   itemSlotKeys,
   groupExpandButtonPosition,
@@ -654,7 +685,7 @@ provideDataTableContext<T, IdType>({
       </table>
     </div>
     <RuiTablePagination
-      v-if="paginationData && !hideDefaultFooter"
+      v-if="paginationData && showFooter"
       v-model="paginationData"
       :dense="dense"
       :loading="loading"

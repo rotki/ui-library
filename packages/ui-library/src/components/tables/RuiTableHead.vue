@@ -121,9 +121,10 @@ const tableHeadStyles = tv({
     thead: 'divide-y divide-black/[0.12] dark:divide-white/[0.12]',
     checkbox: 'px-2 w-[3.625rem] max-w-[3.625rem] [&_label]:ml-0',
     th: 'p-4',
-    columnText: 'text-rui-text dark:text-white font-medium text-[0.875rem] leading-6',
+    columnText: 'text-rui-text font-medium text-[0.875rem] leading-6',
     sortButton: 'inline-flex group/sort',
-    sortIcon: 'transition opacity-0 rotate-180 group-hover/sort:opacity-60',
+    // a faint resting arrow marks sortable columns for keyboard and touch users
+    sortIcon: 'transition opacity-30 rotate-180 group-hover/sort:opacity-60 group-focus-visible/sort:opacity-60',
     loaderRow: 'border-none',
     progress: 'p-0 h-0',
     progressWrapper: 'h-0 -mt-1',
@@ -191,6 +192,17 @@ function getSortIndex(key: TableColumn<T>['key']): number {
 function getSortDirection(key: TableColumn<T>['key']): SortDirection | undefined {
   return sortedMap[key]?.direction;
 }
+
+function getAriaSort(column: TableColumn<T>): 'ascending' | 'descending' | 'none' | undefined {
+  if (!column.sortable)
+    return undefined;
+  const direction = getSortDirection(column.key);
+  if (direction === SortDirection.asc)
+    return 'ascending';
+  if (direction === SortDirection.desc)
+    return 'descending';
+  return 'none';
+}
 </script>
 
 <template>
@@ -229,6 +241,7 @@ function getSortDirection(key: TableColumn<T>['key']): SortDirection | undefined
         scope="col"
         :colspan="column.colspan ?? 1"
         :rowspan="column.rowspan ?? 1"
+        :aria-sort="getAriaSort(column)"
         :data-id="column.sortable ? 'column-sortable' : undefined"
       >
         <slot

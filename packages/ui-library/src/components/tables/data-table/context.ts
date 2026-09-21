@@ -8,6 +8,8 @@ export interface DataTableClasses {
   tr: string;
   trSelected: string;
   trExpandable: string;
+  /** a row whose expanded panel is open, shaded to match the panel */
+  trExpandedParent: string;
   trGroup: string;
   trEmpty: string;
   checkbox: string;
@@ -47,9 +49,18 @@ export interface DataTableExpansionContext<T extends object = any, IdType extend
   onToggleExpand: (row: T) => void;
 }
 
+export interface DataTableGroupLabel {
+  key: string;
+  /** the grouped column's visible label, or the key when no column defines one */
+  label: string;
+}
+
 export interface DataTableGroupingContext<T extends object = any> {
   groupExpandButtonPosition: GroupExpandButtonPosition;
   groupKey: ComputedRef<string | undefined>;
+  groupLabels: ComputedRef<DataTableGroupLabel[]>;
+  /** the number of rows in the group, across all pages */
+  getGroupSize: (identifier: string) => number;
   isExpandedGroup: (group: Partial<T>) => boolean;
   onToggleExpandGroup: (group: Partial<T>, identifier: string) => void;
   onUngroup: () => void;
@@ -156,7 +167,7 @@ export function provideDataTableContext<T extends object, IdType extends keyof T
   provideDataTableColumns<T>({ columns: context.columns, cellValue: context.cellValue, itemSlotKeys: context.itemSlotKeys, columnAttr: context.columnAttr });
   provideDataTableSelection<T, IdType>({ selectedData: context.selectedData, isSelected: context.isSelected, isDisabledRow: context.isDisabledRow, onSelect: context.onSelect, onCheckboxClick: context.onCheckboxClick });
   provideDataTableExpansion<T, IdType>({ expandable: context.expandable, isExpanded: context.isExpanded, onToggleExpand: context.onToggleExpand });
-  provideDataTableGrouping<T>({ groupExpandButtonPosition: context.groupExpandButtonPosition, groupKey: context.groupKey, isExpandedGroup: context.isExpandedGroup, onToggleExpandGroup: context.onToggleExpandGroup, onUngroup: context.onUngroup, onCopyGroup: context.onCopyGroup });
+  provideDataTableGrouping<T>({ groupExpandButtonPosition: context.groupExpandButtonPosition, groupKey: context.groupKey, groupLabels: context.groupLabels, getGroupSize: context.getGroupSize, isExpandedGroup: context.isExpandedGroup, onToggleExpandGroup: context.onToggleExpandGroup, onUngroup: context.onUngroup, onCopyGroup: context.onCopyGroup });
   provideDataTableRowIdentity<T, IdType>({ getRowId: context.getRowId, itemClass: context.itemClass });
 }
 

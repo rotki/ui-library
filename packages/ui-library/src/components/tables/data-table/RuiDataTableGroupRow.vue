@@ -30,8 +30,10 @@ const { classes, colspan, isMobile } = useDataTableStyling();
  */
 const mobileGroupClass = 'mt-6 first:mt-0 mb-2 rounded-lg';
 const {
+  getGroupSize,
   groupExpandButtonPosition,
   groupKey,
+  groupLabels,
   isExpandedGroup,
   onCopyGroup,
   onToggleExpandGroup,
@@ -39,6 +41,16 @@ const {
 } = useDataTableGrouping<T>();
 
 const isOpen = computed<boolean>(() => isExpandedGroup(row.group));
+const groupSize = computed<number>(() => getGroupSize(row.identifier));
+
+/** One label/value pair per grouped column, e.g. `Username: amartin`. */
+const groupParts = computed<{ key: string; label: string; value: string }[]>(() => {
+  const values = new Map<string, unknown>(Object.entries(row.group));
+  return get(groupLabels).map(({ key, label }) => {
+    const value = values.get(key);
+    return { key, label, value: value === undefined || value === null ? '' : String(value) };
+  });
+});
 </script>
 
 <template>
@@ -70,7 +82,24 @@ const isOpen = computed<boolean>(() => isExpandedGroup(row.group));
             name="group.header.content"
             :header="row"
           >
-            <span>{{ groupKey }}: {{ row.identifier }}</span>
+            <span
+              class="flex flex-wrap items-baseline gap-x-3"
+              data-id="group-label"
+            >
+              <span
+                v-for="part in groupParts"
+                :key="part.key"
+              >
+                <span class="text-rui-text-secondary">{{ part.label }}:</span>
+                <span class="font-medium ml-1">{{ part.value }}</span>
+              </span>
+            </span>
+            <span
+              class="rounded-full bg-black/[0.06] dark:bg-white/[0.08] px-2 text-caption text-rui-text-secondary"
+              data-id="group-size"
+            >
+              {{ groupSize }}
+            </span>
             <RuiButton
               size="sm"
               variant="text"
@@ -97,8 +126,8 @@ const isOpen = computed<boolean>(() => isExpandedGroup(row.group));
                 @click="onUngroup()"
               >
                 <RuiIcon
-                  name="lu-trash-2"
-                  size="14"
+                  name="lu-ungroup"
+                  size="16"
                 />
               </RuiButton>
             </template>

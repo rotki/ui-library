@@ -7,7 +7,7 @@ export const dataTableStyles = tv({
     table: 'min-w-full table-fixed divide-y divide-black/[0.12] dark:divide-white/[0.12] whitespace-nowrap mx-auto my-0 max-w-fit relative border-black/[0.12] dark:border-white/[0.12]',
     tbody: 'divide-y divide-black/[0.12] dark:divide-white/[0.12]',
     tr: 'hover:bg-black/[0.04] dark:hover:bg-white/[0.04]',
-    td: 'p-4 text-rui-text text-body-2 [text-wrap:initial]',
+    td: 'p-4 text-rui-text text-body-2 tabular-nums [text-wrap:initial]',
     checkbox: 'px-2 w-[3.625rem] max-w-[3.625rem] [&_label]:ml-0',
     tbodyLoader: 'text-center',
   },
@@ -29,7 +29,9 @@ export const dataTableStyles = tv({
     rowVariant: {
       selected: { tr: 'bg-rui-primary/[0.08] dark:bg-rui-dark-primary/[0.08]' },
       empty: { tr: 'hover:bg-transparent' },
-      expandable: { tr: 'bg-[#f9fafb] hover:bg-[#f9fafb] dark:bg-[#121212] dark:hover:bg-[#121212]' },
+      // `!border-t-0` drops the divider so the panel joins the row that opened it
+      expandable: { tr: 'bg-rui-grey-50 hover:bg-rui-grey-50 dark:bg-white/[0.03] dark:hover:bg-white/[0.03] !border-t-0' },
+      expandedParent: { tr: 'bg-rui-grey-50 dark:bg-white/[0.03]' },
       group: { tr: 'bg-black/[0.02] dark:bg-white/[0.02]' },
     },
     mobile: {
