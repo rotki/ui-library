@@ -1251,6 +1251,36 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(wrapper.findAllComponents(RuiTablePagination)).toHaveLength(1);
   });
 
+  describe('stale rows', () => {
+    it('should dim rows from an earlier read while loading', () => {
+      wrapper = createWrapper({
+        props: { cols: columns, loading: true, rowAttr: 'id', rows: data.slice(0, 3) },
+      });
+
+      const tbody = wrapper.find('tbody');
+      expect(tbody.attributes('data-stale')).toBe('true');
+      expect(tbody.classes()).toContain('opacity-50');
+    });
+
+    it('should not dim the loading row of an empty table', () => {
+      wrapper = createWrapper({
+        props: { cols: columns, loading: true, rowAttr: 'id', rows: [] },
+      });
+
+      const tbody = wrapper.find('tbody');
+      expect(tbody.attributes('data-stale')).toBeUndefined();
+      expect(tbody.classes()).not.toContain('opacity-50');
+    });
+
+    it('should not dim rows once loading ends', () => {
+      wrapper = createWrapper({
+        props: { cols: columns, rowAttr: 'id', rows: data.slice(0, 3) },
+      });
+
+      expect(wrapper.find('tbody').classes()).not.toContain('opacity-50');
+    });
+  });
+
   describe('error state', () => {
     it('should replace the empty state with the error', () => {
       wrapper = createWrapper({

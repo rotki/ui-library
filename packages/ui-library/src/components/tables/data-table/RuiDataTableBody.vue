@@ -8,7 +8,7 @@ import RuiDataTableLoadingRow from '@/components/tables/data-table/RuiDataTableL
 import RuiDataTableRow from '@/components/tables/data-table/RuiDataTableRow.vue';
 import { type GroupHeader, isRow } from '@/composables/tables/data-table/types';
 
-const { error, loading } = defineProps<{
+const { error, loading, noData } = defineProps<{
   filtered: (T | GroupHeader<T>)[];
   loading: boolean;
   noData: boolean;
@@ -50,10 +50,20 @@ const { getRowId } = useDataTableRowIdentity<T>();
  * stay below the error.
  */
 const showError = computed<boolean>(() => !!error && !loading);
+
+/**
+ * Rows shown while a read is in flight are the previous result, so they dim
+ * until it lands. An empty table shows its loading row instead, undimmed.
+ */
+const stale = computed<boolean>(() => loading && !noData);
 </script>
 
 <template>
-  <tbody :class="classes.tbody">
+  <tbody
+    class="transition-opacity duration-150"
+    :class="[classes.tbody, { 'opacity-50': stale }]"
+    :data-stale="stale || undefined"
+  >
     <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
     <slot
       v-if="$slots['body.prepend']"
