@@ -124,9 +124,9 @@ describe('components/tables/use-pagination-navigation', () => {
       unmount = u;
 
       expect(result.ranges.value).toEqual([
-        { page: 1, text: '1 - 10' },
-        { page: 2, text: '11 - 20' },
-        { page: 3, text: '21 - 25' },
+        { page: 1, text: '1–10' },
+        { page: 2, text: '11–20' },
+        { page: 3, text: '21–25' },
       ]);
     });
 
@@ -142,8 +142,8 @@ describe('components/tables/use-pagination-navigation', () => {
       unmount = u;
 
       expect(result.ranges.value).toEqual([
-        { page: 1, text: '1 - 2,500' },
-        { page: 2, text: '2,501 - 5,000' },
+        { page: 1, text: '1–2,500' },
+        { page: 2, text: '2,501–5,000' },
       ]);
     });
   });
@@ -379,7 +379,7 @@ describe('components/tables/use-pagination-navigation', () => {
       result.currentLimit.value = 30;
 
       expect(result.ranges.value).toHaveLength(1);
-      expect(result.ranges.value[0]?.text).toBe('1 - 30');
+      expect(result.ranges.value[0]?.text).toBe('1–30');
     });
   });
 });

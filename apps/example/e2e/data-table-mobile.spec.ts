@@ -60,8 +60,9 @@ test.describe('data tables - mobile', () => {
 
   test('should hide the verbose pagination section labels on mobile', async ({ page }) => {
     const limitSection = page.locator('[data-id=table-mobile-forced] [data-id=table-pagination-limit-section]').first();
-    // The "Rows per page:" label is present but hidden so the toolbar stays on one line.
-    await expect(limitSection.getByText('Rows per page:')).toBeHidden();
+    // visually hidden to keep the toolbar on one line, but it still names the select
+    await expect(limitSection.getByText('Rows per page:')).toHaveClass(/\bsr-only\b/);
+    await expect(limitSection.getByRole('button', { name: 'Rows per page:' })).toBeVisible();
   });
 
   test('should pin the action into the card header', async ({ page }) => {

@@ -225,15 +225,15 @@ test.describe('data tables - pagination', () => {
     const table = container.locator('[data-id=table]');
     await expect(table).toBeVisible();
 
-    // Check initial range shows "1 - 5"
+    // Check initial range shows "1–5"
     const rangeDisplay = container.locator('[data-id=table-pagination-ranges] [data-id=activator]').first();
-    await expect(rangeDisplay).toContainText('1 - 5');
+    await expect(rangeDisplay).toContainText('1–5');
 
     // Navigate to next page
     await container.locator('[data-id=table-pagination-next]').first().click();
 
-    // Range should update to "6 - 10"
-    await expect(rangeDisplay).toContainText('6 - 10');
+    // Range should update to "6–10"
+    await expect(rangeDisplay).toContainText('6–10');
   });
 
   test('should hide header pagination when hideDefaultHeader is set', async ({ page }) => {
@@ -462,14 +462,14 @@ test.describe('data tables - search', () => {
 
     // Verify we're on page 2 by checking the range display
     const rangeDisplay = container.locator('[data-id=table-pagination-ranges] [data-id=activator]').first();
-    await expect(rangeDisplay).toContainText('6 - 10');
+    await expect(rangeDisplay).toContainText('6–10');
 
     // Now search
     await searchInput.fill('Alice');
     await page.waitForTimeout(100);
 
     // Page should reset to 1 (range should start from 1)
-    await expect(rangeDisplay).toContainText('1 -');
+    await expect(rangeDisplay).toContainText('1–');
   });
 });
 

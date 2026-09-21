@@ -60,7 +60,7 @@ export function usePaginationNavigation(
     const { limit, total } = get(modelValue);
     const start = (page - 1) * limit + 1;
     const end = Math.min(page * limit, total);
-    return `${formatInteger(start)} - ${formatInteger(end)}`;
+    return `${formatInteger(start)}–${formatInteger(end)}`;
   }
 
   const useInputJump = computed<boolean>(() => {

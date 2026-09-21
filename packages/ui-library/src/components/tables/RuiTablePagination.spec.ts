@@ -39,8 +39,22 @@ describe('components/tables/RuiTablePagination.vue', () => {
   it('renders the pagination ranges section', () => {
     wrapper = createWrapper({ page: 1, total: 50, limit: 10 });
 
-    expect(wrapper.find('[data-id="table-pagination-ranges-section"]').exists()).toBeTruthy();
-    expect(wrapper.find('[data-id="table-pagination-ranges-section"]').text()).toContain('Items #');
+    const section = wrapper.find('[data-id="table-pagination-ranges-section"]');
+    expect(section.exists()).toBeTruthy();
+
+    // the range select reads as "1–10 of 50" on its own; its label is for screen readers
+    const label = section.find('label');
+    expect(label.text()).toBe('Page');
+    expect(label.classes()).toContain('sr-only');
+    expect(section.find(`#${label.attributes('for')}`).exists()).toBe(true);
+  });
+
+  it('keeps the page label visible beside the page input', () => {
+    wrapper = createWrapper({ page: 1, total: 50, limit: 10 }, { props: { modelValue: { page: 1, total: 50, limit: 10 }, rangesThreshold: 1 } });
+
+    const label = wrapper.find('[data-id="table-pagination-ranges-section"] label');
+    expect(label.text()).toBe('Page');
+    expect(label.classes()).not.toContain('sr-only');
   });
 
   describe('single page', () => {

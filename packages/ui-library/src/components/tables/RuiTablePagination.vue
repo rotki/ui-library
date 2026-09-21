@@ -20,9 +20,9 @@ export interface Props {
   mobile?: boolean;
   /**
    * Maximum number of pages before the jump-to-page dropdown is replaced
-   * with a numeric input. Set to `0` to always use the input, or a very
-   * large number to always use the dropdown. Defaults to `500` — past that
-   * materialising the full range list stalls the main thread.
+   * with a numeric input. Set to `1` to use the input whenever there is more
+   * than one page, or `0` to always use the dropdown. Defaults to `500`, since
+   * past that materialising the full range list stalls the main thread.
    */
   rangesThreshold?: number;
 }
@@ -64,7 +64,8 @@ const paginationStyles = tv({
       true: {
         wrapper: 'flex-nowrap justify-between gap-x-2 gap-y-0',
         ranges: 'pr-0',
-        sectionLabel: 'hidden',
+        // sr-only rather than hidden: a display:none label names nothing
+        sectionLabel: 'sr-only',
       },
     },
   },
@@ -163,9 +164,9 @@ const rangesId = useId();
     >
       <label
         :for="rangesId"
-        :class="ui.sectionLabel()"
+        :class="ui.sectionLabel({ class: useInputJump ? undefined : 'sr-only' })"
       >
-        {{ useInputJump ? 'Page' : 'Items #' }}
+        Page
       </label>
       <RuiTextField
         v-if="useInputJump"

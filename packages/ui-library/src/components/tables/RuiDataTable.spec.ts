@@ -1168,7 +1168,7 @@ describe('components/tables/RuiDataTable.vue', () => {
     await nextTick();
 
     expect(ranges.props().modelValue).toBe(2);
-    expect(ranges.find('[data-id="activator"]').text()).toBe('6 - 10');
+    expect(ranges.find('[data-id="activator"]').text()).toBe('6–10');
     expect(ranges.find('input[type=hidden]').element).toHaveProperty('value', '2');
 
     limits.vm.$emit('update:modelValue', 10);
@@ -1180,7 +1180,7 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(limits.find('input[type=hidden]').element).toHaveProperty('value', '10');
 
     expect(ranges.props().modelValue).toBe(1);
-    expect(ranges.find('[data-id="activator"]').text()).toBe('1 - 10');
+    expect(ranges.find('[data-id="activator"]').text()).toBe('1–10');
     expect(ranges.find('input[type=hidden]').element).toHaveProperty('value', '1');
   });
 
