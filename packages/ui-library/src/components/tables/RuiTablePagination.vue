@@ -19,12 +19,6 @@ export interface Props {
    */
   mobile?: boolean;
   /**
-   * Show only the rows-per-page select, e.g. when every row already fits on
-   * one page. The range and navigation sections are hidden but keep their
-   * space, so the select does not move when the mode flips.
-   */
-  perPageOnly?: boolean;
-  /**
    * Maximum number of pages before the jump-to-page dropdown is replaced
    * with a numeric input. Set to `0` to always use the input, or a very
    * large number to always use the dropdown. Defaults to `500` — past that
@@ -41,7 +35,6 @@ const {
   disablePerPage = false,
   rangesThreshold = 500,
   mobile = false,
-  perPageOnly = false,
 } = defineProps<Props>();
 
 const paginationStyles = tv({
@@ -74,16 +67,10 @@ const paginationStyles = tv({
         sectionLabel: 'hidden',
       },
     },
-    perPageOnly: {
-      true: {
-        ranges: 'invisible',
-        navigation: 'invisible',
-      },
-    },
   },
 });
 
-const ui = computed<ReturnType<typeof paginationStyles>>(() => paginationStyles({ dense, mobile, perPageOnly }));
+const ui = computed<ReturnType<typeof paginationStyles>>(() => paginationStyles({ dense, mobile }));
 
 const tableDefaults = useTable();
 
@@ -102,6 +89,22 @@ const {
   onFirst,
   onLast,
 } = usePaginationNavigation(modelValue, tableDefaults, () => rangesThreshold);
+
+/**
+ * With every row on one page the bar stays in place, as a summary, but the
+ * page jump has nowhere to go, so it disables like the arrows beside it.
+ */
+const singlePage = computed<boolean>(() => get(pages) <= 1);
+
+/**
+ * The rows-per-page select disables only once every option would fit all the
+ * rows. Until then it stays live even on a single page: it is how a user
+ * lowers a limit they raised past the row count.
+ */
+const everyLimitFits = computed<boolean>(() => {
+  const { total } = get(modelValue);
+  return get(singlePage) && get(limits).every(({ limit }) => limit >= total);
+});
 
 const pageDraft = ref<string>(String(get(currentRange)));
 
@@ -142,7 +145,7 @@ const rangesId = useId();
         :id="limitId"
         v-model="currentLimit"
         :options="limits"
-        :disabled="loading || disablePerPage"
+        :disabled="loading || disablePerPage || everyLimitFits"
         :class-names="{ label: ui.select() }"
         variant="outlined"
         label=""
@@ -169,7 +172,7 @@ const rangesId = useId();
         :id="rangesId"
         v-model="pageDraft"
         variant="outlined"
-        :disabled="loading"
+        :disabled="loading || singlePage"
         :class="[ui.pageInput()]"
         type="number"
         min="1"
@@ -186,7 +189,7 @@ const rangesId = useId();
         :id="rangesId"
         v-model="currentRange"
         :options="ranges"
-        :disabled="loading"
+        :disabled="loading || singlePage"
         :class-names="{ label: ui.select() }"
         variant="outlined"
         label=""

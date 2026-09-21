@@ -70,11 +70,6 @@ export interface Props<T, K extends keyof T> {
   loading?: boolean;
   disablePerPage?: boolean;
   /**
-   * Reduce the pagination to its rows-per-page select, e.g. when every row
-   * already fits on one page. Forwarded to `RuiTablePagination`.
-   */
-  perPageOnly?: boolean;
-  /**
    * Maximum number of pages before the jump-to-page dropdown is replaced with
    * a numeric input. Defaults to `500`. Forwarded to `RuiTablePagination`.
    */
@@ -174,7 +169,6 @@ const {
   striped = false,
   loading = false,
   disablePerPage = false,
-  perPageOnly = false,
   rangesThreshold = 500,
   empty = { label: 'No item found' },
   error = '',
@@ -716,7 +710,6 @@ provideDataTableContext<T, IdType>({
       :loading="loading"
       :mobile="isMobile"
       :disable-per-page="disablePerPage"
-      :per-page-only="perPageOnly"
       :ranges-threshold="rangesThreshold"
       data-id="table-pagination"
       @update:model-value="onPaginate()"

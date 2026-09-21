@@ -581,13 +581,12 @@ export const HiddenHeaderAndFooter = meta.story({
   },
 });
 
-export const PerPageOnlyFooter = meta.story({
+export const SinglePage = meta.story({
   args: {
     cols: columns,
     hideDefaultHeader: true,
     outlined: true,
     pagination: { limit: 10, page: 1, total: 5 },
-    perPageOnly: true,
     rows: data.slice(0, 5),
   },
 });

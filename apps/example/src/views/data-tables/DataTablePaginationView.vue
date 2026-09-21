@@ -31,6 +31,20 @@ const paginationHideFooter = ref<TablePaginationData>({
   total: fixedRows.length,
 });
 
+const singlePageRows = fixedRows.slice(0, 5);
+
+const paginationSinglePage = ref<TablePaginationData>({
+  limit: 10,
+  page: 1,
+  total: singlePageRows.length,
+});
+
+const paginationRaisedLimit = ref<TablePaginationData>({
+  limit: 25,
+  page: 1,
+  total: fixedRows.length,
+});
+
 const paginationSticky = ref<TablePaginationData>({
   limit: 5,
   page: 1,
@@ -222,6 +236,46 @@ const paginationLargeTotalDropdown = ref<TablePaginationData>({
           :ranges-threshold="0"
           row-attr="id"
           outlined
+          data-id="table"
+        />
+      </div>
+
+      <!-- Every row on a single page -->
+      <div
+        class="flex flex-col space-y-3"
+        data-id="table-pagination-single-page"
+      >
+        <h4>Single Page</h4>
+        <p class="text-sm text-rui-text-secondary">
+          Every rows-per-page option fits all rows, so the whole bar is disabled
+        </p>
+        <RuiDataTable
+          v-model:pagination="paginationSinglePage"
+          :rows="singlePageRows"
+          :cols="fixedColumns"
+          row-attr="id"
+          outlined
+          hide-default-header
+          data-id="table"
+        />
+      </div>
+
+      <!-- A single page only because the limit was raised -->
+      <div
+        class="flex flex-col space-y-3"
+        data-id="table-pagination-raised-limit"
+      >
+        <h4>Single Page at a Raised Limit</h4>
+        <p class="text-sm text-rui-text-secondary">
+          The page controls are disabled, but rows per page stays live so the limit can go back down
+        </p>
+        <RuiDataTable
+          v-model:pagination="paginationRaisedLimit"
+          :rows="fixedRows"
+          :cols="fixedColumns"
+          row-attr="id"
+          outlined
+          hide-default-header
           data-id="table"
         />
       </div>
