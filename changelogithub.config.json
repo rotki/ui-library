@@ -1,0 +1,8 @@
+{
+  "types": {
+    "feat": { "title": "🚀 Features" },
+    "fix": { "title": "🐞 Bug Fixes" },
+    "perf": { "title": "🏎 Performance" },
+    "style": { "title": "🎨 Styles" }
+  }
+}
