@@ -2,16 +2,24 @@
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
 import { useDataTableColumns, useDataTableRowIdentity, useDataTableStyling } from '@/components/tables/data-table/context';
 import RuiDataTableEmptyRow from '@/components/tables/data-table/RuiDataTableEmptyRow.vue';
+import RuiDataTableErrorRow from '@/components/tables/data-table/RuiDataTableErrorRow.vue';
 import RuiDataTableGroupRow from '@/components/tables/data-table/RuiDataTableGroupRow.vue';
 import RuiDataTableLoadingRow from '@/components/tables/data-table/RuiDataTableLoadingRow.vue';
 import RuiDataTableRow from '@/components/tables/data-table/RuiDataTableRow.vue';
 import { type GroupHeader, isRow } from '@/composables/tables/data-table/types';
 
-defineProps<{
+const { error, loading } = defineProps<{
   filtered: (T | GroupHeader<T>)[];
   loading: boolean;
   noData: boolean;
   empty: { label?: string; description?: string };
+  error: string;
+  errorTitle: string;
+  retryText: string;
+}>();
+
+const emit = defineEmits<{
+  retry: [];
 }>();
 
 defineSlots<Partial<
@@ -28,12 +36,20 @@ defineSlots<Partial<
     'expanded-item'?: (props: { row: T; index: number }) => any;
     'no-data'?: () => any;
     'empty-description'?: () => any;
+    'error'?: () => any;
   }
 >>();
 
 const { classes, colspan } = useDataTableStyling();
 const { itemSlotKeys } = useDataTableColumns<T>();
 const { getRowId } = useDataTableRowIdentity<T>();
+
+/**
+ * Loading outranks a failure, which outranks the empty state: rows that did
+ * not arrive are not rows that are not there. Rows kept from an earlier read
+ * stay below the error.
+ */
+const showError = computed<boolean>(() => !!error && !loading);
 </script>
 
 <template>
@@ -44,6 +60,21 @@ const { getRowId } = useDataTableRowIdentity<T>();
       :colspan="colspan"
       name="body.prepend"
     />
+    <RuiDataTableErrorRow
+      v-if="showError"
+      :message="error"
+      :title="errorTitle"
+      :retry-text="retryText"
+      @retry="emit('retry')"
+    >
+      <template
+        v-if="$slots.error"
+        #error
+      >
+        <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
+        <slot name="error" />
+      </template>
+    </RuiDataTableErrorRow>
     <template v-for="(row, index) in filtered">
       <RuiDataTableGroupRow
         v-if="!isRow(row)"
@@ -101,7 +132,7 @@ const { getRowId } = useDataTableRowIdentity<T>();
     </template>
     <RuiDataTableLoadingRow v-if="loading && noData" />
     <RuiDataTableEmptyRow
-      v-if="noData && empty && !loading"
+      v-if="noData && empty && !loading && !showError"
       :empty="empty"
     >
       <template

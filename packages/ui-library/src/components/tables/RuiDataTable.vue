@@ -88,6 +88,15 @@ export interface Props<T, K extends keyof T> {
     description?: string;
   };
   /**
+   * Why the last read failed. Shown above any rows kept from an earlier read,
+   * or in place of the empty state; `loading` still takes precedence.
+   */
+  error?: string;
+  /** Heading for that failure. */
+  errorTitle?: string;
+  /** Label for the retry control; without one, no control is offered. */
+  retryText?: string;
+  /**
    * should hide the header navigation
    */
   hideDefaultHeader?: boolean;
@@ -168,6 +177,9 @@ const {
   perPageOnly = false,
   rangesThreshold = 500,
   empty = { label: 'No item found' },
+  error = '',
+  errorTitle = '',
+  retryText = '',
   hideDefaultHeader = false,
   hideDefaultFooter = false,
   rounded = 'md',
@@ -187,6 +199,7 @@ const {
 const emit = defineEmits<{
   'update:options': [value: { pagination?: TablePaginationData; sort?: TableSortData<T> }];
   'copy:group': [value: GroupData<T>];
+  'retry': [];
 }>();
 
 const slots = defineSlots<Partial<
@@ -204,6 +217,7 @@ const slots = defineSlots<Partial<
     'expanded-item': (props: { row: T; index: number }) => any;
     'no-data': () => any;
     'empty-description': () => any;
+    'error': () => any;
     'tfoot': () => any;
   }
 >>();
@@ -602,7 +616,18 @@ provideDataTableContext<T, IdType>({
           :loading="loading"
           :no-data="noData"
           :empty="empty"
+          :error="error"
+          :error-title="errorTitle"
+          :retry-text="retryText"
+          @retry="emit('retry')"
         >
+          <template
+            v-if="slots.error"
+            #error
+          >
+            <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
+            <slot name="error" />
+          </template>
           <template
             v-if="slots['body.prepend']"
             #body.prepend="slotData"

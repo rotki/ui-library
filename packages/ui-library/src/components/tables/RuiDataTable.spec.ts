@@ -1251,6 +1251,90 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(wrapper.findAllComponents(RuiTablePagination)).toHaveLength(1);
   });
 
+  describe('error state', () => {
+    it('should replace the empty state with the error', () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          error: 'The request timed out',
+          errorTitle: 'Could not load users',
+          rowAttr: 'id',
+          rows: [],
+        },
+      });
+
+      const errorRow = wrapper.find('tr[data-id="row-error"]');
+      expect(errorRow.exists()).toBe(true);
+      expect(errorRow.text()).toContain('Could not load users');
+      expect(errorRow.text()).toContain('The request timed out');
+      expect(wrapper.find('tr[data-id="row-empty"]').exists()).toBe(false);
+    });
+
+    it('should keep rows from an earlier read below the error', () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          error: 'The request timed out',
+          rowAttr: 'id',
+          rows: data.slice(0, 3),
+        },
+      });
+
+      const bodyRows = wrapper.findAll('tbody tr');
+      expect(bodyRows[0]?.attributes('data-id')).toBe('row-error');
+      expect(wrapper.findAll('tr[data-id="row"]')).toHaveLength(3);
+    });
+
+    it('should let loading take precedence over the error', () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          error: 'The request timed out',
+          loading: true,
+          rowAttr: 'id',
+          rows: [],
+        },
+      });
+
+      expect(wrapper.find('tr[data-id="row-error"]').exists()).toBe(false);
+      expect(wrapper.find('[data-id="tbody-loader"]').exists()).toBe(true);
+    });
+
+    it('should emit retry from the retry control', async () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          error: 'The request timed out',
+          retryText: 'Retry',
+          rowAttr: 'id',
+          rows: [],
+        },
+      });
+
+      const retry = wrapper.find('tr[data-id="row-error"]').findAll('button').find(button => button.text() === 'Retry');
+      assert(retry);
+      await retry.trigger('click');
+      expect(wrapper.emitted('retry')).toHaveLength(1);
+    });
+
+    it('should render a custom error slot', () => {
+      wrapper = createWrapper({
+        props: {
+          cols: columns,
+          error: 'The request timed out',
+          rowAttr: 'id',
+          rows: [],
+        },
+        slots: {
+          error: '<div data-id="custom-error">Custom failure</div>',
+        },
+      });
+
+      expect(wrapper.find('tr[data-id="row-error"] [data-id="custom-error"]').exists()).toBe(true);
+      expect(wrapper.find('[data-id="table-error"]').exists()).toBe(false);
+    });
+  });
+
   it('should set aria-sort on sortable column headers', () => {
     wrapper = createWrapper({
       props: {

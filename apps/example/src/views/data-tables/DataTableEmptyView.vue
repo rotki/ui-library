@@ -5,6 +5,8 @@ import {
   RuiIcon,
 } from '@rotki/ui-library/components';
 import { fixedColumns, fixedRows } from '@/data/table-configs';
+
+const retries = ref<number>(0);
 </script>
 
 <template>
@@ -112,6 +114,48 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
             </RuiButton>
           </template>
         </RuiDataTable>
+      </div>
+
+      <!-- Failed read without data -->
+      <div
+        class="flex flex-col space-y-3"
+        data-id="table-error-empty"
+      >
+        <h4>Error without Data</h4>
+        <p
+          class="text-sm text-rui-text-secondary"
+          data-id="retry-count"
+        >
+          Retries: {{ retries }}
+        </p>
+        <RuiDataTable
+          :rows="[]"
+          :cols="fixedColumns"
+          error="The server did not respond in time."
+          error-title="Could not load users"
+          retry-text="Retry"
+          row-attr="id"
+          outlined
+          data-id="table"
+          @retry="retries++"
+        />
+      </div>
+
+      <!-- Failed refresh with data -->
+      <div
+        class="flex flex-col space-y-3"
+        data-id="table-error-data"
+      >
+        <h4>Error with Data from an Earlier Read</h4>
+        <RuiDataTable
+          :rows="fixedRows"
+          :cols="fixedColumns"
+          :items-per-page="5"
+          error="Refreshing failed, showing the last loaded users."
+          row-attr="id"
+          outlined
+          data-id="table"
+        />
       </div>
     </div>
   </div>

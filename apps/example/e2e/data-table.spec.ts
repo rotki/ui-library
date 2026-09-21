@@ -833,6 +833,26 @@ test.describe('data tables - empty states', () => {
     // Should show progress bar in header
     await expect(table.locator('thead tr[data-id="thead-loader"]')).toHaveCount(1);
   });
+
+  test('should render the error in place of the empty state and retry', async ({ page }) => {
+    const container = page.locator('[data-id=table-error-empty]');
+    const table = container.locator('[data-id=table]');
+    const errorRow = table.locator('tbody tr[data-id="row-error"]');
+
+    await expect(errorRow).toContainText('Could not load users');
+    await expect(table.locator('tbody tr[data-id="row-empty"]')).toHaveCount(0);
+    await expect(table.locator('[data-id=table-pagination]')).toHaveCount(1);
+
+    await errorRow.getByRole('button', { name: 'Retry' }).click();
+    await expect(container.getByTestId('retry-count')).toHaveText('Retries: 1');
+  });
+
+  test('should keep rows from an earlier read below the error', async ({ page }) => {
+    const table = page.locator('[data-id=table-error-data] [data-id=table]');
+
+    await expect(table.locator('tbody tr').first()).toHaveAttribute('data-id', 'row-error');
+    await expect(table.locator('tbody tr[data-id="row"]')).toHaveCount(5);
+  });
 });
 
 test.describe('data tables - custom slots', () => {
