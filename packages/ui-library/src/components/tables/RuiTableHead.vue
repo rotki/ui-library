@@ -1,4 +1,5 @@
 <script lang="ts" setup generic="T extends object, K extends keyof T = keyof T">
+import type { RuiIcons } from '@/icons';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
@@ -121,11 +122,12 @@ const tableHeadStyles = tv({
     thead: 'divide-y divide-black/[0.12] dark:divide-white/[0.12]',
     checkbox: 'px-2 w-[3.625rem] max-w-[3.625rem] [&_label]:ml-0',
     th: '[:where(&)]:px-4',
-    columnText: 'text-rui-text font-medium text-[0.875rem] leading-6',
+    // labels read as secondary to the data; the sorted column's label steps up to primary
+    columnText: 'text-rui-text-secondary font-medium text-[0.875rem] leading-6',
     // the negative margin cancels the button's own padding so the label lines up with the cells below
     sortButton: 'inline-flex group/sort -mx-1.5',
-    // a faint resting arrow marks sortable columns for keyboard and touch users
-    sortIcon: 'transition opacity-30 rotate-180 group-hover/sort:opacity-60 group-focus-visible/sort:opacity-60',
+    // a faint resting icon marks sortable columns for keyboard and touch users
+    sortIcon: 'transition opacity-30 group-hover/sort:opacity-60 group-focus-visible/sort:opacity-60',
     loaderRow: 'border-none',
     progress: 'p-0 h-0',
     progressWrapper: 'h-0 -mt-1',
@@ -168,7 +170,19 @@ function getSortIconClass(key: TableColumn<T>['key']): string | undefined {
   if (!isSortedBy(key))
     return undefined;
   const direction = getSortDirection(key);
-  return `!opacity-100 ${direction === SortDirection.asc ? '!rotate-180' : '!rotate-0'}`;
+  return `!opacity-100 ${direction === SortDirection.asc ? 'rotate-180' : 'rotate-0'}`;
+}
+
+/**
+ * An unsorted column shows a neutral up-down icon, so nothing reads as sorted
+ * until it is; the sorted column shows its direction.
+ */
+function getSortIconName(key: TableColumn<T>['key']): RuiIcons {
+  return isSortedBy(key) ? 'lu-arrow-down' : 'lu-arrow-up-down';
+}
+
+function getColumnTextClass(key: TableColumn<T>['key']): string {
+  return get(ui).columnText({ class: isSortedBy(key) ? 'text-rui-text' : undefined });
 }
 
 function onSort({ key, direction }: TableColumn<T>): void {
@@ -269,7 +283,7 @@ function getAriaSort(column: TableColumn<T>): 'ascending' | 'descending' | 'none
               @click="onSort(column)"
             >
               <span
-                :class="ui.columnText()"
+                :class="getColumnTextClass(column.key)"
                 data-id="column-text"
               >
                 <slot
@@ -286,7 +300,7 @@ function getAriaSort(column: TableColumn<T>): 'ascending' | 'descending' | 'none
               >
                 <RuiIcon
                   :class="ui.sortIcon({ class: getSortIconClass(column.key) })"
-                  name="lu-arrow-down"
+                  :name="getSortIconName(column.key)"
                   size="18"
                 />
               </template>
@@ -295,7 +309,7 @@ function getAriaSort(column: TableColumn<T>): 'ascending' | 'descending' | 'none
                 <RuiIcon
                   v-if="column.align !== TableAlign.end"
                   :class="ui.sortIcon({ class: getSortIconClass(column.key) })"
-                  name="lu-arrow-down"
+                  :name="getSortIconName(column.key)"
                   size="18"
                 />
               </template>

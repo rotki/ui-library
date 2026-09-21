@@ -122,6 +122,31 @@ describe('components/tables/RuiTableHead.vue', () => {
     expect(sortButtons[0]?.attributes('data-direction')).toBe('desc');
   });
 
+  it('marks the sorted column apart from the sortable ones', () => {
+    wrapper = createWrapper({
+      props: {
+        columns,
+        sortedMap: {
+          name: { column: 'name', direction: SortDirection.asc },
+        },
+      },
+    });
+
+    const [id, name, title] = wrapper.findAll('th');
+    const iconName = (th: typeof id): unknown => th?.findComponent({ name: 'RuiIcon' }).props('name');
+    const labelClasses = (th: typeof id): string[] => th?.find('[data-id="column-text"]').classes() ?? [];
+
+    // a neutral up-down icon until sorted, the direction arrow once sorted
+    expect(iconName(name)).toBe('lu-arrow-down');
+    expect(iconName(title)).toBe('lu-arrow-up-down');
+
+    // labels read secondary, and the sorted one steps up to primary
+    expect(labelClasses(id)).toContain('text-rui-text-secondary');
+    expect(labelClasses(title)).toContain('text-rui-text-secondary');
+    expect(labelClasses(name)).toContain('text-rui-text');
+    expect(labelClasses(name)).not.toContain('text-rui-text-secondary');
+  });
+
   it('shows badge with sort index for multi-sort', () => {
     const sortData = [
       { column: 'name' as const, direction: SortDirection.asc },
