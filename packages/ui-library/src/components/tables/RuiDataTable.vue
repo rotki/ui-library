@@ -283,6 +283,19 @@ const { stick } = useStickyTableHeader(
   { table, tableScroller },
 );
 
+const { width: scrollerWidth } = useElementSize(tableScroller);
+
+/**
+ * The visible width of the table, which an expanded row caps its content to.
+ * Without the cap a wide panel, such as a nested table, sets the minimum width
+ * of the whole table and pushes every column past the scroller. `initial`
+ * resets the variable, so a nested table never inherits its parent's width.
+ */
+const viewportStyle = computed<Record<string, string>>(() => {
+  const width = get(scrollerWidth);
+  return { '--rui-table-viewport': width > 0 && !get(isMobile) ? `${width}px` : 'initial' };
+});
+
 const { expandable, isExpanded, onToggleExpand } = useTableExpansion<T, IdType>(
   { rowAttr, singleExpand },
   { expanded },
@@ -550,6 +563,7 @@ provideDataTableContext<T, IdType>({
       <table
         ref="table"
         :class="ui.table()"
+        :style="viewportStyle"
         :aria-busy="loading"
       >
         <RuiTableHead

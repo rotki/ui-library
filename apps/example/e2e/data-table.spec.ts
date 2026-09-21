@@ -664,6 +664,20 @@ test.describe('data tables - expandable', () => {
     await page.goto('/data-tables/expandable');
   });
 
+  test('should keep a wide nested table from widening its parent', async ({ page }) => {
+    const container = page.getByTestId('table-expandable-nested');
+    const outerScroller = container.getByTestId('table-scroller').first();
+    const nestedScroller = container.getByTestId('nested-table').getByTestId('table-scroller');
+    await expect(nestedScroller).toBeVisible();
+
+    const overflow = async (scroller: typeof outerScroller): Promise<number> =>
+      scroller.evaluate(element => element.scrollWidth - element.clientWidth);
+
+    // the outer table fits its container while the nested one scrolls inside it
+    expect(await overflow(outerScroller)).toBe(0);
+    expect(await overflow(nestedScroller)).toBeGreaterThan(0);
+  });
+
   test('should expand multiple rows', async ({ page }) => {
     const container = page.locator('[data-id=table-expandable-multiple]');
     const table = container.locator('[data-id=table]');

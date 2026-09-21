@@ -12,6 +12,9 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
 const expandedMultiple = ref<ExtendedUser[]>([]);
 const expandedSingle = ref<ExtendedUser[]>([]);
 const expandedCustom = ref<ExtendedUser[]>([]);
+const expandedNested = ref<ExtendedUser[]>(fixedRows.slice(0, 1));
+
+const nestedOuterColumns = fixedColumns.filter(column => column.key === 'id' || column.key === 'name');
 
 function isExpanded(row: BaseUser, expanded: ExtendedUser[]): boolean {
   return expanded.some(item => item.id === row.id);
@@ -161,6 +164,39 @@ function toggleRow(row: BaseUser, expanded: ExtendedUser[]): void {
               </template>
               <p>This is the expanded row content.</p>
             </RuiCard>
+          </template>
+        </RuiDataTable>
+      </div>
+
+      <!-- Nested table wider than its parent -->
+      <div
+        class="flex flex-col space-y-3 max-w-xl"
+        data-id="table-expandable-nested"
+      >
+        <h4>Nested Table</h4>
+        <p class="text-sm text-rui-text-secondary">
+          The expanded panel keeps to the table's visible width, so the wide nested table scrolls on its own
+        </p>
+        <RuiDataTable
+          v-model:expanded="expandedNested"
+          :rows="fixedRows.slice(0, 3)"
+          :cols="nestedOuterColumns"
+          row-attr="id"
+          outlined
+          hide-default-footer
+          hide-default-header
+          data-id="table"
+        >
+          <template #expanded-item>
+            <RuiDataTable
+              :rows="fixedRows.slice(0, 3)"
+              :cols="fixedColumns"
+              row-attr="id"
+              outlined
+              dense
+              hide-default-footer
+              data-id="nested-table"
+            />
           </template>
         </RuiDataTable>
       </div>
