@@ -81,6 +81,20 @@ const showMobileHeader = computed<boolean>(() =>
 );
 
 /**
+ * Without a selection checkbox the header bar would hold only the pinned
+ * actions, so they float in the card's top-right corner instead and the first
+ * field row makes room for them.
+ */
+const compactMobileHeader = computed<boolean>(() =>
+  get(showMobileHeader) && !get(selectedData) && get(bodyColumns).length > 0,
+);
+
+/** Room for each floating action, about one small icon button wide. */
+const firstRowInset = computed<Record<string, string> | undefined>(() =>
+  get(compactMobileHeader) ? { paddingRight: `${get(mobileHeaderColumns).length * 2 + 1}rem` } : undefined,
+);
+
+/**
  * `!border-y` defeats the `divide-y-0` on the mobile tbody, which otherwise
  * zeroes the top and bottom border on every card except the first. An expanded
  * card flattens its bottom edge so the expanded panel attaches flush beneath
@@ -106,7 +120,9 @@ const mobileCardClass = computed<string>(() => {
     <!-- Mobile card header: checkbox on the left, pinned action columns on the right -->
     <td
       v-if="showMobileHeader"
-      class="flex items-center justify-between gap-2 px-4 py-2 border-b border-black/[0.12] dark:border-white/[0.12]"
+      :class="compactMobileHeader
+        ? 'absolute top-0 right-0 z-[1] flex items-center gap-1 px-2 py-1'
+        : 'flex items-center justify-between gap-2 px-4 py-2 border-b border-black/[0.12] dark:border-white/[0.12]'"
       data-id="mobile-card-header"
     >
       <RuiCheckbox
@@ -121,7 +137,7 @@ const mobileCardClass = computed<string>(() => {
         @update:model-value="onSelect($event, rowId, true)"
         @click="onCheckboxClick($event, rowId, index)"
       />
-      <span v-else />
+      <span v-else-if="!compactMobileHeader" />
 
       <div
         v-if="mobileHeaderColumns.length > 0"
@@ -177,6 +193,7 @@ const mobileCardClass = computed<string>(() => {
       :row="row"
       :index="index"
       :row-id="rowId"
+      :style="subIndex === 0 ? firstRowInset : undefined"
     >
       <template
         v-if="itemSlotKeys.has(column.key.toString())"

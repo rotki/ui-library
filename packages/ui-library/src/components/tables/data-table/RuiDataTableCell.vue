@@ -3,7 +3,7 @@ import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
 import { useDataTableColumns, useDataTableExpansion, useDataTableStyling } from '@/components/tables/data-table/context';
 import RuiExpandButton from '@/components/tables/RuiExpandButton.vue';
 
-const { column } = defineProps<{
+const { column, row } = defineProps<{
   column: TableColumn<T>;
   row: T;
   index: number;
@@ -31,6 +31,14 @@ const mobileLabel = computed<string>(() => {
   return label === undefined || label === null ? '' : String(label);
 });
 const showMobileLabel = computed<boolean>(() => get(isMobile) && column.key !== 'expand' && get(mobileLabel).length > 0);
+
+/** A stacked card shows a placeholder for an empty value rather than a bare label. */
+const showMobilePlaceholder = computed<boolean>(() => {
+  if (!get(showMobileLabel))
+    return false;
+  const value = cellValue(row, column.key);
+  return value === undefined || value === null || value === '';
+});
 </script>
 
 <template>
@@ -46,7 +54,7 @@ const showMobileLabel = computed<boolean>(() => get(isMobile) && column.key !== 
     <span
       v-if="showMobileLabel"
       aria-hidden="true"
-      class="shrink-0 text-left font-medium text-rui-text-secondary"
+      class="shrink-0 text-left text-caption text-rui-text-secondary"
       data-id="cell-label"
     >
       {{ mobileLabel }}
@@ -62,6 +70,13 @@ const showMobileLabel = computed<boolean>(() => get(isMobile) && column.key !== 
           :expanded="rowId !== undefined && isExpanded(rowId)"
           @click="onToggleExpand(row)"
         />
+        <span
+          v-else-if="showMobilePlaceholder"
+          class="text-rui-text-disabled"
+          data-id="cell-placeholder"
+        >
+          –
+        </span>
         <template v-else-if="column.key !== 'expand'">
           {{ cellValue(row, column.key) }}
         </template>
