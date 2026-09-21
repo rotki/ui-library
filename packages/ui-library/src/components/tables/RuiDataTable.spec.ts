@@ -1842,8 +1842,10 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const tbody = wrapper.find('tbody');
-      expect(tbody.classes()).toContain('even:[&>tr]:bg-rui-grey-50');
+      // at zero specificity, so selected, hovered, expanded and group rows keep their own background
+      const stripes = wrapper.find('tbody').classes().filter(name => name.includes('nth-child(even)'));
+      expect(stripes).toHaveLength(2);
+      expect(stripes.every(name => name.includes('[:where(&>tr:nth-child(even))]'))).toBe(true);
     });
 
     it('should apply rounded variants to wrapper', () => {

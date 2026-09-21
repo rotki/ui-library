@@ -24,8 +24,9 @@ export const dataTableStyles = tv({
       true: {},
       false: {},
     },
+    // `:where()` keeps the stripe below every row state (selected, hover, expanded, group)
     striped: {
-      true: { tbody: 'even:[&>tr]:bg-rui-grey-50 dark:even:[&>tr]:bg-rui-grey-900' },
+      true: { tbody: '[:where(&>tr:nth-child(even))]:bg-rui-grey-50 dark:[:where(&>tr:nth-child(even))]:bg-rui-grey-900' },
     },
     rowVariant: {
       selected: { tr: 'bg-rui-primary/[0.08] dark:bg-rui-dark-primary/[0.08]' },

@@ -42,7 +42,7 @@ test.describe('data tables - basic', () => {
   test('should render striped table', async ({ page }) => {
     const tbody = page.locator('[data-id=table-striped] [data-id=table] tbody');
     await expect(tbody).toBeVisible();
-    await expect(tbody).toHaveClass(/even:/);
+    await expect(tbody).toHaveClass(/nth-child\(even\)/);
   });
 });
 
