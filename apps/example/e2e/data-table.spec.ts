@@ -44,6 +44,25 @@ test.describe('data tables - basic', () => {
     await expect(tbody).toBeVisible();
     await expect(tbody).toHaveClass(/nth-child\(even\)/);
   });
+
+  test('should keep its full height in a scrolling flex column', async ({ page }) => {
+    const section = page.locator('[data-id=table-in-flex-scroller]');
+    const scroller = section.locator('[data-id=scroller]');
+    const table = section.locator('[data-id=table]');
+    await expect(table.locator('tbody tr')).toHaveCount(10);
+
+    // a shrunken table clips its own rows and leaves its parent nothing to scroll
+    const { clientHeight, scrollHeight } = await table.evaluate(el => ({
+      clientHeight: el.clientHeight,
+      scrollHeight: el.scrollHeight,
+    }));
+    expect(clientHeight).toBe(scrollHeight);
+    expect(await scroller.evaluate(el => el.scrollHeight > el.clientHeight)).toBe(true);
+
+    const lastRow = table.locator('tbody tr').last();
+    await lastRow.scrollIntoViewIfNeeded();
+    await expect(lastRow).toBeInViewport({ ratio: 1 });
+  });
 });
 
 test.describe('data tables - sorting', () => {

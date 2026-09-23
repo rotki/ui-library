@@ -2,7 +2,8 @@ import { tv } from '@/utils/tv';
 
 export const dataTableStyles = tv({
   slots: {
-    wrapper: 'relative divide-y divide-black/[0.12] dark:divide-white/[0.12] overflow-hidden',
+    // `clip`, not `hidden`: a hidden-overflow flex item may shrink below its rows and hide them
+    wrapper: 'relative divide-y divide-black/[0.12] dark:divide-white/[0.12] overflow-clip',
     scroller: 'overflow-x-auto overflow-y-hidden [clip-path:inset(0_0_0_0)]',
     table: 'min-w-full table-fixed divide-y divide-black/[0.12] dark:divide-white/[0.12] whitespace-nowrap mx-auto my-0 max-w-fit relative border-black/[0.12] dark:border-white/[0.12]',
     tbody: 'divide-y divide-black/[0.12] dark:divide-white/[0.12]',

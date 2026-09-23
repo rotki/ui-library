@@ -140,6 +140,28 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
           </template>
         </RuiDataTable>
       </div>
+
+      <!-- In a scrolling flex column (a drawer or dialog body) -->
+      <div
+        class="flex flex-col space-y-3"
+        data-id="table-in-flex-scroller"
+      >
+        <h4>In a scrolling flex column</h4>
+        <div
+          class="h-48 flex flex-col gap-4 overflow-y-auto border border-dashed border-black/[0.12] dark:border-white/[0.12] p-2"
+          data-id="scroller"
+        >
+          <RuiDataTable
+            :rows="fixedRows"
+            :cols="fixedColumns"
+            row-attr="id"
+            outlined
+            rounded="md"
+            data-id="table"
+          />
+          <p>Content below the table</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
