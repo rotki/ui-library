@@ -1,11 +1,15 @@
 <script lang="ts" setup>
 import {
   RuiButton,
+  RuiCard,
   RuiDataTable,
+  RuiDialog,
   RuiIcon,
   type TablePaginationData,
 } from '@rotki/ui-library/components';
 import { fixedColumns, fixedRows } from '@/data/table-configs';
+
+const stickyDialogOpen = ref<boolean>(false);
 
 const pagination = ref<TablePaginationData>({
   limit: 5,
@@ -289,7 +293,10 @@ const paginationLargeTotalDropdown = ref<TablePaginationData>({
         <p class="text-sm text-rui-text-secondary">
           Table header stays visible when scrolling (scroll the table to test)
         </p>
-        <div class="h-48 overflow-auto">
+        <div
+          class="h-48 overflow-auto"
+          data-id="sticky-scroller"
+        >
           <RuiDataTable
             v-model:pagination="paginationSticky"
             :rows="fixedRows"
@@ -312,6 +319,96 @@ const paginationLargeTotalDropdown = ref<TablePaginationData>({
               </RuiButton>
             </template>
           </RuiDataTable>
+        </div>
+      </div>
+
+      <!-- Sticky header in a dialog -->
+      <div
+        class="flex flex-col space-y-3"
+        data-id="table-pagination-sticky-dialog"
+      >
+        <h4>Sticky Header in a Dialog</h4>
+        <p class="text-sm text-rui-text-secondary">
+          The dialog is transformed, so the stuck header has to be placed relative to it rather than the viewport
+        </p>
+        <RuiDialog
+          v-model="stickyDialogOpen"
+          max-width="900"
+          data-id="sticky-dialog"
+        >
+          <template #activator="{ attrs }">
+            <RuiButton
+              data-id="sticky-dialog-activator"
+              v-bind="attrs"
+            >
+              Open dialog
+            </RuiButton>
+          </template>
+          <RuiCard>
+            <template #header>
+              Sticky header in a dialog
+            </template>
+            <div
+              class="h-64 overflow-auto"
+              data-id="sticky-dialog-scroller"
+            >
+              <RuiDataTable
+                :rows="fixedRows"
+                :cols="fixedColumns"
+                row-attr="id"
+                outlined
+                sticky-header
+                data-id="table"
+              />
+            </div>
+          </RuiCard>
+        </RuiDialog>
+      </div>
+
+      <!-- Sticky header in a wrapper that could scroll but does not -->
+      <div
+        class="flex flex-col space-y-3"
+        data-id="table-pagination-sticky-page"
+      >
+        <h4>Sticky Header in a Card Body</h4>
+        <p class="text-sm text-rui-text-secondary">
+          The wrapper allows scrolling but has nothing to scroll, so the header sticks to the page
+        </p>
+        <div class="overflow-y-auto">
+          <RuiDataTable
+            :rows="fixedRows"
+            :cols="fixedColumns"
+            row-attr="id"
+            outlined
+            sticky-header
+            data-id="table"
+          />
+        </div>
+      </div>
+
+      <!-- Sticky header in a card body inside a scrolling container -->
+      <div
+        class="flex flex-col space-y-3"
+        data-id="table-pagination-sticky-nested"
+      >
+        <h4>Sticky Header in a Card Body inside a Scrolling Container</h4>
+        <p class="text-sm text-rui-text-secondary">
+          The inner wrapper allows scrolling but has nothing to scroll, so the header sticks to the outer container
+        </p>
+        <div
+          class="h-48 overflow-auto"
+          data-id="sticky-scroller"
+        >
+          <div class="overflow-y-auto">
+            <RuiDataTable
+              :rows="fixedRows"
+              :cols="fixedColumns"
+              row-attr="id"
+              outlined
+              sticky-header
+              data-id="table"
+            />
+          </div>
         </div>
       </div>
     </div>

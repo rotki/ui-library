@@ -280,7 +280,7 @@ const tableScroller = useTemplateRef<HTMLElement>('tableScroller');
 const { stick } = useStickyTableHeader(
   () => stickyHeader,
   stickyHeaderOffset,
-  { table, tableScroller },
+  { table },
 );
 
 const { width: scrollerWidth } = useElementSize(tableScroller);

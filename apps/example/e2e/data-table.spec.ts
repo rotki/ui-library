@@ -1,4 +1,17 @@
-import { expect, test } from '@playwright/test';
+import { expect, type Locator, test } from '@playwright/test';
+
+async function expectHeaderStuckToTop(scroller: Locator): Promise<void> {
+  const head = scroller.locator('table thead[data-id="head-main"]');
+  await scroller.evaluate((el) => {
+    el.scrollTop = 150;
+  });
+
+  await expect(head).toHaveClass(/fixed/);
+  await expect.poll(async () => {
+    const [headBox, scrollerBox] = await Promise.all([head.boundingBox(), scroller.boundingBox()]);
+    return Math.abs((headBox?.y ?? Number.NaN) - (scrollerBox?.y ?? Number.NaN));
+  }).toBeLessThanOrEqual(1);
+}
 
 test.describe('data tables - basic', () => {
   test.beforeEach(async ({ page }) => {
@@ -286,6 +299,38 @@ test.describe('data tables - pagination', () => {
     // The table thead should have sticky class (library uses absolute/fixed positioning for sticky behavior)
     const thead = table.locator('table thead[data-id="head-main"]');
     await expect(thead).toHaveClass(/absolute/);
+  });
+
+  test('should stick the header to the top of its scrolling container', async ({ page }) => {
+    const scroller = page.locator('[data-id=table-pagination-sticky] [data-id=sticky-scroller]');
+    await scroller.scrollIntoViewIfNeeded();
+    await expectHeaderStuckToTop(scroller);
+  });
+
+  test('should stick the header to the top of its scrolling container in a dialog', async ({ page }) => {
+    await page.locator('[data-id=sticky-dialog-activator]').click();
+    const scroller = page.locator('[data-id=sticky-dialog-scroller]');
+    await expect(scroller).toBeVisible();
+    await expectHeaderStuckToTop(scroller);
+  });
+
+  test('should skip a wrapper with nothing to scroll when finding the scrolling container', async ({ page }) => {
+    const scroller = page.locator('[data-id=table-pagination-sticky-nested] [data-id=sticky-scroller]');
+    await scroller.scrollIntoViewIfNeeded();
+    await expectHeaderStuckToTop(scroller);
+  });
+
+  test('should stick the header to the page when its wrapper has nothing to scroll', async ({ page }) => {
+    const table = page.locator('[data-id=table-pagination-sticky-page] [data-id=table]');
+    const head = table.locator('table thead[data-id="head-main"]');
+    await table.scrollIntoViewIfNeeded();
+    await table.evaluate((el) => {
+      window.scrollBy(0, el.getBoundingClientRect().top);
+    });
+
+    await expect(head).toHaveClass(/fixed/);
+    // the example app's sticky offset, which clears its app bar
+    await expect.poll(async () => Math.round((await head.boundingBox())?.y ?? Number.NaN)).toBe(72);
   });
 
   test('should swap dropdown for jump-to-page input when pages exceed rangesThreshold', async ({ page }) => {
