@@ -200,13 +200,17 @@ const menuAttrs = computed<MenuAttrs>(() => ({
   onClick: disabled ? undefined : checkClick,
 }));
 
+/**
+ * Moves focus into the open menu without scrolling the page. A menu taller than the space below its
+ * activator would otherwise make the browser scroll the whole document to reveal the focused
+ * container, sliding the page out from under the activator.
+ */
 function focusOnContent() {
   const content = get(menuContent);
   if (!content)
     return;
 
-  // Focus on the menu container itself
-  content.focus();
+  content.focus({ preventScroll: true });
 }
 
 function focusMenu(): void {
@@ -216,6 +220,7 @@ function focusMenu(): void {
   nextTick(() => focusOnContent());
 }
 
+/** Hands focus back to the activator on close, likewise without scrolling to it. */
 function focusOnActivator() {
   const activatorEl = get(activator);
   if (!activatorEl) {
@@ -223,7 +228,7 @@ function focusOnActivator() {
   }
   const focusableEl = activatorEl.querySelector<HTMLElement>(FOCUSABLE_ELEMENTS_SELECTOR);
   if (focusableEl) {
-    focusableEl.focus();
+    focusableEl.focus({ preventScroll: true });
   }
 }
 

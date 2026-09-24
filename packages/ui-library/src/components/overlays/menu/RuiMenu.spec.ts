@@ -460,6 +460,26 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
     expect(document.activeElement).toBe(menuContent);
   });
 
+  it('should move focus into the menu and back to the trigger without scrolling the page', async () => {
+    const focus = vi.spyOn(HTMLElement.prototype, 'focus');
+    wrapper = createWrapper();
+
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    const menuContent = queryByDataId<HTMLElement>('content');
+    assertExists(menuContent);
+    expect(focus.mock.contexts.at(-1)).toBe(menuContent);
+    expect(focus).toHaveBeenLastCalledWith({ preventScroll: true });
+
+    await wrapper.find('#trigger').trigger('keydown', { key: 'Escape' });
+    await vi.runAllTimersAsync();
+
+    expect(focus.mock.contexts.at(-1)).toBe(wrapper.find('#trigger').element);
+    expect(focus).toHaveBeenLastCalledWith({ preventScroll: true });
+    focus.mockRestore();
+  });
+
   it('should menu works with `closeOnContentClick=true`', async () => {
     wrapper = createWrapper({
       props: {
