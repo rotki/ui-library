@@ -8,6 +8,7 @@ import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiDialog, { type DialogProps } from '@/components/overlays/dialog/RuiDialog.vue';
+import { activatorHandlers } from '@/components/overlays/menu/activator-handlers';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { Placement } from '@/composables/floating';
@@ -474,7 +475,7 @@ watch(isOpen, onOpenChanged);
             :aria-required="required || undefined"
             :aria-invalid="hasError || undefined"
             :aria-busy="loading || undefined"
-            v-bind="readOnly ? {} : attrs"
+            v-bind="readOnly ? {} : activatorHandlers(attrs)"
             @mouseenter="isHovered = true"
             @mouseleave="isHovered = false"
           >

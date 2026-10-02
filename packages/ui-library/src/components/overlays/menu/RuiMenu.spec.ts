@@ -252,42 +252,60 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
     });
   });
 
-  it('should have aria-haspopup on activator wrapper', () => {
+  it('should put aria-haspopup on the activator, not on the wrapper', () => {
     wrapper = createWrapper();
 
+    expect(wrapper.find('#trigger').attributes('aria-haspopup')).toBe('true');
+
     const activatorWrapper = wrapper.find('[data-menu-disabled]');
-    expect(activatorWrapper.attributes('aria-haspopup')).toBe('true');
+    expect(activatorWrapper.attributes('aria-haspopup')).toBeUndefined();
+    expect(activatorWrapper.attributes('aria-expanded')).toBeUndefined();
   });
 
   it('should have aria-expanded="false" when closed and "true" when open', async () => {
     wrapper = createWrapper();
 
-    const activatorWrapper = wrapper.find('[data-menu-disabled]');
-    expect(activatorWrapper.attributes('aria-expanded')).toBe('false');
+    const trigger = wrapper.find('#trigger');
+    expect(trigger.attributes('aria-expanded')).toBe('false');
 
     // Open menu
-    await wrapper.find('#trigger').trigger('click');
+    await trigger.trigger('click');
     await vi.runAllTimersAsync();
 
-    expect(activatorWrapper.attributes('aria-expanded')).toBe('true');
+    expect(trigger.attributes('aria-expanded')).toBe('true');
 
     // Close menu by clicking outside
     document.body.click();
     await vi.runAllTimersAsync();
 
-    expect(activatorWrapper.attributes('aria-expanded')).toBe('false');
+    expect(trigger.attributes('aria-expanded')).toBe('false');
   });
 
-  it('should have aria-haspopup on activator wrapper even when disabled', () => {
+  it('should point aria-controls at the popover only while it is shown', async () => {
+    wrapper = createWrapper();
+
+    const trigger = wrapper.find('#trigger');
+    expect(trigger.attributes('aria-controls')).toBeUndefined();
+
+    await trigger.trigger('click');
+    await vi.runAllTimersAsync();
+
+    const menu = queryByRole<HTMLDivElement>('menu');
+    assertExists(menu);
+    expect(trigger.attributes('aria-controls')).toBe(menu.id);
+    expect(menu.id).not.toBe('');
+  });
+
+  it('should have aria-haspopup on the activator even when disabled', () => {
     wrapper = createWrapper({
       props: {
         disabled: true,
       },
     });
 
-    const activatorWrapper = wrapper.find('[data-menu-disabled]');
-    expect(activatorWrapper.attributes('aria-haspopup')).toBe('true');
-    expect(activatorWrapper.attributes('aria-expanded')).toBe('false');
+    const trigger = wrapper.find('#trigger');
+    expect(trigger.attributes('aria-haspopup')).toBe('true');
+    expect(trigger.attributes('aria-expanded')).toBe('false');
   });
 
   describe('role', () => {
@@ -314,15 +332,14 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
       expect(queryByRole('menu')).toBeFalsy();
     });
 
-    it('should match aria-haspopup on the activator wrapper to the role', () => {
+    it('should match aria-haspopup on the activator to the role', () => {
       wrapper = createWrapper({
         props: {
           role: 'listbox',
         },
       });
 
-      const activatorWrapper = wrapper.find('[data-menu-disabled]');
-      expect(activatorWrapper.attributes('aria-haspopup')).toBe('listbox');
+      expect(wrapper.find('#trigger').attributes('aria-haspopup')).toBe('listbox');
     });
   });
 

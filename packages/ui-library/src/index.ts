@@ -14,6 +14,8 @@ import '@/style.css';
 
 export * from '@/components';
 
+export { activatorHandlers, type ActivatorHandlers } from '@/components/overlays/menu/activator-handlers';
+
 export * from '@/composables';
 
 export type { LogoOptions, LogoResolver } from '@/composables/defaults/logo';

@@ -81,20 +81,25 @@ test.describe('menu', () => {
 
   test('should have aria-expanded toggle on open/close', async ({ page }) => {
     const menu = page.locator('div[data-id=menu-0]');
-    const activatorWrapper = menu.locator('[aria-haspopup=true]');
+    const activator = menu.locator('[data-id=activator]');
+
+    // The ARIA sits on the activator itself, never on a role-less wrapper
+    await expect(activator).toHaveAttribute('aria-haspopup', 'true');
+    await expect(menu.locator('div[aria-haspopup]')).toHaveCount(0);
 
     // Initially aria-expanded should be false
-    await expect(activatorWrapper).toHaveAttribute('aria-expanded', 'false');
+    await expect(activator).toHaveAttribute('aria-expanded', 'false');
 
     // Open menu
-    await menu.locator('[data-id=activator]').click();
+    await activator.click();
     await expect(page.locator(menuContent)).toBeVisible();
-    await expect(activatorWrapper).toHaveAttribute('aria-expanded', 'true');
+    await expect(activator).toHaveAttribute('aria-expanded', 'true');
+    await expect(activator).toHaveAttribute('aria-controls', /.+/);
 
     // Close menu
     await page.keyboard.press('Escape');
     await expect(page.locator(menuContent)).toHaveCount(0);
-    await expect(activatorWrapper).toHaveAttribute('aria-expanded', 'false');
+    await expect(activator).toHaveAttribute('aria-expanded', 'false');
   });
 
   test('should close menu when clicking outside', async ({ page }) => {

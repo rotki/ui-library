@@ -8,7 +8,17 @@ import { cn, tv } from '@/utils/tv';
 
 interface BaseMenuAttrs { onMouseover?: () => void; onMouseleave?: () => void }
 
-interface MenuAttrs extends BaseMenuAttrs { onClick?: () => void }
+/**
+ * What the activator slot binds onto its trigger. The ARIA keys belong on an
+ * element that can carry them (a button, link or combobox), never on a plain
+ * `div`; an activator that sets its own ARIA takes `activatorHandlers(attrs)`.
+ */
+interface MenuAttrs extends BaseMenuAttrs {
+  'onClick'?: () => void;
+  'aria-haspopup': RuiMenuRole | 'true';
+  'aria-expanded': boolean;
+  'aria-controls'?: string;
+}
 
 export interface RuiMenuClassNames {
   root?: VueClassValue;
@@ -99,7 +109,15 @@ const {
 
 defineSlots<{
   activator?: (props: {
-    attrs: { onMouseover?: () => void; onMouseleave?: () => void; onClick?: () => void };
+    // An inline type literal, so callers can pass it on as `Record<string, unknown>`
+    attrs: {
+      'onMouseover'?: () => void;
+      'onMouseleave'?: () => void;
+      'onClick'?: () => void;
+      'aria-haspopup': RuiMenuRole | 'true';
+      'aria-expanded': boolean;
+      'aria-controls'?: string;
+    };
     open: boolean;
     disabled: boolean;
     hasError: boolean;
@@ -110,6 +128,7 @@ defineSlots<{
 
 const click = ref<boolean>(false);
 const menuContent = useTemplateRef<HTMLElement>('menuContent');
+const menuId = useId();
 
 const FOCUSABLE_ELEMENTS_SELECTOR =
   'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -197,7 +216,11 @@ const baseMenuAttrs = computed<BaseMenuAttrs>(() => {
 
 const menuAttrs = computed<MenuAttrs>(() => ({
   ...get(baseMenuAttrs),
-  onClick: disabled ? undefined : checkClick,
+  'onClick': disabled ? undefined : checkClick,
+  'aria-haspopup': get(ariaHasPopup),
+  'aria-expanded': get(open),
+  // Only while the popover is in the DOM, so the reference never points at a missing element
+  'aria-controls': get(visible) ? menuId : undefined,
 }));
 
 /**
@@ -317,8 +340,6 @@ onClickOutside(menu, () => {
       ref="activator"
       :class="ui.wrapper({ class: cn(classNames?.wrapper) ?? cn(wrapperClass as VueClassValue) })"
       :data-menu-disabled="disabled"
-      :aria-haspopup="ariaHasPopup"
-      :aria-expanded="open"
     >
       <slot
         name="activator"
@@ -331,6 +352,7 @@ onClickOutside(menu, () => {
     >
       <div
         v-if="visible"
+        :id="menuId"
         ref="menu"
         :class="ui.popover({ class: cn(classNames?.menu) ?? cn(menuClass as VueClassValue) })"
         :role="role"

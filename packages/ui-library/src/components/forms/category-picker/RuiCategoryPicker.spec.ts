@@ -62,6 +62,17 @@ describe('components/forms/category-picker/RuiCategoryPicker.vue', () => {
     expect(queryByDataId('detail', dialog)).toBeTruthy();
   });
 
+  it('keeps its own popup ARIA on the trigger instead of the menu defaults', async () => {
+    wrapper = mountPicker();
+    const activator = wrapper.find('[data-id=activator]');
+
+    expect(activator.attributes('aria-haspopup')).toBe('dialog');
+
+    await openPicker(wrapper);
+    expect(activator.attributes('aria-expanded')).toBe('true');
+    expect(activator.attributes('aria-controls')).toMatch(/-panel$/);
+  });
+
   it('renders the rail with an "All" entry plus every category', async () => {
     wrapper = mountPicker();
     const dialog = await openPicker(wrapper);

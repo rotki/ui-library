@@ -9,6 +9,7 @@ import { useDateTimeSelection } from '@/components/date-time-picker/use-date-tim
 import { useInputHandler } from '@/components/date-time-picker/use-input-handler';
 import { useKeyboardHandler } from '@/components/date-time-picker/use-keyboard-handler';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
+import { activatorHandlers } from '@/components/overlays/menu/activator-handlers';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
 import { type FloatingOptions, Placement } from '@/composables/floating';
 import { useRuiI8n } from '@/composables/use-rui-i18n';
@@ -537,7 +538,7 @@ defineExpose({
         :class="ui.activator()"
         v-bind="{
           ...getNonRootAttrs($attrs, ['onClick', 'class']),
-          ...(readonly ? {} : attrs),
+          ...(readonly ? {} : activatorHandlers(attrs)),
         }"
         data-id="activator"
         :aria-invalid="hasError"
