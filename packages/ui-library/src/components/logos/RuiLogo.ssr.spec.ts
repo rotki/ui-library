@@ -26,16 +26,15 @@ describe('components/logos/RuiLogo.vue', () => {
     expect(content.includes('>rotki<')).toBeTruthy();
   });
 
-  it('should render fallback and custom image when logo prop defined', async () => {
+  it('should render only the fallback when logo prop defined', async () => {
     const content = await createWrapper({
       props: {
         logo: 'website',
       },
     });
-    // Should have both fallback (visible) and custom (hidden) images
-    expect(content.includes('img')).toBeTruthy();
+    // The seasonal logo resolves on the client after mount, so the server HTML matches its first render
     expect(content.includes('data-image="fallback"')).toBeTruthy();
-    expect(content.includes('data-image="custom"')).toBeTruthy();
+    expect(content.includes('data-image="custom"')).toBeFalsy();
     expect(content.includes('>rotki<')).toBeFalsy();
   });
 

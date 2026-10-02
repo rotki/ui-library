@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { isClient } from '@vueuse/shared';
-import { useSSRContext } from 'vue';
 import fallback from '@/components/logos/logo.svg';
 import { getCachedLogoSources, getLogoSources, getVerifiedLogoUrl, removeVerifiedLogoUrl, setVerifiedLogoUrl } from '@/components/logos/use-logo-sources';
 
@@ -40,14 +38,9 @@ const error = ref<boolean>(false);
 const seasonalReady = ref<boolean>(false);
 const externalSources = ref<ExternalLinks>(emptyLinks());
 
-const customImageRef = useTemplateRef<HTMLImageElement>('customImageRef');
+const isMounted = ref<boolean>(false);
 
-// Synchronously hydrate from sessionStorage so the URL is available immediately on refresh
-if (isClient && logo && !src) {
-  const cached = getCachedLogoSources(branch);
-  if (cached)
-    set(externalSources, cached);
-}
+const customImageRef = useTemplateRef<HTMLImageElement>('customImageRef');
 
 function buildExternalUrl(sources: ExternalLinks): string | undefined {
   if (!logo || !sources[logo])
@@ -70,18 +63,7 @@ const externalSource = computed<string | undefined>(() => {
 
 const showCustom = computed<boolean>(() => !!src || (!!get(externalSource) && get(seasonalReady) && !get(error)));
 
-// If we have a previously verified URL that matches the current source, trust it immediately
-if (isClient && logo && !src) {
-  const verifiedUrl = getVerifiedLogoUrl(branch, String(logo));
-  const currentUrl = get(externalSource);
-  if (verifiedUrl && currentUrl && verifiedUrl === currentUrl)
-    set(seasonalReady, true);
-}
-
 function preloadImage(url: string): void {
-  if (!isClient)
-    return;
-
   const existing = document.head.querySelectorAll<HTMLLinkElement>('link[rel="preload"][as="image"]');
   for (const link of existing) {
     if (link.href === url)
@@ -95,15 +77,32 @@ function preloadImage(url: string): void {
   document.head.appendChild(link);
 }
 
-// Inject a preload hint for the seasonal image so the browser starts fetching early
-if (isClient && logo && !src) {
-  const url = get(externalSource);
-  if (url)
-    preloadImage(url);
+/**
+ * Restores the seasonal logo cached by an earlier page load. It runs after mount
+ * because sessionStorage does not exist on the server: reading it during setup made
+ * the client's first render differ from the server-rendered HTML.
+ */
+function restoreCachedSources(): void {
+  if (!logo || src)
+    return;
+
+  const cached = getCachedLogoSources(branch);
+  if (cached)
+    set(externalSources, cached);
+
+  const currentUrl = get(externalSource);
+  if (!currentUrl)
+    return;
+
+  // A URL that already decoded on an earlier load is shown without waiting for it again
+  if (getVerifiedLogoUrl(branch, String(logo)) === currentUrl)
+    set(seasonalReady, true);
+
+  preloadImage(currentUrl);
 }
 
 async function fetchSources(): Promise<void> {
-  if (!logo || src)
+  if (!logo || src || !get(isMounted))
     return;
 
   const links = await getLogoSources(branch);
@@ -141,11 +140,10 @@ watch(() => get(customImageRef)?.complete, (complete) => {
 
 watchEffect(fetchSources);
 
-if (!isClient)
-  useSSRContext();
-
-onServerPrefetch(async () => {
-  await fetchSources();
+// Server and client render only the bundled fallback (or `src`), so hydration matches
+onMounted(() => {
+  restoreCachedSources();
+  set(isMounted, true);
 });
 </script>
 
