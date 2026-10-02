@@ -294,3 +294,4 @@ async function fetchData() {
 - The theme system uses CSS custom properties and Tailwind CSS - changes to colors/spacing should go through the theme configuration
 - Components follow Vue 3 Composition API patterns with full TypeScript support
 - The build generates separate entry points for tree-shaking - maintain the current export structure
+- The package declares `"sideEffects": ["**/*.css"]`, so a consumer's bundler drops any module imported only for its effect, and any top-level statement no used export depends on. Never write a bare `import './setup'` or top-level setup calls: put the setup in the initializer of an export that the code needing it imports (see `date-time-picker/dayjs-setup.ts`). Library code takes dayjs from that module, never from `dayjs`. ESLint enforces both, and `pnpm run build:prod` runs `verify:tree-shaking`, which bundles small consumer apps and fails if one ships code it never imported or loses the dayjs plugin setup.

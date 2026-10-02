@@ -60,6 +60,34 @@ export default rotki({
     'unicorn/no-barrel-files': 'off',
   },
 }, {
+  /*
+   * The package declares no side effects except CSS (`sideEffects` in its
+   * package.json), so a consumer's bundler drops any module imported only for
+   * its effect. A bare import is a bug waiting to happen: export what the
+   * module sets up and import that instead. dayjs is the one library that needs
+   * setting up, so it comes from the module that registers its plugins.
+   */
+  files: ['packages/ui-library/src/**/*.{ts,vue}'],
+  ignores: ['**/*.spec.ts', '**/*.stories.ts', '**/__test__/**'],
+  rules: {
+    'no-restricted-syntax': ['error', 'TSEnumDeclaration[const=true]', 'TSExportAssignment', {
+      selector: 'ImportDeclaration[specifiers.length=0]:not([importKind=\'type\']):not([source.value=/\\.s?css$/])',
+      message: 'The package is side-effect free, so a bundler may drop a module imported only for its effect. Export what it sets up and import that.',
+    }],
+    '@typescript-eslint/no-restricted-imports': ['error', {
+      paths: [{
+        name: 'dayjs',
+        allowTypeImports: true,
+        message: 'Import { dayjs } from \'@/components/date-time-picker/dayjs-setup\', which registers the plugins the library relies on.',
+      }],
+    }],
+  },
+}, {
+  files: ['packages/ui-library/src/components/date-time-picker/dayjs-setup.ts'],
+  rules: {
+    '@typescript-eslint/no-restricted-imports': 'off',
+  },
+}, {
   // vue-router writes this one, bare `eslint-disable` and all, on every build
   files: ['apps/example/src/route-map.d.ts'],
   rules: {

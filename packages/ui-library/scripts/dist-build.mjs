@@ -20,4 +20,6 @@ consola.info('scanning library icons');
 execSync('pnpm run scan:library-icons', { stdio: 'inherit' });
 consola.info('verifying dist');
 execSync('pnpm run verify:dist', { stdio: 'inherit' });
+consola.info('verifying tree-shaking');
+execSync('pnpm run verify:tree-shaking', { stdio: 'inherit' });
 consola.success('build done');

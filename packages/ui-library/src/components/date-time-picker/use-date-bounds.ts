@@ -1,5 +1,6 @@
+import type { Dayjs } from 'dayjs';
 import type { ComputedRef, Ref } from 'vue';
-import dayjs, { type Dayjs } from 'dayjs';
+import { dayjs } from '@/components/date-time-picker/dayjs-setup';
 import { resolveBound } from '@/components/date-time-picker/segment-utils';
 import { useRuiI8n } from '@/composables/use-rui-i18n';
 import { RUI_I18N_KEYS } from '@/i18n/keys';

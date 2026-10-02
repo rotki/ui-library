@@ -1,12 +1,12 @@
+import type { Dayjs } from 'dayjs';
 import type { ComputedRef, Ref, WritableComputedRef } from 'vue';
 import type { SegmentData } from '@/components/date-time-picker/types';
 import type { TimeAccuracy } from '@/consts/time-accuracy';
-import dayjs, { type Dayjs } from 'dayjs';
+import { dayjs } from '@/components/date-time-picker/dayjs-setup';
 import { completePartialEntry, type PartialTimeMode } from '@/components/date-time-picker/partial-time';
 import { buildDateTime, clampToBounds } from '@/components/date-time-picker/segment-utils';
 import { useDateBounds } from '@/components/date-time-picker/use-date-bounds';
 import { formatWallClock, guessTimezone, includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
-import '@/components/date-time-picker/dayjs-setup';
 
 type DateTimeModelType = 'date' | 'epoch-ms' | 'epoch';
 

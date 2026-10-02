@@ -1,9 +1,8 @@
+import type { Dayjs } from 'dayjs';
 import type { DateTimeSegmentType } from '@/components/date-time-picker/types';
 import type { TimeAccuracy } from '@/consts/time-accuracy';
-import dayjs, { type Dayjs } from 'dayjs';
+import { dayjs } from '@/components/date-time-picker/dayjs-setup';
 import { includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
-
-import '@/components/date-time-picker/dayjs-setup';
 
 export interface SegmentValues {
   year?: number;

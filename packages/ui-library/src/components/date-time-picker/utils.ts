@@ -1,7 +1,6 @@
-import dayjs from 'dayjs';
+import { dayjs } from '@/components/date-time-picker/dayjs-setup';
 import { timezones } from '@/components/date-time-picker/timezones';
 import { TimeAccuracy } from '@/consts/time-accuracy';
-import '@/components/date-time-picker/dayjs-setup';
 
 export function guessTimezone() {
   const timezone = dayjs.tz.guess();

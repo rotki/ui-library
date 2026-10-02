@@ -27,6 +27,13 @@ import '@rotki/ui-library/dist/style.css';
 import '@fontsource/roboto/latin.css';
 ```
 
+### Tree-shaking
+
+The package declares no side effects apart from its CSS, so your bundler ships only the components you
+import. Importing the library does not set anything up globally. In particular, it registers the dayjs
+`utc`, `timezone` and `customParseFormat` plugins only when `RuiDateTimePicker` is part of your bundle. If
+your own code relies on those plugins, register them yourself.
+
 ### Using the plugin
 
 To use the library you must install the library plugin:

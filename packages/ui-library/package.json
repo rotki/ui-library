@@ -76,6 +76,9 @@
       ]
     }
   },
+  "sideEffects": [
+    "**/*.css"
+  ],
   "scripts": {
     "build:prod": "tsx scripts/dist-build.mjs",
     "build": "pnpm run generate-icons && vite build && cp src/vite-plugin/client.d.ts dist/vite-plugin/",
@@ -87,6 +90,7 @@
     "resolve:alias": "tsc-alias --replacer ./scripts/tsc-alias-replacer.cjs -p tsconfig.build.json --dir dist",
     "scan:library-icons": "tsx scripts/scan-library-icons.ts",
     "verify:dist": "tsx scripts/verify-dist.ts",
+    "verify:tree-shaking": "tsx scripts/verify-tree-shaking.ts",
     "dev": "vite",
     "prepare": "node scripts/prepare.mjs",
     "storybook": "storybook dev -p 6006",
