@@ -214,6 +214,58 @@ import { RuiIcon } from '@rotki/ui-library';
 </template>
 ```
 
+### Logo images
+
+The library makes no network requests. `RuiLogo` shows its bundled logo until the app tells it where a
+named logo lives, through the `logo.resolve` option of `createRui`:
+
+```typescript
+const RuiPlugin = createRui({
+  logo: {
+    // Return an image URL for a logo name, or undefined to keep the bundled logo
+    resolve: name => `/api/logo/${name}`,
+  },
+});
+```
+
+```vue
+<RuiLogo logo="website" />
+```
+
+The resolver runs in the browser after mount, never on the server, so server-rendered pages hydrate
+without mismatches. It may return a promise. Fetching, caching and validating the URL are up to the app,
+and a resolver that throws leaves the bundled logo in place.
+
+To keep the seasonal logos that rotki publishes in [rotki/data](https://github.com/rotki/data), the app
+looks up the mapping itself:
+
+```typescript
+const branch = 'main';
+const base = `https://raw.githubusercontent.com/rotki/data/${branch}`;
+let mappings: Promise<Record<string, string> | undefined> | undefined;
+
+async function loadMappings(): Promise<Record<string, string> | undefined> {
+  const response = await fetch(`${base}/constants/asset-mappings.json`);
+  return response.ok ? (await response.json()).logo : undefined;
+}
+
+const RuiPlugin = createRui({
+  logo: {
+    async resolve(name) {
+      mappings ??= loadMappings().catch(() => undefined);
+      const file = (await mappings)?.[name];
+      // Accept only a plain image filename, so the mapping cannot point anywhere else
+      if (!file || !/^[\w.-]+\.(?:png|svg|webp|gif|jpe?g)$/i.test(file))
+        return undefined;
+      return `${base}/assets/icons/${file}`;
+    },
+  },
+});
+```
+
+Keys are looked up as they appear in `asset-mappings.json` (for example `empty_screen`). `uniqueKey` still
+appends `key=<value>` to the resolved URL, and `src` still bypasses the resolver.
+
 ### Setting up internationalization (i18n)
 
 The UI library supports internationalization through the `createRuiI8nPlugin` function. This allows you to provide translations for UI components.

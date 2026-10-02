@@ -1,5 +1,6 @@
 import type { App } from 'vue';
 import type { InitThemeOptions } from '@/types/theme';
+import { type LogoOptions, LogoSymbol } from '@/composables/defaults/logo';
 import {
   createTableDefaults,
   type TableOptions,
@@ -14,6 +15,8 @@ import '@/style.css';
 export * from '@/components';
 
 export * from '@/composables';
+
+export type { LogoOptions, LogoResolver } from '@/composables/defaults/logo';
 
 export { contextColors, type ContextColorsType } from '@/consts/colors';
 
@@ -44,10 +47,15 @@ export interface RuiOptions {
   defaults?: {
     table?: Partial<TableOptions>;
   };
+  /**
+   * Where `RuiLogo` gets the image for its `logo` prop. Without it every
+   * `RuiLogo` shows the bundled logo, and the library makes no network request.
+   */
+  logo?: LogoOptions;
 }
 
 export function createRui(options: RuiOptions = {}) {
-  const { theme, defaults: defaultOptions } = options;
+  const { theme, defaults: defaultOptions, logo } = options;
 
   const defaults = Object.freeze({
     icons: createIconDefaults({
@@ -61,6 +69,9 @@ export function createRui(options: RuiOptions = {}) {
 
     app.provide(TableSymbol, defaults.table);
     app.provide(IconsSymbol, defaults.icons);
+
+    if (logo)
+      app.provide(LogoSymbol, logo);
   };
 
   return {

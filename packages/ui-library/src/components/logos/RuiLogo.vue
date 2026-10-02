@@ -1,21 +1,19 @@
 <script setup lang="ts">
 import fallback from '@/components/logos/logo.svg';
-import { getCachedLogoSources, getLogoSources, getVerifiedLogoUrl, removeVerifiedLogoUrl, setVerifiedLogoUrl } from '@/components/logos/use-logo-sources';
-
-export interface ExternalLinks {
-  drawer?: string;
-  app?: string;
-  website?: string;
-  about?: string;
-  emptyScreen?: string;
-  [key: string]: string | undefined;
-}
+import { getVerifiedLogoUrl, removeVerifiedLogoUrl, setVerifiedLogoUrl } from '@/components/logos/verified-logo';
+import { useLogoOptions } from '@/composables/defaults/logo';
 
 export interface Props {
   text?: boolean;
-  branch?: 'develop' | 'main' | string;
-  logo?: keyof ExternalLinks;
+  /**
+   * Name handed to the `logo.resolve` option of `createRui`. Without a resolver
+   * the bundled logo shows.
+   */
+  logo?: string;
   size?: string | number; // in rems
+  /**
+   * Appended to the resolved URL as `key`, so each instance loads its own copy.
+   */
   uniqueKey?: string | number;
   src?: string;
 }
@@ -24,41 +22,29 @@ defineOptions({
   name: 'RuiLogo',
 });
 
-const { text = false, branch = 'develop', logo, size = 3, uniqueKey, src } = defineProps<Props>();
+const { text = false, logo, size = 3, uniqueKey, src } = defineProps<Props>();
 
 const appName = 'rotki';
-const emptyLinks: () => ExternalLinks = () => ({
-  app: undefined,
-  website: undefined,
-  about: undefined,
-  emptyScreen: undefined,
-});
 
+const resolvedUrl = ref<string>();
 const error = ref<boolean>(false);
 const seasonalReady = ref<boolean>(false);
-const externalSources = ref<ExternalLinks>(emptyLinks());
 
 const isMounted = ref<boolean>(false);
 
 const customImageRef = useTemplateRef<HTMLImageElement>('customImageRef');
 
-function buildExternalUrl(sources: ExternalLinks): string | undefined {
-  if (!logo || !sources[logo])
-    return undefined;
-
-  const url = `https://raw.githubusercontent.com/rotki/data/${branch}/assets/icons/${sources[logo]}`;
-
-  if (uniqueKey !== undefined)
-    return `${url}?key=${uniqueKey}`;
-
-  return url;
-}
+const logoOptions = useLogoOptions();
 
 const externalSource = computed<string | undefined>(() => {
   if (src)
     return src;
 
-  return buildExternalUrl(get(externalSources));
+  const url = get(resolvedUrl);
+  if (!url || uniqueKey === undefined)
+    return url;
+
+  return `${url}${url.includes('?') ? '&' : '?'}key=${uniqueKey}`;
 });
 
 const showCustom = computed<boolean>(() => !!src || (!!get(externalSource) && get(seasonalReady) && !get(error)));
@@ -77,44 +63,51 @@ function preloadImage(url: string): void {
   document.head.appendChild(link);
 }
 
-/**
- * Restores the seasonal logo cached by an earlier page load. It runs after mount
- * because sessionStorage does not exist on the server: reading it during setup made
- * the client's first render differ from the server-rendered HTML.
- */
-function restoreCachedSources(): void {
-  if (!logo || src)
-    return;
-
-  const cached = getCachedLogoSources(branch);
-  if (cached)
-    set(externalSources, cached);
-
-  const currentUrl = get(externalSource);
-  if (!currentUrl)
-    return;
-
-  // A URL that already decoded on an earlier load is shown without waiting for it again
-  if (getVerifiedLogoUrl(branch, String(logo)) === currentUrl)
-    set(seasonalReady, true);
-
-  preloadImage(currentUrl);
+async function callResolver(name: string): Promise<string | undefined> {
+  try {
+    return await logoOptions?.resolve(name);
+  }
+  catch {
+    // A failing resolver leaves the bundled logo in place
+    return undefined;
+  }
 }
 
-async function fetchSources(): Promise<void> {
-  if (!logo || src || !get(isMounted))
+/**
+ * Asks the app's resolver for the logo URL. It runs only after mount, so the
+ * server and the client's first render both show the bundled fallback (or
+ * `src`) and hydration matches.
+ */
+async function resolveLogo(): Promise<void> {
+  if (!get(isMounted))
     return;
 
-  const links = await getLogoSources(branch);
+  if (src || !logo || !logoOptions) {
+    set(resolvedUrl, undefined);
+    return;
+  }
 
-  if (links)
-    set(externalSources, links);
+  const name = logo;
+  const url = await callResolver(name);
+
+  // The logo prop changed while the resolver ran; that newer run wins
+  if (name !== logo)
+    return;
+
+  set(error, false);
+  // A URL that already decoded in this session is shown without waiting for it again
+  set(seasonalReady, !!url && getVerifiedLogoUrl(name) === url);
+  set(resolvedUrl, url);
+
+  const source = get(externalSource);
+  if (source)
+    preloadImage(source);
 }
 
 function onImageError(): void {
   set(error, true);
   if (logo)
-    removeVerifiedLogoUrl(branch, String(logo));
+    removeVerifiedLogoUrl(logo);
 }
 
 function onImageLoaded(): void {
@@ -125,10 +118,10 @@ function onImageLoaded(): void {
   img.decode()
     .then(() => {
       set(seasonalReady, true);
-      // Cache the verified URL so subsequent page loads can trust it immediately
-      const url = get(externalSource);
+      // Remember the decoded URL so the next page load can trust it immediately
+      const url = get(resolvedUrl);
       if (url && logo)
-        setVerifiedLogoUrl(branch, String(logo), url);
+        setVerifiedLogoUrl(logo, url);
     })
     .catch(() => set(error, true));
 }
@@ -138,11 +131,9 @@ watch(() => get(customImageRef)?.complete, (complete) => {
     onImageLoaded();
 });
 
-watchEffect(fetchSources);
+watchEffect(resolveLogo);
 
-// Server and client render only the bundled fallback (or `src`), so hydration matches
 onMounted(() => {
-  restoreCachedSources();
   set(isMounted, true);
 });
 </script>

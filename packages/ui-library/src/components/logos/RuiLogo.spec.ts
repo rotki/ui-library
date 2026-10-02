@@ -3,18 +3,20 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createSSRApp, h } from 'vue';
 import { renderToString } from 'vue/server-renderer';
 import RuiLogo, { type Props } from '@/components/logos/RuiLogo.vue';
-import { clearLogoSourcesCache, getLogoSources, setVerifiedLogoUrl } from '@/components/logos/use-logo-sources';
+import { clearVerifiedLogoUrls, setVerifiedLogoUrl } from '@/components/logos/verified-logo';
+import { type LogoResolver, LogoSymbol } from '@/composables/defaults/logo';
 
-const SEASONAL_URL = 'https://raw.githubusercontent.com/rotki/data/develop/assets/icons/website-logo.svg';
-
-/** Caches the mocked asset mappings and marks the seasonal logo as decoded, as an earlier page load would. */
-async function cacheSeasonalLogo(): Promise<void> {
-  await getLogoSources('develop');
-  setVerifiedLogoUrl('develop', 'website', SEASONAL_URL);
-}
+const SEASONAL_URL = 'https://example.com/logos/website-logo.svg';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiLogo>): VueWrapper<InstanceType<typeof RuiLogo>> {
   return mount(RuiLogo, { ...options });
+}
+
+function mountWithResolver(resolve: LogoResolver, props: Props): VueWrapper<InstanceType<typeof RuiLogo>> {
+  return mount(RuiLogo, {
+    props,
+    global: { provide: { [LogoSymbol]: { resolve } } },
+  });
 }
 
 describe('components/logos/RuiLogo.vue', () => {
@@ -49,24 +51,6 @@ describe('components/logos/RuiLogo.vue', () => {
     expect(wrapper.find('div').text()).toBe('rotki');
     await wrapper.setProps({ text: false });
     expect(wrapper.find('div').text()).toBe('');
-  });
-
-  it('should pass logo props', async () => {
-    wrapper = createWrapper();
-    expect(wrapper.find('div').text()).toBe('');
-    await wrapper.setProps({ logo: 'website' });
-    await vi.advanceTimersToNextTimerAsync();
-    expect(wrapper.find('img[data-image=custom]').exists()).toBeTruthy();
-    await wrapper.setProps({ uniqueKey: '10' });
-    expect(wrapper.find('img[data-image=custom][src*="?key=10"]').exists()).toBeTruthy();
-  });
-
-  it('should show fallback while logo prop is loading', async () => {
-    wrapper = createWrapper({ props: { logo: 'website' } });
-
-    // Fallback should be visible immediately while custom image loads
-    const fallback = wrapper.find('img[data-image=fallback]');
-    expect(fallback.exists()).toBeTruthy();
   });
 
   it('should render fallback image with alt text', () => {
@@ -119,53 +103,159 @@ describe('components/logos/RuiLogo.vue', () => {
   });
 });
 
-describe('components/logos/RuiLogo.vue cached seasonal logo', () => {
+describe('components/logos/RuiLogo.vue logo resolver', () => {
+  let wrapper: VueWrapper<InstanceType<typeof RuiLogo>> | undefined;
+
+  afterEach(() => {
+    wrapper?.unmount();
+    wrapper = undefined;
+    clearVerifiedLogoUrls();
+    vi.restoreAllMocks();
+  });
+
+  it('should show only the bundled logo without a resolver', async () => {
+    wrapper = createWrapper({ props: { logo: 'website' } });
+    await flushPromises();
+
+    expect(wrapper.find('img[data-image=custom]').exists()).toBeFalsy();
+    expect(wrapper.find('img[data-image=fallback]').classes()).toContain('opacity-100');
+  });
+
+  it('should never make a network request of its own', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+
+    wrapper = mountWithResolver(() => SEASONAL_URL, { logo: 'website' });
+    await flushPromises();
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it('should render the URL the resolver returns for the logo name', async () => {
+    const resolve = vi.fn<LogoResolver>(async () => SEASONAL_URL);
+
+    wrapper = mountWithResolver(resolve, { logo: 'website' });
+    await flushPromises();
+
+    expect(resolve).toHaveBeenCalledExactlyOnceWith('website');
+    expect(wrapper.find('img[data-image=custom]').attributes('src')).toBe(SEASONAL_URL);
+  });
+
+  it('should append the unique key to the resolved URL', async () => {
+    wrapper = mountWithResolver(() => SEASONAL_URL, { logo: 'website', uniqueKey: '10' });
+    await flushPromises();
+    expect(wrapper.find('img[data-image=custom]').attributes('src')).toBe(`${SEASONAL_URL}?key=10`);
+
+    wrapper.unmount();
+    wrapper = mountWithResolver(() => `${SEASONAL_URL}?v=2`, { logo: 'website', uniqueKey: '10' });
+    await flushPromises();
+    expect(wrapper.find('img[data-image=custom]').attributes('src')).toBe(`${SEASONAL_URL}?v=2&key=10`);
+  });
+
+  it('should keep the bundled logo when the resolver returns nothing', async () => {
+    wrapper = mountWithResolver(() => undefined, { logo: 'website' });
+    await flushPromises();
+
+    expect(wrapper.find('img[data-image=custom]').exists()).toBeFalsy();
+  });
+
+  it('should keep the bundled logo when the resolver throws', async () => {
+    wrapper = mountWithResolver(async () => {
+      throw new Error('offline');
+    }, { logo: 'website' });
+    await flushPromises();
+
+    expect(wrapper.find('img[data-image=custom]').exists()).toBeFalsy();
+    expect(wrapper.find('img[data-image=fallback]').classes()).toContain('opacity-100');
+  });
+
+  it('should skip the resolver when src is provided', async () => {
+    const resolve = vi.fn<LogoResolver>(() => SEASONAL_URL);
+
+    wrapper = mountWithResolver(resolve, { logo: 'website', src: '/staging/logo.svg' });
+    await flushPromises();
+
+    expect(resolve).not.toHaveBeenCalled();
+    expect(wrapper.find('img[data-image=custom]').attributes('src')).toBe('/staging/logo.svg');
+  });
+
+  it('should keep the newest logo when an older resolve finishes last', async () => {
+    const pending = new Map<string, (url: string) => void>();
+    const resolve: LogoResolver = name => new Promise((done) => {
+      pending.set(name, done);
+    });
+
+    wrapper = mountWithResolver(resolve, { logo: 'app' });
+    await flushPromises();
+    await wrapper.setProps({ logo: 'website' });
+    await flushPromises();
+
+    pending.get('website')?.('https://example.com/website.svg');
+    await flushPromises();
+    pending.get('app')?.('https://example.com/app.svg');
+    await flushPromises();
+
+    expect(wrapper.find('img[data-image=custom]').attributes('src')).toBe('https://example.com/website.svg');
+  });
+
+  it('should show a URL that already decoded in this session straight away', async () => {
+    setVerifiedLogoUrl('website', SEASONAL_URL);
+
+    wrapper = mountWithResolver(() => SEASONAL_URL, { logo: 'website' });
+    await flushPromises();
+
+    expect(wrapper.find('img[data-image=custom]').classes()).toContain('opacity-100');
+    expect(wrapper.find('img[data-image=fallback]').classes()).toContain('opacity-0');
+  });
+});
+
+describe('components/logos/RuiLogo.vue hydration', () => {
   let container: HTMLElement | undefined;
 
   afterEach(() => {
     container?.remove();
     container = undefined;
-    clearLogoSourcesCache();
+    clearVerifiedLogoUrls();
     vi.restoreAllMocks();
   });
 
-  it('should show the cached seasonal logo after mount', async () => {
-    await cacheSeasonalLogo();
+  function createApp(props: Props, resolve: LogoResolver) {
+    return createSSRApp({ render: () => h(RuiLogo, props) }).provide(LogoSymbol, { resolve });
+  }
 
-    const wrapper = mount(RuiLogo, { props: { logo: 'website' } });
-    await nextTick();
+  it('should not call the resolver on the server', async () => {
+    const resolve = vi.fn<LogoResolver>(() => SEASONAL_URL);
 
-    const custom = wrapper.find('img[data-image=custom]');
-    expect(custom.attributes('src')).toBe(SEASONAL_URL);
-    expect(custom.classes()).toContain('opacity-100');
-    expect(wrapper.find('img[data-image=fallback]').classes()).toContain('opacity-0');
-    wrapper.unmount();
+    const html = await renderToString(createApp({ logo: 'website' }, resolve));
+
+    expect(resolve).not.toHaveBeenCalled();
+    expect(html).not.toContain('data-image="custom"');
   });
 
-  const emptyCache = async (): Promise<void> => {};
+  const noCache = (): void => {};
+  const verifiedCache = (): void => setVerifiedLogoUrl('website', SEASONAL_URL);
 
-  it.each<[string, Props, () => Promise<void>]>([
-    ['with an empty cache', { logo: 'website' }, emptyCache],
-    ['with a cached seasonal logo', { logo: 'website' }, cacheSeasonalLogo],
-    ['with a src', { src: '/staging/logo.svg' }, emptyCache],
+  it.each<[string, Props, () => void]>([
+    ['with an empty cache', { logo: 'website' }, noCache],
+    ['with an already decoded logo', { logo: 'website' }, verifiedCache],
+    ['with a src', { src: '/staging/logo.svg' }, noCache],
   ])('should hydrate without mismatches %s', async (_name, props, prepareVisitorCache) => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const error = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    const html = await renderToString(createSSRApp({ render: () => h(RuiLogo, props) }));
+    const html = await renderToString(createApp(props, () => SEASONAL_URL));
 
     // The server has no sessionStorage, so the visitor's cache is set up only after rendering
-    clearLogoSourcesCache();
-    await prepareVisitorCache();
+    prepareVisitorCache();
 
     container = document.createElement('div');
     container.innerHTML = html;
     document.body.append(container);
 
-    createSSRApp({ render: () => h(RuiLogo, props) }).mount(container);
+    createApp(props, () => SEASONAL_URL).mount(container);
     await flushPromises();
 
     const messages = [...warn.mock.calls, ...error.mock.calls].map(([message]) => String(message));
     expect(messages.filter(message => message.includes('Hydration'))).toEqual([]);
+    expect(container.querySelector('img[data-image=custom]')).not.toBeNull();
   });
 });

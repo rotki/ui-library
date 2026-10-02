@@ -22,8 +22,8 @@ class ResizeObserverMock {
 
 vi.stubGlobal('ResizeObserver', ResizeObserverMock);
 
-// Start MSW server before all tests
-beforeAll(() => server.listen());
+// An unhandled request fails the test, so a network call slipping into the library shows up
+beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 
 // Handlers a test added are dropped, so they cannot reach the next one
 afterEach(() => server.resetHandlers());
