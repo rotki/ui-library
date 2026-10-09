@@ -11,21 +11,33 @@ A Vue component library and design system for rotki
 
 ### Installing the library
 
-You can start using the library after installing it from npm along with the roboto font:
+You can start using the library after installing it from npm along with the Inter and Geist Mono fonts:
 
 ```bash
-pnpm install -D --save-exact @rotki/ui-library @fontsource/roboto
+pnpm install -D --save-exact @rotki/ui-library @fontsource-variable/inter @fontsource-variable/geist-mono
 ```
 
 ### Importing the stylesheets
 
-Don't forget to import the `style.css` file from `@rotki/ui-library` along with the latin roboto font,
-in the project root (e.g main.ts)
+With Tailwind CSS 4 in the app, import the library into your Tailwind entry (see
+[Use the @rotki/ui-library Tailwind CSS theme](#use-the-rotkiui-library-tailwind-css-theme)) and the fonts in
+the project root (e.g. main.ts):
 
 ```typescript
-import '@rotki/ui-library/dist/style.css';
-import '@fontsource/roboto/latin.css';
+import '@fontsource-variable/inter/opsz.css';
+import '@fontsource-variable/geist-mono';
 ```
+
+Without Tailwind, import the prebuilt stylesheet as well:
+
+```typescript
+import '@rotki/ui-library/style.css';
+```
+
+The library names the fonts but does not ship them. Inter's `opsz.css` adds the optical size axis, so large
+headings get the display cut; `@fontsource-variable/inter` alone is about a third smaller. The static
+`@fontsource/inter` and `@fontsource/geist-mono` builds work too. Self-host the fonts rather than loading
+them from a CDN, so an offline app still renders them.
 
 ### Using the plugin
 
@@ -244,18 +256,27 @@ export const RUI_I18N_KEYS = {
 } as const;
 ```
 
-### Use @rotki/ui-library tailwindcss theme
+### Use the @rotki/ui-library Tailwind CSS theme
 
-You can extend @rotki/ui-library tailwind theme configuration by adding these to your tailwind config. It will provide you the classes for the colors, typography, and shadow.
+The library is built for Tailwind CSS 4. Import it right after Tailwind in your CSS entry:
 
-```javascript
-// tailwind.config.js
-
-module.exports = {
-  // ... your tailwind configs,
-  plugins: [require('@rotki/ui-library/theme')],
-};
+```css
+/* main.css */
+@import 'tailwindcss';
+@import '@rotki/ui-library/tailwind.css';
 ```
+
+That is the whole setup: there is no `style.css` to import. `tailwind.css` brings the theme, the color
+values and the library's variants and utilities, and points your Tailwind build at the library's components,
+so your build generates the classes they use, once, next to your own. A class you pass to a component then
+competes with the component's own classes as any two Tailwind classes do, whatever order your stylesheets
+load in.
+
+`@rotki/ui-library/style.css` is the same library prebuilt with Tailwind itself, for an app without its own
+Tailwind build. Don't import it alongside `tailwind.css`: everything would ship twice, and the prebuilt
+classes would override your responsive ones (`lg:grid-cols-3`) by loading later.
+
+The theme gives you the `rui-*` colors (`bg-rui-primary`, `text-rui-text-secondary`), the semantic surfaces and lines (`bg-rui-surface`, `border-rui-divider`, `border-rui-outline`), the role radii (`rounded-rui-control`, `rounded-rui-card`), the role shadows (`shadow-rui-menu`, `shadow-rui-drawer`, `shadow-rui-tooltip`, `shadow-rui-control`), the typography classes (`text-body-1`, `text-h6`) and a `dark:` variant that follows the theme `useRotkiTheme` sets. The tokens are CSS variables, so `--radius-rui-control` and the other role tokens can be retuned in your own CSS.
 
 ## Development
 
