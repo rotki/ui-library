@@ -24,6 +24,13 @@
   /* The app bar: 56px on a phone, 64px from md, as in rotki. */
   --rui-app-bar-height: 3.5rem;
 
+  /*
+   * How much of the view's bottom a data table's stuck pagination bar covers. RuiDataTable sets it on
+   * the root while a bar sticks; a dock or FAB fixed to the bottom adds it to its offset to stay clear
+   * of the page buttons.
+   */
+  --rui-sticky-bottom: 0px;
+
   /* RuiDialog's `size` presets, which cover nearly every dialog in the rotki apps. */
   --rui-dialog-sm: 400px;
   --rui-dialog-md: 500px;

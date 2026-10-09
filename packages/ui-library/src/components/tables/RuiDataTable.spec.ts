@@ -1240,7 +1240,12 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(wrapper.findAllComponents(RuiTablePagination)).toHaveLength(0);
   });
 
-  it('should not stick the pagination bar of a nested table', () => {
+  it('should not stick the pagination bar of a nested table with more rows than the smallest page', () => {
+    const manyRows: User[] = Array.from({ length: 12 }, (_, i) => {
+      const row = data[i % data.length];
+      assert(row);
+      return { ...row, id: 1000 + i };
+    });
     wrapper = createWrapper({
       props: {
         cols: columns,
@@ -1252,7 +1257,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         'expanded-item': () => h(RuiDataTable<User>, {
           cols: columns,
           rowAttr: 'id',
-          rows: data,
+          rows: manyRows,
         }),
       },
     });
@@ -1267,6 +1272,28 @@ describe('components/tables/RuiDataTable.vue', () => {
     const outer = bars.find(bar => !bar.element.closest('[data-id=row-expanded]'));
     assert(outer);
     expect(outer.attributes('data-sticky')).toBe('true');
+  });
+
+  it('should drop the pagination bar of a nested table whose rows fit the smallest page', () => {
+    wrapper = createWrapper({
+      props: {
+        cols: columns,
+        expanded: data.slice(0, 1),
+        rowAttr: 'id',
+        rows: data,
+      },
+      slots: {
+        'expanded-item': () => h(RuiDataTable<User>, {
+          cols: columns,
+          rowAttr: 'id',
+          rows: data.slice(0, 4),
+        }),
+      },
+    });
+
+    expect(wrapper.find('[data-id=row-expanded] [data-id=table-pagination]').exists()).toBe(false);
+    // the top-level table keeps its bar as a summary, however few its rows
+    expect(wrapper.findAll('[data-id=table-pagination]')).toHaveLength(1);
   });
 
   describe('stale rows', () => {

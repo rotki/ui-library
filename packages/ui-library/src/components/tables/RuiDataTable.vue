@@ -20,7 +20,7 @@ import { useStickyTableHeader } from '@/composables/sticky-header';
 import { useTableColumns } from '@/composables/tables/data-table/columns';
 import { useTableExpansion } from '@/composables/tables/data-table/expansion';
 import { useTableGrouping } from '@/composables/tables/data-table/grouping';
-import { usePageScroll, useStickyPaginationBar } from '@/composables/tables/data-table/page-scroll';
+import { usePageScroll, useStickyBottomInset, useStickyPaginationBar } from '@/composables/tables/data-table/page-scroll';
 import { useTablePagination } from '@/composables/tables/data-table/pagination';
 import { useTableSelection } from '@/composables/tables/data-table/selection';
 import { useTableSort } from '@/composables/tables/data-table/sort';
@@ -217,6 +217,8 @@ const slots = defineSlots<Partial<
 const tableDefaults = useTable();
 
 const tableWrapper = useTemplateRef<HTMLElement>('tableWrapper');
+const paginationSentinel = useTemplateRef<HTMLElement>('paginationSentinel');
+const paginationBar = useTemplateRef<InstanceType<typeof RuiTablePagination>>('paginationBar');
 const { width: windowWidth } = useWindowSize();
 const { width: containerWidth } = useElementSize(tableWrapper);
 
@@ -362,7 +364,21 @@ const noData = computed<boolean>(() => get(filtered).length === 0);
 // one loader at a time: the header bar marks a refetch over rows, and an empty table shows only its spinner row
 const headerLoading = computed<boolean>(() => loading && !get(noData));
 
-const showPagination = computed<boolean>(() => !!get(paginationData) && !hidePagination);
+/**
+ * A nested table (a breakdown in an expanded row) that pages its own rows drops the bar when they all fit
+ * the smallest page size: no control on it could change what shows, and in a breakdown it is pure noise.
+ * A top-level table keeps it as a summary; a server-paged one keeps it, since only the server knows the total.
+ */
+const fitsSmallestPage = computed<boolean>(() => {
+  if (!isNestedTable || paginationModifiers.external)
+    return false;
+  const { limits } = get(paginationData);
+  const sizes = limits ?? toValue(tableDefaults.limits);
+  // the rows themselves, not the pagination total, which is only filled in after mount
+  return sizes.length > 0 && get(sorted).length <= Math.min(...sizes);
+});
+
+const showPagination = computed<boolean>(() => !!get(paginationData) && !hidePagination && !get(fitsSmallestPage));
 
 /**
  * The one pagination bar sticks to the bottom of the view, so a long page can be turned without
@@ -371,6 +387,14 @@ const showPagination = computed<boolean>(() => !!get(paginationData) && !hidePag
  */
 const canStickPagination = useStickyPaginationBar(tableWrapper, () => !isNestedTable && get(showPagination));
 const stickyPagination = computed<boolean>(() => !isNestedTable && get(canStickPagination));
+
+const paginationBarElement = computed<HTMLElement | undefined>(() => {
+  const element: unknown = get(paginationBar)?.$el;
+  return element instanceof HTMLElement ? element : undefined;
+});
+
+// while the bar is stuck to the page, `--rui-sticky-bottom` tells the page's floating parts to rise above it
+useStickyBottomInset(paginationSentinel, paginationBarElement, stickyPagination);
 
 /**
  * Grouped columns leave the column list, so their labels come from `cols`.
@@ -711,8 +735,17 @@ provideDataTableContext<T, IdType>({
         </tfoot>
       </table>
     </div>
+    <!-- the bar's own place after the rows: below the view, the bar is stuck; no divider of its own -->
+    <div
+      v-if="paginationData && showPagination && !isNestedTable"
+      ref="paginationSentinel"
+      class="border-0!"
+      aria-hidden="true"
+      data-id="table-pagination-sentinel"
+    />
     <RuiTablePagination
       v-if="paginationData && showPagination"
+      ref="paginationBar"
       v-model="paginationData"
       :class="ui.pagination({ sticky: stickyPagination })"
       :dense="dense"

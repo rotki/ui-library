@@ -79,6 +79,32 @@ test.describe('data tables - long pages', () => {
     expect(await topmostAt('7')).not.toBe('probe-dock');
   });
 
+  test('publishes the stuck bar\'s height so a docked part can rise above it', async ({ page }) => {
+    const table = page.locator('[data-id=long-single] [data-id=table]');
+    const bar = table.locator('[data-id=table-pagination]');
+    const stickyBottom = async (): Promise<string> => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--rui-sticky-bottom').trim());
+
+    await scrollTo(table, APP_BAR);
+    await expect.poll(() => bottomOf(bar)).toBe(viewportHeight(page));
+    const barHeight = Math.round((await bar.boundingBox())?.height ?? 0);
+    await expect.poll(stickyBottom).toBe(`${barHeight}px`);
+
+    // a dock fixed to the bottom corner, offset like rotki's, clears the bar's page buttons
+    const dockBottom = await page.evaluate(() => {
+      const dock = document.createElement('div');
+      Object.assign(dock.style, { position: 'fixed', right: '16px', width: '200px', height: '32px', bottom: 'calc(16px + var(--rui-sticky-bottom))' });
+      document.body.append(dock);
+      const bottom = dock.getBoundingClientRect().bottom;
+      dock.remove();
+      return Math.round(bottom);
+    });
+    expect(dockBottom).toBeLessThanOrEqual(await topOf(bar));
+
+    // with only a table peeking in from below on screen, its bar sits under the rows and the inset goes back to nothing
+    await scrollTo(page.locator('[data-id=long-stacked] [data-id=table-first]'), viewportHeight(page) - 60);
+    await expect.poll(stickyBottom).toBe('0px');
+  });
+
   test('leaves the bar under the rows while a table is only starting to scroll into view', async ({ page }) => {
     const table = page.locator('[data-id=long-stacked] [data-id=table-second]');
     const bar = table.locator('[data-id=table-pagination]');
