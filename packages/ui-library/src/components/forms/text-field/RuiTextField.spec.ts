@@ -122,8 +122,12 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
     expect(wrapper.find('input').attributes('readonly')).toBeUndefined();
     await wrapper.setProps({ readonly: true });
     expect(wrapper.find('input').attributes('readonly')).toBeDefined();
+    // a filled wrapper with a dashed edge, in both themes
+    expectWrapperToHaveClass(wrapper, '[data-id=wrapper]', /^dark:bg-rui-surface-muted$/);
+    expectWrapperToHaveClass(wrapper, 'fieldset', /^border-dashed$/);
     await wrapper.setProps({ readonly: false });
     expect(wrapper.find('input').attributes('readonly')).toBeUndefined();
+    expectWrapperNotToHaveClass(wrapper, 'fieldset', /^border-dashed$/);
   });
 
   // happy-dom never reports the focus, so this checks the styles; the visual suite covers the focused field
@@ -293,14 +297,14 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
     });
 
     // Required asterisk should not be present by default
-    expect(wrapper.find('label').text()).not.toContain('﹡');
+    expect(wrapper.find('label').text()).not.toContain('*');
 
     // Set required to true
     await wrapper.setProps({ required: true });
-    expect(wrapper.find('label').text()).toContain('﹡');
+    expect(wrapper.find('label').text()).toContain('*');
 
     // Set required back to false
     await wrapper.setProps({ required: false });
-    expect(wrapper.find('label').text()).not.toContain('﹡');
+    expect(wrapper.find('label').text()).not.toContain('*');
   });
 });

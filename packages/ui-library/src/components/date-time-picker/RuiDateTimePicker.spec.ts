@@ -872,14 +872,14 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
 
     await vi.runOnlyPendingTimersAsync();
 
-    expect(wrapper.find('[data-id="field-label"]').text()).not.toContain('﹡');
+    expect(wrapper.find('[data-id="field-label"]').text()).not.toContain('*');
 
     await wrapper.setProps({ required: true });
-    expect(wrapper.find('[data-id="field-label"]').text()).toContain('﹡');
+    expect(wrapper.find('[data-id="field-label"]').text()).toContain('*');
     expect(wrapper.find('input').attributes('aria-required')).toBe('true');
 
     await wrapper.setProps({ required: false });
-    expect(wrapper.find('[data-id="field-label"]').text()).not.toContain('﹡');
+    expect(wrapper.find('[data-id="field-label"]').text()).not.toContain('*');
   });
 
   describe('model value synchronization', () => {

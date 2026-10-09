@@ -79,14 +79,14 @@ describe('components/forms/checkbox/checkbox-group/RuiCheckboxGroup.vue', () => 
       },
     });
 
-    expect(wrapper.text()).not.toContain('﹡');
+    expect(wrapper.text()).not.toContain('*');
 
     await wrapper.setProps({ required: true });
-    expect(wrapper.text()).toContain('﹡');
+    expect(wrapper.text()).toContain('*');
     expect(wrapper.find('.text-rui-error').exists()).toBeTruthy();
 
     await wrapper.setProps({ required: false });
-    expect(wrapper.text()).not.toContain('﹡');
+    expect(wrapper.text()).not.toContain('*');
   });
 
   it('should toggle values into the model array', async () => {

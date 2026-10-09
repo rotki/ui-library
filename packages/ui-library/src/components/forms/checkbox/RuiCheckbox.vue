@@ -162,7 +162,7 @@ watch(internalModelValue, (val) => {
           v-if="required"
           class="text-rui-error"
         >
-          ﹡
+          *
         </span>
       </span>
     </label>

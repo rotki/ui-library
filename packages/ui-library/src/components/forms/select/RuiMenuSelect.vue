@@ -260,15 +260,14 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
           </span>
 
           <span
-            v-if="clearable && value && !disabled"
+            v-if="clearable && value && !disabled && !readOnly"
             data-id="clear"
             :class="[ui.clear(), focused && 'visible!', { 'mr-2': !dense }]"
             @click.stop.prevent="clear()"
           >
             <RuiIcon
-              color="error"
               name="lu-x"
-              size="18"
+              size="16"
             />
           </span>
 

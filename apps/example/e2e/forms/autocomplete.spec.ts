@@ -84,7 +84,7 @@ test.describe('auto-complete - basic', () => {
     const combobox = ac.getByRole('combobox');
     const label = ac.getByTestId('field-label');
     await expect(combobox).toHaveAttribute('aria-required', 'true');
-    await expect(label).toContainText('\uFE61');
+    await expect(label).toContainText('*');
     await expect(combobox).toHaveAttribute('aria-labelledby', (await label.getAttribute('id')) ?? '');
   });
 

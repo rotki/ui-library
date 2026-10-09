@@ -55,16 +55,16 @@ describe('components/forms/revealable-text-field/RuiRevealableTextField.vue', ()
     });
 
     // Required asterisk should not be present by default
-    expect(wrapper.find('label').text()).not.toContain('﹡');
+    expect(wrapper.find('label').text()).not.toContain('*');
 
     // Set required to true
     await wrapper.setProps({ required: true });
-    expect(wrapper.find('label').text()).toContain('﹡');
+    expect(wrapper.find('label').text()).toContain('*');
     expect(wrapper.find('label .text-rui-error').exists()).toBeTruthy();
 
     // Set required back to false
     await wrapper.setProps({ required: false });
-    expect(wrapper.find('label').text()).not.toContain('﹡');
+    expect(wrapper.find('label').text()).not.toContain('*');
   });
 
   it('should have aria-label on toggle button', () => {

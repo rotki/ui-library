@@ -103,7 +103,8 @@ const showPlainSelection = computed<boolean>(() =>
         :index="i"
         v-bind="{ item, chipAttrs: chipAttrs(item, i) }"
       >
-        {{ getText(item) }}
+        <!-- plain values are joined with a comma, the value row's gap standing in for the space -->
+        {{ getText(item) }}{{ multiple && i < items.length - 1 ? ',' : '' }}
       </slot>
     </div>
   </template>

@@ -780,7 +780,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     const activator = wrapper.find('div[data-id="activator"]');
     const combobox = wrapper.find('input[role=combobox]');
     expect(label.text()).toContain('Asset');
-    expect(label.text()).toContain('﹡');
+    expect(label.text()).toContain('*');
     expect(combobox.attributes('aria-labelledby')).toBe(label.attributes('id'));
     expect(activator.text()).not.toContain('Asset');
     expect(wrapper.find('[data-id=resting-placeholder]').text()).toBe('Search assets');
@@ -837,6 +837,20 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     await wrapper.setProps({ hideSelectionWrapper: false });
     expect(wrapper.find('div[data-id="activator"] div[data-id=value] > div.flex').exists()).toBe(true);
     expect(wrapper.find('div[data-id="activator"] div[data-id=value] > div.contents').exists()).toBe(false);
+  });
+
+  it('should join plain multiple selections with a comma', () => {
+    wrapper = createWrapper<string[], SelectOption>({
+      props: {
+        keyAttr: 'id',
+        modelValue: ['1', '2', '3'],
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    const values = wrapper.findAll('div[data-id="activator"] div[data-id=value] > div.flex').map(item => item.text());
+    expect(values).toEqual(['Germany,', 'Nigeria,', 'Greece']);
   });
 
   it('should show clear button and emit undefined on click', async () => {

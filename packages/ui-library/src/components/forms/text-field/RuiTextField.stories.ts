@@ -130,13 +130,31 @@ export const WithHint = meta.story({
   },
 });
 
+/**
+ * The same hint on two fields: the first draws it below the field, the second sets `hideDetails`,
+ * which drops the hint and the line it would take.
+ */
 export const HideDetails = meta.story({
   args: {
     hideDetails: true,
-    hint: 'Hint (should be invisible)',
-    label: 'Label',
+    hint: 'This hint is only drawn when details are shown',
+    label: 'Details hidden',
     placeholder: 'Placeholder',
   },
+  render: args => ({
+    components: { RuiTextField },
+    setup() {
+      const shown = ref<string>('');
+      const hidden = ref<string>('');
+      return { args, hidden, shown };
+    },
+    template: `
+      <div class="flex flex-col gap-4">
+        <RuiTextField v-bind="args" v-model="shown" label="Details shown" :hide-details="false" />
+        <RuiTextField v-bind="args" v-model="hidden" />
+      </div>
+    `,
+  }),
 });
 
 export const WithPrependIcon = meta.story({
@@ -208,7 +226,10 @@ export const HiddenLabel = meta.story({
   },
 });
 
-/** The clear button shows while the field is hovered or focused and has a value. */
+/**
+ * The clear button shows while the field is hovered or focused and has a value. The story clears
+ * the field and types a new value, so it ends focused with the button showing.
+ */
 export const Clearable = meta.story({
   args: {
     clearable: true,
@@ -220,6 +241,9 @@ export const Clearable = meta.story({
     await userEvent.click(input);
     await userEvent.click(canvas.getByRole('button', { name: 'Clear' }));
     await expect(input).toHaveValue('');
+    await userEvent.type(input, 'rotki.eth');
+    await expect(input).toHaveValue('rotki.eth');
+    await expect(canvas.getByRole('button', { name: 'Clear' })).toBeVisible();
   },
 });
 

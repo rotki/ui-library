@@ -64,6 +64,7 @@ export const Default = meta.story({
   args: {
     keyAttr: 'id',
     modelValue: undefined,
+    placeholder: 'Select a country',
     textAttr: 'label',
   },
   async play({ canvas, userEvent }) {
@@ -92,14 +93,16 @@ export const SearchStyle = meta.story({
 // @ts-expect-error PrimitiveItems uses string[] options instead of SelectOption[]
 export const PrimitiveItems = meta.story({
   args: {
+    modelValue: 'Greece',
     options: options.map(item => item.label),
   },
 });
 
+/** Without chips, the selected values are listed as plain, comma-separated text. */
 // @ts-expect-error MultipleValue uses string[] options and array modelValue
 export const MultipleValue = meta.story({
   args: {
-    modelValue: [],
+    modelValue: ['Germany', 'Greece', 'Spain'],
     options: options.map(item => item.label),
   },
 });
@@ -108,7 +111,7 @@ export const Disabled = meta.story({
   args: {
     disabled: true,
     keyAttr: 'id',
-    modelValue: undefined,
+    modelValue: '3',
     textAttr: 'label',
   },
 });
@@ -117,7 +120,7 @@ export const Dense = meta.story({
   args: {
     dense: true,
     keyAttr: 'id',
-    modelValue: undefined,
+    modelValue: '1',
     textAttr: 'label',
   },
 });
@@ -170,8 +173,8 @@ export const MultipleValueDeletion = meta.story({
   async play({ canvas, userEvent }) {
     const body = within(document.body);
 
-    // Verify initial values are rendered
-    expect(canvas.getByText('Germany')).toBeVisible();
+    // Verify initial values are rendered, joined by a comma
+    expect(canvas.getByText('Germany,')).toBeVisible();
     expect(canvas.getByText('Nigeria')).toBeVisible();
 
     // Focus input
@@ -185,7 +188,7 @@ export const MultipleValueDeletion = meta.story({
 
     // Another Backspace removes the remaining value
     await userEvent.keyboard('{Backspace}');
-    await waitFor(() => expect(canvas.queryByText('Germany')).toBeNull());
+    await waitFor(() => expect(canvas.queryByText(/^Germany/)).toBeNull());
 
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(body.queryByRole('listbox')).toBeNull());
@@ -198,6 +201,7 @@ export const CustomValue = meta.story({
     dense: false,
     keyAttr: 'id',
     modelValue: undefined,
+    placeholder: 'Pick a country or type your own',
     textAttr: 'label',
   },
 });
@@ -221,6 +225,7 @@ export const Loading = meta.story({
     keyAttr: 'id',
     loading: true,
     modelValue: undefined,
+    placeholder: 'Loading countries',
     textAttr: 'label',
   },
 });
@@ -239,6 +244,7 @@ export const WithHint = meta.story({
     hint: 'Select your country of residence',
     keyAttr: 'id',
     modelValue: undefined,
+    placeholder: 'Select a country',
     textAttr: 'label',
   },
 });
@@ -248,6 +254,7 @@ export const WithErrors = meta.story({
     errorMessages: ['This field is required', 'Please select a valid option'],
     keyAttr: 'id',
     modelValue: undefined,
+    placeholder: 'Select a country',
     textAttr: 'label',
   },
 });
@@ -261,15 +268,33 @@ export const WithSuccess = meta.story({
   },
 });
 
+/**
+ * The same hint on two fields: the first draws it below the field, the second sets `hideDetails`,
+ * which drops the hint and the line it would take.
+ */
 export const HideDetails = meta.story({
   args: {
-    errorMessages: ['This error should not be visible'],
     hideDetails: true,
-    hint: 'This hint should not be visible',
+    hint: 'This hint is only drawn when details are shown',
     keyAttr: 'id',
-    modelValue: undefined,
+    label: 'Details hidden',
+    modelValue: '1',
     textAttr: 'label',
   },
+  render: args => ({
+    components: { RuiAutoComplete: RuiAutoComplete<string, SelectOption> },
+    setup() {
+      const shown = ref<string | undefined>('3');
+      const hidden = ref<string | undefined>('1');
+      return { args, hidden, shown };
+    },
+    template: `
+      <div class="flex flex-col gap-4">
+        <RuiAutoComplete v-bind="args" v-model="shown" label="Details shown" :hide-details="false" />
+        <RuiAutoComplete v-bind="args" v-model="hidden" />
+      </div>
+    `,
+  }),
 });
 
 // @ts-expect-error HideSelected uses string[] modelValue for multi-select
@@ -306,6 +331,7 @@ export const NoFilter = meta.story({
     keyAttr: 'id',
     modelValue: undefined,
     noFilter: true,
+    placeholder: 'Every option stays listed while you type',
     textAttr: 'label',
   },
   async play({ canvas, userEvent }) {
@@ -332,6 +358,7 @@ export const AutoSelectFirst = meta.story({
     autoSelectFirst: true,
     keyAttr: 'id',
     modelValue: undefined,
+    placeholder: 'Enter picks the first match',
     textAttr: 'label',
   },
   async play({ canvas, userEvent }) {
@@ -354,6 +381,7 @@ export const CustomValueInteraction = meta.story({
     customValue: true,
     keyAttr: 'id',
     modelValue: undefined,
+    placeholder: 'Type a country that is not listed',
     textAttr: 'label',
   },
   async play({ canvas, userEvent }) {
@@ -372,7 +400,9 @@ export const CustomValueInteraction = meta.story({
 export const Required = meta.story({
   args: {
     keyAttr: 'id',
+    label: 'Country',
     modelValue: undefined,
+    placeholder: 'Select a country',
     required: true,
     textAttr: 'label',
   },
@@ -385,6 +415,7 @@ export const Grouped = meta.story({
     keyAttr: 'id',
     modelValue: undefined,
     options: groupedOptions,
+    placeholder: 'Countries grouped by continent',
     textAttr: 'label',
   },
   async play({ canvas, userEvent }) {
@@ -410,6 +441,7 @@ export const GroupedSearchLabel = meta.story({
     keyAttr: 'id',
     modelValue: undefined,
     options: groupedOptions,
+    placeholder: 'Search by country or continent',
     searchIncludesGroupLabel: true,
     textAttr: 'label',
   },
@@ -436,7 +468,7 @@ export const GroupedCustomHeader = meta.story({
   args: {
     groupBy: 'category',
     keyAttr: 'id',
-    modelValue: undefined,
+    modelValue: '4',
     options: groupedOptions,
     textAttr: 'label',
   },
@@ -476,6 +508,7 @@ export const WithDisabledItems = meta.story({
       { category: 'A', disabled: true, id: '4', label: 'Also disabled' },
       { category: 'A', id: '5', label: 'Final available row' },
     ] satisfies GroupedSelectOption[],
+    placeholder: 'Some rows cannot be picked',
     textAttr: 'label',
   },
   async play({ canvas, userEvent }) {
@@ -530,6 +563,7 @@ export const FooterSlot = meta.story({
   args: {
     keyAttr: 'id',
     modelValue: undefined,
+    placeholder: 'Open to see the footer',
     textAttr: 'label',
   },
   render: args => ({

@@ -27,13 +27,16 @@ function render(args: ComponentPropsAndSlots<typeof RuiDateTimePicker>) {
 
       return { args, epoch, iso };
     },
-    template: `<div>
+    // the gap keeps the readout off the field when there is no details row between them
+    template: `<div class="flex flex-col gap-2">
       <RuiDateTimePicker v-bind="args" v-model="args.modelValue" />
-      <div class="text-rui-text">
-        <span class='font-medium'>Date:</span> {{ iso }}
-      </div>
-      <div class="text-rui-text">
-        <span class='font-medium'>Epoch</span> {{ epoch }}
+      <div>
+        <div class="text-rui-text">
+          <span class='font-medium'>Date:</span> {{ iso }}
+        </div>
+        <div class="text-rui-text">
+          <span class='font-medium'>Epoch</span> {{ epoch }}
+        </div>
       </div>
     </div>`,
   };
@@ -75,6 +78,9 @@ export const Default = meta.story({
     await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+    // leave the story at rest, without a selected segment's focus ring
+    input.blur();
+    await expect(input).not.toHaveFocus();
   },
 });
 
@@ -143,19 +149,35 @@ export const WithHint = meta.story({
   },
 });
 
+/** A hint is set but not drawn, so nothing sits between the field and the readout below it. */
 export const HideDetails = meta.story({
   args: {
     hideDetails: true,
-    hint: 'This hint should not be rendered',
+    hint: 'This hint is only drawn when details are shown',
     modelValue: new Date(),
   },
 });
 
+/**
+ * The menu gains a timezone selector, which starts at the browser's zone; the hint names it. The
+ * play opens the menu to check the selector, then closes it again.
+ */
 export const WithTimezone = meta.story({
   args: {
     accuracy: TimeAccuracy.SECOND,
+    hint: `Read in ${new Intl.DateTimeFormat().resolvedOptions().timeZone}; change the zone from the menu`,
     modelValue: new Date(),
     showTimezone: true,
+  },
+  async play({ canvas, userEvent }) {
+    const input = canvas.getByRole('textbox');
+    await userEvent.click(input);
+    const body = within(document.body);
+    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+    await waitFor(() => expect(body.getByRole('menu').querySelector('[data-id="timezone-select"]')).toBeVisible());
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+    input.blur();
   },
 });
 

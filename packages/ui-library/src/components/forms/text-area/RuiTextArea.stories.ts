@@ -122,13 +122,31 @@ export const WithHint = meta.story({
   },
 });
 
+/**
+ * The same hint on two fields: the first draws it below the field, the second sets `hideDetails`,
+ * which drops the hint and the line it would take.
+ */
 export const HideDetails = meta.story({
   args: {
     hideDetails: true,
-    hint: 'Hint (should be invisible)',
-    label: 'Label',
+    hint: 'This hint is only drawn when details are shown',
+    label: 'Details hidden',
     placeholder: 'Placeholder',
   },
+  render: args => ({
+    components: { RuiTextArea },
+    setup() {
+      const shown = ref<string>('');
+      const hidden = ref<string>('');
+      return { args, hidden, shown };
+    },
+    template: `
+      <div class="flex flex-col gap-4">
+        <RuiTextArea v-bind="args" v-model="shown" label="Details shown" :hide-details="false" />
+        <RuiTextArea v-bind="args" v-model="hidden" />
+      </div>
+    `,
+  }),
 });
 
 export const WithPrependIcon = meta.story({
@@ -156,12 +174,18 @@ export const Readonly = meta.story({
   },
 });
 
+/** The clear button shows while the field is hovered or focused and has a value; the story ends focused. */
 export const Clearable = meta.story({
   args: {
     clearable: true,
     label: 'Label',
     modelValue: 'Clearable text',
     placeholder: 'Placeholder',
+  },
+  async play({ canvas, userEvent }) {
+    const textarea = canvas.getByRole('textbox', { name: 'Label' });
+    await userEvent.click(textarea);
+    await expect(canvas.getByRole('button', { name: 'Clear' })).toBeVisible();
   },
 });
 

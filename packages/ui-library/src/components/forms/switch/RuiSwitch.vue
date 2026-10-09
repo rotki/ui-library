@@ -165,7 +165,7 @@ function input(event: Event): void {
           v-if="required"
           class="text-rui-error"
         >
-          ﹡
+          *
         </span>
       </span>
     </label>

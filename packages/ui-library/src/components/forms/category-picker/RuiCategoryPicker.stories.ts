@@ -85,8 +85,9 @@ const meta = preview.meta<
 
 export const Default = meta.story({
   args: {
+    clearable: true,
     label: 'Country',
-    modelValue: undefined,
+    modelValue: '2',
   },
   async play({ canvas, userEvent }) {
     const body = within(document.body);
@@ -103,7 +104,7 @@ export const LargeCatalogue = meta.story({
     // @ts-expect-error the spike uses the ActionOption shape
     items: actionOptions,
     label: 'Action',
-    modelValue: undefined,
+    modelValue: '3-3',
   },
 });
 
@@ -111,22 +112,24 @@ export const Dense = meta.story({
   args: {
     dense: true,
     label: 'Country',
-    modelValue: undefined,
+    modelValue: '4',
   },
 });
 
 export const NoSearch = meta.story({
   args: {
+    hint: 'Typing is off: open the field and pick from the list',
     label: 'Country',
-    modelValue: undefined,
+    modelValue: '6',
     searchable: false,
   },
 });
 
 export const WithoutAll = meta.story({
   args: {
+    hint: 'The rail starts at the first category, with no "All" entry',
     label: 'Country',
-    modelValue: undefined,
+    modelValue: '3',
     showAll: false,
   },
 });
@@ -167,16 +170,17 @@ export const Validation = meta.story({
  */
 export const DrillIn = meta.story({
   args: {
+    hint: 'Opens as a bottom sheet below the 2xl breakpoint',
     label: 'Country',
     mobileBreakpoint: '2xl',
-    modelValue: undefined,
+    modelValue: '5',
   },
 });
 
 export const CustomSlots = meta.story({
   args: {
     label: 'Country',
-    modelValue: undefined,
+    modelValue: '1',
   },
   render(args: CategoryPickerProps) {
     return {

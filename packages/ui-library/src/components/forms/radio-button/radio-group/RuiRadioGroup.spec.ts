@@ -79,15 +79,15 @@ describe('components/forms/radio-button/radio-group/RuiRadioGroup.vue', () => {
     });
 
     // Required asterisk should not be present by default
-    expect(wrapper.text()).not.toContain('﹡');
+    expect(wrapper.text()).not.toContain('*');
 
     // Set required to true
     await wrapper.setProps({ required: true });
-    expect(wrapper.text()).toContain('﹡');
+    expect(wrapper.text()).toContain('*');
     expect(wrapper.find('.text-rui-error').exists()).toBeTruthy();
 
     // Set required back to false
     await wrapper.setProps({ required: false });
-    expect(wrapper.text()).not.toContain('﹡');
+    expect(wrapper.text()).not.toContain('*');
   });
 });

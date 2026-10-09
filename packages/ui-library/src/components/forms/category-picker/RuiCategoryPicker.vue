@@ -515,9 +515,8 @@ watch(isOpen, onOpenChanged);
               @click.stop.prevent="clearSelection()"
             >
               <RuiIcon
-                color="error"
                 name="lu-x"
-                size="18"
+                size="16"
               />
             </span>
             <span

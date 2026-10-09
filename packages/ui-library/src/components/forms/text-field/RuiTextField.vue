@@ -79,7 +79,7 @@ const attrs = useAttrs();
 
 const { focused } = useFocus(inputRef);
 const placement = useLabelPlacement(() => labelPlacement);
-const { create: delayClearHide } = useTimeoutManager();
+const { clear: cancelClearHide, create: delayClearHide } = useTimeoutManager();
 const { hasError, hasSuccess, hasMessages, validation } = useFormTextDetail(
   () => errorMessages,
   () => successMessages,
@@ -107,6 +107,7 @@ const effectiveColor = computed<ContextColorsType | undefined>(() => get(validat
 const ui = computed<ReturnType<typeof textFieldStyles>>(() => textFieldStyles({
   dense,
   disabled,
+  readonly,
   hovered: get(isHovered),
   focused: get(focused),
   color: get(effectiveColor),
@@ -128,6 +129,8 @@ function clearIconClicked(): void {
 
 watch(focused, (value) => {
   if (value) {
+    // a refocus within the delay keeps the button
+    cancelClearHide();
     set(showClearButton, true);
   }
   else {
@@ -210,7 +213,6 @@ defineExpose({
           variant="text"
           type="button"
           icon
-          color="error"
           data-id="clear-btn"
           aria-label="Clear"
           tabindex="-1"
@@ -218,7 +220,7 @@ defineExpose({
         >
           <RuiIcon
             name="lu-x"
-            size="20"
+            size="16"
           />
         </RuiButton>
         <slot

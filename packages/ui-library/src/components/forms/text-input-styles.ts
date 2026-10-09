@@ -32,6 +32,10 @@ export const textInputBase = tv({
     disabled: {
       true: { fieldset: '!border-rui-divider' },
     },
+    // a dashed edge marks a value that can be read and copied but not changed; the fill sits on the wrapper
+    readonly: {
+      true: { fieldset: 'border-dashed' },
+    },
     validation: {
       error: { fieldset: '!border-rui-error ring-rui-error/20' },
       success: { fieldset: '!border-rui-success ring-rui-success/20' },
@@ -85,7 +89,11 @@ export const activatorStyles = tv({
       'transform-gpu',
     ].join(' '),
     value: 'w-full block truncate',
-    clear: 'ml-auto shrink-0 invisible group-hover:!visible',
+    // the field icons' muted tone, darkening on hover; the glyph is 16px in every field
+    clear: [
+      'ml-auto shrink-0 invisible group-hover:!visible',
+      'text-rui-neutral-500 dark:text-rui-neutral-400 hover:text-rui-text dark:hover:text-rui-text',
+    ].join(' '),
     menu: 'overflow-y-auto max-h-60 min-w-[2.5rem]',
     // the grey list button's hover and active tints, so options and menu buttons highlight alike
     highlighted: '!bg-rui-hover',
@@ -94,7 +102,7 @@ export const activatorStyles = tv({
      * The rail is dropped: a grey band over the field's border read as a thick, shadowed edge.
      */
     progress: 'absolute inset-0 flex items-end overflow-hidden rounded-rui-control pointer-events-none [&_[data-id=progress-rail]]:bg-transparent',
-    icon: 'text-rui-text transition',
+    icon: 'text-rui-neutral-500 dark:text-rui-neutral-400 transition',
     iconWrapper: 'flex items-center justify-end absolute right-2 top-px bottom-0',
   },
   variants: {
@@ -105,13 +113,21 @@ export const activatorStyles = tv({
     disabled: {
       true: {
         activator: 'bg-rui-neutral-50 dark:bg-rui-neutral-900 text-rui-text-disabled dark:text-rui-text-disabled active:text-rui-text-disabled cursor-default pointer-events-none',
-        icon: 'text-rui-text-disabled',
+        icon: 'text-rui-text-disabled dark:text-rui-text-disabled',
         fieldset: '!border-rui-divider',
       },
     },
+    /*
+     * The muted fill reads against the page and the card in both themes, so its dark value is restated
+     * over the base `dark:bg-transparent`; the edge goes dashed and the text keeps its full color.
+     * Nothing opens, so the chevron is dropped.
+     */
     readonly: {
-      // an inset well: below the card in both themes, where white/10 lifted it above
-      true: { activator: 'opacity-80 pointer-events-none cursor-default bg-rui-surface-sunken' },
+      true: {
+        activator: 'pointer-events-none cursor-default bg-rui-surface-muted dark:bg-rui-surface-muted',
+        fieldset: 'border-dashed',
+        iconWrapper: 'hidden',
+      },
     },
     hovered: {
       true: { fieldset: 'border-rui-neutral-500 dark:border-rui-neutral-400' },

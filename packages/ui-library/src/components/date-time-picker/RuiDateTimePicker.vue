@@ -548,7 +548,7 @@ defineExpose({
       >
         <span :class="ui.iconPrepend()">
           <RuiIcon
-            class="text-rui-text-secondary transition"
+            class="text-rui-neutral-500 dark:text-rui-neutral-400 transition"
             :size="dense ? 16 : 20"
             name="lu-calendar-days"
           />
@@ -591,12 +591,11 @@ defineExpose({
         </div>
 
         <RuiButton
-          v-if="allowEmpty && valueSet && !disabled"
+          v-if="allowEmpty && valueSet && !disabled && !readonly"
           variant="text"
           icon
           data-id="clear-button"
           size="sm"
-          color="error"
           :aria-label="clearLabel"
           :class="[
             ui.clear(),
@@ -607,7 +606,7 @@ defineExpose({
         >
           <RuiIcon
             name="lu-x"
-            size="18"
+            size="16"
           />
         </RuiButton>
 

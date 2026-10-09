@@ -81,7 +81,7 @@ test.describe('menu-select - basic', () => {
     const activator = ms.locator('[data-id=activator]');
     const label = ms.getByTestId('field-label');
     await expect(activator).toHaveAttribute('aria-required', 'true');
-    await expect(label).toContainText('\uFE61');
+    await expect(label).toContainText('*');
     await expect(activator).toHaveAttribute('aria-labelledby', (await label.getAttribute('id')) ?? '');
   });
 

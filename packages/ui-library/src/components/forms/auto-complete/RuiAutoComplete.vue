@@ -565,12 +565,11 @@ defineExpose({
           </div>
 
           <RuiButton
-            v-if="clearable && valueSet && !disabled"
+            v-if="clearable && valueSet && !disabled && !readOnly"
             variant="text"
             icon
             size="sm"
             tabindex="-1"
-            color="error"
             data-id="clear"
             aria-label="Clear"
             :class="[
@@ -582,7 +581,7 @@ defineExpose({
           >
             <RuiIcon
               name="lu-x"
-              size="18"
+              size="16"
             />
           </RuiButton>
 

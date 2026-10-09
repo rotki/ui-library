@@ -90,7 +90,7 @@ const attrs = useAttrs();
 
 const { focused } = useFocus(textarea);
 const placement = useLabelPlacement(() => labelPlacement);
-const { create: delayClearHide } = useTimeoutManager();
+const { clear: cancelClearHide, create: delayClearHide } = useTimeoutManager();
 const { prependWidth, appendWidth } = usePrependAppendWidth(prepend, append, 24);
 const { hasError, hasSuccess, hasMessages, validation } = useFormTextDetail(
   () => errorMessages,
@@ -119,6 +119,7 @@ const effectiveColor = computed<ContextColorsType | undefined>(() => get(validat
 const ui = computed<ReturnType<typeof textAreaStyles>>(() => textAreaStyles({
   dense,
   disabled,
+  readonly,
   noResize,
   hovered: get(isHovered),
   focused: get(focused),
@@ -173,6 +174,8 @@ function computeFieldHeight(newVal?: string, oldVal?: string): void {
 
 watch(focused, (value) => {
   if (value) {
+    // a refocus within the delay keeps the button
+    cancelClearHide();
     set(showClearButton, true);
   }
   else {
@@ -264,7 +267,6 @@ defineExpose({
           variant="text"
           type="button"
           icon
-          color="error"
           data-id="clear-btn"
           aria-label="Clear"
           tabindex="-1"
@@ -272,7 +274,7 @@ defineExpose({
         >
           <RuiIcon
             name="lu-x"
-            size="20"
+            size="16"
           />
         </RuiButton>
         <slot

@@ -21,11 +21,16 @@ export const textFieldStyles = tv({
       'placeholder:text-rui-neutral-500 dark:placeholder:text-rui-neutral-400',
     ].join(' '),
     inputWrapper: 'flex flex-1',
+    // matching insets: a glyph sits 12px from either edge
     prepend: 'flex items-center gap-1 shrink-0 pl-3',
-    append: 'flex items-center gap-1 shrink-0 pr-1.5',
+    append: 'flex items-center gap-1 shrink-0 pr-3',
     icon: 'text-rui-neutral-500 dark:text-rui-neutral-400',
     details: 'pt-1',
-    clearButton: '!p-1.5',
+    // 24px round a 16px glyph; as the last control it pulls into the inset by its own padding
+    clearButton: [
+      '!p-1 last:-mr-1',
+      'text-rui-neutral-500 dark:text-rui-neutral-400 hover:text-rui-text dark:hover:text-rui-text',
+    ].join(' '),
   },
   variants: {
     dense: {
@@ -42,6 +47,10 @@ export const textFieldStyles = tv({
     },
     disabled: {
       true: { wrapper: 'bg-rui-neutral-50 dark:bg-rui-neutral-900' },
+    },
+    // the activators' read-only fill, restated for dark over the base `dark:bg-transparent`
+    readonly: {
+      true: { wrapper: 'bg-rui-surface-muted dark:bg-rui-surface-muted' },
     },
   },
 });

@@ -72,7 +72,7 @@ const children = computed<VNode[]>(() => {
         v-if="required"
         class="text-rui-error"
       >
-        ﹡
+        *
       </span>
     </div>
     <div :class="{ 'flex between:ml-6 between:mr-0': inline }">

@@ -261,7 +261,7 @@ describe('components/forms/category-picker/RuiCategoryPicker.vue', () => {
     wrapper = mountPicker({ errorMessages: 'This field is required', required: true });
 
     expect(wrapper.text()).toContain('Country');
-    expect(wrapper.text()).toContain('﹡');
+    expect(wrapper.text()).toContain('*');
     expect(wrapper.text()).toContain('This field is required');
     expect(wrapper.find('[data-id=activator]').attributes('aria-required')).toBe('true');
     expect(wrapper.find('[data-id=activator]').attributes('aria-invalid')).toBe('true');

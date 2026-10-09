@@ -168,7 +168,7 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
     expect(wrapper.find('fieldset').exists()).toBe(true);
 
     await wrapper.setProps({ required: true });
-    expect(wrapper.find('[data-id=field-label]').text()).toContain('﹡');
+    expect(wrapper.find('[data-id=field-label]').text()).toContain('*');
 
     await wrapper.setProps({ dense: true });
     expectWrapperToHaveClass(wrapper, 'button[data-id="activator"]', /^min-h-8$/);
@@ -186,14 +186,14 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
     });
 
     // The mark sits in the label above the field, not in the activator
-    expect(wrapper.find('[data-id=field-label]').text()).not.toContain('﹡');
+    expect(wrapper.find('[data-id=field-label]').text()).not.toContain('*');
 
     await wrapper.setProps({ required: true });
-    expect(wrapper.find('[data-id=field-label]').text()).toContain('﹡');
-    expect(wrapper.find('button[data-id="activator"]').text()).not.toContain('﹡');
+    expect(wrapper.find('[data-id=field-label]').text()).toContain('*');
+    expect(wrapper.find('button[data-id="activator"]').text()).not.toContain('*');
 
     await wrapper.setProps({ required: false });
-    expect(wrapper.find('[data-id=field-label]').text()).not.toContain('﹡');
+    expect(wrapper.find('[data-id=field-label]').text()).not.toContain('*');
   });
 
   it('should show clear button and emit undefined on click', async () => {

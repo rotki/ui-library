@@ -223,7 +223,7 @@ describe('components/forms/slider/RuiSlider.vue', () => {
       },
     });
 
-    expect(wrapper.text()).not.toContain('﹡');
+    expect(wrapper.text()).not.toContain('*');
   });
 
   it('should have data-error attribute when errorMessages present', async () => {
@@ -250,13 +250,13 @@ describe('components/forms/slider/RuiSlider.vue', () => {
       },
     });
 
-    expect(wrapper.text()).not.toContain('﹡');
+    expect(wrapper.text()).not.toContain('*');
 
     await wrapper.setProps({ required: true });
-    expect(wrapper.text()).toContain('﹡');
+    expect(wrapper.text()).toContain('*');
     expect(wrapper.find('.text-rui-error').exists()).toBeTruthy();
 
     await wrapper.setProps({ required: false });
-    expect(wrapper.text()).not.toContain('﹡');
+    expect(wrapper.text()).not.toContain('*');
   });
 });

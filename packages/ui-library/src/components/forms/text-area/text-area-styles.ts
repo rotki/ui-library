@@ -24,18 +24,26 @@ export const textAreaStyles = tv({
       'placeholder:text-rui-neutral-500 dark:placeholder:text-rui-neutral-400',
     ].join(' '),
     textareaSizer: 'invisible absolute top-0 left-0 w-full h-0 -z-10 pointer-events-none px-3 text-sm',
-    prepend: 'flex items-center gap-1 shrink-0 mt-2 ml-3',
-    append: 'flex items-center gap-1 shrink-0 absolute right-0 mt-1 mr-3',
+    // both sides are one 24px line tall and start where the text does, so icons center on the first line
+    prepend: 'flex items-center gap-1 shrink-0 h-6 mt-2 ml-3',
+    append: 'flex items-center gap-1 shrink-0 absolute right-0 h-6 mt-2 mr-3',
     icon: 'text-rui-neutral-500 dark:text-rui-neutral-400',
     details: 'pt-1',
-    clearButton: '!p-1.5',
+    // 24px round a 16px glyph; as the last control it pulls into the inset by its own padding
+    clearButton: [
+      '!p-1 last:-mr-1',
+      'text-rui-neutral-500 dark:text-rui-neutral-400 hover:text-rui-text dark:hover:text-rui-text',
+    ].join(' '),
   },
   variants: {
+    // 4px above and below the text rather than 8px, the 4px the dense text field drops
     dense: {
       true: {
-        inputWrapper: 'pt-1.5',
-        textarea: 'pt-1 pb-1.5',
-        textareaSizer: 'pt-1 pb-1.5',
+        inputWrapper: 'pt-1',
+        textarea: 'pb-1',
+        textareaSizer: 'pb-1',
+        prepend: 'mt-1',
+        append: 'mt-1',
       },
     },
     noResize: {
@@ -53,6 +61,10 @@ export const textAreaStyles = tv({
     },
     disabled: {
       true: { wrapper: 'bg-rui-neutral-50 dark:bg-rui-neutral-900' },
+    },
+    // the activators' read-only fill, restated for dark over the base `dark:bg-transparent`
+    readonly: {
+      true: { wrapper: 'bg-rui-surface-muted dark:bg-rui-surface-muted' },
     },
   },
   defaultVariants: {

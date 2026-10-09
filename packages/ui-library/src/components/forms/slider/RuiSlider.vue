@@ -166,7 +166,7 @@ function isHighlightedTick(index: number): boolean {
           v-if="required"
           class="text-rui-error"
         >
-          ﹡
+          *
         </span>
       </div>
       <div

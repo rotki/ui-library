@@ -69,12 +69,15 @@ const hidden = ref<boolean>(true);
           type="button"
           icon
           data-id="toggle-visibility"
-          class="-mr-1 p-2!"
+          class="-mr-1 p-1!"
           @click="hidden = !hidden"
         >
-          <!-- secondary text and the field's 16px icon size, like the other field icons -->
+          <!--
+            24px round the field's 16px glyph, so the focus ring and its offset stay inside even the 32px
+            dense field; the muted tone of the other field icons
+          -->
           <RuiIcon
-            class="text-rui-text-secondary"
+            class="text-rui-neutral-500 dark:text-rui-neutral-400"
             size="16"
             :name="hidden ? 'lu-eye-off' : 'lu-eye'"
           />

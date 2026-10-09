@@ -60,7 +60,7 @@ const ui = computed<ReturnType<typeof labelStyles>>(() => labelStyles({ hidden, 
       :class="ui.required()"
       aria-hidden="true"
     >
-      ﹡
+      *
     </span>
   </label>
 </template>

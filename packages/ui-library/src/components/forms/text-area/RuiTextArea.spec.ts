@@ -81,13 +81,13 @@ describe('components/forms/text-area/RuiTextArea.vue', () => {
 
   it('should pass dense props', async () => {
     wrapper = createWrapper();
-    expectWrapperNotToHaveClass(wrapper, 'textarea:not([aria-hidden="true"])', /^pt-1$/);
+    expectWrapperNotToHaveClass(wrapper, 'textarea:not([aria-hidden="true"])', /^pb-1$/);
 
     await wrapper.setProps({ dense: true });
-    expectWrapperToHaveClass(wrapper, 'textarea:not([aria-hidden="true"])', /^pt-1$/);
+    expectWrapperToHaveClass(wrapper, 'textarea:not([aria-hidden="true"])', /^pb-1$/);
 
     await wrapper.setProps({ dense: false });
-    expectWrapperNotToHaveClass(wrapper, 'textarea:not([aria-hidden="true"])', /^pt-1$/);
+    expectWrapperNotToHaveClass(wrapper, 'textarea:not([aria-hidden="true"])', /^pb-1$/);
   });
 
   it('should pass hint props', async () => {
@@ -229,14 +229,14 @@ describe('components/forms/text-area/RuiTextArea.vue', () => {
     });
 
     // Required asterisk should not be present by default
-    expect(wrapper.find('label').text()).not.toContain('﹡');
+    expect(wrapper.find('label').text()).not.toContain('*');
 
     // Set required to true
     await wrapper.setProps({ required: true });
-    expect(wrapper.find('label').text()).toContain('﹡');
+    expect(wrapper.find('label').text()).toContain('*');
 
     // Set required back to false
     await wrapper.setProps({ required: false });
-    expect(wrapper.find('label').text()).not.toContain('﹡');
+    expect(wrapper.find('label').text()).not.toContain('*');
   });
 });
