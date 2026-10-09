@@ -117,15 +117,23 @@ export const CircularWithLabel = meta.story({
 });
 
 export const CircularWithLabelSizes = meta.story({
+  parameters: {
+    docs: {
+      description: {
+        story: 'The label scales with the ring. A ring too small for a legible label drops it, keeping its size, and shows the value on hover instead.',
+      },
+    },
+  },
   render(args) {
     return {
       components: { Progress: RuiProgress },
-      setup: () => ({ args, sizes: [24, 30, 40, 64, 100] }),
+      setup: () => ({ args, sizes: [24, 32, 40, 64, 100], thicknesses: [2, 4] }),
       template: `
-        <div class="flex flex-wrap items-center gap-6 p-4 text-rui-text">
-          <div v-for="size in sizes" :key="size" class="flex flex-col items-center gap-2">
-            <Progress circular show-label color="primary" :value="100" :size="size" :thickness="2" />
-            <span class="text-xs">{{ size }}px</span>
+        <div class="flex flex-col gap-8 p-4 text-rui-text">
+          <div v-for="thickness in thicknesses" :key="thickness" class="flex flex-wrap items-end gap-8">
+            <div v-for="size in sizes" :key="size" class="flex flex-col items-center gap-2">
+              <Progress circular show-label color="primary" :value="72" :size="size" :thickness="thickness" />
+              <span class="text-xs text-rui-text-secondary">{{ size }}px, {{ thickness }}px stroke</span>            </div>
           </div>
         </div>`,
     };

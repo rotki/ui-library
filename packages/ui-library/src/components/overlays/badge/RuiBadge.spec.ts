@@ -39,7 +39,7 @@ describe('components/overlays/badge/RuiBadge.vue', () => {
     expect(badge.attributes('data-placement')).toBe('top');
     expect(badge.classes()).toContain('rounded-full');
     expect(badge.classes()).toContain('min-h-5');
-    expect(badge.classes()).toContain('bg-rui-primary');
+    expect(badge.classes()).toContain('bg-rui-primary-fill');
   });
 
   it('should have correct ARIA attributes', () => {
@@ -53,7 +53,24 @@ describe('components/overlays/badge/RuiBadge.vue', () => {
     expect(badge.exists()).toBeTruthy();
     expect(badge.attributes('aria-live')).toBe('polite');
     expect(badge.attributes('aria-atomic')).toBe('true');
-    expect(badge.attributes('aria-label')).toBe('Badge');
+    // a label would replace the content, so a reader would announce "Badge" instead of the count
+    expect(badge.attributes('aria-label')).toBeUndefined();
+    expect(badge.text()).toBe('Badge content');
+  });
+
+  it('should keep an icon-only badge round and space an icon from its text', async () => {
+    wrapper = createWrapper({
+      props: {
+        icon: 'lu-star',
+      },
+    });
+
+    expect(wrapper.find('div[role=status] > span').classes()).toContain('px-0');
+
+    await wrapper.setProps({ text: '3' });
+    const content = wrapper.find('div[role=status] > span');
+    expect(content.classes()).not.toContain('px-0');
+    expect(content.classes()).toContain('gap-1');
   });
 
   it('should render dot variant', () => {
@@ -94,14 +111,14 @@ describe('components/overlays/badge/RuiBadge.vue', () => {
     });
 
     const badge = wrapper.find('div[role=status]');
-    expect(badge.classes()).toContain('bg-rui-primary');
+    expect(badge.classes()).toContain('bg-rui-primary-fill');
 
     await wrapper.setProps({ color: 'secondary' });
-    expect(badge.classes()).toContain('bg-rui-secondary');
-    expect(badge.classes()).not.toContain('bg-rui-primary');
+    expect(badge.classes()).toContain('bg-rui-secondary-fill');
+    expect(badge.classes()).not.toContain('bg-rui-primary-fill');
 
     await wrapper.setProps({ color: 'error' });
-    expect(badge.classes()).toContain('bg-rui-error');
+    expect(badge.classes()).toContain('bg-rui-error-fill');
   });
 
   it('should apply rounded classes', async () => {
@@ -118,7 +135,7 @@ describe('components/overlays/badge/RuiBadge.vue', () => {
     expect(badge.classes()).toContain('rounded-xs');
 
     await wrapper.setProps({ rounded: 'lg' });
-    expect(badge.classes()).toContain('rounded-lg');
+    expect(badge.classes()).toContain('rounded-rui-card');
   });
 
   it('should be hidden when modelValue is false', async () => {

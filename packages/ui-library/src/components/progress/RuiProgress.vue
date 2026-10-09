@@ -52,10 +52,12 @@ defineSlots<Record<string, never>>();
 
 const CIRCLE_RADIUS = 20;
 const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS; // ~125.66
-/** approximate width of `100%` in ems */
-const LABEL_WIDTH_EM = 2.5;
+/** width of `100%` in ems, measured with tabular figures */
+const LABEL_WIDTH_EM = 2.95;
 /** keeps the label off the stroke rather than merely inside it */
-const LABEL_BREATHING_ROOM = 0.85;
+const LABEL_BREATHING_ROOM = 0.9;
+/** below this font size a label inside the ring is unreadable, so the ring drops it rather than change its footprint */
+const MIN_INSIDE_LABEL_PX = 9;
 
 function clampPercent(val: number | undefined): number {
   return Math.max(0, Math.min(val ?? 100, 100));
@@ -106,7 +108,7 @@ const progressStyles = tv({
     // Linear label
     { circular: false, hasLabel: true, class: { label: 'block text-sm ml-4 text-rui-text-secondary tabular-nums' } },
     // Circular label (overlays the circle, font size derived from `size`)
-    { circular: true, hasLabel: true, class: { label: 'absolute inset-0 flex items-center justify-center leading-none tabular-nums whitespace-nowrap' } },
+    { circular: true, hasLabel: true, class: { label: 'absolute inset-0 flex items-center justify-center leading-none font-medium tabular-nums whitespace-nowrap' } },
   ],
   compoundSlots: [
     // Track behind the bar: one neutral for every named color, which reads in both themes where a tint of a dark hue vanished on a dark page
@@ -129,6 +131,17 @@ const progressStyles = tv({
 });
 
 const hasLabel = computed<boolean>(() => showLabel && variant !== ProgressVariant.indeterminate);
+
+/**
+ * The font size that fits the widest label (`100%`) inside the ring, solved against the chord
+ * it spans. Always computed for that widest label so the text does not resize as the value climbs.
+ */
+const insideLabelFit = computed<number>(() => {
+  const innerRadius = Math.max((+size - 2 * +thickness) / 2, 0);
+  return (LABEL_BREATHING_ROOM * 2 * innerRadius) / Math.sqrt(LABEL_WIDTH_EM ** 2 + 1);
+});
+
+const labelFits = computed<boolean>(() => get(insideLabelFit) >= MIN_INSIDE_LABEL_PX);
 
 const ui = computed<ReturnType<typeof progressStyles>>(() => progressStyles({
   color,
@@ -170,16 +183,12 @@ const circularGeometry = computed<{ scaledThickness: number; viewSize: number }>
 });
 
 /**
- * The circular label lives inside the ring, so it scales with both `size` and `thickness`.
- * `fit` solves for the widest label (`100%`) fitting the chord it spans, always computed
- * for that widest label so the text does not resize as the value climbs. It is capped by
+ * The label inside the ring scales with both `size` and `thickness`. The fit is capped by
  * a sublinear curve so large rings do not end up with an oversized number in the middle.
  */
-const circularLabelStyle = computed<Record<string, string>>(() => {
-  const innerRadius = Math.max((+size - 2 * +thickness) / 2, 0);
-  const fit = (LABEL_BREATHING_ROOM * 2 * innerRadius) / Math.sqrt(LABEL_WIDTH_EM ** 2 + 1);
-  return { fontSize: `${Math.min(fit, +size * 0.15 + 6)}px` };
-});
+const circularLabelStyle = computed<Record<string, string>>(() => ({
+  fontSize: `${Math.min(get(insideLabelFit), +size * 0.15 + 6)}px`,
+}));
 
 const circularStrokeStyle = computed<Record<string, string>>(() => ({
   strokeDasharray: `${CIRCLE_CIRCUMFERENCE}`,
@@ -200,6 +209,7 @@ const circularStrokeStyle = computed<Record<string, string>>(() => ({
       :data-variant="variant"
       :data-color="color"
       :aria-label="ariaLabel"
+      :title="hasLabel && !labelFits ? label : undefined"
       aria-valuemax="100"
       aria-valuemin="0"
       role="progressbar"
@@ -229,7 +239,7 @@ const circularStrokeStyle = computed<Record<string, string>>(() => ({
         />
       </svg>
       <div
-        v-if="hasLabel"
+        v-if="hasLabel && labelFits"
         :class="ui.label()"
         :style="circularLabelStyle"
         aria-hidden="true"

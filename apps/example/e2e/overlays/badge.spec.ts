@@ -22,7 +22,9 @@ test.describe('badge', () => {
     await expect(badge).toBeVisible();
     await expect(badge).toHaveAttribute('aria-live', 'polite');
     await expect(badge).toHaveAttribute('aria-atomic', 'true');
-    await expect(badge).toHaveAttribute('aria-label', 'Badge');
+    // the count itself is what a reader announces, so there is no label to replace it
+    await expect(badge).not.toHaveAttribute('aria-label');
+    await expect(page.locator('div[data-id=badge-0]').getByRole('status')).toHaveText('1');
   });
 
   test('should render dot badge variant', async ({ page }) => {

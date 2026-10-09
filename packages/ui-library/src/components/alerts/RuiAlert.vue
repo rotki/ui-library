@@ -35,7 +35,7 @@ const emit = defineEmits<{
   close: [];
 }>();
 
-defineSlots<{
+const slots = defineSlots<{
   title?: () => any;
   default?: () => any;
 }>();
@@ -44,12 +44,18 @@ const alertStyles = tv({
   slots: {
     root: 'px-4 py-2.5 rounded-rui-panel flex between:ml-4 between:mr-0',
     content: 'flex between:ml-3 between:mr-0 py-1 grow',
-    icon: '',
+    // as tall as the first line of text and centered in it, so the icon lines up however the text wraps
+    icon: 'flex shrink-0 items-center',
     texts: 'between:mt-1 between:mb-0 grow',
     action: '',
     close: '',
   },
   variants: {
+    // the first line is the title's (24px) when there is one, else the description's (text-sm, 20px)
+    titled: {
+      true: { icon: 'h-6' },
+      false: { icon: 'h-5' },
+    },
     variant: {
       default: {},
       filled: {
@@ -94,7 +100,7 @@ const alertStyles = tv({
   ],
 });
 
-const ui = computed<ReturnType<typeof alertStyles>>(() => alertStyles({ variant, type }));
+const ui = computed<ReturnType<typeof alertStyles>>(() => alertStyles({ variant, type, titled: !!slots.title || !!title }));
 
 const usedIcon = computed<RuiIcons | undefined>(() => {
   if (icon)
@@ -127,7 +133,7 @@ const usedIcon = computed<RuiIcons | undefined>(() => {
       >
         <RuiIcon
           :name="usedIcon"
-          size="22"
+          size="20"
         />
       </div>
       <div :class="ui.texts()">

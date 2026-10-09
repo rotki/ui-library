@@ -111,7 +111,7 @@ describe('components/progress/RuiProgress.vue', () => {
       props: {
         circular: true,
         showLabel: true,
-        size: 30,
+        size: 48,
         thickness: 2,
         value: 94,
       },
@@ -121,19 +121,42 @@ describe('components/progress/RuiProgress.vue', () => {
     expect(label.text()).toBe('94%');
     // the value is already exposed through aria-valuenow
     expect(label.attributes('aria-hidden')).toBe('true');
-    expect(labelFontSize()).toBeCloseTo(8.21, 2);
+    expect(labelFontSize()).toBeCloseTo(12.71, 2);
 
     // the label is sized for `100%`, so it does not jump as the value climbs
     await wrapper.setProps({ value: 100 });
-    expect(labelFontSize()).toBeCloseTo(8.21, 2);
+    expect(labelFontSize()).toBeCloseTo(12.71, 2);
 
     // large rings are capped by the sublinear curve rather than the fit
     await wrapper.setProps({ size: 100 });
     expect(labelFontSize()).toBeCloseTo(21, 1);
 
     // a fatter stroke leaves less room inside, and the fit takes over again
-    await wrapper.setProps({ size: 30, thickness: 10 });
-    expect(labelFontSize()).toBeCloseTo(3.16, 1);
+    await wrapper.setProps({ size: 60, thickness: 10 });
+    expect(labelFontSize()).toBeCloseTo(11.56, 1);
+  });
+
+  it('should drop the label from a ring too small to hold it, keeping it as a title', async () => {
+    wrapper = createWrapper({
+      props: {
+        circular: true,
+        showLabel: true,
+        size: 24,
+        thickness: 2,
+        value: 72,
+      },
+    });
+
+    const ring = wrapper.find('div[role=progressbar]');
+    expect(ring.find('div').exists()).toBe(false);
+    expect(ring.attributes('title')).toBe('72%');
+    expect(ring.attributes('aria-valuenow')).toBe('72');
+    // the ring keeps its footprint, with nothing placed beside it
+    expect(wrapper.findAll('div[role=progressbar] + div')).toHaveLength(0);
+
+    await wrapper.setProps({ size: 64 });
+    expect(wrapper.find('div[role=progressbar] > div').text()).toBe('72%');
+    expect(wrapper.find('div[role=progressbar]').attributes('title')).toBeUndefined();
   });
 
   it('should show label when showLabel is true', () => {

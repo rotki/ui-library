@@ -48,48 +48,54 @@ const slots = defineSlots<{
 const badgeStyles = tv({
   slots: {
     wrapper: 'relative inline-block',
-    badge: 'flex items-center justify-center text-xs font-medium absolute bg-transparent text-rui-light-text dark:text-rui-text',
-    content: 'flex items-center px-1.5',
+    badge: 'flex items-center justify-center text-xs font-medium tabular-nums absolute bg-transparent text-rui-text',
+    content: 'flex items-center gap-1 px-1.5',
   },
   variants: {
+    // `-fill` is `main` in light and, for a status color, the deep `darker` in dark, where `main` is a text tone
     color: {
       default: { badge: 'bg-rui-neutral-200 dark:bg-rui-neutral-700' },
-      primary: { badge: 'text-white bg-rui-primary' },
-      secondary: { badge: 'text-white bg-rui-secondary' },
-      // in dark a status color's `main` is a text tone, so a badge with text fills with the deep `darker`
-      error: { badge: 'text-white bg-rui-error dark:bg-rui-error-darker' },
-      warning: { badge: 'text-white bg-rui-warning dark:bg-rui-warning-darker' },
-      info: { badge: 'text-white bg-rui-info dark:bg-rui-info-darker' },
-      success: { badge: 'text-white bg-rui-success dark:bg-rui-success-darker' },
+      primary: { badge: 'bg-rui-primary-fill text-rui-primary-foreground' },
+      secondary: { badge: 'bg-rui-secondary-fill text-rui-secondary-foreground' },
+      error: { badge: 'bg-rui-error-fill text-rui-error-foreground' },
+      warning: { badge: 'bg-rui-warning-fill text-rui-warning-foreground' },
+      info: { badge: 'bg-rui-info-fill text-rui-info-foreground' },
+      success: { badge: 'bg-rui-success-fill text-rui-success-foreground' },
     },
+    // the icon is 60% of the badge height, as the text is, rather than filling it
     size: {
-      sm: { badge: 'min-h-4 min-w-4' },
-      md: { badge: 'min-h-5 min-w-5' },
-      lg: { badge: 'min-h-6 min-w-6' },
+      sm: { badge: 'min-h-4 min-w-4 text-caption-2 [--rui-icon-size:0.625rem]' },
+      md: { badge: 'min-h-5 min-w-5 [--rui-icon-size:0.75rem]' },
+      lg: { badge: 'min-h-6 min-w-6 [--rui-icon-size:0.875rem]' },
     },
     rounded: {
       sm: { badge: 'rounded-xs' },
-      md: { badge: 'rounded-md' },
-      lg: { badge: 'rounded-lg' },
+      md: { badge: 'rounded-rui-control' },
+      lg: { badge: 'rounded-rui-card' },
       full: { badge: 'rounded-full' },
     },
     dot: {
       true: {},
     },
+    // an icon alone needs no side padding, so the badge stays as wide as it is tall
+    iconOnly: {
+      true: { content: 'px-0' },
+      false: {},
+    },
   },
   compoundVariants: [
-    // Dot default color
-    { dot: true, color: 'default', class: { badge: 'bg-rui-neutral-500' } },
+    // the default dot is a step lighter in dark, where neutral-500 nearly vanished against a dark control
+    { dot: true, color: 'default', class: { badge: 'bg-rui-neutral-500 dark:bg-rui-neutral-400' } },
     // A dot carries no text, so it keeps the brighter `main`, which reads better as a small mark on a dark page
     { dot: true, color: 'error', class: { badge: 'dark:bg-rui-error' } },
     { dot: true, color: 'warning', class: { badge: 'dark:bg-rui-warning' } },
     { dot: true, color: 'info', class: { badge: 'dark:bg-rui-info' } },
     { dot: true, color: 'success', class: { badge: 'dark:bg-rui-success' } },
 
-    // Dot sizes (smaller than normal badge)
-    { dot: true, size: 'sm', class: { badge: 'min-w-1.5 min-h-1.5' } },
-    { dot: true, size: 'md', class: { badge: 'min-w-2 min-h-2' } },
-    { dot: true, size: 'lg', class: { badge: 'min-w-2.5 min-h-2.5' } },
+    // Dot sizes: 8, 10 and 12px, since half of a dot sits off the corner and reads smaller than it is
+    { dot: true, size: 'sm', class: { badge: 'min-w-2 min-h-2' } },
+    { dot: true, size: 'md', class: { badge: 'min-w-2.5 min-h-2.5' } },
+    { dot: true, size: 'lg', class: { badge: 'min-w-3 min-h-3' } },
   ],
   defaultVariants: {
     color: 'primary',
@@ -108,10 +114,15 @@ const ui = computed<ReturnType<typeof badgeStyles>>(() => badgeStyles({
   size,
   rounded,
   dot,
+  iconOnly: (!!icon || !!slots.icon) && !get(hasText),
 }));
 
-// Position configs: [leftOffset, rightBase, edgeBase, centerOffset] (rem / calc expressions)
-const DOT_POS: PosConfig = [-0.25, '100% - 0.25rem', '100% - 0.25rem', 0.25];
+/** Dot positions as [leftOffset, rightBase, edgeBase, centerOffset]; a dot's center sits on the corner, so each size moves by half its diameter. */
+const DOT_POS: Record<BadgeSize, PosConfig> = {
+  sm: [-0.25, '100% - 0.25rem', '100% - 0.25rem', 0.25],
+  md: [-0.3125, '100% - 0.3125rem', '100% - 0.3125rem', 0.3125],
+  lg: [-0.375, '100% - 0.375rem', '100% - 0.375rem', 0.375],
+};
 const BADGE_POS: Record<BadgeSize, PosConfig> = {
   sm: [-0.85, '100% - 0.375rem', '100% - 0.375rem', 0.55],
   md: [-0.95, '100% - 0.5rem', '100% - 0.5rem', 0.65],
@@ -121,7 +132,7 @@ const BADGE_POS: Record<BadgeSize, PosConfig> = {
 const positionStyle = computed<Record<string, string>>(() => {
   const ox = Number(offsetX) * 0.0625;
   const oy = Number(offsetY) * 0.0625;
-  const [l, r, edge, center] = dot ? DOT_POS : BADGE_POS[size];
+  const [l, r, edge, center] = dot ? DOT_POS[size] : BADGE_POS[size];
 
   const horizontal = `calc(${left ? `${l}rem` : r} + ${ox}rem)`;
   const vertical = placement === 'center'
@@ -138,14 +149,15 @@ const positionStyle = computed<Record<string, string>>(() => {
 <template>
   <div :class="ui.wrapper()">
     <slot />
+    <!-- under reduced motion the badge appears and leaves at full size, with no scale -->
     <Transition
       appear
-      enter-active-class="transform ease-out duration-200"
-      enter-from-class="scale-0"
+      enter-active-class="transition-[scale] ease-out duration-200 motion-reduce:transition-none"
+      enter-from-class="scale-0 motion-reduce:scale-100"
       enter-to-class="scale-100"
-      leave-active-class="transform ease-in duration-150"
+      leave-active-class="transition-[scale] ease-in duration-150 motion-reduce:transition-none"
       leave-from-class="scale-100"
-      leave-to-class="scale-0"
+      leave-to-class="scale-0 motion-reduce:scale-100"
     >
       <div
         v-if="modelValue"
@@ -155,13 +167,13 @@ const positionStyle = computed<Record<string, string>>(() => {
         :data-dot="dot || undefined"
         :data-left="left || undefined"
         aria-atomic="true"
-        aria-label="Badge"
         aria-live="polite"
         role="status"
       >
+        <!-- no aria-label: on a live region it replaced the count, so a reader announced "Badge" -->
         <span
           v-if="!dot"
-          :class="ui.content({ class: hasIconAndText ? 'px-2.5' : undefined })"
+          :class="ui.content({ class: hasIconAndText ? 'px-2' : undefined })"
         >
           <slot name="badge">
             {{ text }}
@@ -170,8 +182,6 @@ const positionStyle = computed<Record<string, string>>(() => {
             <RuiIcon
               v-if="icon"
               :name="icon"
-              size="16"
-              :class="{ 'ml-0.5': hasText }"
             />
           </slot>
         </span>

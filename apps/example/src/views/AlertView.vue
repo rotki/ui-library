@@ -61,5 +61,12 @@ onBeforeMount(() => {
         @close="alert.closed = true"
       />
     </div>
+
+    <RuiAlert
+      class="mt-6"
+      type="info"
+      description="A description alone, with no title above it."
+      data-id="alert-no-title"
+    />
   </ComponentView>
 </template>
