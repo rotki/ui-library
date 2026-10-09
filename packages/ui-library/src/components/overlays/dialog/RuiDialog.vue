@@ -72,8 +72,8 @@ const style = computed<{ width: string | undefined; maxWidth: string | undefined
 const dialog = tv({
   slots: {
     root: 'fixed inset-0',
-    overlay: 'absolute inset-0 backdrop-blur bg-rui-grey-500/50 dark:bg-black/50',
-    content: 'absolute left-1/2 bottom-0 -translate-x-1/2 outline-none overflow-y-auto max-h-[90vh]',
+    overlay: 'absolute inset-0 backdrop-blur-sm bg-rui-grey-500/50 dark:bg-black/50',
+    content: 'absolute left-1/2 bottom-0 -translate-x-1/2 outline-hidden overflow-y-auto max-h-[90vh]',
   },
   variants: {
     bottomSheet: {

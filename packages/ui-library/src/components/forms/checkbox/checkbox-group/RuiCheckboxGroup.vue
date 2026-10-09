@@ -79,7 +79,7 @@ provide(RuiCheckboxGroupContextKey, {
         ﹡
       </span>
     </div>
-    <div :class="{ 'flex space-x-6': inline }">
+    <div :class="{ 'flex between:ml-6 between:mr-0': inline }">
       <slot />
     </div>
     <RuiFormTextDetail

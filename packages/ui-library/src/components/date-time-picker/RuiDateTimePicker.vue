@@ -577,7 +577,7 @@ defineExpose({
             ref="textInput"
             :disabled="disabled"
             :value="formattedDisplay"
-            class="bg-transparent outline-none flex-1 min-w-0"
+            class="bg-transparent outline-hidden flex-1 min-w-0"
             type="text"
             inputmode="numeric"
             spellcheck="false"
@@ -618,7 +618,7 @@ defineExpose({
           :aria-label="clearLabel"
           :class="[
             ui.clear(),
-            anyFocused && '!visible',
+            anyFocused && 'visible!',
             { 'mr-2': !dense },
           ]"
           @click.stop.prevent="clear()"

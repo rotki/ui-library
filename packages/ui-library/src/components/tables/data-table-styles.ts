@@ -3,10 +3,10 @@ import { tv } from '@/utils/tv';
 export const dataTableStyles = tv({
   slots: {
     // `clip`, not `hidden`: a hidden-overflow flex item may shrink below its rows and hide them
-    wrapper: 'relative divide-y divide-black/[0.12] dark:divide-white/[0.12] overflow-clip',
+    wrapper: 'relative between:border-t between:border-b-0 between:border-black/12 dark:between:border-white/12 overflow-clip',
     scroller: 'overflow-x-auto overflow-y-hidden [clip-path:inset(0_0_0_0)]',
-    table: 'min-w-full table-fixed divide-y divide-black/[0.12] dark:divide-white/[0.12] whitespace-nowrap mx-auto my-0 max-w-fit relative border-black/[0.12] dark:border-white/[0.12]',
-    tbody: 'divide-y divide-black/[0.12] dark:divide-white/[0.12]',
+    table: 'min-w-full table-fixed between:border-t between:border-b-0 between:border-black/12 dark:between:border-white/12 whitespace-nowrap mx-auto my-0 max-w-fit relative border-black/12 dark:border-white/12',
+    tbody: 'between:border-t between:border-b-0 between:border-black/12 dark:between:border-white/12',
     tr: 'hover:bg-black/[0.04] dark:hover:bg-white/[0.04]',
     td: '[:where(&)]:px-4 text-rui-text text-body-2 tabular-nums [text-wrap:initial]',
     checkbox: 'px-2 w-[3.625rem] max-w-[3.625rem] [&_label]:ml-0',
@@ -39,10 +39,10 @@ export const dataTableStyles = tv({
     },
     mobile: {
       true: {
-        wrapper: 'divide-y-0 border-0 rounded-none overflow-visible',
+        wrapper: 'between:border-t-0 border-0 rounded-none overflow-visible',
         scroller: 'overflow-visible [clip-path:none]',
-        table: 'block min-w-0 max-w-none w-full whitespace-normal divide-y-0 border-0',
-        tbody: 'block divide-y-0',
+        table: 'block min-w-0 max-w-none w-full whitespace-normal between:border-t-0 border-0',
+        tbody: 'block between:border-t-0',
         tr: 'block',
         td: 'block px-4 py-2',
       },

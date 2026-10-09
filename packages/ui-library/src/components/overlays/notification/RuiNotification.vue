@@ -26,7 +26,7 @@ const style = computed<{ width: string | undefined }>(() => ({
   width: transformPropsUnit(width),
 }));
 
-const rootStyle = tv({ base: 'top-2 right-2 fixed drop-shadow-lg rounded-sm z-50' });
+const rootStyle = tv({ base: 'top-2 right-2 fixed drop-shadow-lg rounded-xs z-50' });
 
 const { start, stop } = useTimeoutFn(() => {
   set(modelValue, false);

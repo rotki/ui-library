@@ -29,7 +29,8 @@ const vitestConfig = defineConfig({
       reportsDirectory: 'tests/coverage',
       reporter: ['html', 'json'],
       include: ['src/**'],
-      exclude: ['node_modules', 'tests/', '**/*.d.ts', 'src/**/*.stories.ts', 'src/**/__test__/**'],
+      // stylesheets are Tailwind source, which the coverage parser reads as JavaScript and fails on
+      exclude: ['node_modules', 'tests/', '**/*.d.ts', '**/*.css', 'src/**/*.stories.ts', 'src/**/__test__/**'],
     },
     projects: [
       {

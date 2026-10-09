@@ -30,10 +30,11 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
-    "./theme": {
-      "types": "./dist/theme/index.d.ts",
-      "import": "./dist/theme/index.js",
-      "default": "./dist/theme/index.js"
+    "./tailwind.css": {
+      "default": "./dist/tailwind.css"
+    },
+    "./theme.css": {
+      "default": "./dist/theme.css"
     },
     "./components": {
       "types": "./dist/components/index.d.ts",
@@ -59,9 +60,6 @@
   },
   "typesVersions": {
     "*": {
-      "theme": [
-        "./dist/theme/index.d.ts"
-      ],
       "composables": [
         "./dist/composables/index.d.ts"
       ],
@@ -81,16 +79,17 @@
   ],
   "scripts": {
     "build:prod": "tsx scripts/dist-build.mjs",
-    "build": "pnpm run generate-icons && vite build && cp src/vite-plugin/client.d.ts dist/vite-plugin/",
+    "build": "pnpm run generate-icons && vite build && cp src/vite-plugin/client.d.ts dist/vite-plugin/ && tsx scripts/copy-css.ts",
     "build:storybook": "STORYBOOK=true storybook build",
-    "build:tailwind": "tailwindcss -o dist/style.css --minify",
     "build:types": "vue-tsc -p tsconfig.build.json",
     "build:web-types": "tsx scripts/build-web-types.mjs",
     "generate-icons": "tsx scripts/generate-icons.ts",
+    "generate-theme": "tsx scripts/generate-theme.ts",
     "resolve:alias": "tsc-alias --replacer ./scripts/tsc-alias-replacer.cjs -p tsconfig.build.json --dir dist",
     "scan:library-icons": "tsx scripts/scan-library-icons.ts",
     "verify:dist": "tsx scripts/verify-dist.ts",
     "verify:tree-shaking": "tsx scripts/verify-tree-shaking.ts",
+    "verify:css-size": "tsx scripts/verify-css-size.ts",
     "dev": "vite",
     "prepare": "node scripts/prepare.mjs",
     "storybook": "storybook dev -p 6006",
@@ -134,6 +133,7 @@
     "@storybook/addon-themes": "catalog:",
     "@storybook/addon-vitest": "catalog:",
     "@storybook/vue3-vite": "catalog:",
+    "@tailwindcss/vite": "catalog:",
     "@tsconfig/node24": "catalog:",
     "@types/node": "catalog:",
     "@types/tinycolor2": "catalog:",
@@ -144,7 +144,6 @@
     "@vitest/ui": "catalog:",
     "@vue/test-utils": "catalog:",
     "@vue/tsconfig": "catalog:",
-    "autoprefixer": "catalog:",
     "cac": "catalog:",
     "consola": "catalog:",
     "fast-glob": "catalog:",
@@ -153,7 +152,6 @@
     "happy-dom": "catalog:",
     "lucide": "catalog:",
     "msw": "catalog:",
-    "postcss": "catalog:",
     "storybook": "catalog:",
     "tailwindcss": "catalog:",
     "tsc-alias": "catalog:",

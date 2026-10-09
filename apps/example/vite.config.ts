@@ -1,5 +1,6 @@
 import { fileURLToPath, URL } from 'node:url';
 import { ruiIconsPlugin } from '@rotki/ui-library/vite-plugin';
+import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import AutoImport from 'unplugin-auto-import/vite';
 import { defineConfig } from 'vite';
@@ -12,6 +13,7 @@ export default defineConfig({
       routesFolder: 'src/pages',
       dts: 'src/route-map.d.ts',
     }),
+    tailwindcss(),
     vue(),
     ruiIconsPlugin({
       debug: true,

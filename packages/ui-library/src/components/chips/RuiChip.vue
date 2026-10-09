@@ -61,10 +61,10 @@ defineSlots<{
 
 const chipStyles = tv({
   slots: {
-    root: 'inline-flex items-center justify-between px-2 py-1 transition-all cursor-default outline-none max-w-full truncate',
+    root: 'inline-flex items-center justify-between px-2 py-1 transition-all cursor-default outline-hidden max-w-full truncate',
     prepend: 'rounded-full flex items-center justify-center pr-0 w-6 h-6 text-[0.6rem] text-white bg-rui-grey-400 dark:bg-rui-grey-700 overflow-hidden',
     label: 'truncate px-2 text-[0.8125rem]',
-    close: 'rounded-full flex items-center p-[0.13rem] pl-0 inset-y-0 focus:outline-none',
+    close: 'rounded-full flex items-center p-[0.13rem] pl-0 inset-y-0 focus:outline-hidden',
     closeIcon: 'opacity-50 hover:opacity-80 dark:hover:text-rui-grey-300 transition-opacity',
   },
   variants: {
@@ -109,8 +109,8 @@ const chipStyles = tv({
 
     // Grey filled/outlined
     { color: 'grey', variant: 'filled', class: { root: 'bg-rui-grey-200 dark:bg-rui-grey-800' } },
-    { color: 'grey', variant: 'outlined', class: { root: 'border border-black/[0.26] bg-transparent dark:border-white/[0.26]' } },
-    { color: 'grey', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-black/[0.04] focus:bg-black/[0.12] dark:hover:bg-white/[0.04] dark:focus:bg-white/[0.12]' } },
+    { color: 'grey', variant: 'outlined', class: { root: 'border border-black/26 bg-transparent dark:border-white/26' } },
+    { color: 'grey', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-black/4 focus:bg-black/12 dark:hover:bg-white/4 dark:focus:bg-white/12' } },
 
     // Context colors — filled bg
     { color: 'primary', variant: 'filled', class: { root: 'bg-rui-primary' } },
@@ -129,12 +129,12 @@ const chipStyles = tv({
     { color: 'success', variant: 'outlined', class: { root: 'border text-rui-success border-rui-success/50 bg-transparent' } },
 
     // Context colors — outlined interactive
-    { color: 'primary', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-primary/[0.04] focus:bg-rui-primary/[0.12]' } },
-    { color: 'secondary', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-secondary/[0.04] focus:bg-rui-secondary/[0.12]' } },
-    { color: 'error', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-error/[0.04] focus:bg-rui-error/[0.12]' } },
-    { color: 'warning', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-warning/[0.04] focus:bg-rui-warning/[0.12]' } },
-    { color: 'info', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-info/[0.04] focus:bg-rui-info/[0.12]' } },
-    { color: 'success', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-success/[0.04] focus:bg-rui-success/[0.12]' } },
+    { color: 'primary', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-primary/4 focus:bg-rui-primary/12' } },
+    { color: 'secondary', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-secondary/4 focus:bg-rui-secondary/12' } },
+    { color: 'error', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-error/4 focus:bg-rui-error/12' } },
+    { color: 'warning', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-warning/4 focus:bg-rui-warning/12' } },
+    { color: 'info', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-info/4 focus:bg-rui-info/12' } },
+    { color: 'success', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-success/4 focus:bg-rui-success/12' } },
   ],
   compoundSlots: [
     // All context colors filled share dark text

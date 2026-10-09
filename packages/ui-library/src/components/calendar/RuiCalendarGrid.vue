@@ -38,7 +38,7 @@ const today = new Date();
 const todayKey = createDateKey(today);
 
 const dayButton = tv({
-  base: 'h-9 w-full flex items-center justify-center text-sm rounded-full mx-auto max-w-[2.25rem] transition-colors duration-150 ease-in-out border-none outline-none cursor-pointer focus:ring-2 focus:ring-rui-primary focus:ring-opacity-50',
+  base: 'h-9 w-full flex items-center justify-center text-sm rounded-full mx-auto max-w-9 transition-colors duration-150 ease-in-out border-none outline-hidden cursor-pointer focus:ring-2 focus:ring-rui-primary/50',
   variants: {
     selected: {
       true: 'bg-rui-primary text-white hover:bg-rui-primary/90 dark:hover:bg-rui-primary/90',

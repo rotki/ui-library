@@ -465,7 +465,7 @@ onMounted(() => {
           v-if="showMillisecond"
           role="button"
           aria-label="Select milliseconds"
-          :class="ui.digit({ active: editMode === 'millisecond', class: '!text-lg' })"
+          :class="ui.digit({ active: editMode === 'millisecond', class: 'text-lg!' })"
           @click="editMode = 'millisecond'"
         >
           {{ formatValue(selectedMillisecond, 3) }}

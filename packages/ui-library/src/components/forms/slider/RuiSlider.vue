@@ -131,7 +131,7 @@ const innerStyle = computed<Record<string, string>>(() => {
   const style: Record<string, string> = { width: vertical ? h : w, height: vertical ? w : h };
   if (vertical) {
     style['transform-origin'] = '0 0';
-    style['--tw-translate-y'] = h;
+    style['--rui-slider-shift'] = h;
   }
   return style;
 });

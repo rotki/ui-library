@@ -115,7 +115,7 @@ describe('components/overlays/badge/RuiBadge.vue', () => {
     expect(badge.classes()).toContain('rounded-full');
 
     await wrapper.setProps({ rounded: 'sm' });
-    expect(badge.classes()).toContain('rounded-sm');
+    expect(badge.classes()).toContain('rounded-xs');
 
     await wrapper.setProps({ rounded: 'lg' });
     expect(badge.classes()).toContain('rounded-lg');
@@ -170,11 +170,11 @@ describe('components/overlays/badge/RuiBadge.vue', () => {
 
     expect(wrapper.find('svg[aria-hidden]').exists()).toBeTruthy();
     expect(badge.classes()).toContain('rounded-full');
-    expect(badge.classes()).not.toContain('rounded-sm');
+    expect(badge.classes()).not.toContain('rounded-xs');
 
     await wrapper.setProps({ rounded: 'sm' });
 
-    expect(badge.classes()).toContain('rounded-sm');
+    expect(badge.classes()).toContain('rounded-xs');
     expect(badge.classes()).not.toContain('rounded-full');
   });
 });

@@ -1,5 +1,6 @@
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
+import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import AutoImport from 'unplugin-auto-import/vite';
 import { defineConfig } from 'vitest/config';
@@ -23,6 +24,7 @@ export default defineConfig({
     },
   },
   plugins: [
+    tailwindcss(),
     vue(),
     AutoImport({
       imports: ['vue', '@vueuse/core', { '@vueuse/shared': ['get', 'set'] }],
@@ -39,7 +41,6 @@ export default defineConfig({
         'index': resolve(__dirname, 'src/index.ts'),
         'components/index': resolve(__dirname, 'src/components/index.ts'),
         'composables/index': resolve(__dirname, 'src/composables/index.ts'),
-        'theme/index': resolve(__dirname, 'src/theme/index.ts'),
         'vite-plugin/index': resolve(__dirname, 'src/vite-plugin/index.ts'),
       },
       formats: ['es'],

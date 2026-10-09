@@ -67,7 +67,7 @@ const groupParts = computed<{ key: string; label: string; value: string }[]>(() 
       :toggle="() => onToggleExpandGroup(row.group, row.identifier)"
     >
       <td
-        class="!px-4 !py-2"
+        class="px-4! py-2!"
         :class="[classes.td, { 'h-auto': !isMobile }]"
         :colspan="colspan"
       >
@@ -98,7 +98,7 @@ const groupParts = computed<{ key: string; label: string; value: string }[]>(() 
               </span>
             </span>
             <span
-              class="rounded-full bg-black/[0.06] dark:bg-white/[0.08] px-2 text-caption text-rui-text-secondary"
+              class="rounded-full bg-black/6 dark:bg-white/8 px-2 text-caption text-rui-text-secondary"
               data-id="group-size"
             >
               {{ groupSize }}

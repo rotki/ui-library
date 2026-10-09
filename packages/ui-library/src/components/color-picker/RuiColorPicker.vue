@@ -45,7 +45,7 @@ watch(
   { immediate: true },
 );
 
-const rootStyle = tv({ base: 'relative select-none bg-initial' });
+const rootStyle = tv({ base: 'relative select-none' });
 </script>
 
 <template>

@@ -85,7 +85,7 @@ function onSelect(column: TableColumn<T>): void {
         :key="column.key.toString()"
         variant="text"
         size="sm"
-        class="!justify-between w-full !rounded-none"
+        class="justify-between! w-full rounded-none!"
         :data-id="`table-mobile-sort-option-${column.key}`"
         :data-active="isActive(column.key)"
         :data-direction="sortDirection(column.key)"

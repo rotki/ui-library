@@ -36,7 +36,7 @@ describe('components/forms/checkbox/checkbox-group/RuiCheckboxGroup.vue', () => 
     await wrapper.setProps({ inline: true });
     const updatedWrapper = wrapper.findAll('div[role=group] > div')[0];
     expect(updatedWrapper?.classes()).toContain('flex');
-    expect(updatedWrapper?.classes()).toContain('space-x-6');
+    expect(updatedWrapper?.classes()).toContain('between:ml-6');
   });
 
   it('should pass hint props', async () => {

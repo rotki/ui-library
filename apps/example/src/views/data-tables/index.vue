@@ -84,14 +84,14 @@ const sections = [
       >
         <RuiCard
           variant="outlined"
-          class="h-full hover:border-primary transition-colors cursor-pointer"
+          class="h-full hover:border-rui-primary transition-colors cursor-pointer"
           :data-id="`link-${section.route}`"
         >
           <template #header>
             <div class="flex items-center gap-2">
               <RuiIcon
                 :name="section.icon"
-                class="text-primary"
+                class="text-rui-primary"
               />
               <span>{{ section.title }}</span>
             </div>

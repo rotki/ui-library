@@ -119,8 +119,8 @@ const emit = defineEmits<{
 
 const tableHeadStyles = tv({
   slots: {
-    thead: 'divide-y divide-black/[0.12] dark:divide-white/[0.12]',
-    checkbox: 'px-2 w-[3.625rem] max-w-[3.625rem] [&_label]:ml-0',
+    thead: 'between:border-t between:border-b-0 between:border-black/12 dark:between:border-white/12',
+    checkbox: 'px-2 w-14.5 max-w-14.5 [&_label]:ml-0',
     th: '[:where(&)]:px-4',
     // labels read as secondary to the data; the sorted column's label steps up to primary
     columnText: 'text-rui-text-secondary font-medium text-[0.875rem] leading-6',
@@ -138,7 +138,7 @@ const tableHeadStyles = tv({
       sticky: { thead: 'top-0 z-10 absolute' },
       fixed: {
         thead: 'top-0 z-10 fixed',
-        th: 'bg-white dark:bg-[#121212] border-b border-b-black/[0.12] dark:border-b-white/[0.12]',
+        th: 'bg-white dark:bg-[#121212] border-b border-b-black/12 dark:border-b-white/12',
       },
     },
     // a fixed height evens out rows with and without sort buttons; `:where()` lets a column's `class` win
@@ -170,7 +170,7 @@ function getSortIconClass(key: TableColumn<T>['key']): string | undefined {
   if (!isSortedBy(key))
     return undefined;
   const direction = getSortDirection(key);
-  return `!opacity-100 ${direction === SortDirection.asc ? 'rotate-180' : 'rotate-0'}`;
+  return `opacity-100! ${direction === SortDirection.asc ? 'rotate-180' : 'rotate-0'}`;
 }
 
 /**

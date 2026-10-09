@@ -9,7 +9,6 @@ import App from '@/App.vue';
 import { router } from '@/router';
 import { useDefaultsStore } from '@/stores/defaults';
 import '@/assets/main.css';
-import '@rotki/ui-library/style.css';
 import '@fontsource/roboto/latin.css';
 
 // Create i18n instance

@@ -1,0 +1,146 @@
+/*
+ * The library for a consumer's own Tailwind 4 build:
+ *
+ *   @import 'tailwindcss';
+ *   @import '@rotki/ui-library/tailwind.css';
+ *
+ * It carries the theme tokens, the color values and the library's variants and utilities, and
+ * points Tailwind at the built components, so the consumer's build generates the classes they use
+ * once, in the same layers as its own. Nothing is shipped twice, and a class passed to a component
+ * competes with the component's classes as any two Tailwind classes do.
+ *
+ * `style.css` wraps this file with Tailwind itself, prebuilt, for an app without Tailwind.
+ */
+@import './theme/theme.css';
+@import './styles/colors.css' layer(base);
+
+/* The built components and their helpers; paths resolve from this file, next to them in dist. */
+@source './**/*.js';
+@source not './vite-plugin';
+
+/* `elevation` builds the class at runtime, so no source file names these. */
+@source inline('shadow-{1..24}');
+
+/*
+ * Tailwind 3's divide and space selector. Tailwind 4's `divide-*` and
+ * `space-*` style every child but the last (the bottom border, the end
+ * margin) inside a zero-specificity `:where()`, so a child's own `border-0`
+ * erases the line, a `border-t-0` on the row below no longer removes it, and
+ * a `w-full` child lays out differently. The components write them as
+ * `between:border-t` and `between:ml-2` and keep the old placement and weight.
+ */
+@custom-variant between (& > :not([hidden]) ~ :not([hidden]));
+
+@theme {
+  --animate-buffer-pulse: buffer-pulse 3s ease-in-out 3s infinite;
+  --animate-slide-rail: slide-rail 1.6s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+  --animate-collapse-stroke: collapse-stroke 1.4s ease-in-out infinite;
+  --animate-circular-spin: spin 1.4s linear infinite;
+
+  @keyframes buffer-pulse {
+    0% {
+      opacity: 0.2;
+      left: -100%;
+    }
+    50% {
+      opacity: 1.5;
+      left: -100%;
+    }
+    60% {
+      opacity: 0.4;
+      left: -75%;
+    }
+    100% {
+      opacity: 0.2;
+      left: -100%;
+    }
+  }
+
+  @keyframes slide-rail {
+    0% {
+      left: -35%;
+      right: 100%;
+    }
+    60% {
+      left: 100%;
+      right: -90%;
+    }
+    100% {
+      left: 100%;
+      right: -90%;
+    }
+  }
+
+  @keyframes collapse-stroke {
+    0% {
+      stroke-dasharray: 1px, 200px;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 100px, 200px;
+      stroke-dashoffset: -15px;
+    }
+    100% {
+      stroke-dasharray: 100px, 200px;
+      stroke-dashoffset: -125px;
+    }
+  }
+}
+
+/*
+ * Tailwind 3 preflight defaults that Tailwind 4 changed, kept so components and
+ * consumer markup look the same after the move. The colors are Tailwind 3's
+ * gray-200 and gray-400 as hex: Tailwind 4's grays are oklch and slightly off.
+ */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: #e5e7eb;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #9ca3af;
+  }
+
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+
+  html,
+  body,
+  html * {
+    font-family: 'Roboto', sans-serif;
+  }
+
+  body {
+    scroll-behavior: smooth;
+  }
+}
+
+@utility no-scrollbar {
+  /* Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+@utility bg-hue-spectrum {
+  background-image: linear-gradient(
+    to right,
+    red 0%,
+    yellow 16.66%,
+    lime 33.33%,
+    cyan 50%,
+    blue 66.66%,
+    magenta 83.33%,
+    red 100%
+  );
+}

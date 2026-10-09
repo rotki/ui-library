@@ -21,11 +21,11 @@ const { options, disabled = false, label, name = '', variant: selectVariant = 'd
 
 const selectClass = tv({
   base: [
-    'outline-none focus:outline-none appearance-none cursor-pointer pl-2 py-1 pr-8 rounded',
+    'outline-hidden focus:outline-hidden appearance-none cursor-pointer pl-2 py-1 pr-8 rounded-sm',
     'm-0 w-full transition [font:inherit]',
     'bg-white hover:bg-gray-50',
     'dark:bg-transparent dark:hover:bg-white/10 dark:text-rui-text-disabled',
-    'disabled:bg-black/[.12] disabled:text-rui-text-disabled disabled:active:text-rui-text-disabled disabled:cursor-default',
+    'disabled:bg-black/12 disabled:text-rui-text-disabled disabled:active:text-rui-text-disabled disabled:cursor-default',
     'dark:disabled:bg-white/10',
   ].join(' '),
   variants: {

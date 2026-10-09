@@ -80,7 +80,7 @@ const actionConfig = computed<ActionConfig[]>(() => {
 
 <template>
   <div class="flex flex-col">
-    <div class="flex divide-x divide-rui-grey-200 dark:divide-rui-grey-800">
+    <div class="flex between:border-l between:border-r-0 between:border-rui-grey-200 dark:between:border-rui-grey-800">
       <RuiCalendar
         v-model="selectedDate"
         v-model:menu-open="calendarMenuOpen"

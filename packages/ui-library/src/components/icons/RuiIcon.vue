@@ -26,13 +26,13 @@ type SvgComponent = [tag: string, attrs: Record<string, string>];
 
 /**
  * The icon's box is always driven by `--rui-icon-size`, so flex shrinking is
- * never wanted: `shrink-0` keeps the size beside a long flex-grow sibling,
+ * never wanted: `shrink-0` keeps the size beside a long grow sibling,
  * such as a `w-full` button label in `variant="list"`. Without it the svg is
  * compressed along the main axis while its height stays put, drawing a sliver
  * of a glyph.
  */
 const iconStyles = tv({
-  base: 'shrink-0 w-[var(--rui-icon-size,1.5rem)] h-[var(--rui-icon-size,1.5rem)]',
+  base: 'shrink-0 w-(--rui-icon-size,1.5rem) h-(--rui-icon-size,1.5rem)',
   variants: {
     color: {
       primary: 'text-rui-primary',

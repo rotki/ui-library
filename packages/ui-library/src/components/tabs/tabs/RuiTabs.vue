@@ -62,13 +62,13 @@ const tabs = tv({
     layout: {
       [TabLayout.horizontal]: {
         root: 'flex h-fit',
-        arrow: 'h-[3rem] w-10',
-        bar: 'h-[3rem]',
+        arrow: 'h-12 w-10',
+        bar: 'h-12',
         wrapper: '',
       },
       [TabLayout.vertical]: {
         root: 'inline-flex flex-col',
-        arrow: 'min-h-[3rem] w-full',
+        arrow: 'min-h-12 w-full',
         bar: '',
         wrapper: 'flex-col h-auto',
       },
@@ -218,7 +218,7 @@ onMounted(() => {
       :class="ui.arrow()"
     >
       <RuiButton
-        class="w-full h-full !rounded-none"
+        class="w-full h-full rounded-none!"
         variant="text"
         :color="color"
         :disabled="prevArrowDisabled"
@@ -250,7 +250,7 @@ onMounted(() => {
       :class="ui.arrow()"
     >
       <RuiButton
-        class="w-full h-full !rounded-none"
+        class="w-full h-full rounded-none!"
         variant="text"
         :color="color"
         :disabled="nextArrowDisabled"

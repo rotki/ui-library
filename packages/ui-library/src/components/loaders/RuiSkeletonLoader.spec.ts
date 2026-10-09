@@ -36,7 +36,7 @@ describe('components/loaders/RuiSkeletonLoader.vue', () => {
     wrapper = createWrapper({
       props: { type: 'button' },
     });
-    expect(wrapper.find('div[role=alert]').classes()).toContain('h-[2.25rem]');
+    expect(wrapper.find('div[role=alert]').classes()).toContain('h-9');
   });
 
   it('should render icon type', () => {
@@ -96,7 +96,7 @@ describe('components/loaders/RuiSkeletonLoader.vue', () => {
     expect(wrapper.get('div[role=alert]').classes()).toContain('rounded-full');
 
     await wrapper.setProps({ rounded: 'sm' });
-    expect(wrapper.get('div[role=alert]').classes()).toContain('rounded-sm');
+    expect(wrapper.get('div[role=alert]').classes()).toContain('rounded-xs');
 
     await wrapper.setProps({ rounded: 'none' });
     expect(wrapper.get('div[role=alert]').classes()).toContain('rounded-none');

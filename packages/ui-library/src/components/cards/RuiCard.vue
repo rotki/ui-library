@@ -54,20 +54,20 @@ const card = tv({
     root: 'flex flex-col h-full w-full bg-white dark:bg-[#1E1E1E]',
     image: 'overflow-hidden',
     content: 'text-body-1 text-rui-light-text dark:text-rui-dark-text overflow-y-auto',
-    footer: 'flex space-x-2 items-center justify-start mt-auto',
+    footer: 'flex between:ml-2 between:mr-0 items-center justify-start mt-auto',
   },
   variants: {
     variant: {
       flat: { root: '' },
-      outlined: { root: 'border border-black/[0.12] dark:border-white/[0.12]' },
+      outlined: { root: 'border border-black/12 dark:border-white/12' },
     },
     rounded: {
       sm: { root: 'rounded-[.25rem]', image: 'rounded-t-[.25rem]' },
       md: { root: 'rounded-[.5rem]', image: 'rounded-t-[.5rem]' },
-      lg: { root: 'rounded-[1rem]', image: 'rounded-t-[1rem]' },
+      lg: { root: 'rounded-2xl', image: 'rounded-t-2xl' },
     },
     divide: {
-      true: { root: 'divide-y divide-black/[0.12] dark:divide-white/[0.12]' },
+      true: { root: 'between:border-t between:border-b-0 between:border-black/12 dark:between:border-white/12' },
     },
     padding: {
       none: { content: 'p-0' },

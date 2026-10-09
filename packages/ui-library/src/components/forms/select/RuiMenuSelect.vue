@@ -282,7 +282,7 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
           <span
             v-if="clearable && value && !disabled"
             data-id="clear"
-            :class="[ui.clear(), focused && '!visible', { 'mr-2': !dense }]"
+            :class="[ui.clear(), focused && 'visible!', { 'mr-2': !dense }]"
             @click.stop.prevent="clear()"
           >
             <RuiIcon

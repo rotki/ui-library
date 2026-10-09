@@ -14,7 +14,7 @@ export function getCheckControlIconSize(size?: 'sm' | 'lg'): number {
 export const checkControlStyles = tv({
   slots: {
     wrapper: 'relative flex items-start cursor-pointer -ml-[0.5625rem]',
-    input: 'peer appearance-none w-px h-px absolute z-[2] outline-none select-none',
+    input: 'peer appearance-none w-px h-px absolute z-[2] outline-hidden select-none',
     control: [
       'relative text-rui-text-secondary p-[0.5625rem]',
       `before:content-[''] before:absolute before:top-1/2 before:left-1/2 before:block before:size-[2.625rem]`,

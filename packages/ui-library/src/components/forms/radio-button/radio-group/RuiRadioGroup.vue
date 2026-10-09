@@ -75,7 +75,7 @@ const children = computed<VNode[]>(() => {
         ﹡
       </span>
     </div>
-    <div :class="{ 'flex space-x-6': inline }">
+    <div :class="{ 'flex between:ml-6 between:mr-0': inline }">
       <Component
         :is="child"
         v-for="(child, i) in children"

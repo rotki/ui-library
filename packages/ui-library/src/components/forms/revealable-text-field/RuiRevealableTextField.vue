@@ -69,11 +69,11 @@ const hidden = ref<boolean>(true);
           type="button"
           icon
           data-id="toggle-visibility"
-          class="-mr-1 !p-2"
+          class="-mr-1 p-2!"
           @click="hidden = !hidden"
         >
           <RuiIcon
-            class="text-black/[.54] dark:text-white/[.56]"
+            class="text-black/54 dark:text-white/[.56]"
             size="20"
             :name="hidden ? 'lu-eye-off' : 'lu-eye'"
           />

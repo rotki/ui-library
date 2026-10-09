@@ -41,9 +41,9 @@ import { tv } from '@/utils/tv';
 export const buttonStyles = tv({
   slots: {
     root: [
-      'text-sm leading-5 font-medium outline outline-1 outline-transparent outline-offset-[-1px]',
+      'text-sm leading-5 font-medium outline-solid outline-1 outline-transparent -outline-offset-1',
       'flex items-center justify-center gap-x-2',
-      'px-4 py-1.5 rounded transition-all',
+      'px-4 py-1.5 rounded-sm transition-all',
       '[--rui-icon-size:1.125rem]',
       'disabled:cursor-not-allowed',
       'focus-visible:!ring-2',

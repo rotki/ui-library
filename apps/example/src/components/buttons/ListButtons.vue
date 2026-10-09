@@ -24,7 +24,7 @@ const sizes = ['xs', 'sm', undefined, 'lg', 'xl', '2xl'] as const;
       <div
         v-for="size in sizes"
         :key="size ?? 'md'"
-        class="rounded border border-rui-grey-300 dark:border-rui-grey-700 overflow-hidden w-56"
+        class="rounded-sm border border-rui-grey-300 dark:border-rui-grey-700 overflow-hidden w-56"
         :data-id="`list-button-card-${size ?? 'md'}`"
       >
         <div class="px-3 py-2 text-caption text-rui-text-secondary border-b border-rui-grey-200 dark:border-rui-grey-800">

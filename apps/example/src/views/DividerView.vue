@@ -15,7 +15,7 @@ import ComponentView from '@/components/ComponentView.vue';
           Horizontal (Default)
         </h3>
         <div
-          class="p-4 border rounded"
+          class="p-4 border rounded-sm"
           data-id="divider-horizontal"
         >
           <p>Content above</p>
@@ -29,7 +29,7 @@ import ComponentView from '@/components/ComponentView.vue';
           Vertical
         </h3>
         <div
-          class="flex items-center gap-4 p-4 border rounded h-20"
+          class="flex items-center gap-4 p-4 border rounded-sm h-20"
           data-id="divider-vertical"
         >
           <span>Left</span>

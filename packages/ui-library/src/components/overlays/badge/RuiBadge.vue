@@ -67,7 +67,7 @@ const badgeStyles = tv({
       lg: { badge: 'min-h-6 min-w-6' },
     },
     rounded: {
-      sm: { badge: 'rounded-sm' },
+      sm: { badge: 'rounded-xs' },
       md: { badge: 'rounded-md' },
       lg: { badge: 'rounded-lg' },
       full: { badge: 'rounded-full' },

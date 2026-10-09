@@ -62,12 +62,12 @@ const stepper = tv({
       [StepperOrientation.horizontal]: {
         root: 'whitespace-nowrap lg:whitespace-normal',
         step: '',
-        divider: 'block max-w-full min-w-[1rem] h-0 max-h-0 self-center -mx-4 my-0 border-t [flex:1_1_0]',
+        divider: 'block max-w-full min-w-4 h-0 max-h-0 self-center -mx-4 my-0 border-t flex-[1_1_0]',
       },
       [StepperOrientation.vertical]: {
         root: 'flex-col inline-flex',
         step: 'px-0 py-6',
-        divider: 'block min-h-[3rem] min-w-0 max-h-full h-full self-start -my-4 mx-3 border-l',
+        divider: 'block min-h-12 min-w-0 max-h-full h-full self-start -my-4 mx-3 border-l',
       },
     },
     state: {

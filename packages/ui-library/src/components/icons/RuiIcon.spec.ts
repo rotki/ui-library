@@ -41,7 +41,7 @@ describe('components/icons/RuiIcon.vue', () => {
     expect(classes).toContain('size-4');
     // the variant colour and the base box must be gone, not merely outranked
     expect(classes).not.toContain('text-rui-primary');
-    expect(classes).not.toContain('w-[var(--rui-icon-size,1.5rem)]');
+    expect(classes).not.toContain('w-(--rui-icon-size,1.5rem)');
     // untouched base classes stay
     expect(classes).toContain('shrink-0');
     expect(classes).toContain('rui-icon');
@@ -134,8 +134,8 @@ describe('components/icons/RuiIcon.vue', () => {
     });
 
     expect(wrapper.attributes('style')).toBeUndefined();
-    expect(wrapper.classes()).toContain('w-[var(--rui-icon-size,1.5rem)]');
-    expect(wrapper.classes()).toContain('h-[var(--rui-icon-size,1.5rem)]');
+    expect(wrapper.classes()).toContain('w-(--rui-icon-size,1.5rem)');
+    expect(wrapper.classes()).toContain('h-(--rui-icon-size,1.5rem)');
   });
 
   it('should keep the var-driven sizing classes when size prop is set', () => {
@@ -147,8 +147,8 @@ describe('components/icons/RuiIcon.vue', () => {
     });
 
     // The classes stay; the size prop just changes the custom property.
-    expect(wrapper.classes()).toContain('w-[var(--rui-icon-size,1.5rem)]');
-    expect(wrapper.classes()).toContain('h-[var(--rui-icon-size,1.5rem)]');
+    expect(wrapper.classes()).toContain('w-(--rui-icon-size,1.5rem)');
+    expect(wrapper.classes()).toContain('h-(--rui-icon-size,1.5rem)');
   });
 
   it('should carry shrink-0 so a flex sibling cannot squeeze the icon below --rui-icon-size', () => {

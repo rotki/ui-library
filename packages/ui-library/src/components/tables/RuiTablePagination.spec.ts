@@ -160,13 +160,13 @@ describe('components/tables/RuiTablePagination.vue', () => {
 
     const wrapperEl = wrapper.find('[data-id="table-pagination-navigation"]').element.parentElement;
     expect(wrapperEl?.className).toContain('gap-x-4');
-    expect(wrapper.find('[data-id="table-pagination-limit"] [data-id="activator"]').classes()).toContain('!min-h-7');
+    expect(wrapper.find('[data-id="table-pagination-limit"] [data-id="activator"]').classes()).toContain('min-h-7!');
   });
 
   it('uses 32px selects outside dense mode', () => {
     wrapper = createWrapper({ page: 1, total: 50, limit: 10 });
 
-    expect(wrapper.find('[data-id="table-pagination-limit"] [data-id="activator"]').classes()).toContain('!min-h-8');
+    expect(wrapper.find('[data-id="table-pagination-limit"] [data-id="activator"]').classes()).toContain('min-h-8!');
   });
 
   it('links each section label to its control', () => {

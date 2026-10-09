@@ -65,12 +65,12 @@ const slots = defineSlots<{
 }>();
 
 const tab = tv({
-  base: 'min-w-[5.625rem] max-w-[22.5rem] flex items-center rounded-none cursor-pointer relative whitespace-nowrap shrink-0 !px-4',
+  base: 'min-w-22.5 max-w-90 flex items-center rounded-none cursor-pointer relative whitespace-nowrap shrink-0 px-4!',
   variants: {
     layout: {
       [TabLayout.horizontal]: '',
       // `min-h` keeps the 48px floor of the horizontal layout while letting richer content grow instead of clipping
-      [TabLayout.vertical]: '!min-h-[3rem] w-full max-w-none',
+      [TabLayout.vertical]: 'min-h-12! w-full max-w-none',
     },
     align: {
       start: 'justify-start text-left rtl:justify-end rtl:text-right',

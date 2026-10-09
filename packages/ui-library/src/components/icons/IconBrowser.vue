@@ -88,7 +88,7 @@ function isCopied(icon: string): boolean {
           <button
             v-for="icon in row"
             :key="icon"
-            class="flex flex-col items-center p-3 rounded-lg border border-rui-grey-300 dark:border-rui-grey-700 bg-white dark:bg-rui-grey-800 cursor-pointer transition-all duration-150 hover:border-rui-primary hover:shadow-sm min-w-[140px] h-24 flex-[1_1_0]"
+            class="flex flex-col items-center p-3 rounded-lg border border-rui-grey-300 dark:border-rui-grey-700 bg-white dark:bg-rui-grey-800 cursor-pointer transition-all duration-150 hover:border-rui-primary hover:shadow-xs min-w-[140px] h-24 flex-[1_1_0]"
             :class="{ 'border-rui-success bg-rui-success/10': isCopied(icon) }"
             type="button"
             :title="`Click to copy: ${icon}`"

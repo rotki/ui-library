@@ -21,7 +21,7 @@ const { formattedErrorMessages, formattedSuccessMessages, hasError, hasSuccess }
 <template>
   <TransitionGroup
     tag="div"
-    class="details min-h-[1.5rem]"
+    class="details min-h-6"
     enter-from-class="opacity-0 -translate-y-2 h-0"
     enter-active-class="transform transition"
     enter-to-class="opacity-100 translate-y-0"

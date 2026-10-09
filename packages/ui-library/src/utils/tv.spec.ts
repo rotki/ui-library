@@ -94,20 +94,17 @@ describe('tv', () => {
       expect(button({ class: 'px-8' })).toBe('py-2 px-8');
     });
 
-    it('should keep a colour paired with a Tailwind 3 opacity utility the Tailwind 4 groups read as a colour', () => {
-      const rail = tv({ base: 'bg-rui-primary bg-opacity-40' });
-      expect(rail()).toBe('bg-rui-primary bg-opacity-40');
-      expect(tv({ base: 'text-rui-error text-opacity-40' })()).toBe('text-rui-error text-opacity-40');
-      expect(tv({ base: 'border-rui-info border-opacity-40' })()).toBe('border-rui-info border-opacity-40');
-      expect(tv({ base: 'ring-rui-primary ring-opacity-50' })()).toBe('ring-rui-primary ring-opacity-50');
+    it('should let a slash opacity colour replace the plain one', () => {
+      expect(tv({ base: 'bg-rui-primary bg-rui-primary/40' })()).toBe('bg-rui-primary/40');
+      expect(tv({ base: 'ring-2 ring-rui-primary/50' })()).toBe('ring-2 ring-rui-primary/50');
     });
 
-    it('should keep a bare `outline` beside a width, since Tailwind 3 means the style by it', () => {
-      expect(tv({ base: 'outline outline-1 outline-transparent' })()).toBe('outline outline-1 outline-transparent');
+    it('should keep an outline style, width and colour side by side', () => {
+      expect(tv({ base: 'outline-solid outline-1 outline-transparent' })()).toBe('outline-solid outline-1 outline-transparent');
       // Widths still replace one another, and the style keywords still conflict with each other
       expect(tv({ base: 'outline-1 outline-2' })()).toBe('outline-2');
-      expect(tv({ base: 'outline outline-dashed' })()).toBe('outline-dashed');
-      expect(tv({ base: 'outline outline-none' })()).toBe('outline-none');
+      expect(tv({ base: 'outline-solid outline-dashed' })()).toBe('outline-dashed');
+      expect(tv({ base: 'outline-solid outline-hidden' })()).toBe('outline-hidden');
     });
   });
 

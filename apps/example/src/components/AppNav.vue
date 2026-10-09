@@ -33,7 +33,7 @@ const onSwitchTheme = ({ value }: Theme) => switchThemeScheme(value);
         />
       </RouterLink>
       <div
-        class="relative flex basis-0 justify-end gap-6 sm:gap-8 md:flex-grow"
+        class="relative flex basis-0 justify-end gap-6 sm:gap-8 md:grow"
       >
         <span class="sr-only">Theme</span>
         <RuiButtonGroup

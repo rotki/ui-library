@@ -22,4 +22,6 @@ consola.info('verifying dist');
 execSync('pnpm run verify:dist', { stdio: 'inherit' });
 consola.info('verifying tree-shaking');
 execSync('pnpm run verify:tree-shaking', { stdio: 'inherit' });
+consola.info('verifying css size');
+execSync('pnpm run verify:css-size', { stdio: 'inherit' });
 consola.success('build done');

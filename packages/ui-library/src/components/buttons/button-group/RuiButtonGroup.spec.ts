@@ -41,19 +41,19 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
         color: 'primary',
       },
     });
-    expectToHaveClass(wrapper.element, /divide-rui-primary/);
+    expectToHaveClass(wrapper.element, /between:border-rui-primary/);
     expectWrapperToHaveClass(wrapper, 'button', /bg-rui-primary/);
 
     await wrapper.setProps({ color: 'secondary' });
-    expectToHaveClass(wrapper.element, /divide-rui-secondary/);
+    expectToHaveClass(wrapper.element, /between:border-rui-secondary/);
     expectWrapperToHaveClass(wrapper, 'button', /bg-rui-secondary/);
 
     await wrapper.setProps({ color: 'error' });
-    expectToHaveClass(wrapper.element, /divide-rui-error/);
+    expectToHaveClass(wrapper.element, /between:border-rui-error/);
     expectWrapperToHaveClass(wrapper, 'button', /bg-rui-error/);
 
     await wrapper.setProps({ color: 'success' });
-    expectToHaveClass(wrapper.element, /divide-rui-success/);
+    expectToHaveClass(wrapper.element, /between:border-rui-success/);
     expectWrapperToHaveClass(wrapper, 'button', /bg-rui-success/);
   });
 
@@ -61,8 +61,8 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
     wrapper = createWrapper();
     expectNotToHaveClass(wrapper.element, /outline-black/);
     await wrapper.setProps({ variant: 'outlined' });
-    expectToHaveClass(wrapper.element, /outline-black\/\[0\.23\]/);
-    expectToHaveClass(wrapper.element, /divide-black\/\[0\.23\]/);
+    expectToHaveClass(wrapper.element, /outline-black\/23/);
+    expectToHaveClass(wrapper.element, /between:border-black\/23/);
     expectWrapperToHaveClass(wrapper, 'button', /outline-black\/\[0\.23\]/);
     await wrapper.setProps({ variant: 'text' });
     expectNotToHaveClass(wrapper.element, /outline-black/);

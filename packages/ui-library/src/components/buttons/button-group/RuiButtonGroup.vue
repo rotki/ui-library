@@ -37,31 +37,31 @@ const slots = useSlots();
 
 const buttonGroupStyles = tv({
   slots: {
-    root: 'inline-flex rounded divide-x divide-rui-grey-400 outline outline-1 outline-transparent outline-offset-[-1px]',
-    button: 'border-0 outline-0 focus:z-[1]',
+    root: 'inline-flex rounded-sm between:border-l between:border-r-0 between:border-rui-grey-400 outline-solid outline-1 outline-transparent -outline-offset-1',
+    button: 'border-0 outline-0 focus:z-1',
   },
   variants: {
     vertical: {
       true: {
-        root: 'flex-col items-start divide-x-0 divide-y',
+        root: 'flex-col items-start between:border-l-0 between:border-t between:border-b-0',
         button: 'w-full',
       },
       false: {},
     },
     gap: {
       none: {
-        button: '!rounded-none',
+        button: 'rounded-none!',
       },
       sm: {
-        root: 'divide-x-0 divide-y-0 outline-0 gap-2',
+        root: 'between:border-0 outline-0 gap-2',
         button: 'outline-1',
       },
       md: {
-        root: 'divide-x-0 divide-y-0 outline-0 gap-4',
+        root: 'between:border-0 outline-0 gap-4',
         button: 'outline-1',
       },
       lg: {
-        root: 'divide-x-0 divide-y-0 outline-0 gap-6',
+        root: 'between:border-0 outline-0 gap-6',
         button: 'outline-1',
       },
     },
@@ -69,7 +69,7 @@ const buttonGroupStyles = tv({
       default: {},
       outlined: {
         // Material's 23% neutral edge, matching RuiButton's colourless outlined treatment
-        root: 'outline-black/[0.23] divide-black/[0.23] dark:outline-white/[0.23] dark:divide-white/[0.23]',
+        root: 'outline-black/23 between:border-black/23 dark:outline-white/23 dark:between:border-white/23',
       },
       text: {},
     },
@@ -84,32 +84,32 @@ const buttonGroupStyles = tv({
   },
   compoundVariants: [
     // First/last child rounding when not separated (! needed to override RuiButton's CSS module border-radius)
-    { gap: 'none', vertical: false, class: { button: 'first:!rounded-l last:!rounded-r' } },
-    { gap: 'none', vertical: true, class: { button: 'first:!rounded-t last:!rounded-b' } },
+    { gap: 'none', vertical: false, class: { button: 'first:rounded-l! last:rounded-r!' } },
+    { gap: 'none', vertical: true, class: { button: 'first:rounded-t! last:rounded-b!' } },
 
     // Color dividers (default variant)
-    { color: 'primary', class: { root: 'divide-rui-primary-darker' } },
-    { color: 'secondary', class: { root: 'divide-rui-secondary-darker' } },
-    { color: 'error', class: { root: 'divide-rui-error-darker' } },
-    { color: 'warning', class: { root: 'divide-rui-warning-darker' } },
-    { color: 'info', class: { root: 'divide-rui-info-darker' } },
-    { color: 'success', class: { root: 'divide-rui-success-darker' } },
+    { color: 'primary', class: { root: 'between:border-rui-primary-darker' } },
+    { color: 'secondary', class: { root: 'between:border-rui-secondary-darker' } },
+    { color: 'error', class: { root: 'between:border-rui-error-darker' } },
+    { color: 'warning', class: { root: 'between:border-rui-warning-darker' } },
+    { color: 'info', class: { root: 'between:border-rui-info-darker' } },
+    { color: 'success', class: { root: 'between:border-rui-success-darker' } },
 
     // Color dividers for outlined/text (overrides darker dividers above)
-    { color: 'primary', variant: ['outlined', 'text'], class: { root: 'divide-rui-primary/[0.5]' } },
-    { color: 'secondary', variant: ['outlined', 'text'], class: { root: 'divide-rui-secondary/[0.5]' } },
-    { color: 'error', variant: ['outlined', 'text'], class: { root: 'divide-rui-error/[0.5]' } },
-    { color: 'warning', variant: ['outlined', 'text'], class: { root: 'divide-rui-warning/[0.5]' } },
-    { color: 'info', variant: ['outlined', 'text'], class: { root: 'divide-rui-info/[0.5]' } },
-    { color: 'success', variant: ['outlined', 'text'], class: { root: 'divide-rui-success/[0.5]' } },
+    { color: 'primary', variant: ['outlined', 'text'], class: { root: 'between:border-rui-primary/50' } },
+    { color: 'secondary', variant: ['outlined', 'text'], class: { root: 'between:border-rui-secondary/50' } },
+    { color: 'error', variant: ['outlined', 'text'], class: { root: 'between:border-rui-error/50' } },
+    { color: 'warning', variant: ['outlined', 'text'], class: { root: 'between:border-rui-warning/50' } },
+    { color: 'info', variant: ['outlined', 'text'], class: { root: 'between:border-rui-info/50' } },
+    { color: 'success', variant: ['outlined', 'text'], class: { root: 'between:border-rui-success/50' } },
 
     // Color outline for outlined variant
-    { color: 'primary', variant: 'outlined', class: { root: 'outline-rui-primary/[0.5]' } },
-    { color: 'secondary', variant: 'outlined', class: { root: 'outline-rui-secondary/[0.5]' } },
-    { color: 'error', variant: 'outlined', class: { root: 'outline-rui-error/[0.5]' } },
-    { color: 'warning', variant: 'outlined', class: { root: 'outline-rui-warning/[0.5]' } },
-    { color: 'info', variant: 'outlined', class: { root: 'outline-rui-info/[0.5]' } },
-    { color: 'success', variant: 'outlined', class: { root: 'outline-rui-success/[0.5]' } },
+    { color: 'primary', variant: 'outlined', class: { root: 'outline-rui-primary/50' } },
+    { color: 'secondary', variant: 'outlined', class: { root: 'outline-rui-secondary/50' } },
+    { color: 'error', variant: 'outlined', class: { root: 'outline-rui-error/50' } },
+    { color: 'warning', variant: 'outlined', class: { root: 'outline-rui-warning/50' } },
+    { color: 'info', variant: 'outlined', class: { root: 'outline-rui-info/50' } },
+    { color: 'success', variant: 'outlined', class: { root: 'outline-rui-success/50' } },
   ],
   defaultVariants: {
     vertical: false,

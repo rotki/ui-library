@@ -1,3 +1,15 @@
+@import '../src/style.css';
+
+/*
+ * Storybook also scans the stories, and generates every palette and typography
+ * class: the theme pages build those class names at runtime.
+ */
+@source '../src/**/*.stories.ts';
+@source '../src/stories';
+@source inline('{,hover:,disabled:,active:,focus:}{bg,text,border}-rui-{grey,indigo,deep-purple,amber,orange,pink,deep-orange,green,red,light-green,purple,lime,light-blue,yellow,cyan,teal,blue,blue-gray}{,-50,-100,-200,-300,-400,-500,-600,-700,-800,-900,-a100,-a200,-a400,-a700}');
+@source inline('{,hover:,disabled:,active:,focus:}{bg,text,border}-rui{,-light,-dark}-{primary,secondary,error,warning,info,success}{,-darker,-lighter}');
+@source inline('text-{body-1,body-2,subtitle-1,subtitle-2,caption,overline,h1,h2,h3,h4,h5,h6}');
+
 .dark .sbdocs-preview,
 .dark .sb-show-main {
   background-color: #121212;

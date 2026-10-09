@@ -25,12 +25,11 @@
   },
   "devDependencies": {
     "@playwright/test": "catalog:",
+    "@tailwindcss/vite": "catalog:",
     "@tsconfig/node24": "catalog:",
     "@types/node": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "@vue/tsconfig": "catalog:",
-    "autoprefixer": "catalog:",
-    "postcss": "catalog:",
     "typescript": "catalog:",
     "unplugin-auto-import": "catalog:",
     "vite": "catalog:",

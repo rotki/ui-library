@@ -16,11 +16,11 @@ export const textAreaStyles = tv({
   slots: {
     fieldset: '',
     legend: '',
-    wrapper: 'relative w-full min-w-[12.5rem] flex items-start rounded bg-white dark:bg-transparent',
+    wrapper: 'relative w-full min-w-[12.5rem] flex items-start rounded-sm bg-white dark:bg-transparent',
     inputWrapper: 'flex flex-1 overflow-hidden',
     textarea: [
       'peer leading-6 text-rui-text w-full bg-transparent pb-2 pt-0',
-      'outline-0 outline-none',
+      'outline-0 outline-hidden',
       'placeholder:opacity-0 focus:placeholder:opacity-100',
     ].join(' '),
     textareaSizer: 'invisible absolute top-0 left-0 w-full h-0 -z-10 pointer-events-none',
@@ -49,7 +49,7 @@ export const textAreaStyles = tv({
         inputWrapper: 'pt-4',
         textarea: 'px-4 [padding-right:calc(var(--x-padding,1rem)+var(--append-w,0px))]',
         textareaSizer: 'px-4',
-        label: `flex leading-[3.2] [--x-padding:1rem] rounded-t bg-black/[0.06] dark:bg-white/[0.09] ${underlinePseudo}`,
+        label: `flex leading-[3.2] [--x-padding:1rem] rounded-t-sm bg-black/[0.06] dark:bg-white/[0.09] ${underlinePseudo}`,
         prepend: '!mr-0',
         append: '!ml-0',
       },
@@ -116,11 +116,11 @@ export const textAreaStyles = tv({
     validation: {
       error: {
         textarea: '!border-rui-error',
-        label: '!text-rui-error !after:border-rui-error',
+        label: '!text-rui-error after:border-rui-error!',
       },
       success: {
         textarea: '!border-rui-success',
-        label: '!text-rui-success !after:border-rui-success',
+        label: '!text-rui-success after:border-rui-success!',
       },
     },
   },

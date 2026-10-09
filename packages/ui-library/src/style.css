@@ -1,27 +1,15 @@
-@import 'styles/colors.css';
+/*
+ * The prebuilt stylesheet, `@rotki/ui-library/style.css`: Tailwind itself plus the library, for an
+ * app without its own Tailwind 4 build. An app with one imports `tailwind.css` instead.
+ */
+@import 'tailwindcss' source(none);
+@import './tailwind.css';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-html,
-body,
-html * {
-  font-family: 'Roboto', sans-serif;
-}
-
-body {
-  scroll-behavior: smooth;
-}
-
-@layer utilities {
-  /* Chrome, Safari and Opera */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-  }
-}
+/* Built here from the sources, since `tailwind.css` scans the built files next to it in dist. */
+@source './**/*.vue';
+@source './**/*.ts';
+@source not './**/*.spec.ts';
+@source not './**/*.stories.ts';
+@source not './__test__';
+@source not './stories';
+@source not './theme/theme-css.ts';

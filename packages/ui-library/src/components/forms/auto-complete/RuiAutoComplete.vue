@@ -655,7 +655,7 @@ defineExpose({
               ref="textInput"
               :disabled="disabled"
               :value="internalSearch"
-              class="bg-transparent outline-none"
+              class="bg-transparent outline-hidden"
               type="text"
               :placeholder="usedPlaceholder"
               :class="[focusInputClass, { hidden: hideSearchInput }]"
@@ -677,7 +677,7 @@ defineExpose({
             data-id="clear"
             :class="[
               ui.clear(),
-              focusAnyFocused && '!visible',
+              focusAnyFocused && 'visible!',
               { 'mr-2': !dense },
             ]"
             @click.stop.prevent="clear()"
@@ -797,12 +797,12 @@ defineExpose({
           The scroll container above reserves ~15px on the right for the
           scrollbar gutter. We render an equivalent right-padding here so the
           footer's content aligns with the option rows' content rather than
-          the menu's outer edge. `pr-[var(--rui-scrollbar-gutter,15px)]`
+          the menu's outer edge. `pr-(--rui-scrollbar-gutter,15px)`
           lets consumers override if their theme reserves a different width.
         -->
         <div
           v-if="slots.footer"
-          class="bg-white dark:bg-rui-grey-900 border-t border-black/[0.12] dark:border-white/[0.12] pr-[var(--rui-scrollbar-gutter,15px)] -mb-2"
+          class="bg-white dark:bg-rui-grey-900 border-t border-black/12 dark:border-white/12 pr-(--rui-scrollbar-gutter,15px) -mb-2"
           data-id="footer"
         >
           <slot name="footer" />

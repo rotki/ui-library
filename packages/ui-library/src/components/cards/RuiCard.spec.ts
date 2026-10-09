@@ -117,7 +117,7 @@ describe('components/cards/RuiCard.vue', () => {
     expect(wrapper.classes()).not.toContain('rounded-[.5rem]');
 
     await wrapper.setProps({ rounded: 'lg' });
-    expect(wrapper.classes()).toContain('rounded-[1rem]');
+    expect(wrapper.classes()).toContain('rounded-2xl');
   });
 
   it('should apply dense class', async () => {
@@ -143,10 +143,10 @@ describe('components/cards/RuiCard.vue', () => {
       },
     });
 
-    expect(wrapper.classes()).not.toContain('divide-y');
+    expect(wrapper.classes()).not.toContain('between:border-t');
 
     await wrapper.setProps({ divide: true });
-    expect(wrapper.classes()).toContain('divide-y');
+    expect(wrapper.classes()).toContain('between:border-t');
   });
 
   it('should react to props changes', async () => {
@@ -186,6 +186,6 @@ describe('components/cards/RuiCard.vue', () => {
     expect(wrapper.classes()).not.toContain('border');
     expect(wrapper.classes()).not.toContain('shadow-0');
     expect(wrapper.classes()).toContain('shadow-2');
-    expect(wrapper.classes()).toContain('divide-y');
+    expect(wrapper.classes()).toContain('between:border-t');
   });
 });

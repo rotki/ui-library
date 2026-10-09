@@ -12,11 +12,11 @@ defineOptions({
 const { rounded } = defineProps<Props>();
 
 const skeleton = tv({
-  base: 'animate-pulse bg-black/[.12] dark:bg-white/[.16]',
+  base: 'animate-pulse bg-black/12 dark:bg-white/16',
   variants: {
     rounded: {
       none: 'rounded-none',
-      sm: 'rounded-sm',
+      sm: 'rounded-xs',
       md: 'rounded-md',
       lg: 'rounded-lg',
       full: 'rounded-full',

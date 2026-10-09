@@ -292,26 +292,53 @@
   --rui-dark-text-disabled: rgba(255, 255, 255, 0.5);
 }
 
-@keyframes bg-tint {
-  to {
-    background: white;
-  }
+/* The adaptive variables alias whichever theme is showing. */
+html[data-theme='light'],
+html.light {
+  --rui-primary-main: var(--rui-light-primary-main);
+  --rui-primary-darker: var(--rui-light-primary-darker);
+  --rui-primary-lighter: var(--rui-light-primary-lighter);
+  --rui-secondary-main: var(--rui-light-secondary-main);
+  --rui-secondary-darker: var(--rui-light-secondary-darker);
+  --rui-secondary-lighter: var(--rui-light-secondary-lighter);
+  --rui-error-main: var(--rui-light-error-main);
+  --rui-error-darker: var(--rui-light-error-darker);
+  --rui-error-lighter: var(--rui-light-error-lighter);
+  --rui-warning-main: var(--rui-light-warning-main);
+  --rui-warning-darker: var(--rui-light-warning-darker);
+  --rui-warning-lighter: var(--rui-light-warning-lighter);
+  --rui-info-main: var(--rui-light-info-main);
+  --rui-info-darker: var(--rui-light-info-darker);
+  --rui-info-lighter: var(--rui-light-info-lighter);
+  --rui-success-main: var(--rui-light-success-main);
+  --rui-success-darker: var(--rui-light-success-darker);
+  --rui-success-lighter: var(--rui-light-success-lighter);
+  --rui-text-primary: var(--rui-light-text-primary);
+  --rui-text-secondary: var(--rui-light-text-secondary);
+  --rui-text-disabled: var(--rui-light-text-disabled);
 }
 
-@keyframes bg-shade {
-  to {
-    background: black;
-  }
-}
-
-@keyframes text-tint {
-  to {
-    color: white;
-  }
-}
-
-@keyframes text-shade {
-  to {
-    color: black;
-  }
+html[data-theme='dark'],
+html.dark {
+  --rui-primary-main: var(--rui-dark-primary-main);
+  --rui-primary-darker: var(--rui-dark-primary-darker);
+  --rui-primary-lighter: var(--rui-dark-primary-lighter);
+  --rui-secondary-main: var(--rui-dark-secondary-main);
+  --rui-secondary-darker: var(--rui-dark-secondary-darker);
+  --rui-secondary-lighter: var(--rui-dark-secondary-lighter);
+  --rui-error-main: var(--rui-dark-error-main);
+  --rui-error-darker: var(--rui-dark-error-darker);
+  --rui-error-lighter: var(--rui-dark-error-lighter);
+  --rui-warning-main: var(--rui-dark-warning-main);
+  --rui-warning-darker: var(--rui-dark-warning-darker);
+  --rui-warning-lighter: var(--rui-dark-warning-lighter);
+  --rui-info-main: var(--rui-dark-info-main);
+  --rui-info-darker: var(--rui-dark-info-darker);
+  --rui-info-lighter: var(--rui-dark-info-lighter);
+  --rui-success-main: var(--rui-dark-success-main);
+  --rui-success-darker: var(--rui-dark-success-darker);
+  --rui-success-lighter: var(--rui-dark-success-lighter);
+  --rui-text-primary: var(--rui-dark-text-primary);
+  --rui-text-secondary: var(--rui-dark-text-secondary);
+  --rui-text-disabled: var(--rui-dark-text-disabled);
 }

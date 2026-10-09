@@ -10,11 +10,9 @@
     "vitest.config.*",
     ".storybook/**/*",
     "scripts/**/*",
-    "tailwind.config.*",
-    "postcss.config.*",
     "src/consts/colors.ts",
     "src/consts/typography.ts",
-    "src/theme/index.ts",
+    "src/theme/theme-css.ts",
     "src/types/icons.ts",
     "src/vite-plugin/scanner.ts",
     "src/vite-plugin/types.ts"

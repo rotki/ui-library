@@ -26,9 +26,9 @@ const {
 } = defineProps<Props>();
 
 const footerStepper = {
-  arrowButton: '!bg-white !disabled:bg-white/60 dark:!disabled:bg-[rgb(50,50,50)]',
+  arrowButton: 'bg-white! !disabled:bg-white/60 dark:!disabled:bg-[rgb(50,50,50)]',
   bullet: tv({
-    base: 'rounded-full h-2 w-2 bg-black/[0.26] dark:bg-white/30 transition-colors cursor-pointer hover:bg-rui-grey-300 dark:hover:bg-rui-grey-400',
+    base: 'rounded-full h-2 w-2 bg-black/26 dark:bg-white/30 transition-colors cursor-pointer hover:bg-rui-grey-300 dark:hover:bg-rui-grey-400',
     variants: {
       active: {
         true: 'bg-rui-primary dark:bg-rui-primary hover:bg-rui-primary dark:hover:bg-rui-primary',

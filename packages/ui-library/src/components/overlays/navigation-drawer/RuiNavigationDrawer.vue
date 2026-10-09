@@ -83,14 +83,14 @@ const drawer = tv({
       false: '',
     },
     withOverlay: {
-      true: 'z-[10000]',
-      false: 'z-[7]',
+      true: 'z-10000',
+      false: 'z-7',
     },
   },
   compoundVariants: [
     { position: 'left', visible: false, mini: false, class: '-translate-x-full' },
     { position: 'right', visible: false, mini: false, class: 'translate-x-full' },
-    { mini: true, visible: false, class: '!w-14' },
+    { mini: true, visible: false, class: 'w-14!' },
   ],
   defaultVariants: { position: 'left', visible: false, mini: false, withOverlay: false },
 });
@@ -167,7 +167,7 @@ onClickOutside(content, () => {
         <div
           v-if="modelValue"
           data-id="overlay"
-          class="absolute inset-0 backdrop-blur bg-rui-grey-500/50 dark:bg-black/50 z-[10000]"
+          class="absolute inset-0 backdrop-blur-sm bg-rui-grey-500/50 dark:bg-black/50 z-10000"
           @click.stop="close()"
         />
       </Transition>

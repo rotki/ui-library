@@ -1,4 +1,20 @@
 import rotki from '@rotki/eslint-config';
+import betterTailwind from 'eslint-plugin-better-tailwindcss';
+
+/*
+ * Tailwind class checks, read against the CSS entry each project builds with:
+ * a class that Tailwind 4 renamed, or that it does not generate at all, fails
+ * the lint instead of silently styling nothing.
+ */
+function tailwindRules(markers) {
+  return {
+    'better-tailwindcss/no-deprecated-classes': 'error',
+    // markers are plain class names the tests and consumers select by, with no styles of their own
+    'better-tailwindcss/no-unknown-classes': ['error', { ignore: markers }],
+    'better-tailwindcss/no-duplicate-classes': 'error',
+    'better-tailwindcss/no-conflicting-classes': 'error',
+  };
+}
 
 export default rotki({
   vue: true,
@@ -93,6 +109,21 @@ export default rotki({
   rules: {
     'eslint-comments/require-description': 'off',
   },
+}, {
+  files: ['packages/ui-library/src/**/*.{ts,vue}'],
+  ignores: ['**/*.spec.ts', '**/__test__/**'],
+  plugins: { 'better-tailwindcss': betterTailwind },
+  settings: { 'better-tailwindcss': { entryPoint: 'packages/ui-library/.storybook/preview.css' } },
+  rules: tailwindRules(['^details$', '^rui-icon$', '^rui-time-picker-period$']),
+}, {
+  files: ['apps/example/src/**/*.{ts,vue}'],
+  plugins: { 'better-tailwindcss': betterTailwind },
+  settings: { 'better-tailwindcss': { entryPoint: 'apps/example/src/assets/main.css' } },
+  // `wrapper` is the example app's own layout class, defined in assets/main.css
+  rules: tailwindRules(['^wrapper$']),
+}, {
+  // `pnpm run generate-theme` writes it from src/theme/theme-css.ts
+  ignores: ['packages/ui-library/src/theme/theme.css'],
 }, {
   // `__test__` is this repo's test-fixtures directory convention, so the directory-name rule skips it
   files: ['**/__test__/**'],

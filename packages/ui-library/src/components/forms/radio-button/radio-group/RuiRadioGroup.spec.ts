@@ -35,7 +35,7 @@ describe('components/forms/radio-button/radio-group/RuiRadioGroup.vue', () => {
     await wrapper.setProps({ inline: true });
     const updatedWrapper = wrapper.findAll('div[role=radiogroup] > div')[0];
     expect(updatedWrapper?.classes()).toContain('flex');
-    expect(updatedWrapper?.classes()).toContain('space-x-6');
+    expect(updatedWrapper?.classes()).toContain('between:ml-6');
   });
 
   it('should pass hint props', async () => {

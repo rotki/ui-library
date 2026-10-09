@@ -215,7 +215,7 @@ function dialogShellProps(): Record<string, unknown> {
 function menuShellProps(): Record<string, unknown> {
   return {
     anchorEl: get(fieldRef) ?? undefined,
-    classNames: { content: 'py-0', menu: 'z-[9999]' },
+    classNames: { content: 'py-0', menu: 'z-9999' },
     closeOnContentClick: false,
     disableAutoFocus: true,
     fullWidth: true,
@@ -518,7 +518,7 @@ watch(isOpen, onOpenChanged);
               :readonly="!canType"
               :disabled="disabled"
               :aria-invalid="hasError || undefined"
-              class="bg-transparent outline-none"
+              class="bg-transparent outline-hidden"
               :class="[activatorUi.value(), !canType && 'cursor-pointer']"
               @input="onInput($event)"
               @keydown.down.prevent="focusPane('rail')"
@@ -528,7 +528,7 @@ watch(isOpen, onOpenChanged);
             <span
               v-if="showClear"
               data-id="clear"
-              :class="[activatorUi.clear(), focused && '!visible', { 'mr-2': !dense }]"
+              :class="[activatorUi.clear(), focused && 'visible!', { 'mr-2': !dense }]"
               @click.stop.prevent="clearSelection()"
             >
               <RuiIcon

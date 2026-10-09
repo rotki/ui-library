@@ -163,8 +163,8 @@ const { hasError, hasSuccess } = useFormTextDetail(
 const menuStyles = tv({
   slots: {
     wrapper: 'relative inline-flex max-w-full',
-    popover: 'w-max z-[9999]',
-    content: 'rounded overflow-hidden shadow-8 bg-white dark:bg-[#2E2E2E] text-rui-text focus:outline-none py-2',
+    popover: 'w-max z-9999',
+    content: 'rounded-sm overflow-hidden shadow-8 bg-white dark:bg-[#2E2E2E] text-rui-text focus:outline-hidden py-2',
     details: 'pt-1',
   },
   variants: {

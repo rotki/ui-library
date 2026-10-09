@@ -18,7 +18,7 @@ export const timePickerStyles = tv({
   variants: {
     bordered: {
       true: {
-        root: 'rounded-md shadow-sm border border-rui-grey-200 dark:border-rui-grey-800',
+        root: 'rounded-md shadow-xs border border-rui-grey-200 dark:border-rui-grey-800',
       },
     },
     active: {

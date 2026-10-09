@@ -27,11 +27,11 @@ const cardHeader = tv({
   variants: {
     dense: {
       true: {
-        root: 'p-3 space-x-2',
+        root: 'p-3 between:ml-2 between:mr-0',
         prepend: 'text-base p-[0.08rem] w-9 h-9',
       },
       false: {
-        root: 'p-4 space-x-4',
+        root: 'p-4 between:ml-4 between:mr-0',
         prepend: 'text-[1.25rem] w-10 h-10',
       },
     },

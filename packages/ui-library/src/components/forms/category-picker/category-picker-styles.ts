@@ -56,9 +56,9 @@ export const categoryPickerStyles = tv({
     header: 'flex flex-col gap-3 p-4 border-b border-rui-grey-200 dark:border-rui-grey-800',
     title: 'text-h6 text-rui-text',
     body: 'grid min-h-0 flex-1',
-    rail: 'flex flex-col gap-0.5 p-2 overflow-y-auto outline-none border-rui-grey-200 dark:border-rui-grey-800',
+    rail: 'flex flex-col gap-0.5 p-2 overflow-y-auto outline-hidden border-rui-grey-200 dark:border-rui-grey-800',
     railCount: 'ml-auto pl-2 text-caption tabular-nums text-rui-text-secondary',
-    detail: 'flex flex-col gap-0.5 p-2 overflow-y-auto outline-none min-w-0',
+    detail: 'flex flex-col gap-0.5 p-2 overflow-y-auto outline-hidden min-w-0',
     // Focus lives on the pane container, so this is the only per-item focus cue
     highlighted: '!bg-rui-grey-100 dark:!bg-rui-grey-800',
     subheader: 'px-3 pt-3 pb-1 text-overline text-rui-text-secondary uppercase',

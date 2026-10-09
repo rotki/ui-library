@@ -100,11 +100,11 @@ const rootStyle = tv({ base: 'relative w-full h-40 overflow-hidden cursor-pointe
     @mousedown="onMouseDown($event)"
     @touchstart="onTouchStart($event)"
   >
-    <div class="absolute inset-0 to-transparent bg-gradient-to-r from-white" />
-    <div class="absolute inset-0 to-transparent bg-gradient-to-t from-black" />
+    <div class="absolute inset-0 to-transparent bg-linear-to-r from-white" />
+    <div class="absolute inset-0 to-transparent bg-linear-to-t from-black" />
     <div
       data-id="cursor"
-      class="absolute w-5 h-5 -translate-x-1/2 -translate-y-1/2 border-2 border-white shadow rounded-full after:content-[''] after:absolute after:inset-0 after:rounded-full after:border-2 after:border-black/15"
+      class="absolute w-5 h-5 -translate-x-1/2 -translate-y-1/2 border-2 border-white shadow-sm rounded-full after:content-[''] after:absolute after:inset-0 after:rounded-full after:border-2 after:border-black/15"
       :style="cursorStyle"
     />
   </div>

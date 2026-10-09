@@ -95,7 +95,7 @@ const firstRowInset = computed<Record<string, string> | undefined>(() =>
 );
 
 /**
- * `!border-y` defeats the `divide-y-0` on the mobile tbody, which otherwise
+ * `border-y!` defeats the `divide-y-0` on the mobile tbody, which otherwise
  * zeroes the top and bottom border on every card except the first. An expanded
  * card flattens its bottom edge so the expanded panel attaches flush beneath
  * it.
@@ -104,7 +104,7 @@ const firstRowInset = computed<Record<string, string> | undefined>(() =>
  * own utilities rather than emitting conflicting ones.
  */
 const mobileCardClass = computed<string>(() => {
-  const shared = 'relative flex flex-col border !border-y border-black/[0.12] dark:border-white/[0.12] overflow-hidden';
+  const shared = 'relative flex flex-col border border-y! border-black/12 dark:border-white/12 overflow-hidden';
   return get(expanded)
     ? `${shared} rounded-t-lg mb-0`
     : `${shared} rounded-lg mb-3 last:mb-0`;
@@ -121,8 +121,8 @@ const mobileCardClass = computed<string>(() => {
     <td
       v-if="showMobileHeader"
       :class="compactMobileHeader
-        ? 'absolute top-0 right-0 z-[1] flex items-center gap-1 px-2 py-1'
-        : 'flex items-center justify-between gap-2 px-4 py-2 border-b border-black/[0.12] dark:border-white/[0.12]'"
+        ? 'absolute top-0 right-0 z-1 flex items-center gap-1 px-2 py-1'
+        : 'flex items-center justify-between gap-2 px-4 py-2 border-b border-black/12 dark:border-white/12'"
       data-id="mobile-card-header"
     >
       <RuiCheckbox

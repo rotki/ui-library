@@ -50,7 +50,7 @@ export const textInputBase = tv({
     label: 'text-rui-text-secondary transition-all duration-75',
     fieldset: [
       'absolute w-full min-w-0 h-[calc(100%+0.5rem)] top-0 left-0',
-      'rounded pointer-events-none px-2 transition-all -mt-2',
+      'rounded-sm pointer-events-none px-2 transition-all -mt-2',
       'border border-black/[0.23]',
       'dark:border-white/[0.23]',
       // translateZ(0) promotes this to its own layer, whose raster snaps to integer pixels
@@ -142,8 +142,8 @@ export const activatorStyles = tv({
     wrapper: 'w-full inline-flex flex-col',
     activator: [
       'group relative inline-flex items-center w-full',
-      'outline-none focus:outline-none focus-within:outline-none cursor-pointer',
-      'min-h-14 pl-4 py-2 pr-8 rounded',
+      'outline-hidden focus:outline-hidden focus-within:outline-hidden cursor-pointer',
+      'min-h-14 pl-4 py-2 pr-8 rounded-sm',
       'm-0 transition-all text-body-1 text-left',
       'dark:text-rui-text',
     ].join(' '),

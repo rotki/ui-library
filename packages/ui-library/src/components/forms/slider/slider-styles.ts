@@ -45,7 +45,7 @@ export const sliderStyles = tv({
       'invisible opacity-0',
       'absolute -mt-7 transition-all ease-linear duration-75 -translate-x-1/2',
       'px-2 py-1 text-xs font-normal',
-      'bg-rui-grey-700/90 text-white rounded shadow',
+      'bg-rui-grey-700/90 text-white rounded-sm shadow-sm',
     ].join(' '),
   },
   variants: {
@@ -62,7 +62,8 @@ export const sliderStyles = tv({
         wrapper: 'flex-col-reverse items-center h-full',
         label: 'mb-2 text-center',
         outer: 'min-w-0 min-h-[7.5rem] w-8',
-        inner: '-rotate-90',
+        // turned about its top-left corner, then pushed down its own height back into the box
+        inner: '-rotate-90 translate-y-(--rui-slider-shift)',
         thumbLabel: 'mt-6 rotate-90 translate-x-0 [transform-origin:0_50%]',
       },
     },
@@ -90,12 +91,12 @@ export const sliderStyles = tv({
   },
   compoundSlots: [
     // Container bg (with opacity)
-    { slots: ['container'], color: 'primary', class: 'bg-rui-primary bg-opacity-40' },
-    { slots: ['container'], color: 'secondary', class: 'bg-rui-secondary bg-opacity-40' },
-    { slots: ['container'], color: 'error', class: 'bg-rui-error bg-opacity-40' },
-    { slots: ['container'], color: 'warning', class: 'bg-rui-warning bg-opacity-40' },
-    { slots: ['container'], color: 'info', class: 'bg-rui-info bg-opacity-40' },
-    { slots: ['container'], color: 'success', class: 'bg-rui-success bg-opacity-40' },
+    { slots: ['container'], color: 'primary', class: 'bg-rui-primary/40' },
+    { slots: ['container'], color: 'secondary', class: 'bg-rui-secondary/40' },
+    { slots: ['container'], color: 'error', class: 'bg-rui-error/40' },
+    { slots: ['container'], color: 'warning', class: 'bg-rui-warning/40' },
+    { slots: ['container'], color: 'info', class: 'bg-rui-info/40' },
+    { slots: ['container'], color: 'success', class: 'bg-rui-success/40' },
 
     // Track + thumb + thumb ripple + tick color
     { slots: ['track', 'thumb', 'tick'], color: 'primary', class: 'bg-rui-primary' },

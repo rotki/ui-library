@@ -29,7 +29,7 @@ const { isDark } = useRotkiTheme();
 const emptyStyles = tv({
   slots: {
     root: 'flex flex-col items-center justify-center flex-1',
-    title: 'text-body-1 leading-none font-bold text-center text-current pb-0 mb-0',
+    title: 'text-body-1 font-bold text-center text-current pb-0 mb-0',
     subtitle: 'text-body-2 text-center text-rui-text-secondary pb-0 mb-0',
   },
   variants: {
