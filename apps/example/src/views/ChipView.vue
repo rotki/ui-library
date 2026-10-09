@@ -5,7 +5,7 @@ import ComponentView from '@/components/ComponentView.vue';
 
 const colors = ['grey', 'primary', 'secondary', 'error', 'warning', 'info', 'success'] as const;
 
-const variants = ['filled', 'outlined'] as const;
+const variants = ['filled', 'outlined', 'tonal'] as const;
 
 const attributes: Partial<ChipProps>[] = [
   { disabled: false, closeable: true },

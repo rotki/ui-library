@@ -38,20 +38,20 @@ const today = new Date();
 const todayKey = createDateKey(today);
 
 const dayButton = tv({
-  base: 'h-9 w-full flex items-center justify-center text-sm rounded-full mx-auto max-w-9 transition-colors duration-150 ease-in-out border-none outline-hidden cursor-pointer focus-visible:focus-ring',
+  base: 'h-9 w-full flex items-center justify-center text-sm rounded-rui-control mx-auto max-w-9 transition-colors duration-150 ease-in-out border-none outline-hidden cursor-pointer focus-visible:focus-ring',
   variants: {
     selected: {
       true: 'bg-rui-primary text-white hover:bg-rui-primary/90 dark:hover:bg-rui-primary/90',
     },
     currentMonth: {
-      true: 'text-rui-neutral-700 hover:bg-rui-neutral-100 dark:text-rui-neutral-300 dark:hover:bg-rui-neutral-700',
+      true: 'text-rui-neutral-700 hover:bg-black/5 dark:text-rui-neutral-300 dark:hover:bg-white/8',
       false: 'text-rui-neutral-400 dark:text-rui-neutral-600',
     },
     inRange: {
       false: 'opacity-50 cursor-not-allowed hover:bg-transparent',
     },
     today: {
-      true: `relative after:content-[''] after:absolute after:size-1 after:rounded-full after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:bg-rui-primary`,
+      true: 'inset-ring inset-ring-rui-outline font-semibold',
     },
   },
   compoundVariants: [

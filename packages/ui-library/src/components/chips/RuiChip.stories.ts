@@ -48,13 +48,16 @@ const meta = preview.meta({
     tile: { control: 'boolean' },
     variant: {
       control: 'select',
-      options: ['filled', 'outlined'],
+      options: ['filled', 'outlined', 'tonal'],
     },
   },
   parameters: {
     docs: {
       controls: {
         exclude: ['remove'],
+      },
+      description: {
+        component: 'Use the `tonal` variant for status tags (`color="success" variant="tonal"`): a column of filled status chips is the loudest thing on a table. Keep `filled` for the few chips that should stand out. Only a `clickable` chip is a button and a tab stop.',
       },
     },
   },
@@ -108,8 +111,10 @@ export const Dismissible = meta.story({
   },
   async play({ canvas }) {
     await expect(canvas.getByText('Chip')).toBeVisible();
+    // a chip that is not clickable is not a button; only its close control is
     const buttons = canvas.getAllByRole('button');
-    await expect(buttons.length).toBeGreaterThanOrEqual(2);
+    await expect(buttons).toHaveLength(1);
+    await expect(buttons[0]).toHaveAttribute('type', 'button');
   },
 });
 
@@ -401,6 +406,27 @@ export const OutlinedErrorSmallDisabledPrefixed = meta.story({
     size: 'sm',
     variant: 'outlined',
   },
+});
+
+export const StatusTags = meta.story({
+  args: { size: 'sm', variant: 'tonal' },
+  render: args => ({
+    components: { RuiChip },
+    setup() {
+      const statuses = [
+        { color: 'success', label: 'Synced' },
+        { color: 'info', label: 'Queued' },
+        { color: 'warning', label: 'Rate limited' },
+        { color: 'error', label: 'Failed' },
+        { color: 'grey', label: 'Skipped' },
+      ] as const;
+      return { args, statuses };
+    },
+    template: `
+      <div class="flex flex-wrap gap-2">
+        <RuiChip v-for="status in statuses" :key="status.color" v-bind="args" :color="status.color">{{ status.label }}</RuiChip>
+      </div>`,
+  }),
 });
 
 export default meta;

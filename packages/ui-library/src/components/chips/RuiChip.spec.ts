@@ -64,12 +64,12 @@ describe('components/chips/RuiChip.vue', () => {
       },
     });
 
-    await wrapper.find('div[role=button]').trigger('click');
+    await wrapper.find('div[data-variant]').trigger('click');
     expect(wrapper.emitted()).not.toHaveProperty('click');
 
     await wrapper.setProps({ disabled: false });
 
-    await wrapper.find('div[role=button]').trigger('click');
+    await wrapper.find('div[data-variant]').trigger('click');
     expect(wrapper.emitted()).toHaveProperty('click');
   });
 
@@ -106,8 +106,8 @@ describe('components/chips/RuiChip.vue', () => {
       },
     });
 
-    expectWrapperToHaveClass(wrapper, 'div[role=button]', /text-rui-text-disabled/);
-    expectWrapperToHaveClass(wrapper, 'div[role=button]', /bg-rui-neutral-100/);
+    expectWrapperToHaveClass(wrapper, 'div[data-variant]', /text-rui-text-disabled/);
+    expectWrapperToHaveClass(wrapper, 'div[data-variant]', /bg-rui-neutral-100/);
   });
 
   it('should apply readonly state when not clickable', () => {
@@ -117,7 +117,7 @@ describe('components/chips/RuiChip.vue', () => {
       },
     });
 
-    expectWrapperToHaveClass(wrapper, 'div[role=button]', /cursor-default/);
+    expectWrapperToHaveClass(wrapper, 'div[data-variant]', /cursor-default/);
   });
 
   it('should apply size classes', async () => {
@@ -127,11 +127,12 @@ describe('components/chips/RuiChip.vue', () => {
       },
     });
 
-    const chip = wrapper.find('div[role=button]');
-    expect(chip.classes()).toContain('min-h-8');
+    const chip = wrapper.find('div[data-variant]');
+    expect(chip.classes()).toContain('min-h-7');
 
     await wrapper.setProps({ size: 'sm' });
-    expect(chip.classes()).not.toContain('min-h-8');
+    expect(chip.classes()).toContain('min-h-6');
+    expect(chip.classes()).not.toContain('min-h-7');
   });
 
   it('should apply color classes', async () => {
@@ -141,7 +142,7 @@ describe('components/chips/RuiChip.vue', () => {
       },
     });
 
-    const chip = wrapper.find('div[role=button]');
+    const chip = wrapper.find('div[data-variant]');
     expect(chip.classes()).toContain('bg-rui-primary');
 
     await wrapper.setProps({ color: 'error' });
@@ -157,7 +158,7 @@ describe('components/chips/RuiChip.vue', () => {
       },
     });
 
-    const chip = wrapper.find('div[role=button]');
+    const chip = wrapper.find('div[data-variant]');
     expect(chip.attributes('data-variant')).toBe('filled');
 
     await wrapper.setProps({ variant: 'outlined' });
@@ -172,12 +173,50 @@ describe('components/chips/RuiChip.vue', () => {
       },
     });
 
-    await wrapper.find('div[role=button]').trigger('click');
+    await wrapper.find('div[data-variant]').trigger('click');
     expect(wrapper.emitted()).not.toHaveProperty('click');
 
     await wrapper.setProps({ clickable: true });
 
-    await wrapper.find('div[role=button]').trigger('click');
+    await wrapper.find('div[data-variant]').trigger('click');
     expect(wrapper.emitted()).toHaveProperty('click');
+  });
+
+  it('should leave a non-clickable chip out of the tab order and the button role', () => {
+    wrapper = createWrapper();
+
+    const chip = wrapper.find('div[data-variant]');
+    expect(chip.attributes('role')).toBeUndefined();
+    expect(chip.attributes('tabindex')).toBeUndefined();
+  });
+
+  it('should expose a clickable chip as a focusable button', async () => {
+    wrapper = createWrapper({ props: { clickable: true } });
+
+    const chip = wrapper.find('div[data-variant]');
+    expect(chip.attributes('role')).toBe('button');
+    expect(chip.attributes('tabindex')).toBe('0');
+
+    await wrapper.setProps({ disabled: true });
+    expect(chip.attributes('tabindex')).toBeUndefined();
+    expect(chip.attributes('aria-disabled')).toBe('true');
+  });
+
+  it('should activate a clickable chip with Enter and Space', async () => {
+    wrapper = createWrapper({ props: { clickable: true } });
+
+    const chip = wrapper.find('div[data-variant]');
+    await chip.trigger('keydown', { key: 'Enter' });
+    await chip.trigger('keydown', { key: ' ' });
+    await chip.trigger('keydown', { key: 'a' });
+    expect(wrapper.emitted('click')).toHaveLength(2);
+  });
+
+  it('should tint a clickable chip on hover without a brightness filter', () => {
+    wrapper = createWrapper({ props: { clickable: true, color: 'error', variant: 'tonal' } });
+
+    const classes = wrapper.find('div[data-variant]').classes();
+    expect(classes).toContain('hover:state-layer');
+    expect(classes.some(name => name.includes('brightness'))).toBe(false);
   });
 });

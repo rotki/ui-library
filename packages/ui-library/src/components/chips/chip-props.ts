@@ -8,11 +8,13 @@ export type ChipSize = (typeof ChipSize)[keyof typeof ChipSize];
 export const ChipVariant = {
   filled: 'filled',
   outlined: 'outlined',
+  /** A soft tint of the color with deeper text, for status tags in dense views */
+  tonal: 'tonal',
 } as const;
 
 export type ChipVariant = (typeof ChipVariant)[keyof typeof ChipVariant];
 
 export const CHIP_CLOSE_ICON_SIZES: Record<ChipSize, number> = {
-  sm: 16,
-  md: 24,
+  sm: 12,
+  md: 14,
 };

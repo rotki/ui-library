@@ -42,7 +42,7 @@ const {
   closeable = false,
   disabled = false,
   variant = ChipVariant.filled,
-  closeIcon = 'lu-circle-x',
+  closeIcon = 'lu-x',
   bgColor = undefined,
   textColor = undefined,
   classNames,
@@ -54,35 +54,49 @@ const emit = defineEmits<{
   'click': [e: MouseEvent];
 }>();
 
-defineSlots<{
+const slots = defineSlots<{
   prepend?: () => any;
   default?: () => any;
 }>();
 
+const root = useTemplateRef<HTMLDivElement>('root');
+
 const chipStyles = tv({
   slots: {
-    root: 'inline-flex items-center justify-between px-2 py-1 transition duration-150 cursor-default outline-hidden max-w-full truncate',
-    prepend: 'rounded-full flex items-center justify-center pr-0 w-6 h-6 text-[0.6rem] text-white bg-rui-neutral-400 dark:bg-rui-neutral-600 overflow-hidden',
-    label: 'truncate px-2 text-[0.8125rem]',
-    close: 'rounded-full flex items-center p-[0.13rem] pl-0 inset-y-0 focus:outline-hidden',
-    closeIcon: 'opacity-50 hover:opacity-80 dark:hover:text-rui-neutral-300 transition-opacity',
+    root: 'inline-flex items-center justify-between px-2 py-0.5 transition duration-150 cursor-default outline-hidden max-w-full truncate',
+    // the avatar's neutral pair, so initials stay readable on any chip color
+    prepend: 'rounded-full flex items-center justify-center shrink-0 w-6 h-6 text-[0.625rem] font-semibold text-rui-neutral-700 bg-rui-neutral-200 dark:text-rui-neutral-200 dark:bg-rui-neutral-700 overflow-hidden',
+    label: 'truncate px-2 text-[0.8125rem]/5',
+    // a round hover fill marks the close icon as its own button
+    close: 'rounded-full flex items-center p-0.5 inset-y-0 focus:outline-hidden transition-colors hover:bg-black/10 dark:hover:bg-white/15',
+    closeIcon: 'opacity-60 hover:opacity-100 transition-opacity',
   },
   variants: {
     tile: {
-      true: { root: 'rounded-lg' },
+      true: { root: 'rounded-rui-sm' },
       false: { root: 'rounded-full' },
     },
     size: {
-      md: { root: 'min-h-8' },
+      // 28px, to sit in a 44px table row; sm is 24px with 12px text, the smallest the library sets
+      md: { root: 'min-h-7' },
       sm: {
-        root: 'py-[0.19rem]',
+        root: 'min-h-6',
         prepend: 'text-[0.5rem] p-[0.08rem] w-4 h-4',
-        label: 'px-1.5 text-[0.7rem]',
-        close: 'p-[0.08rem]',
+        label: 'px-1.5 text-xs/4',
+        close: 'p-px',
       },
     },
+    // a leading circle sits as far from the start edge as from the top, like an avatar in a pill
+    prepended: {
+      true: { root: 'pl-0.5' },
+      false: {},
+    },
+    closeable: {
+      true: {},
+      false: {},
+    },
     disabled: {
-      true: { root: '!text-rui-text-disabled cursor-default', close: 'cursor-default' },
+      true: { root: '!text-rui-text-disabled cursor-default', close: 'cursor-default hover:bg-transparent dark:hover:bg-transparent' },
       false: {},
     },
     clickable: {
@@ -92,6 +106,7 @@ const chipStyles = tv({
     variant: {
       filled: {},
       outlined: {},
+      tonal: {},
     },
     color: {
       grey: { root: 'text-rui-text' },
@@ -104,13 +119,12 @@ const chipStyles = tv({
     },
   },
   compoundVariants: [
-    // Interactive states (clickable + not disabled)
-    { clickable: true, disabled: false, class: { root: 'hover:brightness-90 dark:hover:brightness-110 focus-visible:focus-ring' } },
+    // Interactive states (clickable + not disabled): a tint over any fill, which keeps the text color
+    { clickable: true, disabled: false, class: { root: 'hover:state-layer active:state-layer-pressed focus-visible:focus-ring' } },
 
     // Grey filled/outlined
     { color: 'grey', variant: 'filled', class: { root: 'bg-rui-neutral-100 dark:bg-rui-neutral-800' } },
     { color: 'grey', variant: 'outlined', class: { root: 'border border-rui-outline bg-transparent' } },
-    { color: 'grey', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-black/4 dark:hover:bg-white/4' } },
 
     // Context colors — filled bg
     { color: 'primary', variant: 'filled', class: { root: 'bg-rui-primary' } },
@@ -129,17 +143,26 @@ const chipStyles = tv({
     { color: 'info', variant: 'outlined', class: { root: 'border text-rui-info border-rui-info/50 bg-transparent' } },
     { color: 'success', variant: 'outlined', class: { root: 'border text-rui-success border-rui-success/50 bg-transparent' } },
 
-    // Disabled: a flat neutral chip in any color, like a disabled button
-    { disabled: true, variant: 'filled', class: { root: '!bg-rui-neutral-100 dark:!bg-rui-neutral-800' } },
-    { disabled: true, variant: 'outlined', class: { root: '!border-rui-divider' } },
+    // Context colors — tonal: a tint of the hue with its deeper tone as text, 4.5:1 in both themes
+    { color: 'grey', variant: 'tonal', class: { root: 'bg-rui-neutral-100 dark:bg-rui-neutral-800' } },
+    { color: 'primary', variant: 'tonal', class: { root: 'bg-rui-primary/10 text-rui-primary-darker dark:bg-rui-primary/20 dark:text-rui-primary-lighter' } },
+    { color: 'secondary', variant: 'tonal', class: { root: 'bg-rui-secondary/10 text-rui-secondary-darker dark:bg-rui-secondary/20 dark:text-rui-secondary-lighter' } },
+    { color: 'error', variant: 'tonal', class: { root: 'bg-rui-error/10 text-rui-error-darker dark:bg-rui-error/20 dark:text-rui-error-lighter' } },
+    { color: 'warning', variant: 'tonal', class: { root: 'bg-rui-warning/10 text-rui-warning-darker dark:bg-rui-warning/20 dark:text-rui-warning-lighter' } },
+    { color: 'info', variant: 'tonal', class: { root: 'bg-rui-info/10 text-rui-info-darker dark:bg-rui-info/20 dark:text-rui-info-lighter' } },
+    { color: 'success', variant: 'tonal', class: { root: 'bg-rui-success/10 text-rui-success-darker dark:bg-rui-success/20 dark:text-rui-success-lighter' } },
 
-    // Context colors — outlined interactive
-    { color: 'primary', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-primary/4' } },
-    { color: 'secondary', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-secondary/4' } },
-    { color: 'error', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-error/4' } },
-    { color: 'warning', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-warning/4' } },
-    { color: 'info', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-info/4' } },
-    { color: 'success', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-success/4' } },
+    // sm: a 16px circle in a 24px chip, 4px in from the start as from the top
+    { size: 'sm', prepended: true, class: { root: 'pl-1' } },
+    // in a tile chip the prefix follows the corners: the chip's 6px radius less the 2px inset
+    { tile: true, class: { prepend: 'rounded-sm' } },
+    // the close button's round hover area mirrors the prefix: as far from the end edge as from the top
+    { closeable: true, class: { root: 'pr-1', label: 'pr-1' } },
+    { closeable: true, size: 'sm', class: { root: 'pr-1', label: 'pr-0.5' } },
+
+    // Disabled: a flat neutral chip in any color, like a disabled button
+    { disabled: true, variant: ['filled', 'tonal'], class: { root: '!bg-rui-neutral-100 dark:!bg-rui-neutral-800' } },
+    { disabled: true, variant: 'outlined', class: { root: '!border-rui-divider' } },
   ],
   compoundSlots: [
     // Every filled color takes light text, in both themes
@@ -162,6 +185,8 @@ const ui = computed<ReturnType<typeof chipStyles>>(() => chipStyles({
   variant,
   disabled,
   clickable,
+  prepended: !!slots.prepend,
+  closeable,
 }));
 
 const style = computed<Partial<StyleValue>>(() => {
@@ -179,19 +204,38 @@ function click(e: MouseEvent): void {
 
   emit('click', e);
 }
+
+/**
+ * Enter and Space activate a clickable chip as they would a button, through a
+ * real click so the handler still gets a `MouseEvent`.
+ *
+ * @param e - the key press on the chip
+ */
+function onKeydown(e: KeyboardEvent): void {
+  if (!clickable || disabled || e.target !== get(root))
+    return;
+  if (e.key !== 'Enter' && e.key !== ' ')
+    return;
+
+  e.preventDefault();
+  get(root)?.click();
+}
 </script>
 
 <template>
   <div
+    ref="root"
     :class="ui.root({ class: cn(classNames?.root) })"
     :style="style"
     :data-variant="variant"
     :data-color="color"
     :data-disabled="disabled || undefined"
-    role="button"
-    tabindex="0"
+    :role="clickable ? 'button' : undefined"
+    :tabindex="clickable && !disabled ? 0 : undefined"
+    :aria-disabled="clickable && disabled ? true : undefined"
     v-bind="objectOmit($attrs, ['onClick'])"
     @click="click($event)"
+    @keydown="onKeydown($event)"
   >
     <div
       v-if="$slots.prepend"
