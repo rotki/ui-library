@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ContextColorsType } from '@/consts/colors';
 import type { VueClassValue } from '@/types/class-value';
+import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';
 import RuiSliderTicks from '@/components/forms/slider/RuiSliderTicks.vue';
 import { HIGHLIGHT_COLOR_MAP, HIGHLIGHT_DEFAULT, SliderInteraction, sliderStyles } from '@/components/forms/slider/slider-styles';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
@@ -69,10 +70,19 @@ const isActive = ref<boolean>(false);
 
 const outer = useTemplateRef<HTMLDivElement>('outer');
 
-const { hasError, validation } = useFormTextDetail(
+const generatedId = useId();
+const attrs = useAttrs();
+
+const { hasError } = useFormTextDetail(
   () => errorMessages,
   () => successMessages,
 );
+
+// the label above points at the range input, keeping a consumer's own id
+const inputId = computed<string>(() => {
+  const id = attrs.id;
+  return typeof id === 'string' && id ? id : generatedId;
+});
 
 const { width, height } = useElementBounding(outer);
 
@@ -96,9 +106,9 @@ const interaction = computed<SliderInteraction>(() => {
 const ui = computed<ReturnType<typeof sliderStyles>>(() => sliderStyles({
   disabled,
   vertical,
-  validation: get(validation),
   color,
   bigTick: get(bigTick),
+  hasLabel: !!label,
 }));
 
 // Track ui: includes interaction state, used for slider/thumb/ticks (changes on hover/focus/active)
@@ -152,23 +162,24 @@ function isHighlightedTick(index: number): boolean {
 </script>
 
 <template>
-  <div v-bind="getRootAttrs($attrs)">
-    <label
+  <div
+    v-bind="getRootAttrs($attrs)"
+    :class="ui.root()"
+  >
+    <!-- above the rail like any field's label, neutral in every state; the messages below carry the validation -->
+    <RuiFieldLabel
+      v-if="label"
+      :text="label"
+      :for="inputId"
+      :required="required"
+      :disabled="disabled"
+      :class="ui.label()"
+    />
+    <div
       :class="ui.wrapper()"
       :data-error="hasError ? '' : undefined"
+      data-id="slider-wrapper"
     >
-      <div
-        v-if="label"
-        :class="ui.label()"
-      >
-        {{ label }}
-        <span
-          v-if="required"
-          class="text-rui-error"
-        >
-          *
-        </span>
-      </div>
       <div
         ref="outer"
         :class="ui.outer()"
@@ -178,7 +189,8 @@ function isHighlightedTick(index: number): boolean {
           :style="innerStyle"
         >
           <input
-            v-model="modelValue"
+            :id="inputId"
+            v-model.number="modelValue"
             :class="ui.input()"
             type="range"
             :max="max"
@@ -188,7 +200,7 @@ function isHighlightedTick(index: number): boolean {
             :aria-invalid="hasError"
             :aria-label="label || undefined"
             :aria-valuetext="String(modelValue)"
-            v-bind="getNonRootAttrs($attrs)"
+            v-bind="getNonRootAttrs($attrs, ['class', 'id'])"
             @mouseenter="isHovered = true"
             @mouseleave="isHovered = false"
             @focus="isFocused = true"
@@ -235,7 +247,7 @@ function isHighlightedTick(index: number): boolean {
           </div>
         </div>
       </div>
-    </label>
+    </div>
     <RuiFormTextDetail
       v-if="!hideDetails"
       class="pt-1"

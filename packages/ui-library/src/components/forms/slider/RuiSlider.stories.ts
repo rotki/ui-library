@@ -1,5 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
-import { expect } from 'storybook/test';
+import { expect, waitFor } from 'storybook/test';
 import RuiSlider from '@/components/forms/slider/RuiSlider.vue';
 import { contextColors } from '@/consts/colors';
 import preview from '~/.storybook/preview';
@@ -64,12 +64,12 @@ const meta = preview.meta({
 export const Default = meta.story({
   args: {
     label: 'Label',
-    modelValue: 0,
+    modelValue: 40,
   },
   async play({ canvas }) {
     const slider = canvas.getByRole('slider');
-    await expect(slider).toHaveValue('0');
-    await expect(canvas.getByText('Value: 0')).toBeVisible();
+    await expect(slider).toHaveValue('40');
+    await expect(canvas.getByText('Value: 40')).toBeVisible();
   },
 });
 
@@ -77,31 +77,59 @@ export const Secondary = meta.story({
   args: {
     color: 'secondary',
     label: 'Label',
-    modelValue: 0,
+    modelValue: 40,
   },
 });
 
 export const Vertical = meta.story({
   args: {
     label: 'Label',
-    modelValue: 0,
+    modelValue: 40,
     vertical: true,
   },
+  render: args => ({
+    components: { RuiSlider },
+    setup() {
+      const modelValue = computed({
+        get() {
+          return args.modelValue;
+        },
+        set(val) {
+          // @ts-expect-error Storybook args are mutable but Vue extracts readonly props
+          args.modelValue = val;
+        },
+      });
+
+      return { args, modelValue };
+    },
+    // a vertical rail fills its parent's height, so the story gives it a fixed one at the left
+    template: `<div class="flex h-64 w-fit flex-col items-start">
+      <RuiSlider v-bind="args" v-model="modelValue" class="h-48" />
+      <div class="text-rui-text">Value: {{ modelValue }}</div>
+    </div>`,
+  }),
 });
 
 export const ShowThumbLabel = meta.story({
   args: {
     label: 'Label',
-    modelValue: 0,
+    modelValue: 40,
     showThumbLabel: true,
+  },
+  // the value bubble shows while the thumb is pressed or keyboard focused, so the story focuses it
+  async play({ canvas, canvasElement, userEvent }) {
+    await userEvent.tab();
+    await expect(canvas.getByRole('slider')).toHaveFocus();
+    await waitFor(() => expect(canvasElement.querySelector('[data-id=slider-thumb-label]')).toBeVisible());
   },
 });
 
 export const ShowTicks = meta.story({
   args: {
     label: 'Label',
-    modelValue: 0,
+    modelValue: 40,
     showTicks: true,
+    step: 10,
   },
 });
 
@@ -109,7 +137,7 @@ export const HideTrack = meta.story({
   args: {
     hideTrack: true,
     label: 'Label',
-    modelValue: 0,
+    modelValue: 40,
   },
 });
 
@@ -117,9 +145,10 @@ export const TriStateStyle = meta.story({
   args: {
     label: 'Label',
     max: 2,
-    modelValue: 0,
+    modelValue: 1,
     showTicks: true,
-    classNames: { slider: '!bg-rui-neutral-200 dark:!bg-rui-neutral-800', tick: '!bg-rui-neutral-200 dark:!bg-rui-neutral-800' },
+    // the stops are bumps of the rail itself, one tone in each theme, so the end stop stays visible
+    classNames: { slider: '!bg-rui-neutral-200 dark:!bg-rui-neutral-700', tick: '!bg-rui-neutral-200 dark:!bg-rui-neutral-700' },
     step: 1,
     tickSize: 12,
   },
@@ -129,7 +158,7 @@ export const Disabled = meta.story({
   args: {
     disabled: true,
     label: 'Label',
-    modelValue: 0,
+    modelValue: 40,
   },
 });
 
@@ -137,7 +166,7 @@ export const WithHint = meta.story({
   args: {
     hint: 'With hint',
     label: 'Label',
-    modelValue: 0,
+    modelValue: 40,
   },
 });
 
@@ -146,7 +175,7 @@ export const HideDetails = meta.story({
     hideDetails: true,
     hint: 'Hint (should be invisible)',
     label: 'Label',
-    modelValue: 0,
+    modelValue: 40,
   },
 });
 
@@ -154,14 +183,14 @@ export const WithErrorMessage = meta.story({
   args: {
     errorMessages: ['With error messages'],
     label: 'Label',
-    modelValue: 0,
+    modelValue: 40,
   },
 });
 
 export const WithSuccessMessage = meta.story({
   args: {
     label: 'Label',
-    modelValue: 0,
+    modelValue: 40,
     successMessages: ['With success messages'],
   },
 });
@@ -169,7 +198,7 @@ export const WithSuccessMessage = meta.story({
 export const Required = meta.story({
   args: {
     label: 'Required Slider',
-    modelValue: 0,
+    modelValue: 40,
     required: true,
   },
 });

@@ -47,11 +47,11 @@ describe('components/forms/slider/RuiSlider.vue', () => {
 
   it('should pass vertical props', async () => {
     wrapper = createWrapper();
-    expectWrapperNotToHaveClass(wrapper, 'label', /flex-col-reverse/);
+    expectWrapperNotToHaveClass(wrapper, '[data-id=slider-wrapper]', /flex-col-reverse/);
     await wrapper.setProps({ vertical: true });
-    expectWrapperToHaveClass(wrapper, 'label', /flex-col-reverse/);
+    expectWrapperToHaveClass(wrapper, '[data-id=slider-wrapper]', /flex-col-reverse/);
     await wrapper.setProps({ vertical: false });
-    expectWrapperNotToHaveClass(wrapper, 'label', /flex-col-reverse/);
+    expectWrapperNotToHaveClass(wrapper, '[data-id=slider-wrapper]', /flex-col-reverse/);
   });
 
   it('should pass hideTrack props', async () => {
@@ -102,16 +102,16 @@ describe('components/forms/slider/RuiSlider.vue', () => {
 
   it('should pass color props', async () => {
     wrapper = createWrapper();
-    expectWrapperToHaveClass(wrapper, '[data-id=slider-thumb]', /bg-rui-primary/);
+    expectWrapperToHaveClass(wrapper, '[data-id=slider-thumb]', /border-rui-primary-fill/);
 
     await wrapper.setProps({ color: 'secondary' });
-    expectWrapperToHaveClass(wrapper, '[data-id=slider-thumb]', /bg-rui-secondary/);
+    expectWrapperToHaveClass(wrapper, '[data-id=slider-thumb]', /border-rui-secondary-fill/);
 
     await wrapper.setProps({ color: 'error' });
-    expectWrapperToHaveClass(wrapper, '[data-id=slider-thumb]', /bg-rui-error/);
+    expectWrapperToHaveClass(wrapper, '[data-id=slider-thumb]', /border-rui-error-fill/);
 
     await wrapper.setProps({ color: 'success' });
-    expectWrapperToHaveClass(wrapper, '[data-id=slider-thumb]', /bg-rui-success/);
+    expectWrapperToHaveClass(wrapper, '[data-id=slider-thumb]', /border-rui-success-fill/);
   });
 
   it('should pass hint props', async () => {
@@ -197,7 +197,8 @@ describe('components/forms/slider/RuiSlider.vue', () => {
 
     await wrapper.find('input').setValue(75);
     expect(wrapper.emitted('update:modelValue')).toBeTruthy();
-    expect(wrapper.emitted('update:modelValue')![0]).toEqual(['75']);
+    // a range input reports a string, but the model is a number
+    expect(wrapper.emitted('update:modelValue')![0]).toEqual([75]);
   });
 
   it('should have aria-invalid when errorMessages are provided', async () => {
@@ -233,13 +234,29 @@ describe('components/forms/slider/RuiSlider.vue', () => {
       },
     });
 
-    expect(wrapper.find('label').attributes('data-error')).toBeUndefined();
+    expect(wrapper.find('[data-id=slider-wrapper]').attributes('data-error')).toBeUndefined();
 
     await wrapper.setProps({ errorMessages: ['Error'] });
-    expect(wrapper.find('label').attributes('data-error')).toBe('');
+    expect(wrapper.find('[data-id=slider-wrapper]').attributes('data-error')).toBe('');
 
     await wrapper.setProps({ errorMessages: [] });
-    expect(wrapper.find('label').attributes('data-error')).toBeUndefined();
+    expect(wrapper.find('[data-id=slider-wrapper]').attributes('data-error')).toBeUndefined();
+  });
+
+  it('should label the input from above and keep the label neutral on error', async () => {
+    wrapper = createWrapper({
+      props: {
+        label: 'Volume',
+        modelValue: 50,
+      },
+    });
+
+    const label = wrapper.find('[data-id=field-label]');
+    expect(label.attributes('for')).toBe(wrapper.find('input').attributes('id'));
+    expect(label.classes()).toContain('text-rui-text');
+
+    await wrapper.setProps({ errorMessages: ['Error'] });
+    expect(wrapper.find('[data-id=field-label]').classes()).not.toContain('text-rui-error');
   });
 
   it('should show required asterisk when required prop is true', async () => {
