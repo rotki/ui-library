@@ -51,7 +51,7 @@ const meta = preview.meta({
   component: RuiCheckboxGroup<string>,
   render,
   tags: ['autodocs'],
-  title: 'Components/Forms/Checkbox/CheckboxGroup',
+  title: 'Forms/Checkbox Group',
 });
 
 export const Default = meta.story({

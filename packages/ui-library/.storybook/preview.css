@@ -1,16 +1,26 @@
 @import '../src/style.css';
 
 /*
- * Storybook also scans the stories, and generates every palette and typography
- * class: the theme pages build those class names at runtime.
+ * Storybook also scans the stories and the docs pages, which live outside `src` so the library's
+ * own `@source not` rules skip them, and generates every palette, typography and token class that
+ * the docs pages build at runtime.
  */
 @source '../src/**/*.stories.ts';
-@source '../src/stories';
-@source inline('{,hover:,disabled:,active:,focus:}{bg,text,border}-rui-{grey,indigo,deep-purple,amber,orange,pink,deep-orange,green,red,light-green,purple,lime,light-blue,yellow,cyan,teal,blue,blue-gray}{,-50,-100,-200,-300,-400,-500,-600,-700,-800,-900,-a100,-a200,-a400,-a700}');
+@source '../docs';
+@source inline('{,hover:,disabled:,active:,focus:}{bg,text,border}-rui-grey{,-50,-100,-200,-300,-400,-500,-600,-700,-800,-900,-a100,-a200,-a400,-a700}');
+@source inline('{,hover:,disabled:,active:,focus:}{bg,text,border}-rui-neutral-{50,100,200,300,400,500,600,700,800,900,950}');
 @source inline('{,hover:,disabled:,active:,focus:}{bg,text,border}-rui{,-light,-dark}-{primary,secondary,error,warning,info,success}{,-darker,-lighter}');
-@source inline('text-{body-1,body-2,subtitle-1,subtitle-2,caption,overline,h1,h2,h3,h4,h5,h6}');
+@source inline('text-{body-1,body-2,subtitle-1,subtitle-2,caption,caption-2,overline,h1,h2,h3,h4,h5,h6}');
+@source inline('{bg,border,text}-rui-{primary,secondary,error,warning,info,success}-{subtle,soft,border,fill,foreground}');
+@source inline('bg-rui-{background,surface,surface-sunken,surface-muted,menu,overlay,hover,pressed,veil}');
+@source inline('{bg-rui-chart-{1,2,3,4,5,6,7,8,other},text-rui-link,hover:state-layer,rui-scrollbar}');
+
+/* the page color and its text, as an app sets them, so plain text in a story follows the theme */
+.sb-show-main {
+  color: var(--rui-text-primary);
+}
 
 .dark .sbdocs-preview,
 .dark .sb-show-main {
-  background-color: #121212;
+  background-color: rgb(var(--rui-dark-background));
 }

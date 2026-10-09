@@ -10,7 +10,7 @@ function render(args: ComponentPropsAndSlots<typeof RuiProgress>) {
       return { args };
     },
     template:
-      '<div class="text-black dark:text-white"><Progress v-bind="args" /></div>',
+      '<div class="text-rui-text"><Progress v-bind="args" /></div>',
   };
 }
 
@@ -48,7 +48,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Progress',
+  title: 'Feedback/Progress',
 });
 
 export const Default = meta.story({
@@ -61,27 +61,9 @@ export const Default = meta.story({
   },
 });
 
-export const Primary = meta.story({
-  args: {
-    bufferValue: 60,
-    circular: false,
-    color: 'primary',
-    showLabel: false,
-    value: 50,
-    variant: 'determinate',
-  },
-});
-
 export const WithLabel = meta.story({
   args: {
     showLabel: true,
-    value: 50,
-  },
-});
-
-export const Secondary = meta.story({
-  args: {
-    color: 'secondary',
     value: 50,
   },
 });
@@ -117,14 +99,6 @@ export const Circular = meta.story({
   },
 });
 
-export const CircularPrimary = meta.story({
-  args: {
-    circular: true,
-    color: 'primary',
-    value: 50,
-  },
-});
-
 export const CircularIndeterminate = meta.story({
   args: {
     circular: true,
@@ -148,7 +122,7 @@ export const CircularWithLabelSizes = meta.story({
       components: { Progress: RuiProgress },
       setup: () => ({ args, sizes: [24, 30, 40, 64, 100] }),
       template: `
-        <div class="flex flex-wrap items-center gap-6 p-4 text-black dark:text-white">
+        <div class="flex flex-wrap items-center gap-6 p-4 text-rui-text">
           <div v-for="size in sizes" :key="size" class="flex flex-col items-center gap-2">
             <Progress circular show-label color="primary" :value="100" :size="size" :thickness="2" />
             <span class="text-xs">{{ size }}px</span>
@@ -164,7 +138,7 @@ export const Colors = meta.story({
       components: { Progress: RuiProgress },
       setup: () => ({ args, colors: ['inherit', ...contextColors] }),
       template: `
-        <div class="flex flex-col gap-4 p-4 text-black dark:text-white">
+        <div class="flex flex-col gap-4 p-4 text-rui-text">
           <div v-for="color in colors" :key="color" class="flex items-center gap-4">
             <span class="w-20 text-sm">{{ color }}</span>
             <Progress :color="color" :value="60" class="flex-1" />
@@ -180,7 +154,7 @@ export const CircularColors = meta.story({
       components: { Progress: RuiProgress },
       setup: () => ({ args, colors: ['inherit', ...contextColors] }),
       template: `
-        <div class="flex flex-wrap gap-6 p-4 text-black dark:text-white">
+        <div class="flex flex-wrap gap-6 p-4 text-rui-text">
           <div v-for="color in colors" :key="color" class="flex flex-col items-center gap-2">
             <Progress circular :color="color" :value="60" />
             <span class="text-xs">{{ color }}</span>

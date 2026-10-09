@@ -12,6 +12,9 @@ setup((app) => {
   app.use(RuiPlugin);
 });
 
+// A docs page without stories never runs the theme decorator, so the theme class is set on load too
+useRotkiTheme();
+
 export default definePreview({
   addons: [addonA11y(), addonDocs()],
   parameters: {
@@ -22,6 +25,32 @@ export default definePreview({
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/,
+      },
+    },
+    /*
+     * Grouped by purpose, foundations first. Components are listed rather than sorted, since the
+     * alphabetical method would also reorder each component's stories and move Default down.
+     */
+    options: {
+      storySort: {
+        order: [
+          'Foundations',
+          ['Colors', 'Tokens', 'Typography', 'Icons'],
+          'Actions',
+          ['Button', 'Button Group'],
+          'Forms',
+          ['Text Field', 'Text Area', 'Revealable Text Field', 'Menu Select', 'Auto Complete', 'Simple Select', 'Category Picker', 'Checkbox', 'Checkbox Group', 'Radio', 'Radio Group', 'Switch', 'Slider', 'Color Picker', 'File Upload'],
+          'Date & Time',
+          ['Calendar', 'Date Time Picker', 'Time Picker', 'Timezone Select'],
+          'Data Display',
+          ['Data Table', 'Table', 'Chip', 'Badge', 'Avatar', 'Avatar Group', 'Card', 'Divider', 'Icon', 'Logo'],
+          'Feedback',
+          ['Alert', 'Notification', 'Progress', 'Skeleton'],
+          'Navigation',
+          ['Tabs', 'Stepper', 'Footer Stepper', 'Accordion', 'Navigation Drawer'],
+          'Overlays',
+          ['Dialog', 'Bottom Sheet', 'Menu', 'Tooltip'],
+        ],
       },
     },
   },

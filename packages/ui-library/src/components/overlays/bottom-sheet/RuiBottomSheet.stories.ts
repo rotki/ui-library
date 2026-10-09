@@ -12,10 +12,7 @@ function render(args: ComponentPropsAndSlots<typeof RuiBottomSheet>) {
       return { args };
     },
     template: `
-      <RuiBottomSheet
-        v-bind="args"
-        width="900px"
-      >
+      <RuiBottomSheet v-bind="args">
         <template #activator="{ attrs }">
           <RuiButton v-bind="attrs">
             Click me!
@@ -35,7 +32,7 @@ function render(args: ComponentPropsAndSlots<typeof RuiBottomSheet>) {
                 Contents
               </div>
 
-              <div class="border-t border-default py-4">
+              <div class="border-t border-rui-divider py-4">
                 <div class="flex gap-2 w-full justify-end">
                   <RuiButton
                     variant="outlined"
@@ -73,7 +70,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Overlays/BottomSheet',
+  title: 'Overlays/Bottom Sheet',
 });
 
 export const Default = meta.story({

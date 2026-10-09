@@ -31,7 +31,6 @@ const meta = preview.meta({
     successMessages: [],
   },
   argTypes: {
-    appendIcon: { control: 'text' },
     color: {
       control: 'select',
       options: contextColors,
@@ -62,7 +61,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Forms/RevealableTextField',
+  title: 'Forms/Revealable Text Field',
 });
 
 export const Default = meta.story({
@@ -80,20 +79,11 @@ export const Default = meta.story({
   },
 });
 
-export const PrimaryText = meta.story({
+/** The field fills `#append` with its own reveal toggle, so the text color is what varies here. */
+export const TextColor = meta.story({
   args: {
-    appendIcon: 'lu-eye',
     label: 'Password',
-    placeholder: 'Placeholder',
-    textColor: 'primary',
-  },
-});
-
-export const SuccessText = meta.story({
-  args: {
-    appendIcon: 'lu-eye',
-    label: 'Password',
-    placeholder: 'Placeholder',
+    modelValue: 'secret123',
     textColor: 'success',
   },
 });

@@ -40,7 +40,8 @@ const meta = preview.meta({
     label: { control: 'text' },
     modelValue: { control: 'boolean' },
     required: { control: 'boolean', table: { category: 'State' } },
-    size: { control: 'select', options: ['medium', 'sm'] },
+    // the default size takes no value
+    size: { control: 'select', options: [undefined, 'sm'] },
     successMessages: { control: 'object' },
   },
   component: RuiSwitch,
@@ -51,7 +52,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Forms/Switch',
+  title: 'Forms/Switch',
 });
 
 export const Checked = meta.story({

@@ -53,7 +53,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Overlays/Tooltip',
+  title: 'Overlays/Tooltip',
 });
 
 export const Default = meta.story({
@@ -69,67 +69,47 @@ export const Default = meta.story({
   },
 });
 
-export const Top = meta.story({
-  args: {
-    options: {
-      placement: 'top',
+/** Hover any activator: the four placements, with the arrow and without. */
+export const Placements = meta.story({
+  render: () => ({
+    components: { RuiTooltip },
+    setup() {
+      const placements = ['top', 'right', 'bottom', 'left'] as const;
+      return { placements };
     },
+    template: `
+      <div class="flex flex-col items-center gap-10 p-16">
+        <div v-for="hideArrow in [false, true]" :key="String(hideArrow)" class="flex gap-12">
+          <RuiTooltip v-for="placement in placements" :key="placement" :options="{ placement }" :hide-arrow="hideArrow">
+            <template #activator>
+              <span class="text-rui-primary">{{ placement }}{{ hideArrow ? ', no arrow' : '' }}</span>
+            </template>
+            Placed {{ placement }}
+          </RuiTooltip>
+        </div>
+      </div>`,
+  }),
+  async play({ canvas, userEvent }) {
+    await userEvent.hover(canvas.getByText('left'));
+    const tooltip = await waitFor(() => within(document.body).getByRole('tooltip'));
+    await expect(tooltip).toHaveAttribute('data-placement', 'left');
   },
 });
 
-export const Right = meta.story({
+const longText = 'The balance includes staked and pending amounts, converted at the latest price from your preferred oracle. Prices older than an hour are refreshed when you open the asset.';
+
+/** A long tooltip wraps at `--rui-tooltip-max-width` (20rem) without any class. */
+export const LongText = meta.story({
   args: {
-    options: {
-      placement: 'right',
-    },
+    text: longText,
   },
 });
 
-export const Left = meta.story({
+/** A `max-w-*` in `classNames.tooltip` replaces the default width. */
+export const CustomMaxWidth = meta.story({
   args: {
-    options: {
-      placement: 'left',
-    },
-  },
-});
-
-export const NoArrow = meta.story({
-  args: {
-    hideArrow: true,
-  },
-});
-
-export const NoArrowTop = meta.story({
-  args: {
-    hideArrow: true,
-    options: {
-      placement: 'top',
-    },
-  },
-});
-
-export const NoArrowRight = meta.story({
-  args: {
-    hideArrow: true,
-    options: {
-      placement: 'right',
-    },
-  },
-});
-
-export const NoArrowLeft = meta.story({
-  args: {
-    hideArrow: true,
-    options: {
-      placement: 'left',
-    },
-  },
-});
-
-export const WithCustomSize = meta.story({
-  args: {
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    classNames: { tooltip: 'max-w-[20rem]' },
+    text: longText,
+    classNames: { tooltip: 'max-w-48' },
   },
 });
 

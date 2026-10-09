@@ -41,13 +41,14 @@ const meta = preview.meta({
     label: { control: 'text' },
     modelValue: { control: 'text' },
     required: { control: 'boolean', table: { category: 'State' } },
-    size: { control: 'select', options: ['medium', 'sm', 'lg'] },
+    // the default size takes no value
+    size: { control: 'select', options: [undefined, 'sm', 'lg'] },
     successMessages: { control: 'object' },
   },
   component: RuiRadioGroup<string>,
   render,
   tags: ['autodocs'],
-  title: 'Components/Forms/Radio/RadioGroup',
+  title: 'Forms/Radio Group',
 });
 
 export const Default = meta.story({

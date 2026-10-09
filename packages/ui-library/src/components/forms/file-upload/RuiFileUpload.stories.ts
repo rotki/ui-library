@@ -51,7 +51,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Forms/FileUpload',
+  title: 'Forms/File Upload',
 });
 
 export const Default = meta.story({

@@ -36,7 +36,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/ColorPicker',
+  title: 'Forms/Color Picker',
 });
 
 export const Default = meta.story({

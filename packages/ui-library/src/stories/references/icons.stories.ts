@@ -11,7 +11,7 @@ const meta = preview.meta({
     },
   },
   tags: ['autodocs'],
-  title: 'References/Icons',
+  title: 'Foundations/Icons',
 });
 
 export const Default = meta.story({});

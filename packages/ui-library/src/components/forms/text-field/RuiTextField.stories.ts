@@ -1,5 +1,6 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { expect } from 'storybook/test';
+import RuiFieldDefaults from '@/components/forms/field-defaults/RuiFieldDefaults.vue';
 import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
 import { contextColors } from '@/consts/colors';
 import preview from '~/.storybook/preview';
@@ -43,6 +44,7 @@ const meta = preview.meta({
     hideDetails: { control: 'boolean', table: { category: 'State' } },
     hint: { control: 'text' },
     label: { control: 'text' },
+    labelPlacement: { control: 'select', options: ['top', 'hidden'] },
     modelValue: { control: 'text' },
     placeholder: { control: 'text' },
     prependIcon: { control: 'text' },
@@ -63,7 +65,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Forms/TextField',
+  title: 'Forms/Text Field',
 });
 
 export const Default = meta.story({
@@ -76,14 +78,6 @@ export const Default = meta.story({
     await userEvent.click(input);
     await userEvent.type(input, 'Hello World');
     await expect(input).toHaveValue('Hello World');
-  },
-});
-
-export const Primary = meta.story({
-  args: {
-    color: 'primary',
-    label: 'Label',
-    placeholder: 'Placeholder',
   },
 });
 
@@ -195,6 +189,75 @@ export const Required = meta.story({
     label: 'Label',
     placeholder: 'Placeholder',
     required: true,
+  },
+});
+
+/**
+ * For search and filter fields, and rows that already name the field: the label is not drawn but
+ * stays as the field's accessible name, and the placeholder says what to type.
+ */
+export const HiddenLabel = meta.story({
+  args: {
+    label: 'Search assets',
+    labelPlacement: 'hidden',
+    placeholder: 'Search by name or symbol',
+    prependIcon: 'lu-search',
+  },
+  async play({ canvas }) {
+    await expect(canvas.getByRole('textbox', { name: 'Search assets' })).toBeVisible();
+  },
+});
+
+/** The clear button shows while the field is hovered or focused and has a value. */
+export const Clearable = meta.story({
+  args: {
+    clearable: true,
+    label: 'Address',
+    modelValue: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
+  },
+  async play({ canvas, userEvent }) {
+    const input = canvas.getByRole('textbox', { name: 'Address' });
+    await userEvent.click(input);
+    await userEvent.click(canvas.getByRole('button', { name: 'Clear' }));
+    await expect(input).toHaveValue('');
+  },
+});
+
+/**
+ * `RuiFieldDefaults` sets the label placement for every field inside it, here a settings list whose
+ * rows carry their own titles. A field's own `label-placement` still wins, as the last row shows.
+ */
+export const FieldDefaults = meta.story({
+  render: () => ({
+    components: { RuiFieldDefaults, RuiTextField },
+    setup() {
+      const rows = ref<{ description: string; label: string; value: string }[]>([
+        { description: 'How often balances refresh, in seconds.', label: 'Refresh interval', value: '60' },
+        { description: 'Shown in reports and exports.', label: 'Display name', value: 'Main portfolio' },
+      ]);
+      const note = ref<string>('');
+      return { note, rows };
+    },
+    template: `
+      <RuiFieldDefaults label-placement="hidden">
+        <div class="flex flex-col divide-y divide-rui-divider max-w-2xl">
+          <div v-for="row in rows" :key="row.label" class="grid grid-cols-1 md:grid-cols-2 gap-4 py-4 items-center">
+            <div>
+              <div class="text-subtitle-2">{{ row.label }}</div>
+              <div class="text-caption text-rui-text-secondary">{{ row.description }}</div>
+            </div>
+            <RuiTextField v-model="row.value" :label="row.label" dense hide-details />
+          </div>
+          <div class="py-4">
+            <RuiTextField v-model="note" label="Note" label-placement="top" placeholder="Anything to remember" hide-details />
+          </div>
+        </div>
+      </RuiFieldDefaults>
+    `,
+  }),
+  async play({ canvas }) {
+    await expect(canvas.getByRole('textbox', { name: 'Refresh interval' })).toHaveValue('60');
+    await expect(canvas.getByText('Note')).toBeVisible();
   },
 });
 

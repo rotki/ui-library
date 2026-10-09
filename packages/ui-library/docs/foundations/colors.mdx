@@ -1,0 +1,63 @@
+import { baseColorsIntensities, contextColors, contextColorsIntensities } from '@/consts/colors';
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundations/Colors" />
+
+# Colors
+
+The raw palettes. Each works with `bg-rui-`, `text-rui-` and `border-rui-`. For surfaces, lines,
+tints and states, reach for the named values on the Tokens page first; these are for the cases
+those do not cover.
+
+## Neutral
+
+Zinc, the grey every component draws with. Use it for your own greys so they match.
+
+<div className="sb-unstyled grid grid-cols-6 md:grid-cols-11 gap-2">
+  {['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'].map(step => (
+    <div key={step} className="text-rui-text min-w-0">
+      <div className={`h-12 rounded-rui-control border border-rui-divider bg-rui-neutral-${step}`}></div>
+      <code className="text-caption">{step}</code>
+    </div>
+  ))}
+</div>
+
+## Brand and status
+
+Each color has a main tone and a darker and lighter step, in a light and a dark set. The adaptive
+class (`bg-rui-error`) follows the theme; `bg-rui-light-error` and `bg-rui-dark-error` stay fixed.
+
+<div className="sb-unstyled grid grid-cols-1 md:grid-cols-2 gap-4">
+  {contextColors.map(color => (
+    <div key={color} className="rounded-rui-card border border-rui-divider bg-rui-surface p-4 text-rui-text">
+      <div className="text-subtitle-2 capitalize">{color}</div>
+      <div className="grid grid-cols-[4rem_1fr_1fr_1fr] gap-2 mt-3 items-center">
+        <div></div>
+        {contextColorsIntensities.map(({ name }) => (
+          <div key={name} className="text-caption text-rui-text-secondary">{name}</div>
+        ))}
+        {[['Adaptive', ''], ['Light', 'light-'], ['Dark', 'dark-']].map(([label, theme]) => (
+          <div key={label} className="contents">
+            <div className="text-caption text-rui-text-secondary">{label}</div>
+            {contextColorsIntensities.map(({ name, prefix }) => (
+              <div key={name} className={`h-9 rounded-rui-control bg-rui-${theme}${color}${prefix}`} title={`bg-rui-${theme}${color}${prefix}`}></div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>
+
+## Grey (legacy)
+
+Material grey, kept from 2.x for apps that still use it. Prefer `neutral` for new code.
+
+<div className="sb-unstyled grid grid-cols-7 md:grid-cols-14 gap-2">
+  {baseColorsIntensities.map(step => (
+    <div key={step} className="text-rui-text min-w-0">
+      <div className={`h-12 rounded-rui-control border border-rui-divider bg-rui-grey-${step}`}></div>
+      <code className="text-caption">{step}</code>
+    </div>
+  ))}
+</div>

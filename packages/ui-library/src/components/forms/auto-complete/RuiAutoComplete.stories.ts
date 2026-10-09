@@ -57,7 +57,7 @@ const meta = preview.meta<
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Forms/AutoComplete',
+  title: 'Forms/Auto Complete',
 });
 
 export const Default = meta.story({
@@ -103,16 +103,6 @@ export const Disabled = meta.story({
 export const Dense = meta.story({
   args: {
     dense: true,
-    keyAttr: 'id',
-    modelValue: undefined,
-    textAttr: 'label',
-  },
-});
-
-export const DisabledDense = meta.story({
-  args: {
-    dense: true,
-    disabled: true,
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',

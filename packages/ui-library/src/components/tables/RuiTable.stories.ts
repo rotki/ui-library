@@ -29,15 +29,21 @@ const body = `
   </tbody>
 `;
 
-function render(args: Props, slot: string = body) {
-  return {
+/**
+ * A render function for the given table markup. Storybook calls `render(args, context)`, so the
+ * markup comes from this factory rather than a second parameter, which would receive the context.
+ */
+function renderWith(slot: string) {
+  return (args: Props) => ({
     components: { RuiTable },
     setup() {
       return { args };
     },
     template: `<RuiTable v-bind="args">${slot}</RuiTable>`,
-  };
+  });
 }
+
+const render = renderWith(body);
 
 const meta = preview.meta({
   args: {
@@ -53,7 +59,7 @@ const meta = preview.meta({
   component: RuiTable,
   render,
   tags: ['autodocs'],
-  title: 'Components/Tables/Table',
+  title: 'Data Display/Table',
 });
 
 export const Default = meta.story({
@@ -77,7 +83,7 @@ export const Dense = meta.story({
 export const CellOverride = meta.story({
   args: {},
   // `p-0` is a plain class, so it beats the `:where()` cell rules unaided
-  render: (args: Props) => render(args, `
+  render: renderWith(`
     <thead>
       <tr>
         <th scope="col">Padded like the rest</th>

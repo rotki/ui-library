@@ -50,7 +50,8 @@ const meta = preview.meta({
     label: { control: 'text' },
     modelValue: { control: 'boolean' },
     required: { control: 'boolean', table: { category: 'State' } },
-    size: { control: 'select', options: ['medium', 'sm', 'lg'] },
+    // the default size takes no value
+    size: { control: 'select', options: [undefined, 'sm', 'lg'] },
     successMessages: { control: 'object' },
   },
   component: RuiCheckbox,
@@ -61,7 +62,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Forms/Checkbox',
+  title: 'Forms/Checkbox',
 });
 
 export const Checked = meta.story({

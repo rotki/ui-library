@@ -23,7 +23,7 @@ function render(args: ChipStoryArgs) {
     },
     template: `
       <div>
-      <RuiChip v-if="show" v-bind="chipArgs" @remove="hideShow()">
+      <RuiChip v-if="show" v-bind="chipArgs" @click:close="hideShow()">
         <template #prepend v-if="args.prepend">{{ args.prepend }}</template>
         {{ args.children }}
       </RuiChip>
@@ -54,7 +54,7 @@ const meta = preview.meta({
   parameters: {
     docs: {
       controls: {
-        exclude: ['remove'],
+        exclude: ['click:close'],
       },
       description: {
         component: 'Use the `tonal` variant for status tags (`color="success" variant="tonal"`): a column of filled status chips is the loudest thing on a table. Keep `filled` for the few chips that should stand out. Only a `clickable` chip is a button and a tab stop.',
@@ -63,7 +63,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Chip',
+  title: 'Data Display/Chip',
 });
 
 export const Default = meta.story({
@@ -118,6 +118,18 @@ export const Dismissible = meta.story({
   },
 });
 
+/** The close button emits `click:close`, which the story answers by hiding the chip for two seconds. */
+export const DismissibleHides = meta.story({
+  args: {
+    children: 'Dismiss me',
+    closeable: true,
+  },
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole('button'));
+    await expect(canvas.queryByText('Dismiss me')).toBeNull();
+  },
+});
+
 export const DismissiblePrefix = meta.story({
   args: {
     children: 'Chip',
@@ -130,281 +142,47 @@ export const DismissiblePrefix = meta.story({
   },
 });
 
-export const SmallDismissible = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'grey',
-    disabled: false,
-    size: 'sm',
-    variant: 'filled',
-  },
-});
-
-export const SmallDismissiblePrefix = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'grey',
-    disabled: false,
-    prepend: 'BTC',
-    size: 'sm',
-    variant: 'filled',
-  },
-});
-
-export const Primary = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'primary',
-    disabled: false,
-    size: 'md',
-    variant: 'filled',
-  },
-});
-
-export const PrimarySmall = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'primary',
-    disabled: false,
-    size: 'sm',
-    variant: 'filled',
-  },
-});
-
-export const PrimarySmallDisabled = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'primary',
-    disabled: true,
-    size: 'sm',
-    variant: 'filled',
-  },
-});
-
-export const Secondary = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'secondary',
-    disabled: false,
-    size: 'md',
-    variant: 'filled',
-  },
-});
-
-export const SecondarySmall = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'secondary',
-    disabled: false,
-    size: 'sm',
-    variant: 'filled',
-  },
-});
-
-export const SecondarySmallDisabled = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'secondary',
-    disabled: true,
-    size: 'sm',
-    variant: 'filled',
-  },
-});
-
-export const Error = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'error',
-    disabled: false,
-    size: 'md',
-    variant: 'filled',
-  },
-});
-
-export const ErrorSmall = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'error',
-    disabled: false,
-    size: 'sm',
-    variant: 'filled',
-  },
-});
-
-export const ErrorSmallDisabled = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'error',
-    disabled: true,
-    size: 'sm',
-    variant: 'filled',
-  },
-});
-
-export const OutlinedDefault = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: false,
-    color: 'grey',
-    disabled: false,
-    size: 'md',
-    variant: 'outlined',
-  },
-});
-
-export const OutlinedDismissible = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'grey',
-    disabled: false,
-    size: 'md',
-    variant: 'outlined',
-  },
-});
-
-export const OutlinedSmallDismissible = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'grey',
-    disabled: false,
-    size: 'sm',
-    variant: 'outlined',
-  },
-});
-
-export const OutlinedPrimary = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'primary',
-    disabled: false,
-    size: 'md',
-    variant: 'outlined',
-  },
-});
-
-export const OutlinedPrimarySmall = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'primary',
-    disabled: false,
-    size: 'sm',
-    variant: 'outlined',
-  },
-});
-
-export const OutlinedPrimarySmallDisabled = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'primary',
-    disabled: true,
-    size: 'sm',
-    variant: 'outlined',
-  },
-});
-
-export const OutlinedSecondary = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'secondary',
-    disabled: false,
-    size: 'md',
-    variant: 'outlined',
-  },
-});
-
-export const OutlinedSecondarySmall = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'secondary',
-    disabled: false,
-    size: 'sm',
-    variant: 'outlined',
-  },
-});
-
-export const OutlinedSecondarySmallDisabled = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'secondary',
-    disabled: true,
-    size: 'sm',
-    variant: 'outlined',
-  },
-});
-
-export const OutlinedError = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'error',
-    disabled: false,
-    size: 'md',
-    variant: 'outlined',
-  },
-});
-
-export const OutlinedErrorPrefix = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'error',
-    disabled: false,
-    prepend: 'BTC',
-    size: 'md',
-    variant: 'outlined',
-  },
-});
-
-export const OutlinedErrorSmall = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'error',
-    disabled: false,
-    size: 'sm',
-    variant: 'outlined',
-  },
-});
-
-export const OutlinedErrorSmallDisabled = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'error',
-    disabled: true,
-    size: 'sm',
-    variant: 'outlined',
-  },
-});
-
-export const OutlinedErrorSmallDisabledPrefixed = meta.story({
-  args: {
-    children: 'Chip',
-    closeable: true,
-    color: 'error',
-    disabled: true,
-    prepend: 'BTC',
-    size: 'sm',
-    variant: 'outlined',
+/**
+ * Every variant in every color at both sizes, with the prefix, close and disabled states: three
+ * variants of seven colors at two sizes, plus four state chips per variant.
+ */
+export const Variants = meta.story({
+  render: () => ({
+    components: { RuiChip },
+    setup() {
+      const variants = ['filled', 'outlined', 'tonal'] as const;
+      const colors = ['grey', ...contextColors] as const;
+      const sizes = ['md', 'sm'] as const;
+      return { colors, sizes, variants };
+    },
+    template: `
+      <div class="flex flex-col gap-6">
+        <section v-for="variant in variants" :key="variant" class="flex flex-col gap-2">
+          <h3 class="text-sm font-medium text-rui-text-secondary">{{ variant }}</h3>
+          <div v-for="size in sizes" :key="size" class="flex flex-wrap items-center gap-2">
+            <RuiChip v-for="color in colors" :key="color" :variant="variant" :color="color" :size="size" closeable>{{ color }}</RuiChip>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <RuiChip :variant="variant" color="primary" closeable>
+              <template #prepend>BTC</template>
+              Prefix
+            </RuiChip>
+            <RuiChip :variant="variant" color="primary" size="sm" closeable>
+              <template #prepend>BTC</template>
+              Prefix
+            </RuiChip>
+            <RuiChip :variant="variant" color="primary" closeable disabled>Disabled</RuiChip>
+            <RuiChip :variant="variant" color="error" size="sm" closeable disabled>
+              <template #prepend>BTC</template>
+              Disabled
+            </RuiChip>
+          </div>
+        </section>
+      </div>`,
+  }),
+  async play({ canvas }) {
+    await expect(canvas.getAllByText('primary')).toHaveLength(6);
+    await expect(canvas.getAllByText('Disabled')).toHaveLength(6);
   },
 });
 

@@ -39,7 +39,8 @@ const meta = preview.meta({
     label: { control: 'text' },
     modelValue: { control: 'text' },
     required: { control: 'boolean', table: { category: 'State' } },
-    size: { control: 'select', options: ['medium', 'sm', 'lg'] },
+    // the default size takes no value
+    size: { control: 'select', options: [undefined, 'sm', 'lg'] },
     value: { control: 'text' },
   },
   component: RuiRadio<string>,
@@ -50,7 +51,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Forms/Radio/Radio',
+  title: 'Forms/Radio',
 });
 
 export const Checked = meta.story({

@@ -1,0 +1,44 @@
+import { typographyClasses } from '@/consts/typography';
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundations/Typography" />
+
+# Typography
+
+Two faces: Inter for everything you read, Geist Mono for addresses, hashes and code. Sizes are in
+pixels, written as size / line height.
+
+## Faces
+
+<div className="sb-unstyled grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div className="rounded-rui-card border border-rui-divider bg-rui-surface p-5 text-rui-text">
+    <div className="text-caption text-rui-text-secondary">font-sans</div>
+    <div className="text-h5 mt-1">Inter</div>
+    <div className="text-body-2 text-rui-text-secondary mt-2">Portfolio value rose 4.2% this week across 12 accounts.</div>
+    <div className="text-body-2 mt-3 tabular-nums">1,234.56 · 98,765.43 · 0.000123</div>
+  </div>
+  <div className="rounded-rui-card border border-rui-divider bg-rui-surface p-5 text-rui-text">
+    <div className="text-caption text-rui-text-secondary">font-mono</div>
+    <div className="text-h5 mt-1 font-mono">Geist Mono</div>
+    <div className="text-body-2 text-rui-text-secondary mt-2 font-mono break-all">0x71C7656EC7ab88b098defB751B7401B5f6d8976F</div>
+    <div className="text-body-2 mt-3 font-mono">1,234.56 · 98,765.43 · 0.000123</div>
+  </div>
+</div>
+
+Inter's figures are proportional. Add `tabular-nums` where digits stack in columns, as in tables and
+balances.
+
+## Scale
+
+<div className="sb-unstyled rounded-rui-card border border-rui-divider bg-rui-surface text-rui-text divide-y divide-rui-divider">
+  {typographyClasses.map(({ name, className, spec, use }) => (
+    <div key={className} className="grid grid-cols-1 md:grid-cols-[13rem_1fr] gap-x-6 gap-y-1 px-5 py-4 items-center">
+      <div>
+        <code>{className}</code>
+        <div className="text-caption text-rui-text-secondary">{spec}</div>
+        <div className="text-caption text-rui-text-secondary">{use}</div>
+      </div>
+      <div className={`${className} min-w-0 truncate`}>{name}: Net worth over time</div>
+    </div>
+  ))}
+</div>

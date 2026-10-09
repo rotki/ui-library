@@ -39,7 +39,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Avatars/AvatarGroup',
+  title: 'Data Display/Avatar Group',
 });
 
 export const Basic = meta.story({

@@ -20,7 +20,7 @@ const meta = preview.meta({
   component: RuiDivider,
   render,
   tags: ['autodocs'],
-  title: 'Components/Divider',
+  title: 'Data Display/Divider',
 });
 
 export const Default = meta.story({

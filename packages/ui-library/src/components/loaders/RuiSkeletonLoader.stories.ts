@@ -48,7 +48,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Loaders/Skeleton',
+  title: 'Feedback/Skeleton',
 });
 
 export const Default = meta.story({

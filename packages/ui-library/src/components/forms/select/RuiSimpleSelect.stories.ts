@@ -51,7 +51,7 @@ const meta = preview.meta<typeof RuiSimpleSelect, Decorator, SimpleSelectMetaArg
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Forms/SimpleSelect',
+  title: 'Forms/Simple Select',
 });
 
 export const Default = meta.story({

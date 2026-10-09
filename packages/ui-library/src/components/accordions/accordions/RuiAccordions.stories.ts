@@ -53,7 +53,7 @@ const meta = preview.meta({
   component: RuiAccordions,
   render,
   tags: ['autodocs'],
-  title: 'Components/Accordions',
+  title: 'Navigation/Accordion',
 });
 
 export const Default = meta.story({

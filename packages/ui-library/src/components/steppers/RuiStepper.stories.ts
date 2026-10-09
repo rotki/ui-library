@@ -34,7 +34,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Stepper',
+  title: 'Navigation/Stepper',
 });
 
 export const Default = meta.story({

@@ -70,7 +70,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Overlays/NavigationDrawer',
+  title: 'Navigation/Navigation Drawer',
 });
 
 export const Default = meta.story({

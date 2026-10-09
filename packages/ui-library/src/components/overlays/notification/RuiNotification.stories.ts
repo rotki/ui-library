@@ -51,7 +51,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Overlays/Notification',
+  title: 'Feedback/Notification',
 });
 
 export const Default = meta.story({

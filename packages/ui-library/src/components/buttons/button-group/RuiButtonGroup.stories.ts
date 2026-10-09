@@ -16,16 +16,16 @@ function render(args: ComponentPropsAndSlots<typeof RuiButtonGroup<string | numb
     template: `
     <div v-if="'modelValue' in args">
       <RuiButtonGroup v-bind="args" v-model="args.modelValue">
-        <RuiButton>
+        <RuiButton aria-label="Align start">
           <RuiIcon name="lu-align-start-horizontal" />
         </RuiButton>
-        <RuiButton>
+        <RuiButton aria-label="Align center">
           <RuiIcon name="lu-align-center-horizontal" />
         </RuiButton>
-        <RuiButton>
+        <RuiButton aria-label="Align end">
           <RuiIcon name="lu-align-end-horizontal" />
         </RuiButton>
-        <RuiButton>
+        <RuiButton aria-label="Justify">
           <RuiIcon name="lu-align-horizontal-justify-center" />
         </RuiButton>
       </RuiButtonGroup>
@@ -61,7 +61,7 @@ const meta = preview.meta({
   component: RuiButtonGroup<string | number>,
   render,
   tags: ['autodocs'],
-  title: 'Components/Button/ButtonGroup',
+  title: 'Actions/Button Group',
 });
 
 export const Default = meta.story({
@@ -92,40 +92,52 @@ export const SmallGap = meta.story({
   },
 });
 
-export const Small = meta.story({
-  args: {
-    size: 'sm',
-  },
+/** The three variants: joined filled buttons, an outlined frame, and bare text buttons. */
+export const Variants = meta.story({
+  render: () => ({
+    components: { RuiButton, RuiButtonGroup },
+    setup() {
+      return { variants: ['default', 'outlined', 'text'] as const };
+    },
+    template: `
+      <div class="flex flex-col gap-3">
+        <RuiButtonGroup v-for="variant in variants" :key="variant" :variant="variant" color="primary">
+          <RuiButton>Day</RuiButton>
+          <RuiButton>Week</RuiButton>
+          <RuiButton>Month</RuiButton>
+        </RuiButtonGroup>
+      </div>`,
+  }),
 });
 
-export const Large = meta.story({
-  args: {
-    size: 'lg',
-  },
+export const Sizes = meta.story({
+  render: () => ({
+    components: { RuiButton, RuiButtonGroup },
+    setup() {
+      return { sizes: ['sm', undefined, 'lg', 'xl'] as const };
+    },
+    template: `
+      <div class="flex flex-col items-start gap-3">
+        <RuiButtonGroup v-for="size in sizes" :key="size ?? 'md'" :size="size" color="primary">
+          <RuiButton>{{ size ?? 'md' }}</RuiButton>
+          <RuiButton>Week</RuiButton>
+          <RuiButton>Month</RuiButton>
+        </RuiButtonGroup>
+      </div>`,
+  }),
 });
 
-export const ExtraLarge = meta.story({
-  args: {
-    size: 'xl',
-  },
-});
-
-export const Outlined = meta.story({
-  args: {
-    variant: 'outlined',
-  },
-});
-
-export const Text = meta.story({
-  args: {
-    variant: 'text',
-  },
-});
-
-export const DefaultToggle = meta.story({
+/** A single-choice toggle: the bound value is the index of the pressed button. */
+export const Toggle = meta.story({
   args: {
     color: 'primary',
     modelValue: 0,
+  },
+  async play({ canvas, userEvent }) {
+    const center = canvas.getByRole('button', { name: 'Align center' });
+    await userEvent.click(center);
+    await expect(center).toHaveAttribute('data-active', 'true');
+    await expect(canvas.getByRole('button', { name: 'Align start' })).not.toHaveAttribute('data-active');
   },
 });
 
@@ -145,39 +157,33 @@ export const VerticalToggle = meta.story({
   },
 });
 
-export const Toggle = meta.story({
-  args: {
-    color: 'primary',
-    modelValue: 0,
-  },
+/** The toggle in the outlined and text variants, and with a separate color for the pressed button. */
+export const ToggleVariants = meta.story({
+  render: () => ({
+    components: { RuiButton, RuiButtonGroup, RuiIcon },
+    setup() {
+      const outlined = ref<number>(0);
+      const text = ref<number>(1);
+      const activeColor = ref<number>(2);
+      return { activeColor, outlined, text };
+    },
+    template: `
+      <div class="flex flex-col items-start gap-3">
+        <RuiButtonGroup v-model="outlined" variant="outlined" color="primary">
+          <RuiButton>Day</RuiButton><RuiButton>Week</RuiButton><RuiButton>Month</RuiButton>
+        </RuiButtonGroup>
+        <RuiButtonGroup v-model="text" variant="text" color="primary">
+          <RuiButton>Day</RuiButton><RuiButton>Week</RuiButton><RuiButton>Month</RuiButton>
+        </RuiButtonGroup>
+        <RuiButtonGroup v-model="activeColor" variant="text" color="primary" active-color="warning">
+          <RuiButton>Day</RuiButton><RuiButton>Week</RuiButton><RuiButton>Month</RuiButton>
+        </RuiButtonGroup>
+      </div>`,
+  }),
 });
 
-export const OutlinedToggle = meta.story({
-  args: {
-    color: 'primary',
-    modelValue: 0,
-    variant: 'outlined',
-  },
-});
-
-export const TextToggle = meta.story({
-  args: {
-    color: 'primary',
-    modelValue: 0,
-    variant: 'text',
-  },
-});
-
-export const ActiveColorToggle = meta.story({
-  args: {
-    activeColor: 'warning',
-    color: 'primary',
-    modelValue: 0,
-    variant: 'text',
-  },
-});
-
-export const DefaultToggleMultiple = meta.story({
+/** A multiple-choice toggle: the bound value is the list of pressed indices. */
+export const ToggleMultiple = meta.story({
   args: {
     color: 'primary',
     modelValue: [0],
@@ -189,46 +195,6 @@ export const ToggleMultipleRequired = meta.story({
     color: 'primary',
     modelValue: [0],
     required: true,
-  },
-});
-
-export const VerticalToggleMultiple = meta.story({
-  args: {
-    color: 'primary',
-    modelValue: [0],
-    vertical: true,
-  },
-});
-
-export const ToggleMultiple = meta.story({
-  args: {
-    color: 'primary',
-    modelValue: [0],
-  },
-});
-
-export const OutlinedToggleMultiple = meta.story({
-  args: {
-    color: 'primary',
-    modelValue: [0],
-    variant: 'outlined',
-  },
-});
-
-export const TextToggleMultiple = meta.story({
-  args: {
-    color: 'primary',
-    modelValue: [0],
-    variant: 'text',
-  },
-});
-
-export const ActiveColorMultiple = meta.story({
-  args: {
-    activeColor: 'warning',
-    color: 'primary',
-    modelValue: [0],
-    variant: 'text',
   },
 });
 

@@ -1,0 +1,231 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundations/Tokens" />
+
+# Tokens
+
+The values the components draw with, for app code to use too. Each is a `--rui-*` variable with Tailwind
+utilities on top, so an app that retunes a variable changes its own markup and the components together.
+Switch the theme in the toolbar to see the dark values.
+
+## Surfaces
+
+Steps of background that separate areas without a shadow.
+
+<div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+  {[
+    ['bg-rui-background', 'The page'],
+    ['bg-rui-surface', 'Cards, docked drawers, tables'],
+    ['bg-rui-surface-sunken', 'An inset panel inside a surface'],
+    ['bg-rui-surface-muted', 'Tracks, wells, empty bars'],
+    ['bg-rui-menu', 'Menus, the date picker, dialogs'],
+    ['bg-rui-overlay', 'A modal drawer'],
+  ].map(([token, use]) => (
+    <div key={token} className="sb-unstyled rounded-rui-card border border-rui-divider overflow-hidden">
+      <div className={`h-16 ${token}`}></div>
+      <div className="p-3 bg-rui-surface text-rui-text">
+        <code>{token}</code>
+        <div className="text-caption text-rui-text-secondary">{use}</div>
+      </div>
+    </div>
+  ))}
+</div>
+
+## Lines
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div className="sb-unstyled rounded-rui-card bg-rui-surface p-4 text-rui-text">
+    <div className="h-10 rounded-rui-control border border-rui-divider"></div>
+    <code>border-rui-divider</code>
+    <div className="text-caption text-rui-text-secondary">Separators and the edges of surfaces. A bare <code>border</code> uses it.</div>
+  </div>
+  <div className="sb-unstyled rounded-rui-card bg-rui-surface p-4 text-rui-text">
+    <div className="h-10 rounded-rui-control border border-rui-outline"></div>
+    <code>border-rui-outline</code>
+    <div className="text-caption text-rui-text-secondary">The edge of a control a user acts on, at 3:1 against the surface.</div>
+  </div>
+</div>
+
+## Corners
+
+Radii are named by what they round, so a control and a card keep their difference if one is retuned.
+
+<div className="sb-unstyled grid grid-cols-2 md:grid-cols-5 gap-4">
+  {[
+    ['rounded-rui-sm', '6px', 'list items, small tags'],
+    ['rounded-rui-control', '6px', 'buttons, fields'],
+    ['rounded-rui-card', '8px', 'cards, dialogs, sheets'],
+    ['rounded-rui-panel', '8px', 'alerts, panels'],
+    ['rounded-rui-lg', '12px', 'large feature areas'],
+  ].map(([token, size, use]) => (
+    <div key={token} className="text-rui-text">
+      <div className={`h-16 border border-rui-outline bg-rui-surface ${token}`}></div>
+      <code>{token}</code>
+      <div className="text-caption text-rui-text-secondary">{size}, {use}</div>
+    </div>
+  ))}
+</div>
+
+## Shadows
+
+Surfaces have no shadow: borders and background steps separate them. A shadow marks something that
+floats above the page, and is named by that role.
+
+<div className="sb-unstyled grid grid-cols-2 md:grid-cols-4 gap-6 p-4 rounded-rui-card bg-rui-background">
+  {[
+    ['shadow-rui-control', 'a raised button'],
+    ['shadow-rui-tooltip', 'tooltips'],
+    ['shadow-rui-menu', 'menus, dialogs'],
+    ['shadow-rui-drawer', 'drawers, bottom sheets'],
+  ].map(([token, use]) => (
+    <div key={token} className="text-rui-text">
+      <div className={`h-20 rounded-rui-card bg-rui-surface ${token}`}></div>
+      <div className="mt-3"><code>{token}</code></div>
+      <div className="text-caption text-rui-text-secondary">{use}</div>
+    </div>
+  ))}
+</div>
+
+## State layers
+
+A tint laid over whatever fill an element has, so hover and press read the same on any surface.
+
+<div className="sb-unstyled flex flex-wrap gap-4">
+  {[
+    ['bg-rui-hover', 'hover'],
+    ['bg-rui-pressed', 'pressed'],
+  ].map(([token, label]) => (
+    <div key={token} className="rounded-rui-card bg-rui-surface p-4 text-rui-text">
+      <div className={`h-10 w-40 rounded-rui-control ${token}`}></div>
+      <code>{token}</code>
+    </div>
+  ))}
+  <div className="rounded-rui-card bg-rui-surface p-4 text-rui-text">
+    <div className="h-10 w-40 rounded-rui-control bg-rui-primary hover:state-layer flex items-center justify-center text-rui-primary-foreground">Hover me</div>
+    <code>hover:state-layer</code>
+  </div>
+  <div className="rounded-rui-card bg-rui-surface p-4 text-rui-text">
+    <div className="relative h-10 w-40 rounded-rui-control overflow-hidden">
+      <div className="absolute inset-0 flex items-center px-2">Loading…</div>
+      <div className="absolute inset-0 bg-rui-veil"></div>
+    </div>
+    <code>bg-rui-veil</code>
+  </div>
+</div>
+
+## Status and brand tints
+
+Each color in three strengths, plus a solid fill with the text color that passes on it. Use `-soft` with
+`-border` for a status panel, `-subtle` for a highlighted row, and `-fill` with `-foreground` for a badge.
+
+<div className="max-w-full overflow-x-auto">
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th><code>-subtle</code></th>
+        <th><code>-soft</code></th>
+        <th><code>-border</code></th>
+        <th><code>-fill</code> / <code>-foreground</code></th>
+      </tr>
+    </thead>
+    <tbody>
+      {['primary', 'secondary', 'error', 'warning', 'info', 'success'].map(color => (
+        <tr key={color}>
+          <td><code>{color}</code></td>
+          <td className="sb-unstyled"><div className={`h-10 w-24 rounded-rui-control bg-rui-${color}-subtle`}></div></td>
+          <td className="sb-unstyled"><div className={`h-10 w-24 rounded-rui-control bg-rui-${color}-soft`}></div></td>
+          <td className="sb-unstyled"><div className={`h-10 w-24 rounded-rui-control border-2 border-rui-${color}-border`}></div></td>
+          <td className="sb-unstyled">
+            <div className={`h-10 w-24 rounded-rui-control flex items-center justify-center text-sm font-medium bg-rui-${color}-fill text-rui-${color}-foreground`}>Label</div>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+## Text
+
+<div className="sb-unstyled rounded-rui-card bg-rui-surface p-4 flex flex-col gap-2">
+  <div className="text-rui-text"><code>text-rui-text</code> body text and headings</div>
+  <div className="text-rui-text-secondary"><code>text-rui-text-secondary</code> descriptions, labels, hints</div>
+  <div className="text-rui-text-disabled"><code>text-rui-text-disabled</code> disabled controls only</div>
+  <div className="text-rui-link"><code>text-rui-link</code> links in running text</div>
+  <div className="text-caption-2 text-rui-text-secondary"><code>text-caption-2</code> 10px, for dense tags and axis labels</div>
+</div>
+
+## Chart palette
+
+Eight series colors in order, and one for the remainder. They work with any color utility
+(`bg-`, `text-`, `fill-`, `stroke-`).
+
+<div className="sb-unstyled flex flex-wrap gap-3">
+  {['bg-rui-chart-1', 'bg-rui-chart-2', 'bg-rui-chart-3', 'bg-rui-chart-4', 'bg-rui-chart-5', 'bg-rui-chart-6', 'bg-rui-chart-7', 'bg-rui-chart-8', 'bg-rui-chart-other'].map(token => (
+    <div key={token} className="text-center text-rui-text">
+      <div className={`h-12 w-12 rounded-rui-control ${token}`}></div>
+      <code className="text-caption">{token.replace('bg-rui-', '')}</code>
+    </div>
+  ))}
+</div>
+
+## Scrollbars
+
+<div className="sb-unstyled rui-scrollbar h-32 w-64 overflow-y-auto rounded-rui-card border border-rui-divider bg-rui-surface p-3 text-rui-text">
+  {Array.from({ length: 12 }, (_, i) => <div key={i}>Row {i + 1}</div>)}
+</div>
+
+Add `rui-scrollbar` to a scrolling element for the library's thin scrollbar.
+
+## Stacking
+
+Layers from lowest to highest. A menu or tooltip opened from a dialog sits above it, and a toast above
+everything but a blocking screen. Put an app's own fixed parts on a layer instead of a raw `z-index`.
+
+<table>
+  <thead>
+    <tr><th>Utility</th><th>Value</th><th>Holds</th></tr>
+  </thead>
+  <tbody>
+    {[
+      ['raised', 10, 'sticky headers and cells inside content'],
+      ['app-bar', 20, 'the app bar, a docked drawer'],
+      ['drawer', 30, 'a modal drawer and its scrim'],
+      ['dialog', 1000, 'dialogs and bottom sheets'],
+      ['menu', 1100, 'menus, selects, pickers'],
+      ['tooltip', 1200, 'tooltips'],
+      ['toast', 1300, 'notifications'],
+      ['blocking', 2000, 'error and lock screens'],
+    ].map(([layer, value, holds]) => (
+      <tr key={layer}>
+        <td><code>{`z-rui-${layer}`}</code></td>
+        <td>{value}</td>
+        <td>{holds}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+Each utility reads a variable of the same name, `--rui-z-raised` and on.
+
+## Layout
+
+<table>
+  <thead>
+    <tr><th>Utility</th><th>Variable</th><th>Value</th></tr>
+  </thead>
+  <tbody>
+    {[
+      ['h-rui-app-bar, top-rui-app-bar, mt-rui-app-bar', '--rui-app-bar-height', '56px, 64px from md'],
+      ['max-w-rui-dialog-sm to -2xl, or RuiDialog size', '--rui-dialog-sm to -2xl', '400, 500, 600, 800, 1000px'],
+      ['', '--rui-dialog-max-height', '90vh'],
+      ['max-w-rui-tooltip', '--rui-tooltip-max-width', '20rem'],
+    ].map(([utility, variable, value]) => (
+      <tr key={variable}>
+        <td>{utility && <code>{utility}</code>}</td>
+        <td><code>{variable}</code></td>
+        <td>{value}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>

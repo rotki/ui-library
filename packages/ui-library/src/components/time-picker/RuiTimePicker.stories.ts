@@ -40,7 +40,7 @@ const meta = preview.meta({
   component: RuiTimePicker,
   render,
   tags: ['autodocs'],
-  title: 'Components/TimePicker',
+  title: 'Date & Time/Time Picker',
 });
 
 export const Default = meta.story({

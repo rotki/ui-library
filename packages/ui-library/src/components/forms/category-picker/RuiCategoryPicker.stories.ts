@@ -80,7 +80,7 @@ const meta = preview.meta<
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Forms/CategoryPicker',
+  title: 'Forms/Category Picker',
 });
 
 export const Default = meta.story({

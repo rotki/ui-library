@@ -35,7 +35,7 @@ const meta = preview.meta({
   component: RuiAlert,
   render,
   tags: ['autodocs'],
-  title: 'Components/Alert',
+  title: 'Feedback/Alert',
 });
 
 export const Default = meta.story({
@@ -45,54 +45,23 @@ export const Default = meta.story({
   },
 });
 
-export const Error = meta.story({
-  args: {
-    description: 'Description',
-    title: 'Title',
-    type: 'error',
-  },
-});
-
-export const Warning = meta.story({
-  args: {
-    description: 'Description',
-    title: 'Title',
-    type: 'warning',
-  },
-});
-
-export const Info = meta.story({
-  args: {
-    description: 'Description',
-    title: 'Title',
-    type: 'info',
-  },
-});
-
-export const Success = meta.story({
-  args: {
-    description: 'Description',
-    title: 'Title',
-    type: 'success',
-  },
-});
-
-export const Filled = meta.story({
-  args: {
-    description: 'Description',
-    title: 'Title',
-    type: 'error',
-    variant: 'filled',
-  },
-});
-
-export const Outlined = meta.story({
-  args: {
-    description: 'Description',
-    title: 'Title',
-    type: 'error',
-    variant: 'outlined',
-  },
+/** The four status types in each variant. */
+export const Variants = meta.story({
+  render: () => ({
+    components: { RuiAlert },
+    setup() {
+      const types = ['error', 'warning', 'info', 'success'] as const;
+      const variants = ['default', 'filled', 'outlined'] as const;
+      return { types, variants };
+    },
+    template: `
+      <div class="grid gap-3 md:grid-cols-3">
+        <div v-for="variant in variants" :key="variant" class="flex flex-col gap-3">
+          <span class="text-sm text-rui-text-secondary">{{ variant }}</span>
+          <RuiAlert v-for="type in types" :key="type" :type="type" :variant="variant" :title="type" description="What happened, and what to do next." />
+        </div>
+      </div>`,
+  }),
 });
 
 export const WithActionButton = meta.story({

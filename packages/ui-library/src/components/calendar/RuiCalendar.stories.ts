@@ -45,7 +45,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Calendar',
+  title: 'Date & Time/Calendar',
 });
 
 export const Default = meta.story({

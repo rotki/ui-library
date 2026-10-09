@@ -35,7 +35,7 @@ const meta = preview.meta({
     clearable: { control: 'boolean' },
     color: {
       control: 'select',
-      options: ['grey', ...contextColors],
+      options: contextColors,
       table: { category: 'State' },
     },
     dense: { control: 'boolean', table: { category: 'State' } },
@@ -67,7 +67,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Forms/TextArea',
+  title: 'Forms/Text Area',
 });
 
 export const Default = meta.story({
@@ -79,14 +79,6 @@ export const Default = meta.story({
     const textarea = canvas.getByPlaceholderText('Placeholder');
     await userEvent.type(textarea, 'Hello World');
     await expect(textarea).toHaveValue('Hello World');
-  },
-});
-
-export const Primary = meta.story({
-  args: {
-    color: 'primary',
-    label: 'Label',
-    placeholder: 'Placeholder',
   },
 });
 

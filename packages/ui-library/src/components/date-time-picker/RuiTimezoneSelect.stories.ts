@@ -34,7 +34,7 @@ const meta = preview.meta({
   component: RuiTimezoneSelect,
   render,
   tags: ['autodocs'],
-  title: 'Components/TimezoneSelect',
+  title: 'Date & Time/Timezone Select',
 });
 
 export const Default = meta.story({

@@ -58,7 +58,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Forms/Slider',
+  title: 'Forms/Slider',
 });
 
 export const Default = meta.story({

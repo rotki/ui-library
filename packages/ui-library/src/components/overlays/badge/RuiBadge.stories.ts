@@ -84,7 +84,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Overlays/Badge',
+  title: 'Data Display/Badge',
 });
 
 export const Default = meta.story({
@@ -96,74 +96,29 @@ export const Default = meta.story({
   },
 });
 
-export const Left = meta.story({
-  args: {
-    left: true,
-  },
-});
-
-export const Center = meta.story({
-  args: {
-    placement: 'center',
-  },
-});
-
-export const CenterLeft = meta.story({
-  args: {
-    left: true,
-    placement: 'center',
-  },
-});
-
-export const Bottom = meta.story({
-  args: {
-    placement: 'bottom',
-  },
-});
-
-export const BottomLeft = meta.story({
-  args: {
-    left: true,
-    placement: 'bottom',
-  },
-});
-
 export const Dot = meta.story({
   args: { dot: true },
 });
 
-export const DotLeft = meta.story({
-  args: { dot: true, left: true },
-});
-
-export const DotCenter = meta.story({
-  args: {
-    dot: true,
-    placement: 'center',
-  },
-});
-
-export const DotCenterLeft = meta.story({
-  args: {
-    dot: true,
-    left: true,
-    placement: 'center',
-  },
-});
-
-export const DotBottom = meta.story({
-  args: {
-    dot: true,
-    placement: 'bottom',
-  },
-});
-
-export const DotBottomLeft = meta.story({
-  args: {
-    dot: true,
-    left: true,
-    placement: 'bottom',
-  },
+/** Every placement on either side, as a count and as a dot. */
+export const Placements = meta.story({
+  render: () => ({
+    components: { RuiBadge, RuiButton },
+    setup() {
+      const placements = ['top', 'center', 'bottom'] as const;
+      return { placements };
+    },
+    template: `
+      <div class="flex flex-col gap-10 p-8">
+        <div v-for="dot in [false, true]" :key="String(dot)" class="flex flex-wrap gap-12">
+          <template v-for="placement in placements" :key="placement">
+            <RuiBadge v-for="left in [false, true]" :key="String(left)" :placement="placement" :left="left" :dot="dot" text="1">
+              <RuiButton>{{ placement }}{{ left ? ' left' : '' }}</RuiButton>
+            </RuiBadge>
+          </template>
+        </div>
+      </div>`,
+  }),
 });
 
 export const Colors = meta.story({

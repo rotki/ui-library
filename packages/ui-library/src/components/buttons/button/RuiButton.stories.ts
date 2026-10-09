@@ -50,7 +50,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Button/Button',
+  title: 'Actions/Button',
 });
 
 export const Default = meta.story({
@@ -79,52 +79,41 @@ export const Primary = meta.story({
   },
 });
 
-export const PrimaryText = meta.story({
-  args: {
-    color: 'primary',
-    label: 'Large',
-    variant: 'text',
-  },
+/** Every color in each variant, with a disabled row; `grey` is the unset color. */
+export const Variants = meta.story({
+  render: () => ({
+    components: { RuiButton },
+    setup() {
+      const variants = ['default', 'outlined', 'text'] as const;
+      const colors = [undefined, ...contextColors] as const;
+      return { colors, variants };
+    },
+    template: `
+      <div class="flex flex-col gap-3">
+        <div v-for="variant in variants" :key="variant" class="flex flex-wrap items-center gap-2">
+          <span class="w-20 text-sm text-rui-text-secondary">{{ variant }}</span>
+          <RuiButton v-for="color in colors" :key="color ?? 'grey'" :variant="variant" :color="color">{{ color ?? 'grey' }}</RuiButton>
+          <RuiButton :variant="variant" color="primary" disabled>Disabled</RuiButton>
+        </div>
+      </div>`,
+  }),
 });
 
-export const PrimaryRounded = meta.story({
-  args: {
-    color: 'primary',
-    label: 'Medium',
-    rounded: true,
-  },
-});
-
-export const PrimarySmall = meta.story({
-  args: {
-    color: 'primary',
-    label: 'Small',
-    size: 'sm',
-  },
-});
-
-export const PrimaryLarge = meta.story({
-  args: {
-    color: 'primary',
-    label: 'Large',
-    size: 'lg',
-  },
-});
-
-export const PrimaryExtraLarge = meta.story({
-  args: {
-    color: 'primary',
-    label: 'Extra Large',
-    size: 'xl',
-  },
-});
-
-export const Primary2xl = meta.story({
-  args: {
-    color: 'primary',
-    label: '2× Extra Large',
-    size: '2xl',
-  },
+/** The sizes, square and rounded; the unset size is md, 36px like a field. */
+export const Sizes = meta.story({
+  render: () => ({
+    components: { RuiButton },
+    setup() {
+      const sizes = ['xs', 'sm', undefined, 'lg', 'xl', '2xl'] as const;
+      return { sizes };
+    },
+    template: `
+      <div class="flex flex-col gap-3">
+        <div v-for="rounded in [false, true]" :key="String(rounded)" class="flex flex-wrap items-center gap-2">
+          <RuiButton v-for="size in sizes" :key="size ?? 'md'" color="primary" :size="size" :rounded="rounded">{{ size ?? 'md' }}</RuiButton>
+        </div>
+      </div>`,
+  }),
 });
 
 export const AutoSizedIcon = meta.story({
@@ -136,7 +125,7 @@ export const AutoSizedIcon = meta.story({
     docs: {
       description: {
         story:
-          'When `<RuiIcon>` is used inside a button without an explicit `size` prop, it inherits a size proportional to the button height (xs → 0.75rem, sm → 0.875rem, md → 1rem, lg → 1.25rem, xl & 2xl → 1.375rem). Sizing flows through the `--rui-icon-size` custom property: the button seeds it per size variant, and the icon reads it via `width: var(--rui-icon-size, 1.5rem)`. A consumer passing `size` on `<RuiIcon>` still wins because that path stamps an inline style on the svg itself (see `ConsumerIconSizeOverride`). `xl` and `2xl` share the same glyph weight — `xl` targets the 40px input-row height; `2xl` keeps the previous 44px for jumbo CTAs.',
+          'When `<RuiIcon>` is used inside a button without an explicit `size` prop, it inherits a size proportional to the button height (xs → 0.75rem, sm → 0.875rem, md → 1rem, lg → 1.25rem, xl & 2xl → 1.375rem). Sizing flows through the `--rui-icon-size` custom property: the button seeds it per size variant, and the icon reads it via `width: var(--rui-icon-size, 1.5rem)`. A consumer passing `size` on `<RuiIcon>` still wins because that path stamps an inline style on the svg itself (see `ConsumerIconSizeOverride`). `xl` and `2xl` share the same glyph weight: `xl` is 40px and `2xl` 44px, for larger calls to action. The default `md` is 36px, the height of a text field or select.',
       },
     },
   },
@@ -185,7 +174,7 @@ export const IconOnlySizes = meta.story({
     docs: {
       description: {
         story:
-          'Icon-only buttons (`icon` prop) land at the same height as text buttons of the matching `size` (xs 20px, sm 28px, md 32px, lg 36px, xl 40px, 2xl 44px) with a ~60–70% icon-to-box ratio. `xs` is aimed at inline contexts like copy buttons or badge actions; `xl` lines up with RuiTextField / RuiMenuSelect at the 40px input height; `2xl` is for jumbo CTAs that used to land on the old 44px `xl`.',
+          'Icon-only buttons (`icon` prop) land at the same height as text buttons of the matching `size` (xs 20px, sm 28px, md 36px, lg 36px, xl 40px, 2xl 44px) with a 60 to 70% icon-to-box ratio. `xs` is aimed at inline contexts like copy buttons or badge actions; `md` lines up with RuiTextField and RuiMenuSelect at 36px; `2xl` is for jumbo calls to action.',
       },
     },
   },
@@ -279,7 +268,7 @@ export const IconOnlyVsText = meta.story({
   }),
 });
 
-export const XlMatchesInputHeight = meta.story({
+export const MatchesFieldHeight = meta.story({
   args: {
     color: 'primary',
   },
@@ -287,7 +276,7 @@ export const XlMatchesInputHeight = meta.story({
     docs: {
       description: {
         story:
-          '`size="xl"` is tuned to the 40px input-row height so buttons line up with `<RuiTextField>` / `<RuiMenuSelect>` in a toolbar without ad-hoc `class="!h-10"` workarounds. Combine it with `size="md"` or `"lg"` elsewhere in the app; reach for `2xl` only when you need a 44px jumbo CTA.',
+          'The default `md` button is 36px, the height of `<RuiTextField>` and `<RuiMenuSelect>`, so a toolbar lines up without height overrides. Dense fields (32px) pair with `size="sm"` icon buttons.',
       },
     },
   },
@@ -299,16 +288,16 @@ export const XlMatchesInputHeight = meta.story({
     template: `
       <div class="flex items-center gap-3">
         <RuiTextField
+          label="Search"
+          label-placement="hidden"
           placeholder="Search"
-          variant="outlined"
           color="primary"
-          dense
           hide-details
         />
-        <RuiButton v-bind="args" size="xl" icon aria-label="filter">
+        <RuiButton v-bind="args" variant="outlined" icon aria-label="filter">
           <RuiIcon name="lu-funnel" />
         </RuiButton>
-        <RuiButton v-bind="args" size="xl">
+        <RuiButton v-bind="args">
           <template #prepend><RuiIcon name="lu-file-down" /></template>
           Export
         </RuiButton>
@@ -420,31 +409,6 @@ export const ListVariantWithIcons = meta.story({
   }),
 });
 
-export const PrimaryLargeRounded = meta.story({
-  args: {
-    color: 'primary',
-    label: 'Large',
-    rounded: true,
-    size: 'lg',
-  },
-});
-
-export const PrimaryDisabled = meta.story({
-  args: {
-    color: 'primary',
-    disabled: true,
-    label: 'Medium',
-  },
-});
-
-export const PrimaryOutlined = meta.story({
-  args: {
-    color: 'primary',
-    label: 'Primary Outlined',
-    variant: 'outlined',
-  },
-});
-
 export const PrimaryLoading = meta.story({
   args: {
     color: 'primary',
@@ -453,69 +417,12 @@ export const PrimaryLoading = meta.story({
   },
 });
 
-export const Secondary = meta.story({
-  args: {
-    color: 'secondary',
-    label: 'Secondary Button',
-  },
-});
-
-export const SecondaryText = meta.story({
-  args: {
-    color: 'secondary',
-    label: 'Secondary Button',
-    size: 'lg',
-    variant: 'text',
-  },
-});
-
-export const SecondaryOutlined = meta.story({
-  args: {
-    color: 'secondary',
-    label: 'Outlined Button',
-    variant: 'outlined',
-  },
-});
-
-export const ErrorButton = meta.story({
-  args: {
-    color: 'error',
-    label: 'Error Button',
-  },
-});
-
-export const ErrorButtonText = meta.story({
-  args: {
-    color: 'error',
-    label: 'Error Button',
-    size: 'lg',
-    variant: 'text',
-  },
-});
-
-export const ErrorOutlined = meta.story({
-  args: {
-    color: 'error',
-    label: 'Error Button',
-    variant: 'outlined',
-  },
-});
-
-export const ErrorOutlinedDisabled = meta.story({
-  args: {
-    color: 'error',
-    disabled: true,
-    label: 'Error Button',
-    variant: 'outlined',
-  },
-});
-
 export const List = meta.story({
   render() {
     return {
       components: { RuiButton },
       template: `
-        <div class="w-64 border border-black/10 dark:border-white/10 rounded-lg overflow-hidden">
+        <div class="w-64 border border-rui-divider rounded-rui-card overflow-hidden">
           <RuiButton variant="list">Dashboard</RuiButton>
           <RuiButton variant="list" active>Settings</RuiButton>
           <RuiButton variant="list">Profile</RuiButton>

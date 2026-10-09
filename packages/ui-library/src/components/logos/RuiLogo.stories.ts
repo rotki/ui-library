@@ -38,7 +38,7 @@ const meta = preview.meta({
   component: RuiLogo,
   render,
   tags: ['autodocs'],
-  title: 'Components/Logo',
+  title: 'Data Display/Logo',
 });
 
 export const Default = meta.story({

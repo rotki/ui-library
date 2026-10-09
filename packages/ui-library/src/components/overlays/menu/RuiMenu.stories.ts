@@ -60,7 +60,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Overlays/Menu',
+  title: 'Overlays/Menu',
 });
 
 export const Default = meta.story({
@@ -106,28 +106,24 @@ export const CloseOnContentClick = meta.story({
   },
 });
 
-export const Top = meta.story({
-  args: {
-    options: {
-      placement: 'top',
+/** Open any of them: the menu on each side of its activator. */
+export const Placements = meta.story({
+  render: () => ({
+    components: { RuiButton, RuiMenu },
+    setup() {
+      const placements = ['top', 'right', 'bottom', 'left'] as const;
+      return { placements };
     },
-  },
-});
-
-export const Right = meta.story({
-  args: {
-    options: {
-      placement: 'right',
-    },
-  },
-});
-
-export const Left = meta.story({
-  args: {
-    options: {
-      placement: 'left',
-    },
-  },
+    template: `
+      <div class="flex justify-center gap-6 p-24">
+        <RuiMenu v-for="placement in placements" :key="placement" :options="{ placement }">
+          <template #activator="{ attrs }">
+            <RuiButton v-bind="attrs">{{ placement }}</RuiButton>
+          </template>
+          <div class="px-4 py-3">Placed {{ placement }}</div>
+        </RuiMenu>
+      </div>`,
+  }),
 });
 
 export const MenuDisabled = meta.story({

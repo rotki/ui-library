@@ -94,7 +94,7 @@ const meta = preview.meta({
   component: RuiTabs,
   render,
   tags: ['autodocs'],
-  title: 'Components/Tabs',
+  title: 'Navigation/Tabs',
 });
 
 export const Default = meta.story({
@@ -106,12 +106,6 @@ export const Default = meta.story({
     await userEvent.click(tab3);
     await expect(tab3).toHaveAttribute('aria-selected', 'true');
     await expect(tab1).toHaveAttribute('aria-selected', 'false');
-  },
-});
-
-export const Primary = meta.story({
-  args: {
-    color: 'primary',
   },
 });
 

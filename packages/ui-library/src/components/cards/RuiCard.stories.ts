@@ -83,7 +83,7 @@ const meta = preview.meta({
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Card',
+  title: 'Data Display/Card',
 });
 
 export const Default = meta.story({

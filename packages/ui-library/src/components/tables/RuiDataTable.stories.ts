@@ -107,10 +107,10 @@ function render(args: DataTableProps) {
         <RuiTextField
           v-if="search !== undefined"
           v-model="search"
-          placeholder="search"
-          label="search"
+          placeholder="Search"
+          label="Search"
+          label-placement="hidden"
           class="w-1/2 lg:w-2/5"
-          variant="outlined"
           color="primary"
           hide-details
         />
@@ -206,25 +206,23 @@ const columns: TableColumn<User>[] = [
     label: 'ID',
   },
   {
-    align: 'end',
     key: 'name',
     label: 'Full name',
     sortable: true,
   },
   {
-    align: 'start',
     key: 'title',
     label: 'Job position',
     sortable: true,
   },
   {
-    align: 'center',
     key: 'email',
     label: 'Email address',
     sortable: true,
   },
   {
     key: 'role',
+    label: 'Role',
     sortable: true,
   },
   {
@@ -279,7 +277,7 @@ const meta = preview.meta<typeof RuiDataTable<User>, Decorator, DataTableMetaArg
   },
   render,
   tags: ['autodocs'],
-  title: 'Components/Tables/DataTable',
+  title: 'Data Display/Data Table',
 });
 
 export const Default = meta.story({
@@ -305,51 +303,10 @@ export const Dense = meta.story({
   },
 });
 
-export const Loading = meta.story({
-  args: {
-    cols: columns,
-    loading: true,
-    rows: [],
-  },
-});
-
-export const WithColumnDefinitions = meta.story({
-  args: {
-    cols: columns,
-    rows: data,
-  },
-});
-
 export const Selectable = meta.story({
   args: {
     cols: columns,
     modelValue: [],
-    rows: data,
-  },
-});
-
-export const SelectableAndDense = meta.story({
-  args: {
-    cols: columns,
-    dense: true,
-    modelValue: [],
-    rows: data,
-  },
-});
-
-export const WithPagination = meta.story({
-  args: {
-    modelValue: [],
-    pagination: { limit: 10, page: 1, total: 50 },
-    rows: data,
-  },
-});
-
-export const ColumnsWithPagination = meta.story({
-  args: {
-    cols: columns,
-    modelValue: [],
-    pagination: { limit: 10, page: 1, total: 50 },
     rows: data,
   },
 });
@@ -494,6 +451,25 @@ export const StickyHeader = meta.story({
   },
 });
 
+/**
+ * A page taller than the screen keeps its pagination bar pinned to the bottom of the viewport, so
+ * the page controls stay in reach while the rows scroll. Nothing to switch on: the bar sticks
+ * whenever the table runs past the bottom edge, and settles under the last row once it is in view.
+ */
+export const StickyPagination = meta.story({
+  args: {
+    cols: columns,
+    outlined: true,
+    pagination: { limit: 50, page: 1, total: 50 },
+    rows: data,
+    stickyHeader: true,
+  },
+  async play({ canvasElement }) {
+    const bar = canvasElement.querySelector('[data-sticky]');
+    await expect(bar).not.toBeNull();
+  },
+});
+
 export const Grouped = meta.story({
   args: {
     collapsed: [],
@@ -565,7 +541,7 @@ export const MultiPageSelect = meta.story({
 export const CustomItemClass = meta.story({
   args: {
     cols: columns,
-    itemClass: (item: User) => (item.name === 'Alice' ? 'bg-rui-success/10' : ''),
+    itemClass: (item: User) => (item.name === 'Alice' ? 'bg-rui-success-soft' : ''),
     outlined: true,
     rows: data,
   },
