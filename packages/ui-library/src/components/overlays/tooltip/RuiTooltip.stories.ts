@@ -78,8 +78,9 @@ export const Placements = meta.story({
       return { placements };
     },
     template: `
-      <div class="flex flex-col items-center gap-10 p-16">
-        <div v-for="hideArrow in [false, true]" :key="String(hideArrow)" class="flex gap-12">
+      <div class="flex flex-col items-center gap-16 p-16">
+        <!-- wider than a side tooltip, so an open one never covers the next activator -->
+        <div v-for="hideArrow in [false, true]" :key="String(hideArrow)" class="flex gap-32">
           <RuiTooltip v-for="placement in placements" :key="placement" :options="{ placement }" :hide-arrow="hideArrow">
             <template #activator>
               <span class="text-rui-primary">{{ placement }}{{ hideArrow ? ', no arrow' : '' }}</span>

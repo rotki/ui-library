@@ -32,6 +32,7 @@ function render(args: ComponentPropsAndSlots<typeof RuiTabs>) {
 
       return { args, modelValue };
     },
+    // flat panels: the tab rail already draws the line between the tabs and their content
     template: `
     <div class="flex" :class="args.vertical ? 'flex-row gap-x-6' : 'flex-col'">
       <RuiTabs v-bind="args" v-model='modelValue'>
@@ -56,20 +57,20 @@ function render(args: ComponentPropsAndSlots<typeof RuiTabs>) {
         </RuiTab>
       </RuiTabs>
       <RuiTabItems v-model="modelValue">
-        <RuiTabItem><RuiCard>Tab 1 Content</RuiCard></RuiTabItem>
-        <RuiTabItem><RuiCard>Tab 2 Content</RuiCard></RuiTabItem>
-        <RuiTabItem eager><RuiCard>Tab 3 Content</RuiCard></RuiTabItem>
-        <RuiTabItem><RuiCard>Tab 4 Content</RuiCard></RuiTabItem>
-        <RuiTabItem><RuiCard>Tab 5 Content</RuiCard></RuiTabItem>
-        <RuiTabItem><RuiCard>Tab 6 Content</RuiCard></RuiTabItem>
-        <RuiTabItem><RuiCard>Tab 7 Content</RuiCard></RuiTabItem>
+        <RuiTabItem><RuiCard variant="flat">Tab 1 Content</RuiCard></RuiTabItem>
+        <RuiTabItem><RuiCard variant="flat">Tab 2 Content</RuiCard></RuiTabItem>
+        <RuiTabItem eager><RuiCard variant="flat">Tab 3 Content</RuiCard></RuiTabItem>
+        <RuiTabItem><RuiCard variant="flat">Tab 4 Content</RuiCard></RuiTabItem>
+        <RuiTabItem><RuiCard variant="flat">Tab 5 Content</RuiCard></RuiTabItem>
+        <RuiTabItem><RuiCard variant="flat">Tab 6 Content</RuiCard></RuiTabItem>
+        <RuiTabItem><RuiCard variant="flat">Tab 7 Content</RuiCard></RuiTabItem>
         <RuiTabItem>
-          <RuiCard>
+          <RuiCard variant="flat">
             Tab 8 Long Long Long Long Long Long Long Long Long Long Long Long
             Long Long Long Long Long Long Long Long Long Long Long Long Long Long Long Long Long Long Long Long Long Content
           </RuiCard>
         </RuiTabItem>
-        <RuiTabItem eager><RuiCard>Tab 9 Content</RuiCard></RuiTabItem>
+        <RuiTabItem eager><RuiCard variant="flat">Tab 9 Content</RuiCard></RuiTabItem>
       </RuiTabItems>
     </div>
   `,
@@ -118,6 +119,7 @@ export const Default = meta.story({
     await expect(tab3).toHaveAttribute('aria-selected', 'true');
     await expect(tab1).toHaveAttribute('aria-selected', 'false');
     await panelsSettled(canvasElement);
+    tab3.blur();
   },
 });
 
@@ -163,7 +165,7 @@ export const VerticalWithArrow = meta.story({
 
 export const IndicatorPositionOnTop = meta.story({
   args: {
-    class: 'w-[200px] h-[300px]',
+    class: 'w-[500px]',
     indicatorPosition: 'start',
   },
 });
@@ -192,6 +194,7 @@ export const KeyboardNavigation = meta.story({
     await userEvent.keyboard('{Home}');
     await expect(tab1).toHaveAttribute('aria-selected', 'true');
     await panelsSettled(canvasElement);
+    tab1.blur();
   },
 });
 
@@ -230,6 +233,7 @@ export const Segmented = meta.story({
     await expect(week).toHaveAttribute('aria-selected', 'true');
     await expect(week).toHaveAttribute('data-variant', 'segmented');
     await panelsSettled(canvasElement);
+    week.blur();
   },
 });
 

@@ -54,10 +54,11 @@
     }
   }
 
+  /* the first frame shows a short bar at the start, so a paused or reduced-motion rail is not empty */
   @keyframes slide-rail {
     0% {
-      left: -35%;
-      right: 100%;
+      left: 0%;
+      right: 70%;
     }
     60% {
       left: 100%;
@@ -69,9 +70,10 @@
     }
   }
 
+  /* the first frame draws a short arc instead of a 1px dot */
   @keyframes collapse-stroke {
     0% {
-      stroke-dasharray: 1px, 200px;
+      stroke-dasharray: 20px, 200px;
       stroke-dashoffset: 0;
     }
     50% {

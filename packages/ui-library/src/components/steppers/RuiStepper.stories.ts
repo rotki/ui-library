@@ -42,8 +42,8 @@ export const Default = meta.story({
     steps: [
       {
         description: 'Lorem ipsum',
-        state: StepperState.inactive,
-        title: 'Inactive',
+        state: StepperState.done,
+        title: 'Done',
       },
       {
         description: 'Lorem ipsum',
@@ -52,28 +52,8 @@ export const Default = meta.story({
       },
       {
         description: 'Lorem ipsum',
-        state: StepperState.done,
-        title: 'Done',
-      },
-      {
-        description: 'Lorem ipsum',
-        state: StepperState.error,
-        title: 'Error',
-      },
-      {
-        description: 'Lorem ipsum',
-        state: StepperState.warning,
-        title: 'Warning',
-      },
-      {
-        description: 'Lorem ipsum',
-        state: StepperState.info,
-        title: 'Info',
-      },
-      {
-        description: 'Lorem ipsum',
-        state: StepperState.success,
-        title: 'Success',
+        state: StepperState.inactive,
+        title: 'Inactive',
       },
     ],
   },
@@ -81,6 +61,17 @@ export const Default = meta.story({
     await expect(canvas.getByText('Active')).toBeVisible();
     await expect(canvas.getByText('Done')).toBeVisible();
     await expect(canvas.getByText('Inactive')).toBeVisible();
+  },
+});
+
+export const StatusStates = meta.story({
+  args: {
+    steps: [
+      { description: 'Lorem ipsum', state: StepperState.error, title: 'Error' },
+      { description: 'Lorem ipsum', state: StepperState.warning, title: 'Warning' },
+      { description: 'Lorem ipsum', state: StepperState.info, title: 'Info' },
+      { description: 'Lorem ipsum', state: StepperState.success, title: 'Success' },
+    ],
   },
 });
 
@@ -210,7 +201,7 @@ export const StepOnlyAndVertical = meta.story({
 export const Custom = meta.story({
   args: {
     custom: true,
-    step: 1,
+    step: 2,
     steps: [
       { description: 'Lorem ipsum', state: StepperState.done, title: 'Done' },
       {
@@ -233,7 +224,7 @@ export const CustomVertical = meta.story({
   args: {
     custom: true,
     orientation: StepperOrientation.vertical,
-    step: 1,
+    step: 2,
     steps: [
       { description: 'Lorem ipsum', state: StepperState.done, title: 'Done' },
       {
@@ -255,7 +246,7 @@ export const CustomVertical = meta.story({
 export const CustomWithColor = meta.story({
   args: {
     custom: true,
-    step: 1,
+    step: 2,
     steps: [
       { description: 'Lorem ipsum', state: StepperState.done, title: 'Done' },
       {

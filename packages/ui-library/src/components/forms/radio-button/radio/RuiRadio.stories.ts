@@ -81,6 +81,7 @@ export const Small = meta.story({
 export const Primary = meta.story({
   args: {
     color: 'primary',
+    modelValue: 'test',
     value: 'test',
   },
 });

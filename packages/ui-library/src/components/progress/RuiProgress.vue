@@ -111,10 +111,10 @@ const progressStyles = tv({
     { circular: true, hasLabel: true, class: { label: 'absolute inset-0 flex items-center justify-center leading-none font-medium tabular-nums whitespace-nowrap' } },
   ],
   compoundSlots: [
-    // Track behind the bar: one neutral for every named color, which reads in both themes where a tint of a dark hue vanished on a dark page
-    { slots: ['rail'], color: ['primary', 'secondary', 'error', 'warning', 'info', 'success'], class: 'bg-rui-neutral-200 dark:bg-rui-neutral-800' },
-    { slots: ['bufferDots'], color: ['primary', 'secondary', 'error', 'warning', 'info', 'success'], class: 'border-rui-neutral-200 dark:border-rui-neutral-800' },
-    { slots: ['circleTrack'], color: ['primary', 'secondary', 'error', 'warning', 'info', 'success'], class: 'stroke-rui-neutral-200 dark:stroke-rui-neutral-800' },
+    // Track behind the bar: one neutral for every named color, neutral-700 in dark like the footer stepper pills, which reads on a near-black page
+    { slots: ['rail'], color: ['primary', 'secondary', 'error', 'warning', 'info', 'success'], class: 'bg-rui-neutral-200 dark:bg-rui-neutral-700' },
+    { slots: ['bufferDots'], color: ['primary', 'secondary', 'error', 'warning', 'info', 'success'], class: 'border-rui-neutral-200 dark:border-rui-neutral-700' },
+    { slots: ['circleTrack'], color: ['primary', 'secondary', 'error', 'warning', 'info', 'success'], class: 'stroke-rui-neutral-200 dark:stroke-rui-neutral-700' },
     // `inherit` keeps a tint of whatever color it is given
     { slots: ['rail', 'bufferDots'], color: 'inherit', class: 'bg-current opacity-20 border-current' },
     { slots: ['circleTrack'], color: 'inherit', class: 'stroke-current opacity-20' },

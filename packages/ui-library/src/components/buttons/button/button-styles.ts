@@ -112,7 +112,7 @@ export const buttonStyles = tv({
     { variant: ['default', 'fab'], color: ['primary', 'secondary', 'error', 'warning', 'info', 'success'], class: { root: 'not-disabled:hover:state-layer-pressed' } },
     // Disabled appearance: a flat neutral fill, skipped while loading so the variant color shows behind the spinner
     { loading: false, class: { root: 'disabled:!bg-rui-neutral-100 dark:disabled:!bg-rui-neutral-800 disabled:!text-rui-text-disabled disabled:active:!text-rui-text-disabled' } },
-    { loading: false, variant: 'outlined', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent disabled:inset-ring-rui-text-disabled' } },
+    { loading: false, variant: 'outlined', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent disabled:inset-ring-rui-text-disabled dark:disabled:inset-ring-rui-text-disabled' } },
     { loading: false, variant: 'text', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent' } },
     { loading: false, variant: 'list', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent' } },
 
@@ -149,9 +149,9 @@ export const buttonStyles = tv({
     { color: 'info', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-rui-info/[0.08] text-rui-info-darker' } },
     { color: 'success', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-rui-success/[0.08] text-rui-success-darker' } },
 
-    // === Context colors — outlined border ===
-    { color: 'primary', variant: 'outlined', class: { root: 'inset-ring-rui-primary/50' } },
-    { color: 'secondary', variant: 'outlined', class: { root: 'inset-ring-rui-secondary/50' } },
+    // === Context colors: outlined border (dark draws primary and secondary solid; at 50% their deep fills sink into the page and look alike) ===
+    { color: 'primary', variant: 'outlined', class: { root: 'inset-ring-rui-primary/50 dark:inset-ring-rui-primary' } },
+    { color: 'secondary', variant: 'outlined', class: { root: 'inset-ring-rui-secondary/50 dark:inset-ring-rui-secondary' } },
     { color: 'error', variant: 'outlined', class: { root: 'inset-ring-rui-error/50' } },
     { color: 'warning', variant: 'outlined', class: { root: 'inset-ring-rui-warning/50' } },
     { color: 'info', variant: 'outlined', class: { root: 'inset-ring-rui-info/50' } },

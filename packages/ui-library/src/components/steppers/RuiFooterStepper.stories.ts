@@ -72,7 +72,7 @@ export const Default = meta.story({
 export const DefaultWithoutButtons = meta.story({
   args: {
     arrowButtons: false,
-    hideButtons: false,
+    hideButtons: true,
     modelValue: 1,
     pages: 5,
     variant: 'numeric',

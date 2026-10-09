@@ -111,6 +111,7 @@ export const CircularWithLabel = meta.story({
   args: {
     circular: true,
     showLabel: true,
+    size: 48,
     value: 75,
     variant: 'determinate',
   },

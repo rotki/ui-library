@@ -81,7 +81,7 @@ export const NoDrop = meta.story({
   args: {
     accept: 'image/*',
     noDrop: true,
-    hint: 'Click only — drag and drop disabled',
+    hint: 'Click only, drag and drop disabled',
   },
 });
 
@@ -100,6 +100,7 @@ export const Progress = meta.story({
 
 export const Uploaded = meta.story({
   args: {
+    modelValue: new File(['date,amount\n2026-01-01,10\n'], 'transactions.csv', { type: 'text/csv' }),
     uploaded: true,
   },
 });

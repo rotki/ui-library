@@ -108,6 +108,12 @@ const buttonGroupStyles = tv({
      */
     { gap: 'none', vertical: false, class: { button: '[&:is([data-button-group]>:first-child,[data-button-group]>:first-child_*)]:rounded-l-rui-control! [&:is([data-button-group]>:last-child,[data-button-group]>:last-child_*)]:rounded-r-rui-control!' } },
     { gap: 'none', vertical: true, class: { button: '[&:is([data-button-group]>:first-child,[data-button-group]>:first-child_*)]:rounded-t-rui-control! [&:is([data-button-group]>:last-child,[data-button-group]>:last-child_*)]:rounded-b-rui-control!' } },
+    /*
+     * In a joined group the focus outline's sides fall on the neighbours, and on a primary neighbour a
+     * primary outline vanishes. A surface ring fills the outline's offset, so the raised segment's
+     * ring is parted from its neighbours on every side.
+     */
+    { gap: 'none', variant: ['default', 'outlined', 'text'], class: { button: 'focus-visible:ring-2 focus-visible:ring-rui-surface' } },
     // each segment is its own rounded pill inside the track, not a slice of one joined bar
     { variant: 'segmented', class: { button: 'rounded-rui-control!' } },
 

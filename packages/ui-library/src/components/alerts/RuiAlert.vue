@@ -89,12 +89,18 @@ const alertStyles = tv({
       class: { root: 'border -m-px bg-[color-mix(in_srgb,rgb(var(--rui-alert))_8%,transparent)] dark:bg-[color-mix(in_srgb,rgb(var(--rui-alert))_12%,transparent)] border-[color-mix(in_srgb,rgb(var(--rui-alert))_25%,transparent)]' },
     },
     { variant: 'filled', class: { root: 'bg-[rgb(var(--rui-alert))] dark:bg-[rgb(var(--rui-alert-fill,var(--rui-alert)))]' } },
-    { variant: 'outlined', class: { root: 'border-[rgb(var(--rui-alert))]' } },
+    // without a tint behind it, the outlined alert carries its type in the icon too
+    { variant: 'outlined', class: { root: 'border-[rgb(var(--rui-alert))]', icon: 'text-[rgb(var(--rui-alert))]' } },
   ],
   compoundSlots: [
     {
-      slots: ['icon', 'texts', 'action', 'close'],
+      slots: ['texts', 'action', 'close'],
       variant: ['default', 'outlined'],
+      class: 'text-[color-mix(in_srgb,black_60%,rgb(var(--rui-alert)))] dark:text-[color-mix(in_srgb,white_60%,rgb(var(--rui-alert)))]',
+    },
+    {
+      slots: ['icon'],
+      variant: 'default',
       class: 'text-[color-mix(in_srgb,black_60%,rgb(var(--rui-alert)))] dark:text-[color-mix(in_srgb,white_60%,rgb(var(--rui-alert)))]',
     },
   ],

@@ -20,7 +20,7 @@ const statusIcons: Partial<Record<StepperState, RuiIcons>> = {
 
 /**
  * The step marker: an outlined number ahead, a filled number with a soft halo
- * for the current step, and a tinted check behind. A status state shows its
+ * for the current step, and a tinted, primary-outlined check behind. A status state shows its
  * icon at full size in the step's own color.
  */
 const stepperIcon = tv({
@@ -32,8 +32,10 @@ const stepperIcon = tv({
     },
     state: {
       [StepperState.inactive]: 'border border-rui-outline bg-rui-surface text-rui-text-secondary',
-      [StepperState.active]: 'bg-rui-primary-fill text-rui-primary-foreground ring-4 ring-rui-primary-soft',
-      [StepperState.done]: 'bg-rui-primary-soft text-rui-primary dark:text-rui-primary-lighter',
+      // the 10% tint vanishes on a dark page, so dark raises the halo and the done well
+      [StepperState.active]: 'bg-rui-primary-fill text-rui-primary-foreground ring-4 ring-rui-primary-soft dark:ring-rui-primary/30',
+      // a primary outline over the tint, so done sits between the filled current step and a neutral upcoming one
+      [StepperState.done]: 'border border-rui-primary bg-rui-primary-soft text-rui-primary dark:border-rui-primary-lighter dark:bg-rui-primary/20 dark:text-rui-primary-lighter',
       [StepperState.error]: '',
       [StepperState.warning]: '',
       [StepperState.info]: '',

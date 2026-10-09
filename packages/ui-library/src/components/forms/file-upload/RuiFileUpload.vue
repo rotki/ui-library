@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { RuiIcons } from '@/icons';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
@@ -25,7 +26,7 @@ export interface FileUploadProps {
   hint?: string;
   /** Disable drag-and-drop; the dropzone becomes click-only (matches rotki.com use case). */
   noDrop?: boolean;
-  /** Replace the default "Drag and drop or \{button\}" copy. */
+  /** Replace the default "Drag and drop or \{button\}" copy. With `noDrop` the default is empty, so only the button shows. */
   uploadText?: string;
   /** Label shown on the inline button when no file is selected. */
   clickToUploadText?: string;
@@ -53,7 +54,7 @@ const {
   errorMessages = [],
   hint = '',
   noDrop = false,
-  uploadText = 'Drag and drop or',
+  uploadText = undefined,
   clickToUploadText = 'click to upload',
   replaceText = 'replace file',
   hideDetails = false,
@@ -94,6 +95,36 @@ const combinedErrorMessages = computed<string[]>(() => {
 });
 
 const { hasError } = useFormTextDetail(combinedErrorMessages, () => []);
+
+// a click-only dropzone does not offer dragging
+const resolvedUploadText = computed<string>(() => uploadText ?? (noDrop ? '' : 'Drag and drop or'));
+
+type WellTone = 'primary' | 'error' | 'success';
+
+// the icon well follows the dropzone's state, like its border
+const wellTone = computed<WellTone>(() => {
+  if (get(hasError))
+    return 'error';
+  if (uploaded)
+    return 'success';
+  return 'primary';
+});
+
+const wellIcon = computed<RuiIcons>(() => {
+  const tone = get(wellTone);
+  if (tone === 'error')
+    return 'lu-circle-alert';
+  if (tone === 'success')
+    return 'lu-circle-check';
+  return 'lu-file-up';
+});
+
+// the 10% tint vanishes on a dark page, so dark doubles it
+const wellClasses: Record<WellTone, string> = {
+  primary: 'bg-rui-primary-soft dark:bg-rui-primary/20',
+  error: 'bg-rui-error-soft dark:bg-rui-error/20',
+  success: 'bg-rui-success-soft dark:bg-rui-success/20',
+};
 
 function matchesAccept(file: File, acceptString: string): boolean {
   if (!acceptString || acceptString === '*' || acceptString === '*/*')
@@ -203,7 +234,7 @@ defineExpose({
   <div v-bind="getRootAttrs($attrs)">
     <div
       ref="wrapper"
-      class="p-4 border border-rui-outline rounded-rui-panel w-full relative border-dashed transition"
+      class="p-4 border border-rui-outline dark:border-rui-neutral-400 rounded-rui-panel w-full relative border-dashed transition"
       :class="{
         'border-rui-primary! bg-rui-primary-subtle': isOverDropZone && !disabled && !noDrop,
         'border-rui-error! border-solid! bg-rui-error-subtle': hasError,
@@ -232,7 +263,7 @@ defineExpose({
             <div
               v-for="file in files"
               :key="`${file.name}-${file.lastModified}`"
-              class="flex items-center gap-2 bg-rui-primary-soft rounded-full pl-3 pr-1 py-1"
+              class="flex items-center gap-2 bg-rui-primary-soft dark:bg-rui-primary/20 rounded-full pl-3 pr-1 py-1"
               data-id="file-item"
             >
               <RuiIcon
@@ -269,12 +300,13 @@ defineExpose({
           <div
             v-else
             class="h-10 w-10 rounded-full flex items-center justify-center"
-            :class="uploaded ? 'bg-rui-success-soft' : 'bg-rui-primary-soft'"
+            :class="wellClasses[wellTone]"
+            data-id="icon-well"
           >
             <slot name="icon">
               <RuiIcon
-                :name="uploaded ? 'lu-circle-check' : 'lu-file-up'"
-                :color="uploaded ? 'success' : 'primary'"
+                :name="wellIcon"
+                :color="wellTone"
               />
             </slot>
           </div>
@@ -283,10 +315,11 @@ defineExpose({
         <div class="text-center text-sm">
           <slot name="description">
             <div class="flex items-center justify-center gap-1 flex-wrap">
-              <span>{{ uploadText }}</span>
+              <span v-if="resolvedUploadText">{{ resolvedUploadText }}</span>
               <button
                 type="button"
                 class="text-rui-primary underline disabled:no-underline disabled:text-rui-text-disabled"
+                :class="{ 'first-letter:uppercase': !resolvedUploadText }"
                 :disabled="disabled"
                 data-id="open-picker"
                 @click="openPicker()"

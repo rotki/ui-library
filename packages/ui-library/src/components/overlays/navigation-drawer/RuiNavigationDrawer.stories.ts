@@ -49,7 +49,7 @@ function render(args: ComponentPropsAndSlots<typeof RuiNavigationDrawer>) {
             v-for="item in items"
             :key="item.id"
             variant="list"
-            color="primary"
+            :color="active === item.id ? 'primary' : undefined"
             class="p-2.5 gap-3"
             :active="active === item.id"
             :aria-current="active === item.id ? 'page' : undefined"
@@ -109,18 +109,25 @@ export const Default = meta.story({
     // Close by clicking the activator (toggles the drawer)
     await userEvent.click(activator);
     await waitFor(() => expect(body.queryByText('Home')).toBeNull());
+    // Open it again, so the story rests on a visible drawer, without a focus ring on the activator
+    await userEvent.click(activator);
+    await waitFor(() => expect(body.getByText('Home')).toBeVisible());
+    activator.blur();
   },
 });
 
 export const Right = meta.story({
   args: {
+    modelValue: true,
     position: 'right',
     temporary: true,
   },
 });
 
 export const Persistent = meta.story({
-  args: {},
+  args: {
+    modelValue: true,
+  },
 });
 
 export const MiniVariant = meta.story({
@@ -139,6 +146,7 @@ export const MiniVariant = meta.story({
     // Collapse back
     await userEvent.click(activator);
     await waitFor(() => expect(drawer).not.toHaveAttribute('data-visible'));
+    activator.blur();
   },
 });
 

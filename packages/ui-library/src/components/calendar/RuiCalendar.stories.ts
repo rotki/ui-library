@@ -54,6 +54,8 @@ export const Default = meta.story({
     await expect(canvas.getByText('15')).toBeVisible(); // day 15 is in every month
 
     await userEvent.click(canvas.getByText('15'));
+    // the click leaves the day focused; drop it so the story rests without a focus ring
+    canvas.getByText('15').closest('button')?.blur();
   },
 });
 
@@ -63,15 +65,26 @@ export const AllowEmpty = meta.story({
   },
 });
 
+/**
+ * A day in the month the calendar opens on, so a bound falls inside the shown month.
+ *
+ * @param day - the day of the current month
+ * @returns that date
+ */
+function dayOfThisMonth(day: number): Date {
+  const today = new Date();
+  return new Date(today.getFullYear(), today.getMonth(), day);
+}
+
 export const WithMinDate = meta.story({
   args: {
-    minDate: new Date(2025, 1, 10),
+    minDate: dayOfThisMonth(10),
   },
 });
 
 export const WithMaxDate = meta.story({
   args: {
-    maxDate: new Date(2025, 3, 1),
+    maxDate: dayOfThisMonth(20),
   },
 });
 

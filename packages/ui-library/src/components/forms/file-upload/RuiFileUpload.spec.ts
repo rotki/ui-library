@@ -39,6 +39,17 @@ describe('components/forms/file-upload/RuiFileUpload.vue', () => {
     expect(wrapper.find('[data-id=file-list]').exists()).toBeFalsy();
   });
 
+  it('drops the drag and drop copy when noDrop is set', () => {
+    wrapper = createWrapper({ props: { modelValue: undefined, noDrop: true } });
+    expect(wrapper.text()).not.toContain('Drag and drop');
+    expect(wrapper.text()).toContain('click to upload');
+  });
+
+  it('tints the icon well with the error color on error', () => {
+    wrapper = createWrapper({ props: { modelValue: undefined, errorMessages: ['Bad file'] } });
+    expect(wrapper.find('[data-id=icon-well]').classes()).toContain('bg-rui-error-soft');
+  });
+
   it('emits the selected file via v-model', async () => {
     wrapper = createWrapper({ props: { modelValue: undefined } });
     const file = makeFile('a.txt');

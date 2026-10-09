@@ -95,7 +95,7 @@ watch(
 <template>
   <div
     data-id="color-input"
-    class="flex flex-col gap-2 w-[16rem] mx-auto"
+    class="flex flex-col gap-2 w-full"
     v-bind="$attrs"
   >
     <!-- the format is a choice between two views of one value, which is what a segmented control is for -->

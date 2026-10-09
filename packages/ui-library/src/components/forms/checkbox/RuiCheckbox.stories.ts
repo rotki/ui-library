@@ -75,6 +75,10 @@ export const Checked = meta.story({
     await expect(checkbox).toBeChecked();
     await userEvent.click(checkbox);
     await expect(checkbox).not.toBeChecked();
+    // check it again and drop the focus, so the story rests in its checked state
+    await userEvent.click(checkbox);
+    await expect(checkbox).toBeChecked();
+    checkbox.blur();
   },
 });
 
@@ -99,6 +103,7 @@ export const Small = meta.story({
 export const Primary = meta.story({
   args: {
     color: 'primary',
+    modelValue: true,
   },
 });
 

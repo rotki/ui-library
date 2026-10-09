@@ -42,7 +42,8 @@ defineSlots<{
 
 const switchStyles = tv({
   slots: {
-    wrapper: 'relative flex gap-2 items-start cursor-pointer group/switch',
+    // 13px to the label, the gap a checkbox or radio leaves, so the focus ring clears the text
+    wrapper: 'relative flex gap-3.25 items-start cursor-pointer group/switch',
     // 40 × 22, nudged down a pixel to sit centred on the label's 24px line
     inner: 'relative w-10 h-5.5 mt-px shrink-0',
     // the off track is the control edge color, 3:1 against the page in both themes
