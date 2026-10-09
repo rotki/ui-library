@@ -5,10 +5,9 @@ import { createOptions } from '@/data/options';
 const options = createOptions();
 
 const defaultValue = ref<number>(1);
-const outlinedValue = ref<number>(1);
+const hiddenLabelValue = ref<number>(1);
 const denseValue = ref<number>(1);
 const disabledValue = ref<number>(1);
-const disabledOutlinedValue = ref<number>(1);
 const loadingValue = ref<number>();
 const errorValue = ref<number>();
 const successValue = ref<number>();
@@ -36,13 +35,15 @@ const hintValue = ref<number>();
       </div>
 
       <div class="flex flex-col space-y-2">
-        <h4>Outlined</h4>
+        <h4>Hidden label</h4>
         <RuiMenuSelect
-          v-model="outlinedValue"
+          v-model="hiddenLabelValue"
           :options="options"
           key-attr="id"
           text-attr="label"
-          data-id="ms-basic-outlined"
+          label="Country"
+          label-placement="hidden"
+          data-id="ms-basic-hidden-label"
         />
       </div>
 
@@ -67,18 +68,6 @@ const hintValue = ref<number>();
           text-attr="label"
           disabled
           data-id="ms-basic-disabled"
-        />
-      </div>
-
-      <div class="flex flex-col space-y-2">
-        <h4>Disabled Outlined</h4>
-        <RuiMenuSelect
-          v-model="disabledOutlinedValue"
-          :options="options"
-          key-attr="id"
-          text-attr="label"
-          disabled
-          data-id="ms-basic-disabled-outlined"
         />
       </div>
 

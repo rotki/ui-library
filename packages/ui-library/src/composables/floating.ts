@@ -64,7 +64,7 @@ export interface FloatingOptions {
 }
 
 /** Custom property carrying the space-aware max height set by the size middleware. */
-export const FLOATING_MAX_HEIGHT_VAR = '--rui-floating-max-height';
+const FLOATING_MAX_HEIGHT_VAR = '--rui-floating-max-height';
 
 export const DEFAULT_FLOATING_OPTIONS: Required<FloatingOptions> = {
   autoUpdate: true,

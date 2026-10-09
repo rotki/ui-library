@@ -5,7 +5,7 @@ import { RouterLink } from 'vue-router';
 const sections = [
   {
     title: 'Basic',
-    description: 'Variants, disabled, loading, messages, required, hint',
+    description: 'Dense, hidden label, disabled, loading, messages, required, hint',
     route: '/menu-selects/basic',
     icon: 'lu-list',
   },
@@ -17,7 +17,7 @@ const sections = [
   },
   {
     title: 'Read-only',
-    description: 'Read-only variants',
+    description: 'Read-only with a pre-selected value',
     route: '/menu-selects/readonly',
     icon: 'lu-lock',
   },

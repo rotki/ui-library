@@ -41,27 +41,6 @@ const textFields = ref<TextFieldData[]>([
   { modelValue: '', color: 'info' },
   { modelValue: '', color: 'success' },
 
-  { modelValue: '', color: 'primary', dense: true },
-  { modelValue: '', color: 'secondary', dense: true },
-  { modelValue: '', color: 'error', dense: true },
-  { modelValue: '', color: 'warning', dense: true },
-  { modelValue: '', color: 'info', dense: true },
-  { modelValue: '', color: 'success', dense: true },
-
-  { modelValue: '', color: 'primary' },
-  { modelValue: '', color: 'secondary' },
-  { modelValue: '', color: 'error' },
-  { modelValue: '', color: 'warning' },
-  { modelValue: '', color: 'info' },
-  { modelValue: '', color: 'success' },
-
-  { modelValue: '', color: 'primary', dense: true },
-  { modelValue: '', color: 'secondary', dense: true },
-  { modelValue: '', color: 'error', dense: true },
-  { modelValue: '', color: 'warning', dense: true },
-  { modelValue: '', color: 'info', dense: true },
-  { modelValue: '', color: 'success', dense: true },
-
   { modelValue: '', color: 'primary', disabled: true },
   { modelValue: '', color: 'secondary', disabled: true },
   { modelValue: '', color: 'error', disabled: true },
@@ -120,19 +99,9 @@ const textFields = ref<TextFieldData[]>([
     modelValue: '',
     color: 'primary',
     appendIcon: 'lu-arrow-right',
-  },
-  {
-    modelValue: '',
-    color: 'primary',
-    appendIcon: 'lu-arrow-right',
     textColor: 'primary',
   },
 
-  {
-    modelValue: '',
-    color: 'primary',
-    prependIcon: 'lu-arrow-right',
-  },
   {
     modelValue: '',
     color: 'primary',
@@ -159,16 +128,6 @@ const textFields = ref<TextFieldData[]>([
   {
     modelValue: '',
     color: 'primary',
-    prepend: 'Prepend',
-  },
-  {
-    modelValue: '',
-    color: 'primary',
-    append: 'Append',
-  },
-  {
-    modelValue: '',
-    color: 'primary',
     append: 'Append',
   },
   {
@@ -176,12 +135,6 @@ const textFields = ref<TextFieldData[]>([
     color: 'primary',
     append: 'Append',
     textColor: 'primary',
-  },
-  {
-    modelValue: '',
-    color: 'primary',
-    append: 'Append',
-    clearable: true,
   },
   {
     modelValue: '',

@@ -15,8 +15,7 @@ const numericOptions: SelectOption[] = [
 
 const returnObjectValue = ref<SelectOption>();
 const returnObjectPreselected = ref<SelectOption>({ id: 1, label: 'Germany' });
-const filledValue = ref<string>();
-const filledOutlinedValue = ref<string>();
+const primitiveValue = ref<string>();
 const falsyValue = ref<number>(0);
 const searchInputValue = ref<string>();
 const searchInputText = ref<string>('');
@@ -59,19 +58,10 @@ const chipToTextValue = ref<string[]>(['Lorem', 'Ipsum']);
 
       <div class="py-4">
         <RuiAutoComplete
-          v-model="filledValue"
+          v-model="primitiveValue"
           :options="primitiveOptions"
-          label="Filled Variant"
-          data-id="ac-adv-filled"
-        />
-      </div>
-
-      <div class="py-4">
-        <RuiAutoComplete
-          v-model="filledOutlinedValue"
-          :options="primitiveOptions"
-          label="Outlined (comparison)"
-          data-id="ac-adv-outlined"
+          label="Primitive options"
+          data-id="ac-adv-primitive"
         />
       </div>
 

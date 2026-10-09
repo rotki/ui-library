@@ -4,7 +4,6 @@ import { RuiMenuSelect } from '@rotki/ui-library';
 const primitiveOptions: string[] = ['Lorem', 'Ipsum', 'Dolor', 'Sit amet', 'Consecteur'];
 
 const readonlyDefault = ref<string>('Lorem');
-const readonlyOutlined = ref<string>('Lorem');
 </script>
 
 <template>
@@ -15,22 +14,12 @@ const readonlyOutlined = ref<string>('Lorem');
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div class="flex flex-col space-y-2">
-        <h4>Read-only Default</h4>
+        <h4>Read-only</h4>
         <RuiMenuSelect
           v-model="readonlyDefault"
           :options="primitiveOptions"
           read-only
           data-id="ms-readonly-default"
-        />
-      </div>
-
-      <div class="flex flex-col space-y-2">
-        <h4>Read-only Outlined</h4>
-        <RuiMenuSelect
-          v-model="readonlyOutlined"
-          :options="primitiveOptions"
-          read-only
-          data-id="ms-readonly-outlined"
         />
       </div>
     </div>

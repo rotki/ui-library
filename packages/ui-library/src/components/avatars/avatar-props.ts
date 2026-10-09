@@ -27,7 +27,7 @@ export const AvatarGroupSpacing = {
 
 export type AvatarGroupSpacing = (typeof AvatarGroupSpacing)[keyof typeof AvatarGroupSpacing];
 
-export const AVATAR_SIZE_PX: Record<AvatarSize, number> = {
+const AVATAR_SIZE_PX: Record<AvatarSize, number> = {
   'xs': 20,
   'sm': 24,
   'md': 32,
@@ -36,7 +36,7 @@ export const AVATAR_SIZE_PX: Record<AvatarSize, number> = {
   '2xl': 64,
 };
 
-export const AVATAR_ICON_PX: Record<AvatarSize, number> = {
+const AVATAR_ICON_PX: Record<AvatarSize, number> = {
   'xs': 12,
   'sm': 14,
   'md': 18,

@@ -17,7 +17,7 @@ export interface FieldOptions {
 export const FieldSymbol: InjectionKey<FieldOptions> = Symbol.for('rui:field');
 
 /** A default for every field below a component, set with `provideFieldDefaults` or `RuiFieldDefaults`. */
-export const FieldScopeSymbol: InjectionKey<MaybeRefOrGetter<LabelPlacement | undefined>> = Symbol.for('rui:field-scope');
+const FieldScopeSymbol: InjectionKey<MaybeRefOrGetter<LabelPlacement | undefined>> = Symbol.for('rui:field-scope');
 
 export function createFieldDefaults(options?: Partial<FieldOptions>): FieldOptions {
   return {

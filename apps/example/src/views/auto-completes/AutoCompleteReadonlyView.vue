@@ -4,7 +4,6 @@ import { RuiAutoComplete } from '@rotki/ui-library/components';
 const primitiveOptions: string[] = ['Lorem', 'Ipsum', 'Dolor', 'Sit amet', 'Consecteur'];
 
 const readonlyDefault = ref<string>('Lorem');
-const readonlyOutlined = ref<string>('Lorem');
 const readonlyMulti = ref<string[]>(['Lorem', 'Ipsum']);
 </script>
 
@@ -20,18 +19,8 @@ const readonlyMulti = ref<string[]>(['Lorem', 'Ipsum']);
           v-model="readonlyDefault"
           read-only
           :options="primitiveOptions"
-          label="Read-only Default"
+          label="Read-only"
           data-id="ac-readonly-default"
-        />
-      </div>
-
-      <div class="py-4">
-        <RuiAutoComplete
-          v-model="readonlyOutlined"
-          read-only
-          :options="primitiveOptions"
-          label="Read-only Outlined"
-          data-id="ac-readonly-outlined"
         />
       </div>
 

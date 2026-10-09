@@ -5,7 +5,7 @@ import { RouterLink } from 'vue-router';
 const sections = [
   {
     title: 'Basic',
-    description: 'Variants, disabled, loading, messages, required',
+    description: 'Dense, hidden label, disabled, loading, messages, required',
     route: '/auto-completes/basic',
     icon: 'lu-text-cursor-input',
   },
@@ -23,7 +23,7 @@ const sections = [
   },
   {
     title: 'Read-only',
-    description: 'Read-only variants with pre-selected values',
+    description: 'Read-only with pre-selected values, single and chips',
     route: '/auto-completes/readonly',
     icon: 'lu-lock',
   },
@@ -41,7 +41,7 @@ const sections = [
   },
   {
     title: 'Advanced',
-    description: 'Return object, filled variant, falsy values, search model',
+    description: 'Return object, primitive options, falsy values, search model, chip to text',
     route: '/auto-completes/advanced',
     icon: 'lu-settings',
   },

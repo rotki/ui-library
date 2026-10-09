@@ -5,10 +5,9 @@ import { createOptions } from '@/data/options';
 const options = createOptions();
 
 const defaultValue = ref<number>(1);
-const outlinedValue = ref<number>(1);
+const hiddenLabelValue = ref<number>();
 const denseValue = ref<number>(1);
 const disabledValue = ref<number>(1);
-const disabledOutlinedValue = ref<number>(1);
 const loadingValue = ref<number>();
 const errorValue = ref<number>();
 const successValue = ref<number>();
@@ -38,13 +37,15 @@ const hintValue = ref<number>();
 
       <div class="py-4">
         <RuiAutoComplete
-          v-model="outlinedValue"
+          v-model="hiddenLabelValue"
           clearable
           :options="options"
           key-attr="id"
           text-attr="label"
-          label="Outlined"
-          data-id="ac-basic-outlined"
+          label="Country"
+          label-placement="hidden"
+          placeholder="Search countries"
+          data-id="ac-basic-hidden-label"
         />
       </div>
 
@@ -70,18 +71,6 @@ const hintValue = ref<number>();
           text-attr="label"
           label="Disabled"
           data-id="ac-basic-disabled"
-        />
-      </div>
-
-      <div class="py-4">
-        <RuiAutoComplete
-          v-model="disabledOutlinedValue"
-          disabled
-          :options="options"
-          key-attr="id"
-          text-attr="label"
-          label="Disabled Outlined"
-          data-id="ac-basic-disabled-outlined"
         />
       </div>
 

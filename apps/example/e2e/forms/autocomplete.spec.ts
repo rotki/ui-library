@@ -37,11 +37,10 @@ test.describe('auto-complete - basic', () => {
     await expect(ac.locator('input')).toHaveValue('Germany');
   });
 
-  test('should render outlined variant', async ({ page }) => {
-    const ac = page.locator('[data-id=ac-basic-outlined]');
-    await expect(ac).toBeVisible();
-    await expect(ac.locator('fieldset')).toBeVisible();
-    await expect(ac.locator('input')).toHaveValue('Germany');
+  test('should keep a hidden label as the combobox name', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-basic-hidden-label]');
+    await expect(ac.getByRole('combobox', { name: 'Country' })).toBeVisible();
+    await expect(ac.getByText('Search countries')).toBeVisible();
   });
 
   test('should render dense variant', async ({ page }) => {
@@ -568,11 +567,10 @@ test.describe('auto-complete - advanced', () => {
     await expect(ac.locator('input')).toHaveValue('Germany');
   });
 
-  test('should render filled variant', async ({ page }) => {
-    const ac = page.locator('[data-id=ac-adv-filled]');
+  test('should pick from primitive options', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-adv-primitive]');
     await expect(ac).toBeVisible();
 
-    // Filled variant should be functional - open and select
     const activator = ac.locator('[data-id=activator]');
     await activator.click();
     await expect(page.locator('div[role=listbox]')).toBeVisible();

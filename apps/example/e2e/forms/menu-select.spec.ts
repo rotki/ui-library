@@ -28,17 +28,15 @@ test.describe('menu-select - basic', () => {
     await page.keyboard.press('Escape');
   });
 
-  test('should render default variant with pre-selected value', async ({ page }) => {
+  test('should render with a pre-selected value', async ({ page }) => {
     const ms = page.locator('[data-id=ms-basic-default]');
     await expect(ms).toBeVisible();
     await expect(ms.locator('[data-id=activator]')).toContainText('Germany');
   });
 
-  test('should render outlined variant', async ({ page }) => {
-    const ms = page.locator('[data-id=ms-basic-outlined]');
-    await expect(ms).toBeVisible();
-    await expect(ms.locator('fieldset')).toBeVisible();
-    await expect(ms.locator('[data-id=activator]')).toContainText('Germany');
+  test('should keep a hidden label as the combobox name', async ({ page }) => {
+    const ms = page.locator('[data-id=ms-basic-hidden-label]');
+    await expect(ms.getByRole('combobox', { name: 'Country' })).toContainText('Germany');
   });
 
   test('should render dense variant', async ({ page }) => {

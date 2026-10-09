@@ -6,7 +6,7 @@ test.describe('forms/TextArea', () => {
   });
 
   test('should render text areas', async ({ page }) => {
-    await expect(page.locator('h2[data-id=text-fields]')).toContainText('Text Fields');
+    await expect(page.locator('h2[data-id=text-areas]')).toContainText('Text Areas');
 
     const content = page.locator('[data-id=content]');
     const textareas = content.locator('textarea:not([aria-hidden="true"])');

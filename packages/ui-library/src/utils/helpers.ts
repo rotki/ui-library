@@ -1,6 +1,5 @@
 import type { SetupContext } from 'vue';
 import { objectOmit, objectPick } from '@vueuse/shared';
-import { camelCase, snakeCase } from 'scule';
 
 interface FormatNumberOptions {
   fractionDigits?: number;
@@ -63,32 +62,6 @@ export function getNonRootAttrs(
   exclude: SetupContextAttrsKeys = ['class'],
 ) {
   return objectOmit(data, [...getRootKeys(data), ...exclude]);
-}
-
-/**
- * Rewrites an object's keys in another case.
- *
- * @param item - the object whose keys to rewrite
- * @param to - the case to write them in
- * @returns a new object holding the same values under the rewritten keys
- */
-export function transformCase<T extends object>(
-  item: T,
-  to: 'camelCase' | 'snake_case',
-): Record<string, T[keyof T]> {
-  if (!item)
-    return item;
-
-  return Object.keys(item).reduce(
-    (acc, curr) => {
-      if (to === 'camelCase')
-        acc[camelCase(curr)] = item[curr as keyof T];
-      else acc[snakeCase(curr)] = item[curr as keyof T];
-
-      return acc;
-    },
-    {} as Record<string, T[keyof T]>,
-  );
 }
 
 /**
