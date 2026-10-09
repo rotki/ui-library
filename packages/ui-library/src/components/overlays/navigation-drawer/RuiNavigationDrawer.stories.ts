@@ -19,27 +19,49 @@ function render(args: ComponentPropsAndSlots<typeof RuiNavigationDrawer>) {
         },
       });
 
-      return { args, modelValue };
+      const items = [
+        { icon: 'lu-house', id: 'home', label: 'Home' },
+        { icon: 'lu-chart-line', id: 'reports', label: 'Reports' },
+        { icon: 'lu-wallet', id: 'accounts', label: 'Accounts' },
+        { icon: 'lu-settings', id: 'settings', label: 'Settings' },
+      ] as const;
+      const active = ref<string>('home');
+      const expanded = computed<boolean>(() => !args.miniVariant || !!get(modelValue));
+
+      return { active, args, expanded, items, modelValue };
     },
+    /*
+     * List buttons with 10px padding make 40px squares, which fill a 56px mini drawer, so each icon
+     * stays put as the drawer expands and the label slides in beside it. The activator keeps clear of
+     * a docked drawer on either side.
+     */
     template: `
-      <RuiNavigationDrawer v-bind="args" v-model='modelValue'>
+      <RuiNavigationDrawer v-bind="args" v-model='modelValue' aria-label="Main">
         <template #activator="{ attrs }">
-          <RuiButton v-bind="attrs">
-            Click me!
-          </RuiButton>
+          <div class="px-16">
+            <RuiButton v-bind="attrs">
+              Click me!
+            </RuiButton>
+          </div>
         </template>
-        <nav class="flex flex-col gap-1 p-2">
-          <RuiButton variant="text" class="!justify-start gap-3">
-            <RuiIcon name="lu-home" />
-            <span v-if="!args.miniVariant || modelValue">Home</span>
-          </RuiButton>
-          <RuiButton variant="text" class="!justify-start gap-3">
-            <RuiIcon name="lu-settings" />
-            <span v-if="!args.miniVariant || modelValue">Settings</span>
-          </RuiButton>
-          <RuiButton variant="text" class="!justify-start gap-3">
-            <RuiIcon name="lu-user" />
-            <span v-if="!args.miniVariant || modelValue">Profile</span>
+        <nav class="flex flex-col gap-0.5 p-2">
+          <RuiButton
+            v-for="item in items"
+            :key="item.id"
+            variant="list"
+            color="primary"
+            class="p-2.5 gap-3"
+            :active="active === item.id"
+            :aria-current="active === item.id ? 'page' : undefined"
+            :aria-label="expanded ? undefined : item.label"
+            @click="active = item.id"
+          >
+            <template #prepend>
+              <RuiIcon :name="item.icon" size="20" class="shrink-0" />
+            </template>
+            <template v-if="expanded" #default>
+              <span class="truncate">{{ item.label }}</span>
+            </template>
           </RuiButton>
         </nav>
       </RuiNavigationDrawer>
@@ -66,6 +88,8 @@ const meta = preview.meta({
   parameters: {
     docs: {
       controls: { exclude: ['default'] },
+      // the drawer is fixed to the viewport, so on the docs page each story gets its own frame to sit in
+      story: { height: '360px', inline: false },
     },
   },
   render,

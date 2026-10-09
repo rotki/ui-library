@@ -20,6 +20,12 @@ export interface NavigationDrawerProps {
   position?: 'left' | 'right';
   classNames?: RuiNavigationDrawerClassNames;
   ariaLabel?: string;
+  /**
+   * Starts the drawer, and its overlay, below the app bar (`--rui-app-bar-height`), so the app bar
+   * stays uncovered and usable while the drawer is open. Without it the drawer runs the full height and
+   * a modal one covers the app bar.
+   */
+  belowAppBar?: boolean;
 }
 
 defineOptions({
@@ -38,6 +44,7 @@ const {
   position = 'left',
   classNames,
   ariaLabel,
+  belowAppBar = false,
 } = defineProps<NavigationDrawerProps>();
 
 const emit = defineEmits<{
@@ -65,8 +72,17 @@ const activatorAttrs: { onClick: () => void } = {
 };
 
 const drawer = tv({
-  base: 'transition-[transform,width] duration-200 ease-in-out top-0 h-full fixed text-rui-text bg-rui-overlay',
+  base: 'transition-[transform,width] duration-200 ease-in-out bottom-0 fixed text-rui-text',
   variants: {
+    belowAppBar: {
+      true: 'top-rui-app-bar',
+      false: 'top-0',
+    },
+    // a temporary drawer floats on the overlay surface; a docked one is part of the page, edged by a hairline
+    temporary: {
+      true: 'bg-rui-overlay',
+      false: 'bg-rui-surface',
+    },
     position: {
       left: 'left-0',
       right: 'right-0',
@@ -89,9 +105,17 @@ const drawer = tv({
     { position: 'left', visible: false, mini: false, class: '-translate-x-full' },
     { position: 'right', visible: false, mini: false, class: 'translate-x-full' },
     { mini: true, visible: false, class: 'w-14!' },
+    { temporary: false, position: 'left', class: 'border-r border-rui-divider' },
+    { temporary: false, position: 'right', class: 'border-l border-rui-divider' },
   ],
-  defaultVariants: { position: 'left', visible: false, mini: false, withOverlay: false },
+  defaultVariants: { position: 'left', visible: false, mini: false, withOverlay: false, temporary: false, belowAppBar: false },
 });
+
+// the overlay dims what the drawer covers: the whole view, or only the part below the app bar
+const overlayClass = computed<string>(() => cn([
+  'fixed inset-x-0 bottom-0 backdrop-blur-sm bg-rui-neutral-950/40 dark:bg-black/60 z-rui-drawer',
+  belowAppBar ? 'top-rui-app-bar' : 'top-0',
+]) ?? '');
 
 /**
  * Consumer classes go through `drawer()` rather than alongside it, so
@@ -105,6 +129,8 @@ function rootClass(attrsClass: ClassValue): string {
     visible: modelValue.value,
     mini: miniVariant,
     withOverlay: overlay,
+    temporary,
+    belowAppBar,
     class: cn([
       temporary && modelValue.value && 'shadow-rui-drawer',
       classNames?.content,
@@ -165,7 +191,7 @@ onClickOutside(content, () => {
         <div
           v-if="modelValue"
           data-id="overlay"
-          class="absolute inset-0 backdrop-blur-sm bg-rui-neutral-950/40 dark:bg-black/60 z-rui-drawer"
+          :class="overlayClass"
           @click.stop="close()"
         />
       </Transition>

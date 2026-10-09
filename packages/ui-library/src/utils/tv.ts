@@ -29,6 +29,8 @@ export const tv = /* #__PURE__ */ createTV({
         shadow: [...shadowRoles.map(role => `rui-${role}`), ...Array.from({ length: 24 }, (_, i) => `${i + 1}`)],
         // `max-w-rui-tooltip` replaces a consumer's `max-w-40` on a tooltip, and the reverse
         container: [...dialogSizes.map(size => `rui-dialog-${size}`), 'rui-tooltip'],
+        // `top-rui-app-bar` replaces a consumer's `top-16` on a drawer, and the reverse
+        spacing: ['rui-app-bar'],
       },
       classGroups: {
         // `text-rui-*` is a text colour, so the merger stops classifying it as a font size like the typography utilities below

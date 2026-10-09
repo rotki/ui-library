@@ -269,6 +269,33 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
     expect(drawer.classList.contains('z-rui-app-bar')).toBe(true);
   });
 
+  it('should run the full height and dim the whole view by default', async () => {
+    wrapper = createWrapper({ props: { modelValue: true, overlay: true } });
+    await vi.runAllTimersAsync();
+
+    const drawer = queryBody<HTMLElement>('aside[data-id=drawer-content]');
+    const overlay = queryBody<HTMLElement>('[data-id=overlay]');
+    assertExists(drawer);
+    assertExists(overlay);
+    expect(drawer.classList.contains('top-0')).toBe(true);
+    expect(overlay.classList.contains('top-0')).toBe(true);
+  });
+
+  it('should start the drawer and its overlay below the app bar with belowAppBar', async () => {
+    wrapper = createWrapper({ props: { modelValue: true, overlay: true, belowAppBar: true } });
+    await vi.runAllTimersAsync();
+
+    const drawer = queryBody<HTMLElement>('aside[data-id=drawer-content]');
+    const overlay = queryBody<HTMLElement>('[data-id=overlay]');
+    assertExists(drawer);
+    assertExists(overlay);
+    expect(drawer.classList.contains('top-rui-app-bar')).toBe(true);
+    expect(drawer.classList.contains('top-0')).toBe(false);
+    // the app bar stays uncovered, so it remains usable while the drawer is open
+    expect(overlay.classList.contains('top-rui-app-bar')).toBe(true);
+    expect(overlay.classList.contains('top-0')).toBe(false);
+  });
+
   it('should keep DOM element when miniVariant is true and modelValue is false', async () => {
     wrapper = createWrapper({
       props: {

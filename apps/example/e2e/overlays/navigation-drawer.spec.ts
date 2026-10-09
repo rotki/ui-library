@@ -78,6 +78,37 @@ test.describe('navigation drawer', () => {
     await expect(page.locator('aside[data-visible]')).toHaveCount(0);
   });
 
+  test('keeps the app bar uncovered and usable with belowAppBar', async ({ page }) => {
+    await page.locator('div[data-id=navigation-drawer-3] [data-id=activator]').click();
+    const aside = page.locator('aside[data-visible]');
+    await expect(aside).toBeVisible();
+
+    const header = await page.locator('header').first().boundingBox();
+    const drawer = await aside.boundingBox();
+    const overlay = await page.locator('[data-id=overlay]').boundingBox();
+    const headerBottom = Math.round((header?.y ?? 0) + (header?.height ?? 0));
+    expect(Math.round(drawer?.y ?? -1)).toBe(headerBottom);
+    expect(Math.round(overlay?.y ?? -1)).toBe(headerBottom);
+
+    // the app bar is the topmost element over its own area, not the overlay
+    const onTop = await page.evaluate(() => {
+      const bar = document.querySelector('header')?.getBoundingClientRect();
+      if (!bar)
+        return false;
+      return !!document.elementFromPoint(bar.left + bar.width / 2, bar.top + bar.height / 2)?.closest('header');
+    });
+    expect(onTop).toBe(true);
+  });
+
+  test('covers the app bar with a full-height overlay drawer by default', async ({ page }) => {
+    await page.locator('div[data-id=navigation-drawer-4] [data-id=activator]').click();
+    const aside = page.locator('aside[data-visible]');
+    await expect(aside).toBeVisible();
+
+    expect(Math.round((await aside.boundingBox())?.y ?? -1)).toBe(0);
+    expect(Math.round((await page.locator('[data-id=overlay]').boundingBox())?.y ?? -1)).toBe(0);
+  });
+
   test('should have aria-label on drawer', async ({ page }) => {
     const defaultDrawer = page.locator('div[data-id=navigation-drawer-0]');
     await defaultDrawer.locator('[data-id=activator]').click();

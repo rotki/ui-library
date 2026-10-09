@@ -12,13 +12,15 @@ interface NavigationDrawerItem {
   overlay?: boolean;
   position?: 'left' | 'right';
   ariaLabel?: string;
+  belowAppBar?: boolean;
 }
 
 const navigationDrawers = ref<NavigationDrawerItem[]>([
-  { modelValue: false, label: 'Left', temporary: true, ariaLabel: 'Left navigation' },
-  { modelValue: false, label: 'Right', position: 'right', temporary: true, ariaLabel: 'Right navigation' },
-  { modelValue: false, label: 'Persistent', temporary: false, ariaLabel: 'Persistent navigation' },
-  { modelValue: false, label: 'With Overlay', temporary: true, overlay: true, ariaLabel: 'Overlay navigation' },
+  { modelValue: false, label: 'Left', temporary: true, belowAppBar: true, ariaLabel: 'Left navigation' },
+  { modelValue: false, label: 'Right', position: 'right', temporary: true, belowAppBar: true, ariaLabel: 'Right navigation' },
+  { modelValue: false, label: 'Persistent', temporary: false, belowAppBar: true, ariaLabel: 'Persistent navigation' },
+  { modelValue: false, label: 'With Overlay', temporary: true, overlay: true, belowAppBar: true, ariaLabel: 'Overlay navigation' },
+  { modelValue: false, label: 'Overlay Over App Bar', temporary: true, overlay: true, ariaLabel: 'Full height navigation' },
 ]);
 </script>
 
@@ -37,7 +39,6 @@ const navigationDrawers = ref<NavigationDrawerItem[]>([
         <RuiNavigationDrawer
           v-bind="navigationDrawer"
           v-model="navigationDrawer.modelValue"
-          :class-names="{ content: '!top-16' }"
         >
           <template #activator="{ attrs }">
             <RuiButton

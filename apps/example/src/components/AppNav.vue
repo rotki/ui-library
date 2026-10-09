@@ -16,10 +16,22 @@ const themes: Theme[] = [
 ];
 
 const onSwitchTheme = ({ value }: Theme) => switchThemeScheme(value);
+
+const header = useTemplateRef<HTMLElement>('header');
+const { height: headerHeight } = useElementSize(header, undefined, { box: 'border-box' });
+
+// this app bar is taller than the library's default, so drawers placed below it read its real height
+watchEffect(() => {
+  if (get(headerHeight) > 0)
+    document.documentElement.style.setProperty('--rui-app-bar-height', `${get(headerHeight)}px`);
+});
 </script>
 
 <template>
-  <header class="sticky top-0 z-50 flex flex-wrap items-center bg-white dark:bg-[#272727] shadow-md dark:shadow-none shadow-slate-900/5 transition duration-500 py-5">
+  <header
+    ref="header"
+    class="sticky top-0 z-50 flex flex-wrap items-center bg-white dark:bg-[#272727] shadow-md dark:shadow-none shadow-slate-900/5 transition duration-500 py-5"
+  >
     <div class="wrapper flex flex-wrap items-center justify-between">
       <RouterLink
         to="/"

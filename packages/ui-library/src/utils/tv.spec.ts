@@ -101,6 +101,8 @@ describe('tv', () => {
       expect(tv({ base: 'shadow-lg shadow-rui-menu' })()).toBe('shadow-rui-menu');
       expect(tv({ base: 'bg-rui-surface bg-white' })()).toBe('bg-white');
       expect(tv({ base: 'border-rui-divider border-rui-primary' })()).toBe('border-rui-primary');
+      expect(tv({ base: 'top-rui-app-bar top-16' })()).toBe('top-16');
+      expect(tv({ base: 'top-0 top-rui-app-bar' })()).toBe('top-rui-app-bar');
     });
 
     it('should let a slash opacity colour replace the plain one', () => {
