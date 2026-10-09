@@ -15,6 +15,8 @@ const attributes: Partial<ButtonGroupData>[] = [
   { vertical: true, variant: 'outlined' },
   { variant: 'outlined' },
   { variant: 'text' },
+  { variant: 'segmented' },
+  { required: true, variant: 'segmented' },
 ];
 
 const toggleButtons = ref<ButtonGroupData[]>([]);
@@ -39,16 +41,16 @@ onBeforeMount(() => {
         v-bind="objectOmit(buttonGroup, ['modelValue', 'count', 'rounded'])"
         v-model="buttonGroup.modelValue"
       >
-        <RuiButton>
+        <RuiButton :model-value="0">
           <RuiIcon name="lu-text-align-start" />
         </RuiButton>
-        <RuiButton>
+        <RuiButton :model-value="1">
           <RuiIcon name="lu-text-align-center" />
         </RuiButton>
-        <RuiButton>
+        <RuiButton :model-value="2">
           <RuiIcon name="lu-text-align-end" />
         </RuiButton>
-        <RuiButton>
+        <RuiButton :model-value="3">
           <RuiIcon name="lu-text-align-justify" />
         </RuiButton>
       </RuiButtonGroup>

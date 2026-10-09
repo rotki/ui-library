@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { h } from 'vue';
 import RuiButtonGroup from '@/components/buttons/button-group/RuiButtonGroup.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
 import {
   assertExists,
   expectNotToHaveClass,
@@ -15,7 +16,7 @@ function createWrapper(
 ) {
   return mount(RuiButtonGroup, {
     slots: {
-      default: [RuiButton, RuiButton, RuiButton],
+      default: () => [0, 1, 2].map(value => h(RuiButton, { modelValue: value }, () => `Button ${value}`)),
     },
     ...options,
   });
@@ -264,5 +265,106 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
     expect(button0.attributes('disabled')).toBeDefined();
     expect(button1.attributes('disabled')).toBeDefined();
     expect(button2.attributes('disabled')).toBeDefined();
+  });
+
+  it('should draw the segmented variant as a neutral track of text buttons', () => {
+    wrapper = createWrapper({
+      props: {
+        color: 'primary',
+        modelValue: 1,
+        variant: 'segmented',
+      },
+    });
+
+    expectToHaveClass(wrapper.element, /^bg-rui-neutral-200$/);
+    const buttons = wrapper.findAll('button');
+    for (const button of buttons) {
+      expect(button.attributes('data-variant')).toBe('text');
+      // neutral like the segmented tabs, so the group's color does not reach the buttons
+      expect(button.attributes('data-color')).toBeUndefined();
+    }
+    expect(buttons[1]?.attributes('data-active')).toBe('true');
+  });
+
+  describe('wrapped buttons', () => {
+    function mountWrapped(props: Record<string, unknown> = {}) {
+      return mount(RuiButtonGroup, {
+        attachTo: document.body,
+        props: { color: 'primary', size: 'sm', ...props },
+        slots: {
+          default: () => [
+            h('div', { 'data-id': 'wrapper-a' }, [h(RuiButton, { modelValue: 'a' }, () => 'A')]),
+            h(RuiButton, { modelValue: 'b' }, () => 'B'),
+            h('div', { 'data-id': 'wrapper-c' }, [h('span', [h(RuiButton, { modelValue: 'c' }, () => 'C')])]),
+          ],
+        },
+      });
+    }
+
+    it('should apply the group state to a button at any depth', async () => {
+      const group = mountWrapped({ disabled: true });
+      for (const button of group.findAll('button')) {
+        expect(button.attributes('data-color')).toBe('primary');
+        expect(button.attributes('data-size')).toBe('sm');
+        expect(button.attributes('disabled')).toBeDefined();
+        expect(button.classes()).toContain('border-0');
+      }
+      group.unmount();
+    });
+
+    it('should toggle the model from a nested button', async () => {
+      const group = mountWrapped({
+        'modelValue': 'a',
+        'onUpdate:modelValue': async (value: unknown) => group.setProps({ modelValue: value }),
+      });
+      const nested = group.find('[data-id=wrapper-c] button');
+      expect(group.find('[data-id=wrapper-a] button').attributes('data-active')).toBe('true');
+
+      await nested.trigger('click');
+      expect(group.props('modelValue')).toBe('c');
+      expect(nested.attributes('data-active')).toBe('true');
+      expect(group.find('[data-id=wrapper-a] button').attributes('data-active')).toBeUndefined();
+      group.unmount();
+    });
+  });
+
+  it('should leave a button without a value out of the selection', async () => {
+    const onUpdate = vi.fn();
+    wrapper = mount(RuiButtonGroup, {
+      props: { 'modelValue': undefined, 'onUpdate:modelValue': onUpdate },
+      slots: { default: () => [h(RuiButton, () => 'No value')] },
+    });
+
+    await wrapper.find('button').trigger('click');
+    expect(onUpdate).not.toHaveBeenCalled();
+    expect(wrapper.find('button').attributes('data-active')).toBeUndefined();
+  });
+
+  it('should not reach the buttons inside an overlay\'s content', async () => {
+    vi.useFakeTimers();
+    wrapper = mount(RuiButtonGroup, {
+      attachTo: document.body,
+      props: { color: 'primary' },
+      slots: {
+        default: () => [
+          h(RuiButton, { modelValue: 'run' }, () => 'Run'),
+          h(RuiMenu, null, {
+            activator: ({ attrs }: { attrs: Record<string, unknown> }) => h(RuiButton, { ...attrs, 'data-id': 'menu-activator' }, () => 'More'),
+            default: () => h(RuiButton, { 'data-id': 'menu-item' }, () => 'Option'),
+          }),
+        ],
+      },
+    });
+
+    const activator = wrapper.find('[data-id=menu-activator]');
+    await activator.trigger('click');
+    await vi.runAllTimersAsync();
+
+    expect(activator.attributes('data-color')).toBe('primary');
+    const item = document.body.querySelector('[data-id=menu-item]');
+    assertExists(item);
+    expect(item.getAttribute('data-color')).toBeNull();
+    expect(item.classList.contains('border-0')).toBe(false);
+    vi.useRealTimers();
   });
 });

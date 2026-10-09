@@ -1,5 +1,6 @@
 <script lang="ts" generic="T = undefined" setup>
 import type { ContextColorsType } from '@/consts/colors';
+import { ButtonGroupKey } from '@/components/buttons/button-group/button-group-context';
 import { type ButtonSize, ButtonVariant, getButtonSpinnerSize } from '@/components/buttons/button/button-props';
 import { buttonStyles } from '@/components/buttons/button/button-styles';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
@@ -50,33 +51,54 @@ const slots = defineSlots<{
   default?: () => any;
 }>();
 
+// a RuiButtonGroup anywhere above, unless an overlay's content sits in between
+const group = inject(ButtonGroupKey, undefined);
+
 const btnValue = computed<T | undefined>(() => modelValue);
 
-const spinnerSize = computed<number>(() => getButtonSpinnerSize(size));
+const resolvedVariant = computed<ButtonVariant>(() => group?.variant() ?? variant);
+
+const resolvedSize = computed<ButtonSize | undefined>(() => size ?? group?.size());
+
+const resolvedDisabled = computed<boolean>(() => disabled || (group?.disabled() ?? false));
+
+// a grouped button is pressed when the group's model holds its value; it needs one to take part
+const resolvedActive = computed<boolean>(() => active || (!!group && modelValue !== undefined && group.isActive(modelValue)));
+
+const resolvedColor = computed<ContextColorsType | undefined>(() => group?.color(get(resolvedActive)) ?? color);
+
+const spinnerSize = computed<number>(() => getButtonSpinnerSize(get(resolvedSize)));
 
 const ui = computed<ReturnType<typeof buttonStyles>>(() => buttonStyles({
-  variant,
-  color: color ?? 'grey',
-  size,
+  variant: get(resolvedVariant),
+  color: get(resolvedColor) ?? 'grey',
+  size: get(resolvedSize),
   rounded,
   icon,
-  active,
+  active: get(resolvedActive),
   loading,
   hideFocusIndicator,
 }));
+
+function onClick(): void {
+  emit('update:model-value', get(btnValue));
+  if (group && modelValue !== undefined)
+    group.toggle(modelValue);
+}
 </script>
 
 <template>
   <Component
     :is="tag"
-    :class="ui.root({ class: cn($attrs.class) })"
-    :disabled="disabled || loading"
+    :class="ui.root({ class: cn([group?.itemClass(), $attrs.class]) })"
+    :disabled="resolvedDisabled || loading"
     :type="tag === 'button' ? type : undefined"
-    :data-variant="variant"
-    :data-color="color"
-    :data-active="active || undefined"
+    :data-variant="resolvedVariant"
+    :data-size="resolvedSize ?? 'md'"
+    :data-color="resolvedColor"
+    :data-active="resolvedActive || undefined"
     v-bind="{ ...$attrs, class: undefined }"
-    @click="emit('update:model-value', btnValue)"
+    @click="onClick()"
   >
     <slot name="prepend" />
     <span

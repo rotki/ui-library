@@ -9,7 +9,7 @@ export interface ButtonGroupData {
   vertical?: boolean;
   color?: ContextColorsType;
   activeColor?: ContextColorsType;
-  variant?: 'default' | 'outlined' | 'text';
+  variant?: 'default' | 'outlined' | 'text' | 'segmented';
   size?: 'sm' | 'lg';
   gap?: 'sm' | 'md' | 'lg';
   required?: boolean;

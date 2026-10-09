@@ -1,14 +1,18 @@
 <script lang="ts" generic="T = undefined" setup>
 import type { ButtonSize } from '@/components/buttons/button/button-props';
 import type { ContextColorsType } from '@/consts/colors';
-import { Fragment, isVNode } from 'vue';
-import { tv } from '@/utils/tv';
+import { type ButtonGroupContext, ButtonGroupKey } from '@/components/buttons/button-group/button-group-context';
+import { cn, tv } from '@/utils/tv';
 
 export interface Props {
   vertical?: boolean;
   color?: ContextColorsType;
   activeColor?: ContextColorsType;
-  variant?: 'default' | 'outlined' | 'text';
+  /**
+   * `segmented` draws the options as `RuiTabs variant="segmented"` does: a neutral track whose active
+   * option is a raised surface. It is neutral, so it ignores `color` and `activeColor`.
+   */
+  variant?: 'default' | 'outlined' | 'text' | 'segmented';
   size?: ButtonSize;
   gap?: 'sm' | 'md' | 'lg';
   required?: boolean;
@@ -33,18 +37,24 @@ const {
   disabled = false,
 } = defineProps<Props>();
 
-const slots = useSlots();
+defineSlots<{
+  default?: () => any;
+}>();
 
 const buttonGroupStyles = tv({
   slots: {
-    // between filled buttons a separator only needs to part the fills, so it takes the light divider
-    root: 'inline-flex rounded-rui-control between:border-l between:border-r-0 between:border-rui-divider outline-solid outline-1 outline-transparent -outline-offset-1',
+    /*
+     * `w-fit`: a flex column stretches its children, inline-flex or not, which drew an outlined
+     * group's frame across the whole row. A consumer's own width still wins through the class merge.
+     * Between filled buttons a separator only needs to part the fills, so it takes the light divider.
+     */
+    root: 'inline-flex w-fit max-w-full rounded-rui-control between:border-l between:border-r-0 between:border-rui-divider outline-solid outline-1 outline-transparent -outline-offset-1',
     button: 'border-0 inset-ring-0 focus:z-1',
   },
   variants: {
     vertical: {
       true: {
-        root: 'flex-col items-start between:border-l-0 between:border-t between:border-b-0',
+        root: 'flex-col items-start between:border-l-0 between:border-t between:border-b-0 *:w-full',
         button: 'w-full',
       },
       false: {},
@@ -73,6 +83,14 @@ const buttonGroupStyles = tv({
         root: 'outline-rui-outline between:border-rui-outline',
       },
       text: {},
+      // the segmented tabs' track and pill; the 32px options make a 36px control, a field's height
+      segmented: {
+        root: 'rounded-rui-panel bg-rui-neutral-200 p-0.5 gap-0.5 outline-0 between:border-0 dark:bg-rui-neutral-800',
+        button: [
+          'h-8 px-3 text-rui-text-secondary transition-colors hover:text-rui-text focus-visible:-outline-offset-2',
+          'data-[active]:bg-rui-surface data-[active]:text-rui-text data-[active]:shadow-rui-control dark:data-[active]:bg-rui-neutral-700',
+        ].join(' '),
+      },
     },
     color: {
       primary: {},
@@ -84,9 +102,14 @@ const buttonGroupStyles = tv({
     },
   },
   compoundVariants: [
-    // First/last child rounding when not separated (! needed to override RuiButton's CSS module border-radius)
-    { gap: 'none', vertical: false, class: { button: 'first:rounded-l-rui-control! last:rounded-r-rui-control!' } },
-    { gap: 'none', vertical: true, class: { button: 'first:rounded-t-rui-control! last:rounded-b-rui-control!' } },
+    /*
+     * The outer corners go to the button that is, or sits inside, the group's first or last item, so a
+     * button wrapped in a tooltip or a menu activator rounds like a direct child.
+     */
+    { gap: 'none', vertical: false, class: { button: '[&:is([data-button-group]>:first-child,[data-button-group]>:first-child_*)]:rounded-l-rui-control! [&:is([data-button-group]>:last-child,[data-button-group]>:last-child_*)]:rounded-r-rui-control!' } },
+    { gap: 'none', vertical: true, class: { button: '[&:is([data-button-group]>:first-child,[data-button-group]>:first-child_*)]:rounded-t-rui-control! [&:is([data-button-group]>:last-child,[data-button-group]>:last-child_*)]:rounded-b-rui-control!' } },
+    // each segment is its own rounded pill inside the track, not a slice of one joined bar
+    { variant: 'segmented', class: { button: 'rounded-rui-control!' } },
 
     // Color dividers for outlined/text (overrides darker dividers above)
     { color: 'primary', variant: ['outlined', 'text'], class: { root: 'between:border-rui-primary/50' } },
@@ -119,52 +142,16 @@ const ui = computed<ReturnType<typeof buttonGroupStyles>>(() => buttonGroupStyle
 }));
 
 /**
- * Applies the group's state to one of its buttons: which button is active,
- * the group's disabled flag and colour, and the group's size, that last one
- * only when the button did not set a size of its own, so a consumer can still
- * size a single button.
+ * The color a button takes: the pressed one's `activeColor` when set, otherwise the group's. The
+ * segmented variant is neutral, like the segmented tabs, so its buttons take none.
  *
- * @param child - the button's vnode, whose props are keyed in kebab-case
- * @param index - its place in the group, which stands in for a missing value
- * @param selectedValue - what the group's model currently holds
- * @returns the same vnode, with the group's props written onto it
+ * @param active - whether the button is the pressed one
+ * @returns the color to set, or undefined to leave the button grey
  */
-function applyGroupProps(child: VNode, index: number, selectedValue: T | T[] | undefined): VNode {
-  const value = child.props?.['model-value'];
-  const active = isActive(value ?? index, selectedValue);
-  const resolvedColor = active && activeColor ? activeColor : color;
-  const childSize = child.props?.size;
-
-  child.props = {
-    ...child.props,
-    active,
-    ...(disabled && { disabled: true }),
-    ...(resolvedColor && { color: resolvedColor }),
-    ...(!childSize && size && { size }),
-  };
-
-  return child;
-}
-
-const children = computed<VNode[]>(() => {
-  const selectedValue: T | T[] | undefined = get(modelValue);
-  const slotContent = slots.default?.() ?? [];
-
-  return flattenSlotContent(slotContent)
-    .map((child, index) => applyGroupProps(child, index, selectedValue));
-});
-
-/**
- * Flattens slot content by unwrapping Fragments (created by v-for).
- * Returns only actual VNode children.
- */
-function flattenSlotContent(nodes: VNode[]): VNode[] {
-  return nodes.flatMap((node) => {
-    if (node.type === Fragment && Array.isArray(node.children) && node.children.length > 0)
-      return flattenSlotContent(node.children.filter(isVNode));
-
-    return [node];
-  });
+function buttonColor(active: boolean): ContextColorsType | undefined {
+  if (variant === 'segmented')
+    return undefined;
+  return active && activeColor ? activeColor : color;
 }
 
 function isActive(id: T, selected?: T | T[]): boolean {
@@ -196,20 +183,25 @@ function onClick(id: T): void {
     set(modelValue, isActive(id, selected) ? undefined : id);
   }
 }
+
+// a button that sets its own size keeps it; the rest take the group's
+provide(ButtonGroupKey, {
+  variant: () => variant === 'segmented' ? 'text' : variant,
+  size: () => size,
+  disabled: () => disabled,
+  color: buttonColor,
+  itemClass: () => get(ui).button(),
+  isActive: (value: T) => isActive(value, get(modelValue)),
+  toggle: onClick,
+} satisfies ButtonGroupContext<T>);
 </script>
 
 <template>
   <div
-    :class="ui.root()"
-    v-bind="$attrs"
+    :class="ui.root({ class: cn($attrs.class) })"
+    data-button-group
+    v-bind="{ ...$attrs, class: undefined }"
   >
-    <Component
-      :is="child"
-      v-for="(child, i) in children"
-      :key="i"
-      :class="ui.button()"
-      :variant="variant"
-      @update:model-value="onClick($event ?? i)"
-    />
+    <slot />
   </div>
 </template>

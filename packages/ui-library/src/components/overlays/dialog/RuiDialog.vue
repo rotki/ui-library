@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { DialogSize } from '@/consts/tokens';
 import type { VueClassValue } from '@/types/class-value';
+import { ButtonGroupBoundary } from '@/components/buttons/button-group/button-group-context';
 import { useDismissableOverlay } from '@/composables/overlay-stack';
 import { useTimeoutManager } from '@/composables/timeout-manager';
 import { getNonRootAttrs, getRootAttrs, transformPropsUnit } from '@/utils/helpers';
@@ -227,7 +228,9 @@ watch(contentRef, (ref) => {
             :data-bottom-sheet="bottomSheet || undefined"
             :class="ui.content({ class: cn(classNames?.content) })"
           >
-            <slot v-bind="{ isOpen: modelValue, close }" />
+            <ButtonGroupBoundary>
+              <slot v-bind="{ isOpen: modelValue, close }" />
+            </ButtonGroupBoundary>
           </div>
         </Transition>
       </div>

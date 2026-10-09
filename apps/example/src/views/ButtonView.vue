@@ -3,6 +3,7 @@ import ButtonGroups from '@/components/buttons/ButtonGroups.vue';
 import ListButtons from '@/components/buttons/ListButtons.vue';
 import MultiToggleButtonGroups from '@/components/buttons/MultiToggleButtonGroups.vue';
 import SingleButtons from '@/components/buttons/SingleButtons.vue';
+import SplitButtonGroups from '@/components/buttons/SplitButtonGroups.vue';
 import ToggleButtonGroups from '@/components/buttons/ToggleButtonGroups.vue';
 import ComponentView from '@/components/ComponentView.vue';
 </script>
@@ -16,6 +17,7 @@ import ComponentView from '@/components/ComponentView.vue';
     <SingleButtons />
     <ListButtons />
     <ButtonGroups />
+    <SplitButtonGroups />
     <ToggleButtonGroups />
     <MultiToggleButtonGroups />
   </ComponentView>

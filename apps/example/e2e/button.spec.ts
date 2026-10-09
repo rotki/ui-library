@@ -24,6 +24,27 @@ test.describe('buttons', () => {
     await expect(disabledButton).toContainText('0');
   });
 
+  test('a split button joins buttons wrapped in a tooltip and a menu activator', async ({ page }) => {
+    for (const variant of ['default', 'outlined']) {
+      const group = page.getByTestId(`split-button-${variant}`);
+      const action = group.getByTestId('split-button-action');
+      const more = group.getByTestId('split-button-menu');
+
+      // outer corners round, the joined ones stay square, wherever the button sits in the tree
+      await expect(action).not.toHaveCSS('border-top-left-radius', '0px');
+      await expect(action).toHaveCSS('border-top-right-radius', '0px');
+      await expect(more).toHaveCSS('border-top-left-radius', '0px');
+      await expect(more).not.toHaveCSS('border-top-right-radius', '0px');
+      await expect(more).toHaveAttribute('data-color', 'primary');
+    }
+
+    await page.getByTestId('split-button-default').getByTestId('split-button-menu').click();
+    // the menu's own buttons are not part of the group
+    await expect(page.getByTestId('split-button-option')).toBeVisible();
+    await expect(page.getByTestId('split-button-option')).not.toHaveAttribute('data-color');
+    await page.keyboard.press('Escape');
+  });
+
   test('list-variant button label shares the icon line-box (issue #515)', async ({ page }) => {
     const button = page.getByTestId('list-button-md-settings');
     const label = button.locator('[data-id="btn-label"]');

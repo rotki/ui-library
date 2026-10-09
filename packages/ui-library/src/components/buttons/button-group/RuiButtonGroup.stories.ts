@@ -1,8 +1,10 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
-import { expect } from 'storybook/test';
+import { expect, waitFor, within } from 'storybook/test';
 import RuiButtonGroup from '@/components/buttons/button-group/RuiButtonGroup.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
+import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
+import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
 import { contextColors } from '@/consts/colors';
 import preview from '~/.storybook/preview';
 
@@ -16,16 +18,16 @@ function render(args: ComponentPropsAndSlots<typeof RuiButtonGroup<string | numb
     template: `
     <div v-if="'modelValue' in args">
       <RuiButtonGroup v-bind="args" v-model="args.modelValue">
-        <RuiButton aria-label="Align start">
+        <RuiButton model-value="start" aria-label="Align start">
           <RuiIcon name="lu-align-start-horizontal" />
         </RuiButton>
-        <RuiButton aria-label="Align center">
+        <RuiButton model-value="center" aria-label="Align center">
           <RuiIcon name="lu-align-center-horizontal" />
         </RuiButton>
-        <RuiButton aria-label="Align end">
+        <RuiButton model-value="end" aria-label="Align end">
           <RuiIcon name="lu-align-end-horizontal" />
         </RuiButton>
-        <RuiButton aria-label="Justify">
+        <RuiButton model-value="justify" aria-label="Justify">
           <RuiIcon name="lu-align-horizontal-justify-center" />
         </RuiButton>
       </RuiButtonGroup>
@@ -53,7 +55,7 @@ const meta = preview.meta({
     size: { control: 'select', options: ['md', 'sm', 'lg', 'xl'] },
     variant: {
       control: 'select',
-      options: ['default', 'outlined', 'text'],
+      options: ['default', 'outlined', 'text', 'segmented'],
       table: { category: 'Shape' },
     },
     vertical: { control: 'boolean' },
@@ -127,11 +129,11 @@ export const Sizes = meta.story({
   }),
 });
 
-/** A single-choice toggle: the bound value is the index of the pressed button. */
+/** A single-choice toggle: the bound value is the `model-value` of the pressed button. */
 export const Toggle = meta.story({
   args: {
     color: 'primary',
-    modelValue: 0,
+    modelValue: 'start',
   },
   async play({ canvas, userEvent }) {
     const center = canvas.getByRole('button', { name: 'Align center' });
@@ -144,7 +146,7 @@ export const Toggle = meta.story({
 export const ToggleRequired = meta.story({
   args: {
     color: 'primary',
-    modelValue: 0,
+    modelValue: 'start',
     required: true,
   },
 });
@@ -152,7 +154,7 @@ export const ToggleRequired = meta.story({
 export const VerticalToggle = meta.story({
   args: {
     color: 'primary',
-    modelValue: 0,
+    modelValue: 'start',
     vertical: true,
   },
 });
@@ -162,39 +164,114 @@ export const ToggleVariants = meta.story({
   render: () => ({
     components: { RuiButton, RuiButtonGroup, RuiIcon },
     setup() {
-      const outlined = ref<number>(0);
-      const text = ref<number>(1);
-      const activeColor = ref<number>(2);
+      const outlined = ref<string>('day');
+      const text = ref<string>('week');
+      const activeColor = ref<string>('month');
       return { activeColor, outlined, text };
     },
     template: `
       <div class="flex flex-col items-start gap-3">
         <RuiButtonGroup v-model="outlined" variant="outlined" color="primary">
-          <RuiButton>Day</RuiButton><RuiButton>Week</RuiButton><RuiButton>Month</RuiButton>
+          <RuiButton model-value="day">Day</RuiButton><RuiButton model-value="week">Week</RuiButton><RuiButton model-value="month">Month</RuiButton>
         </RuiButtonGroup>
         <RuiButtonGroup v-model="text" variant="text" color="primary">
-          <RuiButton>Day</RuiButton><RuiButton>Week</RuiButton><RuiButton>Month</RuiButton>
+          <RuiButton model-value="day">Day</RuiButton><RuiButton model-value="week">Week</RuiButton><RuiButton model-value="month">Month</RuiButton>
         </RuiButtonGroup>
         <RuiButtonGroup v-model="activeColor" variant="text" color="primary" active-color="warning">
-          <RuiButton>Day</RuiButton><RuiButton>Week</RuiButton><RuiButton>Month</RuiButton>
+          <RuiButton model-value="day">Day</RuiButton><RuiButton model-value="week">Week</RuiButton><RuiButton model-value="month">Month</RuiButton>
         </RuiButtonGroup>
       </div>`,
   }),
 });
 
-/** A multiple-choice toggle: the bound value is the list of pressed indices. */
+/**
+ * A segmented control built from buttons, drawn like `RuiTabs variant="segmented"`. Reach for it when
+ * the options switch a setting or a filter; when they switch the view below, use the segmented tabs,
+ * which bring the tab roles and arrow-key navigation. It is neutral, so `color` has no effect.
+ */
+export const Segmented = meta.story({
+  render: () => ({
+    components: { RuiButton, RuiButtonGroup, RuiIcon },
+    setup() {
+      const range = ref<string>('1W');
+      const ranges = ['1D', '1W', '1M', '1Y', 'All'];
+      const layout = ref<string>('list');
+      return { layout, range, ranges };
+    },
+    template: `
+      <div class="flex flex-col items-start gap-4">
+        <RuiButtonGroup v-model="range" variant="segmented" required>
+          <RuiButton v-for="option in ranges" :key="option" :model-value="option">{{ option }}</RuiButton>
+        </RuiButtonGroup>
+        <RuiButtonGroup v-model="layout" variant="segmented" required>
+          <RuiButton model-value="list" aria-label="List view"><RuiIcon name="lu-list" size="16" /></RuiButton>
+          <RuiButton model-value="grid" aria-label="Grid view"><RuiIcon name="lu-layout-grid" size="16" /></RuiButton>
+        </RuiButtonGroup>
+      </div>`,
+  }),
+  async play({ canvas, userEvent }) {
+    const month = canvas.getByRole('button', { name: '1M' });
+    await userEvent.click(month);
+    await expect(month).toHaveAttribute('data-active', 'true');
+    await expect(canvas.getByRole('button', { name: '1W' })).not.toHaveAttribute('data-active');
+  },
+});
+
+/** A multiple-choice toggle: the bound value is the list of pressed buttons' `model-value`s. */
 export const ToggleMultiple = meta.story({
   args: {
     color: 'primary',
-    modelValue: [0],
+    modelValue: ['start'],
   },
 });
 
 export const ToggleMultipleRequired = meta.story({
   args: {
     color: 'primary',
-    modelValue: [0],
+    modelValue: ['start'],
     required: true,
+  },
+});
+
+/**
+ * A split button: an action with a tooltip and a chevron that opens a menu. The group reaches a
+ * RuiButton at any depth, so the wrapped buttons join it without corner or border overrides, while the
+ * buttons inside the menu stay plain.
+ */
+export const SplitButton = meta.story({
+  render: () => ({
+    components: { RuiButton, RuiButtonGroup, RuiIcon, RuiMenu, RuiTooltip },
+    template: `
+      <RuiButtonGroup color="primary">
+        <RuiTooltip :open-delay="400">
+          <template #activator>
+            <RuiButton>Refresh</RuiButton>
+          </template>
+          Refresh all balances
+        </RuiTooltip>
+        <RuiMenu>
+          <template #activator="{ attrs }">
+            <RuiButton icon aria-label="More refresh options" v-bind="attrs">
+              <RuiIcon name="lu-chevron-down" />
+            </RuiButton>
+          </template>
+          <div class="py-1">
+            <RuiButton variant="list">Refresh prices</RuiButton>
+            <RuiButton variant="list">Refresh accounts</RuiButton>
+          </div>
+        </RuiMenu>
+      </RuiButtonGroup>`,
+  }),
+  async play({ canvas, userEvent }) {
+    const refresh = canvas.getByRole('button', { name: 'Refresh' });
+    const more = canvas.getByRole('button', { name: 'More refresh options' });
+    await expect(refresh).toHaveAttribute('data-color', 'primary');
+    await expect(more).toHaveAttribute('data-color', 'primary');
+    await userEvent.click(more);
+    const option = within(document.body).getByRole('button', { name: 'Refresh prices' });
+    await expect(option).not.toHaveAttribute('data-color');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(within(document.body).queryByRole('menu')).toBeNull());
   },
 });
 

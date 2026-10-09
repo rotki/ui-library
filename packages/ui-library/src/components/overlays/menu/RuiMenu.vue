@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { VueClassValue } from '@/types/class-value';
+import { ButtonGroupBoundary } from '@/components/buttons/button-group/button-group-context';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { type FloatingOptions, useFloating } from '@/composables/floating';
 import { useFormTextDetail } from '@/utils/form-text-detail';
@@ -376,7 +377,9 @@ onClickOutside(menu, () => {
             tabindex="-1"
             v-bind="baseMenuAttrs"
           >
-            <slot v-bind="{ width }" />
+            <ButtonGroupBoundary>
+              <slot v-bind="{ width }" />
+            </ButtonGroupBoundary>
           </div>
         </TransitionGroup>
       </div>

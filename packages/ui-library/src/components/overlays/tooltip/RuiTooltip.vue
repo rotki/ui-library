@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { VueClassValue } from '@/types/class-value';
+import { ButtonGroupBoundary } from '@/components/buttons/button-group/button-group-context';
 import { type FloatingOptions, useFloating } from '@/composables/floating';
 import { cn, tv } from '@/utils/tv';
 import { tooltipStyles } from './tooltip-styles';
@@ -132,9 +133,11 @@ defineExpose({
             @mouseover="persistOnTooltipHover && onOpen()"
             @mouseleave="persistOnTooltipHover && onClose()"
           >
-            <slot>
-              {{ text }}
-            </slot>
+            <ButtonGroupBoundary>
+              <slot>
+                {{ text }}
+              </slot>
+            </ButtonGroupBoundary>
           </div>
           <span
             v-if="!hideArrow"
