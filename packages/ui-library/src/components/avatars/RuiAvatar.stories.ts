@@ -127,14 +127,15 @@ export const WithStatusBadge = meta.story({
       components: { RuiAvatar, RuiBadge },
       setup: () => ({ args }),
       template: `
+        <!-- The dot is centred on the box corner; these offsets pull it in onto the circle edge at 45 degrees -->
         <div class="flex items-center gap-6 p-8">
-          <RuiBadge dot color="success" placement="bottom" :offset-x="-2" :offset-y="-2">
+          <RuiBadge dot color="success" placement="bottom" :offset-x="-6" :offset-y="6">
             <RuiAvatar text="AL" size="lg" />
           </RuiBadge>
-          <RuiBadge dot color="warning" placement="bottom" :offset-x="-2" :offset-y="-2">
+          <RuiBadge dot color="warning" placement="bottom" :offset-x="-6" :offset-y="6">
             <RuiAvatar text="JS" size="lg" color="primary" />
           </RuiBadge>
-          <RuiBadge dot color="error" placement="bottom" :offset-x="-2" :offset-y="-2">
+          <RuiBadge dot color="error" placement="bottom" :offset-x="-6" :offset-y="6">
             <RuiAvatar icon="lu-user" size="lg" color="secondary" />
           </RuiBadge>
         </div>`,

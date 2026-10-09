@@ -1,4 +1,4 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { type ComponentMountingOptions, type DOMWrapper, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
@@ -100,6 +100,16 @@ describe('components/buttons/button/RuiButton.vue', () => {
     expectWrapperNotToHaveClass(wrapper, 'button', /rounded-full/);
   });
 
+  // a line box would sit a wrapped icon (a badge) on the text baseline and grow the button
+  it('should lay out an icon button\'s label as a flex box, and a text button\'s as text', async () => {
+    wrapper = createWrapper({ slots: { default: () => 'Label' } });
+    const label = (): DOMWrapper<Element> => wrapper.find('[data-id=btn-label]');
+    expect(label().classes()).toContain('inline-block');
+    await wrapper.setProps({ icon: true });
+    expect(label().classes()).toContain('inline-flex');
+    expect(label().classes()).not.toContain('inline-block');
+  });
+
   it('should pass size props', async () => {
     wrapper = createWrapper();
     await wrapper.setProps({ size: 'xs' });
@@ -119,6 +129,15 @@ describe('components/buttons/button/RuiButton.vue', () => {
     expect(wrapper.find('button').classes()).toContain('text-[1rem]');
     expectWrapperToHaveClass(wrapper, 'button', /py-2\.5/);
     expectWrapperToHaveClass(wrapper, 'button', /leading-6/);
+  });
+
+  it('should expose the size as data-size, md when unset', async () => {
+    wrapper = createWrapper();
+    expect(wrapper.attributes('data-size')).toBe('md');
+    await wrapper.setProps({ size: 'sm' });
+    expect(wrapper.attributes('data-size')).toBe('sm');
+    await wrapper.setProps({ size: '2xl' });
+    expect(wrapper.attributes('data-size')).toBe('2xl');
   });
 
   it('should set --rui-icon-size per button size so descendant icons scale', async () => {

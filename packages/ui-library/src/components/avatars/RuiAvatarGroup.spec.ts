@@ -128,4 +128,34 @@ describe('components/avatars/RuiAvatarGroup.vue', () => {
     });
     expect(wrapper.find('[data-id="avatar-group"]').exists()).toBeTruthy();
   });
+
+  it('shapes the item ring after the variant', async () => {
+    wrapper = createWrapper({
+      props: { variant: 'circular' },
+      slots: { default: '<RuiAvatar text="AB" />' },
+    });
+    const item = (): string[] => wrapper.find('[data-id="avatar-group"] > span').classes();
+    expect(item()).toContain('rounded-full');
+
+    await wrapper.setProps({ variant: 'rounded' });
+    expect(item()).toContain('rounded-rui-control');
+
+    await wrapper.setProps({ variant: 'square' });
+    expect(item()).toContain('rounded-none');
+  });
+
+  it('scales the overlap with the avatar size and keeps numeric spacing as is', async () => {
+    wrapper = createWrapper({
+      props: { size: 'md', spacing: 'md' },
+      slots: { default: '<RuiAvatar text="AB" /><RuiAvatar text="CD" />' },
+    });
+    const second = (): string => wrapper.findAll('[data-id="avatar-group"] > span')[1]?.attributes('style') ?? '';
+    expect(second()).toContain('margin-inline-start: -2px');
+
+    await wrapper.setProps({ size: '2xl' });
+    expect(second()).toContain('margin-inline-start: -4px');
+
+    await wrapper.setProps({ spacing: -10 });
+    expect(second()).toContain('margin-inline-start: -10px');
+  });
 });

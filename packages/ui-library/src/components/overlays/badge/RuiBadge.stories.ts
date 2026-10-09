@@ -92,7 +92,11 @@ export const Default = meta.story({
   async play({ canvas, userEvent }) {
     await expect(canvas.getByText('1')).toBeVisible();
     const button = canvas.getByRole('button', { name: 'Badge' });
+    // Toggle off and back on, so the story ends with the badge showing
     await userEvent.click(button);
+    await userEvent.click(button);
+    await expect(canvas.getByText('1')).toBeVisible();
+    button.blur();
   },
 });
 
@@ -158,7 +162,7 @@ export const Rounded = meta.story({
       setup: () => ({ args, options: ['full', 'sm', 'md', 'lg'] as const }),
       template: `
         <div class="flex flex-wrap gap-8 p-8">
-          <RuiBadge v-for="r in options" :key="r" :rounded="r" text="1">
+          <RuiBadge v-for="r in options" :key="r" :rounded="r" text="99+">
             <RuiButton>{{ r }}</RuiButton>
           </RuiBadge>
         </div>`,

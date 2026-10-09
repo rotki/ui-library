@@ -18,8 +18,9 @@ export const ButtonSize = {
 
 export type ButtonSize = (typeof ButtonSize)[keyof typeof ButtonSize];
 
-const SPINNER_SIZES: Record<string, number> = { 'xs': 12, 'sm': 18, 'lg': 26, 'xl': 26, '2xl': 28 };
-const DEFAULT_SPINNER_SIZE = 22;
+// the icon size plus 2px: the spinner takes the icon's place, a thin ring reading lighter than a glyph
+const SPINNER_SIZES: Record<string, number> = { 'xs': 12, 'sm': 16, 'lg': 22, 'xl': 24, '2xl': 24 };
+const DEFAULT_SPINNER_SIZE = 18;
 
 export function getButtonSpinnerSize(size?: ButtonSize): number {
   return (size && SPINNER_SIZES[size]) || DEFAULT_SPINNER_SIZE;

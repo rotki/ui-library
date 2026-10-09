@@ -58,8 +58,12 @@ export const LargerSize = meta.story({
   args: { size: 'lg' },
 });
 
-export const SquareVariant = meta.story({
+export const RoundedVariant = meta.story({
   args: { variant: 'rounded' },
+});
+
+export const SquareVariant = meta.story({
+  args: { variant: 'square' },
 });
 
 export const SpacingOptions = meta.story({

@@ -136,7 +136,7 @@ export const DismissiblePrefix = meta.story({
     closeable: true,
     color: 'grey',
     disabled: false,
-    prepend: 'BTC',
+    prepend: 'B',
     size: 'md',
     variant: 'filled',
   },
@@ -169,16 +169,16 @@ export const Variants = meta.story({
           </div>
           <div class="flex flex-wrap items-center gap-2">
             <RuiChip :variant="variant" color="primary" closeable>
-              <template #prepend>BTC</template>
+              <template #prepend>AL</template>
               Prefix
             </RuiChip>
             <RuiChip :variant="variant" color="primary" size="sm" closeable>
-              <template #prepend>BTC</template>
+              <template #prepend>A</template>
               Prefix
             </RuiChip>
             <RuiChip :variant="variant" color="primary" closeable disabled>Disabled</RuiChip>
             <RuiChip :variant="variant" color="error" size="sm" closeable disabled>
-              <template #prepend>BTC</template>
+              <template #prepend>A</template>
               Disabled
             </RuiChip>
           </div>

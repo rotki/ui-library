@@ -5,9 +5,11 @@ import { get, set } from '@vueuse/shared';
 import {
   type AvatarSize,
   type AvatarVariant,
+  computeAvatarText,
   computeInitials,
   resolveAvatarIconPx,
   resolveAvatarSizePx,
+  resolveAvatarTextSize,
 } from '@/components/avatars/avatar-props';
 import { useAvatarGroup } from '@/components/avatars/use-avatar-group';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
@@ -66,10 +68,8 @@ const resolvedVariant = computed<AvatarVariant>(() => {
   return 'circular';
 });
 
-const sizeToken = computed<AvatarSize | undefined>(() => {
-  const value = get(resolvedSize);
-  return typeof value === 'string' ? value : undefined;
-});
+// A numeric size borrows the text scale of the nearest token below it
+const textSize = computed<AvatarSize>(() => resolveAvatarTextSize(get(resolvedSize)));
 
 const sizePx = computed<number>(() => resolveAvatarSizePx(get(resolvedSize)));
 const iconPx = computed<number>(() => resolveAvatarIconPx(get(resolvedSize)));
@@ -81,7 +81,7 @@ watch(() => src, () => {
 });
 
 const initials = computed<string>(() => {
-  const explicit = computeInitials(text ?? undefined);
+  const explicit = computeAvatarText(text);
   if (explicit)
     return explicit;
   return computeInitials(alt);
@@ -139,13 +139,14 @@ const avatarStyles = tv({
       info: { root: 'bg-rui-info-fill text-rui-info-foreground' },
       success: { root: 'bg-rui-success-fill text-rui-success-foreground' },
     },
+    // On the root so slot content (such as a group's `+N`) scales too
     size: {
-      'xs': { initials: 'text-[0.625rem]' },
-      'sm': { initials: 'text-[0.6875rem]' },
-      'md': { initials: 'text-sm' },
-      'lg': { initials: 'text-base' },
-      'xl': { initials: 'text-lg' },
-      '2xl': { initials: 'text-xl' },
+      'xs': { root: 'text-[0.625rem]' },
+      'sm': { root: 'text-[0.6875rem]' },
+      'md': { root: 'text-sm' },
+      'lg': { root: 'text-base' },
+      'xl': { root: 'text-lg' },
+      '2xl': { root: 'text-xl' },
     },
   },
   defaultVariants: {
@@ -158,7 +159,7 @@ const avatarStyles = tv({
 const ui = computed<ReturnType<typeof avatarStyles>>(() => avatarStyles({
   variant: get(resolvedVariant),
   color,
-  size: get(sizeToken),
+  size: get(textSize),
 }));
 
 function onLoad(event: Event): void {

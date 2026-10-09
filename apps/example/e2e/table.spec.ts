@@ -41,12 +41,13 @@ test.describe('table', () => {
     expect(await paddingLeft(page, 'flush-header')).toBe('0px');
   });
 
-  test('should tighten the cell padding when dense', async ({ page }) => {
-    const normal = page.getByTestId('table-outlined').locator('tbody td').first();
-    const dense = page.getByTestId('table-dense').locator('tbody td').first();
+  test('should shorten the rows when dense, keeping the data table padding', async ({ page }) => {
+    const normal = page.getByTestId('table-outlined').locator('tbody tr').first();
+    const dense = page.getByTestId('table-dense').locator('tbody tr').first();
 
-    await expect(normal).toHaveCSS('padding-left', '16px');
-    await expect(dense).toHaveCSS('padding-left', '8px');
+    await expect(normal).toHaveCSS('height', '44px');
+    await expect(dense).toHaveCSS('height', '36px');
+    await expect(dense.locator('td').first()).toHaveCSS('padding-left', '16px');
   });
 
   test('should show a spinner under the header while loading', async ({ page }) => {

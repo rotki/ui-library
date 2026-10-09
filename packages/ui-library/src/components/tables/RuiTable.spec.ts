@@ -55,13 +55,24 @@ describe('components/tables/RuiTable.vue', () => {
     expect(wrapper.classes()).not.toContain('rounded-rui-panel');
   });
 
-  it('should tighten the cell padding when dense', () => {
+  it('should use the data table row heights', () => {
+    wrapper = createWrapper();
+
+    const classes = wrapper.find('table').classes();
+    expect(classes).toContain('[:where(&)_th]:h-10');
+    expect(classes).toContain('[:where(&)_td]:h-11');
+    expect(classes).toContain('[:where(&)_thead_th]:text-[0.8125rem]');
+    expect(classes).toContain('[:where(&)_tbody>tr+tr]:border-t');
+  });
+
+  it('should shorten the rows when dense', () => {
     wrapper = createWrapper({ props: { dense: true } });
 
     const classes = wrapper.find('table').classes();
-    expect(classes).toContain('[:where(&)_th]:py-1');
-    expect(classes).toContain('[:where(&)_th]:px-2');
-    expect(classes).not.toContain('[:where(&)_th]:py-2');
+    expect(classes).toContain('[:where(&)_th]:h-8');
+    expect(classes).toContain('[:where(&)_td]:h-9');
+    expect(classes).toContain('[:where(&)_td]:px-4');
+    expect(classes).not.toContain('[:where(&)_td]:h-11');
   });
 
   it('should keep every cell rule at element specificity so a consumer class wins', () => {

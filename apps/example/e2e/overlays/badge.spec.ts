@@ -17,6 +17,19 @@ test.describe('badge', () => {
     await expect(defaultBadge.locator('div[role=status]')).toBeVisible();
   });
 
+  test('a badged icon button keeps the size and icon line of a plain one', async ({ page }) => {
+    const box = async (id: string) => {
+      const button = await page.getByTestId(id).boundingBox();
+      const icon = await page.getByTestId(id).locator('svg').first().boundingBox();
+      return { height: button?.height, iconCenter: (icon?.y ?? 0) + (icon?.height ?? 0) / 2 };
+    };
+
+    const plain = await box('icon-button-plain');
+    // an inline-block wrapper on the text baseline added a descender gap below the icon
+    for (const id of ['icon-button-dot', 'icon-button-count'])
+      expect(await box(id)).toEqual(plain);
+  });
+
   test('should have correct ARIA attributes on badge', async ({ page }) => {
     const badge = page.locator('div[data-id=badge-0] div[role=status]');
     await expect(badge).toBeVisible();

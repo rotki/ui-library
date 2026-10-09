@@ -298,7 +298,9 @@ export const Default = meta.story({
 
 export const Dense = meta.story({
   args: {
+    cols: columns,
     dense: true,
+    pagination: { limit: 10, page: 1, total: 50 },
     rows: data,
   },
 });
@@ -433,13 +435,14 @@ export const SingleExpandable = meta.story({
   },
 });
 
+/** A page of 25 rows in a 384px scroll container: the header stays pinned to the container top. */
 export const StickyHeader = meta.story({
   args: {
     cols: columns,
     expanded: [],
     modelValue: [],
     outlined: true,
-    pagination: { limit: 5, page: 1, total: 50 },
+    pagination: { limit: 25, page: 1, total: 50 },
     rows: data,
     singleExpand: true,
     sort: [
@@ -447,8 +450,13 @@ export const StickyHeader = meta.story({
       { column: 'email', direction: 'asc' },
     ],
     stickyHeader: true,
-    stickyOffset: 40,
+    stickyOffset: 0,
   },
+  decorators: [
+    () => ({
+      template: '<div class="h-96 overflow-y-auto"><story /></div>',
+    }),
+  ],
 });
 
 /**

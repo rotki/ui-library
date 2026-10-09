@@ -2,11 +2,11 @@
 import { get } from '@vueuse/shared';
 import { Comment, defineComponent, Fragment, Text, type VNode } from 'vue';
 import {
-  AVATAR_GROUP_SPACING_PX,
   avatarGroupInjectionKey,
   AvatarGroupSpacing,
   type AvatarSize,
   type AvatarVariant,
+  resolveAvatarGroupSpacingPx,
   resolveAvatarSizePx,
 } from '@/components/avatars/avatar-props';
 import RuiAvatar from '@/components/avatars/RuiAvatar.vue';
@@ -17,6 +17,12 @@ export interface Props {
   variant?: AvatarVariant;
   max?: number;
   total?: number;
+  /**
+   * How much each avatar overlaps the previous one. The tokens name the
+   * amount of overlap, so `lg` overlaps the most and `sm` the least; they
+   * scale with the avatar size. A number is the inline margin in pixels and
+   * should be negative to overlap.
+   */
   spacing?: AvatarGroupSpacing | number;
 }
 
@@ -51,7 +57,16 @@ provide(avatarGroupInjectionKey, computed(() => ({ size: get(resolvedSize), vari
 const groupStyles = tv({
   slots: {
     root: 'inline-flex items-center isolate',
-    item: 'relative ring-2 ring-rui-surface rounded-full',
+    item: 'relative ring-2 ring-rui-surface',
+    surplus: 'leading-none text-[0.85em] tracking-tight',
+  },
+  // The ring follows the avatar outline
+  variants: {
+    variant: {
+      circular: { item: 'rounded-full' },
+      rounded: { item: 'rounded-rui-control' },
+      square: { item: 'rounded-none' },
+    },
   },
 });
 
@@ -88,11 +103,7 @@ const surplusCount = computed<number>(() => {
   return Math.max(0, totalCount - shown);
 });
 
-const spacingPx = computed<number>(() => {
-  if (typeof spacing === 'number')
-    return spacing;
-  return AVATAR_GROUP_SPACING_PX[spacing];
-});
+const spacingPx = computed<number>(() => resolveAvatarGroupSpacingPx(spacing, get(resolvedSize)));
 
 // The configured spacing, which is already negative, so the items overlap
 const ringOffsetPx = computed<number>(() => get(spacingPx));
@@ -107,7 +118,7 @@ const firstItemStyle = computed<Record<string, string>>(() => ({
 
 const avatarPx = computed<number>(() => resolveAvatarSizePx(get(resolvedSize)));
 
-const ui = computed<ReturnType<typeof groupStyles>>(() => groupStyles());
+const ui = computed<ReturnType<typeof groupStyles>>(() => groupStyles({ variant }));
 </script>
 
 <template>
@@ -141,7 +152,7 @@ const ui = computed<ReturnType<typeof groupStyles>>(() => groupStyles());
           :alt="`+${surplusCount} more`"
           :style="{ width: `${avatarPx}px`, height: `${avatarPx}px` }"
         >
-          <span class="leading-none">+{{ surplusCount }}</span>
+          <span :class="ui.surplus()">+{{ surplusCount }}</span>
         </RuiAvatar>
       </slot>
     </span>

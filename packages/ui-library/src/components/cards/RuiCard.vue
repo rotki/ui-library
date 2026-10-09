@@ -50,7 +50,15 @@ const card = tv({
     root: 'flex flex-col h-full w-full bg-rui-surface',
     image: 'overflow-hidden',
     content: 'text-sm/6 text-rui-text overflow-y-auto outline-hidden focus-visible:focus-ring focus-visible:-outline-offset-2',
-    footer: 'flex between:ml-2 between:mr-0 items-center justify-start mt-auto',
+    // a leading text button moves out by its side padding to align its label; unquoted selectors, quoted ones break consumer builds
+    footer: [
+      'flex between:ml-2 between:mr-0 items-center justify-start mt-auto',
+      '[&>[data-variant=text][data-size=xs]:first-child]:-ms-1',
+      '[&>[data-variant=text][data-size=sm]:first-child]:-ms-1.5',
+      '[&>[data-variant=text][data-size=md]:first-child]:-ms-2',
+      '[&>[data-variant=text][data-size=lg]:first-child]:-ms-2.5',
+      '[&>[data-variant=text][data-size$=xl]:first-child]:-ms-2.5',
+    ],
   },
   variants: {
     variant: {

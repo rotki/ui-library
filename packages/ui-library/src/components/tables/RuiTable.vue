@@ -83,11 +83,14 @@ const emptyProps = computed<TableEmpty>(() => (typeof empty === 'object' ? empty
 const tableStyles = tv({
   slots: {
     root: 'w-full overflow-y-auto',
-    // sets its own text color like RuiDataTable, rather than inheriting whatever the page sets
+    // matches RuiDataTable: text color, 13px header labels, body text, cell padding and row dividers
     table: [
       'w-full text-rui-text',
       '[:where(&)_thead]:border-b [:where(&)_thead]:border-rui-divider',
       '[:where(&)_thead_th]:font-medium [:where(&)_thead_th]:text-rui-text-secondary [:where(&)_thead_th]:text-start',
+      '[:where(&)_thead_th]:text-[0.8125rem] [:where(&)_thead_th]:leading-5',
+      '[:where(&)_th]:px-4 [:where(&)_td]:px-4 [:where(&)_td]:text-body-2',
+      '[:where(&)_tbody>tr+tr]:border-t [:where(&)_tbody>tr+tr]:border-rui-divider',
       '[:where(&)_tbody_td]:border-b-0',
     ],
   },
@@ -98,12 +101,13 @@ const tableStyles = tv({
         root: 'border rounded-rui-panel border-rui-divider',
       },
     },
+    // the data table's heights: a 40px header over 44px rows, or 32px over 36px when dense
     dense: {
       true: {
-        table: '[:where(&)_th]:py-1 [:where(&)_th]:px-2 [:where(&)_td]:py-1 [:where(&)_td]:px-2 [:where(&)_thead_th]:text-xs',
+        table: '[:where(&)_th]:py-0.5 [:where(&)_th]:h-8 [:where(&)_td]:py-1 [:where(&)_td]:h-9',
       },
       false: {
-        table: '[:where(&)_th]:py-2 [:where(&)_th]:px-4 [:where(&)_td]:py-2 [:where(&)_td]:px-4 [:where(&)_thead_th]:text-sm',
+        table: '[:where(&)_th]:py-1 [:where(&)_th]:h-10 [:where(&)_td]:py-1 [:where(&)_td]:h-11',
       },
     },
   },

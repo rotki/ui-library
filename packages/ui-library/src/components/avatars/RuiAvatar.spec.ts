@@ -72,6 +72,30 @@ describe('components/avatars/RuiAvatar.vue', () => {
     expect(wrapper.find('[data-id="avatar-initials"]').text()).toBe('AL');
   });
 
+  it('renders short text verbatim', async () => {
+    wrapper = createWrapper({ props: { text: 'AL' } });
+    expect(wrapper.find('[data-id="avatar-initials"]').text()).toBe('AL');
+
+    await wrapper.setProps({ text: 'BTC' });
+    expect(wrapper.find('[data-id="avatar-initials"]').text()).toBe('BTC');
+
+    await wrapper.setProps({ text: ' x ' });
+    expect(wrapper.find('[data-id="avatar-initials"]').text()).toBe('x');
+  });
+
+  it('reduces short text with spaces or longer words to initials', async () => {
+    wrapper = createWrapper({ props: { text: 'A B' } });
+    expect(wrapper.find('[data-id="avatar-initials"]').text()).toBe('AB');
+
+    await wrapper.setProps({ text: 'Grace' });
+    expect(wrapper.find('[data-id="avatar-initials"]').text()).toBe('G');
+  });
+
+  it('only renders verbatim text from the text prop, not alt', () => {
+    wrapper = createWrapper({ props: { alt: 'Ada' } });
+    expect(wrapper.find('[data-id="avatar-initials"]').text()).toBe('A');
+  });
+
   it('uses default slot over initials/icon', () => {
     wrapper = createWrapper({
       props: { text: 'AL', icon: 'lu-user' },
@@ -123,6 +147,21 @@ describe('components/avatars/RuiAvatar.vue', () => {
     const style = wrapper.find('[data-id="avatar-root"]').attributes('style') ?? '';
     expect(style).toContain('width: 56px');
     expect(style).toContain('height: 56px');
+  });
+
+  it('scales the text with the size', async () => {
+    wrapper = createWrapper({ props: { text: 'A', size: 'xs' } });
+    const root = (): string[] => wrapper.find('[data-id="avatar-root"]').classes();
+    expect(root()).toContain('text-[0.625rem]');
+
+    await wrapper.setProps({ size: 56 });
+    expect(root()).toContain('text-lg');
+
+    await wrapper.setProps({ size: 100 });
+    expect(root()).toContain('text-xl');
+
+    await wrapper.setProps({ size: 12 });
+    expect(root()).toContain('text-[0.625rem]');
   });
 
   it('sets role=img with aria-label on fallback', () => {

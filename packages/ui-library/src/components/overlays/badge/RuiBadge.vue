@@ -74,8 +74,9 @@ const badgeStyles = tv({
       lg: { badge: 'rounded-rui-card' },
       full: { badge: 'rounded-full' },
     },
+    // A surface ring keeps a dot apart from whatever it overlaps, such as an avatar edge
     dot: {
-      true: {},
+      true: { badge: 'ring-2 ring-rui-surface' },
     },
     // an icon alone needs no side padding, so the badge stays as wide as it is tall
     iconOnly: {

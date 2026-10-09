@@ -3,6 +3,7 @@ import {
   type BadgeProps,
   RuiBadge,
   RuiButton,
+  RuiIcon,
 } from '@rotki/ui-library/components';
 import ComponentView from '@/components/ComponentView.vue';
 
@@ -81,6 +82,46 @@ onBeforeMount(() => {
           </RuiButton>
         </RuiBadge>
       </div>
+    </div>
+
+    <div
+      class="flex items-center gap-2 mt-8"
+      data-id="badge-icon-buttons"
+    >
+      <RuiButton
+        variant="text"
+        icon
+        aria-label="Plain"
+        data-id="icon-button-plain"
+      >
+        <RuiIcon name="lu-bell" />
+      </RuiButton>
+      <RuiButton
+        variant="text"
+        icon
+        aria-label="With a dot"
+        data-id="icon-button-dot"
+      >
+        <RuiBadge
+          dot
+          color="primary"
+        >
+          <RuiIcon name="lu-bell" />
+        </RuiBadge>
+      </RuiButton>
+      <RuiButton
+        variant="text"
+        icon
+        aria-label="With a count"
+        data-id="icon-button-count"
+      >
+        <RuiBadge
+          text="6"
+          color="warning"
+        >
+          <RuiIcon name="lu-bell" />
+        </RuiBadge>
+      </RuiButton>
     </div>
   </ComponentView>
 </template>

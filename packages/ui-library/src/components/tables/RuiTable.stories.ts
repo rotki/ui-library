@@ -7,7 +7,7 @@ const body = `
     <tr>
       <th scope="col">Node</th>
       <th scope="col">Weight</th>
-      <th scope="col"><span class="sr-only">Actions</span></th>
+      <th scope="col">Status</th>
     </tr>
   </thead>
   <tbody>
@@ -81,22 +81,25 @@ export const Dense = meta.story({
 });
 
 export const CellOverride = meta.story({
-  args: {},
-  // `p-0` is a plain class, so it beats the `:where()` cell rules unaided
+  args: { variant: 'outlined' },
+  // `p-0` beats the `:where()` cell rules unaided; the column divider and label tint show the padding
   render: renderWith(`
     <thead>
       <tr>
-        <th scope="col">Padded like the rest</th>
-        <th class="p-0" scope="col">Flush</th>
+        <th scope="col"><span class="bg-rui-primary-soft">Padded like the rest</span></th>
+        <th class="p-0 border-l border-rui-divider" scope="col"><span class="bg-rui-primary-soft">Flush</span></th>
       </tr>
     </thead>
     <tbody>
-      <tr><td>a</td><td class="p-0">b</td></tr>
+      <tr>
+        <td><span class="bg-rui-primary-soft">a</span></td>
+        <td class="p-0 border-l border-rui-divider"><span class="bg-rui-primary-soft">b</span></td>
+      </tr>
     </tbody>
   `),
   async play({ canvas }) {
-    const padded = canvas.getByText('Padded like the rest');
-    const flush = canvas.getByText('Flush');
+    const padded = canvas.getByRole('columnheader', { name: 'Padded like the rest' });
+    const flush = canvas.getByRole('columnheader', { name: 'Flush' });
 
     await expect(window.getComputedStyle(padded).paddingLeft).toBe('16px');
     await expect(window.getComputedStyle(flush).paddingLeft).toBe('0px');

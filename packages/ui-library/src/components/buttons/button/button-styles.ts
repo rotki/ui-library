@@ -83,8 +83,12 @@ export const buttonStyles = tv({
       true: { root: 'rounded-full' },
     },
     icon: {
-      // Only the round shape; the `icon + size` compounds below carry padding and icon sizing
-      true: { root: 'rounded-full' },
+      /*
+       * Only the round shape; the `icon + size` compounds below carry padding and icon sizing. The
+       * label holds no text, so it lays out as a flex box: a line box would put a wrapped icon (a
+       * badge) on the text baseline and grow the button by the descender gap.
+       */
+      true: { root: 'rounded-full', label: 'inline-flex' },
     },
     active: {
       true: {},

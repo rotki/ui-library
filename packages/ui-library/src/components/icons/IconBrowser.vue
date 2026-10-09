@@ -66,6 +66,9 @@ function isCopied(icon: string): boolean {
         prepend-icon="lu-search"
         clearable
         dense
+        hide-details
+        label="Search icons"
+        label-placement="hidden"
         class="flex-1 max-w-md"
       />
       <span class="text-xs text-rui-text-secondary whitespace-nowrap ml-auto">
@@ -90,7 +93,8 @@ function isCopied(icon: string): boolean {
             class="flex flex-col items-center p-3 rounded-rui-card border border-rui-divider bg-rui-surface cursor-pointer transition-colors duration-150 hover:border-rui-outline hover:bg-rui-hover focus-visible:focus-ring outline-hidden min-w-[140px] h-24 flex-[1_1_0]"
             :class="{ 'border-rui-success bg-rui-success-soft': isCopied(icon) }"
             type="button"
-            :title="`Click to copy: ${icon}`"
+            :title="icon"
+            :aria-label="`Copy ${icon}`"
             @click="copy(icon)"
           >
             <span class="flex-1 flex items-center">

@@ -66,7 +66,8 @@ const root = useTemplateRef<HTMLDivElement>('root');
 
 const chipStyles = tv({
   slots: {
-    root: 'inline-flex items-center justify-between px-2 py-0.5 transition duration-150 cursor-default outline-hidden max-w-full truncate',
+    // min-h sets the height and items-center the rest, so a prefix or a border never adds to it
+    root: 'inline-flex items-center justify-between px-2 transition duration-150 cursor-default outline-hidden max-w-full truncate',
     // the avatar's neutral pair, so initials stay readable on any chip color
     prepend: 'rounded-full flex items-center justify-center shrink-0 w-6 h-6 text-[0.625rem] font-semibold text-rui-neutral-700 bg-rui-neutral-200 dark:text-rui-neutral-200 dark:bg-rui-neutral-700 overflow-hidden',
     label: 'truncate px-2 text-[0.8125rem]/5',
@@ -125,9 +126,11 @@ const chipStyles = tv({
     // Interactive states (clickable + not disabled): a tint over any fill, which keeps the text color
     { clickable: true, disabled: false, class: { root: 'hover:state-layer active:state-layer-pressed focus-visible:focus-ring' } },
 
-    // Grey filled/outlined
-    { color: 'grey', variant: 'filled', class: { root: 'bg-rui-neutral-100 dark:bg-rui-neutral-800' } },
-    { color: 'grey', variant: 'outlined', class: { root: 'border border-rui-outline bg-transparent' } },
+    // Grey filled: a solid step above the tonal tint
+    { color: 'grey', variant: 'filled', class: { root: 'bg-rui-neutral-200 dark:bg-rui-neutral-700' } },
+
+    // Outlined: the border is the text color at 40%, so it follows the brighter text tone in dark
+    { variant: 'outlined', class: { root: 'border border-current/40 bg-transparent' } },
 
     // Context colors — filled bg
     { color: 'primary', variant: 'filled', class: { root: 'bg-rui-primary' } },
@@ -138,18 +141,18 @@ const chipStyles = tv({
     { color: 'info', variant: 'filled', class: { root: 'bg-rui-info dark:bg-rui-info-darker' } },
     { color: 'success', variant: 'filled', class: { root: 'bg-rui-success dark:bg-rui-success-darker' } },
 
-    // Context colors — outlined base
-    { color: 'primary', variant: 'outlined', class: { root: 'border text-rui-primary dark:text-rui-primary-lighter border-rui-primary/50 bg-transparent' } },
-    { color: 'secondary', variant: 'outlined', class: { root: 'border text-rui-secondary dark:text-rui-secondary-lighter border-rui-secondary/50 bg-transparent' } },
-    { color: 'error', variant: 'outlined', class: { root: 'border text-rui-error dark:text-rui-error-lighter border-rui-error/50 bg-transparent' } },
-    { color: 'warning', variant: 'outlined', class: { root: 'border text-rui-warning border-rui-warning/50 bg-transparent' } },
-    { color: 'info', variant: 'outlined', class: { root: 'border text-rui-info border-rui-info/50 bg-transparent' } },
-    { color: 'success', variant: 'outlined', class: { root: 'border text-rui-success border-rui-success/50 bg-transparent' } },
+    // Context colors: outlined text
+    { color: 'primary', variant: 'outlined', class: { root: 'text-rui-primary dark:text-rui-primary-lighter' } },
+    { color: 'secondary', variant: 'outlined', class: { root: 'text-rui-secondary dark:text-rui-secondary-lighter' } },
+    { color: 'error', variant: 'outlined', class: { root: 'text-rui-error dark:text-rui-error-lighter' } },
+    { color: 'warning', variant: 'outlined', class: { root: 'text-rui-warning' } },
+    { color: 'info', variant: 'outlined', class: { root: 'text-rui-info' } },
+    { color: 'success', variant: 'outlined', class: { root: 'text-rui-success' } },
 
-    // Context colors — tonal: a tint of the hue with its deeper tone as text, 4.5:1 in both themes
-    { color: 'grey', variant: 'tonal', class: { root: 'bg-rui-neutral-100 dark:bg-rui-neutral-800' } },
-    { color: 'primary', variant: 'tonal', class: { root: 'bg-rui-primary/10 text-rui-primary-darker dark:bg-rui-primary/20 dark:text-rui-primary-lighter' } },
-    { color: 'secondary', variant: 'tonal', class: { root: 'bg-rui-secondary/10 text-rui-secondary-darker dark:bg-rui-secondary/20 dark:text-rui-secondary-lighter' } },
+    // Tonal: a tint with the deeper tone as text, 4.5:1; primary and secondary sit near grey, so tint harder
+    { color: 'grey', variant: 'tonal', class: { root: 'bg-rui-neutral-500/10 dark:bg-rui-neutral-400/10' } },
+    { color: 'primary', variant: 'tonal', class: { root: 'bg-rui-primary/15 text-rui-primary-darker dark:bg-rui-primary/35 dark:text-rui-primary-lighter' } },
+    { color: 'secondary', variant: 'tonal', class: { root: 'bg-rui-secondary/20 text-rui-secondary-darker dark:bg-rui-secondary/35 dark:text-rui-secondary-lighter' } },
     { color: 'error', variant: 'tonal', class: { root: 'bg-rui-error/10 text-rui-error-darker dark:bg-rui-error/20 dark:text-rui-error-lighter' } },
     { color: 'warning', variant: 'tonal', class: { root: 'bg-rui-warning/10 text-rui-warning-darker dark:bg-rui-warning/20 dark:text-rui-warning-lighter' } },
     { color: 'info', variant: 'tonal', class: { root: 'bg-rui-info/10 text-rui-info-darker dark:bg-rui-info/20 dark:text-rui-info-lighter' } },
