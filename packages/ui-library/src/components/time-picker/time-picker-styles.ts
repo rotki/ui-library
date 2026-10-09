@@ -2,19 +2,23 @@ import { tv } from '@/utils/tv';
 
 export const timePickerStyles = tv({
   slots: {
-    root: 'overflow-hidden text-rui-text p-3',
+    // the calendar header's 8px top padding, so the two headers share a row in the date-time picker
+    root: 'overflow-hidden text-rui-text p-3 pt-2',
     // three columns, so the time sits over the dial's center and AM/PM hangs off to its right
     digitalDisplay: 'mb-3 grid grid-cols-[1fr_auto_1fr] items-center',
     // Inter's `case` feature lifts the colon to the middle of the figures instead of the x-height
     time: `col-start-2 flex items-center gap-0.5 [font-feature-settings:'case','cv05','cv08']`,
-    // each part of the time is a button that picks what the face edits, tinted while it is the one
+    /*
+     * Each part of the time is a button that picks what the face edits, tinted while it is the one.
+     * Digits, colons and AM/PM sit on the calendar header's 28px line, so the two headers align.
+     */
     digit: [
-      'rounded-rui-control px-1.5 text-2xl font-semibold tabular-nums transition-colors',
+      'rounded-rui-control px-1.5 text-2xl/7 font-semibold tabular-nums transition-colors',
       'hover:bg-rui-hover outline-hidden focus-visible:focus-ring',
     ].join(' '),
-    separator: 'text-2xl font-semibold text-rui-text-secondary',
+    separator: 'text-2xl/7 font-semibold text-rui-text-secondary',
     period: [
-      'col-start-3 justify-self-start ml-2 rounded-rui-control border border-rui-outline px-2 py-1 text-sm font-medium transition-colors',
+      'col-start-3 justify-self-start ml-2 inline-flex h-7 items-center rounded-rui-control border border-rui-outline px-2 text-sm font-medium transition-colors',
       'hover:bg-rui-hover outline-hidden focus-visible:focus-ring rui-time-picker-period',
     ].join(' '),
     // a translucent well, so the face reads on a menu and on a card in both themes
@@ -45,8 +49,8 @@ export const timePickerStyles = tv({
     },
     selected: {
       true: {
-        // the primary fill and its foreground, like the selected calendar day
-        clockNumber: 'bg-rui-primary-fill hover:bg-rui-primary-fill text-rui-primary-foreground z-1 font-semibold',
+        // the primary fill and its foreground, like the selected calendar day, stacked over the hand (z 10, 11)
+        clockNumber: 'bg-rui-primary-fill hover:bg-rui-primary-fill text-rui-primary-foreground z-20 font-semibold',
       },
     },
   },

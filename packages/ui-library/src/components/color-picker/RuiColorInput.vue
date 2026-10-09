@@ -2,9 +2,9 @@
 import type { Color, ColorFormat } from './utils';
 import { clamp } from '@vueuse/shared';
 import tinycolor from 'tinycolor2';
-import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
-import RuiIcon from '@/components/icons/RuiIcon.vue';
+import RuiTab from '@/components/tabs/tab/RuiTab.vue';
+import RuiTabs from '@/components/tabs/tabs/RuiTabs.vue';
 
 defineOptions({
   name: 'RuiColorInput',
@@ -16,6 +16,7 @@ const modelValue = defineModel<Color>({ required: true });
 const MAX_RGB = 255;
 const VALID_HEX_LENGTHS = [3, 4, 6];
 const DEFAULT_HEX = '000000';
+const RGB_CHANNELS = ['Red', 'Green', 'Blue'];
 
 const inputType = ref<ColorFormat>('hex');
 const state = reactive({
@@ -72,8 +73,9 @@ const onInputChange = useDebounceFn((format: ColorFormat, value: string, key?: n
   set(modelValue, state.color);
 }, 300);
 
-function onInputTypeChange(): void {
-  set(inputType, get(inputType) === 'rgb' ? 'hex' : 'rgb');
+function onInputTypeChange(value: string | number): void {
+  if (value === 'hex' || value === 'rgb')
+    set(inputType, value);
 }
 
 watch(
@@ -93,55 +95,57 @@ watch(
 <template>
   <div
     data-id="color-input"
-    class="flex justify-center gap-2"
+    class="flex flex-col gap-2 w-[16rem] mx-auto"
     v-bind="$attrs"
   >
-    <div class="flex flex-col items-center gap-1 w-[16rem]">
-      <div class="w-full">
-        <RuiTextField
-          v-if="inputType === 'hex'"
-          v-model="state.hex"
-          class="flex-1 w-full [&_input]:uppercase"
-          maxlength="6"
-          color="primary"
-          dense
-          hide-details
-          @update:model-value="onInputChange(inputType, $event)"
-          @blur="onBlurChange(inputType, $event)"
-        >
-          <template #prepend>
-            <span class="text-rui-text"> # </span>
-          </template>
-        </RuiTextField>
-        <div
-          v-else
-          class="flex flex-1 gap-1"
-        >
-          <RuiTextField
-            v-for="(v, i) in state.rgb"
-            :key="i"
-            :model-value="v.toString()"
-            class="[&_input]:text-center w-full"
-            maxlength="3"
-            color="primary"
-            dense
-            hide-details
-            @update:model-value="onInputChange(inputType, $event, i)"
-            @blur="onBlurChange(inputType, $event, i)"
-          />
-        </div>
-      </div>
-
-      <div class="uppercase text-rui-text-secondary text-sm">
-        {{ inputType }}
-      </div>
-    </div>
-    <RuiButton
-      class="h-10"
-      variant="text"
-      @click="onInputTypeChange()"
+    <!-- the format is a choice between two views of one value, which is what a segmented control is for -->
+    <RuiTabs
+      :model-value="inputType"
+      variant="segmented"
+      grow
+      data-id="color-format"
+      @update:model-value="onInputTypeChange($event)"
     >
-      <RuiIcon name="lu-chevrons-up-down" />
-    </RuiButton>
+      <RuiTab value="hex">
+        Hex
+      </RuiTab>
+      <RuiTab value="rgb">
+        RGB
+      </RuiTab>
+    </RuiTabs>
+    <RuiTextField
+      v-if="inputType === 'hex'"
+      v-model="state.hex"
+      class="w-full [&_input]:uppercase"
+      maxlength="6"
+      color="primary"
+      aria-label="Hex color"
+      dense
+      hide-details
+      @update:model-value="onInputChange(inputType, $event)"
+      @blur="onBlurChange(inputType, $event)"
+    >
+      <template #prepend>
+        <span class="text-rui-text-secondary">#</span>
+      </template>
+    </RuiTextField>
+    <div
+      v-else
+      class="flex gap-1"
+    >
+      <RuiTextField
+        v-for="(v, i) in state.rgb"
+        :key="i"
+        :model-value="v.toString()"
+        class="[&_input]:text-center w-full"
+        maxlength="3"
+        color="primary"
+        :aria-label="RGB_CHANNELS[i]"
+        dense
+        hide-details
+        @update:model-value="onInputChange(inputType, $event, i)"
+        @blur="onBlurChange(inputType, $event, i)"
+      />
+    </div>
   </div>
 </template>

@@ -34,15 +34,16 @@ test.describe('color pickers', () => {
     await expect(picker.locator('input')).toHaveCount(1);
     await expect(picker.locator('input')).toHaveValue('45858a');
 
-    // Click toggle button to switch to RGB mode
-    await picker.locator('button').click();
+    // The format is a segmented control above the field
+    await picker.getByRole('tab', { name: 'RGB' }).click();
 
-    // Should now have 3 RGB inputs
+    // Should now have 3 RGB inputs, named by channel
     const inputs = picker.locator('input');
     await expect(inputs).toHaveCount(3);
+    await expect(picker.getByRole('textbox', { name: 'Red' })).toHaveValue('69');
 
     // Switch back to hex mode
-    await picker.locator('button').click();
+    await picker.getByRole('tab', { name: 'Hex' }).click();
     await expect(picker.locator('input')).toHaveCount(1);
   });
 

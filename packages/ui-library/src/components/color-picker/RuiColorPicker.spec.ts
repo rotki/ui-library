@@ -24,6 +24,17 @@ function stubDivRect(): void {
   });
 }
 
+/**
+ * Picks the input format from the segmented control above the field.
+ *
+ * @param wrapper - the mounted picker
+ * @param format - the tab's label
+ */
+async function selectFormat(wrapper: VueWrapper, format: 'Hex' | 'RGB'): Promise<void> {
+  const tab = wrapper.findAll('[data-id=color-format] [role=tab]').find(item => item.text() === format);
+  await tab?.trigger('click');
+}
+
 function createWrapper(
   options?: ComponentMountingOptions<typeof RuiColorPicker>,
 ): VueWrapper<InstanceType<typeof RuiColorPicker>> {
@@ -71,7 +82,7 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
     expect(wrapper.find<HTMLInputElement>('input').element.value).toBe('ff0000');
 
     // Change input type to RGB
-    await wrapper.find('button').trigger('click');
+    await selectFormat(wrapper, 'RGB');
 
     // RGB input value reflected
     expect(wrapper.findAll<HTMLInputElement>('input').at(0)!.element.value).toBe('255');
@@ -100,7 +111,7 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
     expect(wrapper.findAll<HTMLInputElement>('input').at(2)!.element.value).toBe('255');
 
     // Change input type to hex
-    await wrapper.find('button').trigger('click');
+    await selectFormat(wrapper, 'Hex');
 
     // Hex input value reflected
     expect(wrapper.find<HTMLInputElement>('input').element.value).toBe('80ffff');
@@ -123,7 +134,7 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
     expect(wrapper.emitted('update:modelValue')!.at(-1)![0]).toBe('ff0000');
 
     // Change input type to RGB
-    await wrapper.find('button').trigger('click');
+    await selectFormat(wrapper, 'RGB');
 
     // RGB input value reflected
     expect(wrapper.findAll<HTMLInputElement>('input').at(0)!.element.value).toBe('255');
@@ -156,7 +167,7 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
     );
 
     // Change input type to hex
-    await wrapper.find('button').trigger('click');
+    await selectFormat(wrapper, 'Hex');
     expect(wrapper.find<HTMLInputElement>('input').element.value).toBe('80ffff');
 
     expect(wrapper.emitted('update:modelValue')!.at(-1)![0]).toBe('80ffff');
