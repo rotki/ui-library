@@ -87,7 +87,7 @@ function isHighlighted(item: TItem): boolean {
         :key="bucket.group || `group-${bucketIndex}`"
       >
         <div
-          class="sticky top-0 z-10 bg-rui-menu"
+          class="sticky top-0 z-rui-raised bg-rui-menu"
           data-id="group-header"
         >
           <slot

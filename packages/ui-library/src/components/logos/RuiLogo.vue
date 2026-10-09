@@ -172,7 +172,7 @@ onMounted(() => {
 
     <div
       v-if="text"
-      class="text-h4 text-rui-primary dark:text-white"
+      class="text-h4 text-rui-primary dark:text-rui-text"
     >
       {{ appName }}
     </div>

@@ -126,18 +126,18 @@ const avatarStyles = tv({
   variants: {
     variant: {
       circular: { root: 'rounded-full' },
-      rounded: { root: 'rounded-md' },
+      rounded: { root: 'rounded-rui-control' },
       square: { root: 'rounded-none' },
     },
+    // `-fill` is `main` in light and, for a status color, the deep `darker` in dark
     color: {
       default: { root: 'bg-rui-neutral-200 text-rui-text dark:bg-rui-neutral-700' },
-      primary: { root: 'bg-rui-primary text-white' },
-      secondary: { root: 'bg-rui-secondary text-white' },
-      // in dark a status color's `main` is a text tone, so the fill is its deep `darker`
-      error: { root: 'bg-rui-error dark:bg-rui-error-darker text-white' },
-      warning: { root: 'bg-rui-warning dark:bg-rui-warning-darker text-white' },
-      info: { root: 'bg-rui-info dark:bg-rui-info-darker text-white' },
-      success: { root: 'bg-rui-success dark:bg-rui-success-darker text-white' },
+      primary: { root: 'bg-rui-primary-fill text-rui-primary-foreground' },
+      secondary: { root: 'bg-rui-secondary-fill text-rui-secondary-foreground' },
+      error: { root: 'bg-rui-error-fill text-rui-error-foreground' },
+      warning: { root: 'bg-rui-warning-fill text-rui-warning-foreground' },
+      info: { root: 'bg-rui-info-fill text-rui-info-foreground' },
+      success: { root: 'bg-rui-success-fill text-rui-success-foreground' },
     },
     size: {
       'xs': { initials: 'text-[0.625rem]' },

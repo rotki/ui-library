@@ -65,7 +65,7 @@ const chipStyles = tv({
     prepend: 'rounded-full flex items-center justify-center shrink-0 w-6 h-6 text-[0.625rem] font-semibold text-rui-neutral-700 bg-rui-neutral-200 dark:text-rui-neutral-200 dark:bg-rui-neutral-700 overflow-hidden',
     label: 'truncate px-2 text-[0.8125rem]/5',
     // a round hover fill marks the close icon as its own button
-    close: 'rounded-full flex items-center p-0.5 inset-y-0 focus:outline-hidden transition-colors hover:bg-black/10 dark:hover:bg-white/15',
+    close: 'rounded-full flex items-center p-0.5 inset-y-0 focus:outline-hidden transition-colors hover:bg-rui-pressed',
     closeIcon: 'opacity-60 hover:opacity-100 transition-opacity',
   },
   variants: {

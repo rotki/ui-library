@@ -59,7 +59,7 @@ function isCopied(icon: string): boolean {
     ref="grid"
     class="flex flex-col gap-4"
   >
-    <div class="flex items-center gap-4 sticky top-0 bg-white dark:bg-rui-grey-900 py-2 z-10">
+    <div class="flex items-center gap-4 sticky top-0 bg-rui-background py-2 z-rui-raised">
       <RuiTextField
         v-model="search"
         placeholder="Search icons..."
@@ -76,7 +76,7 @@ function isCopied(icon: string): boolean {
     <div
       v-if="filteredIcons.length > 0"
       v-bind="containerProps"
-      class="max-h-[65vh] overflow-auto border border-rui-grey-300 dark:border-rui-grey-700 rounded-lg p-3"
+      class="max-h-[65vh] overflow-auto border border-rui-divider rounded-rui-card p-3"
     >
       <div v-bind="wrapperProps">
         <div
@@ -87,8 +87,8 @@ function isCopied(icon: string): boolean {
           <button
             v-for="icon in row"
             :key="icon"
-            class="flex flex-col items-center p-3 rounded-lg border border-rui-grey-300 dark:border-rui-grey-700 bg-white dark:bg-rui-grey-800 cursor-pointer transition-all duration-150 hover:border-rui-primary hover:shadow-xs min-w-[140px] h-24 flex-[1_1_0]"
-            :class="{ 'border-rui-success bg-rui-success/10': isCopied(icon) }"
+            class="flex flex-col items-center p-3 rounded-rui-card border border-rui-divider bg-rui-surface cursor-pointer transition-colors duration-150 hover:border-rui-outline hover:bg-rui-hover focus-visible:focus-ring outline-hidden min-w-[140px] h-24 flex-[1_1_0]"
+            :class="{ 'border-rui-success bg-rui-success-soft': isCopied(icon) }"
             type="button"
             :title="`Click to copy: ${icon}`"
             @click="copy(icon)"

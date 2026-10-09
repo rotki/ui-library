@@ -136,9 +136,9 @@ const tableHeadStyles = tv({
   variants: {
     position: {
       default: {},
-      sticky: { thead: 'top-0 z-10 absolute' },
+      sticky: { thead: 'top-0 z-rui-raised absolute' },
       fixed: {
-        thead: 'top-0 z-10 fixed',
+        thead: 'top-0 z-rui-raised fixed',
         th: 'bg-rui-background border-b border-b-rui-divider',
       },
     },

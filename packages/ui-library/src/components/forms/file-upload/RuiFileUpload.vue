@@ -205,9 +205,9 @@ defineExpose({
       ref="wrapper"
       class="p-4 border border-rui-outline rounded-rui-panel w-full relative border-dashed transition"
       :class="{
-        'border-rui-primary! bg-rui-primary/8': isOverDropZone && !disabled && !noDrop,
-        'border-rui-error! border-solid! bg-rui-error/8': hasError,
-        'border-rui-success! border-solid! bg-rui-success/8': uploaded,
+        'border-rui-primary! bg-rui-primary-subtle': isOverDropZone && !disabled && !noDrop,
+        'border-rui-error! border-solid! bg-rui-error-subtle': hasError,
+        'border-rui-success! border-solid! bg-rui-success-subtle': uploaded,
         'opacity-60 pointer-events-none': disabled,
       }"
       :data-disabled="disabled || undefined"
@@ -232,7 +232,7 @@ defineExpose({
             <div
               v-for="file in files"
               :key="`${file.name}-${file.lastModified}`"
-              class="flex items-center gap-2 bg-rui-primary/8 rounded-full pl-3 pr-1 py-1"
+              class="flex items-center gap-2 bg-rui-primary-soft rounded-full pl-3 pr-1 py-1"
               data-id="file-item"
             >
               <RuiIcon
@@ -253,7 +253,7 @@ defineExpose({
               </div>
               <button
                 type="button"
-                class="p-1 rounded-full hover:bg-rui-primary/16 transition"
+                class="p-1 rounded-full hover:bg-rui-hover transition focus-visible:focus-ring outline-hidden"
                 :disabled="disabled"
                 :aria-label="`Remove ${file.name}`"
                 data-id="remove-file"
@@ -269,7 +269,7 @@ defineExpose({
           <div
             v-else
             class="h-10 w-10 rounded-full flex items-center justify-center"
-            :class="uploaded ? 'bg-rui-success/12' : 'bg-rui-primary/12'"
+            :class="uploaded ? 'bg-rui-success-soft' : 'bg-rui-primary-soft'"
           >
             <slot name="icon">
               <RuiIcon

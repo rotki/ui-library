@@ -8,11 +8,11 @@ test.describe('calendars', () => {
   test('should render calendar with selected date', async ({ page }) => {
     await expect(page.locator('h2[data-id=calendars]')).toContainText('Calendar');
 
-    await expect(page.locator('[data-id="2023-01-02"]')).toHaveClass(/bg-rui-primary/);
-    await expect(page.locator('[data-id="2023-01-02"]')).toHaveClass(/text-white/);
-    await expect(page.locator('[data-id="2023-01-01"]')).not.toHaveClass(/bg-rui-primary/);
-    await expect(page.locator('[data-id="2023-01-01"]')).not.toHaveClass(/text-white/);
-    await expect(page.locator('[data-id="2023-01-03"]')).not.toHaveClass(/bg-rui-primary/);
-    await expect(page.locator('[data-id="2023-01-03"]')).not.toHaveClass(/text-white/);
+    // the state, not the classes that paint it
+    await expect(page.locator('[data-id="2023-01-02"]')).toHaveAttribute('aria-selected', 'true');
+    await expect(page.locator('[data-id="2023-01-02"]')).toHaveClass(/bg-rui-primary-fill/);
+    await expect(page.locator('[data-id="2023-01-01"]')).toHaveAttribute('aria-selected', 'false');
+    await expect(page.locator('[data-id="2023-01-01"]')).not.toHaveClass(/bg-rui-primary-fill/);
+    await expect(page.locator('[data-id="2023-01-03"]')).toHaveAttribute('aria-selected', 'false');
   });
 });

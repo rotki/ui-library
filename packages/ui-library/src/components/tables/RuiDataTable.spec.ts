@@ -2360,10 +2360,10 @@ describe('components/tables/RuiDataTable.vue', () => {
       });
 
       const firstRow = wrapper.find('tbody tr:first-child');
-      expect(firstRow.classes().some(c => c.includes('bg-rui-primary/[0.08]'))).toBeTruthy();
+      expect(firstRow.classes()).toContain('bg-rui-primary-soft');
 
       const secondRow = wrapper.find('tbody tr:nth-child(2)');
-      expect(secondRow.classes().some(c => c.includes('bg-rui-primary/[0.08]'))).toBeFalsy();
+      expect(secondRow.classes()).not.toContain('bg-rui-primary-soft');
     });
   });
 

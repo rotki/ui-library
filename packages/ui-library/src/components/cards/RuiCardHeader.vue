@@ -23,7 +23,7 @@ const cardHeader = tv({
     root: 'flex',
     prepend: 'rounded-full flex items-center justify-center bg-rui-neutral-200 text-rui-neutral-700 dark:bg-rui-neutral-700 dark:text-rui-neutral-200 overflow-hidden',
     // one title style whether or not there is a prepend: a card title is a section heading, not a page title
-    header: 'text-base font-semibold text-rui-text dark:text-rui-dark-text',
+    header: 'text-base font-semibold text-rui-text',
   },
   variants: {
     dense: {
@@ -66,7 +66,7 @@ const ui = computed<ReturnType<typeof cardHeader>>(() => cardHeader({ dense }));
       <p
         v-if="slots.subheader"
         data-id="subheader"
-        class="text-rui-text-secondary dark:text-rui-dark-text-secondary text-body-2 mb-0"
+        class="text-rui-text-secondary text-body-2 mb-0"
       >
         <slot name="subheader" />
       </p>

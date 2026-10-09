@@ -52,6 +52,19 @@ const cases: OverlayCase[] = [
     open: async page => page.locator('div[data-id=tooltip-4]').hover(),
     target: '[role=tooltip]',
   },
+  {
+    // the whole page: a docked drawer belongs to it, so its edge against the content is the point
+    name: 'drawer-docked',
+    route: '/navigation-drawers',
+    open: async page => page.locator('[data-id=navigation-drawer-2] [data-id=activator]').click(),
+    target: 'body',
+  },
+  {
+    name: 'drawer-temporary',
+    route: '/navigation-drawers',
+    open: async page => page.locator('[data-id=navigation-drawer-0] [data-id=activator]').click(),
+    target: 'body',
+  },
 ];
 
 const schemes = ['light', 'dark'] as const;

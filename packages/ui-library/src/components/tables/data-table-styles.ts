@@ -7,7 +7,7 @@ export const dataTableStyles = tv({
     scroller: 'overflow-x-auto overflow-y-hidden [clip-path:inset(0_0_0_0)]',
     table: 'min-w-full table-fixed between:border-t between:border-b-0 between:border-rui-divider whitespace-nowrap mx-auto my-0 max-w-fit relative border-rui-divider',
     tbody: 'between:border-t between:border-b-0 between:border-rui-divider',
-    tr: 'hover:bg-black/[0.04] dark:hover:bg-white/[0.04]',
+    tr: 'hover:bg-rui-hover',
     // numbers line up in columns, and a slashed zero tells 0 from O in amounts and addresses
     td: '[:where(&)]:px-4 text-rui-text text-body-2 tabular-nums slashed-zero [text-wrap:initial]',
     checkbox: 'px-2 w-[3.625rem] max-w-[3.625rem] [&_label]:ml-0',
@@ -17,7 +17,7 @@ export const dataTableStyles = tv({
   variants: {
     // opaque like the stuck column header, so rows scroll behind it rather than through it
     sticky: {
-      true: { pagination: 'sticky bottom-0 z-10 bg-rui-background' },
+      true: { pagination: 'sticky bottom-0 z-rui-raised bg-rui-background' },
     },
     outlined: {
       true: { wrapper: 'border border-rui-divider' },
@@ -36,7 +36,7 @@ export const dataTableStyles = tv({
       true: { tbody: '[:where(&>tr:nth-child(even))]:bg-rui-neutral-50 dark:[:where(&>tr:nth-child(even))]:bg-white/[0.02]' },
     },
     rowVariant: {
-      selected: { tr: 'bg-rui-primary/[0.08] dark:bg-rui-dark-primary/[0.08]' },
+      selected: { tr: 'bg-rui-primary-soft' },
       empty: { tr: 'hover:bg-transparent' },
       // `!border-t-0` drops the divider so the panel joins the row that opened it
       expandable: { tr: 'bg-rui-neutral-50 hover:bg-rui-neutral-50 dark:bg-white/[0.03] dark:hover:bg-white/[0.03] !border-t-0' },

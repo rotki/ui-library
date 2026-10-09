@@ -22,9 +22,9 @@ const skeletonType = tv({
   variants: {
     type: {
       [SkeletonType.CUSTOM]: 'box-border',
-      [SkeletonType.TEXT]: 'w-full h-4 rounded-md',
-      [SkeletonType.HEADING]: 'w-full h-6 rounded-md',
-      [SkeletonType.BUTTON]: 'w-full max-w-24 h-9 rounded-md',
+      [SkeletonType.TEXT]: 'w-full h-4 rounded-rui-control',
+      [SkeletonType.HEADING]: 'w-full h-6 rounded-rui-control',
+      [SkeletonType.BUTTON]: 'w-full max-w-24 h-9 rounded-rui-control',
       [SkeletonType.ICON]: 'w-6 h-6 rounded-full',
       [SkeletonType.AVATAR]: 'w-10 h-10 rounded-full',
       [SkeletonType.THUMBNAIL]: 'w-14 h-14 rounded-xs',
@@ -53,19 +53,19 @@ const isMultiLine = computed<boolean>(() => multiLineTypes.includes(type));
   >
     <RuiSkeletonBase
       v-if="type === SkeletonType.ARTICLE"
-      class="w-full h-6 rounded-md mb-1"
+      class="w-full h-6 rounded-rui-control mb-1"
       :rounded="rounded"
     />
     <RuiSkeletonBase
-      class="w-full h-3 rounded-md"
+      class="w-full h-3 rounded-rui-control"
       :rounded="rounded"
     />
     <RuiSkeletonBase
-      class="w-full h-3 rounded-md max-w-[80%]"
+      class="w-full h-3 rounded-rui-control max-w-[80%]"
       :rounded="rounded"
     />
     <RuiSkeletonBase
-      class="w-full h-3 rounded-md max-w-[90%]"
+      class="w-full h-3 rounded-rui-control max-w-[90%]"
       :rounded="rounded"
     />
   </div>

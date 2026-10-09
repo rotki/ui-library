@@ -53,6 +53,32 @@ test.describe('data tables - long pages', () => {
     expect(await bottomOf(table)).toBeGreaterThan(viewportHeight(page));
   });
 
+  test('slides the stuck bar under a fixed part on the floating layer', async ({ page }) => {
+    const table = page.locator('[data-id=long-single] [data-id=table]');
+    const bar = table.locator('[data-id=table-pagination]');
+    await scrollTo(table, APP_BAR);
+    await expect.poll(() => bottomOf(bar)).toBe(viewportHeight(page));
+
+    /** Puts a dock over the stuck bar, like rotki's task dock, and returns what is on top at its center. */
+    const topmostAt = async (zIndex: string): Promise<string | null> => page.evaluate((z) => {
+      const barEl = document.querySelector('[data-id=long-single] [data-id=table-pagination]');
+      if (!barEl)
+        return null;
+      const barBox = barEl.getBoundingClientRect();
+      const dock = document.createElement('div');
+      dock.dataset.id = 'probe-dock';
+      Object.assign(dock.style, { position: 'fixed', left: `${barBox.left}px`, top: `${barBox.top}px`, width: '120px', height: `${barBox.height}px`, zIndex: z });
+      document.body.append(dock);
+      const hit = document.elementFromPoint(barBox.left + 60, barBox.top + barBox.height / 2);
+      dock.remove();
+      return hit?.closest('[data-id]')?.getAttribute('data-id') ?? null;
+    }, zIndex);
+
+    expect(await topmostAt('var(--rui-z-floating)')).toBe('probe-dock');
+    // below the raised layer, the stuck bar covers it, which is what hid rotki's dock at z-7
+    expect(await topmostAt('7')).not.toBe('probe-dock');
+  });
+
   test('leaves the bar under the rows while a table is only starting to scroll into view', async ({ page }) => {
     const table = page.locator('[data-id=long-stacked] [data-id=table-second]');
     const bar = table.locator('[data-id=table-pagination]');

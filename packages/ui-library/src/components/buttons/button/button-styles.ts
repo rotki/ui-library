@@ -114,8 +114,8 @@ export const buttonStyles = tv({
     // === Grey color variants ===
     { color: 'grey', active: true, class: { root: 'bg-rui-neutral-200 dark:bg-rui-neutral-700' } },
     // the same hover and pressed tints as a highlighted menu option
-    { color: 'grey', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-black/5 active:bg-black/10 dark:bg-transparent dark:hover:bg-white/8 dark:active:bg-white/12 dark:text-rui-text' } },
-    { color: 'grey', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-black/10 dark:bg-white/12' } },
+    { color: 'grey', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-hover active:bg-rui-pressed dark:bg-transparent dark:text-rui-text' } },
+    { color: 'grey', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-rui-pressed dark:bg-rui-pressed' } },
     // Material's 23% outline: at full strength a neutral edge reads as an error state next to the 50% context colours
     { color: 'grey', variant: 'outlined', class: { root: 'inset-ring-rui-outline' } },
     { color: 'grey', variant: 'text', class: { root: 'text-rui-text-secondary' } },

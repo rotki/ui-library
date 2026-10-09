@@ -45,8 +45,8 @@ export const timePickerStyles = tv({
     },
     selected: {
       true: {
-        // white in both themes, like the selected calendar day
-        clockNumber: 'bg-rui-primary hover:bg-rui-primary dark:hover:bg-rui-primary text-white z-1 font-semibold',
+        // the primary fill and its foreground, like the selected calendar day
+        clockNumber: 'bg-rui-primary-fill hover:bg-rui-primary-fill text-rui-primary-foreground z-1 font-semibold',
       },
     },
   },

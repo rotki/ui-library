@@ -41,10 +41,10 @@ const dayButton = tv({
   base: 'h-9 w-full flex items-center justify-center text-sm rounded-rui-control mx-auto max-w-9 transition-colors duration-150 ease-in-out border-none outline-hidden cursor-pointer focus-visible:focus-ring',
   variants: {
     selected: {
-      true: 'bg-rui-primary text-white hover:bg-rui-primary/90 dark:hover:bg-rui-primary/90',
+      true: 'bg-rui-primary-fill text-rui-primary-foreground hover:bg-rui-primary-fill hover:state-layer-pressed',
     },
     currentMonth: {
-      true: 'text-rui-neutral-700 hover:bg-black/5 dark:text-rui-neutral-300 dark:hover:bg-white/8',
+      true: 'text-rui-neutral-700 hover:bg-rui-hover dark:text-rui-neutral-300',
       false: 'text-rui-neutral-400 dark:text-rui-neutral-600',
     },
     inRange: {
@@ -57,7 +57,7 @@ const dayButton = tv({
   compoundVariants: [
     {
       selected: true,
-      class: 'text-white dark:text-white',
+      class: 'text-rui-primary-foreground',
     },
   ],
 });

@@ -48,7 +48,7 @@ const card = tv({
   slots: {
     root: 'flex flex-col h-full w-full bg-rui-surface',
     image: 'overflow-hidden',
-    content: 'text-sm/6 text-rui-light-text dark:text-rui-dark-text overflow-y-auto',
+    content: 'text-sm/6 text-rui-text overflow-y-auto',
     footer: 'flex between:ml-2 between:mr-0 items-center justify-start mt-auto',
   },
   variants: {

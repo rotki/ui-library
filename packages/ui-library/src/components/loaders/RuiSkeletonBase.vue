@@ -18,8 +18,8 @@ const skeleton = tv({
     rounded: {
       none: 'rounded-none',
       sm: 'rounded-xs',
-      md: 'rounded-md',
-      lg: 'rounded-lg',
+      md: 'rounded-rui-control',
+      lg: 'rounded-rui-card',
       full: 'rounded-full',
     },
   },

@@ -175,7 +175,8 @@ const circularLabelStyle = computed<Record<string, string>>(() => {
 const circularStrokeStyle = computed<Record<string, string>>(() => ({
   strokeDasharray: `${CIRCLE_CIRCUMFERENCE}`,
   strokeDashoffset: `${(get(progress) / 100) * -CIRCLE_CIRCUMFERENCE}`,
-  transition: 'stroke-dashoffset 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+  // the library's own motion, not Material's standard curve
+  transition: 'stroke-dashoffset 200ms ease-out',
 }));
 </script>
 

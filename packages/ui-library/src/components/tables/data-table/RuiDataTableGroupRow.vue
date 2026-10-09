@@ -28,7 +28,7 @@ const { classes, colspan, isMobile } = useDataTableStyling();
  * the previous group's cards above and its own below, aligned to the card
  * content padding.
  */
-const mobileGroupClass = 'mt-6 first:mt-0 mb-2 rounded-lg';
+const mobileGroupClass = 'mt-6 first:mt-0 mb-2 rounded-rui-card';
 const {
   getGroupSize,
   groupExpandButtonPosition,
@@ -98,7 +98,7 @@ const groupParts = computed<{ key: string; label: string; value: string }[]>(() 
               </span>
             </span>
             <span
-              class="rounded-full bg-black/6 dark:bg-white/8 px-2 text-caption text-rui-text-secondary"
+              class="rounded-full bg-rui-hover px-2 text-caption text-rui-text-secondary"
               data-id="group-size"
             >
               {{ groupSize }}

@@ -87,7 +87,7 @@ export const activatorStyles = tv({
     clear: 'ml-auto shrink-0 invisible group-hover:!visible',
     menu: 'overflow-y-auto max-h-60 min-w-[2.5rem]',
     // the grey list button's hover and active tints, so options and menu buttons highlight alike
-    highlighted: '!bg-black/5 dark:!bg-white/8',
+    highlighted: '!bg-rui-hover',
     progress: 'absolute left-0 bottom-0 w-full',
     icon: 'text-rui-text transition',
     iconWrapper: 'flex items-center justify-end absolute right-2 top-px bottom-0',
@@ -105,7 +105,8 @@ export const activatorStyles = tv({
       },
     },
     readonly: {
-      true: { activator: 'opacity-80 pointer-events-none cursor-default bg-rui-neutral-50 dark:bg-white/10' },
+      // an inset well: below the card in both themes, where white/10 lifted it above
+      true: { activator: 'opacity-80 pointer-events-none cursor-default bg-rui-surface-sunken' },
     },
     hovered: {
       true: { fieldset: 'border-rui-neutral-400 dark:border-rui-neutral-500' },
@@ -123,7 +124,7 @@ export const activatorStyles = tv({
       true: { fieldset: '!border-rui-success ring-rui-success/20' },
     },
     active: {
-      true: { highlighted: '!bg-black/10 dark:!bg-white/12' },
+      true: { highlighted: '!bg-rui-pressed' },
     },
   },
   defaultVariants: {

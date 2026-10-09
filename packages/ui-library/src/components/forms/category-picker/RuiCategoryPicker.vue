@@ -216,7 +216,7 @@ function dialogShellProps(): Record<string, unknown> {
 function menuShellProps(): Record<string, unknown> {
   return {
     anchorEl: get(fieldRef) ?? undefined,
-    classNames: { content: 'py-0', menu: 'z-9999' },
+    classNames: { content: 'py-0' },
     closeOnContentClick: false,
     disableAutoFocus: true,
     fullWidth: true,

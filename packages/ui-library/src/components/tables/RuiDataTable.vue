@@ -526,7 +526,7 @@ provideDataTableContext<T, IdType>({
   >
     <div
       v-if="showMobileSort"
-      :class="stickyMobileToolbar ? 'sticky z-10 bg-rui-background pt-2' : 'contents'"
+      :class="stickyMobileToolbar ? 'sticky z-rui-raised bg-rui-background pt-2' : 'contents'"
       :style="stickyMobileToolbar ? { top: `${stickyHeaderOffset ?? 0}px` } : undefined"
       data-id="table-mobile-toolbar-sticky"
     >

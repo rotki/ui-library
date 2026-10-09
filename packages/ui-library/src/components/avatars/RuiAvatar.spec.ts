@@ -97,7 +97,7 @@ describe('components/avatars/RuiAvatar.vue', () => {
     expect(wrapper.find('[data-id="avatar-root"]').classes()).toContain('rounded-full');
 
     await wrapper.setProps({ variant: 'rounded' });
-    expect(wrapper.find('[data-id="avatar-root"]').classes()).toContain('rounded-md');
+    expect(wrapper.find('[data-id="avatar-root"]').classes()).toContain('rounded-rui-control');
 
     await wrapper.setProps({ variant: 'square' });
     expect(wrapper.find('[data-id="avatar-root"]').classes()).toContain('rounded-none');
@@ -105,10 +105,10 @@ describe('components/avatars/RuiAvatar.vue', () => {
 
   it('applies color classes', async () => {
     wrapper = createWrapper({ props: { text: 'A', color: 'primary' } });
-    expect(wrapper.find('[data-id="avatar-root"]').classes()).toContain('bg-rui-primary');
+    expect(wrapper.find('[data-id="avatar-root"]').classes()).toContain('bg-rui-primary-fill');
 
     await wrapper.setProps({ color: 'success' });
-    expect(wrapper.find('[data-id="avatar-root"]').classes()).toContain('bg-rui-success');
+    expect(wrapper.find('[data-id="avatar-root"]').classes()).toContain('bg-rui-success-fill');
   });
 
   it('applies token size as inline dimensions', () => {
