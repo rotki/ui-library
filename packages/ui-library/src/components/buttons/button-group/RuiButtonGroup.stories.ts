@@ -37,7 +37,7 @@ function render(args: ComponentPropsAndSlots<typeof RuiButtonGroup<string | numb
       <RuiButtonGroup v-bind="args">
         <RuiButton @click="count--">Decrease</RuiButton>
         <RuiButton @click="count++">Increase</RuiButton>
-        <RuiButton @click="count++">
+        <RuiButton aria-label="Add one" @click="count++">
           <RuiIcon name="lu-plus"></RuiIcon>
         </RuiButton>
       </RuiButtonGroup>

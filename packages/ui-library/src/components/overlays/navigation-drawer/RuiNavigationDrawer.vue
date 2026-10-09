@@ -205,7 +205,6 @@ onClickOutside(content, () => {
         :data-mini="miniVariant || undefined"
         :class="rootClass($attrs.class)"
         :aria-label="ariaLabel"
-        :aria-hidden="miniVariant && !modelValue ? 'true' : undefined"
         v-bind="getRootAttrs($attrs, [])"
       >
         <slot v-bind="{ attrs: activatorAttrs, close }" />

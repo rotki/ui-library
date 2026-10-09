@@ -248,6 +248,7 @@ function onKeydown(e: KeyboardEvent): void {
       :class="ui.close()"
       :disabled="disabled"
       type="button"
+      aria-label="Remove"
       @click.stop="emit('click:close')"
     >
       <RuiIcon

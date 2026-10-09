@@ -2,6 +2,7 @@
 import type { VueClassValue } from '@/types/class-value';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import RuiStepperIcon from '@/components/steppers/RuiStepperIcon.vue';
+import { useKeyboardScroll } from '@/composables/keyboard-scroll';
 import { StepperOrientation, StepperState, type StepperStep } from '@/types/stepper';
 import { tv } from '@/utils/tv';
 
@@ -40,10 +41,12 @@ defineSlots<{
 }>();
 
 const wrapperRef = useTemplateRef<HTMLDivElement>('wrapperRef');
+const scrollTabindex = useKeyboardScroll(wrapperRef);
 
 const stepper = tv({
   slots: {
-    root: 'flex no-scrollbar overflow-auto',
+    // takes focus only while it overflows (see useKeyboardScroll); the ring sits inside the clip
+    root: 'flex no-scrollbar overflow-auto rounded-rui-control outline-hidden focus-visible:focus-ring focus-visible:-outline-offset-2',
     step: 'flex items-center px-6 relative',
     title: '',
     subtitle: '',
@@ -189,6 +192,7 @@ watch(() => step, () => {
 <template>
   <div
     ref="wrapperRef"
+    :tabindex="scrollTabindex"
     role="list"
     aria-label="Progress steps"
     :class="ui.root()"

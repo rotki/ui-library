@@ -1,5 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
-import { expect } from 'storybook/test';
+import { expect, waitFor } from 'storybook/test';
 import RuiCard from '@/components/cards/RuiCard.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiTabItem from '@/components/tabs/tab-item/RuiTabItem.vue';
@@ -98,15 +98,26 @@ const meta = preview.meta({
   title: 'Navigation/Tabs',
 });
 
+/**
+ * Waits for the panels to finish fading, so the accessibility check that runs after a play does not
+ * measure a panel mid-transition, squeezed into overflow it never has at rest.
+ *
+ * @param canvasElement - the story's root
+ */
+async function panelsSettled(canvasElement: HTMLElement): Promise<void> {
+  await waitFor(() => expect(canvasElement.querySelector('[class*="v-enter-"],[class*="v-leave-"]')).toBeNull());
+}
+
 export const Default = meta.story({
   args: {},
-  async play({ canvas, userEvent }) {
+  async play({ canvas, canvasElement, userEvent }) {
     const tab1 = canvas.getByRole('tab', { name: /Tab 1/ });
     await expect(tab1).toHaveAttribute('aria-selected', 'true');
     const tab3 = canvas.getByRole('tab', { name: 'Tab 3' });
     await userEvent.click(tab3);
     await expect(tab3).toHaveAttribute('aria-selected', 'true');
     await expect(tab1).toHaveAttribute('aria-selected', 'false');
+    await panelsSettled(canvasElement);
   },
 });
 
@@ -167,7 +178,7 @@ export const IndicatorPositionOnLeft = meta.story({
 
 export const KeyboardNavigation = meta.story({
   args: {},
-  async play({ canvas, userEvent }) {
+  async play({ canvas, canvasElement, userEvent }) {
     const tab1 = canvas.getByRole('tab', { name: /Tab 1/ });
     await expect(tab1).toHaveAttribute('tabindex', '0');
     tab1.focus();
@@ -180,6 +191,7 @@ export const KeyboardNavigation = meta.story({
     await expect(canvas.getByRole('tab', { name: /Tab 9/ })).toHaveAttribute('aria-selected', 'true');
     await userEvent.keyboard('{Home}');
     await expect(tab1).toHaveAttribute('aria-selected', 'true');
+    await panelsSettled(canvasElement);
   },
 });
 
@@ -212,11 +224,12 @@ function renderSegmented(args: ComponentPropsAndSlots<typeof RuiTabs>) {
 export const Segmented = meta.story({
   args: { variant: 'segmented' },
   render: renderSegmented,
-  async play({ canvas, userEvent }) {
+  async play({ canvas, canvasElement, userEvent }) {
     const week = canvas.getByRole('tab', { name: '1W' });
     await userEvent.click(week);
     await expect(week).toHaveAttribute('aria-selected', 'true');
     await expect(week).toHaveAttribute('data-variant', 'segmented');
+    await panelsSettled(canvasElement);
   },
 });
 

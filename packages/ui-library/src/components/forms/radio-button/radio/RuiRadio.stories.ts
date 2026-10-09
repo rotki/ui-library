@@ -20,15 +20,14 @@ function render(args: ComponentPropsAndSlots<typeof RuiRadio<string>>) {
       });
       return { args, modelValue };
     },
-    template: `<RuiRadio v-bind="args" v-model="modelValue">
-  {{ args.default }}
-  </RuiRadio>`,
+    template: `<RuiRadio v-bind="args" v-model="modelValue" />`,
   };
 }
 
 const meta = preview.meta({
   args: {
     errorMessages: [],
+    label: 'Label',
   },
   argTypes: {
     color: { control: 'select', options: contextColors },

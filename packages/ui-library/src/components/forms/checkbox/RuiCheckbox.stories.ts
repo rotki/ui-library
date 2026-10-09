@@ -38,6 +38,7 @@ function render(args: ComponentPropsAndSlots<typeof RuiCheckbox>) {
 const meta = preview.meta({
   args: {
     errorMessages: [],
+    label: 'Label',
     successMessages: [],
   },
   argTypes: {

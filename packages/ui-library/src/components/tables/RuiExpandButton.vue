@@ -20,8 +20,10 @@ defineSlots<{
 </script>
 
 <template>
+  <!-- a fixed name with aria-expanded carrying the state; a caller's aria-label in $attrs wins -->
   <RuiButton
     class="relative"
+    aria-label="Expand row"
     :aria-expanded="expanded"
     data-id="expand-button"
     icon

@@ -5,7 +5,7 @@ import preview from '~/.storybook/preview';
 
 type SimpleSelectProps = ComponentPropsAndSlots<typeof RuiSimpleSelect>;
 
-type SimpleSelectMetaArgs = Required<Pick<SimpleSelectProps, 'disabled' | 'options'>>;
+type SimpleSelectMetaArgs = Required<Pick<SimpleSelectProps, 'disabled' | 'label' | 'options'>>;
 
 function render(args: SimpleSelectProps) {
   return {
@@ -30,6 +30,7 @@ function render(args: SimpleSelectProps) {
 const meta = preview.meta<typeof RuiSimpleSelect, Decorator, SimpleSelectMetaArgs>({
   args: {
     disabled: false,
+    label: 'Rows per page',
     options: Array.from(new Array(10), (_, i) => `Option ${i}`),
   },
   argTypes: {

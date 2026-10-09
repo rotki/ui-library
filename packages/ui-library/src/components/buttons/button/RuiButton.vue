@@ -97,6 +97,7 @@ function onClick(): void {
     :data-size="resolvedSize ?? 'md'"
     :data-color="resolvedColor"
     :data-active="resolvedActive || undefined"
+    :aria-busy="loading || undefined"
     v-bind="{ ...$attrs, class: undefined }"
     @click="onClick()"
   >
@@ -109,10 +110,12 @@ function onClick(): void {
       <slot />
     </span>
     <slot name="append" />
+    <!-- the button's aria-busy announces the wait, so the spinner stays out of the accessibility tree -->
     <RuiProgress
       v-if="loading"
       circular
       data-spinner
+      aria-hidden="true"
       :class="ui.spinner()"
       variant="indeterminate"
       thickness="2"

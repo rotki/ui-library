@@ -2,6 +2,7 @@
 import type { VueClassValue } from '@/types/class-value';
 import { computed } from 'vue';
 import RuiCardHeader from '@/components/cards/RuiCardHeader.vue';
+import { useKeyboardScroll } from '@/composables/keyboard-scroll';
 import { cn, tv } from '@/utils/tv';
 
 export interface RuiCardClassNames {
@@ -48,7 +49,7 @@ const card = tv({
   slots: {
     root: 'flex flex-col h-full w-full bg-rui-surface',
     image: 'overflow-hidden',
-    content: 'text-sm/6 text-rui-text overflow-y-auto',
+    content: 'text-sm/6 text-rui-text overflow-y-auto outline-hidden focus-visible:focus-ring focus-visible:-outline-offset-2',
     footer: 'flex between:ml-2 between:mr-0 items-center justify-start mt-auto',
   },
   variants: {
@@ -77,6 +78,10 @@ const card = tv({
   },
   defaultVariants: { variant: 'outlined', rounded: 'md', padding: 'normal', dense: false },
 });
+
+const content = useTemplateRef<HTMLDivElement>('content');
+// a fixed-height card scrolls its content, which keyboard users need to reach when it holds no controls
+const contentTabindex = useKeyboardScroll(content);
 
 const hasHeadContent = computed<boolean>(() => !!slots.header || !!slots.subheader);
 
@@ -128,7 +133,9 @@ const ui = computed<ReturnType<typeof card>>(() => card({ variant: cardVariant, 
     </slot>
     <div
       v-if="slots.default"
+      ref="content"
       data-id="card-content"
+      :tabindex="contentTabindex"
       :class="ui.content({ class: cn(classNames?.content) })"
     >
       <slot />

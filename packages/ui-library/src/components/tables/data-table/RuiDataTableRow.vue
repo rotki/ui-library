@@ -128,6 +128,7 @@ const mobileCardClass = computed<string>(() => {
       <RuiCheckbox
         v-if="selectedData"
         :data-id="`table-toggle-check-${index}`"
+        aria-label="Select row"
         :model-value="selected"
         :disabled="disabled"
         :size="dense ? 'sm' : undefined"
@@ -175,6 +176,7 @@ const mobileCardClass = computed<string>(() => {
     >
       <RuiCheckbox
         :data-id="`table-toggle-check-${index}`"
+        aria-label="Select row"
         :model-value="selected"
         :disabled="disabled"
         :size="dense ? 'sm' : undefined"

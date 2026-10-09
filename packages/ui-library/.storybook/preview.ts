@@ -18,8 +18,9 @@ useRotkiTheme();
 export default definePreview({
   addons: [addonA11y(), addonDocs()],
   parameters: {
+    // every story passes axe, so a new violation fails the story test run; exceptions are set per story
     a11y: {
-      test: 'todo',
+      test: 'error',
     },
     controls: {
       matchers: {

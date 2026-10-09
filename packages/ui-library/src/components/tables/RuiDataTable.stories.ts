@@ -138,7 +138,7 @@ function render(args: DataTableProps) {
         :rows="args.rows"
       >
         <template #item.action>
-          <RuiButton icon variant="text" size="sm">
+          <RuiButton icon variant="text" size="sm" aria-label="Row actions">
             <RuiIcon name="lu-ellipsis" color="primary" />
           </RuiButton>
         </template>

@@ -15,6 +15,7 @@ import RuiTablePagination, {
 } from '@/components/tables/RuiTablePagination.vue';
 import { GroupExpandButtonPosition } from '@/components/tables/table-props';
 import { useTable } from '@/composables/defaults/table';
+import { useKeyboardScroll } from '@/composables/keyboard-scroll';
 import { useStickyTableHeader } from '@/composables/sticky-header';
 import { useTableColumns } from '@/composables/tables/data-table/columns';
 import { useTableExpansion } from '@/composables/tables/data-table/expansion';
@@ -273,6 +274,7 @@ const stickyMobileToolbar = computed<boolean>(() => stickyHeader && get(isMobile
 
 const table = useTemplateRef<HTMLTableElement>('table');
 const tableScroller = useTemplateRef<HTMLElement>('tableScroller');
+const scrollerTabindex = useKeyboardScroll(tableScroller);
 
 const { stick } = useStickyTableHeader(
   () => stickyHeader,
@@ -549,6 +551,7 @@ provideDataTableContext<T, IdType>({
     <div
       ref="tableScroller"
       :class="[ui.scroller(), isMobile && !showMobileSort ? 'pt-2' : '']"
+      :tabindex="scrollerTabindex"
       data-id="table-scroller"
     >
       <table

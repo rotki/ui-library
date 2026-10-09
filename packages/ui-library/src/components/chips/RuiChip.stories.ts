@@ -144,9 +144,14 @@ export const DismissiblePrefix = meta.story({
 
 /**
  * Every variant in every color at both sizes, with the prefix, close and disabled states: three
- * variants of seven colors at two sizes, plus four state chips per variant.
+ * variants of seven colors at two sizes, plus four state chips per variant. The disabled chips are
+ * left out of the accessibility check: WCAG exempts disabled controls from contrast, but a chip
+ * that is not clickable has no role that can carry aria-disabled to tell axe so.
  */
 export const Variants = meta.story({
+  parameters: {
+    a11y: { context: { exclude: ['[data-disabled]'], include: ['body'] } },
+  },
   render: () => ({
     components: { RuiChip },
     setup() {

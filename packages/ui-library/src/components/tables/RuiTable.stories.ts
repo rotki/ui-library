@@ -7,7 +7,7 @@ const body = `
     <tr>
       <th scope="col">Node</th>
       <th scope="col">Weight</th>
-      <th scope="col"></th>
+      <th scope="col"><span class="sr-only">Actions</span></th>
     </tr>
   </thead>
   <tbody>

@@ -4,7 +4,8 @@ export const dataTableStyles = tv({
   slots: {
     // `clip`, not `hidden`: a hidden-overflow flex item may shrink below its rows and hide them
     wrapper: 'relative between:border-t between:border-b-0 between:border-rui-divider overflow-clip',
-    scroller: 'overflow-x-auto overflow-y-hidden [clip-path:inset(0_0_0_0)]',
+    // focusable only while it scrolls with nothing to tab to (useKeyboardScroll), ring drawn inside
+    scroller: 'overflow-x-auto overflow-y-hidden [clip-path:inset(0_0_0_0)] outline-hidden focus-visible:focus-ring focus-visible:-outline-offset-2',
     table: 'min-w-full table-fixed between:border-t between:border-b-0 between:border-rui-divider whitespace-nowrap mx-auto my-0 max-w-fit relative border-rui-divider',
     tbody: 'between:border-t between:border-b-0 between:border-rui-divider',
     tr: 'hover:bg-rui-hover',

@@ -201,7 +201,7 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
     expect(drawer.getAttribute('aria-label')).toBe('Main navigation');
   });
 
-  it('should have aria-hidden when miniVariant is true and drawer is collapsed', async () => {
+  it('should keep a collapsed mini drawer in the accessibility tree, since its icons stay usable', async () => {
     wrapper = createWrapper({
       props: {
         modelValue: false,
@@ -212,15 +212,7 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
 
     const drawer = queryBody<HTMLElement>('aside[data-id=drawer-content]');
     assertExists(drawer);
-    expect(drawer.getAttribute('aria-hidden')).toBe('true');
-
-    // Open drawer
-    await wrapper.setProps({ modelValue: true });
-    await vi.runAllTimersAsync();
-
-    const openDrawer = queryBody<HTMLElement>('aside[data-visible]');
-    assertExists(openDrawer);
-    expect(openDrawer.getAttribute('aria-hidden')).toBeNull();
+    expect(drawer.getAttribute('aria-hidden')).toBeNull();
   });
 
   it('should apply left position class by default', async () => {

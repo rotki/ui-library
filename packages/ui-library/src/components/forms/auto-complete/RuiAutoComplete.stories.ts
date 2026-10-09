@@ -118,6 +118,8 @@ export const Chips = meta.story({
     modelValue: ['3', '4'],
     textAttr: 'label',
   },
+  // the chips are buttons inside the field's button; reported until the field becomes a combobox
+  parameters: { a11y: { test: 'todo' } },
   async play({ canvas, userEvent }) {
     const body = within(document.body);
 

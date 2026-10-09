@@ -26,6 +26,10 @@ export interface Props {
    * only used for circular progress
    */
   size?: number | string;
+  /**
+   * What is loading, as the progress bar's accessible name ("Loading" when not given)
+   */
+  ariaLabel?: string;
 }
 
 defineOptions({
@@ -41,6 +45,7 @@ const {
   showLabel = false,
   thickness = 4,
   size = 40,
+  ariaLabel = 'Loading',
 } = defineProps<Props>();
 
 defineSlots<Record<string, never>>();
@@ -134,6 +139,10 @@ const ui = computed<ReturnType<typeof progressStyles>>(() => progressStyles({
 
 const currentValue = computed<number>(() => clampPercent(value));
 
+/** An indeterminate bar has no value to report, so it leaves `aria-valuenow` off. */
+const ariaValueNow = computed<number | undefined>(() =>
+  variant === ProgressVariant.indeterminate ? undefined : get(currentValue));
+
 const label = computed<string>(() => `${Math.floor(get(currentValue))}%`);
 
 const progress = computed<number>(() => -100 + get(currentValue));
@@ -185,11 +194,12 @@ const circularStrokeStyle = computed<Record<string, string>>(() => ({
     <!-- Circular progress (not supported for buffer variant) -->
     <div
       v-if="circular && variant !== ProgressVariant.buffer"
-      :aria-valuenow="value"
+      :aria-valuenow="ariaValueNow"
       :class="ui.circularContainer()"
       :style="circularSize"
       :data-variant="variant"
       :data-color="color"
+      :aria-label="ariaLabel"
       aria-valuemax="100"
       aria-valuemin="0"
       role="progressbar"
@@ -231,11 +241,12 @@ const circularStrokeStyle = computed<Record<string, string>>(() => ({
     <!-- Linear progress (also used as fallback for circular + buffer) -->
     <div
       v-else
-      :aria-valuenow="value"
+      :aria-valuenow="ariaValueNow"
       :class="ui.progressbar()"
       :style="linearStyle"
       :data-variant="variant"
       :data-color="color"
+      :aria-label="ariaLabel"
       aria-valuemax="100"
       aria-valuemin="0"
       role="progressbar"

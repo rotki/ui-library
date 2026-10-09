@@ -8,6 +8,7 @@ import { useTabIndicator } from '@/components/tabs/tabs/use-tab-indicator';
 import { useTabKeyboard } from '@/components/tabs/tabs/use-tab-keyboard';
 import { useTabRouting } from '@/components/tabs/tabs/use-tab-routing';
 import { useTabScroll } from '@/components/tabs/tabs/use-tab-scroll';
+import { useKeyboardScroll } from '@/composables/keyboard-scroll';
 import { tv } from '@/utils/tv';
 
 type ChildNode = VNode & { props: Record<string, any> };
@@ -53,6 +54,7 @@ const {
 const internalModelValue = ref<string | number>();
 const bar = useTemplateRef<HTMLDivElement>('bar');
 const wrapper = useTemplateRef<HTMLDivElement>('wrapper');
+const barTabindex = useKeyboardScroll(bar);
 
 /**
  * The bar. The underline variant draws its 1px track as a `before` line along
@@ -63,7 +65,8 @@ const tabs = tv({
   slots: {
     root: '',
     arrow: 'flex shrink-0 items-center justify-center',
-    bar: 'no-scrollbar relative max-h-full overflow-auto',
+    // a tab stop only when it scrolls with every tab disabled (useKeyboardScroll)
+    bar: 'no-scrollbar relative max-h-full overflow-auto outline-hidden focus-visible:focus-ring focus-visible:-outline-offset-2',
     wrapper: 'inline-flex max-w-none',
     indicator: 'pointer-events-none absolute',
   },
@@ -279,6 +282,7 @@ onMounted(() => {
         icon
         size="sm"
         tabindex="-1"
+        aria-label="Scroll tabs back"
         :disabled="prevArrowDisabled"
         @click="onPrevSliderClick()"
       >
@@ -288,6 +292,7 @@ onMounted(() => {
     <div
       ref="bar"
       :class="ui.bar()"
+      :tabindex="barTabindex"
     >
       <span
         v-if="indicatorStyle"
@@ -321,6 +326,7 @@ onMounted(() => {
         icon
         size="sm"
         tabindex="-1"
+        aria-label="Scroll tabs forward"
         :disabled="nextArrowDisabled"
         @click="onNextSliderClick()"
       >

@@ -91,7 +91,8 @@ export const buttonStyles = tv({
       false: {},
     },
     loading: {
-      true: { root: 'relative !cursor-progress space-x-0 [&>*:not([data-spinner])]:opacity-0 [&>*:not([data-spinner])]:invisible' },
+      // transparent rather than invisible, which would take the label out of the accessibility tree
+      true: { root: 'relative !cursor-progress space-x-0 [&>*:not([data-spinner])]:opacity-0' },
       false: {},
     },
     hideFocusIndicator: {

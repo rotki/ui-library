@@ -176,8 +176,9 @@ function onError(event: Event): void {
   <span
     :class="ui.root()"
     :style="rootStyle"
-    :role="displayMode === 'image' ? undefined : 'img'"
+    :role="ariaLabel ? 'img' : undefined"
     :aria-label="ariaLabel"
+    :aria-hidden="displayMode !== 'image' && decorative ? 'true' : undefined"
     :data-id="$attrs['data-id'] ?? 'avatar-root'"
     :data-size="typeof resolvedSize === 'string' ? resolvedSize : undefined"
     :data-variant="resolvedVariant"

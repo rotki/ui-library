@@ -29,6 +29,7 @@ function render(args: ComponentPropsAndSlots<typeof RuiSwitch>) {
 const meta = preview.meta({
   args: {
     errorMessages: [],
+    label: 'Label',
     successMessages: [],
   },
   argTypes: {
@@ -69,7 +70,7 @@ export const Checked = meta.story({
 
 export const Small = meta.story({
   args: {
-    label: 'asdfa',
+    label: 'Small',
     size: 'sm',
   },
 });

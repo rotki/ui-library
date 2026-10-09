@@ -237,6 +237,17 @@ function getAriaSort(column: TableColumn<T>): 'ascending' | 'descending' | 'none
     return 'descending';
   return 'none';
 }
+
+/**
+ * The name a screen reader hears for a column drawn without a label, since an empty header cell
+ * leaves the column unnamed: the built-in expand column is "Details", any other its key.
+ *
+ * @param column - the column whose label is empty
+ * @returns Details or the column key
+ */
+function getHiddenHeaderText(column: TableColumn<T>): string {
+  return column.key === 'expand' ? 'Details' : column.key.toString();
+}
 </script>
 
 <template>
@@ -259,6 +270,7 @@ function getAriaSort(column: TableColumn<T>): 'ascending' | 'descending' | 'none
           :size="dense ? 'sm' : undefined"
           color="primary"
           data-id="table-toggle-check-all"
+          aria-label="Select all rows"
           hide-details
           @update:model-value="onToggleAll($event)"
         />
@@ -348,7 +360,13 @@ function getAriaSort(column: TableColumn<T>): 'ascending' | 'descending' | 'none
               :name="`header.text.${column.key.toString()}`"
               :column="column"
             >
-              {{ column[columnAttr] }}
+              <template v-if="column[columnAttr]">{{ column[columnAttr] }}</template>
+              <span
+                v-else
+                class="sr-only"
+              >
+                {{ getHiddenHeaderText(column) }}
+              </span>
             </slot>
           </span>
         </slot>

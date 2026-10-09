@@ -76,6 +76,7 @@ const groupParts = computed<{ key: string; label: string; value: string }[]>(() 
           <RuiExpandButton
             v-if="groupExpandButtonPosition === GroupExpandButtonPosition.start"
             class="-ml-1.5"
+            aria-label="Expand group"
             :expanded="isOpen"
             @click="onToggleExpandGroup(row.group, row.identifier)"
           />
@@ -108,6 +109,7 @@ const groupParts = computed<{ key: string; label: string; value: string }[]>(() 
               variant="text"
               icon
               data-id="group-copy-button"
+              aria-label="Copy group"
               @click="onCopyGroup(row)"
             >
               <RuiIcon
@@ -127,6 +129,7 @@ const groupParts = computed<{ key: string; label: string; value: string }[]>(() 
                 variant="text"
                 icon
                 data-id="group-ungroup-button"
+                aria-label="Ungroup"
                 @click="onUngroup()"
               >
                 <RuiIcon
@@ -140,6 +143,7 @@ const groupParts = computed<{ key: string; label: string; value: string }[]>(() 
           <RuiExpandButton
             v-if="groupExpandButtonPosition === GroupExpandButtonPosition.end"
             class="-mr-1.5"
+            aria-label="Expand group"
             :expanded="isOpen"
             @click="onToggleExpandGroup(row.group, row.identifier)"
           />
