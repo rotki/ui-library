@@ -37,7 +37,7 @@ const slots = useSlots();
 
 const buttonGroupStyles = tv({
   slots: {
-    root: 'inline-flex rounded-sm between:border-l between:border-r-0 between:border-rui-grey-400 outline-solid outline-1 outline-transparent -outline-offset-1',
+    root: 'inline-flex rounded-rui-control between:border-l between:border-r-0 between:border-rui-grey-400 outline-solid outline-1 outline-transparent -outline-offset-1',
     button: 'border-0 outline-0 focus:z-1',
   },
   variants: {
@@ -69,7 +69,7 @@ const buttonGroupStyles = tv({
       default: {},
       outlined: {
         // Material's 23% neutral edge, matching RuiButton's colourless outlined treatment
-        root: 'outline-black/23 between:border-black/23 dark:outline-white/23 dark:between:border-white/23',
+        root: 'outline-rui-outline between:border-rui-outline',
       },
       text: {},
     },
@@ -84,8 +84,8 @@ const buttonGroupStyles = tv({
   },
   compoundVariants: [
     // First/last child rounding when not separated (! needed to override RuiButton's CSS module border-radius)
-    { gap: 'none', vertical: false, class: { button: 'first:rounded-l! last:rounded-r!' } },
-    { gap: 'none', vertical: true, class: { button: 'first:rounded-t! last:rounded-b!' } },
+    { gap: 'none', vertical: false, class: { button: 'first:rounded-l-rui-control! last:rounded-r-rui-control!' } },
+    { gap: 'none', vertical: true, class: { button: 'first:rounded-t-rui-control! last:rounded-b-rui-control!' } },
 
     // Color dividers (default variant)
     { color: 'primary', class: { root: 'between:border-rui-primary-darker' } },

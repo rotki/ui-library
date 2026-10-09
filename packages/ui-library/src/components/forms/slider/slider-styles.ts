@@ -21,7 +21,7 @@ export const HIGHLIGHT_COLOR_MAP: Record<ContextColorsType, string> = {
 };
 
 /** Default highlighted tick color (non-big-tick) */
-export const HIGHLIGHT_DEFAULT = 'bg-rui-grey-100 dark:bg-[#121212]';
+export const HIGHLIGHT_DEFAULT = 'bg-rui-grey-100 dark:bg-rui-dark-background';
 
 export const sliderStyles = tv({
   slots: {
@@ -45,7 +45,7 @@ export const sliderStyles = tv({
       'invisible opacity-0',
       'absolute -mt-7 transition-all ease-linear duration-75 -translate-x-1/2',
       'px-2 py-1 text-xs font-normal',
-      'bg-rui-grey-700/90 text-white rounded-sm shadow-sm',
+      'bg-rui-grey-700/90 text-white rounded-rui-control shadow-rui-tooltip',
     ].join(' '),
   },
   variants: {

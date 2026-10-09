@@ -11,6 +11,7 @@
     ".storybook/**/*",
     "scripts/**/*",
     "src/consts/colors.ts",
+    "src/consts/tokens.ts",
     "src/consts/typography.ts",
     "src/theme/theme-css.ts",
     "src/types/icons.ts",

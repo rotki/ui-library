@@ -110,14 +110,14 @@ describe('components/cards/RuiCard.vue', () => {
       },
     });
 
-    expect(wrapper.classes()).toContain('rounded-[.5rem]');
+    expect(wrapper.classes()).toContain('rounded-rui-card');
 
     await wrapper.setProps({ rounded: 'sm' });
-    expect(wrapper.classes()).toContain('rounded-[.25rem]');
-    expect(wrapper.classes()).not.toContain('rounded-[.5rem]');
+    expect(wrapper.classes()).toContain('rounded-rui-sm');
+    expect(wrapper.classes()).not.toContain('rounded-rui-card');
 
     await wrapper.setProps({ rounded: 'lg' });
-    expect(wrapper.classes()).toContain('rounded-2xl');
+    expect(wrapper.classes()).toContain('rounded-rui-lg');
   });
 
   it('should apply dense class', async () => {

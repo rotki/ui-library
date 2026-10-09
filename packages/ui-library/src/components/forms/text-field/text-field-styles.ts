@@ -52,7 +52,7 @@ export const textFieldStyles = tv({
     fieldset: '',
     legend: '',
     // No pt-* here — each variant sets its own padding-top
-    wrapper: 'relative w-full flex items-center rounded-sm bg-white dark:bg-transparent',
+    wrapper: 'relative w-full flex items-center rounded-rui-control bg-white dark:bg-transparent',
     input: [
       'peer leading-6 text-rui-text w-full bg-transparent pr-4',
       'outline-0 outline-hidden transition-all',
@@ -88,7 +88,7 @@ export const textFieldStyles = tv({
       },
       filled: {
         input: 'px-4 py-4',
-        label: `flex leading-[3.5] [--x-padding:1rem] rounded-t-sm bg-black/[0.06] dark:bg-white/[0.09] ${underlinePseudo}`,
+        label: `flex leading-[3.5] [--x-padding:1rem] rounded-t-rui-control bg-black/[0.06] dark:bg-white/[0.09] ${underlinePseudo}`,
         prepend: 'pl-3',
         append: 'pr-3',
       },

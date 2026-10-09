@@ -94,6 +94,15 @@ describe('tv', () => {
       expect(button({ class: 'px-8' })).toBe('py-2 px-8');
     });
 
+    it('should merge the role tokens with the scale they stand in for', () => {
+      expect(tv({ base: 'rounded-rui-control rounded-full' })()).toBe('rounded-full');
+      expect(tv({ base: 'rounded-t-rui-control rounded-t-none' })()).toBe('rounded-t-none');
+      expect(tv({ base: 'shadow-rui-menu shadow-2' })()).toBe('shadow-2');
+      expect(tv({ base: 'shadow-2 shadow-rui-menu' })()).toBe('shadow-rui-menu');
+      expect(tv({ base: 'bg-rui-surface bg-white' })()).toBe('bg-white');
+      expect(tv({ base: 'border-rui-divider border-rui-primary' })()).toBe('border-rui-primary');
+    });
+
     it('should let a slash opacity colour replace the plain one', () => {
       expect(tv({ base: 'bg-rui-primary bg-rui-primary/40' })()).toBe('bg-rui-primary/40');
       expect(tv({ base: 'ring-2 ring-rui-primary/50' })()).toBe('ring-2 ring-rui-primary/50');

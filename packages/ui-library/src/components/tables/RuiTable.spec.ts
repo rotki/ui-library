@@ -45,14 +45,14 @@ describe('components/tables/RuiTable.vue', () => {
     wrapper = createWrapper();
 
     expect(wrapper.classes()).toContain('border');
-    expect(wrapper.classes()).toContain('rounded-md');
+    expect(wrapper.classes()).toContain('rounded-rui-panel');
   });
 
   it('should drop the border in the default variant', () => {
     wrapper = createWrapper({ props: { variant: 'default' } });
 
     expect(wrapper.classes()).not.toContain('border');
-    expect(wrapper.classes()).not.toContain('rounded-md');
+    expect(wrapper.classes()).not.toContain('rounded-rui-panel');
   });
 
   it('should tighten the cell padding when dense', () => {

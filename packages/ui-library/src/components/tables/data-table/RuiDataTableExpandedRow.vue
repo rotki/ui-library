@@ -18,7 +18,7 @@ const { classes, colspan, isMobile } = useDataTableStyling();
  * the parent card's flattened bottom edge is the divider, and `border-b!`
  * defeats the `divide-y-0` on the mobile tbody.
  */
-const mobileExpandedClass = 'block border-x border-b! border-black/12 dark:border-white/12 rounded-b-lg mb-3 overflow-hidden';
+const mobileExpandedClass = 'block border-x border-b! border-rui-divider rounded-b-rui-card mb-3 overflow-hidden';
 
 /**
  * Caps the panel to the table's visible width, less the cell's 16px sides, and

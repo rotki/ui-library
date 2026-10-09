@@ -50,9 +50,8 @@ export const textInputBase = tv({
     label: 'text-rui-text-secondary transition-all duration-75',
     fieldset: [
       'absolute w-full min-w-0 h-[calc(100%+0.5rem)] top-0 left-0',
-      'rounded-sm pointer-events-none px-2 transition-all -mt-2',
-      'border border-black/[0.23]',
-      'dark:border-white/[0.23]',
+      'rounded-rui-control pointer-events-none px-2 transition-all -mt-2',
+      'border border-rui-outline',
       // translateZ(0) promotes this to its own layer, whose raster snaps to integer pixels
       'transform-gpu',
     ].join(' '),
@@ -71,7 +70,7 @@ export const textInputBase = tv({
     },
     disabled: {
       true: {
-        fieldset: '!border-dotted !border-black/[0.23] dark:!border-white/[0.23]',
+        fieldset: '!border-dotted !border-rui-outline',
         label: 'text-rui-text-disabled',
       },
     },
@@ -143,7 +142,7 @@ export const activatorStyles = tv({
     activator: [
       'group relative inline-flex items-center w-full',
       'outline-hidden focus:outline-hidden focus-within:outline-hidden cursor-pointer',
-      'min-h-14 pl-4 py-2 pr-8 rounded-sm',
+      'min-h-14 pl-4 py-2 pr-8 rounded-rui-control',
       'm-0 transition-all text-body-1 text-left',
       'dark:text-rui-text',
     ].join(' '),
@@ -173,13 +172,13 @@ export const activatorStyles = tv({
     },
     readonly: {
       true: {
-        activator: 'opacity-80 pointer-events-none cursor-default bg-gray-50 dark:bg-white/10',
+        activator: 'opacity-80 pointer-events-none cursor-default bg-rui-neutral-50 dark:bg-white/10',
       },
     },
     filled: {
       true: {
         activator: [
-          '!rounded-t !rounded-b-none !bg-black/[0.06]',
+          '!rounded-t-rui-control !rounded-b-none !bg-black/[0.06]',
           '!hover:bg-black/[0.09] !focus-within:bg-black/[0.09]',
           'dark:!bg-white/[0.09]',
           'dark:!hover:bg-white/[0.13] dark:!focus-within:bg-white/[0.13]',
@@ -263,7 +262,7 @@ export const activatorStyles = tv({
 
     // Outlined + disabled → dotted fieldset
     { outlined: true, disabled: true, class: {
-      fieldset: '!border-dotted !border-black/[0.23] dark:!border-white/[0.23]',
+      fieldset: '!border-dotted !border-rui-outline',
     } },
 
     // Float + opened → label color

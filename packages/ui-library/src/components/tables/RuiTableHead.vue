@@ -119,7 +119,7 @@ const emit = defineEmits<{
 
 const tableHeadStyles = tv({
   slots: {
-    thead: 'between:border-t between:border-b-0 between:border-black/12 dark:between:border-white/12',
+    thead: 'between:border-t between:border-b-0 between:border-rui-divider',
     checkbox: 'px-2 w-14.5 max-w-14.5 [&_label]:ml-0',
     th: '[:where(&)]:px-4',
     // labels read as secondary to the data; the sorted column's label steps up to primary
@@ -138,7 +138,7 @@ const tableHeadStyles = tv({
       sticky: { thead: 'top-0 z-10 absolute' },
       fixed: {
         thead: 'top-0 z-10 fixed',
-        th: 'bg-white dark:bg-[#121212] border-b border-b-black/12 dark:border-b-white/12',
+        th: 'bg-rui-background border-b border-b-rui-divider',
       },
     },
     // a fixed height evens out rows with and without sort buttons; `:where()` lets a column's `class` win

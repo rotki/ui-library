@@ -40,7 +40,7 @@ const startYear = ref<number>(viewYear - 6);
 const months = getShortMonthNames();
 const calendarState = inject<RuiCalendarState>(CalendarStateSymbol) as RuiCalendarState;
 
-const navButtonClass = 'p-1 rounded-full text-gray-500 hover:text-rui-primary hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-rui-primary';
+const navButtonClass = 'p-1 rounded-full text-rui-neutral-500 hover:text-rui-primary hover:bg-rui-neutral-100 dark:text-rui-neutral-400 dark:hover:bg-rui-neutral-600 dark:hover:text-rui-primary';
 
 const cellButton = tv({
   base: 'h-9 w-full flex items-center justify-center text-sm font-medium rounded-md transition-colors duration-150 ease-in-out border-none outline-hidden cursor-pointer focus:ring-2 focus:ring-rui-primary/50',
@@ -49,11 +49,11 @@ const cellButton = tv({
       true: 'bg-rui-primary text-white hover:bg-rui-primary-darker active:bg-rui-primary-darker dark:bg-rui-primary dark:text-white dark:hover:bg-rui-primary-darker',
     },
     inRange: {
-      true: 'text-gray-700 bg-transparent hover:bg-gray-100 active:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700 dark:active:bg-gray-600',
-      false: 'opacity-50 cursor-not-allowed bg-transparent hover:bg-transparent active:bg-transparent dark:hover:bg-transparent dark:active:bg-transparent pointer-events-none text-gray-400 dark:text-gray-600',
+      true: 'text-rui-neutral-700 bg-transparent hover:bg-rui-neutral-100 active:bg-rui-neutral-200 dark:text-rui-neutral-300 dark:hover:bg-rui-neutral-700 dark:active:bg-rui-neutral-600',
+      false: 'opacity-50 cursor-not-allowed bg-transparent hover:bg-transparent active:bg-transparent dark:hover:bg-transparent dark:active:bg-transparent pointer-events-none text-rui-neutral-400 dark:text-rui-neutral-600',
     },
     selectedOutOfRange: {
-      true: 'bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400',
+      true: 'bg-rui-neutral-300 text-rui-neutral-500 dark:bg-rui-neutral-600 dark:text-rui-neutral-400',
     },
   },
 });
@@ -240,7 +240,7 @@ watch(
     :options="MENU_OPTIONS"
   >
     <div class="w-64 shadow-lg overflow-hidden">
-      <div class="flex items-center justify-center p-1 font-medium text-gray-800 dark:text-gray-200 border-b border-rui-grey-200 dark:border-rui-grey-800 cursor-pointer hover:bg-rui-grey-100 dark:hover:bg-rui-grey-800">
+      <div class="flex items-center justify-center p-1 font-medium text-rui-neutral-800 dark:text-rui-neutral-200 border-b border-rui-grey-200 dark:border-rui-grey-800 cursor-pointer hover:bg-rui-grey-100 dark:hover:bg-rui-grey-800">
         <RuiButton
           type="button"
           :class="navButtonClass"

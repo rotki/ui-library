@@ -52,7 +52,7 @@ export const categoryPickerActivatorStyles = tv({
  */
 export const categoryPickerStyles = tv({
   slots: {
-    root: 'flex flex-col min-w-0 max-h-[var(--rui-floating-max-height,60vh)] bg-white dark:bg-rui-grey-900 rounded-md overflow-hidden',
+    root: 'flex flex-col min-w-0 max-h-[var(--rui-floating-max-height,60vh)] bg-white dark:bg-rui-grey-900 rounded-rui-panel overflow-hidden',
     header: 'flex flex-col gap-3 p-4 border-b border-rui-grey-200 dark:border-rui-grey-800',
     title: 'text-h6 text-rui-text',
     body: 'grid min-h-0 flex-1',

@@ -68,7 +68,7 @@ const activatorAttrs: { onClick: () => void } = {
 };
 
 const drawer = tv({
-  base: 'transition-[transform,width] duration-200 ease-in-out top-0 h-full fixed text-rui-text bg-white dark:bg-[#363636]',
+  base: 'transition-[transform,width] duration-200 ease-in-out top-0 h-full fixed text-rui-text bg-rui-overlay',
   variants: {
     position: {
       left: 'left-0',
@@ -108,7 +108,7 @@ function rootClass(attrsClass: ClassValue): string {
     mini: miniVariant,
     withOverlay: overlay,
     class: cn([
-      temporary && modelValue.value && 'shadow-5',
+      temporary && modelValue.value && 'shadow-rui-drawer',
       classNames?.content ?? contentClass,
       classNames?.root,
       attrsClass,

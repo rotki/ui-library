@@ -1859,7 +1859,7 @@ describe('components/tables/RuiDataTable.vue', () => {
       });
 
       const wrapperEl = wrapper.find('div[data-id="table-wrapper"]');
-      expect(wrapperEl.classes()).toContain('rounded-[.25rem]');
+      expect(wrapperEl.classes()).toContain('rounded-rui-sm');
     });
 
     it('should apply rounded lg variant to wrapper', () => {
@@ -1873,7 +1873,7 @@ describe('components/tables/RuiDataTable.vue', () => {
       });
 
       const wrapperEl = wrapper.find('div[data-id="table-wrapper"]');
-      expect(wrapperEl.classes()).toContain('rounded-[1rem]');
+      expect(wrapperEl.classes()).toContain('rounded-rui-lg');
     });
 
     it('should apply itemClass as string to rows', () => {

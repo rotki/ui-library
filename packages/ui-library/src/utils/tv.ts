@@ -14,6 +14,7 @@
 import type { VueClassValue } from '@/types/class-value';
 import { createTV } from 'tailwind-variants';
 import { type ClassValue, normalizeClass } from 'vue';
+import { radiusRoles, shadowRoles } from '@/consts/tokens';
 
 const isAny: (v: string) => boolean = () => true;
 
@@ -22,6 +23,11 @@ export const tv = /* #__PURE__ */ createTV({
   twMergeConfig: {
     // `extend` appends to the built-in groups, which is what the flat form these sat in folded into
     extend: {
+      // the role tokens, so `rounded-rui-control` replaces `rounded-full` and `shadow-rui-menu` replaces `shadow-2`
+      theme: {
+        radius: [...radiusRoles.map(role => `rui-${role}`)],
+        shadow: [...shadowRoles.map(role => `rui-${role}`), ...Array.from({ length: 24 }, (_, i) => `${i + 1}`)],
+      },
       classGroups: {
         // `text-rui-*` is a text colour, so the merger stops classifying it as a font size like the typography utilities below
         'text-color': [{ 'text-rui': [isAny] }],

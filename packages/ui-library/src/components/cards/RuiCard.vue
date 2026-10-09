@@ -51,7 +51,7 @@ const slots = defineSlots<{
 
 const card = tv({
   slots: {
-    root: 'flex flex-col h-full w-full bg-white dark:bg-[#1E1E1E]',
+    root: 'flex flex-col h-full w-full bg-rui-surface',
     image: 'overflow-hidden',
     content: 'text-body-1 text-rui-light-text dark:text-rui-dark-text overflow-y-auto',
     footer: 'flex between:ml-2 between:mr-0 items-center justify-start mt-auto',
@@ -59,15 +59,15 @@ const card = tv({
   variants: {
     variant: {
       flat: { root: '' },
-      outlined: { root: 'border border-black/12 dark:border-white/12' },
+      outlined: { root: 'border border-rui-divider' },
     },
     rounded: {
-      sm: { root: 'rounded-[.25rem]', image: 'rounded-t-[.25rem]' },
-      md: { root: 'rounded-[.5rem]', image: 'rounded-t-[.5rem]' },
-      lg: { root: 'rounded-2xl', image: 'rounded-t-2xl' },
+      sm: { root: 'rounded-rui-sm', image: 'rounded-t-rui-sm' },
+      md: { root: 'rounded-rui-card', image: 'rounded-t-rui-card' },
+      lg: { root: 'rounded-rui-lg', image: 'rounded-t-rui-lg' },
     },
     divide: {
-      true: { root: 'between:border-t between:border-b-0 between:border-black/12 dark:between:border-white/12' },
+      true: { root: 'between:border-t between:border-b-0 between:border-rui-divider' },
     },
     padding: {
       none: { content: 'p-0' },

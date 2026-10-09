@@ -214,12 +214,12 @@ describe('components/time-picker/RuiTimePicker.vue', () => {
       },
     });
 
-    // Default: bordered (adds rounded-md shadow-sm border classes)
+    // Default: bordered (adds the panel radius, a shadow and a border)
     const root = wrapper.find('[role="group"]');
-    expect(root.classes()).toContain('rounded-md');
+    expect(root.classes()).toContain('rounded-rui-panel');
 
     await wrapper.setProps({ borderless: true });
-    expect(root.classes()).not.toContain('rounded-md');
+    expect(root.classes()).not.toContain('rounded-rui-panel');
   });
 
   it('should select time up to milliseconds and emit correct values', async () => {

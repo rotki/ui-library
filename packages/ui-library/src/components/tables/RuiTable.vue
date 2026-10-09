@@ -94,7 +94,7 @@ const tableStyles = tv({
     variant: {
       default: {},
       outlined: {
-        root: 'border rounded-md border-rui-grey-200 dark:border-rui-grey-800',
+        root: 'border rounded-rui-panel border-rui-grey-200 dark:border-rui-grey-800',
       },
     },
     dense: {

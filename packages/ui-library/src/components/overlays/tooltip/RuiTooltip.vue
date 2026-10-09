@@ -132,7 +132,7 @@ defineExpose({
           <div
             v-if="open"
             key="tooltip"
-            class="px-2 py-2 text-xs font-normal bg-rui-grey-700/90 text-white rounded-sm shadow-sm"
+            class="px-2 py-2 text-xs font-normal bg-rui-grey-700/90 text-white rounded-rui-control shadow-rui-tooltip"
             data-id="content"
             @mouseover="persistOnTooltipHover && onOpen()"
             @mouseleave="persistOnTooltipHover && onClose()"

@@ -19,6 +19,7 @@
     "**/*.config.ts",
     ".storybook/",
     "scripts/",
+    "src/theme/theme-css.ts",
     "src/**/__tests__/**/*"
   ],
   "tsc-alias": {

@@ -78,7 +78,7 @@ const badgeStyles = tv({
   },
   compoundVariants: [
     // Dot default color
-    { dot: true, color: 'default', class: { badge: 'bg-gray-500' } },
+    { dot: true, color: 'default', class: { badge: 'bg-rui-neutral-500' } },
 
     // Dot sizes (smaller than normal badge)
     { dot: true, size: 'sm', class: { badge: 'min-w-1.5 min-h-1.5' } },

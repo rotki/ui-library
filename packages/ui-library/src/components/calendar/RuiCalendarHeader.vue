@@ -33,7 +33,7 @@ const anchorEl = ref<HTMLElement>();
 
 const calendarState = inject<RuiCalendarState>(CalendarStateSymbol) as RuiCalendarState;
 
-const navButtonClass = 'p-1 rounded-full text-gray-500 hover:text-rui-primary hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-rui-primary';
+const navButtonClass = 'p-1 rounded-full text-rui-neutral-500 hover:text-rui-primary hover:bg-rui-neutral-100 dark:text-rui-neutral-400 dark:hover:bg-rui-neutral-600 dark:hover:text-rui-primary';
 
 const canGoToNext = computed<boolean>(() => {
   const { maxDate } = calendarState;
@@ -83,7 +83,7 @@ function handleDateSelection(selection: MonthYearSelection): void {
     </RuiButton>
 
     <h3
-      class="font-medium text-gray-800 dark:text-gray-200 flex items-center cursor-pointer pl-8"
+      class="font-medium text-rui-neutral-800 dark:text-rui-neutral-200 flex items-center cursor-pointer pl-8"
       data-id="header-title"
       @click.stop="handleTitleClick($event)"
     >

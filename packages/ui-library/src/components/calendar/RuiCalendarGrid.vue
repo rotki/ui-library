@@ -44,8 +44,8 @@ const dayButton = tv({
       true: 'bg-rui-primary text-white hover:bg-rui-primary/90 dark:hover:bg-rui-primary/90',
     },
     currentMonth: {
-      true: 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700',
-      false: 'text-gray-400 dark:text-gray-600',
+      true: 'text-rui-neutral-700 hover:bg-rui-neutral-100 dark:text-rui-neutral-300 dark:hover:bg-rui-neutral-700',
+      false: 'text-rui-neutral-400 dark:text-rui-neutral-600',
     },
     inRange: {
       false: 'opacity-50 cursor-not-allowed hover:bg-transparent',
@@ -320,7 +320,7 @@ watch(
           v-for="day in daysOfWeek"
           :key="day"
           role="columnheader"
-          class="py-2 pb-4 text-xs font-medium text-center text-gray-500 dark:text-gray-400"
+          class="py-2 pb-4 text-xs font-medium text-center text-rui-neutral-500 dark:text-rui-neutral-400"
         >
           {{ day }}
         </span>

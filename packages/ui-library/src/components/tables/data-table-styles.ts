@@ -3,10 +3,10 @@ import { tv } from '@/utils/tv';
 export const dataTableStyles = tv({
   slots: {
     // `clip`, not `hidden`: a hidden-overflow flex item may shrink below its rows and hide them
-    wrapper: 'relative between:border-t between:border-b-0 between:border-black/12 dark:between:border-white/12 overflow-clip',
+    wrapper: 'relative between:border-t between:border-b-0 between:border-rui-divider overflow-clip',
     scroller: 'overflow-x-auto overflow-y-hidden [clip-path:inset(0_0_0_0)]',
-    table: 'min-w-full table-fixed between:border-t between:border-b-0 between:border-black/12 dark:between:border-white/12 whitespace-nowrap mx-auto my-0 max-w-fit relative border-black/12 dark:border-white/12',
-    tbody: 'between:border-t between:border-b-0 between:border-black/12 dark:between:border-white/12',
+    table: 'min-w-full table-fixed between:border-t between:border-b-0 between:border-rui-divider whitespace-nowrap mx-auto my-0 max-w-fit relative border-rui-divider',
+    tbody: 'between:border-t between:border-b-0 between:border-rui-divider',
     tr: 'hover:bg-black/[0.04] dark:hover:bg-white/[0.04]',
     td: '[:where(&)]:px-4 text-rui-text text-body-2 tabular-nums [text-wrap:initial]',
     checkbox: 'px-2 w-[3.625rem] max-w-[3.625rem] [&_label]:ml-0',
@@ -14,12 +14,12 @@ export const dataTableStyles = tv({
   },
   variants: {
     outlined: {
-      true: { wrapper: 'border border-black/[0.12] dark:border-white/[0.12]' },
+      true: { wrapper: 'border border-rui-divider' },
     },
     rounded: {
-      sm: { wrapper: 'rounded-[.25rem]' },
-      md: { wrapper: 'rounded-[.75rem]' },
-      lg: { wrapper: 'rounded-[1rem]' },
+      sm: { wrapper: 'rounded-rui-sm' },
+      md: { wrapper: 'rounded-rui-table' },
+      lg: { wrapper: 'rounded-rui-lg' },
     },
     dense: {
       true: {},

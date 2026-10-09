@@ -802,7 +802,7 @@ defineExpose({
         -->
         <div
           v-if="slots.footer"
-          class="bg-white dark:bg-rui-grey-900 border-t border-black/12 dark:border-white/12 pr-(--rui-scrollbar-gutter,15px) -mb-2"
+          class="bg-white dark:bg-rui-grey-900 border-t border-rui-divider pr-(--rui-scrollbar-gutter,15px) -mb-2"
           data-id="footer"
         >
           <slot name="footer" />

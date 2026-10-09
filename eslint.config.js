@@ -16,6 +16,27 @@ function tailwindRules(markers) {
   };
 }
 
+/*
+ * The library's colors, corners and shadows come from the theme tokens, so a
+ * restyle changes them in theme-css.ts and nowhere else. A one-off value in a
+ * component is the thing that would not follow.
+ */
+const tokenRule = ['error', {
+  restrict: [{
+    pattern: String.raw`^.*\[#[0-9a-fA-F]{3,8}\].*$`,
+    message: 'Use a theme color (bg-rui-surface, border-rui-divider, text-rui-text, ...) instead of a hex value.',
+  }, {
+    pattern: String.raw`^(.*:)?!?rounded(-[a-z]{1,2})?-\[.*$`,
+    message: 'Use a role radius (rounded-rui-control, -panel, -card, -table, -sm, -lg) instead of an arbitrary one.',
+  }, {
+    pattern: String.raw`^(.*:)?!?(bg|text|border(-[trblxyse])?|ring|outline|divide|fill|stroke|from|via|to|placeholder|shadow|accent|decoration|caret)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3}(/.*)?!?$`,
+    message: 'Use the theme palette (rui-neutral-*, rui-grey-*, rui-primary, ...) instead of Tailwind\'s own colors.',
+  }, {
+    pattern: String.raw`^(.*:)?!?shadow-\[.*$`,
+    message: 'Use an elevation (shadow-1 to shadow-24) or a role shadow (shadow-rui-menu, ...) instead of an arbitrary one.',
+  }],
+}];
+
 export default rotki({
   vue: true,
   typescript: true,
@@ -114,7 +135,10 @@ export default rotki({
   ignores: ['**/*.spec.ts', '**/__test__/**'],
   plugins: { 'better-tailwindcss': betterTailwind },
   settings: { 'better-tailwindcss': { entryPoint: 'packages/ui-library/.storybook/preview.css' } },
-  rules: tailwindRules(['^details$', '^rui-icon$', '^rui-time-picker-period$']),
+  rules: {
+    ...tailwindRules(['^details$', '^rui-icon$', '^rui-time-picker-period$']),
+    'better-tailwindcss/no-restricted-classes': tokenRule,
+  },
 }, {
   files: ['apps/example/src/**/*.{ts,vue}'],
   plugins: { 'better-tailwindcss': betterTailwind },

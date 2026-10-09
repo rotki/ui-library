@@ -45,7 +45,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
 
       const root = wrapper.find('div');
       expect(root.exists()).toBeTruthy();
-      expect(root.classes()).toContain('rounded-md');
+      expect(root.classes()).toContain('rounded-rui-panel');
       expect(root.classes()).toContain('border');
     });
 
@@ -57,7 +57,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
       });
 
       const root = wrapper.find('div');
-      expect(root.classes()).not.toContain('rounded-md');
+      expect(root.classes()).not.toContain('rounded-rui-panel');
       expect(root.classes()).not.toContain('border');
     });
 

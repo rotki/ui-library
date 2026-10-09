@@ -67,9 +67,9 @@ watchImmediate(modelValue, (display) => {
         role="alert"
         aria-live="polite"
         :class="rootStyle({ class: cn([$attrs.class, {
-          'bg-white dark:bg-[#363636]': !theme,
-          'bg-white text-rui-light-text': theme === 'light',
-          'bg-[#363636] text-rui-dark-text': theme === 'dark',
+          'bg-rui-overlay': !theme,
+          'bg-rui-light-overlay text-rui-light-text': theme === 'light',
+          'bg-rui-dark-overlay text-rui-dark-text': theme === 'dark',
         }]) })"
         :style="style"
         v-bind="{ ...$attrs, class: undefined }"

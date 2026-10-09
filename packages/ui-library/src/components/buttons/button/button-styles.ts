@@ -43,7 +43,7 @@ export const buttonStyles = tv({
     root: [
       'text-sm leading-5 font-medium outline-solid outline-1 outline-transparent -outline-offset-1',
       'flex items-center justify-center gap-x-2',
-      'px-4 py-1.5 rounded-sm transition-all',
+      'px-4 py-1.5 rounded-rui-control transition-all',
       '[--rui-icon-size:1.125rem]',
       'disabled:cursor-not-allowed',
       'focus-visible:!ring-2',
@@ -108,7 +108,7 @@ export const buttonStyles = tv({
     { color: 'grey', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-black/[.04] active:bg-black/10 dark:bg-transparent dark:active:bg-white/10 dark:hover:bg-white/[.04] dark:text-rui-text' } },
     { color: 'grey', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-black/10 dark:bg-white/30' } },
     // Material's 23% outline: at full strength a neutral edge reads as an error state next to the 50% context colours
-    { color: 'grey', variant: 'outlined', class: { root: 'outline-black/[0.23] dark:outline-white/[0.23]' } },
+    { color: 'grey', variant: 'outlined', class: { root: 'outline-rui-outline' } },
     { color: 'grey', variant: 'text', class: { root: 'text-rui-text-secondary' } },
 
     // Context colors: `dark:text-rui-<color>` beats the base variant's `dark:text-rui-text`, which is meant for filled buttons

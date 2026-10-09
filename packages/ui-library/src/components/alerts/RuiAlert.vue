@@ -42,7 +42,7 @@ defineSlots<{
 
 const alertStyles = tv({
   slots: {
-    root: 'px-4 py-2.5 rounded-sm flex between:ml-4 between:mr-0',
+    root: 'px-4 py-2.5 rounded-rui-control flex between:ml-4 between:mr-0',
     content: 'flex between:ml-3 between:mr-0 py-1 grow',
     icon: '',
     texts: 'between:mt-1 between:mb-0 grow',

@@ -526,7 +526,7 @@ provideDataTableContext<T, IdType>({
     data-id="table-wrapper"
   >
     <div
-      :class="stickyMobileToolbar ? 'sticky z-10 bg-white dark:bg-[#121212] pt-2' : 'contents'"
+      :class="stickyMobileToolbar ? 'sticky z-10 bg-rui-background pt-2' : 'contents'"
       :style="stickyMobileToolbar ? { top: `${stickyHeaderOffset ?? 0}px` } : undefined"
       data-id="table-mobile-toolbar-sticky"
     >

@@ -256,6 +256,17 @@
   --color-rui-blue-gray-a200: rgb(var(--rui-blue-gray-a200));
   --color-rui-blue-gray-a400: rgb(var(--rui-blue-gray-a400));
   --color-rui-blue-gray-a700: rgb(var(--rui-blue-gray-a700));
+  --color-rui-neutral-50: rgb(var(--rui-neutral-50));
+  --color-rui-neutral-100: rgb(var(--rui-neutral-100));
+  --color-rui-neutral-200: rgb(var(--rui-neutral-200));
+  --color-rui-neutral-300: rgb(var(--rui-neutral-300));
+  --color-rui-neutral-400: rgb(var(--rui-neutral-400));
+  --color-rui-neutral-500: rgb(var(--rui-neutral-500));
+  --color-rui-neutral-600: rgb(var(--rui-neutral-600));
+  --color-rui-neutral-700: rgb(var(--rui-neutral-700));
+  --color-rui-neutral-800: rgb(var(--rui-neutral-800));
+  --color-rui-neutral-900: rgb(var(--rui-neutral-900));
+  --color-rui-neutral-950: rgb(var(--rui-neutral-950));
   --color-rui-light-primary: rgb(var(--rui-light-primary-main));
   --color-rui-light-primary-darker: rgb(var(--rui-light-primary-darker));
   --color-rui-light-primary-lighter: rgb(var(--rui-light-primary-lighter));
@@ -319,9 +330,33 @@
   --color-rui-text: var(--rui-text-primary);
   --color-rui-text-secondary: var(--rui-text-secondary);
   --color-rui-text-disabled: var(--rui-text-disabled);
+  --color-rui-light-background: rgb(var(--rui-light-background));
+  --color-rui-light-surface: rgb(var(--rui-light-surface));
+  --color-rui-light-menu: rgb(var(--rui-light-menu));
+  --color-rui-light-overlay: rgb(var(--rui-light-overlay));
+  --color-rui-light-divider: var(--rui-light-divider);
+  --color-rui-light-outline: var(--rui-light-outline);
+  --color-rui-dark-background: rgb(var(--rui-dark-background));
+  --color-rui-dark-surface: rgb(var(--rui-dark-surface));
+  --color-rui-dark-menu: rgb(var(--rui-dark-menu));
+  --color-rui-dark-overlay: rgb(var(--rui-dark-overlay));
+  --color-rui-dark-divider: var(--rui-dark-divider);
+  --color-rui-dark-outline: var(--rui-dark-outline);
+  --color-rui-background: rgb(var(--rui-background));
+  --color-rui-surface: rgb(var(--rui-surface));
+  --color-rui-menu: rgb(var(--rui-menu));
+  --color-rui-overlay: rgb(var(--rui-overlay));
+  --color-rui-divider: var(--rui-divider);
+  --color-rui-outline: var(--rui-outline);
 }
 
 @theme {
+  --radius-rui-control: 0.25rem;
+  --radius-rui-panel: 0.375rem;
+  --radius-rui-card: 0.5rem;
+  --radius-rui-table: 0.75rem;
+  --radius-rui-sm: 0.25rem;
+  --radius-rui-lg: 1rem;
   --shadow-1: 0px 2px 1px -1px var(--rui-shadow-primary), 0px 1px 1px var(--rui-shadow-secondary), 0px 1px 3px var(--rui-shadow-tertiary);
   --shadow-2: 0px 3px 1px -2px var(--rui-shadow-primary), 0px 2px 2px var(--rui-shadow-secondary), 0px 1px 5px var(--rui-shadow-tertiary);
   --shadow-3: 0px 3px 3px -2px var(--rui-shadow-primary), 0px 3px 4px var(--rui-shadow-secondary), 0px 1px 8px var(--rui-shadow-tertiary);
@@ -346,6 +381,9 @@
   --shadow-22: 0px 10px 14px -6px var(--rui-shadow-primary), 0px 22px 35px 3px var(--rui-shadow-secondary), 0px 8px 42px 7px var(--rui-shadow-tertiary);
   --shadow-23: 0px 11px 14px -7px var(--rui-shadow-primary), 0px 23px 36px 3px var(--rui-shadow-secondary), 0px 9px 44px 8px var(--rui-shadow-tertiary);
   --shadow-24: 0px 11px 15px -7px var(--rui-shadow-primary), 0px 24px 38px 3px var(--rui-shadow-secondary), 0px 9px 46px 8px var(--rui-shadow-tertiary);
+  --shadow-rui-menu: 0px 5px 5px -3px var(--rui-shadow-primary), 0px 8px 10px 1px var(--rui-shadow-secondary), 0px 3px 14px 2px var(--rui-shadow-tertiary);
+  --shadow-rui-drawer: 0px 3px 5px -1px var(--rui-shadow-primary), 0px 5px 8px var(--rui-shadow-secondary), 0px 1px 14px var(--rui-shadow-tertiary);
+  --shadow-rui-tooltip: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
 }
 
 @utility border-default {

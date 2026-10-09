@@ -16,7 +16,7 @@ export const textAreaStyles = tv({
   slots: {
     fieldset: '',
     legend: '',
-    wrapper: 'relative w-full min-w-[12.5rem] flex items-start rounded-sm bg-white dark:bg-transparent',
+    wrapper: 'relative w-full min-w-[12.5rem] flex items-start rounded-rui-control bg-white dark:bg-transparent',
     inputWrapper: 'flex flex-1 overflow-hidden',
     textarea: [
       'peer leading-6 text-rui-text w-full bg-transparent pb-2 pt-0',
@@ -49,7 +49,7 @@ export const textAreaStyles = tv({
         inputWrapper: 'pt-4',
         textarea: 'px-4 [padding-right:calc(var(--x-padding,1rem)+var(--append-w,0px))]',
         textareaSizer: 'px-4',
-        label: `flex leading-[3.2] [--x-padding:1rem] rounded-t-sm bg-black/[0.06] dark:bg-white/[0.09] ${underlinePseudo}`,
+        label: `flex leading-[3.2] [--x-padding:1rem] rounded-t-rui-control bg-black/[0.06] dark:bg-white/[0.09] ${underlinePseudo}`,
         prepend: '!mr-0',
         append: '!ml-0',
       },

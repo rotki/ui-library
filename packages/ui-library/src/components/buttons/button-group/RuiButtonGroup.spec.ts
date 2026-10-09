@@ -59,13 +59,13 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
 
   it('should pass variant props', async () => {
     wrapper = createWrapper();
-    expectNotToHaveClass(wrapper.element, /outline-black/);
+    expectNotToHaveClass(wrapper.element, /outline-rui-outline/);
     await wrapper.setProps({ variant: 'outlined' });
-    expectToHaveClass(wrapper.element, /outline-black\/23/);
-    expectToHaveClass(wrapper.element, /between:border-black\/23/);
-    expectWrapperToHaveClass(wrapper, 'button', /outline-black\/\[0\.23\]/);
+    expectToHaveClass(wrapper.element, /outline-rui-outline/);
+    expectToHaveClass(wrapper.element, /between:border-rui-outline/);
+    expectWrapperToHaveClass(wrapper, 'button', /outline-rui-outline/);
     await wrapper.setProps({ variant: 'text' });
-    expectNotToHaveClass(wrapper.element, /outline-black/);
+    expectNotToHaveClass(wrapper.element, /outline-rui-outline/);
     expectWrapperToHaveClass(wrapper, 'button', /bg-transparent/);
   });
 
