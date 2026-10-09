@@ -8,8 +8,8 @@ export const dataTableStyles = tv({
     table: 'min-w-full table-fixed between:border-t between:border-b-0 between:border-rui-divider whitespace-nowrap mx-auto my-0 max-w-fit relative border-rui-divider',
     tbody: 'between:border-t between:border-b-0 between:border-rui-divider',
     tr: 'hover:bg-rui-hover',
-    // numbers line up in columns, and a slashed zero tells 0 from O in amounts and addresses
-    td: '[:where(&)]:px-4 text-rui-text text-body-2 tabular-nums slashed-zero [text-wrap:initial]',
+    // numbers line up in columns; no slashed zero, which in Inter reads as a second, monospace font beside zero-free values
+    td: '[:where(&)]:px-4 text-rui-text text-body-2 tabular-nums [text-wrap:initial]',
     checkbox: 'px-2 w-[3.625rem] max-w-[3.625rem] [&_label]:ml-0',
     tbodyLoader: 'text-center',
     pagination: '',

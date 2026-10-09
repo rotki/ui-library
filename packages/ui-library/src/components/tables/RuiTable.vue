@@ -83,8 +83,9 @@ const emptyProps = computed<TableEmpty>(() => (typeof empty === 'object' ? empty
 const tableStyles = tv({
   slots: {
     root: 'w-full overflow-y-auto',
+    // sets its own text color like RuiDataTable, rather than inheriting whatever the page sets
     table: [
-      'w-full',
+      'w-full text-rui-text',
       '[:where(&)_thead]:border-b [:where(&)_thead]:border-rui-divider',
       '[:where(&)_thead_th]:font-medium [:where(&)_thead_th]:text-rui-text-secondary [:where(&)_thead_th]:text-start',
       '[:where(&)_tbody_td]:border-b-0',

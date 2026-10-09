@@ -82,6 +82,17 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(wrapper.find('table tbody').exists()).toBeTruthy();
   });
 
+  it('should show a written column label as written, and title-case only labels made from row keys', () => {
+    wrapper = createWrapper({
+      props: { cols: [{ key: 'name', label: '% of net value' }], rowAttr: 'id', rows: data },
+    });
+    expect(wrapper.find('thead th').classes()).not.toContain('capitalize');
+    wrapper.unmount();
+
+    wrapper = createWrapper({ props: { rowAttr: 'id', rows: data } });
+    expect(wrapper.find('thead th').classes()).toContain('capitalize');
+  });
+
   it('should pass props correctly', async () => {
     wrapper = createWrapper({
       props: {
@@ -1950,6 +1961,9 @@ describe('components/tables/RuiDataTable.vue', () => {
       const content = loader.find('[data-id="table-loading"]');
       expect(content.classes()).toContain('min-h-56');
       expect(content.classes()).not.toContain('py-6');
+
+      // one loader at a time: no header bar over an empty table
+      expect(wrapper.find('[data-id="thead-loader"]').exists()).toBe(false);
     });
 
     it('should show progress bar when loading with data', async () => {

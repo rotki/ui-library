@@ -357,6 +357,9 @@ const {
 
 const noData = computed<boolean>(() => get(filtered).length === 0);
 
+// one loader at a time: the header bar marks a refetch over rows, and an empty table shows only its spinner row
+const headerLoading = computed<boolean>(() => loading && !get(noData));
+
 const showPagination = computed<boolean>(() => !!get(paginationData) && !hidePagination);
 
 /**
@@ -556,7 +559,7 @@ provideDataTableContext<T, IdType>({
       >
         <RuiTableHead
           v-if="!isMobile"
-          :loading="loading"
+          :loading="headerLoading"
           :indeterminate="indeterminate"
           :capitalize-headers="!cols"
           :colspan="colspan"
@@ -585,7 +588,7 @@ provideDataTableContext<T, IdType>({
         </RuiTableHead>
         <RuiTableHead
           v-if="stickyHeader && !isMobile"
-          :loading="loading"
+          :loading="headerLoading"
           :capitalize-headers="!cols"
           :colspan="colspan"
           :column-attr="columnAttr"

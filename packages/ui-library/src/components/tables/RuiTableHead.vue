@@ -129,6 +129,10 @@ const tableHeadStyles = tv({
     sortIcon: 'transition opacity-30 group-hover/sort:opacity-60 group-focus-visible/sort:opacity-60',
     // tucked against the arrow, closer than the button's gap
     sortPosition: 'text-[0.6875rem] leading-none font-semibold tabular-nums text-rui-text-secondary',
+    /*
+     * The row is always there and only its bar comes and goes: a collapsed-border table gives even a
+     * zero-height row half a pixel, so adding the row on load pushed the body down.
+     */
     loaderRow: 'border-none',
     progress: 'p-0 h-0',
     progressWrapper: 'h-0 -mt-1',
@@ -266,7 +270,8 @@ function getAriaSort(column: TableColumn<T>): 'ascending' | 'descending' | 'none
         :class="[
           ui.th({ class: getAlignClass(column.align) }),
           column.class,
-          { capitalize: !capitalizeHeaders },
+          // only labels the table made up from row keys; a label the consumer wrote is shown as written
+          { capitalize: capitalizeHeaders },
         ]"
         scope="col"
         :colspan="column.colspan ?? 1"
@@ -350,22 +355,25 @@ function getAriaSort(column: TableColumn<T>): 'ascending' | 'descending' | 'none
       </th>
     </tr>
     <tr
-      v-if="loading"
       :class="ui.loaderRow()"
-      data-id="thead-loader"
+      :data-id="loading ? 'thead-loader' : undefined"
+      :aria-hidden="loading ? undefined : 'true'"
     >
-      <th
+      <!-- a `td`, not a header cell, so it never counts as a column heading -->
+      <td
         :class="ui.progress()"
         :colspan="colspan"
-        scope="col"
       >
-        <div :class="ui.progressWrapper()">
+        <div
+          v-if="loading"
+          :class="ui.progressWrapper()"
+        >
           <RuiProgress
             color="primary"
             variant="indeterminate"
           />
         </div>
-      </th>
+      </td>
     </tr>
   </thead>
 </template>
