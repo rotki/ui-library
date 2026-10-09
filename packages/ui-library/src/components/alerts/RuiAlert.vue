@@ -42,7 +42,7 @@ defineSlots<{
 
 const alertStyles = tv({
   slots: {
-    root: 'px-4 py-2.5 rounded-rui-control flex between:ml-4 between:mr-0',
+    root: 'px-4 py-2.5 rounded-rui-panel flex between:ml-4 between:mr-0',
     content: 'flex between:ml-3 between:mr-0 py-1 grow',
     icon: '',
     texts: 'between:mt-1 between:mb-0 grow',
@@ -58,7 +58,7 @@ const alertStyles = tv({
         action: 'text-rui-dark-text!',
         close: 'text-rui-dark-text!',
       },
-      outlined: { root: 'border -m-px bg-white dark:bg-black' },
+      outlined: { root: 'border -m-px bg-transparent' },
     },
     /*
      * Each type names its color once, as `--rui-alert`, and the variants mix from it. The tints
@@ -76,20 +76,22 @@ const alertStyles = tv({
     },
   },
   compoundVariants: [
+    // A tint of the type's color with a hairline of it, which reads on any surface in either theme
     {
       variant: 'default',
-      class: { root: 'bg-[color-mix(in_srgb,white_90%,rgb(var(--rui-alert)))] dark:bg-[color-mix(in_srgb,black_90%,rgb(var(--rui-alert)))]' },
+      class: { root: 'border -m-px bg-[color-mix(in_srgb,rgb(var(--rui-alert))_8%,transparent)] dark:bg-[color-mix(in_srgb,rgb(var(--rui-alert))_12%,transparent)] border-[color-mix(in_srgb,rgb(var(--rui-alert))_25%,transparent)]' },
     },
     { variant: 'filled', class: { root: 'bg-[rgb(var(--rui-alert))]' } },
-    // Filled dark text override for warning/success/info
-    {
-      variant: 'filled',
-      type: ['warning', 'success', 'info'],
-      class: { root: 'dark:text-rui-light-text!' },
-    },
     { variant: 'outlined', class: { root: 'border-[rgb(var(--rui-alert))]' } },
   ],
   compoundSlots: [
+    // The pale dark-mode warning, success and info fills take dark text; on the slots, which set the light one
+    {
+      slots: ['icon', 'texts', 'action', 'close'],
+      variant: 'filled',
+      type: ['warning', 'success', 'info'],
+      class: 'dark:text-rui-light-text!',
+    },
     {
       slots: ['icon', 'texts', 'action', 'close'],
       variant: ['default', 'outlined'],

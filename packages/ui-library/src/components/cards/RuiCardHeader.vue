@@ -21,8 +21,9 @@ const slots = defineSlots<{
 const cardHeader = tv({
   slots: {
     root: 'flex',
-    prepend: 'rounded-full flex items-center justify-center text-white bg-rui-grey-400 dark:bg-rui-grey-700 dark:text-black/90 overflow-hidden',
-    header: 'text-rui-text dark:text-rui-dark-text',
+    prepend: 'rounded-full flex items-center justify-center bg-rui-neutral-200 text-rui-neutral-700 dark:bg-rui-neutral-700 dark:text-rui-neutral-200 overflow-hidden',
+    // one title style whether or not there is a prepend: a card title is a section heading, not a page title
+    header: 'text-base font-semibold text-rui-text dark:text-rui-dark-text',
   },
   variants: {
     dense: {
@@ -35,15 +36,11 @@ const cardHeader = tv({
         prepend: 'text-[1.25rem] w-10 h-10',
       },
     },
-    hasPrepend: {
-      true: { header: 'text-body-1' },
-      false: { header: 'text-h6' },
-    },
   },
-  defaultVariants: { dense: false, hasPrepend: false },
+  defaultVariants: { dense: false },
 });
 
-const ui = computed<ReturnType<typeof cardHeader>>(() => cardHeader({ dense, hasPrepend: !!slots.prepend }));
+const ui = computed<ReturnType<typeof cardHeader>>(() => cardHeader({ dense }));
 </script>
 
 <template>

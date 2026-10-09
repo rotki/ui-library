@@ -51,7 +51,7 @@ const card = tv({
   slots: {
     root: 'flex flex-col h-full w-full bg-rui-surface',
     image: 'overflow-hidden',
-    content: 'text-body-1 text-rui-light-text dark:text-rui-dark-text overflow-y-auto',
+    content: 'text-sm/6 text-rui-light-text dark:text-rui-dark-text overflow-y-auto',
     footer: 'flex between:ml-2 between:mr-0 items-center justify-start mt-auto',
   },
   variants: {
@@ -73,7 +73,8 @@ const card = tv({
       normal: { content: 'p-4' },
     },
     dense: {
-      true: { footer: 'py-1' },
+      // the footer keeps the content's side padding, so its buttons line up with the text above
+      true: { footer: 'p-3 pt-1' },
       false: { footer: 'p-4 pt-2' },
     },
   },

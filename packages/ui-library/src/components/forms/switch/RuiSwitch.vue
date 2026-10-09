@@ -73,14 +73,13 @@ const switchStyles = tv({
         toggle: 'size-3.5',
       },
     },
+    // a ring and the message below mark the state; a filled red or green track would read as "on"
     validation: {
       error: {
-        input: 'bg-rui-error!',
-        label: 'text-rui-error',
+        input: 'ring-1 ring-rui-error',
       },
       success: {
-        input: 'bg-rui-success!',
-        label: 'text-rui-success',
+        input: 'ring-1 ring-rui-success',
       },
     },
     color: {

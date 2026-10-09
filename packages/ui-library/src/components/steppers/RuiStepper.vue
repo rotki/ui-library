@@ -55,7 +55,7 @@ const stepper = tv({
     title: '',
     subtitle: '',
     label: 'flex flex-col items-start text-left ml-2',
-    divider: 'border-rui-grey-400',
+    divider: 'border-rui-outline',
   },
   variants: {
     orientation: {
@@ -74,7 +74,7 @@ const stepper = tv({
       [StepperState.inactive]: {
         step: 'text-rui-text-disabled',
         title: 'text-rui-text-secondary',
-        subtitle: 'text-rui-text',
+        subtitle: 'text-rui-text-disabled',
       },
       [StepperState.active]: {
         step: 'text-rui-text',

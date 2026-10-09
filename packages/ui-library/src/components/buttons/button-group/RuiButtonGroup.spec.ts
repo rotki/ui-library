@@ -35,25 +35,25 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
     expectToHaveClass(wrapper.element, /flex-col/);
   });
 
-  it('should pass color props', async () => {
+  it('should color the buttons and keep the filled group dividers neutral', async () => {
     wrapper = createWrapper({
       props: {
         color: 'primary',
       },
     });
-    expectToHaveClass(wrapper.element, /between:border-rui-primary/);
+    expectToHaveClass(wrapper.element, /^between:border-rui-outline$/);
     expectWrapperToHaveClass(wrapper, 'button', /bg-rui-primary/);
 
     await wrapper.setProps({ color: 'secondary' });
-    expectToHaveClass(wrapper.element, /between:border-rui-secondary/);
+    expectToHaveClass(wrapper.element, /^between:border-rui-outline$/);
     expectWrapperToHaveClass(wrapper, 'button', /bg-rui-secondary/);
 
     await wrapper.setProps({ color: 'error' });
-    expectToHaveClass(wrapper.element, /between:border-rui-error/);
+    expectToHaveClass(wrapper.element, /^between:border-rui-outline$/);
     expectWrapperToHaveClass(wrapper, 'button', /bg-rui-error/);
 
     await wrapper.setProps({ color: 'success' });
-    expectToHaveClass(wrapper.element, /between:border-rui-success/);
+    expectToHaveClass(wrapper.element, /^between:border-rui-outline$/);
     expectWrapperToHaveClass(wrapper, 'button', /bg-rui-success/);
   });
 

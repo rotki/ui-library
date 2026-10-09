@@ -87,14 +87,6 @@ const buttonGroupStyles = tv({
     { gap: 'none', vertical: false, class: { button: 'first:rounded-l-rui-control! last:rounded-r-rui-control!' } },
     { gap: 'none', vertical: true, class: { button: 'first:rounded-t-rui-control! last:rounded-b-rui-control!' } },
 
-    // Color dividers (default variant)
-    { color: 'primary', class: { root: 'between:border-rui-primary-darker' } },
-    { color: 'secondary', class: { root: 'between:border-rui-secondary-darker' } },
-    { color: 'error', class: { root: 'between:border-rui-error-darker' } },
-    { color: 'warning', class: { root: 'between:border-rui-warning-darker' } },
-    { color: 'info', class: { root: 'between:border-rui-info-darker' } },
-    { color: 'success', class: { root: 'between:border-rui-success-darker' } },
-
     // Color dividers for outlined/text (overrides darker dividers above)
     { color: 'primary', variant: ['outlined', 'text'], class: { root: 'between:border-rui-primary/50' } },
     { color: 'secondary', variant: ['outlined', 'text'], class: { root: 'between:border-rui-secondary/50' } },

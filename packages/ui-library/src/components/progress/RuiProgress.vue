@@ -59,7 +59,7 @@ function clampPercent(val: number | undefined): number {
 const progressStyles = tv({
   slots: {
     wrapper: '',
-    progressbar: 'w-full overflow-hidden relative',
+    progressbar: 'w-full overflow-hidden relative rounded-full',
     rail: 'w-full h-full',
     bar: 'transition-all duration-150 ease-in-out absolute left-0 top-0 h-full w-full',
     indeterminateBar: 'absolute left-0 top-0 h-full w-auto transition-transform duration-200 ease-linear origin-left animate-slide-rail',
@@ -68,7 +68,7 @@ const progressStyles = tv({
     circularContainer: 'inline-block relative',
     svg: 'block',
     circle: 'stroke-current',
-    circleTrack: 'stroke-current opacity-20',
+    circleTrack: '',
     label: 'text-rui-text',
   },
   variants: {
@@ -99,19 +99,18 @@ const progressStyles = tv({
   },
   compoundVariants: [
     // Linear label
-    { circular: false, hasLabel: true, class: { label: 'block text-sm ml-4' } },
+    { circular: false, hasLabel: true, class: { label: 'block text-sm ml-4 text-rui-text-secondary tabular-nums' } },
     // Circular label (overlays the circle, font size derived from `size`)
     { circular: true, hasLabel: true, class: { label: 'absolute inset-0 flex items-center justify-center leading-none tabular-nums whitespace-nowrap' } },
   ],
   compoundSlots: [
-    // Rail background (track behind the bar)
-    { slots: ['rail', 'bufferDots'], color: 'primary', class: 'bg-rui-primary/20 border-rui-primary/20' },
-    { slots: ['rail', 'bufferDots'], color: 'secondary', class: 'bg-rui-secondary/20 border-rui-secondary/20' },
-    { slots: ['rail', 'bufferDots'], color: 'error', class: 'bg-rui-error/20 border-rui-error/20' },
-    { slots: ['rail', 'bufferDots'], color: 'warning', class: 'bg-rui-warning/20 border-rui-warning/20' },
-    { slots: ['rail', 'bufferDots'], color: 'info', class: 'bg-rui-info/20 border-rui-info/20' },
-    { slots: ['rail', 'bufferDots'], color: 'success', class: 'bg-rui-success/20 border-rui-success/20' },
+    // Track behind the bar: one neutral for every named color, which reads in both themes where a tint of a dark hue vanished on a dark page
+    { slots: ['rail'], color: ['primary', 'secondary', 'error', 'warning', 'info', 'success'], class: 'bg-rui-neutral-200 dark:bg-rui-neutral-800' },
+    { slots: ['bufferDots'], color: ['primary', 'secondary', 'error', 'warning', 'info', 'success'], class: 'border-rui-neutral-200 dark:border-rui-neutral-800' },
+    { slots: ['circleTrack'], color: ['primary', 'secondary', 'error', 'warning', 'info', 'success'], class: 'stroke-rui-neutral-200 dark:stroke-rui-neutral-800' },
+    // `inherit` keeps a tint of whatever color it is given
     { slots: ['rail', 'bufferDots'], color: 'inherit', class: 'bg-current opacity-20 border-current' },
+    { slots: ['circleTrack'], color: 'inherit', class: 'stroke-current opacity-20' },
 
     // Bar fill (active progress)
     { slots: ['bar', 'indeterminateBar'], color: 'primary', class: 'bg-rui-primary' },

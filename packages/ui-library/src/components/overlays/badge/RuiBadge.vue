@@ -53,7 +53,7 @@ const badgeStyles = tv({
   },
   variants: {
     color: {
-      default: {},
+      default: { badge: 'bg-rui-neutral-200 dark:bg-rui-neutral-700' },
       primary: { badge: 'text-white bg-rui-primary' },
       secondary: { badge: 'text-white bg-rui-secondary' },
       error: { badge: 'text-white bg-rui-error' },
