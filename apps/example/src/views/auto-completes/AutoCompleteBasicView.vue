@@ -40,7 +40,6 @@ const hintValue = ref<number>();
         <RuiAutoComplete
           v-model="outlinedValue"
           clearable
-          variant="outlined"
           :options="options"
           key-attr="id"
           text-attr="label"
@@ -78,7 +77,6 @@ const hintValue = ref<number>();
         <RuiAutoComplete
           v-model="disabledOutlinedValue"
           disabled
-          variant="outlined"
           :options="options"
           key-attr="id"
           text-attr="label"
@@ -140,7 +138,6 @@ const hintValue = ref<number>();
         <RuiAutoComplete
           v-model="requiredValue"
           required
-          variant="outlined"
           :options="options"
           key-attr="id"
           text-attr="label"

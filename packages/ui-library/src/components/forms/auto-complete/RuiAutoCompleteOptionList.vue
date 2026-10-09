@@ -94,7 +94,7 @@ function isHighlighted(item: TItem): boolean {
             name="group-header"
             v-bind="{ group: bucket.group, items: bucket.items }"
           >
-            <div class="px-3 py-1 text-xs uppercase tracking-wide text-rui-text-secondary">
+            <div class="px-3 pt-2 pb-1 text-xs font-medium text-rui-text-secondary">
               {{ bucket.group }}
             </div>
           </slot>

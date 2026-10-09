@@ -101,7 +101,6 @@ watch(
         <RuiTextField
           v-if="inputType === 'hex'"
           v-model="state.hex"
-          variant="outlined"
           class="flex-1 w-full [&_input]:uppercase"
           maxlength="6"
           color="primary"
@@ -122,7 +121,6 @@ watch(
             v-for="(v, i) in state.rgb"
             :key="i"
             :model-value="v.toString()"
-            variant="outlined"
             class="[&_input]:text-center w-full"
             maxlength="3"
             color="primary"

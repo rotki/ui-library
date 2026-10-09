@@ -66,7 +66,6 @@ function isCopied(icon: string): boolean {
         prepend-icon="lu-search"
         clearable
         dense
-        variant="outlined"
         class="flex-1 max-w-md"
       />
       <span class="text-xs text-rui-text-secondary whitespace-nowrap ml-auto">

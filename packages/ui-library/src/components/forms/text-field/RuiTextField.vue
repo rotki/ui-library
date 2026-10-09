@@ -3,11 +3,10 @@ import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';
-import { textFieldStyles, type TextFieldVariant } from '@/components/forms/text-field/text-field-styles';
+import { textFieldStyles } from '@/components/forms/text-field/text-field-styles';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { type LabelPlacement, useLabelPlacement } from '@/composables/defaults/field';
-import { usePrependAppendWidth } from '@/composables/forms/use-prepend-append-width';
 import { useTimeoutManager } from '@/composables/timeout-manager';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
@@ -18,8 +17,6 @@ export interface TextFieldProps {
   disabled?: boolean;
   /** Where the label shows; falls back to the nearest `RuiFieldDefaults`, then the app default, then `top`. */
   labelPlacement?: LabelPlacement;
-  /** @deprecated Only applies with `labelPlacement="floating"`; every other placement draws the outlined field. */
-  variant?: TextFieldVariant;
   color?: ContextColorsType;
   textColor?: ContextColorsType;
   dense?: boolean;
@@ -46,7 +43,6 @@ const {
   placeholder = '',
   disabled = false,
   labelPlacement = undefined,
-  variant = 'default',
   color = undefined,
   textColor = undefined,
   dense = false,
@@ -76,8 +72,6 @@ defineSlots<{
 const isHovered = ref<boolean>(false);
 const showClearButton = ref<boolean>(false);
 
-const prepend = useTemplateRef<HTMLDivElement>('prepend');
-const append = useTemplateRef<HTMLDivElement>('append');
 const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
 
 const generatedId = useId();
@@ -86,18 +80,10 @@ const attrs = useAttrs();
 const { focused } = useFocus(inputRef);
 const placement = useLabelPlacement(() => labelPlacement);
 const { create: delayClearHide } = useTimeoutManager();
-const { prependWidth, appendWidth } = usePrependAppendWidth(prepend, append);
 const { hasError, hasSuccess, hasMessages, validation } = useFormTextDetail(
   () => errorMessages,
   () => successMessages,
 );
-
-const active = computed<boolean>(() => get(focused) || !!get(modelValue));
-
-const floating = computed<boolean>(() => get(placement) === 'floating');
-
-// Only the floating placement keeps the 2.x variants; the others always draw the bordered field
-const fieldVariant = computed<TextFieldVariant>(() => get(floating) ? variant : 'outlined');
 
 const inputId = computed<string>(() => {
   const id = attrs.id;
@@ -119,30 +105,14 @@ const effectiveTextColor = computed<ContextColorsType | undefined>(() => {
 const effectiveColor = computed<ContextColorsType | undefined>(() => get(validation) ?? color);
 
 const ui = computed<ReturnType<typeof textFieldStyles>>(() => textFieldStyles({
-  variant: get(fieldVariant),
-  placement: get(placement),
   dense,
   disabled,
   hovered: get(isHovered),
   focused: get(focused),
-  active: get(active),
-  noLabel: !get(floating) || !label,
   color: get(effectiveColor),
   textColor: get(effectiveTextColor),
   validation: get(validation),
-  showLabel: get(floating) && !!label,
 }));
-
-const labelStyle = computed<Record<string, string>>(() => ({
-  '--prepend-w': get(prependWidth),
-  '--append-w': get(appendWidth),
-}));
-
-const legendText = computed<string>(() => {
-  if (!get(floating) || !get(active) || !label)
-    return '';
-  return required ? `${label} ﹡` : label;
-});
 
 function input(event: Event): void {
   const target = event.target;
@@ -177,7 +147,7 @@ defineExpose({
 <template>
   <div v-bind="getRootAttrs($attrs)">
     <RuiFieldLabel
-      v-if="!floating && label"
+      v-if="label"
       :text="label"
       :for="inputId"
       :hidden="placement === 'hidden'"
@@ -192,7 +162,6 @@ defineExpose({
     >
       <div
         v-if="$slots.prepend || prependIcon"
-        ref="prepend"
         :class="ui.prepend()"
         data-id="prepend"
       >
@@ -206,7 +175,7 @@ defineExpose({
         >
           <RuiIcon
             :name="prependIcon"
-            :size="floating ? undefined : 18"
+            :size="18"
           />
         </div>
       </div>
@@ -228,33 +197,10 @@ defineExpose({
           @blur="emit('blur', $event)"
           @remove="emit('remove', $event)"
         />
-        <label
-          v-if="floating"
-          :class="ui.label()"
-          :style="labelStyle"
-        >
-          <span :class="ui.labelText()">
-            {{ label }}
-            <span
-              v-if="required"
-              :class="ui.required()"
-            >
-              ﹡
-            </span>
-          </span>
-        </label>
-        <fieldset
-          v-if="fieldVariant === 'outlined'"
-          :class="ui.fieldset()"
-        >
-          <legend :class="ui.legend()">
-            {{ legendText }}
-          </legend>
-        </fieldset>
+        <fieldset :class="ui.fieldset()" />
       </div>
       <div
         v-if="$slots.append || appendIcon || showClearIcon"
-        ref="append"
         :class="ui.append()"
         data-id="append"
       >
@@ -266,6 +212,7 @@ defineExpose({
           icon
           color="error"
           data-id="clear-btn"
+          aria-label="Clear"
           tabindex="-1"
           @click.stop="clearIconClicked()"
         >
@@ -284,7 +231,7 @@ defineExpose({
         >
           <RuiIcon
             :name="appendIcon"
-            :size="floating ? undefined : 18"
+            :size="18"
           />
         </div>
       </div>

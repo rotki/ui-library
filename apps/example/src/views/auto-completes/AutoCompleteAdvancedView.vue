@@ -60,7 +60,6 @@ const chipToTextValue = ref<string[]>(['Lorem', 'Ipsum']);
       <div class="py-4">
         <RuiAutoComplete
           v-model="filledValue"
-          variant="filled"
           :options="primitiveOptions"
           label="Filled Variant"
           data-id="ac-adv-filled"
@@ -70,7 +69,6 @@ const chipToTextValue = ref<string[]>(['Lorem', 'Ipsum']);
       <div class="py-4">
         <RuiAutoComplete
           v-model="filledOutlinedValue"
-          variant="outlined"
           :options="primitiveOptions"
           label="Outlined (comparison)"
           data-id="ac-adv-outlined"

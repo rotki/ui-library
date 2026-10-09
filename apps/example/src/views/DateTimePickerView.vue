@@ -49,7 +49,6 @@ const insideMenuValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
         accuracy="second"
         :actions="['now', 'today', 'clear']"
         allow-empty
-        variant="outlined"
       />
     </div>
     <div
@@ -64,7 +63,6 @@ const insideMenuValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
         data-id="picker-timezone"
         accuracy="second"
         show-timezone
-        variant="outlined"
       />
     </div>
     <div
@@ -81,7 +79,6 @@ const insideMenuValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
         :actions="['now', 'today', 'clear']"
         allow-empty
         :max-date="boundedMax"
-        variant="outlined"
       />
     </div>
     <div
@@ -98,7 +95,6 @@ const insideMenuValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
         allow-empty
         partial-time="start"
         type="epoch"
-        variant="outlined"
       />
       <span data-id="picker-partial-start-value">{{ partialStartValue ?? '' }}</span>
       <RuiDateTimePicker
@@ -109,7 +105,6 @@ const insideMenuValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
         allow-empty
         partial-time="end"
         type="epoch"
-        variant="outlined"
       />
       <span data-id="picker-partial-end-value">{{ partialEndValue ?? '' }}</span>
       <RuiDateTimePicker
@@ -119,7 +114,6 @@ const insideMenuValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
         accuracy="second"
         allow-empty
         type="epoch"
-        variant="outlined"
       />
       <span data-id="picker-partial-strict-value">{{ partialStrictValue ?? '' }}</span>
     </div>
@@ -151,7 +145,6 @@ const insideMenuValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
             v-model="insideMenuValue"
             v-model:menu-open="pickerMenuOpen"
             data-id="picker-inside-menu"
-            variant="outlined"
           />
         </div>
       </RuiMenu>

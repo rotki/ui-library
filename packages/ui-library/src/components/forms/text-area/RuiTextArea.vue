@@ -3,7 +3,7 @@ import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';
-import { textAreaStyles, type TextAreaVariant } from '@/components/forms/text-area/text-area-styles';
+import { textAreaStyles } from '@/components/forms/text-area/text-area-styles';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { type LabelPlacement, useLabelPlacement } from '@/composables/defaults/field';
@@ -18,8 +18,6 @@ export interface TextAreaProps {
   disabled?: boolean;
   /** Where the label shows; falls back to the nearest `RuiFieldDefaults`, then the app default, then `top`. */
   labelPlacement?: LabelPlacement;
-  /** @deprecated Only applies with `labelPlacement="floating"`; every other placement draws the outlined field. */
-  variant?: TextAreaVariant;
   color?: ContextColorsType;
   textColor?: ContextColorsType;
   dense?: boolean;
@@ -51,7 +49,6 @@ const {
   placeholder = '',
   disabled = false,
   labelPlacement = undefined,
-  variant = 'default',
   color = undefined,
   textColor = undefined,
   dense = false,
@@ -100,13 +97,6 @@ const { hasError, hasSuccess, hasMessages, validation } = useFormTextDetail(
   () => successMessages,
 );
 
-const active = computed<boolean>(() => get(focused) || !!get(modelValue));
-
-const floating = computed<boolean>(() => get(placement) === 'floating');
-
-// Only the floating placement keeps the 2.x variants; the others always draw the bordered field
-const fieldVariant = computed<TextAreaVariant>(() => get(floating) ? variant : 'outlined');
-
 const textareaId = computed<string>(() => {
   const id = attrs.id;
   return typeof id === 'string' && id ? id : generatedId;
@@ -127,31 +117,20 @@ const effectiveTextColor = computed<ContextColorsType | undefined>(() => {
 const effectiveColor = computed<ContextColorsType | undefined>(() => get(validation) ?? color);
 
 const ui = computed<ReturnType<typeof textAreaStyles>>(() => textAreaStyles({
-  variant: get(fieldVariant),
-  placement: get(placement),
   dense,
   disabled,
   noResize,
   hovered: get(isHovered),
   focused: get(focused),
-  active: get(active),
-  noLabel: !get(floating) || !label,
   color: get(effectiveColor),
   textColor: get(effectiveTextColor),
   validation: get(validation),
-  showLabel: get(floating) && !!label,
 }));
 
 const wrapperStyle = computed<Record<string, string>>(() => ({
   '--prepend-w': get(prependWidth),
   '--append-w': get(appendWidth),
 }));
-
-const legendText = computed<string>(() => {
-  if (!get(floating) || !get(active) || !label)
-    return '';
-  return required ? `${label} ﹡` : label;
-});
 
 const fieldStyles = computed<{ minHeight: string; maxHeight?: string }>(() => {
   const height = Number(rowHeight);
@@ -214,7 +193,7 @@ defineExpose({
 <template>
   <div v-bind="getRootAttrs($attrs)">
     <RuiFieldLabel
-      v-if="!floating && label"
+      v-if="label"
       :text="label"
       :for="textareaId"
       :hidden="placement === 'hidden'"
@@ -244,7 +223,7 @@ defineExpose({
         >
           <RuiIcon
             :name="prependIcon"
-            :size="floating ? undefined : 18"
+            :size="18"
           />
         </div>
       </div>
@@ -271,28 +250,7 @@ defineExpose({
           :aria-invalid="hasError"
           v-bind="getNonRootAttrs($attrs)"
         />
-        <label
-          v-if="floating"
-          :class="ui.label()"
-        >
-          <span :class="ui.labelText()">
-            {{ label }}
-            <span
-              v-if="required"
-              :class="ui.required()"
-            >
-              ﹡
-            </span>
-          </span>
-        </label>
-        <fieldset
-          v-if="fieldVariant === 'outlined'"
-          :class="ui.fieldset()"
-        >
-          <legend :class="ui.legend()">
-            {{ legendText }}
-          </legend>
-        </fieldset>
+        <fieldset :class="ui.fieldset()" />
       </div>
       <div
         v-if="$slots.append || appendIcon || showClearIcon"
@@ -308,6 +266,7 @@ defineExpose({
           icon
           color="error"
           data-id="clear-btn"
+          aria-label="Clear"
           tabindex="-1"
           @click.stop="clearIconClicked()"
         >
@@ -326,7 +285,7 @@ defineExpose({
         >
           <RuiIcon
             :name="appendIcon"
-            :size="floating ? undefined : 18"
+            :size="18"
           />
         </div>
       </div>

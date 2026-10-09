@@ -1,49 +1,33 @@
-import { activatorStyles, type TextInputVariant } from '@/components/forms/text-input-styles';
+import { activatorStyles } from '@/components/forms/text-input-styles';
 import { tv } from '@/utils/tv';
-
-export type CategoryPickerVariant = TextInputVariant;
 
 /**
  * Form-field trigger, shared with `RuiAutoComplete` / `RuiMenuSelect` via
- * `activatorStyles`: floating label, outlined/filled/underline variants,
- * error + hint details, required marker.
+ * `activatorStyles`.
  *
  * The `selection` slot draws over the emptied input, so it is positioned
- * rather than laid out: `inset-y-0 left-4` lines it up with the field's own
- * `pl-4` text box, and the right offset reserves the trailing controls. It
+ * rather than laid out: `inset-y-0 left-3` lines it up with the field's own
+ * `pl-3` text box, and the right offset reserves the trailing controls. It
  * must not take the `value` slot's `w-full`, because a width of 100% beats the
- * right offset and leaves the layer a full field width shifted right by
- * `left-4`, overflowing the field and covering the chevron it meant to clear
+ * right offset and leaves the layer a full field width shifted right,
+ * overflowing the field and covering the chevron it meant to clear
  * (rotki/ui-library#559).
  *
- * Those right offsets come from the controls: the chevron sits at `right-3`
- * and is 24px wide, reaching 36px in, which `right-10` clears; the clear
- * button ends at the activator's `pr-8` padding edge plus its own `mr-2`, so
- * its 18px icon reaches 58px in, which `right-16` clears. Right-aligned
- * selection content then lands just left of whichever control is showing.
+ * The right offsets clear the controls: `right-10` the chevron, `right-16`
+ * the clear button beside it. Right-aligned selection content then lands just
+ * left of whichever control is showing.
  */
 export const categoryPickerActivatorStyles = tv({
   extend: activatorStyles,
   slots: {
-    selection: 'absolute inset-y-0 left-4 flex items-center gap-2 pointer-events-none truncate transition-all duration-75',
+    selection: 'absolute inset-y-0 left-3 flex items-center gap-2 pointer-events-none truncate transition-all duration-75',
   },
   variants: {
-    // Re-declared for type inference; the styles themselves live in activatorStyles
-    filled: { true: {} },
     withClear: {
       false: { selection: 'right-10' },
       true: { selection: 'right-16' },
     },
-    placement: {
-      floating: {},
-      top: {},
-      hidden: {},
-    },
   },
-  compoundVariants: [
-    // The label above or hidden leaves the activator's 12px inset rather than the floating label's 16px
-    { placement: ['top', 'hidden'], class: { selection: 'left-3' } },
-  ],
   defaultVariants: {
     withClear: false,
   },
@@ -69,8 +53,9 @@ export const categoryPickerStyles = tv({
     railCount: 'ml-auto pl-2 text-caption tabular-nums text-rui-text-secondary',
     detail: 'flex flex-col gap-0.5 p-2 overflow-y-auto outline-hidden min-w-0',
     // Focus lives on the pane container, so this is the only per-item focus cue
-    highlighted: '!bg-black/5 dark:!bg-white/8',
-    subheader: 'px-3 pt-3 pb-1 text-overline text-rui-text-secondary',
+    highlighted: '!bg-rui-hover',
+    // the same quiet group label as the autocomplete's: sentence case, no tracking
+    subheader: 'px-3 pt-3 pb-1 text-xs font-medium text-rui-text-secondary',
     empty: 'flex flex-1 items-center justify-center p-8 text-body-2 text-rui-text-secondary text-center',
     // Opaque panel surface so a scrolled pane never bleeds through the footer.
     footer: 'shrink-0 p-3 border-t border-rui-divider bg-rui-menu',

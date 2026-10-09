@@ -42,7 +42,6 @@ const hintValue = ref<number>();
           :options="options"
           key-attr="id"
           text-attr="label"
-          variant="outlined"
           data-id="ms-basic-outlined"
         />
       </div>
@@ -79,7 +78,6 @@ const hintValue = ref<number>();
           key-attr="id"
           text-attr="label"
           disabled
-          variant="outlined"
           data-id="ms-basic-disabled-outlined"
         />
       </div>
@@ -141,7 +139,6 @@ const hintValue = ref<number>();
           key-attr="id"
           text-attr="label"
           required
-          variant="outlined"
           data-id="ms-basic-required"
         />
       </div>

@@ -29,7 +29,6 @@ const readonlyMulti = ref<string[]>(['Lorem', 'Ipsum']);
         <RuiAutoComplete
           v-model="readonlyOutlined"
           read-only
-          variant="outlined"
           :options="primitiveOptions"
           label="Read-only Outlined"
           data-id="ac-readonly-outlined"

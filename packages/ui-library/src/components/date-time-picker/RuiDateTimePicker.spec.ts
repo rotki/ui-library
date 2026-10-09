@@ -94,31 +94,12 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     wrapper = createWrapper({
       props: {
         label: customLabel,
-        labelPlacement: 'floating',
         modelValue: new Date(),
-        variant: 'outlined',
       },
     });
 
     await vi.runOnlyPendingTimersAsync();
-    expect(wrapper.find('[data-id="label"]').text()).toBe(customLabel);
-  });
-
-  it('should only notch the outlined border when a floated label has text', async () => {
-    wrapper = createWrapper({
-      props: {
-        label: '',
-        labelPlacement: 'floating',
-        modelValue: new Date(),
-        variant: 'outlined',
-      },
-    });
-
-    await vi.runOnlyPendingTimersAsync();
-    expect(wrapper.find('legend').classes()).not.toContain('px-2');
-
-    await wrapper.setProps({ label: 'Pick' });
-    expect(wrapper.find('legend').classes()).toContain('px-2');
+    expect(wrapper.find('[data-id="field-label"]').text()).toBe(customLabel);
   });
 
   it('should apply disabled state correctly', () => {
@@ -885,25 +866,20 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     wrapper = createWrapper({
       props: {
         label: customLabel,
-        labelPlacement: 'floating',
         modelValue: new Date(),
-        variant: 'outlined',
       },
     });
 
     await vi.runOnlyPendingTimersAsync();
 
-    // Required asterisk should not be present by default
-    expect(wrapper.find('[data-id="label"]').text()).not.toContain('﹡');
+    expect(wrapper.find('[data-id="field-label"]').text()).not.toContain('﹡');
 
-    // Set required to true
     await wrapper.setProps({ required: true });
-    expect(wrapper.find('[data-id="label"]').text()).toContain('﹡');
-    expect(wrapper.find('[data-id="required-indicator"]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-id="field-label"]').text()).toContain('﹡');
+    expect(wrapper.find('input').attributes('aria-required')).toBe('true');
 
-    // Set required back to false
     await wrapper.setProps({ required: false });
-    expect(wrapper.find('[data-id="label"]').text()).not.toContain('﹡');
+    expect(wrapper.find('[data-id="field-label"]').text()).not.toContain('﹡');
   });
 
   describe('model value synchronization', () => {
@@ -2865,21 +2841,6 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       expect(activator.attributes('tabindex')).toBeUndefined();
       expect(wrapper.find('input').attributes('tabindex')).toBeUndefined();
       expect(wrapper.find('button[data-id="append"]').exists()).toBe(true);
-    });
-
-    it('names the input even when the visible label is not rendered', () => {
-      wrapper = createWrapper({
-        props: {
-          label: 'Start date',
-          labelPlacement: 'floating',
-          modelValue: new Date(),
-          variant: 'default',
-        },
-      });
-
-      // the floating label only renders in the outlined variant
-      expect(wrapper.find('[data-id="label"]').exists()).toBe(false);
-      expect(wrapper.find('input').attributes('aria-label')).toBe('Start date');
     });
 
     it('falls back to the default label', () => {

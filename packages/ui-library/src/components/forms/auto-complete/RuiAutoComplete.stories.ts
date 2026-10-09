@@ -48,11 +48,6 @@ const meta = preview.meta<
     modelValue: { control: 'object' },
     options: { control: 'object' },
     required: { control: 'boolean', table: { category: 'State' } },
-    variant: {
-      control: 'select',
-      defaultValue: 'default',
-      options: ['default', 'outlined', 'filled'],
-    },
   },
   component: RuiAutoComplete<string, SelectOption>,
   parameters: {
@@ -96,7 +91,7 @@ export const MultipleValue = meta.story({
   },
 });
 
-export const DefaultDisabled = meta.story({
+export const Disabled = meta.story({
   args: {
     disabled: true,
     keyAttr: 'id',
@@ -105,43 +100,22 @@ export const DefaultDisabled = meta.story({
   },
 });
 
-export const Outlined = meta.story({
-  args: {
-    keyAttr: 'id',
-    modelValue: undefined,
-    textAttr: 'label',
-    variant: 'outlined',
-  },
-});
-
-export const OutlinedDisabled = meta.story({
-  args: {
-    disabled: true,
-    keyAttr: 'id',
-    modelValue: undefined,
-    textAttr: 'label',
-    variant: 'outlined',
-  },
-});
-
-export const OutlinedDense = meta.story({
+export const Dense = meta.story({
   args: {
     dense: true,
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
-    variant: 'outlined',
   },
 });
 
-export const OutlinedDisabledDense = meta.story({
+export const DisabledDense = meta.story({
   args: {
     dense: true,
     disabled: true,
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
-    variant: 'outlined',
   },
 });
 
@@ -153,7 +127,6 @@ export const Chips = meta.story({
     keyAttr: 'id',
     modelValue: ['3', '4'],
     textAttr: 'label',
-    variant: 'outlined',
   },
   async play({ canvas, userEvent }) {
     const body = within(document.body);
@@ -223,16 +196,6 @@ export const CustomValue = meta.story({
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
-    variant: 'outlined',
-  },
-});
-
-export const Filled = meta.story({
-  args: {
-    keyAttr: 'id',
-    modelValue: undefined,
-    textAttr: 'label',
-    variant: 'filled',
   },
 });
 
@@ -265,7 +228,6 @@ export const WithPlaceholder = meta.story({
     modelValue: undefined,
     placeholder: 'Search countries...',
     textAttr: 'label',
-    variant: 'outlined',
   },
 });
 
@@ -275,7 +237,6 @@ export const WithHint = meta.story({
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
-    variant: 'outlined',
   },
 });
 
@@ -285,7 +246,6 @@ export const WithErrors = meta.story({
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
-    variant: 'outlined',
   },
 });
 
@@ -295,7 +255,6 @@ export const WithSuccess = meta.story({
     modelValue: '1',
     successMessages: ['Selection confirmed'],
     textAttr: 'label',
-    variant: 'outlined',
   },
 });
 
@@ -307,7 +266,6 @@ export const HideDetails = meta.story({
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
-    variant: 'outlined',
   },
 });
 
@@ -318,7 +276,6 @@ export const HideSelected = meta.story({
     keyAttr: 'id',
     modelValue: ['1', '2'],
     textAttr: 'label',
-    variant: 'outlined',
   },
   async play({ canvas, userEvent }) {
     const combobox = canvas.getByRole('combobox');
@@ -373,7 +330,6 @@ export const AutoSelectFirst = meta.story({
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
-    variant: 'outlined',
   },
   async play({ canvas, userEvent }) {
     const body = within(document.body);
@@ -396,7 +352,6 @@ export const CustomValueInteraction = meta.story({
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
-    variant: 'outlined',
   },
   async play({ canvas, userEvent }) {
     const body = within(document.body);
@@ -417,7 +372,6 @@ export const Required = meta.story({
     modelValue: undefined,
     required: true,
     textAttr: 'label',
-    variant: 'outlined',
   },
 });
 
@@ -429,7 +383,6 @@ export const Grouped = meta.story({
     modelValue: undefined,
     options: groupedOptions,
     textAttr: 'label',
-    variant: 'outlined',
   },
   async play({ canvas, userEvent }) {
     const body = within(document.body);
@@ -456,7 +409,6 @@ export const GroupedSearchLabel = meta.story({
     options: groupedOptions,
     searchIncludesGroupLabel: true,
     textAttr: 'label',
-    variant: 'outlined',
   },
   async play({ canvas, userEvent }) {
     const body = within(document.body);
@@ -484,7 +436,6 @@ export const GroupedCustomHeader = meta.story({
     modelValue: undefined,
     options: groupedOptions,
     textAttr: 'label',
-    variant: 'outlined',
   },
   render: args => ({
     components: { RuiAutoComplete: RuiAutoComplete<string, GroupedSelectOption>, RuiChip },
@@ -523,7 +474,6 @@ export const WithDisabledItems = meta.story({
       { category: 'A', id: '5', label: 'Final available row' },
     ] satisfies GroupedSelectOption[],
     textAttr: 'label',
-    variant: 'outlined',
   },
   async play({ canvas, userEvent }) {
     const body = within(document.body);
@@ -549,7 +499,6 @@ export const PlaceholderSlot = meta.story({
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
-    variant: 'outlined',
   },
   render: args => ({
     components: { RuiAutoComplete: RuiAutoComplete<string, SelectOption>, RuiIcon },
@@ -579,7 +528,6 @@ export const FooterSlot = meta.story({
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
-    variant: 'outlined',
   },
   render: args => ({
     components: { RuiAutoComplete: RuiAutoComplete<string, SelectOption> },

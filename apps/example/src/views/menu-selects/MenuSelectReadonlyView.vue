@@ -30,7 +30,6 @@ const readonlyOutlined = ref<string>('Lorem');
           v-model="readonlyOutlined"
           :options="primitiveOptions"
           read-only
-          variant="outlined"
           data-id="ms-readonly-outlined"
         />
       </div>

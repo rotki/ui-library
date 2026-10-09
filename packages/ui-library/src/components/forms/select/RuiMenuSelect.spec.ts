@@ -179,25 +179,21 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
       props: {
         keyAttr: 'id',
         label: 'Select',
-        labelPlacement: 'floating',
         modelValue: undefined,
         options,
         textAttr: 'label',
-        variant: 'outlined',
       },
     });
 
-    // Required asterisk should not be present by default
-    expect(wrapper.find('button[data-id="activator"]').text()).not.toContain('﹡');
+    // The mark sits in the label above the field, not in the activator
+    expect(wrapper.find('[data-id=field-label]').text()).not.toContain('﹡');
 
-    // Set required to true
     await wrapper.setProps({ required: true });
-    expect(wrapper.find('button[data-id="activator"]').text()).toContain('﹡');
-    expect(wrapper.find('button[data-id="activator"] .text-rui-error').exists()).toBeTruthy();
-
-    // Set required back to false
-    await wrapper.setProps({ required: false });
+    expect(wrapper.find('[data-id=field-label]').text()).toContain('﹡');
     expect(wrapper.find('button[data-id="activator"]').text()).not.toContain('﹡');
+
+    await wrapper.setProps({ required: false });
+    expect(wrapper.find('[data-id=field-label]').text()).not.toContain('﹡');
   });
 
   it('should show clear button and emit undefined on click', async () => {
@@ -370,52 +366,19 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
     expect(noData).toBeFalsy();
   });
 
-  it('should render outlined variant with fieldset', () => {
+  it('should draw the bordered field with no legend notch', () => {
     wrapper = createWrapper({
       props: {
         keyAttr: 'id',
-        modelValue: undefined,
+        label: 'Pick',
+        modelValue: options[0]?.id,
         options,
         textAttr: 'label',
-        variant: 'outlined',
       },
     });
 
     expect(wrapper.find('fieldset').exists()).toBeTruthy();
-  });
-
-  it('should only notch the outlined border when a floated label has text', async () => {
-    wrapper = createWrapper({
-      props: {
-        keyAttr: 'id',
-        label: '',
-        labelPlacement: 'floating',
-        modelValue: options[0]?.id,
-        options,
-        textAttr: 'label',
-        variant: 'outlined',
-      },
-    });
-
-    expect(wrapper.find('legend').classes()).not.toContain('px-2');
-
-    await wrapper.setProps({ label: 'Pick' });
-    expect(wrapper.find('legend').classes()).toContain('px-2');
-  });
-
-  it('should apply dense styling', () => {
-    wrapper = createWrapper({
-      props: {
-        dense: true,
-        keyAttr: 'id',
-        labelPlacement: 'floating',
-        modelValue: undefined,
-        options,
-        textAttr: 'label',
-      },
-    });
-
-    expectWrapperToHaveClass(wrapper, 'button[data-id="activator"]', /min-h-10/);
+    expect(wrapper.find('legend').exists()).toBeFalsy();
   });
 
   it('should render aria-expanded attribute', async () => {

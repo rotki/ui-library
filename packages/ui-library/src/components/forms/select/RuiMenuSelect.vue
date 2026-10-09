@@ -2,7 +2,7 @@
 import type { VueClassValue } from '@/types/class-value';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';
-import { menuSelectStyles, type MenuSelectVariant } from '@/components/forms/select/menu-select-styles';
+import { menuSelectStyles } from '@/components/forms/select/menu-select-styles';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
@@ -37,8 +37,6 @@ export interface MenuSelectProps<TValue, TItem> {
   prependWidth?: number;
   appendWidth?: number;
   itemHeight?: number;
-  /** @deprecated Only applies with `labelPlacement="floating"`; every other placement draws the outlined field. */
-  variant?: MenuSelectVariant;
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
@@ -68,7 +66,6 @@ const {
   labelPlacement = undefined,
   menuOptions,
   classNames,
-  variant = 'default',
   hint,
   keyAttr,
   textAttr,
@@ -87,14 +84,12 @@ defineSlots<{
   'activator'?: (props: {
     disabled: boolean;
     value: TItem | undefined;
-    variant: string;
     readOnly: boolean;
     attrs: Record<string, unknown>;
     open: boolean;
     hasError: boolean;
     hasSuccess: boolean;
   }) => any;
-  'activator.label'?: (props: { value: TItem | undefined }) => any;
   'selection.prepend'?: (props: { item: TItem }) => any;
   'selection'?: (props: { item: TItem }) => any;
   'item.prepend'?: (props: { disabled: boolean; item: TItem; active: boolean }) => any;
@@ -162,23 +157,7 @@ const {
   appendWidth,
 });
 
-const floating = computed<boolean>(() => get(placement) === 'floating');
-// Only the floating placement keeps the 2.x variants; the others always draw the bordered field
-const outlined = computed<boolean>(() => !get(floating) || variant === 'outlined');
-const float = computed<boolean>(() => get(floating) && (get(isOpen) || !!get(value)) && get(outlined));
-
-const legendText = computed<string>(() => {
-  if (!get(float) || !label)
-    return '';
-  return required ? `${label} ﹡` : label;
-});
-
 const ui = computed<ReturnType<typeof menuSelectStyles>>(() => menuSelectStyles({
-  placement: get(placement),
-  filled: get(floating) && variant === 'filled',
-  outlined: get(outlined),
-  float: get(float),
-  showLabel: !!get(legendText),
   opened: get(isOpen),
   hovered: get(isHovered),
   dense,
@@ -205,7 +184,7 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
     v-model="isOpen"
     v-bind="{ ...getRootAttrs($attrs, []), ...menuOptions }"
     :class="ui.wrapper({ class: cn($attrs.class) })"
-    :class-names="{ ...menuOptions?.classNames, details: [{ 'px-0': !floating }, cn(menuOptions?.classNames?.details) ?? ''] }"
+    :class-names="{ ...menuOptions?.classNames, details: ['px-0', cn(menuOptions?.classNames?.details) ?? ''] }"
     :options="menuFloatingOptions"
     close-on-content-click
     full-width
@@ -218,7 +197,7 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
     disable-auto-focus
   >
     <template
-      v-if="!floating && label"
+      v-if="label"
       #label
     >
       <RuiFieldLabel
@@ -232,7 +211,7 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
     <template #activator="{ attrs, open, hasError: slotHasError, hasSuccess: slotHasSuccess }">
       <slot
         name="activator"
-        v-bind="{ disabled, value, variant, readOnly, attrs, open, hasError: slotHasError, hasSuccess: slotHasSuccess }"
+        v-bind="{ disabled, value, readOnly, attrs, open, hasError: slotHasError, hasSuccess: slotHasSuccess }"
       >
         <button
           ref="activator"
@@ -242,7 +221,7 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
           :aria-readonly="readOnly || undefined"
           :aria-required="required || undefined"
           :aria-busy="loading || undefined"
-          :aria-labelledby="!floating && label ? labelId : undefined"
+          :aria-labelledby="label ? labelId : undefined"
           type="button"
           :tabindex="disabled || readOnly ? -1 : 0"
           :class="ui.activator({ class: cn(classNames?.label) })"
@@ -261,26 +240,6 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
           @keydown.home.prevent="modelHighlightedIndex = 0"
           @keydown.end.prevent="modelHighlightedIndex = options.length - 1"
         >
-          <span
-            v-if="floating && (outlined || !value)"
-            :class="[
-              ui.label(),
-              { 'pr-2': !value && !open && outlined },
-            ]"
-          >
-            <slot
-              name="activator.label"
-              v-bind="{ value }"
-            >
-              {{ label }}
-            </slot>
-            <span
-              v-if="required"
-              :class="ui.required()"
-            >
-              ﹡
-            </span>
-          </span>
           <span
             v-if="value"
             :class="ui.value()"
@@ -313,7 +272,7 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
           <span :class="ui.iconWrapper()">
             <RuiIcon
               :class="ui.icon()"
-              :size="dense ? 16 : floating ? 24 : 20"
+              :size="dense ? 16 : 20"
               name="lu-chevron-down"
             />
           </span>
@@ -326,14 +285,7 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
             variant="indeterminate"
           />
         </button>
-        <fieldset
-          v-if="outlined"
-          :class="ui.fieldset()"
-        >
-          <legend :class="ui.legend()">
-            {{ legendText }}
-          </legend>
-        </fieldset>
+        <fieldset :class="ui.fieldset()" />
       </slot>
       <input
         :value="valueKey"

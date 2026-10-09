@@ -64,7 +64,6 @@ const combinedValue = ref<number>();
         <RuiAutoComplete
           v-model="combinedValue"
           clearable
-          variant="outlined"
           :options="options"
           key-attr="id"
           text-attr="label"

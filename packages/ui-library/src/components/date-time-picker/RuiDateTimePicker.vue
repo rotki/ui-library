@@ -3,7 +3,7 @@ import type { ComponentPublicInstance } from 'vue';
 import type { DateTimePickerAction, DateTimeSegmentType } from '@/components/date-time-picker/types';
 import type { TimePickerSelection } from '@/components/time-picker/RuiTimePicker.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
-import { dateTimePickerStyles, type DateTimePickerVariant } from '@/components/date-time-picker/date-time-picker-styles';
+import { dateTimePickerStyles } from '@/components/date-time-picker/date-time-picker-styles';
 import RuiDateTimePickerMenu from '@/components/date-time-picker/RuiDateTimePickerMenu.vue';
 import { useDateTimeSelection } from '@/components/date-time-picker/use-date-time-selection';
 import { useInputHandler } from '@/components/date-time-picker/use-input-handler';
@@ -45,8 +45,6 @@ export interface RuiDateTimePickerProps {
   label?: string;
   /** Where the label shows; falls back to the nearest `RuiFieldDefaults`, then the app default, then `top`. */
   labelPlacement?: LabelPlacement;
-  /** @deprecated Only applies with `labelPlacement="floating"`; every other placement draws the outlined field. */
-  variant?: DateTimePickerVariant;
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
@@ -104,7 +102,6 @@ const {
   hideDetails = false,
   label,
   labelPlacement = undefined,
-  variant = 'default',
   hint,
   maxDate,
   minDate,
@@ -117,7 +114,6 @@ const {
   actions = ['now'],
   autofocus = false,
   partialTime,
-// eslint-disable-next-line vue/max-props -- `labelPlacement` is the field-wide prop every input shares; `variant` leaves in 4.0, back under the limit
 } = defineProps<RuiDateTimePickerProps>();
 
 defineSlots<{
@@ -144,7 +140,6 @@ const keys = RUI_I18N_KEYS.dateTimePicker;
 const fieldLabel = computed<string>(() => label ?? t(keys.label, 'Pick a date'));
 const inputId = useId();
 const placement = useLabelPlacement(() => labelPlacement);
-const floating = computed<boolean>(() => get(placement) === 'floating');
 const clearLabel = computed<string>(() => t(keys.clearValue, 'Clear the date'));
 const toggleLabel = computed<string>(() => (get(isOpen)
   ? t(keys.closeCalendar, 'Close the calendar')
@@ -239,9 +234,6 @@ const { hasError, hasSuccess } = useFormTextDetail(
   () => successMessages,
 );
 
-// Only the floating placement keeps the 2.x variants; the others always draw the bordered field
-const isOutlined = computed<boolean>(() => !get(floating) || variant === 'outlined');
-
 /** True once any segment holds a digit, even a partially typed date. */
 const anySegmentSet = computed<boolean>(() => [
   modelYear,
@@ -333,21 +325,7 @@ const timeSelection = computed<TimePickerSelection>({
   },
 });
 
-const float = computed<boolean>(() => get(floating) && (get(isOpen) || get(valueSet) || get(searchInputFocused)) && get(isOutlined));
-
-const legendText = computed<string>(() => {
-  if (!get(float))
-    return '';
-  const resolved = get(fieldLabel);
-  return required ? `${resolved} ﹡` : resolved;
-});
-
 const ui = computed<ReturnType<typeof dateTimePickerStyles>>(() => dateTimePickerStyles({
-  placement: get(placement),
-  filled: get(floating) && variant === 'filled',
-  outlined: get(isOutlined),
-  float: get(float),
-  showLabel: !!get(legendText),
   opened: get(isOpen),
   hovered: get(isHovered),
   dense,
@@ -532,7 +510,7 @@ defineExpose({
     v-model="isOpen"
     v-bind="getRootAttrs($attrs, [])"
     :class="ui.wrapper({ class: cn($attrs.class) })"
-    :class-names="{ details: { 'px-0': !floating }, content: 'p-0' }"
+    :class-names="{ details: 'px-0', content: 'p-0' }"
     :options="MENU_OPTIONS"
     :dense="dense"
     :hint="hint"
@@ -545,10 +523,7 @@ defineExpose({
     full-width
     disable-auto-focus
   >
-    <template
-      v-if="!floating"
-      #label
-    >
+    <template #label>
       <RuiFieldLabel
         :for="inputId"
         :text="fieldLabel"
@@ -557,7 +532,7 @@ defineExpose({
         :disabled="disabled"
       />
     </template>
-    <template #activator="{ attrs, open }">
+    <template #activator="{ attrs }">
       <div
         ref="activator"
         :class="ui.activator()"
@@ -571,28 +546,10 @@ defineExpose({
         @mouseleave="isHovered = false"
         @click="setInputFocus()"
       >
-        <span
-          v-if="floating && isOutlined && (searchInputFocused || open || valueSet)"
-          data-id="label"
-          :class="[
-            ui.label(),
-            { 'pr-2': !valueSet && !open && isOutlined },
-          ]"
-        >
-          {{ fieldLabel }}
-          <span
-            v-if="required"
-            data-id="required-indicator"
-            :class="ui.required()"
-          >
-            ﹡
-          </span>
-        </span>
-
         <span :class="ui.iconPrepend()">
           <RuiIcon
             class="text-rui-text-secondary transition"
-            :size="dense ? 16 : floating ? 24 : 20"
+            :size="dense ? 16 : 20"
             name="lu-calendar-days"
           />
         </span>
@@ -613,7 +570,6 @@ defineExpose({
             :placeholder="dateFormat"
             :readonly="readonly"
             :aria-invalid="hasError"
-            :aria-label="floating ? fieldLabel : undefined"
             :aria-required="required || undefined"
             @mousedown="handleMouseDown($event)"
             @focus="handleFocus()"
@@ -673,7 +629,7 @@ defineExpose({
         >
           <RuiIcon
             :class="ui.icon()"
-            :size="dense ? 16 : floating ? 24 : 20"
+            :size="dense ? 16 : 20"
             name="lu-chevron-down"
           />
         </button>
@@ -684,19 +640,12 @@ defineExpose({
         >
           <RuiIcon
             :class="ui.icon()"
-            :size="dense ? 16 : floating ? 24 : 20"
+            :size="dense ? 16 : 20"
             name="lu-chevron-down"
           />
         </span>
       </div>
-      <fieldset
-        v-if="isOutlined"
-        :class="ui.fieldset()"
-      >
-        <legend :class="ui.legend()">
-          {{ legendText }}
-        </legend>
-      </fieldset>
+      <fieldset :class="ui.fieldset()" />
     </template>
     <template #default>
       <RuiDateTimePickerMenu

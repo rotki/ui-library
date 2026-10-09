@@ -759,25 +759,6 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     expect(input.element.placeholder).toBe('');
   });
 
-  it('should only notch the outlined border when a floated label has text', async () => {
-    wrapper = createWrapper<string | undefined, SelectOption>({
-      props: {
-        keyAttr: 'id',
-        label: '',
-        labelPlacement: 'floating',
-        modelValue: options[0]?.id,
-        options,
-        textAttr: 'label',
-        variant: 'outlined',
-      },
-    });
-
-    expect(wrapper.find('legend').classes()).not.toContain('px-2');
-
-    await wrapper.setProps({ label: 'Pick' });
-    expect(wrapper.find('legend').classes()).toContain('px-2');
-  });
-
   it('should label the combobox from a label above it, and show the placeholder while empty', async () => {
     wrapper = createWrapper<string | undefined, SelectOption>({
       props: {
@@ -800,32 +781,6 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
 
     await wrapper.setProps({ modelValue: options[0]?.id });
     expect(wrapper.find('[data-id=resting-placeholder]').exists()).toBe(false);
-  });
-
-  it('should show required asterisk when required prop is true', async () => {
-    wrapper = createWrapper<string | undefined, SelectOption>({
-      props: {
-        keyAttr: 'id',
-        label: 'Select',
-        labelPlacement: 'floating',
-        modelValue: undefined,
-        options,
-        textAttr: 'label',
-        variant: 'outlined',
-      },
-    });
-
-    // Required asterisk should not be present by default
-    expect(wrapper.find('div[data-id="activator"]').text()).not.toContain('﹡');
-
-    // Set required to true
-    await wrapper.setProps({ required: true });
-    expect(wrapper.find('div[data-id="activator"]').text()).toContain('﹡');
-    expect(wrapper.find('div[data-id="activator"] .text-rui-error').exists()).toBeTruthy();
-
-    // Set required back to false
-    await wrapper.setProps({ required: false });
-    expect(wrapper.find('div[data-id="activator"]').text()).not.toContain('﹡');
   });
 
   it('should hide search input when hideSearchInput is true', async () => {

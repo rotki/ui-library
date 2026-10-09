@@ -1,8 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { setupVisualPage } from './_setup';
 
-// The three 2.x variants with a floating label, then the label above and the hidden label
-const variants = ['default', 'filled', 'outlined', 'top', 'hidden'] as const;
+const variants = ['top', 'hidden'] as const;
 const densities = ['normal', 'dense'] as const;
 const prepends = ['noprepend', 'prepend'] as const;
 

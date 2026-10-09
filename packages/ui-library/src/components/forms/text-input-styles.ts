@@ -1,94 +1,39 @@
 import { tv } from '@/utils/tv';
 
-export const TextInputVariant = {
-  default: 'default',
-  filled: 'filled',
-  outlined: 'outlined',
-} as const;
-
-export type TextInputVariant = (typeof TextInputVariant)[keyof typeof TextInputVariant];
-
 /**
- * Shared underline pseudo-element classes for default and filled variants.
- * Used by TextField and TextArea label slots.
- */
-export const underlinePseudo = [
-  'border-b border-black/[0.42] dark:border-white/[0.42]',
-  'after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:block after:w-full',
-  'after:scale-x-0 after:border-b-2 after:mb-[-1px] after:transition-transform after:duration-300',
-  'after:border-black dark:after:border-white',
-].join(' ');
-
-/**
- * Shared base tv() for all text-input-family components.
- * Extended by: TextField, TextArea, MenuSelect, AutoComplete, DateTimePicker.
+ * The bordered box every text input draws: a `fieldset` laid over the field, so consumer overrides
+ * that target `[&_fieldset]` keep working. Extended by RuiTextField and RuiTextArea; the activator
+ * styles below carry their own copy, keyed by `opened` rather than `focused`.
  *
- * Provides the common core: floating label, fieldset/legend (outlined),
- * validation colors, disabled state, dark mode, and focus color.
+ * The box is 1px in every state. Hover darkens it, focus colors it and adds a soft ring, and a
+ * validation state colors both.
  *
- * ## State approach (JS-driven for all 5 components)
- *
- * - `focused`: from useFocus (Group A) or computed from isOpen (Group B)
- * - `active`: focused || hasValue — drives label float
- * - `hovered`: mouseenter/mouseleave ref
- *
- * ## Legend content
- *
- * The legend's `after:content` uses CSS variable `--rui-legend`.
- * Bind via `:style="\{ '--rui-legend': labelWithQuote \}"` on the legend element.
- *
- * ## Compositing
- *
- * The fieldset is forced onto its own GPU layer so the focused border is
- * rasterized on integer pixel boundaries. Without it, at fractional
- * y-coordinates with a non-integer device pixel ratio such as 1.25, Chromium
- * anti-aliases the 1.6-2px focus border across two physical pixel rows behind
- * the floated label, which shows up as two thin lines crossing it.
+ * The fieldset is forced onto its own GPU layer so its border is rasterized on integer pixel
+ * boundaries; at fractional y-coordinates with a device pixel ratio such as 1.25, Chromium otherwise
+ * anti-aliases it across two physical pixel rows.
  */
 export const textInputBase = tv({
   slots: {
-    label: 'text-rui-text-secondary transition-all duration-75',
     fieldset: [
-      'absolute w-full min-w-0 h-[calc(100%+0.5rem)] top-0 left-0',
-      'rounded-rui-control pointer-events-none px-2 transition-all -mt-2',
+      'absolute top-0 left-0 w-full h-full min-w-0',
+      'rounded-rui-control pointer-events-none transition-all',
       'border border-rui-outline',
-      // translateZ(0) promotes this to its own layer, whose raster snaps to integer pixels
       'transform-gpu',
     ].join(' '),
-    legend: 'invisible text-[0.75rem] truncate [max-width:calc(100%-1rem)] leading-[0]',
   },
   variants: {
-    focused: {
-      true: {
-        fieldset: '!border-2',
-      },
-    },
     hovered: {
-      true: {
-        fieldset: 'border-black dark:border-white',
-      },
+      true: { fieldset: 'border-rui-neutral-400 dark:border-rui-neutral-500' },
+    },
+    focused: {
+      true: { fieldset: 'ring-3 ring-rui-primary/20' },
     },
     disabled: {
-      true: {
-        fieldset: '!border-dotted !border-rui-outline',
-        label: 'text-rui-text-disabled',
-      },
-    },
-    active: {
-      true: {},
-    },
-    showLabel: {
-      true: {},
+      true: { fieldset: '!border-rui-outline' },
     },
     validation: {
-      error: {
-        fieldset: '!border-rui-error',
-        label: '!text-rui-error',
-      },
-      success: {
-        fieldset: '!border-rui-success',
-        label: '!text-rui-success',
-      },
+      error: { fieldset: '!border-rui-error ring-rui-error/20' },
+      success: { fieldset: '!border-rui-success ring-rui-success/20' },
     },
     color: {
       primary: {},
@@ -100,9 +45,6 @@ export const textInputBase = tv({
     },
   },
   compoundVariants: [
-    // Legend padding only when label is floated (active + has label)
-    { showLabel: true, active: true, class: { legend: 'px-2' } },
-    // Focused + color → fieldset border takes the color
     { focused: true, color: 'primary', class: { fieldset: '!border-rui-primary' } },
     { focused: true, color: 'secondary', class: { fieldset: '!border-rui-secondary' } },
     { focused: true, color: 'error', class: { fieldset: '!border-rui-error' } },
@@ -116,187 +58,78 @@ export const textInputBase = tv({
 });
 
 /**
- * Shared tv() styles for the activator-based components (Group B):
- * MenuSelect, AutoComplete, DateTimePicker.
+ * Shared tv() styles for the activator-based components: RuiMenuSelect, RuiAutoComplete,
+ * RuiDateTimePicker. A 36px box (32px dense) with 14px text whose content is centred, so only
+ * wrapped tags grow it.
  *
- * IMPORTANT: tv() extend does NOT deduplicate conflicting Tailwind classes.
- * Never put a class in the base slot that a variant needs to override.
- *
- * State-driven via JS refs: `outlined`, `float` (open || hasValue),
- * `opened`, `disabled`, `readonly`, `dense`.
- *
- * The wrapper is `w-full inline-flex flex-col` so an activator fills its
- * parent whatever the context. A consumer's own width utility would normally
- * collide with `w-full` on the same element and lose to cascade order, so
- * RuiAutoComplete, RuiMenuSelect and RuiDateTimePicker route consumer classes
- * through `ui.wrapper(\{ class \})`, where twMerge deduplicates them and the
- * consumer's width wins.
+ * The wrapper is `w-full inline-flex flex-col` so an activator fills its parent whatever the
+ * context. A consumer's own width utility would normally collide with `w-full` on the same element
+ * and lose to cascade order, so the components route consumer classes through
+ * `ui.wrapper(\{ class \})`, where twMerge deduplicates them and the consumer's width wins.
  */
 export const activatorStyles = tv({
-  extend: textInputBase,
   slots: {
-    // Re-declare base slots for type inference
-    fieldset: '',
-    legend: '',
     wrapper: 'w-full inline-flex flex-col',
     activator: [
       'group relative inline-flex items-center w-full',
       'outline-hidden focus:outline-hidden focus-within:outline-hidden cursor-pointer',
-      'min-h-14 pl-4 py-2 pr-8 rounded-rui-control',
-      'm-0 transition-colors duration-150 text-body-1 text-left',
-      'dark:text-rui-text',
+      'min-h-9 py-0.5 pl-3 pr-8 rounded-rui-control',
+      'm-0 transition-colors duration-150 text-sm/5 text-left',
+      'bg-white dark:bg-transparent dark:text-rui-text border-none hover:border-none',
     ].join(' '),
-    label: [
-      'text-rui-text-secondary [max-width:calc(100%-2.5rem)]',
-      'block truncate transition-all duration-75',
+    fieldset: [
+      'absolute top-0 left-0 w-full h-full min-w-0',
+      'rounded-rui-control pointer-events-none transition-all',
+      'border border-rui-outline',
+      'transform-gpu',
     ].join(' '),
-    value: 'w-full block truncate transition-all duration-75',
+    value: 'w-full block truncate',
     clear: 'ml-auto shrink-0 invisible group-hover:!visible',
     menu: 'overflow-y-auto max-h-60 min-w-[2.5rem]',
     // the grey list button's hover and active tints, so options and menu buttons highlight alike
     highlighted: '!bg-black/5 dark:!bg-white/8',
     progress: 'absolute left-0 bottom-0 w-full',
     icon: 'text-rui-text transition',
-    iconWrapper: 'flex items-center justify-end absolute right-3 top-px bottom-0',
-    required: 'text-rui-error',
+    iconWrapper: 'flex items-center justify-end absolute right-2 top-px bottom-0',
   },
   variants: {
     dense: {
-      true: {
-        activator: 'py-1.5 min-h-10',
-      },
+      true: { activator: 'min-h-8' },
     },
+    // the dark text color is restated, since the base `dark:text-rui-text` outranks a plain color
     disabled: {
       true: {
-        activator: 'opacity-65 text-rui-text-disabled active:text-rui-text-disabled cursor-default pointer-events-none',
+        activator: 'bg-rui-neutral-50 dark:bg-rui-neutral-900 text-rui-text-disabled dark:text-rui-text-disabled active:text-rui-text-disabled cursor-default pointer-events-none',
+        icon: 'text-rui-text-disabled',
+        fieldset: '!border-rui-outline',
       },
     },
     readonly: {
-      true: {
-        activator: 'opacity-80 pointer-events-none cursor-default bg-rui-neutral-50 dark:bg-white/10',
-      },
+      true: { activator: 'opacity-80 pointer-events-none cursor-default bg-rui-neutral-50 dark:bg-white/10' },
     },
-    filled: {
-      true: {
-        activator: [
-          '!rounded-t-rui-control !rounded-b-none !bg-black/[0.06]',
-          '!hover:bg-black/[0.09] !focus-within:bg-black/[0.09]',
-          'dark:!bg-white/[0.09]',
-          'dark:!hover:bg-white/[0.13] dark:!focus-within:bg-white/[0.13]',
-          underlinePseudo,
-        ].join(' '),
-      },
-    },
-    outlined: {
-      true: {
-        activator: 'bg-white dark:bg-transparent border-none hover:border-none',
-        label: 'absolute',
-        fieldset: '!mt-0 !h-full',
-      },
-      false: {
-        activator: `!rounded-none ${underlinePseudo}`,
-      },
-    },
-    float: {
-      true: {
-        label: '-translate-y-2 top-0 text-[0.75rem] leading-4',
-      },
+    hovered: {
+      true: { fieldset: 'border-rui-neutral-400 dark:border-rui-neutral-500' },
     },
     opened: {
       true: {
         icon: 'rotate-180',
-      },
-    },
-    active: {
-      true: {
-        highlighted: '!bg-black/10 dark:!bg-white/12',
+        fieldset: '!border-rui-primary ring-3 ring-rui-primary/20',
       },
     },
     hasError: {
-      true: {},
+      true: { fieldset: '!border-rui-error ring-rui-error/20' },
     },
     hasSuccess: {
-      true: {},
+      true: { fieldset: '!border-rui-success ring-rui-success/20' },
     },
-    // Re-declare for type inference — actual styles are in textInputBase
-    hovered: { true: {} },
-    showLabel: { true: {} },
-    // `top` and `hidden` render the outlined activator with no label inside; see the compounds at the end
-    placement: {
-      floating: {},
-      top: {},
-      hidden: {},
+    active: {
+      true: { highlighted: '!bg-black/10 dark:!bg-white/12' },
     },
   },
-  compoundVariants: [
-    // Legend padding when a label is floated; without text it would cut an empty notch
-    { float: true, showLabel: true, class: { legend: 'px-2' } },
-
-    // Non-outlined + opened → underline scales up
-    { outlined: false, opened: true, class: { activator: 'after:scale-x-100 after:border-rui-primary' } },
-
-    // Non-outlined + error → underline color
-    { outlined: false, hasError: true, class: { activator: 'after:scale-x-100 after:!border-rui-error' } },
-
-    // Non-outlined + success → underline color
-    { outlined: false, hasSuccess: true, class: { activator: 'after:scale-x-100 after:!border-rui-success' } },
-
-    // Non-outlined + disabled in dark mode
-    { outlined: false, disabled: true, class: { activator: 'dark:bg-white/10' } },
-
-    // Filled + disabled
-    { filled: true, disabled: true, class: { activator: 'bg-black/[0.03] dark:bg-white/[0.05]' } },
-
-    // Outlined + hovered → fieldset border
-    { outlined: true, hovered: true, class: { fieldset: 'border-black dark:border-white' } },
-
-    // Outlined + opened/focused → primary border
-    { outlined: true, opened: true, class: {
-      fieldset: '!border-rui-primary !border-2',
-      label: 'text-rui-primary',
-    } },
-
-    // Outlined + error → fieldset + label
-    { outlined: true, hasError: true, class: {
-      fieldset: '!border-rui-error',
-      label: '!text-rui-error',
-    } },
-    // Outlined + success → fieldset + label
-    { outlined: true, hasSuccess: true, class: {
-      fieldset: '!border-rui-success',
-      label: '!text-rui-success',
-    } },
-
-    // Outlined + disabled → dotted fieldset
-    { outlined: true, disabled: true, class: {
-      fieldset: '!border-dotted !border-rui-outline',
-    } },
-
-    // Float + opened → label color
-    { float: true, opened: true, class: { label: 'text-rui-primary' } },
-
-    // Label above or hidden: a 36px (32px dense) box whose content is centred, so only wrapped tags grow it
-    { placement: ['top', 'hidden'], class: { activator: 'min-h-9 py-0.5 pl-3 text-sm/5', iconWrapper: 'right-2' } },
-    { placement: ['top', 'hidden'], dense: true, class: { activator: 'min-h-8' } },
-    { placement: ['top', 'hidden'], hovered: true, class: { fieldset: 'border-rui-neutral-400 dark:border-rui-neutral-500' } },
-    { placement: ['top', 'hidden'], opened: true, class: { fieldset: '!border ring-3 ring-rui-primary/20' } },
-    { placement: ['top', 'hidden'], hasError: true, class: { fieldset: 'ring-rui-error/20' } },
-    { placement: ['top', 'hidden'], hasSuccess: true, class: { fieldset: 'ring-rui-success/20' } },
-    // the dark text color is restated, since the base `dark:text-rui-text` outranks a plain color
-    { placement: ['top', 'hidden'], disabled: true, class: {
-      activator: 'opacity-100 bg-rui-neutral-50 dark:bg-rui-neutral-900 text-rui-text-disabled dark:text-rui-text-disabled',
-      icon: 'text-rui-text-disabled',
-      fieldset: '!border-solid',
-    } },
-  ],
   defaultVariants: {
-    filled: false,
-    outlined: false,
     dense: false,
     disabled: false,
     readonly: false,
-    float: false,
     opened: false,
-    placement: 'floating',
   },
 });

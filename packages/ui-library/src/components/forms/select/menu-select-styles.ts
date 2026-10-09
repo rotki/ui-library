@@ -1,12 +1,6 @@
-import { activatorStyles, type TextInputVariant } from '@/components/forms/text-input-styles';
+import { activatorStyles } from '@/components/forms/text-input-styles';
 import { tv } from '@/utils/tv';
-
-export type MenuSelectVariant = TextInputVariant;
 
 export const menuSelectStyles = tv({
   extend: activatorStyles,
-  variants: {
-    // Re-declare for type inference — actual styles are in activatorStyles
-    filled: { true: {} },
-  },
 });

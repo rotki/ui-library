@@ -54,11 +54,6 @@ const meta = preview.meta({
       options: contextColors,
       table: { category: 'State' },
     },
-    variant: {
-      control: 'select',
-      options: ['default', 'filled', 'outlined'],
-      table: { category: 'State' },
-    },
   },
   component: RuiTextField,
   parameters: {
@@ -84,28 +79,11 @@ export const Default = meta.story({
   },
 });
 
-export const Filled = meta.story({
-  args: {
-    label: 'Label',
-    placeholder: 'Placeholder',
-    variant: 'filled',
-  },
-});
-
-export const Outlined = meta.story({
-  args: {
-    label: 'Label',
-    placeholder: 'Placeholder',
-    variant: 'outlined',
-  },
-});
-
 export const Primary = meta.story({
   args: {
     color: 'primary',
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 });
 
@@ -114,7 +92,6 @@ export const Dense = meta.story({
     dense: true,
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 });
 
@@ -123,7 +100,6 @@ export const Disabled = meta.story({
     disabled: true,
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 });
 
@@ -133,7 +109,6 @@ export const Readonly = meta.story({
     modelValue: 'Readonly text',
     placeholder: 'Placeholder',
     readonly: true,
-    variant: 'outlined',
   },
 });
 
@@ -142,7 +117,6 @@ export const WithErrorMessage = meta.story({
     errorMessages: ['With error messages'],
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 });
 
@@ -151,7 +125,6 @@ export const WithSuccessMessage = meta.story({
     label: 'Label',
     placeholder: 'Placeholder',
     successMessages: ['With success messages'],
-    variant: 'outlined',
   },
 });
 
@@ -160,7 +133,6 @@ export const WithHint = meta.story({
     hint: 'With hint',
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 });
 
@@ -170,7 +142,6 @@ export const HideDetails = meta.story({
     hint: 'Hint (should be invisible)',
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 });
 
@@ -179,7 +150,6 @@ export const WithPrependIcon = meta.story({
     label: 'Label',
     placeholder: 'Placeholder',
     prependIcon: 'lu-heart',
-    variant: 'outlined',
   },
 });
 
@@ -188,28 +158,12 @@ export const WithAppendIcon = meta.story({
     appendIcon: 'lu-heart',
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 });
 
-export const OutlinedWithNoLabel = meta.story({
+export const WithNoLabel = meta.story({
   args: {
     placeholder: 'Placeholder',
-    variant: 'outlined',
-  },
-});
-
-export const DefaultWithNoLabel = meta.story({
-  args: {
-    placeholder: 'Placeholder',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'When the default (underlined) variant is used without a label, the wrapper drops the `pt-3` floating-label reserve. This keeps the underline at a consistent height with other controls in the same row — for example the dense variant lines up with RuiMenuSelect dense at 32px.',
-      },
-    },
   },
 });
 
@@ -228,12 +182,11 @@ export const DenseWithNoLabel = meta.story({
   },
 });
 
-export const OutlinedWithVeryLongLabel = meta.story({
+export const WithVeryLongLabel = meta.story({
   args: {
     label:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 });
 
@@ -242,7 +195,6 @@ export const Required = meta.story({
     label: 'Label',
     placeholder: 'Placeholder',
     required: true,
-    variant: 'outlined',
   },
 });
 

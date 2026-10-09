@@ -6,11 +6,8 @@ import type { ComputedRef, InjectionKey, MaybeRef, MaybeRefOrGetter } from 'vue'
  * - `top`: a label above a bordered field (the default).
  * - `hidden`: no visible label; the label is still announced to screen readers.
  *   For search and filter fields whose placeholder and icon say what they are.
- * - `floating`: the 2.x Material label that floats into the field's border.
- *   Kept so an app can switch back while it migrates.
- *   @deprecated removed in 4.0.
  */
-export type LabelPlacement = 'top' | 'hidden' | 'floating';
+export type LabelPlacement = 'top' | 'hidden';
 
 export interface FieldOptions {
   labelPlacement: MaybeRef<LabelPlacement>;

@@ -58,11 +58,6 @@ const meta = preview.meta({
       options: contextColors,
       table: { category: 'State' },
     },
-    variant: {
-      control: 'select',
-      options: ['default', 'filled', 'outlined'],
-      table: { category: 'State' },
-    },
   },
   component: RuiTextArea,
   parameters: {
@@ -87,28 +82,11 @@ export const Default = meta.story({
   },
 });
 
-export const Filled = meta.story({
-  args: {
-    label: 'Label',
-    placeholder: 'Placeholder',
-    variant: 'filled',
-  },
-});
-
-export const Outlined = meta.story({
-  args: {
-    label: 'Label',
-    placeholder: 'Placeholder',
-    variant: 'outlined',
-  },
-});
-
 export const Primary = meta.story({
   args: {
     color: 'primary',
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 });
 
@@ -117,7 +95,6 @@ export const Dense = meta.story({
     dense: true,
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 });
 
@@ -126,7 +103,6 @@ export const Disabled = meta.story({
     disabled: true,
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 });
 
@@ -135,7 +111,6 @@ export const WithErrorMessage = meta.story({
     errorMessages: ['With error messages'],
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 });
 
@@ -144,7 +119,6 @@ export const WithSuccessMessage = meta.story({
     label: 'Label',
     placeholder: 'Placeholder',
     successMessages: ['With success messages'],
-    variant: 'outlined',
   },
 });
 
@@ -153,7 +127,6 @@ export const WithHint = meta.story({
     hint: 'With hint',
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 });
 
@@ -163,7 +136,6 @@ export const HideDetails = meta.story({
     hint: 'Hint (should be invisible)',
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 });
 
@@ -172,7 +144,6 @@ export const WithPrependIcon = meta.story({
     label: 'Label',
     placeholder: 'Placeholder',
     prependIcon: 'lu-heart',
-    variant: 'outlined',
   },
 });
 
@@ -181,7 +152,6 @@ export const WithAppendIcon = meta.story({
     appendIcon: 'lu-heart',
     label: 'Label',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 });
 
@@ -191,7 +161,6 @@ export const Readonly = meta.story({
     modelValue: 'Readonly text',
     placeholder: 'Placeholder',
     readonly: true,
-    variant: 'outlined',
   },
 });
 
@@ -201,7 +170,6 @@ export const Clearable = meta.story({
     label: 'Label',
     modelValue: 'Clearable text',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 });
 
@@ -210,7 +178,6 @@ export const Required = meta.story({
     label: 'Label',
     placeholder: 'Placeholder',
     required: true,
-    variant: 'outlined',
   },
 });
 

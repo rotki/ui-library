@@ -1,6 +1,7 @@
 import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiTextArea from '@/components/forms/text-area/RuiTextArea.vue';
+import { textAreaStyles } from '@/components/forms/text-area/text-area-styles';
 import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
 function createWrapper(
@@ -63,7 +64,6 @@ describe('components/forms/text-area/RuiTextArea.vue', () => {
       props: {
         label: 'Notes',
         modelValue: '',
-        variant: 'filled',
       },
     });
     const label = wrapper.find('[data-id=field-label]');
@@ -73,47 +73,21 @@ describe('components/forms/text-area/RuiTextArea.vue', () => {
     expect(wrapper.findAll('label')).toHaveLength(1);
   });
 
-  it('should pass color props', async () => {
-    wrapper = createWrapper({
-      props: {
-        labelPlacement: 'floating',
-        modelValue: '',
-      },
-    });
-    // Default color is primary (from defaultVariants)
-    expectWrapperToHaveClass(wrapper, 'label', /after:border-rui-primary/);
-
-    await wrapper.setProps({ color: 'secondary' });
-    expectWrapperToHaveClass(wrapper, 'label', /after:border-rui-secondary/);
-
-    await wrapper.setProps({ color: 'error' });
-    expectWrapperToHaveClass(wrapper, 'label', /after:border-rui-error/);
-
-    await wrapper.setProps({ color: 'success' });
-    expectWrapperToHaveClass(wrapper, 'label', /after:border-rui-success/);
-  });
-
-  it('should pass variant props', async () => {
-    wrapper = createWrapper({ props: { labelPlacement: 'floating', modelValue: '' } });
-    // Default variant has pt-4 on inputWrapper
-    expectWrapperToHaveClass(wrapper, 'label', /border-b/);
-
-    await wrapper.setProps({ variant: 'filled' });
-    expectWrapperToHaveClass(wrapper, 'label', /rounded-t/);
-
-    await wrapper.setProps({ variant: 'outlined' });
-    expect(wrapper.find('fieldset').exists()).toBeTruthy();
+  // happy-dom never reports the focus, so this checks the styles; the visual suite covers the focused field
+  it('should color the focused border with the color, primary by default', () => {
+    expect(textAreaStyles({ focused: true }).fieldset()).toContain('!border-rui-primary');
+    expect(textAreaStyles({ focused: true, color: 'secondary' }).fieldset()).toContain('!border-rui-secondary');
   });
 
   it('should pass dense props', async () => {
     wrapper = createWrapper();
-    expectWrapperNotToHaveClass(wrapper, 'textarea:not([aria-hidden="true"])', /py-1(?!\.)/);
+    expectWrapperNotToHaveClass(wrapper, 'textarea:not([aria-hidden="true"])', /^pt-1$/);
 
     await wrapper.setProps({ dense: true });
-    expectWrapperToHaveClass(wrapper, 'textarea:not([aria-hidden="true"])', /py-1(?!\.)/);
+    expectWrapperToHaveClass(wrapper, 'textarea:not([aria-hidden="true"])', /^pt-1$/);
 
     await wrapper.setProps({ dense: false });
-    expectWrapperNotToHaveClass(wrapper, 'textarea:not([aria-hidden="true"])', /py-1(?!\.)/);
+    expectWrapperNotToHaveClass(wrapper, 'textarea:not([aria-hidden="true"])', /^pt-1$/);
   });
 
   it('should pass hint props', async () => {

@@ -1,7 +1,7 @@
 <script lang="ts" setup generic="TValue, TItem">
 import type { VueClassValue } from '@/types/class-value';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
-import { autoCompleteStyles, type AutoCompleteVariant } from '@/components/forms/auto-complete/auto-complete-styles';
+import { autoCompleteStyles } from '@/components/forms/auto-complete/auto-complete-styles';
 import RuiAutoCompleteOptionList from '@/components/forms/auto-complete/RuiAutoCompleteOptionList.vue';
 import RuiAutoCompleteSelection from '@/components/forms/auto-complete/RuiAutoCompleteSelection.vue';
 import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';
@@ -54,8 +54,6 @@ export interface AutoCompleteProps<TValue, TItem> {
   prependWidth?: number;
   appendWidth?: number;
   itemHeight?: number;
-  /** @deprecated Only applies with `labelPlacement="floating"`; every other placement draws the outlined field. */
-  variant?: AutoCompleteVariant;
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
@@ -113,7 +111,6 @@ const {
   labelPlacement = undefined,
   menuOptions,
   classNames,
-  variant = 'default',
   hint,
   keyAttr,
   textAttr,
@@ -144,14 +141,12 @@ const slots = defineSlots<{
   'activator'?: (props: {
     disabled: boolean;
     value: TItem[];
-    variant: string;
     readOnly: boolean;
     attrs: Record<string, unknown>;
     open: boolean;
     hasError: boolean;
     hasSuccess: boolean;
   }) => any;
-  'activator.label'?: (props: { value: TItem[] }) => any;
   'selection.prepend'?: (props: { index: number; item: TItem }) => any;
   'selection'?: (props: { index: number; item: TItem; chipAttrs: Record<string, unknown> }) => any;
   'item.prepend'?: (props: { disabled: boolean; item: TItem; active: boolean }) => any;
@@ -339,12 +334,6 @@ const { hasError, hasSuccess } = useFormTextDetail(
 
 const valueSet = computed<boolean>(() => get(value).length > 0);
 
-/**
- * True while the consumer's `#placeholder` slot holds the resting content
- * area, where the resting label would overlap it and so hides instead.
- */
-const placeholderSlotActive = computed<boolean>(() => Boolean(slots.placeholder) && !get(valueSet) && !get(searchInputFocused));
-
 const usedPlaceholder = computed<string>(() => {
   if (get(searchInputFocused))
     return placeholder;
@@ -353,28 +342,13 @@ const usedPlaceholder = computed<string>(() => {
 
 const labelId = useId();
 const placement = useLabelPlacement(() => labelPlacement);
-const floating = computed<boolean>(() => get(placement) === 'floating');
-// Only the floating placement keeps the 2.x variants; the others always draw the bordered field
-const outlined = computed<boolean>(() => !get(floating) || variant === 'outlined');
-const float = computed<boolean>(() => get(floating) && (get(isOpen) || get(valueSet) || get(searchInputFocused)) && get(outlined));
 
-// With no label inside the field, an empty, unfocused field shows the placeholder where the collapsed search input sits
+// An empty, unfocused field shows the placeholder where the collapsed search input sits
 const restingPlaceholder = computed<boolean>(() =>
-  !get(floating) && !!placeholder && !get(valueSet) && !get(searchInputFocused) && !slots.placeholder,
+  !!placeholder && !get(valueSet) && !get(searchInputFocused) && !slots.placeholder,
 );
 
-const legendText = computed<string>(() => {
-  if (!get(float) || !label)
-    return '';
-  return required ? `${label} ﹡` : label;
-});
-
 const ui = computed<ReturnType<typeof autoCompleteStyles>>(() => autoCompleteStyles({
-  placement: get(placement),
-  filled: get(floating) && variant === 'filled',
-  outlined: get(outlined),
-  float: get(float),
-  showLabel: !!get(legendText),
   opened: get(isOpen),
   hovered: get(isHovered),
   dense,
@@ -542,7 +516,7 @@ defineExpose({
     :class="ui.wrapper({ class: cn($attrs.class) })"
     :class-names="{
       ...menuOptions?.classNames,
-      details: [{ 'px-0': !floating }, cn(menuOptions?.classNames?.details) ?? ''],
+      details: ['px-0', cn(menuOptions?.classNames?.details) ?? ''],
       menu: [
         { hidden: optionsWithSelectedHidden.length === 0 && customValue && !slots['no-data'] },
         cn(menuOptions?.classNames?.menu) ?? '',
@@ -561,7 +535,7 @@ defineExpose({
     disable-auto-focus
   >
     <template
-      v-if="!floating && label"
+      v-if="label"
       #label
     >
       <RuiFieldLabel
@@ -575,11 +549,11 @@ defineExpose({
     <template #activator="{ attrs, open, hasError: slotHasError, hasSuccess: slotHasSuccess }">
       <slot
         name="activator"
-        v-bind="{ disabled, value, variant, readOnly, attrs, open, hasError: slotHasError, hasSuccess: slotHasSuccess }"
+        v-bind="{ disabled, value, readOnly, attrs, open, hasError: slotHasError, hasSuccess: slotHasSuccess }"
       >
         <div
           ref="activator"
-          :aria-labelledby="!floating && label ? labelId : undefined"
+          :aria-labelledby="label ? labelId : undefined"
           :class="ui.activator({ class: cn(classNames?.label) })"
           v-bind="{
             ...getNonRootAttrs($attrs, ['onClick', 'class']),
@@ -607,26 +581,6 @@ defineExpose({
           @keydown.home.prevent="modelHighlightedIndex = 0"
           @keydown.end.prevent="modelHighlightedIndex = optionsWithSelectedHidden.length - 1"
         >
-          <span
-            v-if="floating && (outlined || (!valueSet && !searchInputFocused)) && !placeholderSlotActive"
-            :class="[
-              ui.label(),
-              { 'pr-2': !valueSet && !open && outlined },
-            ]"
-          >
-            <slot
-              name="activator.label"
-              v-bind="{ value }"
-            >
-              {{ label }}
-            </slot>
-            <span
-              v-if="required"
-              :class="ui.required()"
-            >
-              ﹡
-            </span>
-          </span>
           <div
             data-id="value"
             :class="ui.value()"
@@ -694,6 +648,7 @@ defineExpose({
               :placeholder="usedPlaceholder"
               :class="[focusInputClass, { hidden: hideSearchInput }]"
               :aria-invalid="hasError"
+              :aria-labelledby="label ? labelId : undefined"
               aria-autocomplete="list"
               @keydown.delete="onInputDeletePressed()"
               @input.stop="updateSearchInput($event)"
@@ -709,6 +664,7 @@ defineExpose({
             tabindex="-1"
             color="error"
             data-id="clear"
+            aria-label="Clear"
             :class="[
               ui.clear(),
               focusAnyFocused && 'visible!',
@@ -728,7 +684,7 @@ defineExpose({
           >
             <RuiIcon
               :class="ui.icon()"
-              :size="dense ? 16 : floating ? 24 : 20"
+              :size="dense ? 16 : 20"
               name="lu-chevron-down"
             />
           </span>
@@ -741,14 +697,7 @@ defineExpose({
             variant="indeterminate"
           />
         </div>
-        <fieldset
-          v-if="outlined"
-          :class="ui.fieldset()"
-        >
-          <legend :class="ui.legend()">
-            {{ legendText }}
-          </legend>
-        </fieldset>
+        <fieldset :class="ui.fieldset()" />
       </slot>
     </template>
     <template #default="{ width }">

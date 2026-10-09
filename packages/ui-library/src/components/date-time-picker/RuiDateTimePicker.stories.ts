@@ -78,11 +78,10 @@ export const Default = meta.story({
   },
 });
 
-export const Outlined = meta.story({
+export const SecondAccuracy = meta.story({
   args: {
     accuracy: TimeAccuracy.SECOND,
     modelValue: new Date(),
-    variant: 'outlined',
   },
 });
 
@@ -91,7 +90,6 @@ export const Optional = meta.story({
     accuracy: TimeAccuracy.SECOND,
     allowEmpty: true,
     modelValue: undefined,
-    variant: 'outlined',
   },
 });
 
@@ -100,14 +98,6 @@ export const WithMaxNow = meta.story({
     accuracy: TimeAccuracy.SECOND,
     maxDate: 'now',
     modelValue: new Date(),
-    variant: 'outlined',
-  },
-});
-
-export const Filled = meta.story({
-  args: {
-    modelValue: new Date(),
-    variant: 'filled',
   },
 });
 
@@ -115,7 +105,6 @@ export const Dense = meta.story({
   args: {
     dense: true,
     modelValue: new Date(),
-    variant: 'outlined',
   },
 });
 
@@ -123,7 +112,6 @@ export const Disabled = meta.story({
   args: {
     disabled: true,
     modelValue: new Date(),
-    variant: 'outlined',
   },
 });
 
@@ -131,7 +119,6 @@ export const Readonly = meta.story({
   args: {
     modelValue: new Date(),
     readonly: true,
-    variant: 'outlined',
   },
 });
 
@@ -139,7 +126,6 @@ export const WithErrorMessage = meta.story({
   args: {
     errorMessages: ['Date is out of range'],
     modelValue: new Date(),
-    variant: 'outlined',
   },
 });
 
@@ -147,7 +133,6 @@ export const WithSuccessMessage = meta.story({
   args: {
     modelValue: new Date(),
     successMessages: ['Date confirmed'],
-    variant: 'outlined',
   },
 });
 
@@ -155,7 +140,6 @@ export const WithHint = meta.story({
   args: {
     hint: 'Select a date and time',
     modelValue: new Date(),
-    variant: 'outlined',
   },
 });
 
@@ -164,7 +148,6 @@ export const HideDetails = meta.story({
     hideDetails: true,
     hint: 'This hint should not be rendered',
     modelValue: new Date(),
-    variant: 'outlined',
   },
 });
 
@@ -173,7 +156,6 @@ export const WithTimezone = meta.story({
     accuracy: TimeAccuracy.SECOND,
     modelValue: new Date(),
     showTimezone: true,
-    variant: 'outlined',
   },
 });
 
@@ -183,7 +165,6 @@ export const AllActions = meta.story({
     actions: ['now', 'today', 'clear'],
     allowEmpty: true,
     modelValue: new Date(),
-    variant: 'outlined',
   },
 });
 
@@ -192,7 +173,6 @@ export const NoActions = meta.story({
     accuracy: TimeAccuracy.SECOND,
     actions: [],
     modelValue: new Date(),
-    variant: 'outlined',
   },
 });
 
@@ -200,14 +180,12 @@ export const Required = meta.story({
   args: {
     modelValue: new Date(),
     required: true,
-    variant: 'outlined',
   },
 });
 
 export const InsideParentMenu = meta.story({
   args: {
     modelValue: new Date(),
-    variant: 'outlined',
   },
   render: args => ({
     components: { RuiButton, RuiDateTimePicker, RuiMenu },

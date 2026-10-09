@@ -53,11 +53,6 @@ const meta = preview.meta({
       options: contextColors,
       table: { category: 'State' },
     },
-    variant: {
-      control: 'select',
-      options: ['default', 'filled', 'outlined'],
-      table: { category: 'State' },
-    },
   },
   component: RuiRevealableTextField,
   parameters: {
@@ -74,7 +69,6 @@ export const Default = meta.story({
   args: {
     label: 'Password',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
   async play({ canvas, userEvent }) {
     const input = canvas.getByPlaceholderText('Placeholder');
@@ -92,7 +86,6 @@ export const PrimaryText = meta.story({
     label: 'Password',
     placeholder: 'Placeholder',
     textColor: 'primary',
-    variant: 'outlined',
   },
 });
 
@@ -102,7 +95,6 @@ export const SuccessText = meta.story({
     label: 'Password',
     placeholder: 'Placeholder',
     textColor: 'success',
-    variant: 'outlined',
   },
 });
 
@@ -111,7 +103,6 @@ export const ErrorsMessage = meta.story({
     errorMessages: ['Lorem ipsum dolor'],
     label: 'Password',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 });
 
@@ -120,7 +111,6 @@ export const SuccessMessage = meta.story({
     label: 'Password',
     placeholder: 'Placeholder',
     successMessages: ['Lorem ipsum dolor'],
-    variant: 'outlined',
   },
 });
 
@@ -129,7 +119,6 @@ export const Hinted = meta.story({
     hint: 'Lorem ipsum dolor',
     label: 'Password',
     placeholder: 'Placeholder',
-    variant: 'outlined',
   },
 });
 
@@ -138,7 +127,6 @@ export const Required = meta.story({
     label: 'Password',
     placeholder: 'Placeholder',
     required: true,
-    variant: 'outlined',
   },
 });
 

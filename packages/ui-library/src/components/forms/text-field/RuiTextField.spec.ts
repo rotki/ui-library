@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { h } from 'vue';
 import RuiFieldDefaults from '@/components/forms/field-defaults/RuiFieldDefaults.vue';
 import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
+import { textFieldStyles } from '@/components/forms/text-field/text-field-styles';
 import { FieldSymbol } from '@/composables/defaults/field';
 import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
@@ -69,46 +70,34 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
       },
     });
     expect(wrapper.find('[data-id=field-label]').classes()).toContain('sr-only');
-    expectWrapperToHaveClass(wrapper, 'input', /^placeholder:opacity-100$/);
-  });
-
-  it('should draw the bordered field whatever the variant unless the label floats', async () => {
-    wrapper = createWrapper({
-      props: {
-        label: 'Field',
-        modelValue: '',
-        variant: 'filled',
-      },
-    });
-    expect(wrapper.find('fieldset').exists()).toBe(true);
-
-    await wrapper.setProps({ labelPlacement: 'floating' });
-    expect(wrapper.find('fieldset').exists()).toBe(false);
-    expect(wrapper.find('[data-id=field-label]').exists()).toBe(false);
+    expect(wrapper.find('input').attributes('placeholder')).toBe('Search assets');
+    expectWrapperNotToHaveClass(wrapper, 'input', /^placeholder:opacity-0$/);
   });
 
   it('should take the placement from the nearest RuiFieldDefaults, then the app default', () => {
-    const app = { labelPlacement: 'floating' as const };
+    const app = { labelPlacement: 'hidden' as const };
     wrapper = mount(RuiTextField, {
       props: { label: 'Field', modelValue: '' },
       global: { stubs: ['rui-icon'], provide: { [FieldSymbol]: app } },
     });
-    expect(wrapper.find('[data-id=field-label]').exists()).toBe(false);
+    expect(wrapper.find('[data-id=field-label]').classes()).toContain('sr-only');
     wrapper.unmount();
 
     const scoped = mount(RuiFieldDefaults, {
-      props: { labelPlacement: 'hidden' },
+      props: { labelPlacement: 'top' },
       slots: { default: () => h(RuiTextField, { label: 'Field', modelValue: '' }) },
       global: { stubs: ['rui-icon'], provide: { [FieldSymbol]: app } },
     });
-    expect(scoped.find('[data-id=field-label]').classes()).toContain('sr-only');
+    expect(scoped.find('[data-id=field-label]').classes()).not.toContain('sr-only');
     scoped.unmount();
 
-    wrapper = mount(RuiTextField, {
-      props: { label: 'Field', labelPlacement: 'top', modelValue: '' },
+    const own = mount(RuiFieldDefaults, {
+      props: { labelPlacement: 'top' },
+      slots: { default: () => h(RuiTextField, { label: 'Field', labelPlacement: 'hidden', modelValue: '' }) },
       global: { stubs: ['rui-icon'], provide: { [FieldSymbol]: app } },
     });
-    expect(wrapper.find('[data-id=field-label]').classes()).not.toContain('sr-only');
+    expect(own.find('[data-id=field-label]').classes()).toContain('sr-only');
+    own.unmount();
   });
 
   it('should pass disabled props', async () => {
@@ -137,67 +126,11 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
     expect(wrapper.find('input').attributes('readonly')).toBeUndefined();
   });
 
-  it('should pass color props', async () => {
-    wrapper = createWrapper({
-      props: {
-        labelPlacement: 'floating',
-        modelValue: '',
-      },
-    });
-    // Default color is primary (from defaultVariants)
-    expectWrapperToHaveClass(wrapper, 'label', /after:border-rui-primary/);
-
-    await wrapper.setProps({ color: 'secondary' });
-    expectWrapperToHaveClass(wrapper, 'label', /after:border-rui-secondary/);
-
-    await wrapper.setProps({ color: 'error' });
-    expectWrapperToHaveClass(wrapper, 'label', /after:border-rui-error/);
-
-    await wrapper.setProps({ color: 'success' });
-    expectWrapperToHaveClass(wrapper, 'label', /after:border-rui-success/);
-  });
-
-  it('should pass variant props', async () => {
-    wrapper = createWrapper({
-      props: {
-        label: 'Field',
-        labelPlacement: 'floating',
-        modelValue: '',
-      },
-    });
-    // Default variant reserves pt-3 on the wrapper for the floating label.
-    expectWrapperToHaveClass(wrapper, '[data-id=wrapper]', /pt-3/);
-
-    await wrapper.setProps({ variant: 'filled' });
-    expectWrapperNotToHaveClass(wrapper, '[data-id=wrapper]', /pt-3/);
-    expectWrapperToHaveClass(wrapper, 'label', /rounded-t/);
-
-    await wrapper.setProps({ variant: 'outlined' });
-    expectWrapperNotToHaveClass(wrapper, '[data-id=wrapper]', /pt-3/);
-    expect(wrapper.find('fieldset').exists()).toBeTruthy();
-  });
-
-  it('should drop the floating-label reserve when used without a label, matching a RuiMenuSelect activator', async () => {
-    wrapper = createWrapper({
-      props: {
-        labelPlacement: 'floating',
-        modelValue: '',
-      },
-    });
-    expectWrapperToHaveClass(wrapper, '[data-id=wrapper]', /!pt-0/);
-
-    // 40px, the height of a non-dense activator
-    expectWrapperToHaveClass(wrapper, 'input', /py-2/);
-
-    // 32px, the height of a dense one
-    await wrapper.setProps({ dense: true });
-    expectWrapperToHaveClass(wrapper, 'input', /py-1(?!\.)/);
-    expectWrapperToHaveClass(wrapper, '[data-id=wrapper]', /!pt-0/);
-
-    // A label brings the reserve back, since the override only applies without one
-    await wrapper.setProps({ label: 'Labelled', dense: false });
-    expectWrapperNotToHaveClass(wrapper, '[data-id=wrapper]', /!pt-0/);
-    expectWrapperToHaveClass(wrapper, '[data-id=wrapper]', /pt-3/);
+  // happy-dom never reports the focus, so this checks the styles; the visual suite covers the focused field
+  it('should color the focused border with the color, primary by default', () => {
+    expect(textFieldStyles({ focused: true }).fieldset()).toContain('!border-rui-primary');
+    expect(textFieldStyles({ focused: true, color: 'secondary' }).fieldset()).toContain('!border-rui-secondary');
+    expect(textFieldStyles({ focused: false, color: 'secondary' }).fieldset()).not.toContain('!border-rui-secondary');
   });
 
   it('should pass dense props', async () => {

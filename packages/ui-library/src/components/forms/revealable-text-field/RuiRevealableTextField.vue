@@ -17,7 +17,6 @@ const {
   placeholder = '',
   disabled = false,
   labelPlacement = undefined,
-  variant = 'default',
   dense = false,
   hint = '',
   errorMessages = [],
@@ -44,7 +43,6 @@ const hidden = ref<boolean>(true);
     :placeholder="placeholder"
     :disabled="disabled"
     :label-placement="labelPlacement"
-    :variant="variant"
     :dense="dense"
     :hint="hint"
     :error-messages="errorMessages"
@@ -74,9 +72,10 @@ const hidden = ref<boolean>(true);
           class="-mr-1 p-2!"
           @click="hidden = !hidden"
         >
+          <!-- secondary text and the field's 16px icon size, like the other field icons -->
           <RuiIcon
-            class="text-black/54 dark:text-white/[.56]"
-            size="20"
+            class="text-rui-text-secondary"
+            size="16"
             :name="hidden ? 'lu-eye-off' : 'lu-eye'"
           />
         </RuiButton>

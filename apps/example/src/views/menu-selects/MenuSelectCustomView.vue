@@ -54,7 +54,6 @@ const customItemValue = ref<number>();
           key-attr="id"
           text-attr="label"
           clearable
-          variant="outlined"
           data-id="ms-custom-selection"
         >
           <template #selection="{ item }">

@@ -31,7 +31,6 @@ const options = ['light', 'dark'];
       <RuiTextField
         v-model="timeout"
         type="number"
-        variant="outlined"
         label="timeout"
         class="mt-4"
         data-id="timeout"
@@ -40,7 +39,6 @@ const options = ['light', 'dark'];
         v-model="theme"
         :options="options"
         label="theme"
-        variant="outlined"
         clearable
         data-id="menu"
       />

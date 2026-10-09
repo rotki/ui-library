@@ -6,7 +6,7 @@ import preview from '~/.storybook/preview';
 
 type MenuSelectProps = ComponentPropsAndSlots<typeof RuiMenuSelect<string, SelectOption>>;
 
-type MenuSelectMetaArgs = Required<Pick<MenuSelectProps, 'disabled' | 'options' | 'variant'>>;
+type MenuSelectMetaArgs = Required<Pick<MenuSelectProps, 'disabled' | 'options'>>;
 
 function render(args: MenuSelectProps) {
   return {
@@ -37,7 +37,6 @@ const meta = preview.meta<
   args: {
     disabled: false,
     options,
-    variant: 'default',
   },
   argTypes: {
     dense: { control: 'boolean' },
@@ -45,10 +44,6 @@ const meta = preview.meta<
     modelValue: { control: 'text' },
     options: { control: 'object' },
     required: { control: 'boolean', table: { category: 'State' } },
-    variant: {
-      control: 'select',
-      options: ['default', 'outlined', 'filled'],
-    },
   },
   component: RuiMenuSelect<string, SelectOption>,
   parameters: {
@@ -84,7 +79,7 @@ export const PrimitiveItems = meta.story({
   },
 });
 
-export const DefaultDisabled = meta.story({
+export const Disabled = meta.story({
   args: {
     disabled: true,
     keyAttr: 'id',
@@ -93,52 +88,22 @@ export const DefaultDisabled = meta.story({
   },
 });
 
-export const Outlined = meta.story({
-  args: {
-    keyAttr: 'id',
-    modelValue: undefined,
-    textAttr: 'label',
-    variant: 'outlined',
-  },
-});
-
-export const OutlinedDisabled = meta.story({
-  args: {
-    disabled: true,
-    keyAttr: 'id',
-    modelValue: undefined,
-    textAttr: 'label',
-    variant: 'outlined',
-  },
-});
-
-export const OutlinedDense = meta.story({
+export const Dense = meta.story({
   args: {
     dense: true,
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
-    variant: 'outlined',
   },
 });
 
-export const OutlinedDisabledDense = meta.story({
+export const DisabledDense = meta.story({
   args: {
     dense: true,
     disabled: true,
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
-    variant: 'outlined',
-  },
-});
-
-export const Filled = meta.story({
-  args: {
-    keyAttr: 'id',
-    modelValue: undefined,
-    textAttr: 'label',
-    variant: 'filled',
   },
 });
 
@@ -148,7 +113,6 @@ export const Readonly = meta.story({
     modelValue: '3',
     readOnly: true,
     textAttr: 'label',
-    variant: 'outlined',
   },
 });
 
@@ -158,7 +122,6 @@ export const WithErrorMessage = meta.story({
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
-    variant: 'outlined',
   },
 });
 
@@ -168,7 +131,6 @@ export const WithSuccessMessage = meta.story({
     modelValue: '3',
     successMessages: ['Selection confirmed'],
     textAttr: 'label',
-    variant: 'outlined',
   },
 });
 
@@ -178,7 +140,6 @@ export const WithHint = meta.story({
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
-    variant: 'outlined',
   },
 });
 
@@ -189,7 +150,6 @@ export const HideDetails = meta.story({
     keyAttr: 'id',
     modelValue: undefined,
     textAttr: 'label',
-    variant: 'outlined',
   },
 });
 
@@ -199,7 +159,6 @@ export const Required = meta.story({
     modelValue: undefined,
     required: true,
     textAttr: 'label',
-    variant: 'outlined',
   },
 });
 

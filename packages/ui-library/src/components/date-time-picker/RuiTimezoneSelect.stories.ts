@@ -30,10 +30,6 @@ const meta = preview.meta({
     'placeholder': { control: 'text' },
     'readOnly': { control: 'boolean' },
     'required': { control: 'boolean' },
-    'variant': {
-      control: 'select',
-      options: ['default', 'filled', 'outlined'],
-    },
   },
   component: RuiTimezoneSelect,
   render,

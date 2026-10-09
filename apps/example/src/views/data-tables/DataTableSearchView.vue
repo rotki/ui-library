@@ -36,7 +36,6 @@ const pagination = ref<TablePaginationData>({
           placeholder="Search..."
           label="Search"
           class="w-1/2 lg:w-2/5"
-          variant="outlined"
           color="primary"
           hide-details
           data-id="search-input"
@@ -75,7 +74,6 @@ const pagination = ref<TablePaginationData>({
           placeholder="Search..."
           label="Search"
           class="w-1/2 lg:w-2/5"
-          variant="outlined"
           color="primary"
           hide-details
           data-id="search-input"
