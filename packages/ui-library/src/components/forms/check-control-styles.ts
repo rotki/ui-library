@@ -77,10 +77,11 @@ export const checkControlStyles = tv({
     { color: 'grey', checked: true, class: { control: 'text-rui-neutral-800 dark:text-rui-neutral-200' } },
     { color: 'primary', checked: true, class: { control: 'text-rui-primary' } },
     { color: 'secondary', checked: true, class: { control: 'text-rui-secondary' } },
-    { color: 'error', checked: true, class: { control: 'text-rui-error' } },
-    { color: 'warning', checked: true, class: { control: 'text-rui-warning' } },
-    { color: 'info', checked: true, class: { control: 'text-rui-info' } },
-    { color: 'success', checked: true, class: { control: 'text-rui-success' } },
+    // a status color's dark `main` is a text tone, so the mark takes the deep `darker` under its white check
+    { color: 'error', checked: true, class: { control: 'text-rui-error dark:text-rui-error-darker' } },
+    { color: 'warning', checked: true, class: { control: 'text-rui-warning dark:text-rui-warning-darker' } },
+    { color: 'info', checked: true, class: { control: 'text-rui-info dark:text-rui-info-darker' } },
+    { color: 'success', checked: true, class: { control: 'text-rui-success dark:text-rui-success-darker' } },
 
     // A dark check where the fill is light: grey and the pale context colors in dark mode
     { color: ['grey', 'warning', 'info', 'success'], class: { glyph: 'dark:text-rui-neutral-900' } },

@@ -115,15 +115,16 @@ const chipStyles = tv({
     // Context colors — filled bg
     { color: 'primary', variant: 'filled', class: { root: 'bg-rui-primary' } },
     { color: 'secondary', variant: 'filled', class: { root: 'bg-rui-secondary' } },
-    { color: 'error', variant: 'filled', class: { root: 'bg-rui-error' } },
-    { color: 'warning', variant: 'filled', class: { root: 'bg-rui-warning' } },
-    { color: 'info', variant: 'filled', class: { root: 'bg-rui-info' } },
-    { color: 'success', variant: 'filled', class: { root: 'bg-rui-success' } },
+    // in dark a status color's `main` is a text tone, so the fill is its deep `darker`
+    { color: 'error', variant: 'filled', class: { root: 'bg-rui-error dark:bg-rui-error-darker' } },
+    { color: 'warning', variant: 'filled', class: { root: 'bg-rui-warning dark:bg-rui-warning-darker' } },
+    { color: 'info', variant: 'filled', class: { root: 'bg-rui-info dark:bg-rui-info-darker' } },
+    { color: 'success', variant: 'filled', class: { root: 'bg-rui-success dark:bg-rui-success-darker' } },
 
     // Context colors — outlined base
-    { color: 'primary', variant: 'outlined', class: { root: 'border text-rui-primary border-rui-primary/50 bg-transparent' } },
-    { color: 'secondary', variant: 'outlined', class: { root: 'border text-rui-secondary border-rui-secondary/50 bg-transparent' } },
-    { color: 'error', variant: 'outlined', class: { root: 'border text-rui-error border-rui-error/50 bg-transparent' } },
+    { color: 'primary', variant: 'outlined', class: { root: 'border text-rui-primary dark:text-rui-primary-lighter border-rui-primary/50 bg-transparent' } },
+    { color: 'secondary', variant: 'outlined', class: { root: 'border text-rui-secondary dark:text-rui-secondary-lighter border-rui-secondary/50 bg-transparent' } },
+    { color: 'error', variant: 'outlined', class: { root: 'border text-rui-error dark:text-rui-error-lighter border-rui-error/50 bg-transparent' } },
     { color: 'warning', variant: 'outlined', class: { root: 'border text-rui-warning border-rui-warning/50 bg-transparent' } },
     { color: 'info', variant: 'outlined', class: { root: 'border text-rui-info border-rui-info/50 bg-transparent' } },
     { color: 'success', variant: 'outlined', class: { root: 'border text-rui-success border-rui-success/50 bg-transparent' } },
@@ -137,10 +138,8 @@ const chipStyles = tv({
     { color: 'success', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-success/4' } },
   ],
   compoundSlots: [
-    // All context colors filled share dark text
+    // Every filled color takes light text, in both themes
     { slots: ['root'], color: ['primary', 'secondary', 'error', 'warning', 'info', 'success'], variant: 'filled', class: 'text-rui-dark-text' },
-    // Dark mode: warning/success/info filled use light text
-    { slots: ['root'], color: ['warning', 'success', 'info'], variant: 'filled', class: 'dark:text-rui-light-text' },
   ],
   defaultVariants: {
     tile: false,

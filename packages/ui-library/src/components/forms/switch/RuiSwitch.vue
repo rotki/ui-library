@@ -45,7 +45,7 @@ const switchStyles = tv({
     wrapper: 'relative flex gap-2 items-start cursor-pointer group/switch',
     // 40 × 22, nudged down a pixel to sit centred on the label's 24px line
     inner: 'relative w-10 h-5.5 mt-px shrink-0',
-    input: 'peer appearance-none relative w-full h-full rounded-full bg-rui-neutral-300 dark:bg-rui-neutral-700 transition-all duration-75 ease-in-out cursor-pointer focus-visible:focus-ring',
+    input: 'peer appearance-none relative w-full h-full rounded-full bg-rui-neutral-400 dark:bg-rui-neutral-700 transition-all duration-75 ease-in-out cursor-pointer focus-visible:focus-ring',
     toggle: [
       'absolute size-4.5 transition-all duration-75 ease-in-out -translate-y-1/2 top-1/2 rounded-full pointer-events-none',
       'bg-white left-0.5 shadow-rui-control',
@@ -92,7 +92,7 @@ const switchStyles = tv({
     },
   },
   compoundVariants: [
-    { checked: false, disabled: false, class: { input: 'group-hover/switch:bg-rui-neutral-400 dark:group-hover/switch:bg-rui-neutral-600' } },
+    { checked: false, disabled: false, class: { input: 'group-hover/switch:bg-rui-neutral-500 dark:group-hover/switch:bg-rui-neutral-600' } },
 
     // Checked (no color): an inverted neutral track, with a dark knob in dark mode
     { checked: true, disabled: false, class: { input: 'bg-rui-neutral-900 dark:bg-rui-neutral-100', toggle: 'dark:bg-rui-neutral-900' } },
@@ -100,10 +100,11 @@ const switchStyles = tv({
     // Checked + color: a solid track with the white knob, in both themes
     { checked: true, disabled: false, color: 'primary', class: { input: 'bg-rui-primary dark:bg-rui-primary', toggle: 'dark:bg-white' } },
     { checked: true, disabled: false, color: 'secondary', class: { input: 'bg-rui-secondary dark:bg-rui-secondary', toggle: 'dark:bg-white' } },
-    { checked: true, disabled: false, color: 'error', class: { input: 'bg-rui-error dark:bg-rui-error', toggle: 'dark:bg-white' } },
-    { checked: true, disabled: false, color: 'warning', class: { input: 'bg-rui-warning dark:bg-rui-warning', toggle: 'dark:bg-white' } },
-    { checked: true, disabled: false, color: 'info', class: { input: 'bg-rui-info dark:bg-rui-info', toggle: 'dark:bg-white' } },
-    { checked: true, disabled: false, color: 'success', class: { input: 'bg-rui-success dark:bg-rui-success', toggle: 'dark:bg-white' } },
+    // a status color's dark `main` is a text tone, so the track takes the deep `darker` under the white knob
+    { checked: true, disabled: false, color: 'error', class: { input: 'bg-rui-error dark:bg-rui-error-darker', toggle: 'dark:bg-white' } },
+    { checked: true, disabled: false, color: 'warning', class: { input: 'bg-rui-warning dark:bg-rui-warning-darker', toggle: 'dark:bg-white' } },
+    { checked: true, disabled: false, color: 'info', class: { input: 'bg-rui-info dark:bg-rui-info-darker', toggle: 'dark:bg-white' } },
+    { checked: true, disabled: false, color: 'success', class: { input: 'bg-rui-success dark:bg-rui-success-darker', toggle: 'dark:bg-white' } },
 
     // Size sm + checked: 34 - 14 - 2
     { size: 'sm', checked: true, class: { toggle: 'left-4.5' } },

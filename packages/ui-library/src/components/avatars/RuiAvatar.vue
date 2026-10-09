@@ -133,10 +133,11 @@ const avatarStyles = tv({
       default: { root: 'bg-rui-grey-200 text-rui-text dark:bg-rui-grey-800' },
       primary: { root: 'bg-rui-primary text-white' },
       secondary: { root: 'bg-rui-secondary text-white' },
-      error: { root: 'bg-rui-error text-white' },
-      warning: { root: 'bg-rui-warning text-white' },
-      info: { root: 'bg-rui-info text-white' },
-      success: { root: 'bg-rui-success text-white' },
+      // in dark a status color's `main` is a text tone, so the fill is its deep `darker`
+      error: { root: 'bg-rui-error dark:bg-rui-error-darker text-white' },
+      warning: { root: 'bg-rui-warning dark:bg-rui-warning-darker text-white' },
+      info: { root: 'bg-rui-info dark:bg-rui-info-darker text-white' },
+      success: { root: 'bg-rui-success dark:bg-rui-success-darker text-white' },
     },
     size: {
       'xs': { initials: 'text-[0.625rem]' },
@@ -147,9 +148,6 @@ const avatarStyles = tv({
       '2xl': { initials: 'text-xl' },
     },
   },
-  compoundSlots: [
-    { slots: ['root'], color: ['warning', 'success', 'info'], class: 'dark:text-rui-light-text' },
-  ],
   defaultVariants: {
     variant: 'circular',
     color: 'default',

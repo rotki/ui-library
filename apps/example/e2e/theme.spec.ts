@@ -54,7 +54,7 @@ test.describe('theme', () => {
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
     const primaryMain = await getAdaptiveVariable('--rui-primary-main')(page);
-    expect(primaryMain).toBe('91, 104, 178');
+    expect(primaryMain).toBe('94, 107, 180');
 
     const textPrimary = await getAdaptiveVariable('--rui-text-primary')(page);
     expect(textPrimary).toBe('rgb(250, 250, 250)');
@@ -75,7 +75,7 @@ test.describe('theme', () => {
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
     primaryMain = await getAdaptiveVariable('--rui-primary-main')(page);
-    expect(primaryMain).toBe('91, 104, 178');
+    expect(primaryMain).toBe('94, 107, 180');
 
     // Switch back to light
     await lightButton.click();

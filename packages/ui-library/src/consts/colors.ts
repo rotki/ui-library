@@ -1,22 +1,9 @@
+/**
+ * The Material palette the library kept from 2.x. Only `grey` is left, because consumers still use
+ * it widely; new code takes the zinc `neutral` ramp, and the other Material hues were dropped in 3.0.
+ */
 export const baseColors = [
   'grey',
-  'indigo',
-  'deep-purple',
-  'amber',
-  'orange',
-  'pink',
-  'deep-orange',
-  'green',
-  'red',
-  'light-green',
-  'purple',
-  'lime',
-  'light-blue',
-  'yellow',
-  'cyan',
-  'teal',
-  'blue',
-  'blue-gray',
 ];
 
 export const baseColorsIntensities = [

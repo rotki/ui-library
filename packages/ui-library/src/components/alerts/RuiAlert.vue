@@ -69,10 +69,11 @@ const alertStyles = tv({
     type: {
       primary: { root: '[--rui-alert:var(--rui-primary-main)]' },
       secondary: { root: '[--rui-alert:var(--rui-secondary-main)]' },
-      error: { root: '[--rui-alert:var(--rui-error-main)]' },
-      warning: { root: '[--rui-alert:var(--rui-warning-main)]' },
-      info: { root: '[--rui-alert:var(--rui-info-main)]' },
-      success: { root: '[--rui-alert:var(--rui-success-main)]' },
+      // a status color's dark `main` is a text tone, so a filled alert takes the deep `darker` there
+      error: { root: '[--rui-alert:var(--rui-error-main)] [--rui-alert-fill:var(--rui-error-darker)]' },
+      warning: { root: '[--rui-alert:var(--rui-warning-main)] [--rui-alert-fill:var(--rui-warning-darker)]' },
+      info: { root: '[--rui-alert:var(--rui-info-main)] [--rui-alert-fill:var(--rui-info-darker)]' },
+      success: { root: '[--rui-alert:var(--rui-success-main)] [--rui-alert-fill:var(--rui-success-darker)]' },
     },
   },
   compoundVariants: [
@@ -81,17 +82,10 @@ const alertStyles = tv({
       variant: 'default',
       class: { root: 'border -m-px bg-[color-mix(in_srgb,rgb(var(--rui-alert))_8%,transparent)] dark:bg-[color-mix(in_srgb,rgb(var(--rui-alert))_12%,transparent)] border-[color-mix(in_srgb,rgb(var(--rui-alert))_25%,transparent)]' },
     },
-    { variant: 'filled', class: { root: 'bg-[rgb(var(--rui-alert))]' } },
+    { variant: 'filled', class: { root: 'bg-[rgb(var(--rui-alert))] dark:bg-[rgb(var(--rui-alert-fill,var(--rui-alert)))]' } },
     { variant: 'outlined', class: { root: 'border-[rgb(var(--rui-alert))]' } },
   ],
   compoundSlots: [
-    // The pale dark-mode warning, success and info fills take dark text; on the slots, which set the light one
-    {
-      slots: ['icon', 'texts', 'action', 'close'],
-      variant: 'filled',
-      type: ['warning', 'success', 'info'],
-      class: 'dark:text-rui-light-text!',
-    },
     {
       slots: ['icon', 'texts', 'action', 'close'],
       variant: ['default', 'outlined'],

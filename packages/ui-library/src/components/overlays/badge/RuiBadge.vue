@@ -56,10 +56,11 @@ const badgeStyles = tv({
       default: { badge: 'bg-rui-neutral-200 dark:bg-rui-neutral-700' },
       primary: { badge: 'text-white bg-rui-primary' },
       secondary: { badge: 'text-white bg-rui-secondary' },
-      error: { badge: 'text-white bg-rui-error' },
-      warning: { badge: 'text-white bg-rui-warning' },
-      info: { badge: 'text-white bg-rui-info' },
-      success: { badge: 'text-white bg-rui-success' },
+      // in dark a status color's `main` is a text tone, so a badge with text fills with the deep `darker`
+      error: { badge: 'text-white bg-rui-error dark:bg-rui-error-darker' },
+      warning: { badge: 'text-white bg-rui-warning dark:bg-rui-warning-darker' },
+      info: { badge: 'text-white bg-rui-info dark:bg-rui-info-darker' },
+      success: { badge: 'text-white bg-rui-success dark:bg-rui-success-darker' },
     },
     size: {
       sm: { badge: 'min-h-4 min-w-4' },
@@ -79,15 +80,16 @@ const badgeStyles = tv({
   compoundVariants: [
     // Dot default color
     { dot: true, color: 'default', class: { badge: 'bg-rui-neutral-500' } },
+    // A dot carries no text, so it keeps the brighter `main`, which reads better as a small mark on a dark page
+    { dot: true, color: 'error', class: { badge: 'dark:bg-rui-error' } },
+    { dot: true, color: 'warning', class: { badge: 'dark:bg-rui-warning' } },
+    { dot: true, color: 'info', class: { badge: 'dark:bg-rui-info' } },
+    { dot: true, color: 'success', class: { badge: 'dark:bg-rui-success' } },
 
     // Dot sizes (smaller than normal badge)
     { dot: true, size: 'sm', class: { badge: 'min-w-1.5 min-h-1.5' } },
     { dot: true, size: 'md', class: { badge: 'min-w-2 min-h-2' } },
     { dot: true, size: 'lg', class: { badge: 'min-w-2.5 min-h-2.5' } },
-  ],
-  compoundSlots: [
-    // Dark mode: warning/success/info keep light text on colored bg
-    { slots: ['badge'], color: ['warning', 'success', 'info'], class: 'dark:text-rui-light-text' },
   ],
   defaultVariants: {
     color: 'primary',

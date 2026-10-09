@@ -112,10 +112,10 @@ export const buttonStyles = tv({
     { color: 'grey', variant: 'outlined', class: { root: 'inset-ring-rui-outline' } },
     { color: 'grey', variant: 'text', class: { root: 'text-rui-text-secondary' } },
 
-    // Context colors: `dark:text-rui-<color>` beats the base variant's `dark:text-rui-text`, which is meant for filled buttons
-    { color: 'primary', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-primary-lighter/[.04] active:bg-rui-primary-lighter/10 text-rui-primary dark:text-rui-primary' } },
-    { color: 'secondary', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-secondary-lighter/[.04] active:bg-rui-secondary-lighter/10 text-rui-secondary dark:text-rui-secondary' } },
-    { color: 'error', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-error-lighter/[.04] active:bg-rui-error-lighter/10 text-rui-error dark:text-rui-error' } },
+    // `dark:text-rui-<color>` beats the filled buttons' `dark:text-rui-text`; primary, secondary and error use their lighter tone in dark for 4.5:1
+    { color: 'primary', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-primary-lighter/[.04] active:bg-rui-primary-lighter/10 text-rui-primary dark:text-rui-primary-lighter' } },
+    { color: 'secondary', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-secondary-lighter/[.04] active:bg-rui-secondary-lighter/10 text-rui-secondary dark:text-rui-secondary-lighter' } },
+    { color: 'error', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-error-lighter/[.04] active:bg-rui-error-lighter/10 text-rui-error dark:text-rui-error-lighter' } },
     { color: 'warning', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-warning-lighter/[.04] active:bg-rui-warning-lighter/10 text-rui-warning dark:text-rui-warning' } },
     { color: 'info', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-info-lighter/[.04] active:bg-rui-info-lighter/10 text-rui-info dark:text-rui-info' } },
     { color: 'success', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-success-lighter/[.04] active:bg-rui-success-lighter/10 text-rui-success dark:text-rui-success' } },
@@ -128,13 +128,13 @@ export const buttonStyles = tv({
     { color: 'info', active: true, class: { root: 'bg-rui-info-darker' } },
     { color: 'success', active: true, class: { root: 'bg-rui-success-darker' } },
 
-    // === Context colors — active outlined/text ===
-    { color: 'primary', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-rui-primary-lighter/30' } },
-    { color: 'secondary', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-rui-secondary-lighter/30' } },
-    { color: 'error', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-rui-error-lighter/30' } },
-    { color: 'warning', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-rui-warning-lighter/30' } },
-    { color: 'info', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-rui-info-lighter/30' } },
-    { color: 'success', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-rui-success-lighter/30' } },
+    // Active outlined/text: a quiet tint with the deeper tone as the label, which keeps 4.5:1 for every color
+    { color: 'primary', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-rui-primary/[0.08] text-rui-primary-darker' } },
+    { color: 'secondary', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-rui-secondary/[0.08] text-rui-secondary-darker' } },
+    { color: 'error', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-rui-error/[0.08] text-rui-error-darker' } },
+    { color: 'warning', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-rui-warning/[0.08] text-rui-warning-darker' } },
+    { color: 'info', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-rui-info/[0.08] text-rui-info-darker' } },
+    { color: 'success', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-rui-success/[0.08] text-rui-success-darker' } },
 
     // === Context colors — outlined border ===
     { color: 'primary', variant: 'outlined', class: { root: 'inset-ring-rui-primary/50' } },
@@ -165,11 +165,18 @@ export const buttonStyles = tv({
     { variant: 'fab', icon: true, size: 'sm', class: { root: 'px-2 py-2' } },
   ],
   compoundSlots: [
-    // Dark mode default variant text override for warning/success/info
-    { slots: ['root'], color: ['warning', 'success', 'info'], variant: 'default', class: 'dark:text-rui-light-text' },
-    // Dark mode active outlined/text override for primary/secondary
-    { slots: ['root'], color: 'primary', variant: ['outlined', 'text', 'list'], active: true, class: 'dark:bg-rui-primary-darker/60 dark:text-rui-primary-lighter' },
-    { slots: ['root'], color: 'secondary', variant: ['outlined', 'text', 'list'], active: true, class: 'dark:bg-rui-secondary-darker/60 dark:text-rui-secondary-lighter' },
+    // In dark a status color's `main` is a text tone, so a filled status button takes the deep `darker` fill
+    { slots: ['root'], color: 'error', variant: ['default', 'fab'], class: 'dark:bg-rui-error-darker dark:hover:bg-rui-error-darker/85 dark:active:bg-rui-error-darker/75' },
+    { slots: ['root'], color: 'warning', variant: ['default', 'fab'], class: 'dark:bg-rui-warning-darker dark:hover:bg-rui-warning-darker/85 dark:active:bg-rui-warning-darker/75' },
+    { slots: ['root'], color: 'info', variant: ['default', 'fab'], class: 'dark:bg-rui-info-darker dark:hover:bg-rui-info-darker/85 dark:active:bg-rui-info-darker/75' },
+    { slots: ['root'], color: 'success', variant: ['default', 'fab'], class: 'dark:bg-rui-success-darker dark:hover:bg-rui-success-darker/85 dark:active:bg-rui-success-darker/75' },
+    // Dark mode active outlined/text: the same quiet tint, with the lighter tone as the label
+    { slots: ['root'], color: 'primary', variant: ['outlined', 'text', 'list'], active: true, class: 'dark:bg-rui-primary/[0.16] dark:text-rui-primary-lighter' },
+    { slots: ['root'], color: 'secondary', variant: ['outlined', 'text', 'list'], active: true, class: 'dark:bg-rui-secondary/[0.16] dark:text-rui-secondary-lighter' },
+    { slots: ['root'], color: 'error', variant: ['outlined', 'text', 'list'], active: true, class: 'dark:bg-rui-error/[0.16] dark:text-rui-error-lighter' },
+    { slots: ['root'], color: 'warning', variant: ['outlined', 'text', 'list'], active: true, class: 'dark:bg-rui-warning/[0.16] dark:text-rui-warning-lighter' },
+    { slots: ['root'], color: 'info', variant: ['outlined', 'text', 'list'], active: true, class: 'dark:bg-rui-info/[0.16] dark:text-rui-info-lighter' },
+    { slots: ['root'], color: 'success', variant: ['outlined', 'text', 'list'], active: true, class: 'dark:bg-rui-success/[0.16] dark:text-rui-success-lighter' },
   ],
   defaultVariants: {
     variant: 'default',

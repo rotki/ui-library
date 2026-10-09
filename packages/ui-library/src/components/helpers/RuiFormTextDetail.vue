@@ -33,7 +33,7 @@ const { formattedErrorMessages, formattedSuccessMessages, hasError, hasSuccess }
     <div
       v-if="hasError"
       key="error"
-      class="text-rui-error text-caption"
+      class="text-rui-error dark:text-rui-error-lighter text-caption"
     >
       {{ formattedErrorMessages[0] }}
     </div>
