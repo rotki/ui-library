@@ -46,6 +46,7 @@ function onClick(): void {
 <template>
   <RuiButton
     :active="active"
+    role="option"
     :aria-selected="active"
     :size="dense ? 'sm' : undefined"
     :disabled="disabled"

@@ -10,7 +10,6 @@ export interface UseAutoCompleteFocusOptions {
 }
 
 export interface UseAutoCompleteFocusDeps {
-  activatorFocused: Ref<boolean>;
   activatorFocusedWithin: Ref<boolean>;
   focusedValueIndex: Ref<number>;
   internalSearch: Ref<string>;
@@ -25,19 +24,31 @@ export interface UseAutoCompleteFocusDeps {
 
 export interface UseAutoCompleteFocusReturn {
   anyFocused: ComputedRef<boolean>;
+  /** Whether the user is searching: the input has focus and is not just showing a picked value. */
+  editing: ComputedRef<boolean>;
   inputClass: ComputedRef<string>;
-  onActivatorFocused: () => Promise<void>;
   onInputFocused: () => void;
+  onSettledKeydown: (event: KeyboardEvent) => void;
   setInputFocus: () => Promise<void>;
+  settleOnInput: () => void;
+  unsettle: () => void;
 }
 
 export function useAutoCompleteFocus(
   options: UseAutoCompleteFocusOptions,
   deps: UseAutoCompleteFocusDeps,
 ): UseAutoCompleteFocusReturn {
+  /**
+   * The input holds focus after a pick, as the combobox, but shows the picked value rather than an
+   * empty search until the user types, clicks or opens the list again.
+   */
+  const settled = shallowRef<boolean>(false);
+
   const anyFocused = computed<boolean>(
     () => get(deps.activatorFocusedWithin) || get(deps.menuWrapperFocusedWithin),
   );
+
+  const editing = computed<boolean>(() => get(deps.searchInputFocused) && !get(settled));
 
   const inputClass = computed<string>(() => {
     const isFocused = get(anyFocused);
@@ -52,25 +63,42 @@ export function useAutoCompleteFocus(
     return 'flex-1 min-w-0';
   });
 
-  async function setInputFocus(): Promise<void> {
-    await nextTick(() => {
-      set(deps.searchInputFocused, true);
-    });
+  function unsettle(): void {
+    set(settled, false);
   }
 
-  async function onActivatorFocused(): Promise<void> {
+  /** Puts focus on the input, as the combobox, while it keeps showing the value just picked. */
+  function settleOnInput(): void {
+    set(settled, true);
+    set(deps.searchInputFocused, true);
+  }
+
+  /**
+   * The first character typed after a pick replaces the shown value, as it would after tabbing in,
+   * rather than adding to it.
+   *
+   * @param event - the key press on the input
+   */
+  function onSettledKeydown(event: KeyboardEvent): void {
+    if (!get(settled) || event.key.length !== 1 || event.ctrlKey || event.metaKey || event.altKey)
+      return;
+    get(deps.textInput)?.select();
+    unsettle();
+  }
+
+  async function setInputFocus(): Promise<void> {
+    unsettle();
     await nextTick(() => {
-      if (!get(deps.activatorFocused)) {
-        set(deps.searchInputFocused, true);
-      }
+      set(deps.searchInputFocused, true);
     });
   }
 
   function onInputFocused(): void {
     set(deps.focusedValueIndex, -1);
 
+    // focus coming back after a pick keeps the value as it is, unselected
     const shouldApply = toValue(options.shouldApplyValueAsSearch);
-    if (shouldApply) {
+    if (shouldApply && !get(settled)) {
       const textInput = get(deps.textInput);
       textInput?.select();
     }
@@ -88,9 +116,11 @@ export function useAutoCompleteFocus(
   let pendingCustomSearch = '';
 
   watch(anyFocused, (focused) => {
-    if (!focused && toValue(options.customValue)) {
+    if (focused)
+      return;
+    unsettle();
+    if (toValue(options.customValue))
       pendingCustomSearch = get(deps.internalSearch);
-    }
   });
 
   // Debounced, so the menu does not close for a moment while focus moves between its own elements
@@ -123,9 +153,12 @@ export function useAutoCompleteFocus(
 
   return {
     anyFocused,
+    editing,
     inputClass,
-    onActivatorFocused,
     onInputFocused,
+    onSettledKeydown,
     setInputFocus,
+    settleOnInput,
+    unsettle,
   };
 }

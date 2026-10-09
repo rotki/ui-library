@@ -7,7 +7,7 @@ import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { type LabelPlacement, useLabelPlacement } from '@/composables/defaults/field';
-import { type KeyOfType, useDropdownMenu } from '@/composables/dropdown-menu';
+import { getOptionHeight, type KeyOfType, useDropdownMenu } from '@/composables/dropdown-menu';
 import { type FloatingOptions, Placement } from '@/composables/floating';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
@@ -143,7 +143,7 @@ const {
   applyHighlighted,
   valueKey,
 } = useDropdownMenu<TValue, TItem>({
-  itemHeight: itemHeight ?? (dense ? 30 : 48),
+  itemHeight: itemHeight ?? getOptionHeight(dense),
   keyAttr,
   textAttr,
   options: () => options,
@@ -195,6 +195,7 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
     :show-details="!hideDetails"
     :disabled="disabled"
     disable-auto-focus
+    role="listbox"
   >
     <template
       v-if="label"
@@ -213,8 +214,10 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
         name="activator"
         v-bind="{ disabled, value, readOnly, attrs, open, hasError: slotHasError, hasSuccess: slotHasSuccess }"
       >
+        <!-- a select-only combobox: the button opens a listbox of options, and carries the field's state -->
         <button
           ref="activator"
+          role="combobox"
           :disabled="disabled"
           :aria-disabled="disabled"
           :aria-expanded="isOpen"
@@ -281,7 +284,7 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
             v-if="loading"
             :class="ui.progress()"
             color="primary"
-            thickness="3"
+            thickness="2"
             variant="indeterminate"
           />
         </button>
@@ -311,6 +314,7 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
             v-for="{ item, _index } in renderedData"
             :key="getIdentifier(item)"
             :active="isActiveItem(item)"
+            role="option"
             :aria-selected="isActiveItem(item)"
             :size="dense ? 'sm' : undefined"
             variant="list"

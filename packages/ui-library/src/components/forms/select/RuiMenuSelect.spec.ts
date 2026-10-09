@@ -101,36 +101,36 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
     await vi.runAllTimersAsync();
     await vi.runAllTimersAsync();
 
-    expect(queryByRole('menu')).toBeTruthy();
+    expect(queryByRole('listbox')).toBeTruthy();
 
     const selectedIndex = 4;
-    let highlightedItemButton = queryMenuButton(1);
+    let highlightedItemButton = queryMenuButton(1, document.body, 'listbox');
     assert(highlightedItemButton);
     expect(highlightedItemButton.getAttribute('data-highlighted')).toBe('true');
 
-    const buttonToSelect = queryMenuButton(selectedIndex);
+    const buttonToSelect = queryMenuButton(selectedIndex, document.body, 'listbox');
     buttonToSelect?.click();
     expect(wrapper.emitted('update:modelValue')).toEqual([[selectedIndex.toString()]]);
 
     await vi.runAllTimersAsync();
-    expect(queryByRole('menu')).toBeFalsy();
+    expect(queryByRole('listbox')).toBeFalsy();
 
     // Open Menu Select
     await wrapper.find('[data-id=activator]').trigger('click');
     await vi.runAllTimersAsync();
     await vi.runAllTimersAsync();
 
-    expect(queryByRole('menu')).toBeTruthy();
+    expect(queryByRole('listbox')).toBeTruthy();
 
     await vi.runAllTimersAsync();
 
-    highlightedItemButton = queryMenuButton(selectedIndex);
+    highlightedItemButton = queryMenuButton(selectedIndex, document.body, 'listbox');
     assert(highlightedItemButton);
     expect(highlightedItemButton.getAttribute('data-highlighted')).toBe('true');
 
     await wrapper.find('[data-id=activator]').trigger('keydown.down');
 
-    highlightedItemButton = queryMenuButton(selectedIndex + 1);
+    highlightedItemButton = queryMenuButton(selectedIndex + 1, document.body, 'listbox');
     assert(highlightedItemButton);
     expect(highlightedItemButton.getAttribute('data-highlighted')).toBe('true');
 
@@ -139,7 +139,7 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
 
     const newSelectedIndex = selectedIndex - 1;
 
-    highlightedItemButton = queryMenuButton(newSelectedIndex);
+    highlightedItemButton = queryMenuButton(newSelectedIndex, document.body, 'listbox');
     assert(highlightedItemButton);
     expect(highlightedItemButton.getAttribute('data-highlighted')).toBe('true');
 
@@ -251,7 +251,7 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
     await wrapper.find('[data-id=activator]').trigger('click');
     await vi.runAllTimersAsync();
 
-    expect(queryByRole('menu')).toBeFalsy();
+    expect(queryByRole('listbox')).toBeFalsy();
   });
 
   it('should render progress indicator when loading', () => {
@@ -340,7 +340,7 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
     await vi.runAllTimersAsync();
     await vi.runAllTimersAsync();
 
-    const menu = queryByRole('menu');
+    const menu = queryByRole('listbox');
     assert(menu);
     const noData = menu.querySelector('[data-id=no-data]');
     assert(noData);
@@ -360,7 +360,7 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
     await vi.runAllTimersAsync();
     await vi.runAllTimersAsync();
 
-    const menu = queryByRole('menu');
+    const menu = queryByRole('listbox');
     assert(menu);
     const noData = menu.querySelector('[data-id=no-data]');
     expect(noData).toBeFalsy();
@@ -459,9 +459,9 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
     await vi.runAllTimersAsync();
     await vi.runAllTimersAsync();
 
-    expect(queryByRole('menu')).toBeTruthy();
+    expect(queryByRole('listbox')).toBeTruthy();
 
-    const buttons = queryAllMenuButtons();
+    const buttons = queryAllMenuButtons(document.body, 'listbox');
     const activeButton = buttons[0];
     assert(activeButton);
     expect(activeButton.getAttribute('aria-selected')).toBe('true');

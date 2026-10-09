@@ -24,11 +24,13 @@ const cases: OverlayCase[] = [
     name: 'menu-select',
     route: '/menu-selects/basic',
     open: async page => page.locator('[data-id=ms-basic-outlined] [data-id=activator]').click(),
+    target: '[role=listbox]',
   },
   {
     name: 'auto-complete',
     route: '/auto-completes/basic',
     open: async page => page.locator('[data-id=ac-basic-outlined] [data-id=activator]').click(),
+    target: '[role=listbox]',
   },
   {
     name: 'date-time-picker',

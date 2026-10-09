@@ -62,7 +62,7 @@ test.describe('data tables - mobile', () => {
     const limitSection = page.locator('[data-id=table-mobile-forced] [data-id=table-pagination-limit-section]').first();
     // visually hidden to keep the toolbar on one line, but it still names the select
     await expect(limitSection.getByText('Rows per page:')).toHaveClass(/\bsr-only\b/);
-    await expect(limitSection.getByRole('button', { name: 'Rows per page:' })).toBeVisible();
+    await expect(limitSection.getByRole('combobox', { name: 'Rows per page:' })).toBeVisible();
   });
 
   test('should pin the action into the card header', async ({ page }) => {

@@ -23,15 +23,22 @@ export interface UseAutoCompleteKeyboardNavigationDeps<TItem> {
   removeValue: (item: TItem) => void;
   setSearchAsValue: () => void;
   getText: (item: TItem) => string | undefined;
+  updateInternalSearch: (value?: string) => void;
   activator: Ref<HTMLElement | undefined> | TemplateRef<HTMLElement>;
 }
 
 export interface UseAutoCompleteKeyboardNavigationReturn {
+  /**
+   * The selected value (a chip) that Backspace or Delete would remove, -1 for none. It is only
+   * drawn as selected: focus stays in the input, where no browser shortcut takes the key.
+   */
   focusedValueIndex: Ref<number>;
   moveSelectedValueHighlight: (event: KeyboardEvent, next: boolean) => void;
   onEnter: (event: KeyboardEvent) => void;
   onTab: (event: KeyboardEvent) => void;
-  onInputDeletePressed: () => void;
+  onInputDeletePressed: (event: KeyboardEvent) => void;
+  /** Drops the value selection on any key that does not act on it. */
+  onInputKeydown: (event: KeyboardEvent) => void;
   setValueFocus: (index: number) => void;
 }
 
@@ -185,45 +192,60 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
     }
   }
 
-  function onInputDeletePressed(): void {
-    const internalSearch = get(deps.internalSearch);
-    const value = get(deps.value);
-    const total = value.length;
-    const multiple = toValue(options.multiple);
+  /**
+   * Removes the selected value. Alt with it, where custom values are accepted, puts the value's
+   * text back in the search instead of dropping it.
+   *
+   * @param event - the Backspace or Delete press
+   * @param item - the value the highlighted chip stands for
+   */
+  function removeSelectedValue(event: KeyboardEvent, item: TItem): void {
+    event.preventDefault();
+    set(focusedValueIndex, -1);
+    deps.removeValue(item);
+    if (event.altKey && toValue(options.customValue))
+      deps.updateInternalSearch(deps.getText(item) ?? '');
+  }
 
-    if (!internalSearch && total > 0) {
-      if (multiple) {
-        if (toValue(options.chips)) {
-          set(focusedValueIndex, total - 1);
-        }
-        else {
-          const lastItem = value[total - 1];
-          if (lastItem !== undefined)
-            deps.removeValue(lastItem);
-        }
-      }
-      else {
-        deps.clear();
-      }
+  /** Backspace or Delete with nothing typed: steps onto the last value, or drops it outright. */
+  function deleteFromEmptySearch(value: TItem[]): void {
+    if (!toValue(options.multiple)) {
+      deps.clear();
+      return;
     }
+    if (toValue(options.chips)) {
+      set(focusedValueIndex, value.length - 1);
+      return;
+    }
+    const lastItem = value.at(-1);
+    if (lastItem !== undefined)
+      deps.removeValue(lastItem);
+  }
+
+  function onInputDeletePressed(event: KeyboardEvent): void {
+    const value = get(deps.value);
+    const selected = value[get(focusedValueIndex)];
+    if (selected !== undefined) {
+      removeSelectedValue(event, selected);
+      return;
+    }
+
+    if (!get(deps.internalSearch) && value.length > 0)
+      deleteFromEmptySearch(value);
+  }
+
+  function onInputKeydown(event: KeyboardEvent): void {
+    if (get(focusedValueIndex) === -1)
+      return;
+    // a modifier pressed on its own (the Alt of Alt + Backspace) keeps the selection for the key it modifies
+    const keepsSelection = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Alt', 'AltGraph', 'Control', 'Meta', 'Shift'].includes(event.key);
+    if (!keepsSelection)
+      set(focusedValueIndex, -1);
   }
 
   // Watch value changes to reset focused index
   watch(deps.value, () => {
     setValueFocus(-1);
-  });
-
-  // Watch focused value index to handle chip focus
-  watch(focusedValueIndex, async (index) => {
-    const multiple = toValue(options.multiple);
-    if (index === -1 || !multiple)
-      return;
-
-    await nextTick(() => {
-      const activator = get(deps.activator);
-      const element = activator?.querySelector<HTMLElement>(`[data-index="${index}"]`);
-      element?.focus();
-    });
   });
 
   return {
@@ -232,6 +254,7 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
     moveSelectedValueHighlight,
     onEnter,
     onInputDeletePressed,
+    onInputKeydown,
     onTab,
     setValueFocus,
   };

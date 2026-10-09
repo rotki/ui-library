@@ -163,7 +163,8 @@ export const buttonStyles = tv({
     { variant: 'fab', size: 'sm', class: { root: 'py-1.5 px-2' } },
     { variant: 'fab', size: 'lg', class: { root: 'py-3' } },
     { variant: 'list', size: 'xs', class: { root: 'px-3 py-0.5' } },
-    { variant: 'list', size: 'sm', class: { root: 'px-3 py-1' } },
+    // 32px: a dense select's option row, which `getOptionHeight` reserves in the virtual list
+    { variant: 'list', size: 'sm', class: { root: 'px-3 py-2' } },
     // Icon-only sizing, per the padding and glyph table on buttonStyles above
     { icon: true, class: { root: 'p-2 ![--rui-icon-size:1.25rem]' } },
     { icon: true, size: 'xs', class: { root: 'p-[0.1875rem] ![--rui-icon-size:0.875rem]' } },

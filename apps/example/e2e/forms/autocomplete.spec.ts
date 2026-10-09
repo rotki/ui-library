@@ -53,15 +53,14 @@ test.describe('auto-complete - basic', () => {
   test('should not open menu when disabled', async ({ page }) => {
     const ac = page.locator('[data-id=ac-basic-disabled]');
     const activator = ac.locator('[data-id=activator]');
-    await expect(activator).toHaveAttribute('aria-disabled', 'true');
+    await expect(ac.getByRole('combobox')).toBeDisabled();
     await activator.click({ force: true });
-    await expect(page.locator('div[role=menu]')).toHaveCount(0);
+    await expect(page.locator('div[role=listbox]')).toHaveCount(0);
   });
 
   test('should show loading indicator', async ({ page }) => {
     const ac = page.locator('[data-id=ac-basic-loading]');
-    const activator = ac.locator('[data-id=activator]');
-    await expect(activator).toHaveAttribute('aria-busy', 'true');
+    await expect(ac.getByRole('combobox')).toHaveAttribute('aria-busy', 'true');
   });
 
   test('should display error messages', async ({ page }) => {
@@ -83,11 +82,11 @@ test.describe('auto-complete - basic', () => {
 
   test('should show required indicator', async ({ page }) => {
     const ac = page.locator('[data-id=ac-basic-required]');
-    const activator = ac.locator('[data-id=activator]');
+    const combobox = ac.getByRole('combobox');
     const label = ac.getByTestId('field-label');
-    await expect(activator).toHaveAttribute('aria-required', 'true');
+    await expect(combobox).toHaveAttribute('aria-required', 'true');
     await expect(label).toContainText('\uFE61');
-    await expect(activator).toHaveAttribute('aria-labelledby', (await label.getAttribute('id')) ?? '');
+    await expect(combobox).toHaveAttribute('aria-labelledby', (await label.getAttribute('id')) ?? '');
   });
 
   test('should display hint text', async ({ page }) => {
@@ -109,15 +108,18 @@ test.describe('auto-complete - selection', () => {
   test('should open menu and select single value', async ({ page }) => {
     const ac = page.locator('[data-id=ac-select-single]');
     const activator = ac.locator('[data-id=activator]');
+    const combobox = ac.getByRole('combobox');
 
-    await expect(activator).toHaveAttribute('aria-expanded', 'false');
+    await expect(combobox).toHaveAttribute('aria-expanded', 'false');
     await activator.click();
-    await expect(activator).toHaveAttribute('aria-expanded', 'true');
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(combobox).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
-    await page.locator('div[role=menu] button').first().click();
-    await expect(activator).toHaveAttribute('aria-expanded', 'false');
-    await expect(ac.locator('input')).toHaveValue('Lorem');
+    await page.locator('div[role=listbox] button').first().click();
+    await expect(combobox).toHaveAttribute('aria-expanded', 'false');
+    await expect(combobox).toHaveValue('Lorem');
+    // focus stays on the combobox after the pick
+    await expect(combobox).toBeFocused();
   });
 
   test('should clear value with clear button', async ({ page }) => {
@@ -135,14 +137,14 @@ test.describe('auto-complete - selection', () => {
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
-    await page.locator('div[role=menu] button').first().click();
+    await page.locator('div[role=listbox] button').first().click();
     // Menu stays open for multi-select
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
     await expect(ac.locator('[data-id=activator] [data-value]')).toHaveCount(1);
 
-    await page.locator('div[role=menu] button').nth(1).click();
+    await page.locator('div[role=listbox] button').nth(1).click();
     await expect(ac.locator('[data-id=activator] [data-value]')).toHaveCount(2);
   });
 
@@ -161,9 +163,9 @@ test.describe('auto-complete - selection', () => {
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
-    const firstButton = page.locator('div[role=menu] button').first();
+    const firstButton = page.locator('div[role=listbox] button').first();
     await expect(firstButton).toHaveAttribute('data-highlighted', 'true');
   });
 
@@ -172,14 +174,14 @@ test.describe('auto-complete - selection', () => {
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
-    const initialCount = await page.locator('div[role=menu] button').count();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
+    const initialCount = await page.locator('div[role=listbox] button').count();
 
     // Select first item
-    await page.locator('div[role=menu] button').first().click();
+    await page.locator('div[role=listbox] button').first().click();
 
     // Re-focus to keep menu open (multi-select)
-    const newCount = await page.locator('div[role=menu] button').count();
+    const newCount = await page.locator('div[role=listbox] button').count();
     expect(newCount).toBe(initialCount - 1);
   });
 
@@ -188,7 +190,7 @@ test.describe('auto-complete - selection', () => {
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
     // Navigate down
     await activator.press('ArrowDown');
@@ -196,7 +198,7 @@ test.describe('auto-complete - selection', () => {
 
     // Select with Enter
     await activator.press('Enter');
-    await expect(page.locator('div[role=menu]')).toHaveCount(0);
+    await expect(page.locator('div[role=listbox]')).toHaveCount(0);
     // The value should be set (exact value depends on which item was highlighted)
     await expect(ac.locator('input')).not.toHaveValue('');
   });
@@ -206,7 +208,7 @@ test.describe('auto-complete - selection', () => {
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
     await activator.press('ArrowDown');
     await activator.press('Tab');
@@ -230,15 +232,15 @@ test.describe('auto-complete - search', () => {
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
     await ac.locator('input').fill('Germany');
-    await expect(page.locator('div[role=menu] button')).toHaveCount(1);
-    await expect(page.locator('div[role=menu] button').first()).toContainText('Germany');
+    await expect(page.locator('div[role=listbox] button')).toHaveCount(1);
+    await expect(page.locator('div[role=listbox] button').first()).toContainText('Germany');
 
     // Type a broader search to verify results change
     await ac.locator('input').fill('Gr');
-    const filteredCount = await page.locator('div[role=menu] button').count();
+    const filteredCount = await page.locator('div[role=listbox] button').count();
     expect(filteredCount).toBeGreaterThanOrEqual(1);
   });
 
@@ -247,13 +249,13 @@ test.describe('auto-complete - search', () => {
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
-    const initialCount = await page.locator('div[role=menu] button').count();
+    const initialCount = await page.locator('div[role=listbox] button').count();
     expect(initialCount).toBe(5);
 
     await ac.locator('input').fill('xyz');
-    const filteredCount = await page.locator('div[role=menu] button').count();
+    const filteredCount = await page.locator('div[role=listbox] button').count();
     expect(filteredCount).toBe(5);
   });
 
@@ -277,7 +279,7 @@ test.describe('auto-complete - search', () => {
     await ac.locator('input').fill('Lor');
 
     // Wait for the filtered menu to settle (internal search is debounced).
-    await expect(page.locator('div[role=menu] button')).toHaveCount(3);
+    await expect(page.locator('div[role=listbox] button')).toHaveCount(3);
 
     // Arrow down past the prepended custom-value row to highlight the real "Lorem" option.
     await activator.press('ArrowDown');
@@ -296,7 +298,7 @@ test.describe('auto-complete - search', () => {
     await ac.locator('input').fill('MyCustom');
 
     // With hideCustomValue the typed text is not offered, and "MyCustom" matches no option either
-    await expect(page.locator('div[role=menu] button')).toHaveCount(0);
+    await expect(page.locator('div[role=listbox] button')).toHaveCount(0);
   });
 
   test('should show no-data message when no matches', async ({ page }) => {
@@ -306,8 +308,8 @@ test.describe('auto-complete - search', () => {
     await activator.click();
     await ac.locator('input').fill('xyznonexistent');
 
-    await expect(page.locator('div[role=menu] [data-id=no-data]')).toBeVisible();
-    await expect(page.locator('div[role=menu] [data-id=no-data]')).toContainText('Nothing found');
+    await expect(page.locator('div[role=listbox] [data-id=no-data]')).toBeVisible();
+    await expect(page.locator('div[role=listbox] [data-id=no-data]')).toContainText('Nothing found');
   });
 
   test('should hide no-data when hideNoData is set', async ({ page }) => {
@@ -317,7 +319,7 @@ test.describe('auto-complete - search', () => {
     await activator.click();
     await ac.locator('input').fill('xyznonexistent');
 
-    await expect(page.locator('div[role=menu] [data-id=no-data]')).toHaveCount(0);
+    await expect(page.locator('div[role=listbox] [data-id=no-data]')).toHaveCount(0);
   });
 
   test('should show placeholder only when focused', async ({ page }) => {
@@ -345,9 +347,9 @@ test.describe('auto-complete - readonly', () => {
   test('should not open menu when read-only', async ({ page }) => {
     const ac = page.locator('[data-id=ac-readonly-default]');
     const activator = ac.locator('[data-id=activator]');
-    await expect(activator).toHaveAttribute('aria-readonly', 'true');
+    await expect(ac.getByRole('combobox')).toHaveAttribute('aria-readonly', 'true');
     await activator.click({ force: true });
-    await expect(page.locator('div[role=menu]')).toHaveCount(0);
+    await expect(page.locator('div[role=listbox]')).toHaveCount(0);
   });
 
   test('should display pre-selected value', async ({ page }) => {
@@ -379,7 +381,7 @@ test.describe('auto-complete - custom slots', () => {
     await expect(button).toContainText('Choose Option');
 
     await button.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
   });
 
   test('should render custom item append content', async ({ page }) => {
@@ -387,16 +389,16 @@ test.describe('auto-complete - custom slots', () => {
     const activator = ac.locator('[data-id=activator]');
 
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
     // Select first item
-    await page.locator('div[role=menu] button').first().click();
+    await page.locator('div[role=listbox] button').first().click();
 
     // Re-open to verify check icon on the selected item
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
-    const activeButton = page.locator('div[role=menu] button[aria-selected=true]');
+    const activeButton = page.locator('div[role=listbox] button[aria-selected=true]');
     await expect(activeButton.locator('svg')).toBeVisible();
   });
 });
@@ -441,13 +443,15 @@ test.describe('auto-complete - keyboard', () => {
     await ac.locator('input').focus();
     await page.keyboard.press('Backspace');
 
-    // First Backspace should focus the last chip (not remove it)
+    // First Backspace selects the last chip (not remove it), with focus kept in the input
     await expect(chips).toHaveCount(3);
-    await expect(activator.locator('[data-index="2"]')).toBeFocused();
+    await expect(activator.locator('[data-index="2"]')).toHaveAttribute('data-selected', 'true');
+    await expect(ac.locator('input')).toBeFocused();
 
-    // Second Backspace on the focused chip should remove it
+    // Second Backspace removes the selected chip
     await page.keyboard.press('Backspace');
     await expect(chips).toHaveCount(2);
+    await expect(ac.locator('input')).toBeFocused();
   });
 
   test('should navigate between chips with arrow keys', async ({ page }) => {
@@ -461,17 +465,20 @@ test.describe('auto-complete - keyboard', () => {
     // Focus the search input explicitly (input is hidden behind chips)
     await ac.locator('input').focus();
 
-    // Press ArrowLeft to move to the last chip
+    // ArrowLeft selects the last chip; the selection moves while focus stays in the input
     await page.keyboard.press('ArrowLeft');
-    await expect(activator.locator('[data-index="3"]')).toBeFocused();
+    await expect(activator.locator('[data-index="3"]')).toHaveAttribute('data-selected', 'true');
 
-    // Press ArrowLeft again to move to the previous chip
     await page.keyboard.press('ArrowLeft');
-    await expect(activator.locator('[data-index="2"]')).toBeFocused();
+    await expect(activator.locator('[data-index="2"]')).toHaveAttribute('data-selected', 'true');
 
-    // Press ArrowRight to move back to the next chip
     await page.keyboard.press('ArrowRight');
-    await expect(activator.locator('[data-index="3"]')).toBeFocused();
+    await expect(activator.locator('[data-index="3"]')).toHaveAttribute('data-selected', 'true');
+    await expect(ac.locator('input')).toBeFocused();
+
+    // past the last chip the selection ends, back in plain typing
+    await page.keyboard.press('ArrowRight');
+    await expect(activator.locator('[data-selected]')).toHaveCount(0);
   });
 
   test('should close menu with Escape', async ({ page }) => {
@@ -480,11 +487,11 @@ test.describe('auto-complete - keyboard', () => {
 
     // Open the menu
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
     // Press Escape to close
     await page.keyboard.press('Escape');
-    await expect(page.locator('div[role=menu]')).toHaveCount(0);
+    await expect(page.locator('div[role=listbox]')).toHaveCount(0);
   });
 
   test('should submit form on Enter when menu is closed and value is set', async ({ page }) => {
@@ -496,11 +503,11 @@ test.describe('auto-complete - keyboard', () => {
 
     // Focus the input - this should open the menu
     await ac.locator('input').click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
     // Close menu with Escape
     await page.keyboard.press('Escape');
-    await expect(page.locator('div[role=menu]')).toHaveCount(0);
+    await expect(page.locator('div[role=listbox]')).toHaveCount(0);
 
     // Press Enter - should submit the form
     await ac.locator('input').press('Enter');
@@ -513,11 +520,11 @@ test.describe('auto-complete - keyboard', () => {
 
     // Open and select an item
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
-    await page.locator('div[role=menu] button').nth(2).click();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
+    await page.locator('div[role=listbox] button').nth(2).click();
 
     // Menu should close (single mode)
-    await expect(page.locator('div[role=menu]')).toHaveCount(0);
+    await expect(page.locator('div[role=listbox]')).toHaveCount(0);
 
     // Value should be set
     const selectedValue = await ac.locator('input').inputValue();
@@ -525,10 +532,10 @@ test.describe('auto-complete - keyboard', () => {
 
     // Re-open the menu
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
     // The selected item should be highlighted
-    const highlightedButton = page.locator('div[role=menu] button[data-highlighted="true"]');
+    const highlightedButton = page.locator('div[role=listbox] button[data-highlighted="true"]');
     await expect(highlightedButton).toBeVisible();
     await expect(highlightedButton).toHaveAttribute('aria-selected', 'true');
   });
@@ -549,8 +556,8 @@ test.describe('auto-complete - advanced', () => {
 
     // Open and select an item
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
-    await page.locator('div[role=menu] button').first().click();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
+    await page.locator('div[role=listbox] button').first().click();
 
     // Value should be displayed
     await expect(ac.locator('input')).toHaveValue('Germany');
@@ -568,9 +575,9 @@ test.describe('auto-complete - advanced', () => {
     // Filled variant should be functional - open and select
     const activator = ac.locator('[data-id=activator]');
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
-    await page.locator('div[role=menu] button').first().click();
+    await page.locator('div[role=listbox] button').first().click();
     await expect(ac.locator('input')).toHaveValue('Lorem');
   });
 
@@ -585,17 +592,17 @@ test.describe('auto-complete - advanced', () => {
     // Clear and select a different value
     const activator = ac.locator('[data-id=activator]');
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
     // Select "One" (id: 1)
-    await page.locator('div[role=menu] button').nth(1).click();
+    await page.locator('div[role=listbox] button').nth(1).click();
     await expect(ac.locator('input')).toHaveValue('One');
     await expect(display).toContainText('Model: 1');
 
     // Re-open and select "Zero" (id: 0) again
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
-    await page.locator('div[role=menu] button').first().click();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
+    await page.locator('div[role=listbox] button').first().click();
     await expect(ac.locator('input')).toHaveValue('Zero');
     await expect(display).toContainText('Model: 0');
   });
@@ -668,7 +675,7 @@ test.describe('auto-complete - grouping', () => {
     const ac = page.locator('[data-id=ac-grouping-string]');
     await ac.locator('[data-id=activator]').click();
 
-    const menu = page.locator('div[role=menu]');
+    const menu = page.locator('div[role=listbox]');
     await expect(menu).toBeVisible();
 
     const headers = menu.locator('[data-id=group-header]');
@@ -684,7 +691,7 @@ test.describe('auto-complete - grouping', () => {
     await activator.focus();
     await activator.click();
 
-    const headers = page.locator('div[role=menu] [data-id=group-header]');
+    const headers = page.locator('div[role=listbox] [data-id=group-header]');
     await expect(headers).toHaveCount(3);
     await expect(headers.nth(0)).toContainText('EUROPE');
     await expect(headers.nth(1)).toContainText('ASIA');
@@ -713,7 +720,7 @@ test.describe('auto-complete - grouping', () => {
     const ac = page.locator('[data-id=ac-grouping-string]');
     await ac.locator('[data-id=activator]').click();
 
-    const menu = page.locator('div[role=menu]');
+    const menu = page.locator('div[role=listbox]');
     await menu.locator('button', { hasText: 'Spain' }).click();
 
     await expect(ac.locator('input')).toHaveValue('Spain');
@@ -723,7 +730,7 @@ test.describe('auto-complete - grouping', () => {
     const ac = page.locator('[data-id=ac-grouping-disabled]');
     await ac.locator('[data-id=activator]').click();
 
-    const menu = page.locator('div[role=menu]');
+    const menu = page.locator('div[role=listbox]');
     await expect(menu).toBeVisible();
 
     const disabledItems = menu.locator('button[data-disabled="true"]');
@@ -741,7 +748,7 @@ test.describe('auto-complete - grouping', () => {
     const activator = ac.locator('[data-id=activator]');
     await activator.click();
 
-    const menu = page.locator('div[role=menu]');
+    const menu = page.locator('div[role=listbox]');
     await expect(menu).toBeVisible();
 
     // First arrow down highlights Germany (first non-disabled).
@@ -768,7 +775,7 @@ test.describe('auto-complete - grouping', () => {
     const ac = page.locator('[data-id=ac-grouping-grouped-disabled]');
     await ac.locator('[data-id=activator]').click();
 
-    const menu = page.locator('div[role=menu]');
+    const menu = page.locator('div[role=listbox]');
     await expect(menu).toBeVisible();
 
     // Two groups (Europe + Asia) are present.
@@ -786,7 +793,7 @@ test.describe('auto-complete - grouping', () => {
     const ac = page.locator('[data-id=ac-grouping-search-label]');
     await ac.locator('[data-id=activator]').click();
 
-    const menu = page.locator('div[role=menu]');
+    const menu = page.locator('div[role=listbox]');
     await expect(menu).toBeVisible();
 
     // "Europe" is only a group label; no item text contains it.
@@ -836,7 +843,7 @@ test.describe('auto-complete - slots (placeholder & footer)', () => {
     const ac = page.locator('[data-id=ac-slots-placeholder]');
     await ac.locator('[data-id=activator]').click();
 
-    const menu = page.locator('div[role=menu]');
+    const menu = page.locator('div[role=listbox]');
     await menu.locator('button', { hasText: 'Germany' }).first().click();
 
     await expect(ac.locator('input')).toHaveValue('Germany');
@@ -847,11 +854,11 @@ test.describe('auto-complete - slots (placeholder & footer)', () => {
 
   test('should render the footer slot when the menu is open', async ({ page }) => {
     const ac = page.locator('[data-id=ac-slots-footer]');
-    await expect(page.locator('div[role=menu] [data-id=footer]')).toHaveCount(0);
+    await expect(page.locator('div[role=listbox] [data-id=footer]')).toHaveCount(0);
 
     await ac.locator('[data-id=activator]').click();
 
-    const footer = page.locator('div[role=menu] [data-id=footer]');
+    const footer = page.locator('div[role=listbox] [data-id=footer]');
     await expect(footer).toBeVisible();
     await expect(footer).toContainText('↑↓ navigate');
     await expect(footer).toContainText('items');
@@ -863,7 +870,7 @@ test.describe('auto-complete - slots (placeholder & footer)', () => {
 
     await ac.locator('input').fill('zzzzzznomatch');
 
-    await expect(page.locator('div[role=menu] [data-id=footer]')).toBeVisible();
+    await expect(page.locator('div[role=listbox] [data-id=footer]')).toBeVisible();
   });
 
   test('should render placeholder and footer slots together', async ({ page }) => {
@@ -871,7 +878,7 @@ test.describe('auto-complete - slots (placeholder & footer)', () => {
     await expect(ac.locator('[data-id=placeholder]')).toContainText('Search countries');
 
     await ac.locator('[data-id=activator]').click();
-    const footer = page.locator('div[role=menu] [data-id=footer]');
+    const footer = page.locator('div[role=listbox] [data-id=footer]');
     await expect(footer).toContainText('Tip: start typing');
   });
 });
@@ -890,8 +897,9 @@ test.describe('auto-complete - advanced', () => {
     const chips = ac.locator('[data-id=activator] [data-value]');
     await expect(chips).toHaveCount(2);
 
-    // Focus the first chip (Lorem) and convert it back to editable text.
-    await chips.first().focus();
+    // Select the first chip (Lorem) and convert it back to editable text.
+    await chips.first().click();
+    await expect(chips.first()).toHaveAttribute('data-selected', 'true');
     await page.keyboard.press('Alt+Backspace');
 
     // Only that chip goes, its text returns to the input, and the other selection stays

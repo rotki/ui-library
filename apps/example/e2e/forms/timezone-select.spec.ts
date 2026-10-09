@@ -32,9 +32,9 @@ test.describe('timezone-select', () => {
   test('should not open the menu when disabled', async ({ page }) => {
     const select = page.getByTestId('timezone-select-3');
     const activator = select.locator('[data-id=activator]');
-    await expect(activator).toHaveAttribute('aria-disabled', 'true');
+    await expect(select.getByRole('combobox')).toBeDisabled();
     await activator.click({ force: true });
-    await expect(page.locator('div[role=menu]')).toHaveCount(0);
+    await expect(page.locator('div[role=listbox]')).toHaveCount(0);
   });
 
   test('should display error messages', async ({ page }) => {
@@ -48,7 +48,7 @@ test.describe('timezone-select', () => {
     const activator = select.locator('[data-id=activator]');
     await activator.click();
 
-    const menu = page.locator('div[role=menu]');
+    const menu = page.locator('div[role=listbox]');
     await expect(menu).toBeVisible();
 
     const input = select.locator('input').first();
@@ -64,7 +64,7 @@ test.describe('timezone-select', () => {
     const input = select.locator('input').first();
     await input.fill('Berlin');
 
-    const menu = page.locator('div[role=menu]');
+    const menu = page.locator('div[role=listbox]');
     await menu.getByText('Europe/Berlin', { exact: true }).click();
 
     await expect(input).toHaveValue('Europe/Berlin');

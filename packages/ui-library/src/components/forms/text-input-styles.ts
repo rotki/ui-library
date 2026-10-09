@@ -89,7 +89,11 @@ export const activatorStyles = tv({
     menu: 'overflow-y-auto max-h-60 min-w-[2.5rem]',
     // the grey list button's hover and active tints, so options and menu buttons highlight alike
     highlighted: '!bg-rui-hover',
-    progress: 'absolute left-0 bottom-0 w-full',
+    /*
+     * Covers the field and clips to its corners, so the bar along the bottom edge follows the rounding.
+     * The rail is dropped: a grey band over the field's border read as a thick, shadowed edge.
+     */
+    progress: 'absolute inset-0 flex items-end overflow-hidden rounded-rui-control pointer-events-none [&_[data-id=progress-rail]]:bg-transparent',
     icon: 'text-rui-text transition',
     iconWrapper: 'flex items-center justify-end absolute right-2 top-px bottom-0',
   },

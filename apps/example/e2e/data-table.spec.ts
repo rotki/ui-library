@@ -215,7 +215,7 @@ test.describe('data tables - pagination', () => {
     await perPageSelect.click();
 
     // Scoped to the open menu, or the activator buttons of the sibling pagination sections collide
-    const option = page.getByTestId('content').getByRole('button', { name: '10', exact: true });
+    const option = page.getByTestId('content').getByRole('option', { name: '10', exact: true });
     await option.click();
 
     // Row count should change

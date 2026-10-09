@@ -107,6 +107,6 @@ describe('components/date-time-picker/RuiTimezoneSelect.vue', () => {
       },
     });
 
-    expect(wrapper.find('div[data-id=activator][tabindex="-1"]').exists()).toBeTruthy();
+    expect(wrapper.find('div[data-id=activator] input[role=combobox]').attributes('disabled')).toBeDefined();
   });
 });

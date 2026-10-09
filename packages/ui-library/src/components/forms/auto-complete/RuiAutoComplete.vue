@@ -1,93 +1,30 @@
 <script lang="ts" setup generic="TValue, TItem">
-import type { VueClassValue } from '@/types/class-value';
+import type { AutoCompleteModelValue, AutoCompleteProps } from '@/components/forms/auto-complete/auto-complete-props';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import { autoCompleteStyles } from '@/components/forms/auto-complete/auto-complete-styles';
 import RuiAutoCompleteOptionList from '@/components/forms/auto-complete/RuiAutoCompleteOptionList.vue';
 import RuiAutoCompleteSelection from '@/components/forms/auto-complete/RuiAutoCompleteSelection.vue';
 import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
-import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
+import { activatorHandlers } from '@/components/overlays/menu/activator-handlers';
+import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
-import { type LabelPlacement, useLabelPlacement } from '@/composables/defaults/field';
-import {
-  type GroupBy,
-  type ItemDisabled,
-  type KeyOfType,
-  useDropdownMenu,
-  useDropdownOptionProperty,
-} from '@/composables/dropdown-menu';
+import { useLabelPlacement } from '@/composables/defaults/field';
+import { getOptionHeight, useDropdownMenu, useDropdownOptionProperty } from '@/composables/dropdown-menu';
 import { type FloatingOptions, Placement } from '@/composables/floating';
 import {
+  splitAriaAttrs,
+  useAutoCompleteChips,
+  useAutoCompleteCombobox,
   useAutoCompleteFocus,
   useAutoCompleteKeyboardNavigation,
   useAutoCompleteSearch,
+  useAutoCompleteSelection,
   useAutoCompleteValue,
 } from '@/composables/forms/auto-complete';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
-import { isEqual } from '@/utils/is-equal';
 import { cn } from '@/utils/tv';
-
-export type AutoCompleteModelValue<TValue> =
-  TValue extends Array<infer U> ? U[] : TValue | undefined;
-
-export interface RuiAutoCompleteClassNames {
-  root?: VueClassValue;
-  label?: VueClassValue;
-  menu?: VueClassValue;
-}
-
-export interface AutoCompleteProps<TValue, TItem> {
-  options?: TItem[];
-  keyAttr?: KeyOfType<TItem, TValue extends Array<infer U> ? U : TValue>;
-  textAttr?: keyof TItem;
-  disabled?: boolean;
-  loading?: boolean;
-  readOnly?: boolean;
-  dense?: boolean;
-  clearable?: boolean;
-  label?: string;
-  /** Where the label shows; falls back to the nearest `RuiFieldDefaults`, then the app default, then `top`. */
-  labelPlacement?: LabelPlacement;
-  menuOptions?: MenuProps;
-  classNames?: RuiAutoCompleteClassNames;
-  prependWidth?: number;
-  appendWidth?: number;
-  itemHeight?: number;
-  hint?: string;
-  errorMessages?: string | string[];
-  successMessages?: string | string[];
-  hideDetails?: boolean;
-  autoSelectFirst?: boolean;
-  chips?: boolean;
-  noFilter?: boolean;
-  hideNoData?: boolean;
-  noDataText?: string;
-  /**
-   * Custom search predicate. Receives the resolved group label as a third
-   * argument when `groupBy` is set, so callers don't have to re-run the
-   * `groupBy` resolver themselves.
-   */
-  filter?: (item: TItem, queryText: string, group?: string) => boolean;
-  hideSelected?: boolean;
-  placeholder?: string;
-  returnObject?: boolean;
-  customValue?: boolean;
-  hideCustomValue?: boolean;
-  required?: boolean;
-  hideSearchInput?: boolean;
-  hideSelectionWrapper?: boolean;
-  groupBy?: GroupBy<TItem>;
-  itemDisabled?: ItemDisabled<TItem>;
-  /**
-   * When true and `groupBy` is set, the default search predicate also matches
-   * against the resolved group label. Items belonging to a group whose label
-   * matches the query stay visible (group header included), even when the
-   * items themselves don't match. No effect when a custom `filter` is supplied
-   * or when `groupBy` is undefined.
-   */
-  searchIncludesGroupLabel?: boolean;
-}
 
 defineOptions({
   name: 'RuiAutoComplete',
@@ -111,6 +48,8 @@ const {
   labelPlacement = undefined,
   menuOptions,
   classNames,
+  prependIcon,
+  hideArrow = false,
   hint,
   keyAttr,
   textAttr,
@@ -176,7 +115,6 @@ const menuWrapperRef = useTemplateRef<HTMLDivElement>('menuWrapperRef');
 const { focused: activatorFocusedWithin } = useFocusWithin(activator);
 const { focused: menuWrapperFocusedWithin } = useFocusWithin(menuWrapperRef);
 const { focused: searchInputFocused } = useFocus(textInput);
-const { focused: activatorFocused } = useFocus(activator);
 
 const {
   internalSearch,
@@ -210,7 +148,7 @@ const shouldApplyValueAsSearch = computed<boolean>(
   () => !(slots.selection || get(multiple) || chips),
 );
 
-const { resolveIn, value, setSelected } = useAutoCompleteValue<AutoCompleteModelValue<TValue>, TItem>(
+const { value } = useAutoCompleteValue<AutoCompleteModelValue<TValue>, TItem>(
   modelValue,
   () => options,
   {
@@ -229,8 +167,9 @@ const { resolveIn, value, setSelected } = useAutoCompleteValue<AutoCompleteModel
   },
 );
 
-const resolvedItemHeight = itemHeight ?? (dense ? 30 : 48);
+const resolvedItemHeight = itemHeight ?? getOptionHeight(dense);
 
+/* eslint-disable @typescript-eslint/no-use-before-define -- these call the selection composable below, which needs their helpers; the calls run after setup */
 const {
   containerProps,
   wrapperProps,
@@ -254,7 +193,7 @@ const {
   dense: () => dense,
   value,
   menuRef,
-  setValue,
+  setValue: (item: TItem): void => { setValue(item); },
   autoSelectFirst,
   hideSelected,
   isOpen,
@@ -271,6 +210,7 @@ const {
   moveSelectedValueHighlight,
   onEnter,
   onInputDeletePressed,
+  onInputKeydown,
   onTab,
   setValueFocus,
 } = useAutoCompleteKeyboardNavigation<TItem>(
@@ -282,7 +222,7 @@ const {
   {
     activator,
     applyHighlighted,
-    clear,
+    clear: (): void => clear(),
     filteredOptions,
     getText,
     highlightedIndex: modelHighlightedIndex,
@@ -290,18 +230,35 @@ const {
     isOpen,
     removeValue: (item: TItem): void => { setValue(item); },
     searchInputFocused,
-    setSearchAsValue,
+    setSearchAsValue: (): void => setSearchAsValue(),
+    updateInternalSearch,
     userNavigated: modelUserNavigated,
     value,
   },
 );
 
+const { chipAttrs, selectChip } = useAutoCompleteChips<TItem>({
+  focusInput: (): void => get(textInput)?.focus(),
+  getIdentifier,
+  setValue: (item: TItem): void => { setValue(item); },
+  setValueFocus,
+});
+
+/** The selected chip's text, read out by the live region so the selection is heard, not only seen. */
+const selectedChipAnnouncement = computed<string>(() => {
+  const item = get(value)[get(focusedValueIndex)];
+  return chips && item !== undefined ? `${getText(item) ?? ''}, press Backspace to remove` : '';
+});
+
 const {
   anyFocused: focusAnyFocused,
+  editing,
   inputClass: focusInputClass,
-  onActivatorFocused: focusOnActivatorFocused,
   onInputFocused: focusOnInputFocused,
+  onSettledKeydown,
   setInputFocus: focusSetInputFocus,
+  settleOnInput,
+  unsettle,
 } = useAutoCompleteFocus(
   {
     customValue: () => customValue,
@@ -309,7 +266,6 @@ const {
     shouldApplyValueAsSearch,
   },
   {
-    activatorFocused,
     activatorFocusedWithin,
     focusedValueIndex,
     internalSearch,
@@ -317,11 +273,28 @@ const {
     justOpened,
     menuWrapperFocusedWithin,
     searchInputFocused,
-    setSearchAsValue,
+    setSearchAsValue: (): void => setSearchAsValue(),
     textInput,
     updateInternalSearch,
   },
 );
+
+/* eslint-enable @typescript-eslint/no-use-before-define -- the wiring above ends here */
+
+const { clear, setSearchAsValue, setValue } = useAutoCompleteSelection<TItem>({
+  getText,
+  internalSearch,
+  isOpen,
+  itemIndexInValue,
+  multiple,
+  resetModel: (): void => set(modelValue, (Array.isArray(get(modelValue)) ? [] : undefined) as AutoCompleteModelValue<TValue>),
+  searchInputFocused,
+  settleOnInput,
+  shouldApplyValueAsSearch,
+  textValueToProperValue,
+  updateInternalSearch,
+  value,
+});
 
 const menuMinHeight = computed<number>(
   () => Math.min(5, get(optionsWithSelectedHidden).length) * resolvedItemHeight,
@@ -335,17 +308,18 @@ const { hasError, hasSuccess } = useFormTextDetail(
 const valueSet = computed<boolean>(() => get(value).length > 0);
 
 const usedPlaceholder = computed<string>(() => {
-  if (get(searchInputFocused))
+  if (get(editing))
     return placeholder;
   return '';
 });
 
 const labelId = useId();
 const placement = useLabelPlacement(() => labelPlacement);
+const { activeDescendant, optionIdPrefix } = useAutoCompleteCombobox(isOpen, modelHighlightedIndex);
 
 // An empty, unfocused field shows the placeholder where the collapsed search input sits
 const restingPlaceholder = computed<boolean>(() =>
-  !!placeholder && !get(valueSet) && !get(searchInputFocused) && !slots.placeholder,
+  !!placeholder && !get(valueSet) && !get(editing) && !slots.placeholder,
 );
 
 const ui = computed<ReturnType<typeof autoCompleteStyles>>(() => autoCompleteStyles({
@@ -366,93 +340,20 @@ function updateSearchInput(event: Event): void {
     return;
 
   const value = target.value;
+  unsettle();
   set(isOpen, true);
   updateInternalSearch(value);
   set(justOpened, false);
 }
 
-async function setValue(val: TItem, skipRefocused = false): Promise<void> {
-  const isMultiple = get(multiple);
-
-  if (isMultiple) {
-    const newValue = [...get(value)];
-    const indexInValue = itemIndexInValue(val);
-    if (indexInValue === -1) {
-      updateInternalSearch();
-      newValue.push(val);
-    }
-    else {
-      newValue.splice(indexInValue, 1);
-    }
-    set(value, newValue);
-  }
-  else {
-    if (get(shouldApplyValueAsSearch))
-      updateInternalSearch(getText(val));
-    else updateInternalSearch();
-
-    set(value, [val]);
-  }
-
-  if (!isMultiple) {
-    if (!skipRefocused) {
-      set(activatorFocused, true);
-      get(activator)?.focus();
-      await nextTick(() => {
-        set(isOpen, false);
-      });
-    }
-    else {
-      set(isOpen, false);
-    }
-  }
-  else if (!skipRefocused) {
-    set(searchInputFocused, true);
-  }
-}
-
-function setSearchAsValue(): void {
-  const searchToBeValue = get(internalSearch);
-  if (!searchToBeValue)
-    return;
-
-  const newValue: TItem = textValueToProperValue(searchToBeValue);
-  setValue(newValue, true);
-}
-
-function clear(): void {
-  updateInternalSearch();
-  set(modelValue, (Array.isArray(get(modelValue)) ? [] : undefined) as AutoCompleteModelValue<TValue>);
-}
-
-function chipAttrs(item: TItem, index: number): Record<string, unknown> {
-  return {
-    'data-index': index,
-    'data-value': getIdentifier(item),
-    'onKeydown': (event: KeyboardEvent): void => {
-      const { key } = event;
-      if (['Backspace', 'Delete'].includes(key)) {
-        event.stopPropagation();
-        event.preventDefault();
-        // Alt + delete restores the chip as search text, which only helps where custom values are accepted
-        if (event.altKey && customValue) {
-          const text = getText(item) ?? '';
-          setValue(item);
-          updateInternalSearch(text);
-        }
-        else {
-          setValue(item);
-        }
-      }
-    },
-    'onClick': (e: MouseEvent): void => {
-      e.stopPropagation();
-      setValueFocus(index);
-    },
-    'onClick:close': (): void => {
-      setValue(item);
-    },
-  };
+/**
+ * Moves the highlight through the options, which also leaves the picked-value display for a search.
+ *
+ * @param up - whether to move towards the first option
+ */
+function onArrow(up: boolean): void {
+  unsettle();
+  moveHighlight(up);
 }
 
 function setSelectionRange(start: number, end: number): void {
@@ -474,27 +375,6 @@ function openMenu(): void {
 function closeMenu(): void {
   set(isOpen, false);
 }
-
-/**
- * Reconciles the selection against a new set of options, comparing by
- * reference before by value so an unchanged list costs nothing.
- *
- * Only a selection the previous options could resolve is reconciled: a value
- * that was already unresolvable is one the consumer set before its options
- * arrived, since an async list starts empty, and clearing it here would
- * discard a legitimate value.
- */
-function onOptionsChanged(curr: TItem[], old: TItem[]): void {
-  if (curr === old || customValue || isEqual(curr, old))
-    return;
-
-  if (!get(multiple) && resolveIn(old).length === 0)
-    return;
-
-  setSelected(get(value));
-}
-
-watch(() => options, onOptionsChanged);
 
 const menuFloatingOptions = computed<FloatingOptions>(() => ({
   placement: Placement.bottomStart,
@@ -533,6 +413,7 @@ defineExpose({
     :show-details="!hideDetails"
     :disabled="disabled"
     disable-auto-focus
+    role="listbox"
   >
     <template
       v-if="label"
@@ -551,36 +432,41 @@ defineExpose({
         name="activator"
         v-bind="{ disabled, value, readOnly, attrs, open, hasError: slotHasError, hasSuccess: slotHasSuccess }"
       >
+        <!--
+          The visual box: it takes clicks and the keys that bubble from the input and the chips, but
+          is no tab stop and carries no role. The input inside is the combobox (ARIA 1.2), so the
+          chips sit beside it rather than nested in it.
+        -->
         <div
           ref="activator"
-          :aria-labelledby="label ? labelId : undefined"
-          :class="ui.activator({ class: cn(classNames?.label) })"
+          :class="ui.activator({ class: cn([hideArrow && 'pr-3', classNames?.label]) })"
           v-bind="{
-            ...getNonRootAttrs($attrs, ['onClick', 'class']),
-            ...(readOnly ? {} : attrs),
+            ...splitAriaAttrs(getNonRootAttrs($attrs, ['onClick', 'class']), false),
+            ...(readOnly ? {} : activatorHandlers(attrs)),
           }"
-          role="combobox"
-          :aria-expanded="open"
-          :aria-disabled="disabled || undefined"
-          :aria-readonly="readOnly || undefined"
-          :aria-required="required || undefined"
-          :aria-busy="loading || undefined"
           data-id="activator"
-          :aria-invalid="hasError"
-          :tabindex="disabled || readOnly ? -1 : 0"
           @mouseenter="isHovered = true"
           @mouseleave="isHovered = false"
           @click="focusSetInputFocus()"
-          @focus="focusOnActivatorFocused()"
           @keydown.enter="onEnter($event)"
           @keydown.tab="onTab($event)"
           @keydown.left="moveSelectedValueHighlight($event, false)"
           @keydown.right="moveSelectedValueHighlight($event, true)"
-          @keydown.up.prevent="moveHighlight(true)"
-          @keydown.down.prevent="moveHighlight(false)"
+          @keydown.up.prevent="onArrow(true)"
+          @keydown.down.prevent="onArrow(false)"
           @keydown.home.prevent="modelHighlightedIndex = 0"
           @keydown.end.prevent="modelHighlightedIndex = optionsWithSelectedHidden.length - 1"
         >
+          <span
+            v-if="prependIcon"
+            :class="ui.prepend()"
+            data-id="prepend"
+          >
+            <RuiIcon
+              :name="prependIcon"
+              :size="dense ? 16 : 18"
+            />
+          </span>
           <div
             data-id="value"
             :class="ui.value()"
@@ -600,7 +486,7 @@ defineExpose({
               {{ placeholder }}
             </span>
             <div
-              v-if="!valueSet && !searchInputFocused && slots.placeholder"
+              v-if="!valueSet && !editing && slots.placeholder"
               data-id="placeholder"
               class="flex-1 min-w-0 pointer-events-none"
             >
@@ -614,11 +500,13 @@ defineExpose({
               :chips="chips"
               :dense="dense"
               :multiple="multiple"
-              :search-input-focused="searchInputFocused"
+              :search-input-focused="editing"
               :hide-selection-wrapper="hideSelectionWrapper"
               :get-identifier="getIdentifier"
               :get-text="getText"
               :chip-attrs="chipAttrs"
+              :selected-index="focusedValueIndex"
+              :select-chip="selectChip"
             >
               <template
                 v-if="slots['selection.prepend']"
@@ -639,21 +527,41 @@ defineExpose({
                 />
               </template>
             </RuiAutoCompleteSelection>
+            <!-- with hideSearchInput the input stays as a collapsed, read-only combobox, so the field keeps a focus target -->
             <input
               ref="textInput"
               :disabled="disabled"
+              :readonly="readOnly || hideSearchInput"
               :value="internalSearch"
               class="bg-transparent outline-hidden"
               type="text"
               :placeholder="usedPlaceholder"
-              :class="[focusInputClass, { hidden: hideSearchInput }]"
-              :aria-invalid="hasError"
+              :class="hideSearchInput ? 'w-0 h-0 min-w-0 opacity-0' : focusInputClass"
+              role="combobox"
+              :tabindex="readOnly ? -1 : undefined"
               :aria-labelledby="label ? labelId : undefined"
+              :aria-expanded="open"
+              aria-haspopup="listbox"
+              :aria-controls="attrs['aria-controls']"
+              :aria-activedescendant="activeDescendant"
+              :aria-readonly="readOnly || undefined"
+              :aria-required="required || undefined"
+              :aria-busy="loading || undefined"
+              :aria-invalid="hasError"
               aria-autocomplete="list"
-              @keydown.delete="onInputDeletePressed()"
+              data-id="search-input"
+              v-bind="splitAriaAttrs(getNonRootAttrs($attrs, ['onClick', 'class']), true)"
+              @keydown="onSettledKeydown($event); onInputKeydown($event)"
+              @keydown.delete="onInputDeletePressed($event)"
               @input.stop="updateSearchInput($event)"
               @focus="focusOnInputFocused()"
             />
+            <span
+              class="sr-only"
+              aria-live="polite"
+            >
+              {{ selectedChipAnnouncement }}
+            </span>
           </div>
 
           <RuiButton
@@ -679,6 +587,7 @@ defineExpose({
           </RuiButton>
 
           <span
+            v-if="!hideArrow"
             :class="ui.iconWrapper()"
             @click="arrowClicked($event)"
           >
@@ -693,7 +602,7 @@ defineExpose({
             v-if="loading"
             :class="ui.progress()"
             color="primary"
-            thickness="3"
+            thickness="2"
             variant="indeterminate"
           />
         </div>
@@ -720,6 +629,7 @@ defineExpose({
           :get-text="getText"
           :is-active-item="isActiveItem"
           :is-item-disabled="isItemDisabled"
+          :option-id-prefix="optionIdPrefix"
           @select="setValue($event)"
           @move-highlight="moveHighlight($event)"
         >

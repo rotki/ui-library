@@ -13,9 +13,24 @@ export interface DropdownItemAttr<TValue, TItem> {
   textAttr?: keyof TItem | ((item: TItem) => string);
 }
 
-export type GroupBy<TItem> = keyof TItem | ((item: TItem) => string);
+/**
+ * An item key or a resolver. `& string` lets Vue's compiler infer a String runtime type for the key
+ * form; a bare generic `keyof` compiles to Function only, and a consumer's runtime warns.
+ */
+export type GroupBy<TItem> = (keyof TItem & string) | ((item: TItem) => string);
 
-export type ItemDisabled<TItem> = keyof TItem | ((item: TItem) => boolean);
+export type ItemDisabled<TItem> = (keyof TItem & string) | ((item: TItem) => boolean);
+
+/**
+ * The rendered height of a default option row, a `list` button at its default or `sm` size.
+ * The virtual list reserves this much per row, so a mismatch leaves a gap under the last option.
+ *
+ * @param dense - whether the options render at the dense size
+ * @returns the row height in pixels
+ */
+export function getOptionHeight(dense: boolean | undefined): number {
+  return dense ? 32 : 40;
+}
 
 export interface DropdownOptionGroup<TItem> {
   group: string;
@@ -90,7 +105,7 @@ export function useDropdownMenu<TValue, TItem>({
   getText: externalGetText,
   hideSelected,
   isOpen: externalIsOpen,
-  itemHeight = 48,
+  itemHeight = getOptionHeight(false),
   keyAttr,
   menuRef: _menuRef,
   options: allOptions,

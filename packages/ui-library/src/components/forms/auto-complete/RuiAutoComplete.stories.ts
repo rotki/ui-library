@@ -70,9 +70,22 @@ export const Default = meta.story({
     const body = within(document.body);
     const combobox = canvas.getByRole('combobox');
     await userEvent.click(combobox);
-    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+    await waitFor(() => expect(body.getByRole('listbox')).toBeVisible());
     await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+    await waitFor(() => expect(body.queryByRole('listbox')).toBeNull());
+  },
+});
+
+/** A search-style field, as in a command palette: a leading search icon and no dropdown arrow. */
+export const SearchStyle = meta.story({
+  args: {
+    hideArrow: true,
+    keyAttr: 'id',
+    labelPlacement: 'hidden',
+    modelValue: undefined,
+    placeholder: 'Search anything…',
+    prependIcon: 'lu-search',
+    textAttr: 'label',
   },
 });
 
@@ -118,8 +131,6 @@ export const Chips = meta.story({
     modelValue: ['3', '4'],
     textAttr: 'label',
   },
-  // the chips are buttons inside the field's button; reported until the field becomes a combobox
-  parameters: { a11y: { test: 'todo' } },
   async play({ canvas, userEvent }) {
     const body = within(document.body);
 
@@ -128,17 +139,17 @@ export const Chips = meta.story({
     expect(canvas.getByText('Indonesia')).toBeVisible();
 
     // Focus input
-    const input = canvas.getByRole('textbox');
+    const input = canvas.getByRole('combobox');
     await userEvent.click(input);
 
-    // First Backspace: focuses last chip
+    // First Backspace: selects the last chip, while focus stays in the input
     await userEvent.keyboard('{Backspace}');
 
-    // Wait for chip to receive focus
-    const lastChip = canvas.getByText('Indonesia').closest('[role="button"]');
-    await waitFor(() => expect(lastChip).toHaveFocus());
+    const lastChip = canvas.getByText('Indonesia').closest('[data-index]');
+    await waitFor(() => expect(lastChip).toHaveAttribute('data-selected', 'true'));
+    await expect(input).toHaveFocus();
 
-    // Second Backspace: removes the focused chip
+    // Second Backspace: removes the selected chip
     await userEvent.keyboard('{Backspace}');
 
     // Verify chip was removed
@@ -146,7 +157,7 @@ export const Chips = meta.story({
     expect(canvas.getByText('Greece')).toBeVisible();
 
     await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+    await waitFor(() => expect(body.queryByRole('listbox')).toBeNull());
   },
 });
 
@@ -164,7 +175,7 @@ export const MultipleValueDeletion = meta.story({
     expect(canvas.getByText('Nigeria')).toBeVisible();
 
     // Focus input
-    const input = canvas.getByRole('textbox');
+    const input = canvas.getByRole('combobox');
     await userEvent.click(input);
 
     // Backspace removes last value directly (no chip focus step)
@@ -177,7 +188,7 @@ export const MultipleValueDeletion = meta.story({
     await waitFor(() => expect(canvas.queryByText('Germany')).toBeNull());
 
     await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+    await waitFor(() => expect(body.queryByRole('listbox')).toBeNull());
   },
 });
 
@@ -275,7 +286,7 @@ export const HideSelected = meta.story({
     const body = within(document.body);
 
     await waitFor(() => {
-      const menu = body.getByRole('menu');
+      const menu = body.getByRole('listbox');
       expect(menu).toBeVisible();
       const menuContent = within(menu);
       // Selected items (Germany, Nigeria) should not appear in menu
@@ -286,7 +297,7 @@ export const HideSelected = meta.story({
     });
 
     await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+    await waitFor(() => expect(body.queryByRole('listbox')).toBeNull());
   },
 });
 
@@ -298,7 +309,7 @@ export const NoFilter = meta.story({
     textAttr: 'label',
   },
   async play({ canvas, userEvent }) {
-    const input = canvas.getByRole('textbox');
+    const input = canvas.getByRole('combobox');
     await userEvent.click(input);
     await userEvent.type(input, 'xyz');
 
@@ -306,13 +317,13 @@ export const NoFilter = meta.story({
 
     // All options should remain visible despite non-matching search
     await waitFor(() => {
-      const menu = body.getByRole('menu');
+      const menu = body.getByRole('listbox');
       expect(menu).toBeVisible();
       expect(within(menu).getByText('Germany')).toBeVisible();
     });
 
     await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+    await waitFor(() => expect(body.queryByRole('listbox')).toBeNull());
   },
 });
 
@@ -327,11 +338,11 @@ export const AutoSelectFirst = meta.story({
     const body = within(document.body);
     const combobox = canvas.getByRole('combobox');
     await userEvent.click(combobox);
-    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+    await waitFor(() => expect(body.getByRole('listbox')).toBeVisible());
 
     // Press Enter to select auto-highlighted first item
     await userEvent.keyboard('{Enter}');
-    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+    await waitFor(() => expect(body.queryByRole('listbox')).toBeNull());
 
     // First option (Germany) should be selected
     expect(canvas.getByDisplayValue('Germany')).toBeVisible();
@@ -347,14 +358,14 @@ export const CustomValueInteraction = meta.story({
   },
   async play({ canvas, userEvent }) {
     const body = within(document.body);
-    const input = canvas.getByRole('textbox');
+    const input = canvas.getByRole('combobox');
     await userEvent.click(input);
     await userEvent.type(input, 'Custom Country');
     await userEvent.keyboard('{Enter}');
 
     // Custom value should be accepted
     await waitFor(() => expect(canvas.getByDisplayValue('Custom Country')).toBeVisible());
-    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+    await waitFor(() => expect(body.queryByRole('listbox')).toBeNull());
   },
 });
 
@@ -380,15 +391,15 @@ export const Grouped = meta.story({
     const body = within(document.body);
     const combobox = canvas.getByRole('combobox');
     await userEvent.click(combobox);
-    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+    await waitFor(() => expect(body.getByRole('listbox')).toBeVisible());
 
-    const menu = body.getByRole('menu');
+    const menu = body.getByRole('listbox');
     await waitFor(() => expect(within(menu).getByText('Europe')).toBeVisible());
     expect(within(menu).getByText('Asia')).toBeVisible();
     expect(within(menu).getByText('Africa')).toBeVisible();
 
     await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+    await waitFor(() => expect(body.queryByRole('listbox')).toBeNull());
   },
 });
 
@@ -406,17 +417,17 @@ export const GroupedSearchLabel = meta.story({
     const body = within(document.body);
     const combobox = canvas.getByRole('combobox');
     await userEvent.click(combobox);
-    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+    await waitFor(() => expect(body.getByRole('listbox')).toBeVisible());
 
     // A group label surfaces every item under it, none of whose own labels hold the query
     await userEvent.keyboard('Europe');
-    const menu = body.getByRole('menu');
+    const menu = body.getByRole('listbox');
     await waitFor(() => expect(within(menu).getByText('Germany')).toBeVisible());
     expect(within(menu).getByText('France')).toBeVisible();
     expect(within(menu).getByText('Spain')).toBeVisible();
 
     await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+    await waitFor(() => expect(body.queryByRole('listbox')).toBeNull());
   },
 });
 
@@ -471,18 +482,18 @@ export const WithDisabledItems = meta.story({
     const body = within(document.body);
     const combobox = canvas.getByRole('combobox');
     await userEvent.click(combobox);
-    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+    await waitFor(() => expect(body.getByRole('listbox')).toBeVisible());
 
     // ArrowDown should skip the disabled row and land on the next available.
     await userEvent.keyboard('{ArrowDown}');
     await userEvent.keyboard('{ArrowDown}');
 
-    const menu = body.getByRole('menu');
+    const menu = body.getByRole('listbox');
     const highlighted = menu.querySelector('button[data-highlighted="true"]');
     expect(highlighted?.textContent).toContain('Another available row');
 
     await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+    await waitFor(() => expect(body.queryByRole('listbox')).toBeNull());
   },
 });
 
@@ -546,13 +557,13 @@ export const FooterSlot = meta.story({
     const body = within(document.body);
     const combobox = canvas.getByRole('combobox');
     await userEvent.click(combobox);
-    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+    await waitFor(() => expect(body.getByRole('listbox')).toBeVisible());
 
-    const menu = body.getByRole('menu');
+    const menu = body.getByRole('listbox');
     await waitFor(() => expect(within(menu).getByText(/navigate/)).toBeVisible());
 
     await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+    await waitFor(() => expect(body.queryByRole('listbox')).toBeNull());
   },
 });
 

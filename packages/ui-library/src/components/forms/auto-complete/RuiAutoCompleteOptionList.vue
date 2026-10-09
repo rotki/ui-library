@@ -26,6 +26,8 @@ export interface AutoCompleteOptionListProps<TItem> {
   getText: (item: TItem) => string | undefined;
   isActiveItem: (item: TItem) => boolean;
   isItemDisabled: (item: TItem) => boolean;
+  /** Prefix of each option's id, which the combobox input names in `aria-activedescendant`. */
+  optionIdPrefix: string;
 }
 
 const {
@@ -41,6 +43,7 @@ const {
   isItemDisabled,
   menuClass,
   menuStyle,
+  optionIdPrefix,
   options,
   renderedData,
   setMenuRef,
@@ -101,6 +104,7 @@ function isHighlighted(item: TItem): boolean {
         </div>
         <RuiAutoCompleteOption
           v-for="item in bucket.items"
+          :id="`${optionIdPrefix}-${options.indexOf(item)}`"
           :key="getIdentifier(item)?.toString()"
           :item="item"
           :text="getText(item)"
@@ -148,6 +152,7 @@ function isHighlighted(item: TItem): boolean {
     >
       <RuiAutoCompleteOption
         v-for="{ item, _index } in renderedData"
+        :id="`${optionIdPrefix}-${_index}`"
         :key="getIdentifier(item)?.toString()"
         :item="item"
         :text="getText(item)"

@@ -56,13 +56,15 @@ export function queryByDataId<T extends Element = Element>(
  * Query a menu button by its index
  * @param index - The 1-based index (CSS nth-child)
  * @param container - The container to search within (defaults to document.body)
+ * @param role - The popup's role: `menu`, or `listbox` for a select's options
  * @returns The button element or null if not found
  */
 export function queryMenuButton(
   index: number,
   container: Document | Element = document.body,
+  role: 'menu' | 'listbox' = 'menu',
 ): HTMLButtonElement | null {
-  const menu = queryByRole('menu', container);
+  const menu = queryByRole(role, container);
   if (!menu)
     return null;
   return menu.querySelector<HTMLButtonElement>(`button:nth-child(${index})`);
@@ -71,12 +73,14 @@ export function queryMenuButton(
 /**
  * Query all buttons within a menu
  * @param container - The container to search within (defaults to document.body)
+ * @param role - The popup's role: `menu`, or `listbox` for a select's options
  * @returns Array of button elements
  */
 export function queryAllMenuButtons(
   container: Document | Element = document.body,
+  role: 'menu' | 'listbox' = 'menu',
 ): HTMLButtonElement[] {
-  const menu = queryByRole('menu', container);
+  const menu = queryByRole(role, container);
   if (!menu)
     return [];
   return Array.from(menu.querySelectorAll<HTMLButtonElement>('button'));

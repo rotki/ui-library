@@ -77,8 +77,9 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
         textAttr: 'label',
       },
     });
-    expect(wrapper.find('div[data-id=activator][tabindex="-1"]').exists()).toBeTruthy();
-    expect(wrapper.find<HTMLInputElement>('div[data-id=activator][tabindex="-1"] input').element.value).toMatch('Spain');
+    const input = wrapper.find<HTMLInputElement>('div[data-id=activator] input[role=combobox]');
+    expect(input.attributes('disabled')).toBeDefined();
+    expect(input.element.value).toMatch('Spain');
   });
 
   it('should work with primitive options', () => {
@@ -107,24 +108,24 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
 
     await wrapper.find('input').trigger('focus');
     await vi.advanceTimersToNextTimerAsync();
-    expect(queryByRole('menu')).toBeFalsy();
+    expect(queryByRole('listbox')).toBeFalsy();
 
     // Open Menu Select
     await wrapper.find('[data-id=activator]').trigger('focus');
     await wrapper.find('[data-id=activator]').trigger('click');
     await vi.advanceTimersToNextTimerAsync();
-    expect(queryByRole('menu')).toBeTruthy();
+    expect(queryByRole('listbox')).toBeTruthy();
 
     // Close Menu Select
     await wrapper.find('[data-id=activator]').trigger('keydown.esc');
     await vi.runAllTimersAsync();
-    expect(queryByRole('menu')).toBeFalsy();
+    expect(queryByRole('listbox')).toBeFalsy();
 
     // Open Menu Select by Enter
     await wrapper.find('[data-id=activator]').trigger('keydown.enter');
     await vi.advanceTimersToNextTimerAsync();
 
-    expect(queryByRole('menu')).toBeTruthy();
+    expect(queryByRole('listbox')).toBeTruthy();
 
     const selectedIndex = 4;
     let highlightedItemButton = queryBody<HTMLButtonElement>(`button:first-child`);
@@ -137,24 +138,25 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     await vi.advanceTimersToNextTimerAsync();
     expect(wrapper.emitted()).toHaveProperty('update:modelValue');
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([selectedIndex.toString()]);
-    expect(document.activeElement?.classList.contains('group')).toBe(true);
+    // focus stays on the combobox input, which keeps showing the value just picked
+    expect(document.activeElement?.getAttribute('role')).toBe('combobox');
 
     await wrapper.setProps({
       modelValue: selectedIndex.toString(),
     });
 
     await vi.advanceTimersToNextTimerAsync();
-    expect(queryByRole('menu')).toBeFalsy();
+    expect(queryByRole('listbox')).toBeFalsy();
 
     await wrapper.find('[data-id=activator]').trigger('keydown.enter');
     await vi.advanceTimersToNextTimerAsync();
-    expect(queryByRole('menu')).toBeFalsy();
+    expect(queryByRole('listbox')).toBeFalsy();
 
     // Open Menu Select
     await wrapper.find('[data-id=activator]').trigger('click');
     await vi.runAllTimersAsync(); // Wait for debounce
 
-    expect(queryByRole('menu')).toBeTruthy();
+    expect(queryByRole('listbox')).toBeTruthy();
 
     highlightedItemButton = queryBody<HTMLButtonElement>(`button:nth-child(${selectedIndex})`);
     assertExists(highlightedItemButton);
@@ -183,7 +185,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     expect(wrapper.emitted()).toHaveProperty('update:modelValue');
     expect(wrapper.emitted('update:modelValue')?.[1]).toEqual([newSelectedIndexToString]);
     expect(wrapper.find<HTMLInputElement>('input').element.value).toBe('Greece');
-    expect(queryBody('div[role=menu] button')).toBeFalsy();
+    expect(queryBody('div[role=listbox] button')).toBeFalsy();
 
     expect(wrapper.find<HTMLInputElement>('input').element.value).toBe('Greece');
 
@@ -208,7 +210,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     await wrapper.find('[data-id=activator]').trigger('keydown.esc');
     await vi.advanceTimersToNextTimerAsync();
 
-    expect(queryByRole('menu')).toBeFalsy();
+    expect(queryByRole('listbox')).toBeFalsy();
 
     expect(wrapper.find<HTMLInputElement>('input').element.value).toBe('');
 
@@ -360,12 +362,14 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     expect(chips[0].text()).toBe('France');
     expect(chips[1].text()).toBe('England');
 
-    await chips[0].trigger('keydown', { altKey: true, key: 'Backspace' });
+    // a clicked chip is selected while focus stays in the input, which takes the key
+    await chips[0].trigger('click');
+    const input = wrapper.find<HTMLInputElement>('div[data-id=activator] input');
+    await input.trigger('keydown', { altKey: true, key: 'Backspace' });
     await vi.advanceTimersToNextTimerAsync();
 
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([['8']]);
-    const input = wrapper.find<HTMLInputElement>('div[data-id=activator] input').element;
-    expect(input.value).toBe('France');
+    expect(input.element.value).toBe('France');
   });
 
   it('should just remove the chip on Alt+Delete when customValue is not set', async () => {
@@ -382,13 +386,14 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     await vi.advanceTimersToNextTimerAsync();
 
     const chips = wrapper.find('div[data-id=activator]').findAllComponents(RuiChip);
-    await chips[0].trigger('keydown', { altKey: true, key: 'Backspace' });
+    await chips[0].trigger('click');
+    const input = wrapper.find<HTMLInputElement>('div[data-id=activator] input');
+    await input.trigger('keydown', { altKey: true, key: 'Backspace' });
     await vi.advanceTimersToNextTimerAsync();
 
     // No custom values allowed → the modifier has no special effect, chip is removed.
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([[]]);
-    const input = wrapper.find<HTMLInputElement>('div[data-id=activator] input').element;
-    expect(input.value).toBe('');
+    expect(input.element.value).toBe('');
   });
 
   it('should custom value', async () => {
@@ -415,9 +420,9 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     await vi.advanceTimersToNextTimerAsync();
 
     // The menu is teleported to document.body, so we need to query it there
-    expect(queryByRole('menu')).toBeTruthy();
+    expect(queryByRole('listbox')).toBeTruthy();
 
-    let menuButtons = queryAllMenuButtons();
+    let menuButtons = queryAllMenuButtons(document.body, 'listbox');
 
     // Narrowed to this test's own search terms, since a menu from another test may still be mounted
     let relevantButtons = menuButtons.filter(btn =>
@@ -433,7 +438,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     await wrapper.setProps({ hideCustomValue: false });
     await vi.runAllTimersAsync();
 
-    menuButtons = queryAllMenuButtons();
+    menuButtons = queryAllMenuButtons(document.body, 'listbox');
     relevantButtons = menuButtons.filter(btn => btn.innerHTML.includes('German') || btn.innerHTML.includes('Germany'));
 
     expect(relevantButtons).toHaveLength(2);
@@ -450,7 +455,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     await vi.advanceTimersToNextTimerAsync();
 
     // Re-query buttons after value change
-    const updatedMenuButtons = queryAllMenuButtons();
+    const updatedMenuButtons = queryAllMenuButtons(document.body, 'listbox');
     const updatedRelevantButtons = updatedMenuButtons.filter(btn => btn.innerHTML.includes('Germany'));
 
     expect(updatedRelevantButtons).toHaveLength(1);
@@ -490,7 +495,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
 
     await wrapper.find('input').setValue('Ger');
     await vi.runAllTimersAsync();
-    expect(queryByRole('menu')).toBeTruthy();
+    expect(queryByRole('listbox')).toBeTruthy();
 
     // User explicitly arrow-navigates down to the real "Germany" row.
     await wrapper.find('[data-id=activator]').trigger('keydown.down');
@@ -773,9 +778,10 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     });
     const label = wrapper.find('[data-id=field-label]');
     const activator = wrapper.find('div[data-id="activator"]');
+    const combobox = wrapper.find('input[role=combobox]');
     expect(label.text()).toContain('Asset');
     expect(label.text()).toContain('﹡');
-    expect(activator.attributes('aria-labelledby')).toBe(label.attributes('id'));
+    expect(combobox.attributes('aria-labelledby')).toBe(label.attributes('id'));
     expect(activator.text()).not.toContain('Asset');
     expect(wrapper.find('[data-id=resting-placeholder]').text()).toBe('Search assets');
 
@@ -783,7 +789,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     expect(wrapper.find('[data-id=resting-placeholder]').exists()).toBe(false);
   });
 
-  it('should hide search input when hideSearchInput is true', async () => {
+  it('should collapse the search input into a read-only combobox when hideSearchInput is true', async () => {
     wrapper = createWrapper<string | undefined, SelectOption>({
       props: {
         keyAttr: 'id',
@@ -794,17 +800,18 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     });
 
     const input = wrapper.find<HTMLInputElement>('input');
+    expect(input.classes()).not.toContain('opacity-0');
+    expect(input.attributes('readonly')).toBeUndefined();
 
-    // Input should be visible by default
-    expect(input.classes()).not.toContain('hidden');
-
-    // Set hideSearchInput to true
+    // still in the page as the focus target, but it takes no typing and draws nothing
     await wrapper.setProps({ hideSearchInput: true });
-    expect(input.classes()).toContain('hidden');
+    expect(input.classes()).toContain('opacity-0');
+    expect(input.attributes('readonly')).toBeDefined();
+    expect(input.attributes('role')).toBe('combobox');
 
-    // Set hideSearchInput back to false
     await wrapper.setProps({ hideSearchInput: false });
-    expect(input.classes()).not.toContain('hidden');
+    expect(input.classes()).not.toContain('opacity-0');
+    expect(input.attributes('readonly')).toBeUndefined();
   });
 
   it('should use contents class instead of flex when hideSelectionWrapper is true', async () => {
@@ -871,15 +878,15 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
 
     await wrapper.find('[data-id=activator]').trigger('click');
     await vi.advanceTimersToNextTimerAsync();
-    expect(queryByRole('menu')).toBeTruthy();
+    expect(queryByRole('listbox')).toBeTruthy();
 
-    const initialButtonCount = queryAllMenuButtons().length;
+    const initialButtonCount = queryAllMenuButtons(document.body, 'listbox').length;
 
     await wrapper.find('input').setValue('xyznonexistent');
     await vi.advanceTimersToNextTimerAsync();
 
     // With noFilter, the same number of options should remain visible
-    const menuButtons = queryAllMenuButtons();
+    const menuButtons = queryAllMenuButtons(document.body, 'listbox');
     expect(menuButtons).toHaveLength(initialButtonCount);
   });
 
@@ -898,9 +905,9 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
 
     await wrapper.find('[data-id=activator]').trigger('click');
     await vi.advanceTimersToNextTimerAsync();
-    expect(queryByRole('menu')).toBeTruthy();
+    expect(queryByRole('listbox')).toBeTruthy();
 
-    const menuButtons = queryAllMenuButtons();
+    const menuButtons = queryAllMenuButtons(document.body, 'listbox');
     const franceButton = menuButtons.find(btn => btn.innerHTML.includes('France'));
     expect(franceButton).toBeFalsy();
   });
@@ -919,7 +926,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
 
     await wrapper.find('[data-id=activator]').trigger('click');
     await vi.advanceTimersToNextTimerAsync();
-    expect(queryByRole('menu')).toBeTruthy();
+    expect(queryByRole('listbox')).toBeTruthy();
 
     const firstButton = queryBody<HTMLButtonElement>('button:first-child');
     assertExists(firstButton);
@@ -929,6 +936,29 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     expect(wrapper.emitted()).toHaveProperty('update:modelValue');
     const emittedValue = wrapper.emitted('update:modelValue')?.[0]?.[0];
     expect(emittedValue).toEqual(options[0]);
+  });
+
+  it('should show the dropdown arrow and no start icon by default', () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      props: { keyAttr: 'id', modelValue: undefined, options, textAttr: 'label' },
+    });
+
+    expect(wrapper.find('[data-id=prepend]').exists()).toBe(false);
+    expect(wrapper.find('.lucide-chevron-down, [data-id=activator] svg').exists()).toBe(true);
+    expect(wrapper.find('[data-id=activator]').classes()).toContain('pr-8');
+  });
+
+  it('should take a start icon and drop the arrow for a search-style field', () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      props: { hideArrow: true, keyAttr: 'id', modelValue: undefined, options, prependIcon: 'lu-search', textAttr: 'label' },
+    });
+
+    expect(wrapper.find('[data-id=prepend] svg').exists()).toBe(true);
+    const activator = wrapper.find('[data-id=activator]');
+    // the arrow's room goes, so the text runs to the edge
+    expect(activator.classes()).toContain('pr-3');
+    expect(activator.classes()).not.toContain('pr-8');
+    expect(activator.findAll('svg')).toHaveLength(1);
   });
 
   it('should render progress indicator when loading', () => {
@@ -1071,12 +1101,12 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     await vi.advanceTimersToNextTimerAsync();
 
     expect(customFilter).toHaveBeenCalled();
-    const menuButtons = queryAllMenuButtons();
+    const menuButtons = queryAllMenuButtons(document.body, 'listbox');
     expect(menuButtons).toHaveLength(1);
     expect(menuButtons[0]?.innerHTML).toContain('Germany');
   });
 
-  it('should focus last chip on Delete key when input is empty', async () => {
+  it('should select the last chip on Delete key when input is empty, and remove it on the next', async () => {
     wrapper = createWrapper<string[], SelectOption>({
       attachTo: document.body,
       props: {
@@ -1095,20 +1125,23 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     await wrapper.find('input').trigger('focus');
     await vi.advanceTimersToNextTimerAsync();
 
-    await wrapper.find('input').trigger('keydown.delete');
+    await wrapper.find('input').trigger('keydown', { key: 'Delete' });
     await vi.advanceTimersToNextTimerAsync();
 
-    // In multi-select the first Delete only focuses the last chip; a second one removes it
+    // the first Delete only selects the last chip, drawn as selected without taking focus
     const lastChip = chips[1];
     assert(lastChip);
-    await lastChip.trigger('keydown', { key: 'Delete' });
+    expect(lastChip.attributes('data-selected')).toBe('true');
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+
+    // the second, still on the input, removes it
+    await wrapper.find('input').trigger('keydown', { key: 'Delete' });
     await vi.advanceTimersToNextTimerAsync();
 
-    expect(wrapper.emitted()).toHaveProperty('update:modelValue');
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['7']]);
   });
 
-  it('should stop propagation when deleting chip via keyboard', async () => {
+  it('should move the chip selection with the arrow keys and drop it on any other key', async () => {
     wrapper = createWrapper<string[], SelectOption>({
       attachTo: document.body,
       props: {
@@ -1123,25 +1156,27 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     const chips = wrapper.find('div[data-id=activator]').findAllComponents(RuiChip);
     expect(chips).toHaveLength(2);
 
-    // Focus input and press Delete to focus last chip
-    await wrapper.find('input').trigger('focus');
-    await vi.advanceTimersToNextTimerAsync();
-    await wrapper.find('input').trigger('keydown.delete');
-    await vi.advanceTimersToNextTimerAsync();
-
-    // Press Backspace on focused chip and verify event is stopped
-    const lastChip = chips[1];
-    assert(lastChip);
-    const keydownEvent = new KeyboardEvent('keydown', { key: 'Backspace', bubbles: true, cancelable: true });
-    const stopPropagationSpy = vi.spyOn(keydownEvent, 'stopPropagation');
-    const preventDefaultSpy = vi.spyOn(keydownEvent, 'preventDefault');
-
-    lastChip.element.dispatchEvent(keydownEvent);
+    const [first, last] = chips;
+    assert(first && last);
+    const input = wrapper.find('input');
+    await input.trigger('focus');
     await vi.advanceTimersToNextTimerAsync();
 
-    expect(stopPropagationSpy).toHaveBeenCalled();
-    expect(preventDefaultSpy).toHaveBeenCalled();
-    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['7']]);
+    // Left from the input selects the last chip, and again the one before it
+    await input.trigger('keydown', { key: 'ArrowLeft' });
+    expect(last.attributes('data-selected')).toBe('true');
+    await input.trigger('keydown', { key: 'ArrowLeft' });
+    expect(first.attributes('data-selected')).toBe('true');
+    expect(last.attributes('data-selected')).toBeUndefined();
+
+    // a modifier on its own, the Alt of Alt + Backspace, keeps the selection for the key that follows
+    await input.trigger('keydown', { altKey: true, key: 'Alt' });
+    expect(first.attributes('data-selected')).toBe('true');
+
+    // a key that does not act on the selection drops it, and nothing is removed
+    await input.trigger('keydown', { key: 'a' });
+    expect(first.attributes('data-selected')).toBeUndefined();
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined();
   });
 
   it('should remove last value on Delete key in non-chips multi-value mode', async () => {
@@ -1205,13 +1240,16 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
       },
     });
 
-    const activator = wrapper.find('div[data-id=activator]');
-    expect(activator.attributes('role')).toBe('combobox');
-    expect(activator.attributes('aria-expanded')).toBe('false');
-    expect(activator.attributes('aria-disabled')).toBe('true');
-    expect(activator.attributes('aria-required')).toBe('true');
-    expect(activator.attributes('aria-busy')).toBe('true');
-    expect(wrapper.find('input').attributes('aria-autocomplete')).toBe('list');
+    // the input is the combobox; the box around it carries no role
+    expect(wrapper.find('div[data-id=activator]').attributes('role')).toBeUndefined();
+    const combobox = wrapper.find('input');
+    expect(combobox.attributes('role')).toBe('combobox');
+    expect(combobox.attributes('aria-expanded')).toBe('false');
+    expect(combobox.attributes('aria-haspopup')).toBe('listbox');
+    expect(combobox.attributes('disabled')).toBeDefined();
+    expect(combobox.attributes('aria-required')).toBe('true');
+    expect(combobox.attributes('aria-busy')).toBe('true');
+    expect(combobox.attributes('aria-autocomplete')).toBe('list');
   });
 
   it('should render correct aria attributes for readonly', () => {
@@ -1225,8 +1263,9 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
       },
     });
 
-    const activator = wrapper.find('div[data-id=activator]');
-    expect(activator.attributes('aria-readonly')).toBe('true');
+    const combobox = wrapper.find('input[role=combobox]');
+    expect(combobox.attributes('aria-readonly')).toBe('true');
+    expect(combobox.attributes('readonly')).toBeDefined();
   });
 
   it('should set aria-selected on active menu options', async () => {
@@ -1244,7 +1283,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
 
     await wrapper.find('[data-id=activator]').trigger('click');
     await vi.advanceTimersToNextTimerAsync();
-    expect(queryByRole('menu')).toBeTruthy();
+    expect(queryByRole('listbox')).toBeTruthy();
 
     const firstButton = queryBody<HTMLButtonElement>('button:first-child');
     assertExists(firstButton);
@@ -1281,14 +1320,14 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     // Opening the menu should show the first option as selected
     await wrapper.find('[data-id=activator]').trigger('click');
     await vi.advanceTimersToNextTimerAsync();
-    expect(queryByRole('menu')).toBeTruthy();
+    expect(queryByRole('listbox')).toBeTruthy();
 
     const firstButton = queryBody<HTMLButtonElement>('button:first-child');
     assertExists(firstButton);
     expect(firstButton.getAttribute('aria-selected')).toBe('true');
   });
 
-  it('should focus chip on click via stopPropagation', async () => {
+  it('should focus a clicked chip rather than the input', async () => {
     wrapper = createWrapper<string[], SelectOption>({
       attachTo: document.body,
       props: {
@@ -1308,18 +1347,14 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     const firstChip = chips[0];
     assert(firstChip);
 
-    // Click the chip - should focus it via stopPropagation
-    const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
-    const stopPropagationSpy = vi.spyOn(clickEvent, 'stopPropagation');
+    // the click stops at the chip, so the box never sees it and cannot pull focus back to the input
+    const boxClicks = vi.fn();
+    wrapper.find('div[data-id=activator]').element.addEventListener('click', boxClicks);
+    await firstChip.trigger('click');
+    await vi.runAllTimersAsync();
 
-    firstChip.element.dispatchEvent(clickEvent);
-    await vi.advanceTimersToNextTimerAsync();
-
-    expect(stopPropagationSpy).toHaveBeenCalled();
-
-    // The chip should have data-index="0" and receive focus
-    const chipElement = firstChip.element as HTMLElement;
-    expect(chipElement.getAttribute('data-index')).toBe('0');
+    expect(firstChip.attributes('data-index')).toBe('0');
+    expect(boxClicks).not.toHaveBeenCalled();
   });
 
   it('should expose openMenu and closeMenu to control the menu programmatically', async () => {
@@ -1333,15 +1368,15 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     });
 
     await vi.advanceTimersToNextTimerAsync();
-    expect(queryByRole('menu')).toBeFalsy();
+    expect(queryByRole('listbox')).toBeFalsy();
 
     wrapper.vm.openMenu();
     await vi.runAllTimersAsync();
-    expect(queryByRole('menu')).toBeTruthy();
+    expect(queryByRole('listbox')).toBeTruthy();
 
     wrapper.vm.closeMenu();
     await vi.runAllTimersAsync();
-    expect(queryByRole('menu')).toBeFalsy();
+    expect(queryByRole('listbox')).toBeFalsy();
   });
 
   describe('groupBy', () => {
@@ -1359,11 +1394,20 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
 
       await wrapper.find('[data-id=activator]').trigger('click');
       await vi.advanceTimersToNextTimerAsync();
-      expect(queryByRole('menu')).toBeTruthy();
+      expect(queryByRole('listbox')).toBeTruthy();
 
       const headers = Array.from(document.body.querySelectorAll('[data-id="group-header"]'));
       expect(headers).toHaveLength(3);
       expect(headers.map(h => h.textContent?.trim())).toEqual(['Europe', 'Asia', 'Africa']);
+    });
+
+    // a dev compile marks an unresolved type `skipCheck`, but the production build drops that and a consumer's runtime warns
+    it('should declare String as a runtime type of groupBy and itemDisabled', () => {
+      const props: unknown = Reflect.get(RuiAutoComplete, 'props');
+      expect(props).toMatchObject({
+        groupBy: { type: [String, Function] },
+        itemDisabled: { type: [String, Function] },
+      });
     });
 
     it('should render group headers when groupBy is a function', async () => {
@@ -1398,7 +1442,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
 
       await wrapper.find('[data-id=activator]').trigger('click');
       await vi.advanceTimersToNextTimerAsync();
-      expect(queryByRole('menu')).toBeTruthy();
+      expect(queryByRole('listbox')).toBeTruthy();
 
       expect(queryByDataId('group-header')).toBeFalsy();
     });
@@ -1449,7 +1493,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
       await wrapper.find('input').setValue('Europe');
       await vi.advanceTimersToNextTimerAsync();
 
-      const menuButtons = queryAllMenuButtons();
+      const menuButtons = queryAllMenuButtons(document.body, 'listbox');
       const relevant = menuButtons.filter(btn =>
         ['Germany', 'France', 'Spain'].some(label => btn.innerHTML.includes(label)),
       );
@@ -1475,7 +1519,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
       await wrapper.find('input').setValue('Europe');
       await vi.advanceTimersToNextTimerAsync();
 
-      const menuButtons = queryAllMenuButtons();
+      const menuButtons = queryAllMenuButtons(document.body, 'listbox');
       const relevant = menuButtons.filter(btn =>
         ['Germany', 'France', 'Spain'].some(label => btn.innerHTML.includes(label)),
       );
@@ -1506,7 +1550,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
       await wrapper.find('input').setValue('Germany');
       await vi.advanceTimersToNextTimerAsync();
 
-      const menuButtons = queryAllMenuButtons();
+      const menuButtons = queryAllMenuButtons(document.body, 'listbox');
       const relevant = menuButtons.filter(btn => btn.innerHTML.includes('Germany'));
       expect(relevant).toHaveLength(1);
     });
@@ -1529,7 +1573,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
       await wrapper.find('input').setValue('Europe');
       await vi.advanceTimersToNextTimerAsync();
 
-      expect(queryAllMenuButtons()).toHaveLength(0);
+      expect(queryAllMenuButtons(document.body, 'listbox')).toHaveLength(0);
     });
 
     it('should pass the resolved group label to a custom filter', async () => {
@@ -1563,7 +1607,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
         'Asia',
       );
 
-      const menuButtons = queryAllMenuButtons();
+      const menuButtons = queryAllMenuButtons(document.body, 'listbox');
       const relevant = menuButtons.filter(btn =>
         ['India', 'Indonesia'].some(label => btn.innerHTML.includes(label)),
       );
@@ -1596,7 +1640,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
       await vi.advanceTimersToNextTimerAsync();
 
       // Both Asia items show, the first matching by text as well as by group, and neither twice
-      const menuButtons = queryAllMenuButtons();
+      const menuButtons = queryAllMenuButtons(document.body, 'listbox');
       expect(menuButtons.filter(btn => btn.innerHTML.includes('Asia Pacific'))).toHaveLength(1);
       expect(menuButtons.filter(btn => btn.innerHTML.includes('India'))).toHaveLength(1);
       expect(menuButtons.filter(btn => btn.innerHTML.includes('Germany'))).toHaveLength(0);
@@ -1621,7 +1665,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
       await wrapper.find('input').setValue('zzzznomatch');
       await vi.advanceTimersToNextTimerAsync();
 
-      expect(queryAllMenuButtons()).toHaveLength(0);
+      expect(queryAllMenuButtons(document.body, 'listbox')).toHaveLength(0);
       expect(queryByDataId('group-header')).toBeFalsy();
     });
 
@@ -1644,7 +1688,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
       await wrapper.find('input').setValue('europe');
       await vi.advanceTimersToNextTimerAsync();
 
-      const menuButtons = queryAllMenuButtons();
+      const menuButtons = queryAllMenuButtons(document.body, 'listbox');
       const relevant = menuButtons.filter(btn =>
         ['Germany', 'France', 'Spain'].some(label => btn.innerHTML.includes(label)),
       );
@@ -1882,7 +1926,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
 
       await wrapper.find('[data-id=activator]').trigger('click');
       await vi.advanceTimersToNextTimerAsync();
-      expect(queryByRole('menu')).toBeTruthy();
+      expect(queryByRole('listbox')).toBeTruthy();
 
       const footer = queryByDataId('footer');
       assertExists(footer);
@@ -1927,9 +1971,73 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
 
       await wrapper.find('[data-id=activator]').trigger('click');
       await vi.advanceTimersToNextTimerAsync();
-      expect(queryByRole('menu')).toBeTruthy();
+      expect(queryByRole('listbox')).toBeTruthy();
 
       expect(queryByDataId('footer')).toBeFalsy();
+    });
+  });
+
+  describe('combobox', () => {
+    it('should point aria-activedescendant at the highlighted option', async () => {
+      wrapper = createWrapper<string | undefined, SelectOption>({
+        attachTo: document.body,
+        props: {
+          keyAttr: 'id',
+          modelValue: undefined,
+          options,
+          textAttr: 'label',
+        },
+      });
+
+      const combobox = wrapper.find('input[role=combobox]');
+      expect(combobox.attributes('aria-activedescendant')).toBeUndefined();
+
+      const activator = wrapper.find('[data-id=activator]');
+      await activator.trigger('click');
+      await vi.runAllTimersAsync();
+      await activator.trigger('keydown.down');
+      await vi.advanceTimersToNextTimerAsync();
+
+      const highlighted = queryBody<HTMLButtonElement>('[data-highlighted="true"]');
+      assertExists(highlighted);
+      expect(highlighted.getAttribute('role')).toBe('option');
+      expect(combobox.attributes('aria-activedescendant')).toBe(highlighted.id);
+    });
+
+    it('should keep a slot-drawn value on show after a pick, until the user types', async () => {
+      const option = options[1];
+      assert(option);
+      wrapper = createWrapper<string | undefined, SelectOption>({
+        attachTo: document.body,
+        props: {
+          keyAttr: 'id',
+          modelValue: undefined,
+          options,
+          textAttr: 'label',
+        },
+        slots: {
+          selection: '<span data-id="picked">{{ params.item.label }}</span>',
+        },
+      });
+
+      await wrapper.find('[data-id=activator]').trigger('click');
+      await vi.runAllTimersAsync();
+      const optionButton = queryBody<HTMLButtonElement>(`[role=option]:nth-child(2)`);
+      assertExists(optionButton);
+      optionButton.click();
+      await vi.runAllTimersAsync();
+      await wrapper.setProps({ modelValue: option.id });
+
+      // focus is on the combobox, and the picked value still shows
+      const combobox = wrapper.find<HTMLInputElement>('input[role=combobox]');
+      expect(document.activeElement).toBe(combobox.element);
+      expect(wrapper.find('[data-id=picked]').text()).toBe(option.label);
+
+      // typing starts a search, which hides the value the slot draws
+      combobox.element.value = 'Ger';
+      await combobox.trigger('input');
+      await vi.runAllTimersAsync();
+      expect(wrapper.find('[data-id=picked]').exists()).toBe(false);
     });
   });
 });

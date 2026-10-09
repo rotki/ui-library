@@ -1,6 +1,7 @@
 import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue';
 import { get, set } from '@vueuse/shared';
 import { assert } from '@/utils/assert';
+import { isEqual } from '@/utils/is-equal';
 
 export interface UseAutoCompleteValueOptions<TItem> {
   /** The property used as the unique identifier for each item. */
@@ -153,6 +154,30 @@ export function useAutoCompleteValue<TValue, TItem>(
       deps.updateInternalSearch(deps.getText(firstItem));
     }
   }, { immediate: true });
+
+  /**
+   * Reconciles the selection against a new set of options, comparing by
+   * reference before by value so an unchanged list costs nothing.
+   *
+   * Only a selection the previous options could resolve is reconciled: a value
+   * that was already unresolvable is one the consumer set before its options
+   * arrived, since an async list starts empty, and clearing it here would
+   * discard a legitimate value.
+   *
+   * @param curr - the new options
+   * @param old - the options before them
+   */
+  function onOptionsChanged(curr: TItem[], old: TItem[]): void {
+    if (curr === old || toValue(opts.customValue) || isEqual(curr, old))
+      return;
+
+    if (!toValue(deps.multiple) && resolveIn(old).length === 0)
+      return;
+
+    setSelected(get(value));
+  }
+
+  watch(() => toValue(options), onOptionsChanged);
 
   return {
     resolveIn,

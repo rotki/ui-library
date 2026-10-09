@@ -52,7 +52,7 @@ test.describe('menu-select - basic', () => {
     const activator = ms.locator('[data-id=activator]');
     await expect(activator).toHaveAttribute('aria-disabled', 'true');
     await activator.click({ force: true });
-    await expect(page.locator('div[role=menu]')).toHaveCount(0);
+    await expect(page.locator('div[role=listbox]')).toHaveCount(0);
   });
 
   test('should show loading indicator', async ({ page }) => {
@@ -110,9 +110,9 @@ test.describe('menu-select - selection', () => {
     await expect(activator).toHaveAttribute('aria-expanded', 'false');
     await activator.click();
     await expect(activator).toHaveAttribute('aria-expanded', 'true');
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
-    await page.locator('div[role=menu] button').first().click();
+    await page.locator('div[role=listbox] button').first().click();
     await expect(activator).toHaveAttribute('aria-expanded', 'false');
     await expect(activator).toContainText('Lorem');
   });
@@ -132,9 +132,9 @@ test.describe('menu-select - selection', () => {
     const activator = ms.locator('[data-id=activator]');
 
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
-    const firstButton = page.locator('div[role=menu] button').first();
+    const firstButton = page.locator('div[role=listbox] button').first();
     await expect(firstButton).toHaveAttribute('data-highlighted', 'true');
   });
 
@@ -143,15 +143,15 @@ test.describe('menu-select - selection', () => {
     const activator = ms.locator('[data-id=activator]');
 
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
     // First item should be highlighted due to autoSelectFirst
-    const firstButton = page.locator('div[role=menu] button').first();
+    const firstButton = page.locator('div[role=listbox] button').first();
     await expect(firstButton).toHaveAttribute('data-highlighted', 'true');
 
     // Navigate down
     await activator.press('ArrowDown');
-    const secondButton = page.locator('div[role=menu] button').nth(1);
+    const secondButton = page.locator('div[role=listbox] button').nth(1);
     await expect(secondButton).toHaveAttribute('data-highlighted', 'true');
 
     // Navigate back up
@@ -160,7 +160,7 @@ test.describe('menu-select - selection', () => {
 
     // Click the highlighted option to select
     await firstButton.click();
-    await expect(page.locator('div[role=menu]')).toHaveCount(0);
+    await expect(page.locator('div[role=listbox]')).toHaveCount(0);
     await expect(activator).toContainText('Lorem');
   });
 
@@ -169,9 +169,9 @@ test.describe('menu-select - selection', () => {
     const activator = ms.locator('[data-id=activator]');
 
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
-    await expect(page.locator('div[role=menu] [data-id=no-data]')).toBeVisible();
-    await expect(page.locator('div[role=menu] [data-id=no-data]')).toContainText('Nothing found');
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
+    await expect(page.locator('div[role=listbox] [data-id=no-data]')).toBeVisible();
+    await expect(page.locator('div[role=listbox] [data-id=no-data]')).toContainText('Nothing found');
   });
 
   test('should hide no-data when hideNoData is set', async ({ page }) => {
@@ -180,7 +180,7 @@ test.describe('menu-select - selection', () => {
 
     await activator.click();
     // Menu may not even open if hideNoData is set and there are no options
-    const menu = page.locator('div[role=menu]');
+    const menu = page.locator('div[role=listbox]');
     const menuCount = await menu.count();
     if (menuCount > 0) {
       await expect(menu.locator('[data-id=no-data]')).toHaveCount(0);
@@ -193,15 +193,15 @@ test.describe('menu-select - selection', () => {
 
     // Select an item first
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
-    await page.locator('div[role=menu] button').first().click();
-    await expect(page.locator('div[role=menu]')).toHaveCount(0);
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
+    await page.locator('div[role=listbox] button').first().click();
+    await expect(page.locator('div[role=listbox]')).toHaveCount(0);
 
     // Re-open and check aria-selected
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
-    const activeButton = page.locator('div[role=menu] button[aria-selected=true]');
+    const activeButton = page.locator('div[role=listbox] button[aria-selected=true]');
     await expect(activeButton).toHaveCount(1);
     await expect(activeButton).toContainText('Lorem');
   });
@@ -221,7 +221,7 @@ test.describe('menu-select - readonly', () => {
     const activator = ms.locator('[data-id=activator]');
     await expect(activator).toHaveAttribute('aria-readonly', 'true');
     await activator.click({ force: true });
-    await expect(page.locator('div[role=menu]')).toHaveCount(0);
+    await expect(page.locator('div[role=listbox]')).toHaveCount(0);
   });
 
   test('should display pre-selected value', async ({ page }) => {
@@ -247,7 +247,7 @@ test.describe('menu-select - custom slots', () => {
     await expect(button).toContainText('Choose option');
 
     await button.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
   });
 
   test('should render custom selection display', async ({ page }) => {
@@ -255,10 +255,10 @@ test.describe('menu-select - custom slots', () => {
     const activator = ms.locator('[data-id=activator]');
 
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
     // Select first item (Germany, id=1)
-    await page.locator('div[role=menu] button').first().click();
+    await page.locator('div[role=listbox] button').first().click();
     await expect(activator).toContainText('1 | Germany');
   });
 
@@ -268,14 +268,14 @@ test.describe('menu-select - custom slots', () => {
 
     // Select first item
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
-    await page.locator('div[role=menu] button').first().click();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
+    await page.locator('div[role=listbox] button').first().click();
 
     // Re-open to verify check icon on the selected item
     await activator.click();
-    await expect(page.locator('div[role=menu]')).toBeVisible();
+    await expect(page.locator('div[role=listbox]')).toBeVisible();
 
-    const activeButton = page.locator('div[role=menu] button[aria-selected=true]');
+    const activeButton = page.locator('div[role=listbox] button[aria-selected=true]');
     await expect(activeButton.locator('[data-id=check-icon]')).toBeVisible();
   });
 });

@@ -12,10 +12,16 @@ export interface AutoCompleteSelectionProps<TItem> {
   getIdentifier: (item: TItem) => unknown;
   getText: (item: TItem) => string | undefined;
   chipAttrs: (item: TItem, index: number) => Record<string, unknown>;
+  /** The chip Backspace and Delete act on, -1 for none, drawn with a ring though it never takes focus. */
+  selectedIndex: number;
+  /** Selects a clicked chip, with focus left in the input. */
+  selectChip: (index: number) => void;
 }
 
 const {
   chipAttrs,
+  selectChip,
+  selectedIndex,
   chips,
   dense,
   getIdentifier,
@@ -46,30 +52,43 @@ const showPlainSelection = computed<boolean>(() =>
     v-for="(item, i) in items"
     :key="getIdentifier(item)?.toString()"
   >
-    <RuiChip
+    <!--
+      Not a clickable chip: that would make it a button around its own close button. It never takes
+      focus either, which stays in the input; the wrapper, which takes no box, selects it on a click.
+    -->
+    <span
       v-if="chips"
-      :key="getTextToken(getIdentifier(item))"
-      tabindex="-1"
-      :size="dense ? 'sm' : 'md'"
-      closeable
-      :class="{ 'leading-3': dense }"
-      clickable
-      v-bind="chipAttrs(item, i)"
+      class="contents"
+      @click.stop="selectChip(i)"
     >
-      <div class="flex">
-        <slot
-          name="prepend"
-          :index="i"
-          v-bind="{ item }"
-        />
-        <slot
-          :index="i"
-          v-bind="{ item, chipAttrs: chipAttrs(item, i) }"
-        >
-          {{ getText(item) }}
-        </slot>
-      </div>
-    </RuiChip>
+      <RuiChip
+        :key="getTextToken(getIdentifier(item))"
+        :size="dense ? 'sm' : 'md'"
+        closeable
+        close-unfocusable
+        :class="{
+          'leading-3': dense,
+          // drawn inside the chip's edge: the field clips anything outside it
+          'outline-2 outline-solid outline-rui-primary -outline-offset-2': i === selectedIndex,
+        }"
+        :data-selected="i === selectedIndex || undefined"
+        v-bind="chipAttrs(item, i)"
+      >
+        <div class="flex">
+          <slot
+            name="prepend"
+            :index="i"
+            v-bind="{ item }"
+          />
+          <slot
+            :index="i"
+            v-bind="{ item, chipAttrs: chipAttrs(item, i) }"
+          >
+            {{ getText(item) }}
+          </slot>
+        </div>
+      </RuiChip>
+    </span>
     <div
       v-else-if="showPlainSelection"
       :class="hideSelectionWrapper ? 'contents' : 'flex'"

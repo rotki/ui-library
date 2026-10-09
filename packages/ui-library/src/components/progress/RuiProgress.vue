@@ -258,6 +258,7 @@ const circularStrokeStyle = computed<Record<string, string>>(() => ({
       <div
         :class="variant === ProgressVariant.buffer ? [ui.rail(), ui.bufferRail()] : ui.rail()"
         :style="variant === ProgressVariant.buffer ? bufferRailStyle : undefined"
+        data-id="progress-rail"
       />
       <div
         v-if="variant === ProgressVariant.indeterminate"

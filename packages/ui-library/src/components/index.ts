@@ -1,4 +1,5 @@
 /* eslint-disable @rotki/max-dependencies -- the package entry point re-exports every component by design */
+import type { AutoCompleteProps, RuiAutoCompleteClassNames } from '@/components/forms/auto-complete/auto-complete-props';
 import type {
   TableColumn as DataTableColumn,
   GroupKeys as DataTableGroupKeys,
@@ -21,7 +22,7 @@ import RuiColorPicker from '@/components/color-picker/RuiColorPicker.vue';
 import RuiDateTimePicker, { type RuiDateTimePickerProps } from '@/components/date-time-picker/RuiDateTimePicker.vue';
 import RuiTimezoneSelect, { type RuiTimezoneSelectProps } from '@/components/date-time-picker/RuiTimezoneSelect.vue';
 import RuiDivider, { type Props as DividerProps } from '@/components/divider/RuiDivider.vue';
-import RuiAutoComplete, { type AutoCompleteProps, type RuiAutoCompleteClassNames } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
+import RuiAutoComplete from '@/components/forms/auto-complete/RuiAutoComplete.vue';
 import RuiCategoryPicker, { type RuiCategoryPickerClassNames, type RuiCategoryPickerProps } from '@/components/forms/category-picker/RuiCategoryPicker.vue';
 import RuiCheckboxGroup, { type Props as CheckboxGroupProps } from '@/components/forms/checkbox/checkbox-group/RuiCheckboxGroup.vue';
 import RuiCheckbox, { type Props as CheckboxProps } from '@/components/forms/checkbox/RuiCheckbox.vue';

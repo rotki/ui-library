@@ -63,12 +63,13 @@ export const Default = meta.story({
     textAttr: 'label',
   },
   async play({ canvas, userEvent }) {
-    const trigger = canvas.getByRole('button');
+    const trigger = canvas.getByRole('combobox');
     await userEvent.click(trigger);
     const body = within(document.body);
-    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+    await waitFor(() => expect(body.getByRole('listbox')).toBeVisible());
+    await expect(body.getAllByRole('option').length).toBeGreaterThan(0);
     await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+    await waitFor(() => expect(body.queryByRole('listbox')).toBeNull());
   },
 });
 
@@ -104,8 +105,6 @@ export const Readonly = meta.story({
     readOnly: true,
     textAttr: 'label',
   },
-  // a button activator cannot carry aria-readonly; reported until it becomes a combobox
-  parameters: { a11y: { test: 'todo' } },
 });
 
 export const WithErrorMessage = meta.story({
@@ -152,8 +151,6 @@ export const Required = meta.story({
     required: true,
     textAttr: 'label',
   },
-  // a button activator cannot carry aria-required; reported until it becomes a combobox
-  parameters: { a11y: { test: 'todo' } },
 });
 
 export default meta;

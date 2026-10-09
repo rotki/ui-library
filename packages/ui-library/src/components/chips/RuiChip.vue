@@ -22,6 +22,11 @@ export interface Props {
   variant?: ChipVariant;
   color?: 'grey' | ContextColorsType;
   closeIcon?: RuiIcons;
+  /**
+   * Takes the close button out of the tab order, for a chip inside a widget that removes chips from
+   * the keyboard itself, as RuiAutoComplete does with Backspace. The button still takes clicks.
+   */
+  closeUnfocusable?: boolean;
   bgColor?: string;
   textColor?: string;
   classNames?: RuiChipClassNames;
@@ -41,6 +46,7 @@ const {
   disabled = false,
   variant = ChipVariant.filled,
   closeIcon = 'lu-x',
+  closeUnfocusable = false,
   bgColor = undefined,
   textColor = undefined,
   classNames,
@@ -249,6 +255,7 @@ function onKeydown(e: KeyboardEvent): void {
       :disabled="disabled"
       type="button"
       aria-label="Remove"
+      :tabindex="closeUnfocusable ? -1 : undefined"
       @click.stop="emit('click:close')"
     >
       <RuiIcon
