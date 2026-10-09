@@ -14,7 +14,6 @@ export const TabIndicatorPosition = {
 export type TabIndicatorPosition = (typeof TabIndicatorPosition)[keyof typeof TabIndicatorPosition];
 
 export interface RouteMatchOptions {
-  exactPath?: boolean;
   exact?: boolean;
 }
 

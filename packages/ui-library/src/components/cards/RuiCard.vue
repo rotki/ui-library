@@ -18,8 +18,6 @@ export interface Props {
   rounded?: 'sm' | 'md' | 'lg';
   noPadding?: boolean;
   classNames?: RuiCardClassNames;
-  /** @deprecated Use `classNames.content` instead */
-  contentClass?: string;
 }
 
 defineOptions({
@@ -34,7 +32,6 @@ const {
   rounded = 'md',
   noPadding = false,
   classNames,
-  contentClass = '',
 } = defineProps<Props>();
 
 const slots = defineSlots<{
@@ -132,7 +129,7 @@ const ui = computed<ReturnType<typeof card>>(() => card({ variant: cardVariant, 
     <div
       v-if="slots.default"
       data-id="card-content"
-      :class="ui.content({ class: cn(classNames?.content) ?? contentClass })"
+      :class="ui.content({ class: cn(classNames?.content) })"
     >
       <slot />
     </div>

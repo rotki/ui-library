@@ -37,7 +37,7 @@ const navigationDrawers = ref<NavigationDrawerItem[]>([
         <RuiNavigationDrawer
           v-bind="navigationDrawer"
           v-model="navigationDrawer.modelValue"
-          content-class="!top-16"
+          :class-names="{ content: '!top-16' }"
         >
           <template #activator="{ attrs }">
             <RuiButton

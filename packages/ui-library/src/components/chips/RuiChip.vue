@@ -25,8 +25,6 @@ export interface Props {
   bgColor?: string;
   textColor?: string;
   classNames?: RuiChipClassNames;
-  /** @deprecated Use `classNames.content` instead */
-  contentClass?: string;
 }
 
 defineOptions({
@@ -46,7 +44,6 @@ const {
   bgColor = undefined,
   textColor = undefined,
   classNames,
-  contentClass = '',
 } = defineProps<Props>();
 
 const emit = defineEmits<{
@@ -243,7 +240,7 @@ function onKeydown(e: KeyboardEvent): void {
     >
       <slot name="prepend" />
     </div>
-    <span :class="ui.label({ class: cn(classNames?.content) ?? contentClass })">
+    <span :class="ui.label({ class: cn(classNames?.content) })">
       <slot />
     </span>
     <button

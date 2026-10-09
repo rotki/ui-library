@@ -30,10 +30,10 @@ const meta = preview.meta({
     closeDelay: 0,
     closeOnContentClick: false,
     disabled: false,
-    menuClass: 'max-w-[20rem]',
+    classNames: { menu: 'max-w-[20rem]' },
     openDelay: 0,
     openOnHover: false,
-    popper: {
+    options: {
       ...DEFAULT_FLOATING_OPTIONS,
     },
   },
@@ -43,11 +43,10 @@ const meta = preview.meta({
     },
     closeOnContentClick: { control: 'boolean' },
     disabled: { control: 'boolean' },
-    menuClass: { control: 'text' },
     openDelay: { control: 'number' },
     openOnHover: { control: 'boolean' },
     persistOnActivatorClick: { control: 'boolean' },
-    popper: { control: 'object' },
+    options: { control: 'object' },
     role: {
       control: 'select',
       options: ['menu', 'listbox', 'tree', 'grid', 'dialog'],
@@ -109,7 +108,7 @@ export const CloseOnContentClick = meta.story({
 
 export const Top = meta.story({
   args: {
-    popper: {
+    options: {
       placement: 'top',
     },
   },
@@ -117,7 +116,7 @@ export const Top = meta.story({
 
 export const Right = meta.story({
   args: {
-    popper: {
+    options: {
       placement: 'right',
     },
   },
@@ -125,7 +124,7 @@ export const Right = meta.story({
 
 export const Left = meta.story({
   args: {
-    popper: {
+    options: {
       placement: 'left',
     },
   },

@@ -96,12 +96,6 @@ describe('use-tab-routing', () => {
       expect(result.resolveRoute(42)).toBeUndefined();
     });
 
-    it('should match exact path with exactPath option', () => {
-      result = mountWithRouting();
-      expect(result.isPathMatch('/current', { exactPath: true })).toBe(true);
-      expect(result.isPathMatch('/other', { exactPath: true })).toBe(false);
-    });
-
     it('should match exact route stripping query params', () => {
       result = mountWithRouting();
       expect(result.isPathMatch('/current?foo=bar', { exact: true })).toBe(true);

@@ -31,10 +31,6 @@ export interface Props {
   successMessages?: string | string[];
   hideDetails?: boolean;
   classNames?: RuiSliderClassNames;
-  /** @deprecated Use `classNames.slider` instead */
-  sliderClass?: string;
-  /** @deprecated Use `classNames.tick` instead */
-  tickClass?: string;
   required?: boolean;
 }
 
@@ -62,8 +58,6 @@ const {
   successMessages = [],
   hideDetails = false,
   classNames,
-  sliderClass = '',
-  tickClass = '',
   required = false,
 } = defineProps<Props>();
 
@@ -150,7 +144,7 @@ const tickStyle = computed<Record<string, string>>(() => {
 
 const highlightClass = computed<string>(() => get(bigTick) ? HIGHLIGHT_COLOR_MAP[color] : HIGHLIGHT_DEFAULT);
 
-const tickClassOverride = computed<string | undefined>(() => cn(classNames?.tick) ?? (tickClass || undefined));
+const tickClassOverride = computed<string | undefined>(() => cn(classNames?.tick));
 
 function isHighlightedTick(index: number): boolean {
   return index <= get(currentTick);
@@ -204,7 +198,7 @@ function isHighlightedTick(index: number): boolean {
           />
           <div :class="trackUi.slider()">
             <div :class="trackUi.sliderInner()">
-              <div :class="trackUi.container({ class: cn(classNames?.slider) ?? sliderClass })">
+              <div :class="trackUi.container({ class: cn(classNames?.slider) })">
                 <div
                   v-if="!hideTrack"
                   :class="trackUi.track()"

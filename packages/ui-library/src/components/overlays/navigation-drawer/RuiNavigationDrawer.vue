@@ -19,8 +19,6 @@ export interface NavigationDrawerProps {
   overlay?: boolean;
   position?: 'left' | 'right';
   classNames?: RuiNavigationDrawerClassNames;
-  /** @deprecated Use `classNames.content` instead */
-  contentClass?: string | object | string[];
   ariaLabel?: string;
 }
 
@@ -39,7 +37,6 @@ const {
   overlay = false,
   position = 'left',
   classNames,
-  contentClass = '',
   ariaLabel,
 } = defineProps<NavigationDrawerProps>();
 
@@ -109,7 +106,7 @@ function rootClass(attrsClass: ClassValue): string {
     withOverlay: overlay,
     class: cn([
       temporary && modelValue.value && 'shadow-rui-drawer',
-      classNames?.content ?? contentClass,
+      classNames?.content,
       classNames?.root,
       attrsClass,
     ]),

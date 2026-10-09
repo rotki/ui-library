@@ -14,10 +14,6 @@ export interface AccordionProps {
   eager?: boolean;
   headerGrow?: boolean;
   classNames?: RuiAccordionClassNames;
-  /** @deprecated Use `classNames.header` instead */
-  headerClass?: string;
-  /** @deprecated Use `classNames.content` instead */
-  contentClass?: string;
 }
 
 defineOptions({
@@ -30,8 +26,6 @@ const {
   eager = false,
   headerGrow = false,
   classNames,
-  headerClass = '',
-  contentClass = '',
 } = defineProps<AccordionProps>();
 
 const emit = defineEmits<{
@@ -76,7 +70,7 @@ const rootStyle = tv({ base: 'flex flex-col items-start' });
       v-if="$slots.header"
       :id="triggerId"
       class="flex gap-2 items-center cursor-pointer outline-hidden focus-visible:focus-ring rounded-rui-control"
-      :class="[classNames?.header ?? headerClass, { 'w-full': headerGrow }]"
+      :class="[classNames?.header, { 'w-full': headerGrow }]"
       role="button"
       tabindex="0"
       :aria-expanded="open"
@@ -101,7 +95,7 @@ const rootStyle = tv({ base: 'flex flex-col items-start' });
       v-if="open || eager"
       :id="contentId"
       class="grow transition-all overflow-hidden w-full"
-      :class="classNames?.content ?? contentClass"
+      :class="classNames?.content"
       :style="{ height: contentHeight }"
       role="region"
       :aria-labelledby="triggerId"

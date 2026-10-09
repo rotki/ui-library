@@ -15,7 +15,6 @@ interface ResolvedTabProps {
   to?: unknown;
   link?: boolean;
   exact?: boolean;
-  exactPath?: boolean;
 }
 
 export interface Props {
@@ -161,7 +160,6 @@ function getTabRouteProps(props: Record<string, unknown>): ResolvedTabProps {
     to: props.to ?? undefined,
     link: typeof props.link === 'boolean' ? props.link : undefined,
     exact: typeof props.exact === 'boolean' ? props.exact : undefined,
-    exactPath: typeof props.exactPath === 'boolean' ? props.exactPath : undefined,
   };
 }
 

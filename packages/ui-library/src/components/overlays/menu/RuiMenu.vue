@@ -2,7 +2,6 @@
 import type { VueClassValue } from '@/types/class-value';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { type FloatingOptions, useFloating } from '@/composables/floating';
-import { type PopperOptions, toFloatingOptions } from '@/composables/popper';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { cn, tv } from '@/utils/tv';
 
@@ -43,13 +42,7 @@ export interface MenuProps {
   openDelay?: number;
   closeDelay?: number;
   options?: FloatingOptions;
-  /** @deprecated Use `options` instead */
-  popper?: PopperOptions;
   classNames?: RuiMenuClassNames;
-  /** @deprecated Use `classNames.wrapper` instead */
-  wrapperClass?: string | object | string[];
-  /** @deprecated Use `classNames.menu` instead */
-  menuClass?: string | object | string[];
   closeOnContentClick?: boolean;
   persistOnActivatorClick?: boolean;
   hint?: string;
@@ -92,10 +85,7 @@ const {
   openDelay = 0,
   closeDelay = 0,
   options,
-  popper,
   classNames,
-  wrapperClass = '',
-  menuClass = '',
   closeOnContentClick = false,
   persistOnActivatorClick = false,
   hint,
@@ -150,7 +140,7 @@ const {
   onLeaveComplete,
   updatePosition,
 } = useFloating(
-  () => popper ? toFloatingOptions(popper) : (options ?? {}),
+  () => options ?? {},
   () => disabled,
   () => openDelay,
   () => closeDelay,
@@ -344,7 +334,7 @@ onClickOutside(menu, () => {
     <slot name="label" />
     <div
       ref="activator"
-      :class="ui.wrapper({ class: cn(classNames?.wrapper) ?? cn(wrapperClass as VueClassValue) })"
+      :class="ui.wrapper({ class: cn(classNames?.wrapper) })"
       :data-menu-disabled="disabled"
     >
       <slot
@@ -360,7 +350,7 @@ onClickOutside(menu, () => {
         v-if="visible"
         :id="menuId"
         ref="menu"
-        :class="ui.popover({ class: cn(classNames?.menu) ?? cn(menuClass as VueClassValue) })"
+        :class="ui.popover({ class: cn(classNames?.menu) })"
         :role="role"
         :data-placement="currentPlacement"
         @click="closeOnContentClick ? onLeave() : undefined"

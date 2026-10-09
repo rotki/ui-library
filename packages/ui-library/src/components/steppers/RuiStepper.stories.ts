@@ -29,7 +29,7 @@ const meta = preview.meta({
   component: RuiStepper,
   parameters: {
     docs: {
-      controls: { exclude: ['icon', 'titleClass', 'subtitleClass'] },
+      controls: { exclude: ['icon'] },
     },
   },
   render,
@@ -271,8 +271,7 @@ export const CustomWithColor = meta.story({
         title: 'Inactive',
       },
     ],
-    subtitleClass: 'text-rui-primary/80',
-    titleClass: 'text-rui-primary',
+    classNames: { subtitle: 'text-rui-primary/80', title: 'text-rui-primary' },
   },
 });
 

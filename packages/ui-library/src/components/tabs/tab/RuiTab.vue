@@ -19,14 +19,10 @@ export interface Props {
   value?: number | string;
   active?: boolean;
   classNames?: RuiTabClassNames;
-  /** @deprecated Use `classNames.active` instead */
-  activeClass?: string;
   link?: boolean;
   target?: string;
   to?: RouteLocationRaw;
   exact?: boolean;
-  /** @deprecated No longer used — vue-router's `useLink` handles route matching internally */
-  exactPath?: boolean;
   vertical?: boolean;
   align?: TabAlignment;
   indicatorPosition?: TabIndicatorPosition;
@@ -44,7 +40,6 @@ const {
   value = useId(),
   active = false,
   classNames,
-  activeClass = '',
   link = false,
   to = '',
   target = '_self',
@@ -124,7 +119,7 @@ function onClick(event?: MouseEvent): void {
   <RuiButton
     :class="[
       tab({ layout, align, indicatorPosition, grow, disabled, active: isEffectivelyActive }),
-      isEffectivelyActive && (classNames?.active ?? activeClass),
+      isEffectivelyActive && classNames?.active,
     ]"
     :data-active-tab="isEffectivelyActive || undefined"
     :data-align="align"

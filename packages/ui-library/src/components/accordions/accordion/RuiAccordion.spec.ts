@@ -54,7 +54,7 @@ describe('components/accordions/accordion/RuiAccordion.vue', () => {
     expect(wrapper.find('[data-accordion]').attributes('data-state')).toBe('closed');
   });
 
-  it('should pass `headerClass` and `contentClass` props', async () => {
+  it('should apply `classNames.header` and `classNames.content`', async () => {
     wrapper = createWrapper({
       props: {
         open: true,
@@ -66,8 +66,7 @@ describe('components/accordions/accordion/RuiAccordion.vue', () => {
     expect(wrapper.find('[data-accordion-content]').classes()).not.toContain(customClass);
 
     await wrapper.setProps({
-      contentClass: customClass,
-      headerClass: customClass,
+      classNames: { content: customClass, header: customClass },
     });
 
     expect(wrapper.find('[data-accordion-trigger]').classes()).toContain(customClass);

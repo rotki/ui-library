@@ -51,10 +51,6 @@ export interface AutoCompleteProps<TValue, TItem> {
   labelPlacement?: LabelPlacement;
   menuOptions?: MenuProps;
   classNames?: RuiAutoCompleteClassNames;
-  /** @deprecated Use `classNames.label` instead */
-  labelClass?: string;
-  /** @deprecated Use `classNames.menu` instead */
-  menuClass?: string;
   prependWidth?: number;
   appendWidth?: number;
   itemHeight?: number;
@@ -117,8 +113,6 @@ const {
   labelPlacement = undefined,
   menuOptions,
   classNames,
-  labelClass,
-  menuClass,
   variant = 'default',
   hint,
   keyAttr,
@@ -546,15 +540,18 @@ defineExpose({
     v-model="isOpen"
     v-bind="{ ...getRootAttrs($attrs, []), ...menuOptions }"
     :class="ui.wrapper({ class: cn($attrs.class) })"
-    :class-names="{ ...menuOptions?.classNames, details: [{ 'px-0': !floating }, cn(menuOptions?.classNames?.details) ?? ''] }"
+    :class-names="{
+      ...menuOptions?.classNames,
+      details: [{ 'px-0': !floating }, cn(menuOptions?.classNames?.details) ?? ''],
+      menu: [
+        { hidden: optionsWithSelectedHidden.length === 0 && customValue && !slots['no-data'] },
+        cn(menuOptions?.classNames?.menu) ?? '',
+      ],
+    }"
     :options="menuFloatingOptions"
     :close-on-content-click="false"
     full-width
     persist-on-activator-click
-    :menu-class="[
-      { hidden: optionsWithSelectedHidden.length === 0 && customValue && !slots['no-data'] },
-      menuOptions?.menuClass,
-    ]"
     :error-messages="errorMessages"
     :success-messages="successMessages"
     :hint="hint"
@@ -583,7 +580,7 @@ defineExpose({
         <div
           ref="activator"
           :aria-labelledby="!floating && label ? labelId : undefined"
-          :class="ui.activator({ class: cn(classNames?.label) ?? labelClass })"
+          :class="ui.activator({ class: cn(classNames?.label) })"
           v-bind="{
             ...getNonRootAttrs($attrs, ['onClick', 'class']),
             ...(readOnly ? {} : attrs),
@@ -768,7 +765,7 @@ defineExpose({
           :highlighted-index="modelHighlightedIndex"
           :highlighted-class="highlightedClass"
           :dense="dense"
-          :menu-class="ui.menu({ class: cn(classNames?.menu) ?? menuClass })"
+          :menu-class="ui.menu({ class: cn(classNames?.menu) })"
           :menu-style="{ width: `${width}px`, minWidth: menuWidth, minHeight: `${menuMinHeight}px` }"
           :get-identifier="getIdentifier"
           :get-text="getText"
@@ -818,7 +815,7 @@ defineExpose({
         <div
           v-else-if="!hideNoData"
           :style="{ width: `${width}px`, minWidth: menuWidth }"
-          :class="classNames?.menu ?? menuClass"
+          :class="classNames?.menu"
         >
           <slot name="no-data">
             <div

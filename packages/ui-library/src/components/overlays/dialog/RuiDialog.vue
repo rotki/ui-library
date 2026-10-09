@@ -16,8 +16,6 @@ export interface DialogProps {
   maxWidth?: string | number;
   bottomSheet?: boolean;
   classNames?: RuiDialogClassNames;
-  /** @deprecated Use `classNames.content` instead */
-  contentClass?: string | string[] | Record<string, boolean>;
   zIndex?: string | number;
   ariaLabel?: string;
 }
@@ -35,7 +33,6 @@ const {
   maxWidth,
   bottomSheet = false,
   classNames,
-  contentClass = '',
   zIndex = 9999,
   ariaLabel,
 } = defineProps<DialogProps>();
@@ -224,7 +221,7 @@ watch(contentRef, (ref) => {
             :style="style"
             tabindex="0"
             :data-bottom-sheet="bottomSheet || undefined"
-            :class="ui.content({ class: cn(classNames?.content) ?? cn(contentClass) })"
+            :class="ui.content({ class: cn(classNames?.content) })"
           >
             <slot v-bind="{ isOpen: modelValue, close }" />
           </div>

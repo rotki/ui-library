@@ -234,8 +234,7 @@ const steppers = ref<StepperProps[]>([
   {
     custom: true,
     iconTop: true,
-    titleClass: 'text-rui-primary',
-    subtitleClass: 'text-rui-info',
+    classNames: { title: 'text-rui-primary', subtitle: 'text-rui-info' },
     steps: [
       {
         title: 'Inactive',

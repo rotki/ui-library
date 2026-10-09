@@ -28,7 +28,7 @@ const meta = preview.meta({
     disabled: false,
     hideArrow: false,
     openDelay: 0,
-    popper: {
+    options: {
       ...DEFAULT_FLOATING_OPTIONS,
     },
     text: 'My Tooltip',
@@ -40,11 +40,10 @@ const meta = preview.meta({
     disabled: { control: 'boolean' },
     hideArrow: { control: 'boolean' },
     openDelay: { control: 'number' },
-    popper: { control: 'object' },
+    options: { control: 'object' },
     text: {
       control: 'text',
     },
-    tooltipClass: { control: 'text' },
   },
   component: RuiTooltip,
   parameters: {
@@ -72,7 +71,7 @@ export const Default = meta.story({
 
 export const Top = meta.story({
   args: {
-    popper: {
+    options: {
       placement: 'top',
     },
   },
@@ -80,7 +79,7 @@ export const Top = meta.story({
 
 export const Right = meta.story({
   args: {
-    popper: {
+    options: {
       placement: 'right',
     },
   },
@@ -88,7 +87,7 @@ export const Right = meta.story({
 
 export const Left = meta.story({
   args: {
-    popper: {
+    options: {
       placement: 'left',
     },
   },
@@ -103,7 +102,7 @@ export const NoArrow = meta.story({
 export const NoArrowTop = meta.story({
   args: {
     hideArrow: true,
-    popper: {
+    options: {
       placement: 'top',
     },
   },
@@ -112,7 +111,7 @@ export const NoArrowTop = meta.story({
 export const NoArrowRight = meta.story({
   args: {
     hideArrow: true,
-    popper: {
+    options: {
       placement: 'right',
     },
   },
@@ -121,16 +120,16 @@ export const NoArrowRight = meta.story({
 export const NoArrowLeft = meta.story({
   args: {
     hideArrow: true,
-    popper: {
+    options: {
       placement: 'left',
     },
   },
 });
 
-export const WithCustomSizeFromTooltipClass = meta.story({
+export const WithCustomSize = meta.story({
   args: {
     text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    tooltipClass: 'max-w-[20rem]',
+    classNames: { tooltip: 'max-w-[20rem]' },
   },
 });
 

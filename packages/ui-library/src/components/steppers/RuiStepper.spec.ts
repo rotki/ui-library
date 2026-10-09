@@ -106,13 +106,12 @@ describe('components/steppers/RuiStepper.vue', () => {
     expect(wrapper.element.getAttribute('data-custom')).toBe('true');
   });
 
-  it('should apply titleClass and subtitleClass when custom', () => {
+  it('should apply classNames.title and classNames.subtitle when custom', () => {
     wrapper = createWrapper({
       props: {
         steps,
         custom: true,
-        titleClass: 'text-rui-primary',
-        subtitleClass: 'text-rui-info',
+        classNames: { title: 'text-rui-primary', subtitle: 'text-rui-info' },
       },
     });
 

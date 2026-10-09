@@ -34,12 +34,6 @@ export interface MenuSelectProps<TValue, TItem> {
   labelPlacement?: LabelPlacement;
   menuOptions?: MenuProps;
   classNames?: RuiMenuSelectClassNames;
-  /** @deprecated Use `classNames.label` instead */
-  labelClass?: string;
-  /** @deprecated Use `classNames.menu` instead */
-  menuClass?: string;
-  /** @deprecated Use `classNames.option` instead */
-  optionClass?: string;
   prependWidth?: number;
   appendWidth?: number;
   itemHeight?: number;
@@ -74,8 +68,6 @@ const {
   labelPlacement = undefined,
   menuOptions,
   classNames,
-  labelClass,
-  menuClass,
   variant = 'default',
   hint,
   keyAttr,
@@ -253,7 +245,7 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
           :aria-labelledby="!floating && label ? labelId : undefined"
           type="button"
           :tabindex="disabled || readOnly ? -1 : 0"
-          :class="ui.activator({ class: cn(classNames?.label) ?? labelClass })"
+          :class="ui.activator({ class: cn(classNames?.label) })"
           v-bind="{
             ...getNonRootAttrs($attrs),
             ...(readOnly ? {} : attrs),
@@ -353,7 +345,7 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
       <div
         v-if="options.length > 0"
         :ref="containerProps.ref"
-        :class="ui.menu({ class: cn(classNames?.menu) ?? menuClass })"
+        :class="ui.menu({ class: cn(classNames?.menu) })"
         :style="[containerProps.style, { width: `${width}px`, minWidth: menuWidth }]"
         @scroll="containerProps.onScroll"
         @keydown.up.prevent="moveHighlight(true)"
@@ -402,7 +394,7 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
         v-else-if="!hideNoData"
         data-id="no-data"
         :style="{ width: `${width}px`, minWidth: menuWidth }"
-        :class="classNames?.menu ?? menuClass"
+        :class="classNames?.menu"
       >
         <slot name="no-data">
           <div class="p-4">

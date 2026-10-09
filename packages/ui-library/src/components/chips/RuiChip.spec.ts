@@ -18,7 +18,7 @@ describe('components/chips/RuiChip.vue', () => {
     const label = 'Chip';
     wrapper = createWrapper({
       props: {
-        contentClass: 'content-class',
+        classNames: { content: 'content-class' },
       },
       slots: {
         default: label,

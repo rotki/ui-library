@@ -46,7 +46,7 @@ const accordions = ref<AccordionItem[]>([
             v-bind="accordion"
             data-id="accordions"
           >
-            <RuiAccordion header-class="py-4 border-y border-default">
+            <RuiAccordion :class-names="{ header: 'py-4 border-y border-default' }">
               <template #header>
                 <div class="text-rui-primary font-bold">
                   Accordion 1 Header
@@ -56,7 +56,7 @@ const accordions = ref<AccordionItem[]>([
                 Accordion 1 Content
               </div>
             </RuiAccordion>
-            <RuiAccordion header-class="py-4 border-b border-default">
+            <RuiAccordion :class-names="{ header: 'py-4 border-b border-default' }">
               <template #header>
                 <div class="text-rui-primary font-bold">
                   Accordion 2 Header

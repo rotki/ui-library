@@ -33,7 +33,7 @@ const attributes: (Partial<TooltipData> & TextGetter)[] = [
   {
     getText: (): string => 'Lorem ipsum dolor sit amet consecteur '.repeat(6),
     getButtonText: (placement: string): string => `${capitalizeFirstLetter(placement)} With long content`,
-    tooltipClass: 'max-w-sm',
+    classNames: { tooltip: 'max-w-sm' },
   },
   {
     disabled: true,
@@ -53,7 +53,7 @@ function createToolip(
     hideArrow: true,
     ...options,
     buttonColor: color,
-    popper: { placement },
+    options: { placement },
   };
 }
 

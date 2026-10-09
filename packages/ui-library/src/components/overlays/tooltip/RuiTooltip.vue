@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { VueClassValue } from '@/types/class-value';
 import { type FloatingOptions, useFloating } from '@/composables/floating';
-import { type PopperOptions, toFloatingOptions } from '@/composables/popper';
 import { cn, tv } from '@/utils/tv';
 import { tooltipStyles } from './tooltip-styles';
 
@@ -18,11 +17,7 @@ export interface Props {
   closeDelay?: number;
   persistOnTooltipHover?: boolean;
   options?: FloatingOptions;
-  /** @deprecated Use `options` instead */
-  popper?: PopperOptions;
   classNames?: RuiTooltipClassNames;
-  /** @deprecated Use `classNames.tooltip` instead */
-  tooltipClass?: string;
 }
 
 defineOptions({
@@ -38,9 +33,7 @@ const {
   closeDelay = 500,
   persistOnTooltipHover = false,
   options,
-  popper,
   classNames,
-  tooltipClass = '',
 } = defineProps<Props>();
 
 defineSlots<{
@@ -63,7 +56,7 @@ const {
   onLeaveComplete,
   updatePosition,
 } = useFloating(
-  () => popper ? toFloatingOptions(popper) : (options ?? {}),
+  () => options ?? {},
   () => disabled,
   () => openDelay,
   () => closeDelay,
@@ -115,7 +108,7 @@ defineExpose({
         :id="tooltipId"
         ref="tooltip"
         class="w-max z-9999"
-        :class="classNames?.tooltip ?? tooltipClass"
+        :class="classNames?.tooltip"
         :role="open ? 'tooltip' : undefined"
         :data-placement="currentPlacement"
       >

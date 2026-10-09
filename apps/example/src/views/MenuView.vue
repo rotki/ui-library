@@ -14,111 +14,111 @@ const menus = ref<SimpleMenu[]>([
     disabled: false,
     buttonText: 'Bottom',
     buttonColor: 'primary',
-    popper: { placement: 'bottom' },
+    options: { placement: 'bottom' },
   },
   {
     disabled: false,
     buttonText: 'Top',
     buttonColor: 'secondary',
-    popper: { placement: 'top' },
+    options: { placement: 'top' },
   },
   {
     disabled: false,
     buttonText: 'Left',
     buttonColor: 'error',
-    popper: { placement: 'left' },
+    options: { placement: 'left' },
   },
   {
     disabled: false,
     buttonText: 'Right',
     buttonColor: 'info',
-    popper: { placement: 'right' },
+    options: { placement: 'right' },
   },
   {
     disabled: true,
     buttonText: 'Menu disabled',
     buttonColor: 'primary',
-    popper: { placement: 'bottom' },
+    options: { placement: 'bottom' },
   },
   {
     disabled: true,
     buttonText: 'Menu disabled',
     buttonColor: 'secondary',
-    popper: { placement: 'top' },
+    options: { placement: 'top' },
   },
   {
     disabled: true,
     buttonText: 'Menu disabled',
     buttonColor: 'error',
-    popper: { placement: 'left' },
+    options: { placement: 'left' },
   },
   {
     disabled: true,
     buttonText: 'Menu disabled',
     buttonColor: 'info',
-    popper: { placement: 'right' },
+    options: { placement: 'right' },
   },
   {
     disabled: false,
     buttonText: 'Bottom (Open on Hover)',
     buttonColor: 'primary',
-    popper: { placement: 'bottom' },
+    options: { placement: 'bottom' },
     openOnHover: true,
   },
   {
     disabled: false,
     buttonText: 'Top (Open on Hover)',
     buttonColor: 'secondary',
-    popper: { placement: 'top' },
+    options: { placement: 'top' },
     openOnHover: true,
   },
   {
     disabled: false,
     buttonText: 'Left (Open on Hover)',
     buttonColor: 'error',
-    popper: { placement: 'left' },
+    options: { placement: 'left' },
     openOnHover: true,
   },
   {
     disabled: false,
     buttonText: 'Right (Open on Hover)',
     buttonColor: 'info',
-    popper: { placement: 'right' },
+    options: { placement: 'right' },
     openOnHover: true,
   },
   {
     disabled: false,
     buttonText: 'Bottom (Close on Content Click)',
     buttonColor: 'primary',
-    popper: { placement: 'bottom' },
+    options: { placement: 'bottom' },
     closeOnContentClick: true,
   },
   {
     disabled: false,
     buttonText: 'Top (Close on Content Click)',
     buttonColor: 'secondary',
-    popper: { placement: 'top' },
+    options: { placement: 'top' },
     closeOnContentClick: true,
   },
   {
     disabled: false,
     buttonText: 'Left (Close on Content Click)',
     buttonColor: 'error',
-    popper: { placement: 'left' },
+    options: { placement: 'left' },
     closeOnContentClick: true,
   },
   {
     disabled: false,
     buttonText: 'Right (Close on Content Click)',
     buttonColor: 'info',
-    popper: { placement: 'right' },
+    options: { placement: 'right' },
     closeOnContentClick: true,
   },
   {
     disabled: false,
     buttonText: 'Bottom (Persistent)',
     buttonColor: 'primary',
-    popper: { placement: 'bottom' },
+    options: { placement: 'bottom' },
     persistent: true,
   },
 ]);
@@ -167,7 +167,7 @@ const persistentNestedOpen = ref<boolean>(false);
       <RuiMenu
         data-id="menu-nested"
         :open-delay="10"
-        :popper="{ placement: 'bottom' }"
+        :options="{ placement: 'bottom' }"
       >
         <template #activator="{ attrs }">
           <RuiButton
@@ -182,7 +182,7 @@ const persistentNestedOpen = ref<boolean>(false);
           <RuiMenu
             data-id="menu-nested-inner"
             :open-delay="10"
-            :popper="{ placement: 'right' }"
+            :options="{ placement: 'right' }"
           >
             <template #activator="{ attrs }">
               <RuiButton
@@ -214,7 +214,7 @@ const persistentNestedOpen = ref<boolean>(false);
         data-id="menu-persistent-nested"
         persistent
         :open-delay="10"
-        :popper="{ placement: 'bottom' }"
+        :options="{ placement: 'bottom' }"
       >
         <template #activator="{ attrs }">
           <RuiButton
@@ -229,7 +229,7 @@ const persistentNestedOpen = ref<boolean>(false);
           <RuiMenu
             data-id="menu-persistent-nested-inner"
             :open-delay="10"
-            :popper="{ placement: 'right' }"
+            :options="{ placement: 'right' }"
           >
             <template #activator="{ attrs }">
               <RuiButton

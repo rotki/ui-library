@@ -53,13 +53,9 @@ export function useTabRouting({ onRouteChange }: UseTabRoutingOptions): UseTabRo
 
   function isPathMatch(
     path: string,
-    { exactPath, exact }: RouteMatchOptions,
+    { exact }: RouteMatchOptions,
   ): boolean {
     const currentRoute = route.fullPath;
-
-    if (exactPath)
-      return currentRoute === path;
-
     const base = typeof window !== 'undefined' ? window.location.origin : 'http://localhost';
     const routeWithoutQueryParams = new URL(path, base).pathname;
 

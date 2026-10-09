@@ -119,9 +119,8 @@ export const TriStateStyle = meta.story({
     max: 2,
     modelValue: 0,
     showTicks: true,
-    sliderClass: '!bg-rui-neutral-200 dark:!bg-rui-neutral-800',
+    classNames: { slider: '!bg-rui-neutral-200 dark:!bg-rui-neutral-800', tick: '!bg-rui-neutral-200 dark:!bg-rui-neutral-800' },
     step: 1,
-    tickClass: '!bg-rui-neutral-200 dark:!bg-rui-neutral-800',
     tickSize: 12,
   },
 });

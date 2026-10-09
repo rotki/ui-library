@@ -18,10 +18,6 @@ export interface Props {
   iconTop?: boolean;
   custom?: boolean;
   classNames?: RuiStepperClassNames;
-  /** @deprecated Use `classNames.title` instead */
-  titleClass?: string;
-  /** @deprecated Use `classNames.subtitle` instead */
-  subtitleClass?: string;
   orientation?: StepperOrientation;
   keepActiveVisible?: boolean;
 }
@@ -36,8 +32,6 @@ const {
   iconTop = false,
   custom = false,
   classNames,
-  titleClass = '',
-  subtitleClass = '',
   orientation = StepperOrientation.horizontal,
   keepActiveVisible = true,
 } = defineProps<Props>();
@@ -247,14 +241,14 @@ watch(() => step, () => {
         >
           <span
             v-if="title"
-            :class="[stepUi(resolveState(state)).title(), custom && (classNames?.title ?? titleClass)]"
+            :class="[stepUi(resolveState(state)).title(), custom && classNames?.title]"
             class="text-subtitle-2"
           >
             {{ title }}
           </span>
           <span
             v-if="description"
-            :class="[stepUi(resolveState(state)).subtitle(), custom && (classNames?.subtitle ?? subtitleClass)]"
+            :class="[stepUi(resolveState(state)).subtitle(), custom && classNames?.subtitle]"
             class="text-caption"
           >
             {{ description }}
