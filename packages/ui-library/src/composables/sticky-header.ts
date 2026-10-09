@@ -171,6 +171,8 @@ export function useStickyTableHeader(
     syncRafId = requestAnimationFrame(() => {
       syncRafId = null;
       applyColumnWidths(mainColumns, readColumnWidths(cloneColumns));
+      // the head's own width too: left stale, it squeezes the columns and leaves an untinted strip at the end
+      toggleStickyClass();
     });
   }
 

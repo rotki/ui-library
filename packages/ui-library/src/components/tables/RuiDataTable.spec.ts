@@ -226,7 +226,10 @@ describe('components/tables/RuiDataTable.vue', () => {
     await wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"]').trigger('click');
 
     expect(wrapper.props().expanded).toHaveLength(0);
-    expect(wrapper.find('tbody tr:nth-child(2) div[data-id=expanded-content]').exists()).toBeFalsy();
+    // the panel fades out before it leaves the DOM
+    await vi.waitFor(() => {
+      expect(wrapper.find('tbody tr:nth-child(2) div[data-id=expanded-content]').exists()).toBeFalsy();
+    });
 
     await wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"]').trigger('click');
 
@@ -236,7 +239,10 @@ describe('components/tables/RuiDataTable.vue', () => {
 
     expect(wrapper.props().expanded).toHaveLength(1);
     expect(wrapper.find('tbody tr:nth-child(1) button[data-id="expand-button"][aria-expanded="true"]').exists()).toBeFalsy();
-    expect(wrapper.find('tbody tr:nth-child(4) div[data-id=expanded-content]').exists()).toBeFalsy();
+    // row one's panel fades out first, holding its place in the row count until it leaves
+    await vi.waitFor(() => {
+      expect(wrapper.find('tbody tr:nth-child(4) div[data-id=expanded-content]').exists()).toBeFalsy();
+    });
   });
 
   it('should not render an expanded row when no expanded-item slot is provided', async () => {
@@ -293,9 +299,12 @@ describe('components/tables/RuiDataTable.vue', () => {
     await nextTick();
 
     const rows = wrapper.findAll('tr[data-id=row]');
-    expect(rows[0]?.classes()).toContain('bg-rui-neutral-50');
-    expect(rows[1]?.classes()).not.toContain('bg-rui-neutral-50');
-    expect(wrapper.find('tr[data-id=row-expanded]').classes()).toContain('!border-t-0');
+    const rail = '[&>td:first-child]:before:bg-rui-primary';
+    expect(rows[0]?.classes()).toContain(rail);
+    expect(rows[1]?.classes()).not.toContain(rail);
+    const panel = wrapper.find('tr[data-id=row-expanded]');
+    expect(panel.classes()).toContain(rail);
+    expect(panel.classes()).toContain('!border-t-0');
   });
 
   describe('consumer-owned expand column', () => {

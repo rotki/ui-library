@@ -30,6 +30,44 @@ const rowId = computed<T[keyof T]>(() => getRowId(row));
 const selected = computed<boolean>(() => isSelected(get(rowId)));
 const disabled = computed<boolean>(() => isDisabledRow(get(rowId)));
 const expanded = computed<boolean>(() => get(expandable) && !!slots['expanded-item'] && isExpanded(get(rowId)));
+
+/** How long a closing panel stays to fade out; matches its `duration-100`. */
+const PANEL_LEAVE_MS = 100;
+
+const reducedMotion = usePreferredReducedMotion();
+
+/**
+ * Whether the panel is in the DOM, which outlasts `expanded` by its fade-out.
+ *
+ * @remarks
+ * Not a `<Transition>`: test utilities stub that with an element, which lands inside the consumer's
+ * `<tbody>` and shifts every `tr:nth-child` its specs count. The fade-in is CSS `@starting-style`.
+ */
+const panelShown = ref<boolean>(get(expanded));
+const panelClosing = ref<boolean>(false);
+
+const { start: finishClosing, stop: cancelClosing } = useTimeoutFn(() => {
+  set(panelShown, false);
+  set(panelClosing, false);
+}, PANEL_LEAVE_MS, { immediate: false });
+
+watch(expanded, (open) => {
+  if (open) {
+    cancelClosing();
+    set(panelClosing, false);
+    set(panelShown, true);
+    return;
+  }
+  if (!get(panelShown))
+    return;
+  if (get(reducedMotion) === 'reduce') {
+    set(panelShown, false);
+    return;
+  }
+  set(panelClosing, true);
+  finishClosing();
+});
+
 const rowClass = computed<string>(() => typeof itemClass === 'string' ? itemClass : itemClass(row));
 
 /** Selection wins over the open-panel shade, so a selected row still reads as selected. */
@@ -209,8 +247,11 @@ const mobileCardClass = computed<string>(() => {
     </RuiDataTableCell>
   </tr>
 
+  <!-- opacity only: the rows below move once, at once, rather than sliding with a growing height -->
   <RuiDataTableExpandedRow
-    v-if="expanded"
+    v-if="panelShown"
+    class="transition-opacity starting:opacity-0 motion-reduce:transition-none"
+    :class="panelClosing ? 'opacity-0 duration-100 ease-in' : 'duration-150 ease-out'"
     :row="row"
     :index="index"
   >

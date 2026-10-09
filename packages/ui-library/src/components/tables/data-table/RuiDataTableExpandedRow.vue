@@ -34,8 +34,10 @@ const panelStyle = { width: 'calc(var(--rui-table-viewport) - 2rem)' };
     :class="[classes.trExpandable, isMobile ? mobileExpandedClass : '']"
     data-id="row-expanded"
   >
+    <!-- an inset on every side: the cell's 16px sides, matched top and bottom instead of a row's dense padding -->
     <td
       :colspan="colspan"
+      class="py-4"
       :class="classes.td"
     >
       <div

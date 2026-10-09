@@ -4,6 +4,7 @@ import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
+import { NESTED_BAR } from '@/components/tables/data-table-styles';
 import { getAlignClass, getSortButtonAlignClass, SortDirection, TableAlign } from '@/components/tables/table-props';
 import { tv } from '@/utils/tv';
 
@@ -119,8 +120,9 @@ const emit = defineEmits<{
 const tableHeadStyles = tv({
   slots: {
     thead: 'between:border-t between:border-b-0 between:border-rui-divider',
-    checkbox: 'px-2 w-14.5 max-w-14.5 [&_label]:ml-0',
-    th: '[:where(&)]:px-4',
+    checkbox: `px-2 w-14.5 max-w-14.5 [&_label]:ml-0 bg-rui-surface-muted ${NESTED_BAR}`,
+    // tinted like the pagination bar, framing the body; opaque, so rows scroll behind a stuck header
+    th: `[:where(&)]:px-4 bg-rui-surface-muted ${NESTED_BAR}`,
     // labels read as secondary to the data; the sorted column's label steps up to primary
     columnText: 'text-rui-text-secondary font-medium text-[0.8125rem] leading-5',
     // the negative margin cancels the button's own padding so the label lines up with the cells below
@@ -143,7 +145,7 @@ const tableHeadStyles = tv({
       sticky: { thead: 'top-0 z-rui-raised absolute' },
       fixed: {
         thead: 'top-0 z-rui-raised fixed',
-        th: 'bg-rui-background border-b border-b-rui-divider',
+        th: 'border-b border-b-rui-divider',
       },
     },
     // a fixed height evens out rows with and without sort buttons; `:where()` lets a column's `class` win
