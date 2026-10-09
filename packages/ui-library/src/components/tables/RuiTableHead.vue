@@ -3,7 +3,6 @@ import type { RuiIcons } from '@/icons';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
-import RuiBadge from '@/components/overlays/badge/RuiBadge.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { getAlignClass, getSortButtonAlignClass, SortDirection, TableAlign } from '@/components/tables/table-props';
 import { tv } from '@/utils/tv';
@@ -123,11 +122,13 @@ const tableHeadStyles = tv({
     checkbox: 'px-2 w-14.5 max-w-14.5 [&_label]:ml-0',
     th: '[:where(&)]:px-4',
     // labels read as secondary to the data; the sorted column's label steps up to primary
-    columnText: 'text-rui-text-secondary font-medium text-[0.875rem] leading-6',
+    columnText: 'text-rui-text-secondary font-medium text-[0.8125rem] leading-5',
     // the negative margin cancels the button's own padding so the label lines up with the cells below
     sortButton: 'inline-flex group/sort -mx-1.5',
     // a faint resting icon marks sortable columns for keyboard and touch users
     sortIcon: 'transition opacity-30 group-hover/sort:opacity-60 group-focus-visible/sort:opacity-60',
+    // tucked against the arrow, closer than the button's gap
+    sortPosition: 'text-[0.6875rem] leading-none font-semibold tabular-nums text-rui-text-secondary',
     loaderRow: 'border-none',
     progress: 'p-0 h-0',
     progressWrapper: 'h-0 -mt-1',
@@ -143,8 +144,8 @@ const tableHeadStyles = tv({
     },
     // a fixed height evens out rows with and without sort buttons; `:where()` lets a column's `class` win
     dense: {
-      true: { th: '[:where(&)]:py-1 [:where(&)]:h-10' },
-      false: { th: '[:where(&)]:py-3 [:where(&)]:h-14' },
+      true: { th: '[:where(&)]:py-1 [:where(&)]:h-8' },
+      false: { th: '[:where(&)]:py-2 [:where(&)]:h-10' },
     },
   },
   defaultVariants: {
@@ -207,6 +208,17 @@ function getSortIndex(key: TableColumn<T>['key']): number {
   return sortData.findIndex(sort => sort.column === key);
 }
 
+/**
+ * A column's place in a multi-column sort, shown beside its arrow. A lone sorted column shows none,
+ * since its arrow already says everything.
+ */
+function getSortPosition(key: TableColumn<T>['key']): number | undefined {
+  if (!Array.isArray(sortData) || sortData.length < 2)
+    return undefined;
+  const index = getSortIndex(key);
+  return index >= 0 ? index + 1 : undefined;
+}
+
 function getSortDirection(key: TableColumn<T>['key']): SortDirection | undefined {
   return sortedMap[key]?.direction;
 }
@@ -266,55 +278,62 @@ function getAriaSort(column: TableColumn<T>): 'ascending' | 'descending' | 'none
           :column="column"
           :name="`header.${column.key.toString()}`"
         >
-          <RuiBadge
+          <RuiButton
             v-if="column.sortable"
-            :model-value="getSortIndex(column.key) >= 0"
-            :text="`${getSortIndex(column.key) + 1}`"
-            :offset-y="dense ? 8 : 0"
-            color="secondary"
+            :class="ui.sortButton({ class: getSortButtonAlignClass(column.align) })"
+            :data-sorted="isSortedBy(column.key) || undefined"
+            :data-direction="getSortDirection(column.key)"
             size="sm"
+            variant="text"
+            @click="onSort(column)"
           >
-            <RuiButton
-              :class="ui.sortButton({ class: getSortButtonAlignClass(column.align) })"
-              :data-sorted="isSortedBy(column.key) || undefined"
-              :data-direction="getSortDirection(column.key)"
-              size="sm"
-              variant="text"
-              @click="onSort(column)"
+            <span
+              :class="getColumnTextClass(column.key)"
+              data-id="column-text"
+            >
+              <slot
+                :name="`header.text.${column.key.toString()}`"
+                :column="column"
+              >
+                {{ column[columnAttr] }}
+              </slot>
+            </span>
+
+            <template
+              v-if="column.align === TableAlign.end"
+              #prepend
             >
               <span
-                :class="getColumnTextClass(column.key)"
-                data-id="column-text"
+                v-if="getSortPosition(column.key)"
+                :class="ui.sortPosition({ class: '-mr-1.5' })"
+                data-id="sort-position"
               >
-                <slot
-                  :name="`header.text.${column.key.toString()}`"
-                  :column="column"
-                >
-                  {{ column[columnAttr] }}
-                </slot>
+                {{ getSortPosition(column.key) }}
               </span>
+              <RuiIcon
+                :class="ui.sortIcon({ class: getSortIconClass(column.key) })"
+                :name="getSortIconName(column.key)"
+                size="18"
+              />
+            </template>
 
-              <template
-                v-if="column.align === TableAlign.end"
-                #prepend
-              >
+            <template #append>
+              <template v-if="column.align !== TableAlign.end">
                 <RuiIcon
                   :class="ui.sortIcon({ class: getSortIconClass(column.key) })"
                   :name="getSortIconName(column.key)"
                   size="18"
                 />
+                <span
+                  v-if="getSortPosition(column.key)"
+                  :class="ui.sortPosition({ class: '-ml-1.5' })"
+                  data-id="sort-position"
+                >
+                  {{ getSortPosition(column.key) }}
+                </span>
               </template>
-
-              <template #append>
-                <RuiIcon
-                  v-if="column.align !== TableAlign.end"
-                  :class="ui.sortIcon({ class: getSortIconClass(column.key) })"
-                  :name="getSortIconName(column.key)"
-                  size="18"
-                />
-              </template>
-            </RuiButton>
-          </RuiBadge>
+            </template>
+          </RuiButton>
           <span
             v-else
             :class="ui.columnText()"

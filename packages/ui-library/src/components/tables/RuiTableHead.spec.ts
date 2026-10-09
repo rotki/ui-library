@@ -147,7 +147,7 @@ describe('components/tables/RuiTableHead.vue', () => {
     expect(labelClasses(name)).not.toContain('text-rui-text-secondary');
   });
 
-  it('shows badge with sort index for multi-sort', () => {
+  it('shows each column\'s place beside its arrow in a multi-column sort', () => {
     const sortData = [
       { column: 'name' as const, direction: SortDirection.asc },
       { column: 'title' as const, direction: SortDirection.desc },
@@ -166,6 +166,18 @@ describe('components/tables/RuiTableHead.vue', () => {
 
     const sortButtons = wrapper.findAll('[data-sorted]');
     expect(sortButtons).toHaveLength(2);
+    expect(sortButtons.map(button => button.find('[data-id=sort-position]').text())).toEqual(['1', '2']);
+  });
+
+  it('shows no sort position when only one column is sorted', () => {
+    const sortData = [{ column: 'name' as const, direction: SortDirection.asc }];
+
+    wrapper = createWrapper({
+      props: { columns, sortData, sortedMap: { name: sortData[0] } },
+    });
+
+    expect(wrapper.find('[data-sorted]').exists()).toBe(true);
+    expect(wrapper.find('[data-id=sort-position]').exists()).toBe(false);
   });
 
   it('emits sort event when sort button is clicked', async () => {
@@ -235,7 +247,7 @@ describe('components/tables/RuiTableHead.vue', () => {
 
     const th = wrapper.find('th');
     expect(th.classes()).toContain('[:where(&)]:py-1');
-    expect(th.classes()).toContain('[:where(&)]:h-10');
+    expect(th.classes()).toContain('[:where(&)]:h-8');
   });
 
   it('uses custom columnAttr for header text', () => {

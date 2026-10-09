@@ -91,12 +91,26 @@ function findScrollParent(element: HTMLElement): HTMLElement | undefined {
   return undefined;
 }
 
-function createsFixedContainingBlock(style: CSSStyleDeclaration): boolean {
-  return style.transform !== 'none'
-    || style.perspective !== 'none'
-    || style.filter !== 'none'
-    || (style.backdropFilter !== undefined && style.backdropFilter !== 'none')
-    || /transform|perspective|filter/.test(style.willChange)
+function isSet(value: string | undefined): boolean {
+  return value !== undefined && value !== '' && value !== 'none';
+}
+
+/**
+ * Whether an element becomes the containing block of its `position: fixed`
+ * descendants. The individual `translate`, `rotate` and `scale` properties
+ * count like `transform`: Tailwind 4 writes its translate utilities to
+ * `translate`, so a dialog centred with `-translate-x-1/2` leaves `transform`
+ * at `none`.
+ */
+export function createsFixedContainingBlock(style: CSSStyleDeclaration): boolean {
+  return isSet(style.transform)
+    || isSet(style.translate)
+    || isSet(style.rotate)
+    || isSet(style.scale)
+    || isSet(style.perspective)
+    || isSet(style.filter)
+    || isSet(style.backdropFilter)
+    || /transform|translate|rotate|scale|perspective|filter/.test(style.willChange)
     || /paint|layout|strict|content/.test(style.contain);
 }
 

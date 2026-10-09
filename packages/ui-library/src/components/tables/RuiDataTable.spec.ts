@@ -282,8 +282,8 @@ describe('components/tables/RuiDataTable.vue', () => {
     await nextTick();
 
     const rows = wrapper.findAll('tr[data-id=row]');
-    expect(rows[0]?.classes()).toContain('bg-rui-grey-50');
-    expect(rows[1]?.classes()).not.toContain('bg-rui-grey-50');
+    expect(rows[0]?.classes()).toContain('bg-rui-neutral-50');
+    expect(rows[1]?.classes()).not.toContain('bg-rui-neutral-50');
     expect(wrapper.find('tr[data-id=row-expanded]').classes()).toContain('!border-t-0');
   });
 
@@ -2049,9 +2049,9 @@ describe('components/tables/RuiDataTable.vue', () => {
 
       const td = wrapper.find('tbody td');
       expect(td.classes()).toContain('[:where(&)]:py-1');
-      expect(td.classes()).not.toContain('[:where(&)]:py-3');
+      expect(td.classes()).not.toContain('[:where(&)]:py-2.5');
       expect(td.classes()).toContain('[:where(&)]:h-9');
-      expect(td.classes()).not.toContain('[:where(&)]:h-[3.25rem]');
+      expect(td.classes()).not.toContain('[:where(&)]:h-11');
     });
 
     it('should not apply dense styling when dense is false', () => {
@@ -2065,9 +2065,9 @@ describe('components/tables/RuiDataTable.vue', () => {
       });
 
       const td = wrapper.find('tbody td');
-      expect(td.classes()).toContain('[:where(&)]:py-3');
+      expect(td.classes()).toContain('[:where(&)]:py-2.5');
       expect(td.classes()).not.toContain('[:where(&)]:py-1');
-      expect(td.classes()).toContain('[:where(&)]:h-[3.25rem]');
+      expect(td.classes()).toContain('[:where(&)]:h-11');
       expect(td.classes()).not.toContain('[:where(&)]:h-9');
     });
 

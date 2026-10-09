@@ -85,7 +85,7 @@ const tableStyles = tv({
     root: 'w-full overflow-y-auto',
     table: [
       'w-full',
-      '[:where(&)_thead]:border-b [:where(&)_thead]:border-rui-grey-200 dark:[:where(&)_thead]:border-rui-grey-800',
+      '[:where(&)_thead]:border-b [:where(&)_thead]:border-rui-divider',
       '[:where(&)_thead_th]:font-medium [:where(&)_thead_th]:text-rui-text-secondary [:where(&)_thead_th]:text-start',
       '[:where(&)_tbody_td]:border-b-0',
     ],
@@ -94,7 +94,7 @@ const tableStyles = tv({
     variant: {
       default: {},
       outlined: {
-        root: 'border rounded-rui-panel border-rui-grey-200 dark:border-rui-grey-800',
+        root: 'border rounded-rui-panel border-rui-divider',
       },
     },
     dense: {
