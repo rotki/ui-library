@@ -104,12 +104,19 @@
   --rui-dark-divider: rgba(250, 250, 250, 0.1);
   --rui-light-outline: rgba(9, 9, 11, 0.18);
   --rui-dark-outline: rgba(250, 250, 250, 0.16);
+  /* State layers, the same tints as a hovered or pressed text button. */
+  --rui-light-hover: rgba(9, 9, 11, 0.05);
+  --rui-light-pressed: rgba(9, 9, 11, 0.1);
+  --rui-dark-hover: rgba(250, 250, 250, 0.08);
+  --rui-dark-pressed: rgba(250, 250, 250, 0.12);
   --rui-surface: var(--rui-light-surface);
   --rui-background: var(--rui-light-background);
   --rui-menu: var(--rui-light-menu);
   --rui-overlay: var(--rui-light-overlay);
   --rui-divider: var(--rui-light-divider);
   --rui-outline: var(--rui-light-outline);
+  --rui-hover: var(--rui-light-hover);
+  --rui-pressed: var(--rui-light-pressed);
 }
 
 /* The adaptive variables alias whichever theme is showing. */
@@ -142,6 +149,8 @@ html.light {
   --rui-overlay: var(--rui-light-overlay);
   --rui-divider: var(--rui-light-divider);
   --rui-outline: var(--rui-light-outline);
+  --rui-hover: var(--rui-light-hover);
+  --rui-pressed: var(--rui-light-pressed);
   --rui-shadow-primary: var(--rui-light-shadow-primary);
   --rui-shadow-secondary: var(--rui-light-shadow-secondary);
 }
@@ -175,6 +184,8 @@ html.dark {
   --rui-overlay: var(--rui-dark-overlay);
   --rui-divider: var(--rui-dark-divider);
   --rui-outline: var(--rui-dark-outline);
+  --rui-hover: var(--rui-dark-hover);
+  --rui-pressed: var(--rui-dark-pressed);
   --rui-shadow-primary: var(--rui-dark-shadow-primary);
   --rui-shadow-secondary: var(--rui-dark-shadow-secondary);
 }

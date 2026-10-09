@@ -47,7 +47,8 @@ export const checkControlStyles = tv({
     disabled: {
       true: {
         wrapper: 'cursor-not-allowed',
-        control: 'opacity-50',
+        // the mark draws with currentColor, so one neutral greys its edge, fill and dot alike
+        control: '!text-rui-neutral-300 dark:!text-rui-neutral-600',
         label: 'text-rui-text-disabled',
       },
     },

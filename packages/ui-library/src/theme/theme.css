@@ -98,18 +98,24 @@
   --color-rui-light-overlay: rgb(var(--rui-light-overlay));
   --color-rui-light-divider: var(--rui-light-divider);
   --color-rui-light-outline: var(--rui-light-outline);
+  --color-rui-light-hover: var(--rui-light-hover);
+  --color-rui-light-pressed: var(--rui-light-pressed);
   --color-rui-dark-background: rgb(var(--rui-dark-background));
   --color-rui-dark-surface: rgb(var(--rui-dark-surface));
   --color-rui-dark-menu: rgb(var(--rui-dark-menu));
   --color-rui-dark-overlay: rgb(var(--rui-dark-overlay));
   --color-rui-dark-divider: var(--rui-dark-divider);
   --color-rui-dark-outline: var(--rui-dark-outline);
+  --color-rui-dark-hover: var(--rui-dark-hover);
+  --color-rui-dark-pressed: var(--rui-dark-pressed);
   --color-rui-background: rgb(var(--rui-background));
   --color-rui-surface: rgb(var(--rui-surface));
   --color-rui-menu: rgb(var(--rui-menu));
   --color-rui-overlay: rgb(var(--rui-overlay));
   --color-rui-divider: var(--rui-divider);
   --color-rui-outline: var(--rui-outline);
+  --color-rui-hover: var(--rui-hover);
+  --color-rui-pressed: var(--rui-pressed);
 }
 
 @theme {
@@ -143,6 +149,14 @@
 @utility focus-ring {
   outline: 2px solid rgb(var(--rui-primary-main));
   outline-offset: 2px;
+}
+
+@utility state-layer {
+  background-image: linear-gradient(var(--rui-hover), var(--rui-hover));
+}
+
+@utility state-layer-pressed {
+  background-image: linear-gradient(var(--rui-pressed), var(--rui-pressed));
 }
 
 @utility text-body-1 {

@@ -30,9 +30,13 @@ type SvgComponent = [tag: string, attrs: Record<string, string>];
  * such as a `w-full` button label in `variant="list"`. Without it the svg is
  * compressed along the main axis while its height stays put, drawing a sliver
  * of a glyph.
+ *
+ * The stroke is set on the svg as CSS, so `--rui-icon-stroke` can retune it.
+ * Lucide's 2 reads heavy beside Inter; 1.5 would draw a 16px glyph at a
+ * single, blurry pixel.
  */
 const iconStyles = tv({
-  base: 'shrink-0 w-(--rui-icon-size,1.5rem) h-(--rui-icon-size,1.5rem)',
+  base: 'shrink-0 w-(--rui-icon-size,1.5rem) h-(--rui-icon-size,1.5rem) [stroke-width:var(--rui-icon-stroke,1.75)]',
   variants: {
     color: {
       primary: 'text-rui-primary',
@@ -109,7 +113,6 @@ const components = computed<SvgComponent[] | undefined>(() => {
       v-bind="component[1]"
       :fill="!isFill ? 'none' : 'currentColor'"
       :stroke="!isFill ? 'currentColor' : 'none'"
-      stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
       fill-rule="evenodd"

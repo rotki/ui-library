@@ -106,7 +106,8 @@ describe('components/chips/RuiChip.vue', () => {
       },
     });
 
-    expectWrapperToHaveClass(wrapper, 'div[role=button]', /opacity-40/);
+    expectWrapperToHaveClass(wrapper, 'div[role=button]', /text-rui-text-disabled/);
+    expectWrapperToHaveClass(wrapper, 'div[role=button]', /bg-rui-neutral-100/);
   });
 
   it('should apply readonly state when not clickable', () => {

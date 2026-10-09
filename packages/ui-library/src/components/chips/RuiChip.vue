@@ -61,7 +61,7 @@ defineSlots<{
 
 const chipStyles = tv({
   slots: {
-    root: 'inline-flex items-center justify-between px-2 py-1 transition-all cursor-default outline-hidden max-w-full truncate',
+    root: 'inline-flex items-center justify-between px-2 py-1 transition duration-150 cursor-default outline-hidden max-w-full truncate',
     prepend: 'rounded-full flex items-center justify-center pr-0 w-6 h-6 text-[0.6rem] text-white bg-rui-neutral-400 dark:bg-rui-neutral-600 overflow-hidden',
     label: 'truncate px-2 text-[0.8125rem]',
     close: 'rounded-full flex items-center p-[0.13rem] pl-0 inset-y-0 focus:outline-hidden',
@@ -82,7 +82,7 @@ const chipStyles = tv({
       },
     },
     disabled: {
-      true: { root: 'opacity-40 cursor-default', close: 'cursor-default' },
+      true: { root: '!text-rui-text-disabled cursor-default', close: 'cursor-default' },
       false: {},
     },
     clickable: {
@@ -128,6 +128,10 @@ const chipStyles = tv({
     { color: 'warning', variant: 'outlined', class: { root: 'border text-rui-warning border-rui-warning/50 bg-transparent' } },
     { color: 'info', variant: 'outlined', class: { root: 'border text-rui-info border-rui-info/50 bg-transparent' } },
     { color: 'success', variant: 'outlined', class: { root: 'border text-rui-success border-rui-success/50 bg-transparent' } },
+
+    // Disabled: a flat neutral chip in any color, like a disabled button
+    { disabled: true, variant: 'filled', class: { root: '!bg-rui-neutral-100 dark:!bg-rui-neutral-800' } },
+    { disabled: true, variant: 'outlined', class: { root: '!border-rui-divider' } },
 
     // Context colors — outlined interactive
     { color: 'primary', variant: 'outlined', clickable: true, disabled: false, class: { root: 'hover:bg-rui-primary/4' } },

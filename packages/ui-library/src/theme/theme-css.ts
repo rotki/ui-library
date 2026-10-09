@@ -9,7 +9,7 @@
  * writes it and a unit test fails when the committed file is stale.
  */
 import { baseColors, baseColorsIntensities, contextColors } from '../consts/colors';
-import { lineColors, neutralShades, type RadiusRole, type ShadowRole, surfaceColors } from '../consts/tokens';
+import { lineColors, neutralShades, type RadiusRole, type ShadowRole, stateColors, surfaceColors } from '../consts/tokens';
 
 const themes = ['light', 'dark'] as const;
 
@@ -86,13 +86,14 @@ function colorTokens(): string[] {
   }
 
   /*
-   * The semantic surfaces and lines. The adaptive ones follow the theme on their own, one class
-   * instead of a `dark:` pair; the `light-` and `dark-` ones are for a part that keeps one look.
+   * The semantic surfaces, lines and state layers. The adaptive ones follow the theme on their
+   * own, one class instead of a `dark:` pair; the `light-` and `dark-` ones are for a part that
+   * keeps one look.
    */
   for (const prefix of [...themes.map(theme => `${theme}-`), '']) {
     for (const surface of surfaceColors)
       lines.push(`--color-rui-${prefix}${surface}: rgb(var(--rui-${prefix}${surface}));`);
-    for (const line of lineColors)
+    for (const line of [...lineColors, ...stateColors])
       lines.push(`--color-rui-${prefix}${line}: var(--rui-${prefix}${line});`);
   }
 
@@ -204,6 +205,19 @@ export function buildThemeCss(): string {
     '@utility focus-ring {',
     '  outline: 2px solid rgb(var(--rui-primary-main));',
     '  outline-offset: 2px;',
+    '}',
+    '',
+    /*
+     * A hover or pressed tint over whatever fill an element has, as `hover:state-layer` and
+     * `active:state-layer-pressed`. It is a background image, so it stacks on the background
+     * color and leaves the text alone.
+     */
+    '@utility state-layer {',
+    '  background-image: linear-gradient(var(--rui-hover), var(--rui-hover));',
+    '}',
+    '',
+    '@utility state-layer-pressed {',
+    '  background-image: linear-gradient(var(--rui-pressed), var(--rui-pressed));',
     '}',
     '',
     ...typography.map(item => `${typographyUtility(item)}\n`),

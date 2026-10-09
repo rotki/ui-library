@@ -21,6 +21,13 @@ export const surfaceColors = ['background', 'surface', 'menu', 'overlay'] as con
 export const lineColors = ['divider', 'outline'] as const;
 
 /**
+ * State layers: translucent fills for a hovered or pressed row, item or chip. Held as full
+ * colors. The `state-layer` utility lays one over a fill as a background image, which tints
+ * the fill without touching the text, as a `brightness` filter would.
+ */
+export const stateColors = ['hover', 'pressed'] as const;
+
+/**
  * The neutral ramp, `rui-neutral-50` to `rui-neutral-950`, for the greys that
  * are not Material's `rui-grey`. Its hue is the one place the restyle picks
  * between zinc and slate.

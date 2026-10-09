@@ -31,8 +31,8 @@ test.describe('buttons', () => {
 
     await expect(button).toBeVisible();
 
-    // 18px matches the md icon box; the inherited 20px drifted the label above the icon
-    await expect(label).toHaveCSS('line-height', '18px');
+    // 16px matches the md icon box; the inherited 20px drifted the label above the icon
+    await expect(label).toHaveCSS('line-height', '16px');
 
     const labelBox = await label.boundingBox();
     const iconBox = await icon.boundingBox();

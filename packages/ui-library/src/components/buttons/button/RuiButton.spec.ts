@@ -124,11 +124,11 @@ describe('components/buttons/button/RuiButton.vue', () => {
   it('should set --rui-icon-size per button size so descendant icons scale', async () => {
     wrapper = createWrapper();
     // md seeds the property without `!`, so an inline style on the svg still wins
-    expect(wrapper.find('button').classes()).toContain('[--rui-icon-size:1.125rem]');
+    expect(wrapper.find('button').classes()).toContain('[--rui-icon-size:1rem]');
 
     // Size variants redefine it with `!`, beating the base rule on the same element
     await wrapper.setProps({ size: 'sm' });
-    expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1rem]');
+    expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:0.875rem]');
 
     await wrapper.setProps({ size: 'lg' });
     expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1.25rem]');
@@ -145,7 +145,7 @@ describe('components/buttons/button/RuiButton.vue', () => {
   describe('icon size cascade inside button (issue #512)', () => {
     const perSize = {
       'xs': '![--rui-icon-size:0.75rem]',
-      'sm': '![--rui-icon-size:1rem]',
+      'sm': '![--rui-icon-size:0.875rem]',
       'lg': '![--rui-icon-size:1.25rem]',
       'xl': '![--rui-icon-size:1.375rem]',
       '2xl': '![--rui-icon-size:1.375rem]',
@@ -176,7 +176,7 @@ describe('components/buttons/button/RuiButton.vue', () => {
       expect(svg.attributes('width')).toBeUndefined();
       expect(svg.attributes('height')).toBeUndefined();
       // The button keeps its own property, so a bare RuiIcon beside this one still inherits it
-      expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1rem]');
+      expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:0.875rem]');
     });
 
     it('should override the md baseline via `!` on size variants', async () => {
@@ -186,13 +186,13 @@ describe('components/buttons/button/RuiButton.vue', () => {
         },
       });
       // No `!` on the md baseline, so a consumer can shadow it without fighting !important
-      expect(wrapper.find('button').classes()).toContain('[--rui-icon-size:1.125rem]');
-      expect(wrapper.find('button').classes()).not.toContain('![--rui-icon-size:1.125rem]');
+      expect(wrapper.find('button').classes()).toContain('[--rui-icon-size:1rem]');
+      expect(wrapper.find('button').classes()).not.toContain('![--rui-icon-size:1rem]');
 
       await wrapper.setProps({ size: 'sm' });
-      expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1rem]');
+      expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:0.875rem]');
       // The baseline rule stays on the element: variants win by `!important`, not removal
-      expect(wrapper.find('button').classes()).toContain('[--rui-icon-size:1.125rem]');
+      expect(wrapper.find('button').classes()).toContain('[--rui-icon-size:1rem]');
     });
 
     it('should apply icon-only compound variant sizing across button sizes', async () => {
@@ -264,10 +264,10 @@ describe('components/buttons/button/RuiButton.vue', () => {
         },
       });
       // md
-      expect(wrapper.find('button').classes()).toContain('[--rui-icon-size:1.125rem]');
+      expect(wrapper.find('button').classes()).toContain('[--rui-icon-size:1rem]');
 
       await wrapper.setProps({ size: 'sm' });
-      expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:1rem]');
+      expect(wrapper.find('button').classes()).toContain('![--rui-icon-size:0.875rem]');
     });
   });
 

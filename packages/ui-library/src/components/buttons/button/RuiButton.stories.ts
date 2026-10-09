@@ -136,7 +136,7 @@ export const AutoSizedIcon = meta.story({
     docs: {
       description: {
         story:
-          'When `<RuiIcon>` is used inside a button without an explicit `size` prop, it inherits a size proportional to the button height (xs → 0.75rem, sm → 1rem, md → 1.125rem, lg → 1.25rem, xl & 2xl → 1.375rem). Sizing flows through the `--rui-icon-size` custom property: the button seeds it per size variant, and the icon reads it via `width: var(--rui-icon-size, 1.5rem)`. A consumer passing `size` on `<RuiIcon>` still wins because that path stamps an inline style on the svg itself (see `ConsumerIconSizeOverride`). `xl` and `2xl` share the same glyph weight — `xl` targets the 40px input-row height; `2xl` keeps the previous 44px for jumbo CTAs.',
+          'When `<RuiIcon>` is used inside a button without an explicit `size` prop, it inherits a size proportional to the button height (xs → 0.75rem, sm → 0.875rem, md → 1rem, lg → 1.25rem, xl & 2xl → 1.375rem). Sizing flows through the `--rui-icon-size` custom property: the button seeds it per size variant, and the icon reads it via `width: var(--rui-icon-size, 1.5rem)`. A consumer passing `size` on `<RuiIcon>` still wins because that path stamps an inline style on the svg itself (see `ConsumerIconSizeOverride`). `xl` and `2xl` share the same glyph weight — `xl` targets the 40px input-row height; `2xl` keeps the previous 44px for jumbo CTAs.',
       },
     },
   },

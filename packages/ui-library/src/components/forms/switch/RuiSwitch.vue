@@ -45,7 +45,7 @@ const switchStyles = tv({
     wrapper: 'relative flex gap-2 items-start cursor-pointer group/switch',
     // 40 × 22, nudged down a pixel to sit centred on the label's 24px line
     inner: 'relative w-10 h-5.5 mt-px shrink-0',
-    input: 'peer appearance-none relative w-full h-full rounded-full bg-rui-neutral-400 dark:bg-rui-neutral-700 transition-all duration-75 ease-in-out cursor-pointer focus-visible:focus-ring',
+    input: 'peer appearance-none relative w-full h-full rounded-full bg-rui-neutral-400 dark:bg-rui-neutral-700 transition-colors duration-150 cursor-pointer focus-visible:focus-ring',
     toggle: [
       'absolute size-4.5 transition-all duration-75 ease-in-out -translate-y-1/2 top-1/2 rounded-full pointer-events-none',
       'bg-white left-0.5 shadow-rui-control',

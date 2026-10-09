@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { contextColors } from '@/consts/colors';
-import { lineColors, neutralShades, radiusRoles, shadowRoles, surfaceColors } from '@/consts/tokens';
+import { lineColors, neutralShades, radiusRoles, shadowRoles, stateColors, surfaceColors } from '@/consts/tokens';
 import { buildThemeCss } from '@/theme/theme-css';
 
 const committed = readFileSync(path.resolve(import.meta.dirname, 'theme.css'), 'utf8');
@@ -50,8 +50,8 @@ describe('theme/theme-css', () => {
     }
   });
 
-  it('should define each surface and line color for both themes and the adaptive one', () => {
-    for (const color of [...surfaceColors, ...lineColors]) {
+  it('should define each surface, line and state color for both themes and the adaptive one', () => {
+    for (const color of [...surfaceColors, ...lineColors, ...stateColors]) {
       for (const prefix of ['', 'light-', 'dark-'])
         expect(committed).toContain(`--color-rui-${prefix}${color}:`);
     }

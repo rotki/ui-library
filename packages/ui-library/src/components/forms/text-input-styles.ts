@@ -143,7 +143,7 @@ export const activatorStyles = tv({
       'group relative inline-flex items-center w-full',
       'outline-hidden focus:outline-hidden focus-within:outline-hidden cursor-pointer',
       'min-h-14 pl-4 py-2 pr-8 rounded-rui-control',
-      'm-0 transition-all text-body-1 text-left',
+      'm-0 transition-colors duration-150 text-body-1 text-left',
       'dark:text-rui-text',
     ].join(' '),
     label: [
@@ -153,7 +153,8 @@ export const activatorStyles = tv({
     value: 'w-full block truncate transition-all duration-75',
     clear: 'ml-auto shrink-0 invisible group-hover:!visible',
     menu: 'overflow-y-auto max-h-60 min-w-[2.5rem]',
-    highlighted: '!bg-rui-neutral-100 dark:!bg-rui-neutral-700',
+    // the grey list button's hover and active tints, so options and menu buttons highlight alike
+    highlighted: '!bg-black/5 dark:!bg-white/8',
     progress: 'absolute left-0 bottom-0 w-full',
     icon: 'text-rui-text transition',
     iconWrapper: 'flex items-center justify-end absolute right-3 top-px bottom-0',
@@ -208,7 +209,7 @@ export const activatorStyles = tv({
     },
     active: {
       true: {
-        highlighted: '!bg-rui-neutral-200 dark:!bg-rui-neutral-600',
+        highlighted: '!bg-black/10 dark:!bg-white/12',
       },
     },
     hasError: {
