@@ -126,7 +126,8 @@ function buildMiddleware(opts: FloatingOptions, arrowEl: HTMLElement | null): Mi
   if (opts.flip !== false)
     mw.push(flip());
 
-  mw.push(shift({ padding: opts.shiftPadding ?? DEFAULT_FLOATING_OPTIONS.shiftPadding }));
+  // `crossAxis`: when neither side fits, overlap the activator rather than open past the viewport edge
+  mw.push(shift({ padding: opts.shiftPadding ?? DEFAULT_FLOATING_OPTIONS.shiftPadding, crossAxis: true }));
 
   if (arrowEl)
     mw.push(arrow({ element: arrowEl, padding: 4 }));

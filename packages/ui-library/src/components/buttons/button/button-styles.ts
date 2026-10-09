@@ -59,7 +59,7 @@ export const buttonStyles = tv({
       text: { root: 'px-2' },
       fab: { root: 'rounded-full py-2 shadow-rui-control disabled:shadow-none' },
       // The label's 18px line-box matches the md icon box, so the two share an optical center (rotki/ui-library#515)
-      list: { root: 'p-3 px-3 rounded-none w-full justify-start text-left', label: 'w-full leading-[1.125rem]' },
+      list: { root: 'p-3 px-3 rounded-rui-sm w-full justify-start text-left', label: 'w-full leading-[1.125rem]' },
     },
     size: {
       'xs': { root: 'px-2 py-[0.125rem] text-[.75rem] leading-4 ![--rui-icon-size:0.75rem]' },
@@ -107,7 +107,7 @@ export const buttonStyles = tv({
     // === Grey color variants ===
     { color: 'grey', active: true, class: { root: 'bg-rui-neutral-200 dark:bg-rui-neutral-700' } },
     { color: 'grey', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-black/[.04] active:bg-black/10 dark:bg-transparent dark:active:bg-white/10 dark:hover:bg-white/[.04] dark:text-rui-text' } },
-    { color: 'grey', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-black/10 dark:bg-white/30' } },
+    { color: 'grey', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-black/10 dark:bg-white/10' } },
     // Material's 23% outline: at full strength a neutral edge reads as an error state next to the 50% context colours
     { color: 'grey', variant: 'outlined', class: { root: 'inset-ring-rui-outline' } },
     { color: 'grey', variant: 'text', class: { root: 'text-rui-text-secondary' } },

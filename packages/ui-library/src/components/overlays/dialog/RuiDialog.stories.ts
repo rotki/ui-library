@@ -22,7 +22,7 @@ function render(args: ComponentPropsAndSlots<typeof RuiDialog>) {
           </RuiButton>
         </template>
         <template #default="{ close }">
-          <RuiCard no-padding :class="{ '!rounded-b-none': args.bottomSheet }">
+          <RuiCard no-padding>
             <template #header>
               Header
             </template>

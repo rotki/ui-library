@@ -72,13 +72,17 @@ const style = computed<{ width: string | undefined; maxWidth: string | undefined
 const dialog = tv({
   slots: {
     root: 'fixed inset-0',
-    overlay: 'absolute inset-0 backdrop-blur-sm bg-rui-grey-500/50 dark:bg-black/50',
+    overlay: 'absolute inset-0 backdrop-blur-sm bg-rui-neutral-950/40 dark:bg-black/60',
     content: 'absolute left-1/2 bottom-0 -translate-x-1/2 outline-hidden overflow-y-auto max-h-[90vh]',
   },
   variants: {
+    /*
+     * The corners match a RuiCard's, the usual content, which the box clips while it scrolls.
+     * A sheet sits on the screen's bottom edge, so its content's bottom corners are squared.
+     */
     bottomSheet: {
-      true: { content: '' },
-      false: { content: 'top-1/2 -translate-y-1/2 bottom-auto' },
+      true: { content: 'rounded-t-rui-card shadow-rui-drawer *:rounded-b-none' },
+      false: { content: 'top-1/2 -translate-y-1/2 bottom-auto rounded-rui-card shadow-rui-menu' },
     },
   },
   defaultVariants: { bottomSheet: false },

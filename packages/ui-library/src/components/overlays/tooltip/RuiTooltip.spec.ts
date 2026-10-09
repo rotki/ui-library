@@ -20,6 +20,13 @@ function createWrapper(
   });
 }
 
+/** Hovers the activator and lets the open timer run, which is when the tooltip takes its role. */
+async function hover(target: VueWrapper<InstanceType<typeof RuiTooltip>>): Promise<void> {
+  await target.trigger('mouseover');
+  vi.advanceTimersByTime(1);
+  await flushPromises();
+}
+
 describe('components/overlays/tooltip/RuiTooltip.vue', () => {
   let wrapper: VueWrapper<InstanceType<typeof RuiTooltip>>;
 
@@ -45,7 +52,7 @@ describe('components/overlays/tooltip/RuiTooltip.vue', () => {
       },
     });
 
-    await wrapper.trigger('mouseover');
+    await hover(wrapper);
 
     const tooltip = queryByRole<HTMLDivElement>('tooltip');
 
@@ -83,7 +90,7 @@ describe('components/overlays/tooltip/RuiTooltip.vue', () => {
     expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.ARROW)).toBeFalsy();
     await wrapper.setProps({ disabled: false });
 
-    await wrapper.trigger('mouseover');
+    await hover(wrapper);
 
     tooltip = queryByRole<HTMLDivElement>('tooltip');
 
@@ -104,12 +111,8 @@ describe('components/overlays/tooltip/RuiTooltip.vue', () => {
 
     await wrapper.trigger('mouseover');
 
-    const tooltip = queryByRole<HTMLDivElement>('tooltip');
-
-    expect(tooltip).toBeTruthy();
-    expect(tooltip?.getAttribute('role')).toBe('tooltip');
-    expect(queryBody(DATA_ATTRIBUTE_SELECTORS.PLACEMENT_BOTTOM)).toBeTruthy();
-    expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.ARROW)).toBeTruthy();
+    // nothing is announced as a tooltip while the delay runs: it would be a tooltip without text
+    expect(queryByRole('tooltip')).toBeFalsy();
 
     // Tooltip shouldn't appear if the mouseleave happens before the timer ends.
     vi.advanceTimersByTime(100);

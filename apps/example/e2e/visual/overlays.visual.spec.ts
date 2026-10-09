@@ -33,7 +33,11 @@ const cases: OverlayCase[] = [
   {
     name: 'date-time-picker',
     route: '/datetimepickers',
-    open: async page => page.getByTestId('picker-all-actions').locator('input').click(),
+    open: async (page) => {
+      await page.getByTestId('picker-all-actions').locator('input').click();
+      // the menu may slide over the field, so the pointer would rest on one of its buttons
+      await page.mouse.move(1, 1);
+    },
   },
   {
     // the whole viewport: the dialog's shadow and corners over the blurred backdrop

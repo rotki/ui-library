@@ -1,5 +1,29 @@
 import { expect, type Page, test } from '@playwright/test';
 
+test.describe('datetimepicker in a short window', () => {
+  test.use({ viewport: { width: 1280, height: 600 } });
+
+  test('keeps the whole menu on screen when it fits neither above nor below the field', async ({ page }) => {
+    await page.goto('/datetimepickers');
+    const input = page.locator('[data-id=picker-all-actions] input').first();
+    // the field in the middle of the window, with too little room on either side for the menu
+    await input.evaluate((el) => {
+      let scroller = el.parentElement;
+      while (scroller && !(['auto', 'scroll'].includes(getComputedStyle(scroller).overflowY) && scroller.scrollHeight > scroller.clientHeight))
+        scroller = scroller.parentElement;
+      (scroller ?? document.scrollingElement)?.scrollBy({ top: el.getBoundingClientRect().top - 280, behavior: 'instant' });
+    });
+    await input.click();
+
+    const menu = page.locator('[role=menu]').last();
+    await expect(menu).toBeVisible();
+    const box = await menu.boundingBox();
+    expect(box?.height).toBeGreaterThan(280);
+    expect(box?.y).toBeGreaterThanOrEqual(0);
+    expect((box?.y ?? 0) + (box?.height ?? 0)).toBeLessThanOrEqual(600);
+  });
+});
+
 test.describe('datetimepicker inside parent menu', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/datetimepickers');
@@ -201,6 +225,13 @@ test.describe('datetimepicker menu footer actions', () => {
 
   test('clear empties an allowEmpty picker', async ({ page }) => {
     const input = actionsInput(page);
+    // near the top, so the menu opens below and leaves the field free to click again
+    await input.evaluate((el) => {
+      let scroller = el.parentElement;
+      while (scroller && !(['auto', 'scroll'].includes(getComputedStyle(scroller).overflowY) && scroller.scrollHeight > scroller.clientHeight))
+        scroller = scroller.parentElement;
+      (scroller ?? document.scrollingElement)?.scrollBy({ top: el.getBoundingClientRect().top - 120, behavior: 'instant' });
+    });
     await input.click();
     await page.getByTestId('action-clear').click();
 

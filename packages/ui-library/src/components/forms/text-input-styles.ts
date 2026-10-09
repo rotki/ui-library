@@ -153,7 +153,7 @@ export const activatorStyles = tv({
     value: 'w-full block truncate transition-all duration-75',
     clear: 'ml-auto shrink-0 invisible group-hover:!visible',
     menu: 'overflow-y-auto max-h-60 min-w-[2.5rem]',
-    highlighted: '!bg-rui-grey-200 dark:!bg-rui-grey-800',
+    highlighted: '!bg-rui-neutral-100 dark:!bg-rui-neutral-700',
     progress: 'absolute left-0 bottom-0 w-full',
     icon: 'text-rui-text transition',
     iconWrapper: 'flex items-center justify-end absolute right-3 top-px bottom-0',
@@ -208,7 +208,7 @@ export const activatorStyles = tv({
     },
     active: {
       true: {
-        highlighted: '!bg-rui-grey-300 dark:!bg-rui-grey-700',
+        highlighted: '!bg-rui-neutral-200 dark:!bg-rui-neutral-600',
       },
     },
     hasError: {

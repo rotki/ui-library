@@ -116,7 +116,7 @@ defineExpose({
         ref="tooltip"
         class="w-max z-9999"
         :class="classNames?.tooltip ?? tooltipClass"
-        role="tooltip"
+        :role="open ? 'tooltip' : undefined"
         :data-placement="currentPlacement"
       >
         <TransitionGroup
@@ -132,7 +132,7 @@ defineExpose({
           <div
             v-if="open"
             key="tooltip"
-            class="px-2 py-2 text-xs font-normal bg-rui-grey-700/90 text-white rounded-rui-control shadow-rui-tooltip"
+            class="px-2 py-1.5 text-xs font-normal bg-rui-neutral-900 dark:bg-rui-neutral-700 text-white rounded-rui-control shadow-rui-tooltip"
             data-id="content"
             @mouseover="persistOnTooltipHover && onOpen()"
             @mouseleave="persistOnTooltipHover && onClose()"
