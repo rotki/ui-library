@@ -2,9 +2,11 @@
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
+import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';
 import { textFieldStyles, type TextFieldVariant } from '@/components/forms/text-field/text-field-styles';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
+import { type LabelPlacement, useLabelPlacement } from '@/composables/defaults/field';
 import { usePrependAppendWidth } from '@/composables/forms/use-prepend-append-width';
 import { useTimeoutManager } from '@/composables/timeout-manager';
 import { useFormTextDetail } from '@/utils/form-text-detail';
@@ -14,6 +16,9 @@ export interface TextFieldProps {
   label?: string;
   placeholder?: string;
   disabled?: boolean;
+  /** Where the label shows; falls back to the nearest `RuiFieldDefaults`, then the app default, then `top`. */
+  labelPlacement?: LabelPlacement;
+  /** @deprecated Only applies with `labelPlacement="floating"`; every other placement draws the outlined field. */
   variant?: TextFieldVariant;
   color?: ContextColorsType;
   textColor?: ContextColorsType;
@@ -40,6 +45,7 @@ const {
   label = '',
   placeholder = '',
   disabled = false,
+  labelPlacement = undefined,
   variant = 'default',
   color = undefined,
   textColor = undefined,
@@ -74,7 +80,11 @@ const prepend = useTemplateRef<HTMLDivElement>('prepend');
 const append = useTemplateRef<HTMLDivElement>('append');
 const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
 
+const generatedId = useId();
+const attrs = useAttrs();
+
 const { focused } = useFocus(inputRef);
+const placement = useLabelPlacement(() => labelPlacement);
 const { create: delayClearHide } = useTimeoutManager();
 const { prependWidth, appendWidth } = usePrependAppendWidth(prepend, append);
 const { hasError, hasSuccess, hasMessages, validation } = useFormTextDetail(
@@ -83,6 +93,16 @@ const { hasError, hasSuccess, hasMessages, validation } = useFormTextDetail(
 );
 
 const active = computed<boolean>(() => get(focused) || !!get(modelValue));
+
+const floating = computed<boolean>(() => get(placement) === 'floating');
+
+// Only the floating placement keeps the 2.x variants; the others always draw the bordered field
+const fieldVariant = computed<TextFieldVariant>(() => get(floating) ? variant : 'outlined');
+
+const inputId = computed<string>(() => {
+  const id = attrs.id;
+  return typeof id === 'string' && id ? id : generatedId;
+});
 
 const showClearIcon = computed<boolean>(() => clearable && !!get(modelValue) && !disabled && !readonly);
 
@@ -99,17 +119,18 @@ const effectiveTextColor = computed<ContextColorsType | undefined>(() => {
 const effectiveColor = computed<ContextColorsType | undefined>(() => get(validation) ?? color);
 
 const ui = computed<ReturnType<typeof textFieldStyles>>(() => textFieldStyles({
-  variant,
+  variant: get(fieldVariant),
+  placement: get(placement),
   dense,
   disabled,
   hovered: get(isHovered),
   focused: get(focused),
   active: get(active),
-  noLabel: !label,
+  noLabel: !get(floating) || !label,
   color: get(effectiveColor),
   textColor: get(effectiveTextColor),
   validation: get(validation),
-  showLabel: !!label,
+  showLabel: get(floating) && !!label,
 }));
 
 const labelStyle = computed<Record<string, string>>(() => ({
@@ -118,7 +139,7 @@ const labelStyle = computed<Record<string, string>>(() => ({
 }));
 
 const legendText = computed<string>(() => {
-  if (!get(active) || !label)
+  if (!get(floating) || !get(active) || !label)
     return '';
   return required ? `${label} ﹡` : label;
 });
@@ -155,6 +176,14 @@ defineExpose({
 
 <template>
   <div v-bind="getRootAttrs($attrs)">
+    <RuiFieldLabel
+      v-if="!floating && label"
+      :text="label"
+      :for="inputId"
+      :hidden="placement === 'hidden'"
+      :required="required"
+      :disabled="disabled"
+    />
     <div
       :class="ui.wrapper()"
       data-id="wrapper"
@@ -175,7 +204,10 @@ defineExpose({
           v-else-if="prependIcon"
           :class="ui.icon()"
         >
-          <RuiIcon :name="prependIcon" />
+          <RuiIcon
+            :name="prependIcon"
+            :size="floating ? undefined : 18"
+          />
         </div>
       </div>
       <div
@@ -183,6 +215,7 @@ defineExpose({
         @click="emit('focus-input', $event)"
       >
         <input
+          :id="inputId"
           ref="inputRef"
           :value="modelValue"
           :placeholder="placeholder || ' '"
@@ -196,6 +229,7 @@ defineExpose({
           @remove="emit('remove', $event)"
         />
         <label
+          v-if="floating"
           :class="ui.label()"
           :style="labelStyle"
         >
@@ -210,7 +244,7 @@ defineExpose({
           </span>
         </label>
         <fieldset
-          v-if="variant === 'outlined'"
+          v-if="fieldVariant === 'outlined'"
           :class="ui.fieldset()"
         >
           <legend :class="ui.legend()">
@@ -248,7 +282,10 @@ defineExpose({
           v-else-if="appendIcon"
           :class="ui.icon()"
         >
-          <RuiIcon :name="appendIcon" />
+          <RuiIcon
+            :name="appendIcon"
+            :size="floating ? undefined : 18"
+          />
         </div>
       </div>
     </div>

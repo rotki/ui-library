@@ -1,5 +1,6 @@
 import type { App } from 'vue';
 import type { InitThemeOptions } from '@/types/theme';
+import { createFieldDefaults, type FieldOptions, FieldSymbol } from '@/composables/defaults/field';
 import { type LogoOptions, LogoSymbol } from '@/composables/defaults/logo';
 import {
   createTableDefaults,
@@ -17,6 +18,8 @@ export * from '@/components';
 export { activatorHandlers, type ActivatorHandlers } from '@/components/overlays/menu/activator-handlers';
 
 export * from '@/composables';
+
+export { type FieldOptions, type LabelPlacement, provideFieldDefaults } from '@/composables/defaults/field';
 
 export type { LogoOptions, LogoResolver } from '@/composables/defaults/logo';
 
@@ -48,6 +51,8 @@ export interface RuiOptions {
   theme?: InitThemeOptions;
   defaults?: {
     table?: Partial<TableOptions>;
+    /** `labelPlacement` for every text field, text area, select and picker; `top` when unset. */
+    field?: Partial<FieldOptions>;
   };
   /**
    * Where `RuiLogo` gets the image for its `logo` prop. Without it every
@@ -64,6 +69,7 @@ export function createRui(options: RuiOptions = {}) {
       registeredIcons: theme?.icons,
     }),
     table: createTableDefaults(defaultOptions?.table),
+    field: createFieldDefaults(defaultOptions?.field),
   });
 
   const install = (app: App) => {
@@ -71,6 +77,7 @@ export function createRui(options: RuiOptions = {}) {
 
     app.provide(TableSymbol, defaults.table);
     app.provide(IconsSymbol, defaults.icons);
+    app.provide(FieldSymbol, defaults.field);
 
     if (logo)
       app.provide(LogoSymbol, logo);

@@ -16,6 +16,7 @@ const {
   label = '',
   placeholder = '',
   disabled = false,
+  labelPlacement = undefined,
   variant = 'default',
   dense = false,
   hint = '',
@@ -42,6 +43,7 @@ const hidden = ref<boolean>(true);
     :label="label"
     :placeholder="placeholder"
     :disabled="disabled"
+    :label-placement="labelPlacement"
     :variant="variant"
     :dense="dense"
     :hint="hint"

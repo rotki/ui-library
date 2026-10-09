@@ -58,9 +58,25 @@ describe('components/forms/text-area/RuiTextArea.vue', () => {
     expect(wrapper.find('textarea:not([aria-hidden="true"])').attributes('readonly')).toBeUndefined();
   });
 
+  it('should put the label above a bordered field and link it to the textarea', () => {
+    wrapper = createWrapper({
+      props: {
+        label: 'Notes',
+        modelValue: '',
+        variant: 'filled',
+      },
+    });
+    const label = wrapper.find('[data-id=field-label]');
+    expect(label.text()).toBe('Notes');
+    expect(label.attributes('for')).toBe(wrapper.find('textarea:not([aria-hidden="true"])').attributes('id'));
+    expect(wrapper.find('fieldset').exists()).toBe(true);
+    expect(wrapper.findAll('label')).toHaveLength(1);
+  });
+
   it('should pass color props', async () => {
     wrapper = createWrapper({
       props: {
+        labelPlacement: 'floating',
         modelValue: '',
       },
     });
@@ -78,7 +94,7 @@ describe('components/forms/text-area/RuiTextArea.vue', () => {
   });
 
   it('should pass variant props', async () => {
-    wrapper = createWrapper();
+    wrapper = createWrapper({ props: { labelPlacement: 'floating', modelValue: '' } });
     // Default variant has pt-4 on inputWrapper
     expectWrapperToHaveClass(wrapper, 'label', /border-b/);
 

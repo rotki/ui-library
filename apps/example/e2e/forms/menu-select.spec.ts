@@ -81,8 +81,10 @@ test.describe('menu-select - basic', () => {
   test('should show required indicator', async ({ page }) => {
     const ms = page.locator('[data-id=ms-basic-required]');
     const activator = ms.locator('[data-id=activator]');
+    const label = ms.getByTestId('field-label');
     await expect(activator).toHaveAttribute('aria-required', 'true');
-    await expect(activator).toContainText('\uFE61');
+    await expect(label).toContainText('\uFE61');
+    await expect(activator).toHaveAttribute('aria-labelledby', (await label.getAttribute('id')) ?? '');
   });
 
   test('should display hint text', async ({ page }) => {

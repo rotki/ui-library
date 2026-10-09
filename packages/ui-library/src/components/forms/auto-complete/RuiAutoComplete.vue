@@ -4,9 +4,11 @@ import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import { autoCompleteStyles, type AutoCompleteVariant } from '@/components/forms/auto-complete/auto-complete-styles';
 import RuiAutoCompleteOptionList from '@/components/forms/auto-complete/RuiAutoCompleteOptionList.vue';
 import RuiAutoCompleteSelection from '@/components/forms/auto-complete/RuiAutoCompleteSelection.vue';
+import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
+import { type LabelPlacement, useLabelPlacement } from '@/composables/defaults/field';
 import {
   type GroupBy,
   type ItemDisabled,
@@ -45,6 +47,8 @@ export interface AutoCompleteProps<TValue, TItem> {
   dense?: boolean;
   clearable?: boolean;
   label?: string;
+  /** Where the label shows; falls back to the nearest `RuiFieldDefaults`, then the app default, then `top`. */
+  labelPlacement?: LabelPlacement;
   menuOptions?: MenuProps;
   classNames?: RuiAutoCompleteClassNames;
   /** @deprecated Use `classNames.label` instead */
@@ -54,6 +58,7 @@ export interface AutoCompleteProps<TValue, TItem> {
   prependWidth?: number;
   appendWidth?: number;
   itemHeight?: number;
+  /** @deprecated Only applies with `labelPlacement="floating"`; every other placement draws the outlined field. */
   variant?: AutoCompleteVariant;
   hint?: string;
   errorMessages?: string | string[];
@@ -109,6 +114,7 @@ const {
   hideDetails = false,
   chips = false,
   label = 'Select',
+  labelPlacement = undefined,
   menuOptions,
   classNames,
   labelClass,
@@ -351,8 +357,17 @@ const usedPlaceholder = computed<string>(() => {
   return '';
 });
 
-const outlined = computed<boolean>(() => variant === 'outlined');
-const float = computed<boolean>(() => (get(isOpen) || get(valueSet) || get(searchInputFocused)) && get(outlined));
+const labelId = useId();
+const placement = useLabelPlacement(() => labelPlacement);
+const floating = computed<boolean>(() => get(placement) === 'floating');
+// Only the floating placement keeps the 2.x variants; the others always draw the bordered field
+const outlined = computed<boolean>(() => !get(floating) || variant === 'outlined');
+const float = computed<boolean>(() => get(floating) && (get(isOpen) || get(valueSet) || get(searchInputFocused)) && get(outlined));
+
+// With no label inside the field, an empty, unfocused field shows the placeholder where the collapsed search input sits
+const restingPlaceholder = computed<boolean>(() =>
+  !get(floating) && !!placeholder && !get(valueSet) && !get(searchInputFocused) && !slots.placeholder,
+);
 
 const legendText = computed<string>(() => {
   if (!get(float) || !label)
@@ -361,7 +376,8 @@ const legendText = computed<string>(() => {
 });
 
 const ui = computed<ReturnType<typeof autoCompleteStyles>>(() => autoCompleteStyles({
-  filled: variant === 'filled',
+  placement: get(placement),
+  filled: get(floating) && variant === 'filled',
   outlined: get(outlined),
   float: get(float),
   showLabel: !!get(legendText),
@@ -530,6 +546,7 @@ defineExpose({
     v-model="isOpen"
     v-bind="{ ...getRootAttrs($attrs, []), ...menuOptions }"
     :class="ui.wrapper({ class: cn($attrs.class) })"
+    :class-names="{ ...menuOptions?.classNames, details: [{ 'px-0': !floating }, cn(menuOptions?.classNames?.details) ?? ''] }"
     :options="menuFloatingOptions"
     :close-on-content-click="false"
     full-width
@@ -546,6 +563,18 @@ defineExpose({
     :disabled="disabled"
     disable-auto-focus
   >
+    <template
+      v-if="!floating && label"
+      #label
+    >
+      <RuiFieldLabel
+        :id="labelId"
+        :text="label"
+        :hidden="placement === 'hidden'"
+        :required="required"
+        :disabled="disabled"
+      />
+    </template>
     <template #activator="{ attrs, open, hasError: slotHasError, hasSuccess: slotHasSuccess }">
       <slot
         name="activator"
@@ -553,6 +582,7 @@ defineExpose({
       >
         <div
           ref="activator"
+          :aria-labelledby="!floating && label ? labelId : undefined"
           :class="ui.activator({ class: cn(classNames?.label) ?? labelClass })"
           v-bind="{
             ...getNonRootAttrs($attrs, ['onClick', 'class']),
@@ -581,7 +611,7 @@ defineExpose({
           @keydown.end.prevent="modelHighlightedIndex = optionsWithSelectedHidden.length - 1"
         >
           <span
-            v-if="(outlined || (!valueSet && !searchInputFocused)) && !placeholderSlotActive"
+            v-if="floating && (outlined || (!valueSet && !searchInputFocused)) && !placeholderSlotActive"
             :class="[
               ui.label(),
               { 'pr-2': !valueSet && !open && outlined },
@@ -611,6 +641,13 @@ defineExpose({
               so clicks pass through to the activator (otherwise the slot
               swallows the first click and the menu needs two taps to open).
             -->
+            <span
+              v-if="restingPlaceholder"
+              data-id="resting-placeholder"
+              class="truncate text-rui-text-secondary pointer-events-none"
+            >
+              {{ placeholder }}
+            </span>
             <div
               v-if="!valueSet && !searchInputFocused && slots.placeholder"
               data-id="placeholder"
@@ -694,7 +731,7 @@ defineExpose({
           >
             <RuiIcon
               :class="ui.icon()"
-              :size="dense ? 16 : 24"
+              :size="dense ? 16 : floating ? 24 : 20"
               name="lu-chevron-down"
             />
           </span>

@@ -32,7 +32,7 @@ import { tv } from '@/utils/tv';
  * ```
  * xs            p-[0.1875rem] + 0.875rem icon = 1.25rem (20px)   70%
  * sm            p-1           + 1.25rem  icon = 1.75rem (28px)   71%
- * md (default)  p-1.5         + 1.25rem  icon = 2rem    (32px)   63%
+ * md (default)  p-2           + 1.25rem  icon = 2.25rem (36px)   56%
  * lg            p-1.5         + 1.5rem   icon = 2.25rem (36px)   67%
  * xl            p-2           + 1.5rem   icon = 2.5rem  (40px)   60%
  * 2xl           p-2           + 1.75rem  icon = 2.75rem (44px)   64%
@@ -43,7 +43,8 @@ export const buttonStyles = tv({
     root: [
       'text-sm leading-5 font-medium inset-ring inset-ring-transparent',
       'flex items-center justify-center gap-x-2',
-      'px-4 py-1.5 rounded-rui-control transition-all',
+      // md is 36px, the height of a text field or select, so a button lines up with them in a row
+      'px-4 py-2 rounded-rui-control transition-all',
       '[--rui-icon-size:1.125rem]',
       'disabled:cursor-not-allowed',
       'focus-visible:focus-ring',
@@ -155,7 +156,7 @@ export const buttonStyles = tv({
     { variant: 'list', size: 'xs', class: { root: 'px-3 py-0.5' } },
     { variant: 'list', size: 'sm', class: { root: 'px-3 py-1' } },
     // Icon-only sizing, per the padding and glyph table on buttonStyles above
-    { icon: true, class: { root: 'p-1.5 ![--rui-icon-size:1.25rem]' } },
+    { icon: true, class: { root: 'p-2 ![--rui-icon-size:1.25rem]' } },
     { icon: true, size: 'xs', class: { root: 'p-[0.1875rem] ![--rui-icon-size:0.875rem]' } },
     { icon: true, size: 'sm', class: { root: 'p-1 ![--rui-icon-size:1.25rem]' } },
     { icon: true, size: 'lg', class: { root: 'p-1.5 ![--rui-icon-size:1.5rem]' } },

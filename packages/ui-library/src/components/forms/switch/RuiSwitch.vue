@@ -50,7 +50,7 @@ const switchStyles = tv({
       'absolute size-4.5 transition-all duration-75 ease-in-out -translate-y-1/2 top-1/2 rounded-full pointer-events-none',
       'bg-white left-0.5 shadow-rui-control',
     ].join(' '),
-    label: 'text-rui-text text-body-1',
+    label: 'text-rui-text text-sm/6',
   },
   variants: {
     checked: {

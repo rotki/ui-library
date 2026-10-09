@@ -1,6 +1,9 @@
 import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
+import { h } from 'vue';
+import RuiFieldDefaults from '@/components/forms/field-defaults/RuiFieldDefaults.vue';
 import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
+import { FieldSymbol } from '@/composables/defaults/field';
 import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 
 function createWrapper(
@@ -25,6 +28,87 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
       },
     });
     expect(wrapper.find('label').text()).toContain(label);
+  });
+
+  it('should put the label above a bordered field and link it to the input', () => {
+    wrapper = createWrapper({
+      props: {
+        label: 'Amount',
+        modelValue: '',
+      },
+    });
+    const label = wrapper.find('[data-id=field-label]');
+    const input = wrapper.find('input');
+    expect(label.text()).toBe('Amount');
+    expect(label.attributes('for')).toBe(input.attributes('id'));
+    expect(label.classes()).not.toContain('sr-only');
+    expect(wrapper.find('fieldset').exists()).toBe(true);
+    expect(wrapper.findAll('label')).toHaveLength(1);
+    expectWrapperToHaveClass(wrapper, 'input', /^py-1\.5$/);
+  });
+
+  it('should keep a consumer id on the input for the label to point at', () => {
+    wrapper = createWrapper({
+      attrs: { id: 'amount' },
+      props: {
+        label: 'Amount',
+        modelValue: '',
+      },
+    });
+    expect(wrapper.find('input').attributes('id')).toBe('amount');
+    expect(wrapper.find('[data-id=field-label]').attributes('for')).toBe('amount');
+  });
+
+  it('should keep a hidden label for screen readers only, and show the placeholder', () => {
+    wrapper = createWrapper({
+      props: {
+        label: 'Search',
+        labelPlacement: 'hidden',
+        modelValue: '',
+        placeholder: 'Search assets',
+      },
+    });
+    expect(wrapper.find('[data-id=field-label]').classes()).toContain('sr-only');
+    expectWrapperToHaveClass(wrapper, 'input', /^placeholder:opacity-100$/);
+  });
+
+  it('should draw the bordered field whatever the variant unless the label floats', async () => {
+    wrapper = createWrapper({
+      props: {
+        label: 'Field',
+        modelValue: '',
+        variant: 'filled',
+      },
+    });
+    expect(wrapper.find('fieldset').exists()).toBe(true);
+
+    await wrapper.setProps({ labelPlacement: 'floating' });
+    expect(wrapper.find('fieldset').exists()).toBe(false);
+    expect(wrapper.find('[data-id=field-label]').exists()).toBe(false);
+  });
+
+  it('should take the placement from the nearest RuiFieldDefaults, then the app default', () => {
+    const app = { labelPlacement: 'floating' as const };
+    wrapper = mount(RuiTextField, {
+      props: { label: 'Field', modelValue: '' },
+      global: { stubs: ['rui-icon'], provide: { [FieldSymbol]: app } },
+    });
+    expect(wrapper.find('[data-id=field-label]').exists()).toBe(false);
+    wrapper.unmount();
+
+    const scoped = mount(RuiFieldDefaults, {
+      props: { labelPlacement: 'hidden' },
+      slots: { default: () => h(RuiTextField, { label: 'Field', modelValue: '' }) },
+      global: { stubs: ['rui-icon'], provide: { [FieldSymbol]: app } },
+    });
+    expect(scoped.find('[data-id=field-label]').classes()).toContain('sr-only');
+    scoped.unmount();
+
+    wrapper = mount(RuiTextField, {
+      props: { label: 'Field', labelPlacement: 'top', modelValue: '' },
+      global: { stubs: ['rui-icon'], provide: { [FieldSymbol]: app } },
+    });
+    expect(wrapper.find('[data-id=field-label]').classes()).not.toContain('sr-only');
   });
 
   it('should pass disabled props', async () => {
@@ -56,6 +140,7 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
   it('should pass color props', async () => {
     wrapper = createWrapper({
       props: {
+        labelPlacement: 'floating',
         modelValue: '',
       },
     });
@@ -76,6 +161,7 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
     wrapper = createWrapper({
       props: {
         label: 'Field',
+        labelPlacement: 'floating',
         modelValue: '',
       },
     });
@@ -94,6 +180,7 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
   it('should drop the floating-label reserve when used without a label, matching a RuiMenuSelect activator', async () => {
     wrapper = createWrapper({
       props: {
+        labelPlacement: 'floating',
         modelValue: '',
       },
     });

@@ -764,6 +764,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
       props: {
         keyAttr: 'id',
         label: '',
+        labelPlacement: 'floating',
         modelValue: options[0]?.id,
         options,
         textAttr: 'label',
@@ -777,11 +778,36 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     expect(wrapper.find('legend').classes()).toContain('px-2');
   });
 
+  it('should label the combobox from a label above it, and show the placeholder while empty', async () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      props: {
+        keyAttr: 'id',
+        label: 'Asset',
+        modelValue: undefined,
+        options,
+        placeholder: 'Search assets',
+        required: true,
+        textAttr: 'label',
+      },
+    });
+    const label = wrapper.find('[data-id=field-label]');
+    const activator = wrapper.find('div[data-id="activator"]');
+    expect(label.text()).toContain('Asset');
+    expect(label.text()).toContain('﹡');
+    expect(activator.attributes('aria-labelledby')).toBe(label.attributes('id'));
+    expect(activator.text()).not.toContain('Asset');
+    expect(wrapper.find('[data-id=resting-placeholder]').text()).toBe('Search assets');
+
+    await wrapper.setProps({ modelValue: options[0]?.id });
+    expect(wrapper.find('[data-id=resting-placeholder]').exists()).toBe(false);
+  });
+
   it('should show required asterisk when required prop is true', async () => {
     wrapper = createWrapper<string | undefined, SelectOption>({
       props: {
         keyAttr: 'id',
         label: 'Select',
+        labelPlacement: 'floating',
         modelValue: undefined,
         options,
         textAttr: 'label',

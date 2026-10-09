@@ -84,8 +84,10 @@ test.describe('auto-complete - basic', () => {
   test('should show required indicator', async ({ page }) => {
     const ac = page.locator('[data-id=ac-basic-required]');
     const activator = ac.locator('[data-id=activator]');
+    const label = ac.getByTestId('field-label');
     await expect(activator).toHaveAttribute('aria-required', 'true');
-    await expect(activator).toContainText('\uFE61');
+    await expect(label).toContainText('\uFE61');
+    await expect(activator).toHaveAttribute('aria-labelledby', (await label.getAttribute('id')) ?? '');
   });
 
   test('should display hint text', async ({ page }) => {

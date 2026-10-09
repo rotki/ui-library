@@ -144,8 +144,8 @@ const tableHeadStyles = tv({
     },
     // a fixed height evens out rows with and without sort buttons; `:where()` lets a column's `class` win
     dense: {
-      true: { th: '[:where(&)]:py-1 [:where(&)]:h-8' },
-      false: { th: '[:where(&)]:py-2 [:where(&)]:h-10' },
+      true: { th: '[:where(&)]:py-0.5 [:where(&)]:h-8' },
+      false: { th: '[:where(&)]:py-1 [:where(&)]:h-10' },
     },
   },
   defaultVariants: {

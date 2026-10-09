@@ -56,7 +56,8 @@ export const dataTableStyles = tv({
    * sets its own because the class merger cannot dedupe these.
    */
   compoundVariants: [
-    { dense: false, mobile: false, class: { td: '[:where(&)]:py-2.5 [:where(&)]:h-11' } },
+    // a 4px inset under the height floor fits a 36px button in a 44px row (a 28px one in a dense 36px row)
+    { dense: false, mobile: false, class: { td: '[:where(&)]:py-1 [:where(&)]:h-11' } },
     { dense: true, mobile: false, class: { td: '[:where(&)]:py-1 [:where(&)]:h-9' } },
   ],
   defaultVariants: {

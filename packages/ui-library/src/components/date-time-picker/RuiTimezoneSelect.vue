@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { AutoCompleteVariant } from '@/components/forms/auto-complete/auto-complete-styles';
 import type { MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
+import type { LabelPlacement } from '@/composables/defaults/field';
 import { timezones } from '@/components/date-time-picker/timezones';
 import RuiAutoComplete, { type RuiAutoCompleteClassNames } from '@/components/forms/auto-complete/RuiAutoComplete.vue';
 import { useRuiI8n } from '@/composables/use-rui-i18n';
@@ -12,6 +13,9 @@ export interface RuiTimezoneSelectProps {
   dense?: boolean;
   clearable?: boolean;
   label?: string;
+  /** Where the label shows; falls back to the nearest `RuiFieldDefaults`, then the app default, then `top`. */
+  labelPlacement?: LabelPlacement;
+  /** @deprecated Only applies with `labelPlacement="floating"`; every other placement draws the outlined field. */
   variant?: AutoCompleteVariant;
   hint?: string;
   errorMessages?: string | string[];
@@ -35,6 +39,7 @@ const {
   dense = false,
   clearable = false,
   label,
+  labelPlacement = undefined,
   variant = 'outlined',
   hint,
   errorMessages,
@@ -69,6 +74,7 @@ const options: TimezoneOption[] = timezones.map(value => ({
     auto-select-first
     :options="options"
     :label="fieldLabel"
+    :label-placement="labelPlacement"
     :variant="variant"
     :disabled="disabled"
     :read-only="readOnly"

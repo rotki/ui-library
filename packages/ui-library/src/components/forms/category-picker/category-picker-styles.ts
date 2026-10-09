@@ -34,7 +34,16 @@ export const categoryPickerActivatorStyles = tv({
       false: { selection: 'right-10' },
       true: { selection: 'right-16' },
     },
+    placement: {
+      floating: {},
+      top: {},
+      hidden: {},
+    },
   },
+  compoundVariants: [
+    // The label above or hidden leaves the activator's 12px inset rather than the floating label's 16px
+    { placement: ['top', 'hidden'], class: { selection: 'left-3' } },
+  ],
   defaultVariants: {
     withClear: false,
   },

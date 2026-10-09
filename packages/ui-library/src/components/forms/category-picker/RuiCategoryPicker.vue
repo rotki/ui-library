@@ -4,6 +4,7 @@ import type { VueClassValue } from '@/types/class-value';
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import { categoryPickerActivatorStyles, categoryPickerStyles, type CategoryPickerVariant } from '@/components/forms/category-picker/category-picker-styles';
+import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';
 import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
@@ -11,6 +12,7 @@ import RuiDialog, { type DialogProps } from '@/components/overlays/dialog/RuiDia
 import { activatorHandlers } from '@/components/overlays/menu/activator-handlers';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
+import { type LabelPlacement, useLabelPlacement } from '@/composables/defaults/field';
 import { Placement } from '@/composables/floating';
 import { useCategoryPicker } from '@/composables/forms/category-picker/use-category-picker';
 import { useFormTextDetail } from '@/utils/form-text-detail';
@@ -58,7 +60,12 @@ export interface RuiCategoryPickerProps<TValue, TItem> {
   dense?: boolean;
   clearable?: boolean;
   loading?: boolean;
-  /** Trigger field style: underline (`default`), `outlined`, or `filled`. */
+  /** Where the label shows; falls back to the nearest `RuiFieldDefaults`, then the app default, then `top`. */
+  labelPlacement?: LabelPlacement;
+  /**
+   * Trigger field style: underline (`default`), `outlined`, or `filled`.
+   * @deprecated Only applies with `labelPlacement="floating"`; every other placement draws the outlined field.
+   */
   variant?: CategoryPickerVariant;
   /** Marks the trigger field as required (renders the asterisk). */
   required?: boolean;
@@ -103,6 +110,7 @@ const {
   dense = false,
   clearable = false,
   loading = false,
+  labelPlacement = undefined,
   variant = 'outlined',
   required = false,
   errorMessages = [],
@@ -245,7 +253,10 @@ const selectedText = computed<string | undefined>(() => {
   return selected ? getText(selected) : undefined;
 });
 
-const outlined = computed<boolean>(() => variant === 'outlined');
+const placement = useLabelPlacement(() => labelPlacement);
+const floating = computed<boolean>(() => get(placement) === 'floating');
+// Only the floating placement keeps the 2.x variants; the others always draw the bordered field
+const outlined = computed<boolean>(() => !get(floating) || variant === 'outlined');
 
 /**
  * Desktop lets the user type in the field itself (no separate search box);
@@ -255,7 +266,7 @@ const canType = computed<boolean>(() => searchable && !get(isMobile) && !readOnl
 
 const isTyping = computed<boolean>(() => get(isOpen) && get(canType));
 
-const float = computed<boolean>(() => (get(isOpen) || get(selectedItem) !== undefined || get(focused)) && get(outlined));
+const float = computed<boolean>(() => get(floating) && (get(isOpen) || get(selectedItem) !== undefined || get(focused)) && get(outlined));
 
 const legendText = computed<string>(() => {
   if (!get(float) || !label)
@@ -273,7 +284,8 @@ const showClear = computed<boolean>(() =>
 const activatorUi = computed<ReturnType<typeof categoryPickerActivatorStyles>>(() => categoryPickerActivatorStyles({
   dense,
   disabled,
-  filled: variant === 'filled',
+  placement: get(placement),
+  filled: get(floating) && variant === 'filled',
   float: get(float),
   hasError: get(hasError),
   hasSuccess: get(hasSuccess) && !get(hasError),
@@ -462,11 +474,20 @@ watch(isOpen, onOpenChanged);
         v-bind="{ attrs, isOpen, item: selectedItem, open, text: selectedText }"
       >
         <div :class="activatorUi.wrapper()">
+          <RuiFieldLabel
+            v-if="!floating && label"
+            :id="`${baseId}-label`"
+            :text="label"
+            :hidden="placement === 'hidden'"
+            :required="required"
+            :disabled="disabled"
+          />
           <div
             ref="fieldRef"
             role="combobox"
             data-id="activator"
             :class="activatorUi.activator()"
+            :aria-labelledby="!floating && label ? `${baseId}-label` : undefined"
             aria-haspopup="dialog"
             :aria-controls="isOpen ? `${baseId}-panel` : undefined"
             :aria-expanded="isOpen"
@@ -480,7 +501,7 @@ watch(isOpen, onOpenChanged);
             @mouseleave="isHovered = false"
           >
             <span
-              v-if="outlined || (!selectedItem && !isTyping)"
+              v-if="floating && (outlined || (!selectedItem && !isTyping))"
               :class="activatorUi.label()"
             >
               <slot
@@ -543,7 +564,7 @@ watch(isOpen, onOpenChanged);
             >
               <RuiIcon
                 :class="activatorUi.icon()"
-                :size="dense ? 16 : 24"
+                :size="dense ? 16 : floating ? 24 : 20"
                 name="lu-chevron-down"
               />
             </span>
@@ -565,7 +586,8 @@ watch(isOpen, onOpenChanged);
           </div>
           <RuiFormTextDetail
             v-if="!hideDetails"
-            class="px-3 pt-1"
+            class="pt-1"
+            :class="{ 'px-3': floating }"
             :error-messages="errorMessages"
             :success-messages="successMessages"
             :hint="hint"

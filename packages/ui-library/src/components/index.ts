@@ -25,6 +25,7 @@ import RuiAutoComplete, { type AutoCompleteProps, type RuiAutoCompleteClassNames
 import RuiCategoryPicker, { type RuiCategoryPickerClassNames, type RuiCategoryPickerProps } from '@/components/forms/category-picker/RuiCategoryPicker.vue';
 import RuiCheckboxGroup, { type Props as CheckboxGroupProps } from '@/components/forms/checkbox/checkbox-group/RuiCheckboxGroup.vue';
 import RuiCheckbox, { type Props as CheckboxProps } from '@/components/forms/checkbox/RuiCheckbox.vue';
+import RuiFieldDefaults, { type FieldDefaultsProps } from '@/components/forms/field-defaults/RuiFieldDefaults.vue';
 import RuiFileUpload, { type FileUploadProps } from '@/components/forms/file-upload/RuiFileUpload.vue';
 import RuiRadioGroup, { type Props as RadioGroupProps } from '@/components/forms/radio-button/radio-group/RuiRadioGroup.vue';
 import RuiRadio, { type RadioProps } from '@/components/forms/radio-button/radio/RuiRadio.vue';
@@ -87,6 +88,7 @@ export type {
   DialogProps,
   DividerProps,
   ExpandButtonProps,
+  FieldDefaultsProps,
   FileUploadProps,
   FooterStepperProps,
   GroupData,
@@ -161,6 +163,7 @@ export {
   RuiDateTimePicker,
   RuiDialog,
   RuiDivider,
+  RuiFieldDefaults,
   RuiFileUpload,
   RuiFooterStepper,
   RuiIcon,

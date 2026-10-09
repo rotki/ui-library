@@ -8,9 +8,11 @@ import RuiDateTimePickerMenu from '@/components/date-time-picker/RuiDateTimePick
 import { useDateTimeSelection } from '@/components/date-time-picker/use-date-time-selection';
 import { useInputHandler } from '@/components/date-time-picker/use-input-handler';
 import { useKeyboardHandler } from '@/components/date-time-picker/use-keyboard-handler';
+import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { activatorHandlers } from '@/components/overlays/menu/activator-handlers';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
+import { type LabelPlacement, useLabelPlacement } from '@/composables/defaults/field';
 import { type FloatingOptions, Placement } from '@/composables/floating';
 import { useRuiI8n } from '@/composables/use-rui-i18n';
 import { RUI_I18N_KEYS } from '@/i18n/keys';
@@ -41,6 +43,9 @@ export interface RuiDateTimePickerProps {
   readonly?: boolean;
   dense?: boolean;
   label?: string;
+  /** Where the label shows; falls back to the nearest `RuiFieldDefaults`, then the app default, then `top`. */
+  labelPlacement?: LabelPlacement;
+  /** @deprecated Only applies with `labelPlacement="floating"`; every other placement draws the outlined field. */
   variant?: DateTimePickerVariant;
   hint?: string;
   errorMessages?: string | string[];
@@ -98,6 +103,7 @@ const {
   type = 'epoch-ms',
   hideDetails = false,
   label,
+  labelPlacement = undefined,
   variant = 'default',
   hint,
   maxDate,
@@ -111,6 +117,7 @@ const {
   actions = ['now'],
   autofocus = false,
   partialTime,
+// eslint-disable-next-line vue/max-props -- `labelPlacement` is the field-wide prop every input shares; `variant` leaves in 4.0, back under the limit
 } = defineProps<RuiDateTimePickerProps>();
 
 defineSlots<{
@@ -135,6 +142,9 @@ const { t } = useRuiI8n();
 const keys = RUI_I18N_KEYS.dateTimePicker;
 
 const fieldLabel = computed<string>(() => label ?? t(keys.label, 'Pick a date'));
+const inputId = useId();
+const placement = useLabelPlacement(() => labelPlacement);
+const floating = computed<boolean>(() => get(placement) === 'floating');
 const clearLabel = computed<string>(() => t(keys.clearValue, 'Clear the date'));
 const toggleLabel = computed<string>(() => (get(isOpen)
   ? t(keys.closeCalendar, 'Close the calendar')
@@ -229,7 +239,8 @@ const { hasError, hasSuccess } = useFormTextDetail(
   () => successMessages,
 );
 
-const isOutlined = computed<boolean>(() => variant === 'outlined');
+// Only the floating placement keeps the 2.x variants; the others always draw the bordered field
+const isOutlined = computed<boolean>(() => !get(floating) || variant === 'outlined');
 
 /** True once any segment holds a digit, even a partially typed date. */
 const anySegmentSet = computed<boolean>(() => [
@@ -322,7 +333,7 @@ const timeSelection = computed<TimePickerSelection>({
   },
 });
 
-const float = computed<boolean>(() => (get(isOpen) || get(valueSet) || get(searchInputFocused)) && get(isOutlined));
+const float = computed<boolean>(() => get(floating) && (get(isOpen) || get(valueSet) || get(searchInputFocused)) && get(isOutlined));
 
 const legendText = computed<string>(() => {
   if (!get(float))
@@ -332,7 +343,8 @@ const legendText = computed<string>(() => {
 });
 
 const ui = computed<ReturnType<typeof dateTimePickerStyles>>(() => dateTimePickerStyles({
-  filled: variant === 'filled',
+  placement: get(placement),
+  filled: get(floating) && variant === 'filled',
   outlined: get(isOutlined),
   float: get(float),
   showLabel: !!get(legendText),
@@ -520,6 +532,7 @@ defineExpose({
     v-model="isOpen"
     v-bind="getRootAttrs($attrs, [])"
     :class="ui.wrapper({ class: cn($attrs.class) })"
+    :class-names="{ details: { 'px-0': !floating } }"
     :options="MENU_OPTIONS"
     :dense="dense"
     :hint="hint"
@@ -532,6 +545,18 @@ defineExpose({
     full-width
     disable-auto-focus
   >
+    <template
+      v-if="!floating"
+      #label
+    >
+      <RuiFieldLabel
+        :for="inputId"
+        :text="fieldLabel"
+        :hidden="placement === 'hidden'"
+        :required="required"
+        :disabled="disabled"
+      />
+    </template>
     <template #activator="{ attrs, open }">
       <div
         ref="activator"
@@ -547,7 +572,7 @@ defineExpose({
         @click="setInputFocus()"
       >
         <span
-          v-if="isOutlined && (searchInputFocused || open || valueSet)"
+          v-if="floating && isOutlined && (searchInputFocused || open || valueSet)"
           data-id="label"
           :class="[
             ui.label(),
@@ -567,13 +592,14 @@ defineExpose({
         <span :class="ui.iconPrepend()">
           <RuiIcon
             class="text-rui-text-secondary transition"
-            :size="dense ? 16 : 24"
+            :size="dense ? 16 : floating ? 24 : 20"
             name="lu-calendar-days"
           />
         </span>
 
         <div :class="ui.value()">
           <input
+            :id="inputId"
             ref="textInput"
             :disabled="disabled"
             :value="formattedDisplay"
@@ -587,7 +613,7 @@ defineExpose({
             :placeholder="dateFormat"
             :readonly="readonly"
             :aria-invalid="hasError"
-            :aria-label="fieldLabel"
+            :aria-label="floating ? fieldLabel : undefined"
             :aria-required="required || undefined"
             @mousedown="handleMouseDown($event)"
             @focus="handleFocus()"
@@ -647,7 +673,7 @@ defineExpose({
         >
           <RuiIcon
             :class="ui.icon()"
-            :size="dense ? 16 : 24"
+            :size="dense ? 16 : floating ? 24 : 20"
             name="lu-chevron-down"
           />
         </button>
@@ -658,7 +684,7 @@ defineExpose({
         >
           <RuiIcon
             :class="ui.icon()"
-            :size="dense ? 16 : 24"
+            :size="dense ? 16 : floating ? 24 : 20"
             name="lu-chevron-down"
           />
         </span>

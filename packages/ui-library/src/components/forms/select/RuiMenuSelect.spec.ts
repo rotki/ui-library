@@ -150,11 +150,36 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
     expect(updates[1]).toEqual([newSelectedIndex.toString()]);
   });
 
+  it('should label the activator from a label above it, with the required mark there', async () => {
+    wrapper = createWrapper({
+      props: {
+        keyAttr: 'id',
+        label: 'Currency',
+        modelValue: undefined,
+        options,
+        textAttr: 'label',
+      },
+    });
+    const label = wrapper.find('[data-id=field-label]');
+    const activator = wrapper.find('button[data-id="activator"]');
+    expect(label.text()).toBe('Currency');
+    expect(activator.attributes('aria-labelledby')).toBe(label.attributes('id'));
+    expect(activator.text()).not.toContain('Currency');
+    expect(wrapper.find('fieldset').exists()).toBe(true);
+
+    await wrapper.setProps({ required: true });
+    expect(wrapper.find('[data-id=field-label]').text()).toContain('﹡');
+
+    await wrapper.setProps({ dense: true });
+    expectWrapperToHaveClass(wrapper, 'button[data-id="activator"]', /^min-h-8$/);
+  });
+
   it('should show required asterisk when required prop is true', async () => {
     wrapper = createWrapper({
       props: {
         keyAttr: 'id',
         label: 'Select',
+        labelPlacement: 'floating',
         modelValue: undefined,
         options,
         textAttr: 'label',
@@ -364,6 +389,7 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
       props: {
         keyAttr: 'id',
         label: '',
+        labelPlacement: 'floating',
         modelValue: options[0]?.id,
         options,
         textAttr: 'label',
@@ -382,6 +408,7 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
       props: {
         dense: true,
         keyAttr: 'id',
+        labelPlacement: 'floating',
         modelValue: undefined,
         options,
         textAttr: 'label',

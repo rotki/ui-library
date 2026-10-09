@@ -26,7 +26,7 @@ export const HIGHLIGHT_DEFAULT = 'bg-rui-grey-100 dark:bg-rui-dark-background';
 export const sliderStyles = tv({
   slots: {
     wrapper: 'flex items-start gap-3',
-    label: 'mt-1 text-rui-text text-body-1',
+    label: 'mt-1 text-rui-text text-sm/6',
     outer: 'relative h-8 flex-1 min-w-[7.5rem]',
     inner: 'relative',
     input: 'peer h-full w-full opacity-0 cursor-pointer',

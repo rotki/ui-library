@@ -71,20 +71,22 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     expect(wrapper.find('input').exists()).toBeTruthy();
   });
 
-  it('should render the default label', async () => {
+  it('should render the default label above the field, linked to the input', async () => {
     wrapper = createWrapper({
       props: {
         modelValue: new Date(),
         type: 'date',
-        variant: 'outlined',
       },
     });
 
     await vi.runOnlyPendingTimersAsync();
-    expect(wrapper.find('[data-id="label"]').text()).toBe('Pick a date');
-
+    const label = wrapper.find('[data-id="field-label"]');
     const input = wrapper.find('input');
+    expect(label.text()).toBe('Pick a date');
+    expect(label.attributes('for')).toBe(input.attributes('id'));
+    expect(input.attributes('aria-label')).toBeUndefined();
     expect(input.attributes('placeholder')).toBe('DD/MM/YYYY HH:mm');
+    expect(wrapper.find('[data-id="label"]').exists()).toBe(false);
   });
 
   it('should render with custom label', async () => {
@@ -92,6 +94,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     wrapper = createWrapper({
       props: {
         label: customLabel,
+        labelPlacement: 'floating',
         modelValue: new Date(),
         variant: 'outlined',
       },
@@ -105,6 +108,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     wrapper = createWrapper({
       props: {
         label: '',
+        labelPlacement: 'floating',
         modelValue: new Date(),
         variant: 'outlined',
       },
@@ -881,6 +885,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     wrapper = createWrapper({
       props: {
         label: customLabel,
+        labelPlacement: 'floating',
         modelValue: new Date(),
         variant: 'outlined',
       },
@@ -2866,12 +2871,13 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       wrapper = createWrapper({
         props: {
           label: 'Start date',
+          labelPlacement: 'floating',
           modelValue: new Date(),
           variant: 'default',
         },
       });
 
-      // the visible label only renders in the outlined variant
+      // the floating label only renders in the outlined variant
       expect(wrapper.find('[data-id="label"]').exists()).toBe(false);
       expect(wrapper.find('input').attributes('aria-label')).toBe('Start date');
     });
@@ -2883,7 +2889,21 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
         },
       });
 
-      expect(wrapper.find('input').attributes('aria-label')).toBe('Pick a date');
+      expect(wrapper.find('[data-id="field-label"]').text()).toBe('Pick a date');
+    });
+
+    it('keeps a hidden label for screen readers only', () => {
+      wrapper = createWrapper({
+        props: {
+          label: 'Start date',
+          labelPlacement: 'hidden',
+          modelValue: new Date(),
+        },
+      });
+
+      const label = wrapper.find('[data-id="field-label"]');
+      expect(label.classes()).toContain('sr-only');
+      expect(label.attributes('for')).toBe(wrapper.find('input').attributes('id'));
     });
 
     it('marks a required field', () => {

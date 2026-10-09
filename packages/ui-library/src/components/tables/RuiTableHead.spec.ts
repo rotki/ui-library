@@ -246,7 +246,7 @@ describe('components/tables/RuiTableHead.vue', () => {
     });
 
     const th = wrapper.find('th');
-    expect(th.classes()).toContain('[:where(&)]:py-1');
+    expect(th.classes()).toContain('[:where(&)]:py-0.5');
     expect(th.classes()).toContain('[:where(&)]:h-8');
   });
 

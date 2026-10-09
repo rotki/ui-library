@@ -21,7 +21,7 @@ export const checkControlStyles = tv({
     mark: 'grid place-items-center size-4 border-[1.5px] border-current transition-colors',
     glyph: 'size-3 text-white',
     dot: 'size-2 rounded-full bg-current',
-    label: 'flex-1 text-rui-text text-body-1 mt-[0.5625rem] mb-1',
+    label: 'flex-1 text-rui-text text-sm/6 mt-[0.5625rem] mb-1',
   },
   variants: {
     size: {

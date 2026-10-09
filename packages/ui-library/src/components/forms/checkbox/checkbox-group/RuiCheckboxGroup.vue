@@ -69,7 +69,7 @@ provide(RuiCheckboxGroupContextKey, {
   >
     <div
       v-if="label"
-      class="text-rui-text-secondary text-body-1"
+      class="text-rui-text text-sm/5 font-medium"
     >
       {{ label }}
       <span

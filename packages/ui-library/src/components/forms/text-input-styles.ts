@@ -220,6 +220,12 @@ export const activatorStyles = tv({
     // Re-declare for type inference — actual styles are in textInputBase
     hovered: { true: {} },
     showLabel: { true: {} },
+    // `top` and `hidden` render the outlined activator with no label inside; see the compounds at the end
+    placement: {
+      floating: {},
+      top: {},
+      hidden: {},
+    },
   },
   compoundVariants: [
     // Legend padding when a label is floated; without text it would cut an empty notch
@@ -267,6 +273,20 @@ export const activatorStyles = tv({
 
     // Float + opened → label color
     { float: true, opened: true, class: { label: 'text-rui-primary' } },
+
+    // Label above or hidden: a 36px (32px dense) box whose content is centred, so only wrapped tags grow it
+    { placement: ['top', 'hidden'], class: { activator: 'min-h-9 py-0.5 pl-3 text-sm/5', iconWrapper: 'right-2' } },
+    { placement: ['top', 'hidden'], dense: true, class: { activator: 'min-h-8' } },
+    { placement: ['top', 'hidden'], hovered: true, class: { fieldset: 'border-rui-neutral-400 dark:border-rui-neutral-500' } },
+    { placement: ['top', 'hidden'], opened: true, class: { fieldset: '!border ring-3 ring-rui-primary/20' } },
+    { placement: ['top', 'hidden'], hasError: true, class: { fieldset: 'ring-rui-error/20' } },
+    { placement: ['top', 'hidden'], hasSuccess: true, class: { fieldset: 'ring-rui-success/20' } },
+    // the dark text color is restated, since the base `dark:text-rui-text` outranks a plain color
+    { placement: ['top', 'hidden'], disabled: true, class: {
+      activator: 'opacity-100 bg-rui-neutral-50 dark:bg-rui-neutral-900 text-rui-text-disabled dark:text-rui-text-disabled',
+      icon: 'text-rui-text-disabled',
+      fieldset: '!border-solid',
+    } },
   ],
   defaultVariants: {
     filled: false,
@@ -276,5 +296,6 @@ export const activatorStyles = tv({
     readonly: false,
     float: false,
     opened: false,
+    placement: 'floating',
   },
 });

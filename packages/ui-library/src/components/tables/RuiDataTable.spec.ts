@@ -2049,7 +2049,6 @@ describe('components/tables/RuiDataTable.vue', () => {
 
       const td = wrapper.find('tbody td');
       expect(td.classes()).toContain('[:where(&)]:py-1');
-      expect(td.classes()).not.toContain('[:where(&)]:py-2.5');
       expect(td.classes()).toContain('[:where(&)]:h-9');
       expect(td.classes()).not.toContain('[:where(&)]:h-11');
     });
@@ -2065,8 +2064,8 @@ describe('components/tables/RuiDataTable.vue', () => {
       });
 
       const td = wrapper.find('tbody td');
-      expect(td.classes()).toContain('[:where(&)]:py-2.5');
-      expect(td.classes()).not.toContain('[:where(&)]:py-1');
+      // both densities pad by 4px; the height floor sets the row
+      expect(td.classes()).toContain('[:where(&)]:py-1');
       expect(td.classes()).toContain('[:where(&)]:h-11');
       expect(td.classes()).not.toContain('[:where(&)]:h-9');
     });

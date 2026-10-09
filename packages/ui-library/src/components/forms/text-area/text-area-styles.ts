@@ -10,6 +10,11 @@ export type TextAreaVariant = TextInputVariant;
  * IMPORTANT: tv() extend does NOT deduplicate conflicting Tailwind classes
  * between base and extension. Never put a class in the base slot that a
  * variant needs to override — put variant-specific classes in the variants.
+ *
+ * With the `top` or `hidden` label placement the component renders the
+ * outlined variant with no label inside, and the `placement` compounds at the
+ * end trade the floating-label reserve for an even 8px padding, 14px text and
+ * the text field's border, focus and disabled treatment.
  */
 export const textAreaStyles = tv({
   extend: textInputBase,
@@ -105,6 +110,11 @@ export const textAreaStyles = tv({
     showLabel: {
       true: {},
     },
+    placement: {
+      floating: {},
+      top: {},
+      hidden: {},
+    },
     textColor: {
       primary: { prepend: 'text-rui-primary', append: 'text-rui-primary', textarea: 'text-rui-primary', icon: 'text-rui-primary' },
       secondary: { prepend: 'text-rui-secondary', append: 'text-rui-secondary', textarea: 'text-rui-secondary', icon: 'text-rui-secondary' },
@@ -158,9 +168,31 @@ export const textAreaStyles = tv({
     { color: 'warning', class: { label: 'after:border-rui-warning' } },
     { color: 'info', class: { label: 'after:border-rui-info' } },
     { color: 'success', class: { label: 'after:border-rui-success' } },
+
+    // --- Label above or hidden: a plain bordered box (always the outlined variant) ---
+    { placement: ['top', 'hidden'], class: {
+      inputWrapper: 'pt-2',
+      textarea: 'px-3 text-sm/6 placeholder:opacity-100 placeholder:text-rui-neutral-500 dark:placeholder:text-rui-neutral-400 [padding-right:calc(0.75rem+var(--append-w,0px))]',
+      icon: 'text-rui-neutral-500 dark:text-rui-neutral-400',
+      textareaSizer: 'px-3 text-sm',
+      prepend: 'mt-2',
+      append: 'mt-1',
+      details: 'px-0',
+      clearButton: '!p-1.5',
+    } },
+    { placement: ['top', 'hidden'], dense: true, class: { inputWrapper: '!pt-1.5', textarea: 'pb-1.5', textareaSizer: 'pb-1.5' } },
+    { placement: ['top', 'hidden'], hovered: true, class: { fieldset: 'border-rui-neutral-400 dark:border-rui-neutral-500' } },
+    { placement: ['top', 'hidden'], focused: true, class: { fieldset: '!border ring-3 ring-rui-primary/20' } },
+    { placement: ['top', 'hidden'], validation: 'error', class: { fieldset: 'ring-rui-error/20' } },
+    { placement: ['top', 'hidden'], validation: 'success', class: { fieldset: 'ring-rui-success/20' } },
+    { placement: ['top', 'hidden'], disabled: true, class: {
+      wrapper: 'bg-rui-neutral-50 dark:bg-rui-neutral-900',
+      fieldset: '!border-solid',
+    } },
   ],
   defaultVariants: {
     variant: 'default',
+    placement: 'floating',
     noResize: false,
   },
 });

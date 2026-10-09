@@ -26,6 +26,8 @@ export interface RuiMenuClassNames {
   menu?: VueClassValue;
   /** Overrides applied to the popover content box (e.g. to drop its default padding). */
   content?: VueClassValue;
+  /** Overrides applied to the hint and messages under the activator. */
+  details?: VueClassValue;
 }
 
 /**
@@ -124,6 +126,8 @@ defineSlots<{
     hasSuccess: boolean;
   }) => any;
   default?: (props: { width: number }) => any;
+  /** Rendered above the activator, outside the element the menu positions against. */
+  label?: () => any;
 }>();
 
 const click = ref<boolean>(false);
@@ -336,6 +340,7 @@ onClickOutside(menu, () => {
     :class="classNames?.root"
     @keydown.esc="onEscape($event)"
   >
+    <slot name="label" />
     <div
       ref="activator"
       :class="ui.wrapper({ class: cn(classNames?.wrapper) ?? cn(wrapperClass as VueClassValue) })"
@@ -387,7 +392,7 @@ onClickOutside(menu, () => {
     </Teleport>
     <RuiFormTextDetail
       v-if="showDetails"
-      :class="ui.details()"
+      :class="ui.details({ class: cn(classNames?.details) })"
       :error-messages="errorMessages"
       :success-messages="successMessages"
       :hint="hint"

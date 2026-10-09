@@ -43,6 +43,13 @@ export type TextFieldVariant = TextInputVariant;
  * A field with no label strips the wrapper's `pt-3` floating-label reserve and
  * tightens the input padding, so its underline sits at the same baseline as a
  * RuiMenuSelect activator (40px, or 32px dense).
+ *
+ * Everything above describes the `floating` label placement, kept from 2.x.
+ * With `top` or `hidden` the component renders the outlined variant with no
+ * label inside it (RuiFieldLabel sits above), and the `placement` compounds at
+ * the end resize it: a 36px box (32px dense) with 14px text, a 1px border that
+ * turns primary with a soft ring on focus, and a placeholder that is always
+ * shown, since no label covers it.
  */
 
 export const textFieldStyles = tv({
@@ -131,6 +138,11 @@ export const textFieldStyles = tv({
     showLabel: {
       true: {},
     },
+    placement: {
+      floating: {},
+      top: {},
+      hidden: {},
+    },
     textColor: {
       primary: { prepend: 'text-rui-primary', append: 'text-rui-primary', input: 'text-rui-primary', icon: 'text-rui-primary' },
       secondary: { prepend: 'text-rui-secondary', append: 'text-rui-secondary', input: 'text-rui-secondary', icon: 'text-rui-secondary' },
@@ -192,8 +204,28 @@ export const textFieldStyles = tv({
     { color: 'warning', class: { label: 'after:border-rui-warning' } },
     { color: 'info', class: { label: 'after:border-rui-info' } },
     { color: 'success', class: { label: 'after:border-rui-success' } },
+
+    // Label above or hidden: an outlined box; `text-sm/6`, since a bare `text-sm` sets a 20px line (a 32px box)
+    { placement: ['top', 'hidden'], class: {
+      input: 'px-3 py-1.5 text-sm/6 placeholder:opacity-100 placeholder:text-rui-neutral-500 dark:placeholder:text-rui-neutral-400',
+      icon: 'text-rui-neutral-500 dark:text-rui-neutral-400',
+      prepend: 'pl-3',
+      append: 'pr-1.5',
+      details: 'px-0',
+      clearButton: '!p-1.5',
+    } },
+    { placement: ['top', 'hidden'], dense: true, class: { input: 'py-1' } },
+    { placement: ['top', 'hidden'], hovered: true, class: { fieldset: 'border-rui-neutral-400 dark:border-rui-neutral-500' } },
+    { placement: ['top', 'hidden'], focused: true, class: { fieldset: '!border ring-3 ring-rui-primary/20' } },
+    { placement: ['top', 'hidden'], validation: 'error', class: { fieldset: 'ring-rui-error/20' } },
+    { placement: ['top', 'hidden'], validation: 'success', class: { fieldset: 'ring-rui-success/20' } },
+    { placement: ['top', 'hidden'], disabled: true, class: {
+      wrapper: 'bg-rui-neutral-50 dark:bg-rui-neutral-900',
+      fieldset: '!border-solid',
+    } },
   ],
   defaultVariants: {
     variant: 'default',
+    placement: 'floating',
   },
 });
