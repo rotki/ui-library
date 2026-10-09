@@ -75,7 +75,7 @@ const rootStyle = tv({ base: 'flex flex-col items-start' });
     <div
       v-if="$slots.header"
       :id="triggerId"
-      class="flex gap-2 items-center cursor-pointer outline-hidden focus-visible:bg-rui-primary/10 rounded-rui-control"
+      class="flex gap-2 items-center cursor-pointer outline-hidden focus-visible:focus-ring rounded-rui-control"
       :class="[classNames?.header ?? headerClass, { 'w-full': headerGrow }]"
       role="button"
       tabindex="0"

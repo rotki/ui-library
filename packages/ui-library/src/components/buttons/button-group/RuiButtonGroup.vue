@@ -38,7 +38,7 @@ const slots = useSlots();
 const buttonGroupStyles = tv({
   slots: {
     root: 'inline-flex rounded-rui-control between:border-l between:border-r-0 between:border-rui-grey-400 outline-solid outline-1 outline-transparent -outline-offset-1',
-    button: 'border-0 outline-0 focus:z-1',
+    button: 'border-0 inset-ring-0 focus:z-1',
   },
   variants: {
     vertical: {
@@ -54,15 +54,15 @@ const buttonGroupStyles = tv({
       },
       sm: {
         root: 'between:border-0 outline-0 gap-2',
-        button: 'outline-1',
+        button: 'inset-ring',
       },
       md: {
         root: 'between:border-0 outline-0 gap-4',
-        button: 'outline-1',
+        button: 'inset-ring',
       },
       lg: {
         root: 'between:border-0 outline-0 gap-6',
-        button: 'outline-1',
+        button: 'inset-ring',
       },
     },
     variant: {

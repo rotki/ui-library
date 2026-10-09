@@ -41,12 +41,12 @@ import { tv } from '@/utils/tv';
 export const buttonStyles = tv({
   slots: {
     root: [
-      'text-sm leading-5 font-medium outline-solid outline-1 outline-transparent -outline-offset-1',
+      'text-sm leading-5 font-medium inset-ring inset-ring-transparent',
       'flex items-center justify-center gap-x-2',
       'px-4 py-1.5 rounded-rui-control transition-all',
       '[--rui-icon-size:1.125rem]',
       'disabled:cursor-not-allowed',
-      'focus-visible:!ring-2',
+      'focus-visible:focus-ring',
     ].join(' '),
     label: 'inline-block text-nowrap',
     spinner: 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
@@ -69,13 +69,13 @@ export const buttonStyles = tv({
       '2xl': { root: 'px-6 py-2.5 text-[1rem] leading-6 ![--rui-icon-size:1.375rem]' },
     },
     color: {
-      grey: { root: 'bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-text ring-rui-grey-400 dark:bg-rui-grey-300 dark:text-rui-light-text dark:ring-rui-grey-600' },
-      primary: { root: 'bg-rui-primary hover:bg-rui-primary-darker active:bg-rui-primary-darker/90 text-rui-dark-text ring-rui-primary/40 dark:text-rui-text dark:ring-rui-primary/60' },
-      secondary: { root: 'bg-rui-secondary hover:bg-rui-secondary-darker active:bg-rui-secondary-darker/90 text-rui-dark-text ring-rui-secondary/40 dark:text-rui-text dark:ring-rui-secondary/60' },
-      error: { root: 'bg-rui-error hover:bg-rui-error-darker active:bg-rui-error-darker/90 text-rui-dark-text ring-rui-error/40 dark:text-rui-text dark:ring-rui-error/60' },
-      warning: { root: 'bg-rui-warning hover:bg-rui-warning-darker active:bg-rui-warning-darker/90 text-rui-dark-text ring-rui-warning/40 dark:text-rui-text dark:ring-rui-warning/60' },
-      info: { root: 'bg-rui-info hover:bg-rui-info-darker active:bg-rui-info-darker/90 text-rui-dark-text ring-rui-info/40 dark:text-rui-text dark:ring-rui-info/60' },
-      success: { root: 'bg-rui-success hover:bg-rui-success-darker active:bg-rui-success-darker/90 text-rui-dark-text ring-rui-success/40 dark:text-rui-text dark:ring-rui-success/60' },
+      grey: { root: 'bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-text dark:bg-rui-grey-300 dark:text-rui-light-text' },
+      primary: { root: 'bg-rui-primary hover:bg-rui-primary-darker active:bg-rui-primary-darker/90 text-rui-dark-text dark:text-rui-text' },
+      secondary: { root: 'bg-rui-secondary hover:bg-rui-secondary-darker active:bg-rui-secondary-darker/90 text-rui-dark-text dark:text-rui-text' },
+      error: { root: 'bg-rui-error hover:bg-rui-error-darker active:bg-rui-error-darker/90 text-rui-dark-text dark:text-rui-text' },
+      warning: { root: 'bg-rui-warning hover:bg-rui-warning-darker active:bg-rui-warning-darker/90 text-rui-dark-text dark:text-rui-text' },
+      info: { root: 'bg-rui-info hover:bg-rui-info-darker active:bg-rui-info-darker/90 text-rui-dark-text dark:text-rui-text' },
+      success: { root: 'bg-rui-success hover:bg-rui-success-darker active:bg-rui-success-darker/90 text-rui-dark-text dark:text-rui-text' },
     },
     rounded: {
       true: { root: 'rounded-full' },
@@ -93,13 +93,13 @@ export const buttonStyles = tv({
       false: {},
     },
     hideFocusIndicator: {
-      true: { root: 'focus-visible:!ring-0' },
+      true: { root: 'focus-visible:!outline-hidden' },
     },
   },
   compoundVariants: [
     // Disabled appearance: the Material disabled palette, skipped while loading so the variant color shows behind the spinner
     { loading: false, class: { root: 'disabled:!bg-black/[.12] dark:disabled:!bg-white/[.12] disabled:!text-rui-text-disabled disabled:active:!text-rui-text-disabled' } },
-    { loading: false, variant: 'outlined', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent disabled:outline-rui-text-disabled' } },
+    { loading: false, variant: 'outlined', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent disabled:inset-ring-rui-text-disabled' } },
     { loading: false, variant: 'text', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent' } },
     { loading: false, variant: 'list', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent' } },
 
@@ -108,7 +108,7 @@ export const buttonStyles = tv({
     { color: 'grey', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-black/[.04] active:bg-black/10 dark:bg-transparent dark:active:bg-white/10 dark:hover:bg-white/[.04] dark:text-rui-text' } },
     { color: 'grey', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-black/10 dark:bg-white/30' } },
     // Material's 23% outline: at full strength a neutral edge reads as an error state next to the 50% context colours
-    { color: 'grey', variant: 'outlined', class: { root: 'outline-rui-outline' } },
+    { color: 'grey', variant: 'outlined', class: { root: 'inset-ring-rui-outline' } },
     { color: 'grey', variant: 'text', class: { root: 'text-rui-text-secondary' } },
 
     // Context colors: `dark:text-rui-<color>` beats the base variant's `dark:text-rui-text`, which is meant for filled buttons
@@ -136,12 +136,12 @@ export const buttonStyles = tv({
     { color: 'success', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-rui-success-lighter/30' } },
 
     // === Context colors — outlined border ===
-    { color: 'primary', variant: 'outlined', class: { root: 'outline-rui-primary/[0.5]' } },
-    { color: 'secondary', variant: 'outlined', class: { root: 'outline-rui-secondary/[0.5]' } },
-    { color: 'error', variant: 'outlined', class: { root: 'outline-rui-error/[0.5]' } },
-    { color: 'warning', variant: 'outlined', class: { root: 'outline-rui-warning/[0.5]' } },
-    { color: 'info', variant: 'outlined', class: { root: 'outline-rui-info/[0.5]' } },
-    { color: 'success', variant: 'outlined', class: { root: 'outline-rui-success/[0.5]' } },
+    { color: 'primary', variant: 'outlined', class: { root: 'inset-ring-rui-primary/50' } },
+    { color: 'secondary', variant: 'outlined', class: { root: 'inset-ring-rui-secondary/50' } },
+    { color: 'error', variant: 'outlined', class: { root: 'inset-ring-rui-error/50' } },
+    { color: 'warning', variant: 'outlined', class: { root: 'inset-ring-rui-warning/50' } },
+    { color: 'info', variant: 'outlined', class: { root: 'inset-ring-rui-info/50' } },
+    { color: 'success', variant: 'outlined', class: { root: 'inset-ring-rui-success/50' } },
 
     // === Size overrides per variant ===
     { variant: 'text', size: 'xs', class: { root: 'px-1' } },

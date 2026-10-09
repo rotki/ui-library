@@ -105,7 +105,7 @@ const chipStyles = tv({
   },
   compoundVariants: [
     // Interactive states (clickable + not disabled)
-    { clickable: true, disabled: false, class: { root: 'hover:brightness-90 focus:brightness-75 dark:hover:brightness-110' } },
+    { clickable: true, disabled: false, class: { root: 'hover:brightness-90 focus:brightness-75 dark:hover:brightness-110 focus-visible:focus-ring' } },
 
     // Grey filled/outlined
     { color: 'grey', variant: 'filled', class: { root: 'bg-rui-grey-200 dark:bg-rui-grey-800' } },

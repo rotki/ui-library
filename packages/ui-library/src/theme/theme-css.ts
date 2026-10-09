@@ -201,6 +201,15 @@ export function buildThemeCss(): string {
     '  }',
     '}',
     '',
+    /*
+     * The one keyboard focus indicator, used as `focus-visible:focus-ring`. An outline with a gap
+     * rather than a ring, so it never mixes with a control's own edge or shadow, both box-shadows.
+     */
+    '@utility focus-ring {',
+    '  outline: 2px solid rgb(var(--rui-primary-main));',
+    '  outline-offset: 2px;',
+    '}',
+    '',
     ...typography.map(item => `${typographyUtility(item)}\n`),
   ].join('\n');
 }

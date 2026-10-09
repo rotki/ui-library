@@ -43,7 +43,7 @@ const calendarState = inject<RuiCalendarState>(CalendarStateSymbol) as RuiCalend
 const navButtonClass = 'p-1 rounded-full text-rui-neutral-500 hover:text-rui-primary hover:bg-rui-neutral-100 dark:text-rui-neutral-400 dark:hover:bg-rui-neutral-600 dark:hover:text-rui-primary';
 
 const cellButton = tv({
-  base: 'h-9 w-full flex items-center justify-center text-sm font-medium rounded-md transition-colors duration-150 ease-in-out border-none outline-hidden cursor-pointer focus:ring-2 focus:ring-rui-primary/50',
+  base: 'h-9 w-full flex items-center justify-center text-sm font-medium rounded-md transition-colors duration-150 ease-in-out border-none outline-hidden cursor-pointer focus-visible:focus-ring',
   variants: {
     selected: {
       true: 'bg-rui-primary text-white hover:bg-rui-primary-darker active:bg-rui-primary-darker dark:bg-rui-primary dark:text-white dark:hover:bg-rui-primary-darker',

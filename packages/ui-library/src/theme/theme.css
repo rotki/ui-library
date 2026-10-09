@@ -382,6 +382,11 @@
   }
 }
 
+@utility focus-ring {
+  outline: 2px solid rgb(var(--rui-primary-main));
+  outline-offset: 2px;
+}
+
 @utility text-body-1 {
   @apply text-base;
 }
