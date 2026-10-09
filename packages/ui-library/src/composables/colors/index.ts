@@ -1,6 +1,5 @@
 export {
   afterBorderColorMap,
-  beforeBgColorMap,
   bgColorMap,
   borderColorMap,
   darkLightTextColorMap,

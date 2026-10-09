@@ -37,7 +37,7 @@ const slots = useSlots();
 
 const buttonGroupStyles = tv({
   slots: {
-    root: 'inline-flex rounded-rui-control between:border-l between:border-r-0 between:border-rui-grey-400 outline-solid outline-1 outline-transparent -outline-offset-1',
+    root: 'inline-flex rounded-rui-control between:border-l between:border-r-0 between:border-rui-outline outline-solid outline-1 outline-transparent -outline-offset-1',
     button: 'border-0 inset-ring-0 focus:z-1',
   },
   variants: {

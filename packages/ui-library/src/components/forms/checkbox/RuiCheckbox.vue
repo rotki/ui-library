@@ -1,10 +1,9 @@
 <script lang="ts" setup generic="TValue">
 import type { ContextColorsType } from '@/consts/colors';
 import { objectPick } from '@vueuse/shared';
-import { checkControlStyles, getCheckControlIconSize } from '@/components/forms/check-control-styles';
+import { checkControlStyles } from '@/components/forms/check-control-styles';
 import { RuiCheckboxGroupContextKey } from '@/components/forms/checkbox/checkbox-group/context';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
-import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
@@ -83,10 +82,14 @@ const ui = computed<ReturnType<typeof checkControlStyles>>(() => checkControlSty
   disabled: get(disabled),
   checked: get(internalModelValue) || get(indeterminate),
   validation: get(validation),
-  color: get(color),
+  color: get(color) ?? 'grey',
 }));
 
-const iconSize = computed<number>(() => getCheckControlIconSize(get(size)));
+const markState = computed<'indeterminate' | 'checked' | 'unchecked'>(() => {
+  if (get(indeterminate))
+    return 'indeterminate';
+  return get(internalModelValue) ? 'checked' : 'unchecked';
+});
 
 watch(indeterminate, (val) => {
   const input = get(el);
@@ -123,21 +126,32 @@ watch(internalModelValue, (val) => {
         v-bind="getNonRootAttrs($attrs, ['onInput', 'onClick'])"
       />
       <span :class="ui.control()">
-        <RuiIcon
-          v-if="indeterminate"
-          name="lu-checkbox-indeterminate-fill"
-          :size="iconSize"
-        />
-        <RuiIcon
-          v-else-if="internalModelValue"
-          name="lu-checkbox-fill"
-          :size="iconSize"
-        />
-        <RuiIcon
-          v-else
-          name="lu-checkbox-blank"
-          :size="iconSize"
-        />
+        <span
+          :class="ui.mark()"
+          data-mark
+          :data-state="markState"
+        >
+          <svg
+            v-if="markState !== 'unchecked'"
+            :class="ui.glyph()"
+            viewBox="0 0 12 12"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path
+              v-if="markState === 'indeterminate'"
+              d="M3 6h6"
+            />
+            <path
+              v-else
+              d="M2.5 6.2 5 8.6l4.5-5"
+            />
+          </svg>
+        </span>
       </span>
       <span
         v-if="label || $slots.default"

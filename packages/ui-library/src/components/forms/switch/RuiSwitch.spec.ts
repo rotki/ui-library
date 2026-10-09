@@ -55,7 +55,7 @@ describe('components/forms/switch/RuiSwitch.vue', () => {
 
   it('should pass size props', () => {
     wrapper = createWrapper({ props: { size: 'sm' } });
-    expectWrapperToHaveClass(wrapper, 'label > div', /w-10/);
+    expectWrapperToHaveClass(wrapper, 'label > div', /^w-8\.5$/);
   });
 
   it('should pass hint props', async () => {

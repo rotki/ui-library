@@ -1,8 +1,7 @@
 <script lang="ts" setup generic="TValue">
 import type { ContextColorsType } from '@/consts/colors';
-import { checkControlStyles, getCheckControlIconSize } from '@/components/forms/check-control-styles';
+import { checkControlStyles } from '@/components/forms/check-control-styles';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
-import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
@@ -52,13 +51,12 @@ const selected = computed<boolean>(() => get(modelValue) === value);
 
 const ui = computed<ReturnType<typeof checkControlStyles>>(() => checkControlStyles({
   size,
+  shape: 'round',
   disabled,
   checked: get(selected),
   validation: get(validation),
-  color,
+  color: color ?? 'grey',
 }));
-
-const iconSize = computed<number>(() => getCheckControlIconSize(size));
 
 function input(event: Event): void {
   const target = event.target;
@@ -86,16 +84,16 @@ function input(event: Event): void {
         @input="input($event)"
       />
       <div :class="ui.control()">
-        <RuiIcon
-          v-if="selected"
-          name="lu-radio-button-fill"
-          :size="iconSize"
-        />
-        <RuiIcon
-          v-else
-          name="lu-checkbox-blank-circle"
-          :size="iconSize"
-        />
+        <span
+          :class="ui.mark()"
+          data-mark
+          :data-state="selected ? 'checked' : 'unchecked'"
+        >
+          <span
+            v-if="selected"
+            :class="ui.dot()"
+          />
+        </span>
       </div>
       <div
         v-if="label || $slots.default"

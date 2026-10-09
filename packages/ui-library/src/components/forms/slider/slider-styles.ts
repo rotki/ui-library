@@ -29,18 +29,15 @@ export const sliderStyles = tv({
     label: 'mt-1 text-rui-text text-body-1',
     outer: 'relative h-8 flex-1 min-w-[7.5rem]',
     inner: 'relative',
-    input: 'h-full w-full opacity-0 cursor-pointer',
-    slider: 'absolute h-full w-full top-0 px-2 pointer-events-none',
+    input: 'peer h-full w-full opacity-0 cursor-pointer',
+    // the range input is invisible, so its keyboard focus rings the thumb drawn over it
+    slider: 'absolute h-full w-full top-0 px-2 pointer-events-none peer-focus-visible:[&_[data-id=slider-thumb]]:focus-ring',
     sliderInner: 'relative h-full w-full cursor-pointer',
     container: 'absolute top-1/2 -translate-y-1/2 w-full h-1 rounded-full',
     track: 'transition-all ease-linear duration-75 h-full rounded-full',
     ticks: 'h-full absolute top-0 flex justify-between items-center',
     tick: 'rounded-full',
     thumb: 'absolute top-1/2 transition-all ease-linear duration-75 -translate-y-1/2 -translate-x-1/2 w-3 h-3 rounded-full shadow-rui-control',
-    thumbRipple: [
-      `before:content-[''] before:w-8 before:h-8 before:rounded-full before:absolute before:top-1/2 before:left-1/2`,
-      'before:opacity-10 before:transition before:-translate-x-1/2 before:-translate-y-1/2 before:scale-0',
-    ].join(' '),
     thumbLabel: [
       'invisible opacity-0',
       'absolute -mt-7 transition-all ease-linear duration-75 -translate-x-1/2',
@@ -69,9 +66,9 @@ export const sliderStyles = tv({
     },
     interaction: {
       idle: {},
-      hover: { thumbRipple: 'before:scale-100' },
-      focus: { thumbRipple: 'before:scale-100 before:opacity-15' },
-      active: { thumbRipple: 'before:scale-100 before:opacity-30', thumbLabel: 'visible opacity-100' },
+      hover: { thumb: 'scale-125' },
+      focus: {},
+      active: { thumb: 'scale-125', thumbLabel: 'visible opacity-100' },
     },
     validation: {
       error: { label: 'text-rui-error' },
@@ -98,21 +95,13 @@ export const sliderStyles = tv({
     { slots: ['container'], color: 'info', class: 'bg-rui-info/40' },
     { slots: ['container'], color: 'success', class: 'bg-rui-success/40' },
 
-    // Track + thumb + thumb ripple + tick color
+    // Track + thumb + tick color
     { slots: ['track', 'thumb', 'tick'], color: 'primary', class: 'bg-rui-primary' },
     { slots: ['track', 'thumb', 'tick'], color: 'secondary', class: 'bg-rui-secondary' },
     { slots: ['track', 'thumb', 'tick'], color: 'error', class: 'bg-rui-error' },
     { slots: ['track', 'thumb', 'tick'], color: 'warning', class: 'bg-rui-warning' },
     { slots: ['track', 'thumb', 'tick'], color: 'info', class: 'bg-rui-info' },
     { slots: ['track', 'thumb', 'tick'], color: 'success', class: 'bg-rui-success' },
-
-    // Thumb ripple (before pseudo) color
-    { slots: ['thumbRipple'], color: 'primary', class: 'before:bg-rui-primary' },
-    { slots: ['thumbRipple'], color: 'secondary', class: 'before:bg-rui-secondary' },
-    { slots: ['thumbRipple'], color: 'error', class: 'before:bg-rui-error' },
-    { slots: ['thumbRipple'], color: 'warning', class: 'before:bg-rui-warning' },
-    { slots: ['thumbRipple'], color: 'info', class: 'before:bg-rui-info' },
-    { slots: ['thumbRipple'], color: 'success', class: 'before:bg-rui-success' },
   ],
   compoundVariants: [
     // Big tick: lighter default, color highlighted

@@ -75,7 +75,8 @@ test.describe('menu', () => {
     await expect(page.locator(menuContent)).toBeVisible();
 
     await page.keyboard.press('Escape');
-    await page.locator('body').click();
+    // a fixed corner, since the centre of the page can land on the activator and reopen the menu
+    await page.mouse.click(1, 1);
     await expect(page.locator(menuContent)).toHaveCount(0);
   });
 

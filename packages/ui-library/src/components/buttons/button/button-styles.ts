@@ -69,7 +69,7 @@ export const buttonStyles = tv({
       '2xl': { root: 'px-6 py-2.5 text-[1rem] leading-6 ![--rui-icon-size:1.375rem]' },
     },
     color: {
-      grey: { root: 'bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-text dark:bg-rui-grey-300 dark:text-rui-light-text' },
+      grey: { root: 'bg-rui-neutral-100 hover:bg-rui-neutral-200 active:bg-rui-neutral-300 text-rui-text dark:bg-rui-neutral-800 dark:hover:bg-rui-neutral-700 dark:active:bg-rui-neutral-600' },
       primary: { root: 'bg-rui-primary hover:bg-rui-primary-darker active:bg-rui-primary-darker/90 text-rui-dark-text dark:text-rui-text' },
       secondary: { root: 'bg-rui-secondary hover:bg-rui-secondary-darker active:bg-rui-secondary-darker/90 text-rui-dark-text dark:text-rui-text' },
       error: { root: 'bg-rui-error hover:bg-rui-error-darker active:bg-rui-error-darker/90 text-rui-dark-text dark:text-rui-text' },
@@ -97,14 +97,14 @@ export const buttonStyles = tv({
     },
   },
   compoundVariants: [
-    // Disabled appearance: the Material disabled palette, skipped while loading so the variant color shows behind the spinner
-    { loading: false, class: { root: 'disabled:!bg-black/[.12] dark:disabled:!bg-white/[.12] disabled:!text-rui-text-disabled disabled:active:!text-rui-text-disabled' } },
+    // Disabled appearance: a flat neutral fill, skipped while loading so the variant color shows behind the spinner
+    { loading: false, class: { root: 'disabled:!bg-rui-neutral-100 dark:disabled:!bg-rui-neutral-800 disabled:!text-rui-text-disabled disabled:active:!text-rui-text-disabled' } },
     { loading: false, variant: 'outlined', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent disabled:inset-ring-rui-text-disabled' } },
     { loading: false, variant: 'text', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent' } },
     { loading: false, variant: 'list', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent' } },
 
     // === Grey color variants ===
-    { color: 'grey', active: true, class: { root: 'bg-rui-grey-50' } },
+    { color: 'grey', active: true, class: { root: 'bg-rui-neutral-200 dark:bg-rui-neutral-700' } },
     { color: 'grey', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-black/[.04] active:bg-black/10 dark:bg-transparent dark:active:bg-white/10 dark:hover:bg-white/[.04] dark:text-rui-text' } },
     { color: 'grey', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-black/10 dark:bg-white/30' } },
     // Material's 23% outline: at full strength a neutral edge reads as an error state next to the 50% context colours

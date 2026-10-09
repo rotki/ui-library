@@ -225,7 +225,7 @@ function isHighlightedTick(index: number): boolean {
                 />
               </div>
               <div
-                :class="[trackUi.thumb(), trackUi.thumbRipple()]"
+                :class="trackUi.thumb()"
                 :style="{ left: trackWidth }"
                 data-id="slider-thumb"
               />

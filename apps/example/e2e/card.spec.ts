@@ -23,7 +23,7 @@ test.describe('cards', () => {
   test('should display divided outline card with border styling', async ({ page }) => {
     const card = page.locator('div[data-id=card-0-1]').first();
 
-    await expect(card).toHaveClass(/divide-y/);
+    await expect(card).toHaveClass(/between:border-t/);
     await expect(card).toHaveClass(/border/);
 
     await expect(card.locator('[data-id=card-content]')).toHaveCSS('border-color', /.+/);
@@ -38,11 +38,10 @@ test.describe('cards', () => {
     await expect(card.locator('img')).toHaveAttribute('src', /.+/);
   });
 
-  test('should display elevated flat card with shadow', async ({ page }) => {
+  test('should display a flat card with neither border nor shadow', async ({ page }) => {
     const card = page.locator('div[data-id=card-1-4]').first();
 
-    const classes = await card.getAttribute('class');
-    expect(classes).toContain('shadow-1');
-    expect(classes).not.toContain('_outlined_');
+    await expect(card).toHaveCSS('box-shadow', 'none');
+    await expect(card).toHaveCSS('border-top-width', '0px');
   });
 });

@@ -25,16 +25,6 @@ export const bgColorMap: Record<ContextColorsType, string> = {
   success: 'bg-rui-success',
 };
 
-/** `before:bg-rui-{color}` — used by checkbox and radio ripple */
-export const beforeBgColorMap: Record<ContextColorsType, string> = {
-  primary: 'before:bg-rui-primary',
-  secondary: 'before:bg-rui-secondary',
-  error: 'before:bg-rui-error',
-  warning: 'before:bg-rui-warning',
-  info: 'before:bg-rui-info',
-  success: 'before:bg-rui-success',
-};
-
 /** `border-rui-{color}` — used by text fields, alerts, etc. */
 export const borderColorMap: Record<ContextColorsType, string> = {
   primary: 'border-rui-primary',

@@ -43,49 +43,44 @@ defineSlots<{
 const switchStyles = tv({
   slots: {
     wrapper: 'relative flex gap-2 items-start cursor-pointer group/switch',
-    inner: 'relative w-10.75 h-6 shrink-0',
-    input: 'peer appearance-none relative w-full h-full rounded-full bg-rui-grey-400 dark:bg-rui-grey-700 transition-all duration-75 ease-in-out cursor-pointer',
+    // 40 × 22, nudged down a pixel to sit centred on the label's 24px line
+    inner: 'relative w-10 h-5.5 mt-px shrink-0',
+    input: 'peer appearance-none relative w-full h-full rounded-full bg-rui-neutral-300 dark:bg-rui-neutral-700 transition-all duration-75 ease-in-out cursor-pointer focus-visible:focus-ring',
     toggle: [
-      'absolute w-5 h-5 transition-all duration-75 ease-in-out -translate-y-1/2 top-1/2 rounded-full pointer-events-none',
-      'bg-white left-0.5',
-      `before:content-[''] before:absolute before:size-10 before:bg-black dark:before:bg-white before:rounded-full`,
-      'before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:transition-all before:ease-in-out before:opacity-0',
-      'peer-active:before:opacity-20',
-      'group-hover/switch:shadow-rui-control',
+      'absolute size-4.5 transition-all duration-75 ease-in-out -translate-y-1/2 top-1/2 rounded-full pointer-events-none',
+      'bg-white left-0.5 shadow-rui-control',
     ].join(' '),
     label: 'text-rui-text text-body-1',
   },
   variants: {
     checked: {
       true: {
-        toggle: 'left-5.25',
+        toggle: 'left-5',
       },
       false: {},
     },
     disabled: {
       true: {
         wrapper: 'cursor-not-allowed',
-        input: 'bg-rui-grey-300! dark:bg-rui-grey-800! cursor-not-allowed',
-        toggle: 'bg-rui-grey-500! dark:bg-rui-grey-600! before:content-none! group-hover/switch:shadow-none!',
+        input: 'bg-rui-neutral-200! dark:bg-rui-neutral-800! cursor-not-allowed',
+        toggle: 'bg-rui-neutral-50! dark:bg-rui-neutral-600! shadow-none!',
         label: 'text-rui-text-disabled',
       },
     },
     size: {
       sm: {
-        inner: 'w-10 h-5 mt-0.5',
-        toggle: 'w-4 h-4 before:size-6',
+        inner: 'w-8.5 h-4.5 mt-0.75',
+        toggle: 'size-3.5',
       },
     },
     validation: {
       error: {
-        input: 'bg-rui-error! dark:bg-rui-error/50!',
+        input: 'bg-rui-error!',
         label: 'text-rui-error',
-        toggle: 'dark:bg-rui-error!',
       },
       success: {
-        input: 'bg-rui-success! dark:bg-rui-success/50!',
+        input: 'bg-rui-success!',
         label: 'text-rui-success',
-        toggle: 'dark:bg-rui-success!',
       },
     },
     color: {
@@ -98,20 +93,21 @@ const switchStyles = tv({
     },
   },
   compoundVariants: [
-    // Checked (no color): track + toggle dark mode
-    { checked: true, disabled: false, class: { input: 'bg-black dark:bg-white' } },
-    { checked: true, disabled: false, class: { toggle: 'dark:bg-black' } },
+    { checked: false, disabled: false, class: { input: 'group-hover/switch:bg-rui-neutral-400 dark:group-hover/switch:bg-rui-neutral-600' } },
 
-    // Checked + color (light: track bg, dark: track bg/50 + toggle bg)
-    { checked: true, disabled: false, color: 'primary', class: { input: 'bg-rui-primary dark:bg-rui-primary/50', toggle: 'dark:bg-rui-primary' } },
-    { checked: true, disabled: false, color: 'secondary', class: { input: 'bg-rui-secondary dark:bg-rui-secondary/50', toggle: 'dark:bg-rui-secondary' } },
-    { checked: true, disabled: false, color: 'error', class: { input: 'bg-rui-error dark:bg-rui-error/50', toggle: 'dark:bg-rui-error' } },
-    { checked: true, disabled: false, color: 'warning', class: { input: 'bg-rui-warning dark:bg-rui-warning/50', toggle: 'dark:bg-rui-warning' } },
-    { checked: true, disabled: false, color: 'info', class: { input: 'bg-rui-info dark:bg-rui-info/50', toggle: 'dark:bg-rui-info' } },
-    { checked: true, disabled: false, color: 'success', class: { input: 'bg-rui-success dark:bg-rui-success/50', toggle: 'dark:bg-rui-success' } },
+    // Checked (no color): an inverted neutral track, with a dark knob in dark mode
+    { checked: true, disabled: false, class: { input: 'bg-rui-neutral-900 dark:bg-rui-neutral-100', toggle: 'dark:bg-rui-neutral-900' } },
 
-    // Size sm + checked: different toggle position
-    { size: 'sm', checked: true, class: { toggle: 'left-5.5' } },
+    // Checked + color: a solid track with the white knob, in both themes
+    { checked: true, disabled: false, color: 'primary', class: { input: 'bg-rui-primary dark:bg-rui-primary', toggle: 'dark:bg-white' } },
+    { checked: true, disabled: false, color: 'secondary', class: { input: 'bg-rui-secondary dark:bg-rui-secondary', toggle: 'dark:bg-white' } },
+    { checked: true, disabled: false, color: 'error', class: { input: 'bg-rui-error dark:bg-rui-error', toggle: 'dark:bg-white' } },
+    { checked: true, disabled: false, color: 'warning', class: { input: 'bg-rui-warning dark:bg-rui-warning', toggle: 'dark:bg-white' } },
+    { checked: true, disabled: false, color: 'info', class: { input: 'bg-rui-info dark:bg-rui-info', toggle: 'dark:bg-white' } },
+    { checked: true, disabled: false, color: 'success', class: { input: 'bg-rui-success dark:bg-rui-success', toggle: 'dark:bg-white' } },
+
+    // Size sm + checked: 34 - 14 - 2
+    { size: 'sm', checked: true, class: { toggle: 'left-4.5' } },
   ],
   defaultVariants: {
     checked: false,
