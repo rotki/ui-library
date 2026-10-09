@@ -1003,7 +1003,7 @@ describe('components/tables/RuiDataTable.vue', () => {
       await nextTick();
 
       const paginationInstances = wrapper.findAllComponents(RuiTablePagination);
-      expect(paginationInstances).toHaveLength(4);
+      expect(paginationInstances).toHaveLength(2);
 
       paginationInstances.forEach((instance) => {
         expect(instance.vm.modelValue).toMatchObject(expect.objectContaining({ limit: 25 }));
@@ -1048,10 +1048,10 @@ describe('components/tables/RuiDataTable.vue', () => {
       await nextTick();
 
       const paginate = wrapper.findAllComponents(RuiTablePagination);
-      expect(paginate).toHaveLength(4);
+      expect(paginate).toHaveLength(2);
 
       const paginate0 = paginate[0];
-      const paginate2 = paginate[2];
+      const paginate2 = paginate[1];
       assert(paginate0);
       assert(paginate2);
 
@@ -1095,10 +1095,10 @@ describe('components/tables/RuiDataTable.vue', () => {
       await nextTick();
 
       const paginate = wrapper.findAllComponents(RuiTablePagination);
-      expect(paginate).toHaveLength(4);
+      expect(paginate).toHaveLength(2);
 
       const paginate0 = paginate[0];
-      const paginate2 = paginate[2];
+      const paginate2 = paginate[1];
       assert(paginate0);
       assert(paginate2);
 
@@ -1184,49 +1184,27 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(ranges.find('input[type=hidden]').element).toHaveProperty('value', '1');
   });
 
-  it('should hideDefaultHeader', () => {
+  it('should render one pagination bar, under the rows, sticking to the bottom', () => {
     wrapper = createWrapper({
       props: {
         cols: columns,
-        hideDefaultHeader: true,
         rowAttr: 'id',
         rows: data,
       },
     });
 
-    const paginate = wrapper.findAllComponents(RuiTablePagination);
-    expect(paginate).toHaveLength(1);
+    expect(wrapper.findAllComponents(RuiTablePagination)).toHaveLength(1);
 
-    // Verify pagination is after the scroller (footer position)
     const wrapperEl = wrapper.find('[data-id="table-wrapper"]').element;
-    const pagination = wrapper.find('[data-id="table-pagination"]').element;
+    const pagination = wrapper.find('[data-id="table-pagination"]');
     const scroller = wrapper.find('[data-id="table-scroller"]').element;
     const children = Array.from(wrapperEl.children);
-    expect(children.indexOf(pagination)).toBeGreaterThan(children.indexOf(scroller));
+    expect(children.indexOf(pagination.element)).toBeGreaterThan(children.indexOf(scroller));
+    expect(pagination.attributes('data-sticky')).toBe('true');
+    expect(pagination.classes()).toEqual(expect.arrayContaining(['sticky', 'bottom-0']));
   });
 
-  it('should hideDefaultFooter', () => {
-    wrapper = createWrapper({
-      props: {
-        cols: columns,
-        hideDefaultFooter: true,
-        rowAttr: 'id',
-        rows: data,
-      },
-    });
-
-    const paginate = wrapper.findAllComponents(RuiTablePagination);
-    expect(paginate).toHaveLength(1);
-
-    // Verify pagination is before the scroller (header position)
-    const wrapperEl = wrapper.find('[data-id="table-wrapper"]').element;
-    const pagination = wrapper.find('[data-id="table-pagination"]').element;
-    const scroller = wrapper.find('[data-id="table-scroller"]').element;
-    const children = Array.from(wrapperEl.children);
-    expect(children.indexOf(pagination)).toBeLessThan(children.indexOf(scroller));
-  });
-
-  it('should drop the footer pagination of an empty table', () => {
+  it('should keep the pagination bar of an empty table', () => {
     wrapper = createWrapper({
       props: {
         cols: columns,
@@ -1238,17 +1216,46 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(wrapper.findAllComponents(RuiTablePagination)).toHaveLength(1);
   });
 
-  it('should keep the footer pagination of an empty table without a header bar', () => {
+  it('should hide the pagination bar with hidePagination', () => {
     wrapper = createWrapper({
       props: {
         cols: columns,
-        hideDefaultHeader: true,
+        hidePagination: true,
         rowAttr: 'id',
-        rows: [],
+        rows: data,
       },
     });
 
-    expect(wrapper.findAllComponents(RuiTablePagination)).toHaveLength(1);
+    expect(wrapper.findAllComponents(RuiTablePagination)).toHaveLength(0);
+  });
+
+  it('should not stick the pagination bar of a nested table', () => {
+    wrapper = createWrapper({
+      props: {
+        cols: columns,
+        expanded: data.slice(0, 1),
+        rowAttr: 'id',
+        rows: data,
+      },
+      slots: {
+        'expanded-item': () => h(RuiDataTable<User>, {
+          cols: columns,
+          rowAttr: 'id',
+          rows: data,
+        }),
+      },
+    });
+
+    const bars = wrapper.findAll('[data-id=table-pagination]');
+    expect(bars).toHaveLength(2);
+
+    const nested = wrapper.find('[data-id=row-expanded] [data-id=table-pagination]');
+    expect(nested.attributes('data-sticky')).toBeUndefined();
+    expect(nested.classes()).not.toContain('sticky');
+
+    const outer = bars.find(bar => !bar.element.closest('[data-id=row-expanded]'));
+    assert(outer);
+    expect(outer.attributes('data-sticky')).toBe('true');
   });
 
   describe('stale rows', () => {
@@ -2365,8 +2372,7 @@ describe('components/tables/RuiDataTable.vue', () => {
       wrapper = createWrapper({
         props: {
           cols: columns,
-          hideDefaultFooter: true,
-          hideDefaultHeader: true,
+          hidePagination: true,
           rowAttr: 'id',
           rows: [],
         },
@@ -2713,7 +2719,7 @@ describe('components/tables/RuiDataTable.vue', () => {
     it('should keep only the outermost table toolbar sticky when tables are nested', () => {
       const cols: TableColumn<User>[] = [
         { key: 'id', label: 'ID' },
-        { key: 'name', label: 'Full name' },
+        { key: 'name', label: 'Full name', sortable: true },
       ];
 
       wrapper = createWrapper({
@@ -2725,6 +2731,7 @@ describe('components/tables/RuiDataTable.vue', () => {
           pagination: { limit: 5, page: 1, total: data.length },
           rowAttr: 'id',
           rows: data,
+          sort: [],
         },
         slots: {
           'expanded-item': () => h(RuiDataTable<User>, {
@@ -2734,6 +2741,7 @@ describe('components/tables/RuiDataTable.vue', () => {
             pagination: { limit: 5, page: 1, total: data.length },
             rowAttr: 'id',
             rows: data,
+            sort: [],
           }),
         },
       });

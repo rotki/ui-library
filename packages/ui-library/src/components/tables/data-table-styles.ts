@@ -12,8 +12,13 @@ export const dataTableStyles = tv({
     td: '[:where(&)]:px-4 text-rui-text text-body-2 tabular-nums slashed-zero [text-wrap:initial]',
     checkbox: 'px-2 w-[3.625rem] max-w-[3.625rem] [&_label]:ml-0',
     tbodyLoader: 'text-center',
+    pagination: '',
   },
   variants: {
+    // opaque like the stuck column header, so rows scroll behind it rather than through it
+    sticky: {
+      true: { pagination: 'sticky bottom-0 z-10 bg-rui-background' },
+    },
     outlined: {
       true: { wrapper: 'border border-rui-divider' },
     },

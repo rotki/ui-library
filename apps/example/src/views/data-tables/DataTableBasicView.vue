@@ -24,7 +24,6 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
           :rows="fixedRows"
           :cols="fixedColumns"
           row-attr="id"
-          hide-default-footer
           data-id="table"
         >
           <template #item.action>

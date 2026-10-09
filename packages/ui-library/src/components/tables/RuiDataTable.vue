@@ -19,6 +19,7 @@ import { useStickyTableHeader } from '@/composables/sticky-header';
 import { useTableColumns } from '@/composables/tables/data-table/columns';
 import { useTableExpansion } from '@/composables/tables/data-table/expansion';
 import { useTableGrouping } from '@/composables/tables/data-table/grouping';
+import { usePageScroll, useStickyPaginationBar } from '@/composables/tables/data-table/page-scroll';
 import { useTablePagination } from '@/composables/tables/data-table/pagination';
 import { useTableSelection } from '@/composables/tables/data-table/selection';
 import { useTableSort } from '@/composables/tables/data-table/sort';
@@ -92,13 +93,10 @@ export interface Props<T, K extends keyof T> {
   /** Label for the retry control; without one, no control is offered. */
   retryText?: string;
   /**
-   * should hide the header navigation
+   * Hide the pagination bar. The bar sits under the table and sticks to the bottom of the view
+   * while the table runs past it.
    */
-  hideDefaultHeader?: boolean;
-  /**
-   * should hide the footer navigation
-   */
-  hideDefaultFooter?: boolean;
+  hidePagination?: boolean;
 
   rounded?: 'sm' | 'md' | 'lg';
   /**
@@ -174,8 +172,7 @@ const {
   error = '',
   errorTitle = '',
   retryText = '',
-  hideDefaultHeader = false,
-  hideDefaultFooter = false,
+  hidePagination = false,
   rounded = 'md',
   singleExpand = false,
   stickyHeader = false,
@@ -360,16 +357,15 @@ const {
 
 const noData = computed<boolean>(() => get(filtered).length === 0);
 
+const showPagination = computed<boolean>(() => !!get(paginationData) && !hidePagination);
+
 /**
- * With the header bar showing, an empty table drops its footer bar: two rows
- * of disabled controls around an empty state only add noise.
+ * The one pagination bar sticks to the bottom of the view, so a long page can be turned without
+ * scrolling down to it. `position: sticky` keeps it inside this table, so stacked and side-by-side
+ * tables each hold their own bar. A nested table's bar stays in place: two stuck bars would stack.
  */
-const showFooter = computed<boolean>(() => {
-  const data = get(paginationData);
-  if (!data || hideDefaultFooter)
-    return false;
-  return data.total > 0 || hideDefaultHeader;
-});
+const canStickPagination = useStickyPaginationBar(tableWrapper, () => !isNestedTable && get(showPagination));
+const stickyPagination = computed<boolean>(() => !isNestedTable && get(canStickPagination));
 
 /**
  * Grouped columns leave the column list, so their labels come from `cols`.
@@ -446,12 +442,15 @@ function onSort(payload: Parameters<typeof applySort>[0]): void {
   resetCheckboxShiftState();
 }
 
-function onPaginate(): void {
+const { revealTableTop } = usePageScroll(tableWrapper, stickyHeaderOffset);
+
+async function onPaginate(): Promise<void> {
   if ((get(expanded)?.length ?? 0) > 0)
     set(expanded, []);
   if (!multiPageSelect)
     onToggleAll(false);
   resetCheckboxShiftState();
+  await revealTableTop();
 }
 
 // Reset pagination page to 1 on search query change
@@ -526,23 +525,12 @@ provideDataTableContext<T, IdType>({
     data-id="table-wrapper"
   >
     <div
+      v-if="showMobileSort"
       :class="stickyMobileToolbar ? 'sticky z-10 bg-rui-background pt-2' : 'contents'"
       :style="stickyMobileToolbar ? { top: `${stickyHeaderOffset ?? 0}px` } : undefined"
       data-id="table-mobile-toolbar-sticky"
     >
-      <RuiTablePagination
-        v-if="paginationData && !hideDefaultHeader"
-        v-model="paginationData"
-        :dense="dense"
-        :loading="loading"
-        :mobile="isMobile"
-        :disable-per-page="disablePerPage"
-        :ranges-threshold="rangesThreshold"
-        data-id="table-pagination"
-        @update:model-value="onPaginate()"
-      />
       <div
-        v-if="showMobileSort"
         class="flex justify-end p-2"
         data-id="table-mobile-toolbar"
       >
@@ -718,13 +706,15 @@ provideDataTableContext<T, IdType>({
       </table>
     </div>
     <RuiTablePagination
-      v-if="paginationData && showFooter"
+      v-if="paginationData && showPagination"
       v-model="paginationData"
+      :class="ui.pagination({ sticky: stickyPagination })"
       :dense="dense"
       :loading="loading"
       :mobile="isMobile"
       :disable-per-page="disablePerPage"
       :ranges-threshold="rangesThreshold"
+      :data-sticky="stickyPagination || undefined"
       data-id="table-pagination"
       @update:model-value="onPaginate()"
     />

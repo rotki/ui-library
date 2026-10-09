@@ -234,6 +234,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/data-tables/long-pages': RouteRecordInfo<
+      '/data-tables/long-pages',
+      '/data-tables/long-pages',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/data-tables/mobile': RouteRecordInfo<
       '/data-tables/mobile',
       '/data-tables/mobile',
@@ -719,6 +726,14 @@ declare module 'vue-router/auto-routes' {
     'src/pages/data-tables/grouping.vue': {
       routes:
         | '/data-tables/grouping'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/data-tables/long-pages.vue': {
+      routes:
+        | '/data-tables/long-pages'
       views:
         | never
       pathParamNames:

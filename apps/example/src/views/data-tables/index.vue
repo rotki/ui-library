@@ -22,6 +22,12 @@ const sections = [
     icon: 'lu-chevrons-left-right-ellipsis',
   },
   {
+    title: 'Long Pages',
+    description: 'The sticky pagination bar across long, stacked, side-by-side and nested tables',
+    route: '/data-tables/long-pages',
+    icon: 'lu-panel-bottom',
+  },
+  {
     title: 'Search',
     description: 'Filtering rows with search input',
     route: '/data-tables/search',

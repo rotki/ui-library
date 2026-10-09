@@ -571,11 +571,10 @@ export const CustomItemClass = meta.story({
   },
 });
 
-export const HiddenHeaderAndFooter = meta.story({
+export const HiddenPagination = meta.story({
   args: {
     cols: columns,
-    hideDefaultFooter: true,
-    hideDefaultHeader: true,
+    hidePagination: true,
     outlined: true,
     rows: data,
   },
@@ -584,7 +583,6 @@ export const HiddenHeaderAndFooter = meta.story({
 export const SinglePage = meta.story({
   args: {
     cols: columns,
-    hideDefaultHeader: true,
     outlined: true,
     pagination: { limit: 10, page: 1, total: 5 },
     rows: data.slice(0, 5),

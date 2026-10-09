@@ -183,8 +183,7 @@ function toggleRow(row: BaseUser, expanded: ExtendedUser[]): void {
           :cols="nestedOuterColumns"
           row-attr="id"
           outlined
-          hide-default-footer
-          hide-default-header
+          hide-pagination
           data-id="table"
         >
           <template #expanded-item>
@@ -194,7 +193,6 @@ function toggleRow(row: BaseUser, expanded: ExtendedUser[]): void {
               row-attr="id"
               outlined
               dense
-              hide-default-footer
               data-id="nested-table"
             />
           </template>

@@ -268,27 +268,20 @@ test.describe('data tables - pagination', () => {
     await expect(rangeDisplay).toContainText('6–10');
   });
 
-  test('should hide header pagination when hideDefaultHeader is set', async ({ page }) => {
-    const container = page.locator('[data-id=table-pagination-hide-header]');
-    const table = container.locator('[data-id=table]');
+  test('should render a single pagination bar per table', async ({ page }) => {
+    const table = page.locator('[data-id=table-pagination-basic] [data-id=table]');
     await expect(table).toBeVisible();
-
-    // Only one pagination should be visible (footer only)
-    const paginationElements = container.locator('[data-id=table-pagination]');
-    await expect(paginationElements).toHaveCount(1);
-
-    // The table element should exist (pagination is outside of it)
-    await expect(table.locator('table')).toBeVisible();
+    await expect(table.locator('[data-id=table-pagination]')).toHaveCount(1);
   });
 
-  test('should hide footer pagination when hideDefaultFooter is set', async ({ page }) => {
-    const container = page.locator('[data-id=table-pagination-hide-footer]');
+  test('should hide the pagination bar when hidePagination is set', async ({ page }) => {
+    const container = page.locator('[data-id=table-pagination-hidden]');
     const table = container.locator('[data-id=table]');
     await expect(table).toBeVisible();
 
-    // Only one pagination should be visible (header only)
-    const paginationElements = container.locator('[data-id=table-pagination]');
-    await expect(paginationElements).toHaveCount(1);
+    await expect(container.locator('[data-id=table-pagination]')).toHaveCount(0);
+    // still one page at a time
+    await expect(table.locator('tbody tr')).toHaveCount(5);
   });
 
   test('should have sticky header when stickyHeader is set', async ({ page }) => {
@@ -323,9 +316,15 @@ test.describe('data tables - pagination', () => {
   test('should stick the header to the page when its wrapper has nothing to scroll', async ({ page }) => {
     const table = page.locator('[data-id=table-pagination-sticky-page] [data-id=table]');
     const head = table.locator('table thead[data-id="head-main"]');
+    // room below the content, so the page can scroll the table past the app bar however tall the rows are
+    await page.addStyleTag({ content: '[data-id=page-content] { padding-bottom: 100vh; }' });
     await table.scrollIntoViewIfNeeded();
+    // the example app scrolls inside its body, not the window, so scroll whatever actually scrolls
     await table.evaluate((el) => {
-      window.scrollBy(0, el.getBoundingClientRect().top);
+      let scroller = el.parentElement;
+      while (scroller && scroller.scrollHeight <= scroller.clientHeight)
+        scroller = scroller.parentElement;
+      (scroller ?? document.scrollingElement)?.scrollBy(0, el.getBoundingClientRect().top);
     });
 
     await expect(head).toHaveClass(/fixed/);
@@ -341,9 +340,8 @@ test.describe('data tables - pagination', () => {
     // Dropdown must not render above the threshold
     await expect(container.locator('[data-id=table-pagination-ranges]')).toHaveCount(0);
 
-    // Input must be present (one per header/footer pagination instance)
     const inputs = container.locator('[data-id=table-pagination-ranges-input] input');
-    await expect(inputs.first()).toBeVisible();
+    await expect(inputs).toHaveCount(1);
 
     const input = inputs.first();
     await expect(input).toHaveValue('1');
@@ -352,9 +350,6 @@ test.describe('data tables - pagination', () => {
     await input.fill('4242');
     await input.press('Enter');
     await expect(input).toHaveValue('4242');
-
-    // The other pagination instance should sync
-    await expect(inputs.nth(1)).toHaveValue('4242');
   });
 
   test('should clamp out-of-range page input to the last page', async ({ page }) => {

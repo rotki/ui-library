@@ -23,13 +23,7 @@ const paginationNoPerPage = ref<TablePaginationData>({
   total: fixedRows.length,
 });
 
-const paginationHideHeader = ref<TablePaginationData>({
-  limit: 5,
-  page: 1,
-  total: fixedRows.length,
-});
-
-const paginationHideFooter = ref<TablePaginationData>({
+const paginationHidden = ref<TablePaginationData>({
   limit: 5,
   page: 1,
   total: fixedRows.length,
@@ -137,55 +131,22 @@ const paginationLargeTotalDropdown = ref<TablePaginationData>({
         </RuiDataTable>
       </div>
 
-      <!-- Hide header pagination -->
+      <!-- Hidden pagination -->
       <div
         class="flex flex-col space-y-3"
-        data-id="table-pagination-hide-header"
+        data-id="table-pagination-hidden"
       >
-        <h4>Hide Header Pagination</h4>
+        <h4>Hidden Pagination</h4>
         <p class="text-sm text-rui-text-secondary">
-          Only footer pagination is visible
+          The bar is gone; the table still shows one page at a time
         </p>
         <RuiDataTable
-          v-model:pagination="paginationHideHeader"
+          v-model:pagination="paginationHidden"
           :rows="fixedRows"
           :cols="fixedColumns"
           row-attr="id"
           outlined
-          hide-default-header
-          data-id="table"
-        >
-          <template #item.action>
-            <RuiButton
-              icon
-              variant="text"
-              size="sm"
-            >
-              <RuiIcon
-                name="lu-ellipsis"
-                color="primary"
-              />
-            </RuiButton>
-          </template>
-        </RuiDataTable>
-      </div>
-
-      <!-- Hide footer pagination -->
-      <div
-        class="flex flex-col space-y-3"
-        data-id="table-pagination-hide-footer"
-      >
-        <h4>Hide Footer Pagination</h4>
-        <p class="text-sm text-rui-text-secondary">
-          Only header pagination is visible
-        </p>
-        <RuiDataTable
-          v-model:pagination="paginationHideFooter"
-          :rows="fixedRows"
-          :cols="fixedColumns"
-          row-attr="id"
-          outlined
-          hide-default-footer
+          hide-pagination
           data-id="table"
         >
           <template #item.action>
@@ -259,7 +220,6 @@ const paginationLargeTotalDropdown = ref<TablePaginationData>({
           :cols="fixedColumns"
           row-attr="id"
           outlined
-          hide-default-header
           data-id="table"
         />
       </div>
@@ -279,7 +239,6 @@ const paginationLargeTotalDropdown = ref<TablePaginationData>({
           :cols="fixedColumns"
           row-attr="id"
           outlined
-          hide-default-header
           data-id="table"
         />
       </div>
