@@ -79,7 +79,9 @@ const navigation = ref([
       </div>
 
       <div class="flex flex-col grow space-y-6 justify-between">
-        <RouterView />
+        <div data-id="page-content">
+          <RouterView />
+        </div>
 
         <div>
           <AppFootNav :navigation="navigation" />

@@ -11,7 +11,7 @@ defineSlots<{
 </script>
 
 <template>
-  <div class="p-8 bg-white">
+  <div class="p-8 bg-white dark:bg-[#121212]">
     <div
       class="grid gap-8"
       :style="{
@@ -22,7 +22,7 @@ defineSlots<{
         v-for="cell in cells"
         :key="cell.id"
         :data-id="`cell-${cell.id}`"
-        class="px-4 py-3 bg-white"
+        class="px-4 py-3 bg-white dark:bg-[#121212]"
         :class="cellWidth ?? 'w-[360px]'"
       >
         <slot

@@ -26,6 +26,13 @@ export default defineConfig({
   timeout: 30 * 1000,
   expect: {
     timeout: 5000,
+    /*
+     * Any color change counts: the default per-pixel tolerance (0.2) lets a whole palette shift
+     * through, such as gray turning zinc, which moves thousands of pixels by a level or two. Even
+     * in the pinned image a run can still differ from the last by a few dozen anti-aliased pixels,
+     * so a shot may differ in up to 64 pixels.
+     */
+    toHaveScreenshot: { threshold: 0, maxDiffPixels: 64 },
   },
   reporter: [
     ['html', { outputFolder: 'playwright-report' }],
