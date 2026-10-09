@@ -66,10 +66,11 @@ const rootStyle = tv({ base: 'flex flex-col items-start' });
     data-accordion
     v-bind="{ ...$attrs, class: undefined }"
   >
+    <!-- rounded only while focused: a permanent radius bent any border an app draws on the header -->
     <div
       v-if="$slots.header"
       :id="triggerId"
-      class="flex gap-2 items-center cursor-pointer outline-hidden focus-visible:focus-ring rounded-rui-control"
+      class="group flex gap-2 items-center cursor-pointer outline-hidden focus-visible:focus-ring focus-visible:rounded-rui-control"
       :class="[classNames?.header, { 'w-full': headerGrow }]"
       role="button"
       tabindex="0"
@@ -86,15 +87,16 @@ const rootStyle = tv({ base: 'flex flex-col items-start' });
         />
       </div>
       <Icon
-        class="text-rui-text-secondary transition-transform"
+        class="shrink-0 text-rui-text-secondary transition-[rotate,color] duration-200 ease-out group-hover:text-rui-text motion-reduce:transition-none"
         :class="{ '-rotate-180': open }"
         name="lu-chevron-down"
+        :size="16"
       />
     </div>
     <div
       v-if="open || eager"
       :id="contentId"
-      class="grow transition-all overflow-hidden w-full"
+      class="grow transition-[height] duration-200 ease-out overflow-hidden w-full motion-reduce:transition-none"
       :class="classNames?.content"
       :style="{ height: contentHeight }"
       role="region"

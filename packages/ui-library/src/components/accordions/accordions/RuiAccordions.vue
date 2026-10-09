@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { Fragment, isVNode } from 'vue';
+
 export interface Props {
   multiple?: boolean;
 }
@@ -15,8 +17,25 @@ const { multiple = false } = defineProps<Props>();
 const internalValue = ref<number[] | number>();
 
 const slots = useSlots();
+
+/**
+ * Unwraps the Fragments a `v-for` or `<template>` makes, so each accordion gets its own index.
+ * The placeholder a false `v-if` leaves keeps its index, so hiding one does not renumber the rest.
+ *
+ * @param nodes - the slot's top-level vnodes
+ * @returns the accordions in order
+ */
+function flattenSlotContent(nodes: VNode[]): VNode[] {
+  return nodes.flatMap((node) => {
+    if (node.type === Fragment && Array.isArray(node.children))
+      return flattenSlotContent(node.children.filter(isVNode));
+
+    return [node];
+  });
+}
+
 const children = computed<VNode[]>(() => {
-  const accordions = slots.default?.() ?? [];
+  const accordions = flattenSlotContent(slots.default?.() ?? []);
   const currentValue = get(internalValue);
 
   return accordions.map((accordion, index) => {

@@ -141,4 +141,35 @@ describe('components/accordions/accordions/RuiAccordions.vue', () => {
     expect(wrapper.findAll('[data-accordion-content]')).toHaveLength(1);
     expect(wrapper.find('[data-accordion-content]').text()).contains('Accordion 1 Content');
   });
+
+  it('should give each accordion of a v-for its own index', async () => {
+    const list = mount({
+      components: { Accordion, Accordions },
+      setup() {
+        const open = ref<number>(-1);
+        return { items: ['First', 'Second', 'Third'], open };
+      },
+      template: `
+        <Accordions v-model="open">
+          <Accordion v-for="item in items" :key="item">
+            <template #header>{{ item }} header</template>
+            {{ item }} content
+          </Accordion>
+        </Accordions>
+      `,
+    });
+
+    const triggers = list.findAll('[data-accordion-trigger]');
+    expect(triggers).toHaveLength(3);
+
+    const second = triggers[1];
+    assert(second);
+    await second.trigger('click');
+    await nextTick();
+
+    const contents = list.findAll('[data-accordion-content]');
+    expect(contents).toHaveLength(1);
+    expect(contents[0]?.text()).toContain('Second content');
+    list.unmount();
+  });
 });
