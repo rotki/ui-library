@@ -2,10 +2,9 @@
 import type { RouteLocationRaw } from 'vue-router';
 import type { ContextColorsType } from '@/consts/colors';
 import type { VueClassValue } from '@/types/class-value';
-import RuiButton from '@/components/buttons/button/RuiButton.vue';
-import { TabAlignment, TabIndicatorPosition, TabLayout } from '@/components/tabs/tab-props';
+import { TabAlignment, TabIndicatorPosition, TabLayout, TabVariant } from '@/components/tabs/tab-props';
 import { useTabLink } from '@/components/tabs/tab/use-tab-link';
-import { tv } from '@/utils/tv';
+import { cn, tv } from '@/utils/tv';
 
 export interface RuiTabClassNames {
   root?: VueClassValue;
@@ -26,6 +25,7 @@ export interface Props {
   vertical?: boolean;
   align?: TabAlignment;
   indicatorPosition?: TabIndicatorPosition;
+  variant?: TabVariant;
 }
 
 defineOptions({
@@ -47,6 +47,7 @@ const {
   vertical = false,
   align = TabAlignment.center,
   indicatorPosition = TabIndicatorPosition.end,
+  variant = TabVariant.underline,
 } = defineProps<Props>();
 
 const emit = defineEmits<{
@@ -59,43 +60,63 @@ const slots = defineSlots<{
   append?: (props?: object) => any;
 }>();
 
+/**
+ * A tab is a plain button or link: RuiTabs draws the active indicator, so a tab
+ * only sets its label color, and its hover fill. On the underline bar the fill
+ * hugs the label rather than the 40px cell, so the bar stays calm.
+ */
 const tab = tv({
-  base: 'min-w-22.5 max-w-90 flex items-center rounded-none cursor-pointer relative whitespace-nowrap shrink-0 px-4!',
+  slots: {
+    root: [
+      'group relative inline-flex shrink-0 items-center whitespace-nowrap rounded-rui-control',
+      'text-sm font-medium text-rui-text-secondary transition-colors duration-150 [--rui-icon-size:1rem]',
+      // inset, since the scrolling bar would clip a ring drawn outside the tab
+      'outline-hidden focus-visible:focus-ring focus-visible:-outline-offset-2',
+    ].join(' '),
+    content: 'inline-flex items-center gap-2 rounded-rui-control transition-colors duration-150',
+  },
   variants: {
+    variant: {
+      [TabVariant.underline]: { root: 'px-1', content: 'h-8 px-2' },
+      // above the sliding pill, which RuiTabs renders behind the tabs
+      [TabVariant.segmented]: { root: 'z-1 h-8 px-3' },
+    },
     layout: {
-      [TabLayout.horizontal]: '',
-      // `min-h` keeps the 48px floor of the horizontal layout while letting richer content grow instead of clipping
-      [TabLayout.vertical]: 'min-h-12! w-full max-w-none',
+      [TabLayout.horizontal]: {},
+      [TabLayout.vertical]: { root: 'w-full' },
     },
     align: {
-      start: 'justify-start text-left rtl:justify-end rtl:text-right',
-      center: 'justify-center text-center',
-      end: 'justify-end text-right rtl:justify-start rtl:text-left',
+      start: { root: 'justify-start text-left rtl:justify-end rtl:text-right' },
+      center: { root: 'justify-center text-center' },
+      end: { root: 'justify-end text-right rtl:justify-start rtl:text-left' },
     },
     grow: {
-      true: 'grow max-w-none',
-    },
-    disabled: {
-      true: 'cursor-not-allowed',
+      true: { root: 'grow' },
     },
     active: {
-      true: '',
-      false: '',
+      true: { root: 'text-rui-text' },
+      false: {},
     },
-    indicatorPosition: {
-      start: '',
-      end: '',
+    disabled: {
+      true: { root: 'cursor-not-allowed text-rui-text-disabled' },
+      false: { root: 'cursor-pointer hover:text-rui-text' },
     },
   },
   compoundVariants: [
-    // Horizontal active indicator (bottom/top border)
-    { active: true, layout: TabLayout.horizontal, indicatorPosition: 'end', class: `after:content-[''] after:absolute after:border-current after:h-0 after:w-full after:bottom-0 after:left-0 after:border-b-2` },
-    { active: true, layout: TabLayout.horizontal, indicatorPosition: 'start', class: `after:content-[''] after:absolute after:border-current after:h-0 after:w-full after:top-0 after:left-0 after:border-b-2` },
-    // Vertical active indicator (right/left border)
-    { active: true, layout: TabLayout.vertical, indicatorPosition: 'end', class: `after:content-[''] after:absolute after:border-current after:h-full after:w-0 after:right-0 after:left-auto after:border-r-2` },
-    { active: true, layout: TabLayout.vertical, indicatorPosition: 'start', class: `after:content-[''] after:absolute after:border-current after:h-full after:w-0 after:left-0 after:right-auto after:border-r-2` },
+    { variant: TabVariant.underline, layout: TabLayout.horizontal, class: { root: 'h-10' } },
+    { variant: TabVariant.underline, layout: TabLayout.horizontal, disabled: false, class: { content: 'group-hover:bg-rui-hover' } },
+    // a vertical list fills the whole row on hover and keeps that fill on the selected row
+    { variant: TabVariant.underline, layout: TabLayout.vertical, class: { root: 'min-h-9 px-3', content: 'h-auto px-0 py-2' } },
+    { variant: TabVariant.underline, layout: TabLayout.vertical, disabled: false, class: { root: 'hover:bg-rui-hover' } },
+    { variant: TabVariant.underline, layout: TabLayout.vertical, active: true, class: { root: 'bg-rui-hover' } },
   ],
-  defaultVariants: { layout: TabLayout.horizontal, align: 'center', indicatorPosition: 'end', active: false },
+  defaultVariants: {
+    variant: TabVariant.underline,
+    layout: TabLayout.horizontal,
+    align: 'center',
+    active: false,
+    disabled: false,
+  },
 });
 
 const { isRouteActive, href: linkHref, navigate, isLink } = useTabLink({
@@ -107,50 +128,61 @@ const { isRouteActive, href: linkHref, navigate, isLink } = useTabLink({
 const layout = computed<TabLayout>(() => vertical ? TabLayout.vertical : TabLayout.horizontal);
 const isSelf = computed<boolean>(() => target === '_self');
 const isEffectivelyActive = computed<boolean>(() => active || get(isRouteActive));
+const ui = computed<ReturnType<typeof tab>>(() => tab({
+  variant,
+  layout: get(layout),
+  align,
+  grow,
+  disabled,
+  active: get(isEffectivelyActive),
+}));
 
-function onClick(event?: MouseEvent): void {
+function onClick(event: MouseEvent): void {
+  if (disabled) {
+    event.preventDefault();
+    return;
+  }
+
   emit('click', value);
-  if (navigate && get(isSelf) && event)
+  if (navigate && get(isSelf))
     navigate(event);
 }
 </script>
 
 <template>
-  <RuiButton
+  <component
+    :is="isLink ? 'a' : 'button'"
+    :type="isLink ? undefined : 'button'"
     :class="[
-      tab({ layout, align, indicatorPosition, grow, disabled, active: isEffectivelyActive }),
+      ui.root({ class: cn(classNames?.root) }),
       isEffectivelyActive && classNames?.active,
     ]"
     :data-active-tab="isEffectivelyActive || undefined"
     :data-align="align"
     :data-indicator-position="indicatorPosition"
     :data-vertical="vertical || undefined"
-    :color="isEffectivelyActive ? color : undefined"
-    :disabled="disabled"
-    :href="isLink && !isSelf ? linkHref : undefined"
+    :data-variant="variant"
+    :data-color="isEffectivelyActive ? color : undefined"
+    :disabled="isLink ? undefined : disabled"
+    :aria-disabled="isLink && disabled ? 'true' : undefined"
+    :href="isLink && !isSelf && !disabled ? linkHref : undefined"
     :target="isLink ? target : undefined"
-    :tag="isLink ? 'a' : undefined"
-    :no-outline="isLink"
     role="tab"
     :aria-selected="isEffectivelyActive"
-    tabindex="-1"
-    hide-focus-indicator
-    variant="text"
+    :tabindex="isEffectivelyActive && !disabled ? 0 : -1"
     v-bind="$attrs"
-    @click="disabled ? undefined : onClick($event)"
+    @click="onClick($event)"
   >
-    <template
-      v-if="slots.prepend"
-      #prepend
-    >
-      <slot name="prepend" />
-    </template>
-    <slot />
-    <template
-      v-if="slots.append"
-      #append
-    >
-      <slot name="append" />
-    </template>
-  </RuiButton>
+    <span :class="ui.content()">
+      <slot
+        v-if="slots.prepend"
+        name="prepend"
+      />
+      <slot />
+      <slot
+        v-if="slots.append"
+        name="append"
+      />
+    </span>
+  </component>
 </template>

@@ -3,14 +3,13 @@ export interface Props {
   active?: boolean;
   value?: number | string;
   eager?: boolean;
-  reverse?: boolean;
 }
 
 defineOptions({
   name: 'RuiTabItem',
 });
 
-const { active = false, value, eager = false, reverse = false } = defineProps<Props>();
+const { active = false, value, eager = false } = defineProps<Props>();
 
 defineSlots<{
   default?: () => any;
@@ -24,15 +23,12 @@ defineSlots<{
     :data-value="value"
     :data-active="active || undefined"
   >
+    <!-- the new panel fades in while the old one collapses at once, rather than Material's sideways swipe -->
     <Transition
-      :enter-from-class="`opacity-0 ${reverse ? '-translate-x-8' : 'translate-x-8'}`"
-      :leave-to-class="`opacity-0 h-0! overflow-hidden ${
-        reverse ? 'translate-x-8' : '-translate-x-8'
-      }`"
-      enter-active-class="w-full transform duration-300 transition"
-      enter-to-class="opacity-100 translate-x-0"
-      leave-active-class="w-full transform duration-300 transition h-0! overflow-hidden"
-      leave-from-class="opacity-100 translate-x-0 h-0! overflow-hidden"
+      enter-from-class="opacity-0"
+      enter-active-class="w-full transition-opacity duration-150 ease-out motion-reduce:transition-none"
+      enter-to-class="opacity-100"
+      leave-active-class="w-full h-0! overflow-hidden"
     >
       <div
         v-if="active"

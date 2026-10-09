@@ -13,6 +13,15 @@ export const TabIndicatorPosition = {
 
 export type TabIndicatorPosition = (typeof TabIndicatorPosition)[keyof typeof TabIndicatorPosition];
 
+export const TabVariant = {
+  /** Labels on a divider track, the active one marked by a sliding line: page and section tabs */
+  underline: 'underline',
+  /** A raised pill sliding on a sunken track: a few short options that switch a view in place */
+  segmented: 'segmented',
+} as const;
+
+export type TabVariant = (typeof TabVariant)[keyof typeof TabVariant];
+
 export interface RouteMatchOptions {
   exact?: boolean;
 }

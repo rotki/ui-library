@@ -14,28 +14,24 @@ import ComponentView from '@/components/ComponentView.vue';
 interface TabItem {
   color?: ContextColorsType;
   vertical?: boolean;
+  variant?: 'underline' | 'segmented';
   modelValue?: number | string;
 }
 
-const colors = ['primary', 'secondary', 'error', 'warning', 'info', 'success'] as const;
+// `color` only tints the underline, so two colors show it; every set alternates horizontal and vertical
+const colors = ['primary', 'success'] as const;
 const verticalAttributes = [false, true] as const;
 
 const tabs = ref<TabItem[]>([]);
 
-function createTab(color: ContextColorsType, vertical: boolean = false): TabItem {
-  return {
-    color,
-    vertical,
-  };
-}
-
 function generateTabs(): TabItem[] {
   const tabs: TabItem[] = [];
   for (const color of colors) {
-    for (const vertical of verticalAttributes) {
-      tabs.push(createTab(color, vertical));
-    }
+    for (const vertical of verticalAttributes)
+      tabs.push({ color, vertical });
   }
+  for (const vertical of verticalAttributes)
+    tabs.push({ variant: 'segmented', vertical });
 
   return tabs;
 }

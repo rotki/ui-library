@@ -19,7 +19,6 @@ const modelValue = defineModel<T>({ default: () => 0 as T });
 
 const slots = useSlots();
 
-const reverse = ref<boolean>(false);
 const currIndex = ref<number>(-1);
 const activeIndex = ref<number>(-1);
 const inner = useTemplateRef<HTMLDivElement>('inner');
@@ -37,10 +36,8 @@ const children = computed<VNode[]>(() => {
     const active = get(modelValue) === value;
     if (active) {
       anyActive = true;
-      if (index !== get(currIndex)) {
-        set(reverse, index < get(currIndex));
+      if (index !== get(currIndex))
         set(currIndex, index);
-      }
     }
 
     return {
@@ -85,7 +82,7 @@ watch(currIndex, (index) => {
 
 <template>
   <div
-    class="grow transition-all overflow-hidden"
+    class="grow transition-[height] duration-200 ease-out overflow-hidden motion-reduce:transition-none"
     :style="{ height: `${innerHeight}px` }"
     v-bind="$attrs"
   >
@@ -94,7 +91,6 @@ watch(currIndex, (index) => {
         :is="child"
         v-for="(child, i) in children"
         :key="i"
-        :reverse="reverse"
         :active="i === activeIndex"
       />
     </div>

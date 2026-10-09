@@ -42,7 +42,8 @@ describe('components/tabs/tab/RuiTab.vue', () => {
       },
     });
     const elem = wrapper.find('button');
-    expect(elem.attributes('data-variant')).toBe('text');
+    expect(elem.attributes('data-variant')).toBe('underline');
+    expect(elem.attributes('type')).toBe('button');
     expect(elem.text()).toContain('prepend');
     expect(elem.find('span').text()).toContain(label);
   });
@@ -176,7 +177,28 @@ describe('components/tabs/tab/RuiTab.vue', () => {
     expect(wrapper.find('button').attributes('aria-selected')).toBe('false');
   });
 
-  it('should set tabindex to -1 for all tab variations', async () => {
+  it('should make only the active, enabled tab a tab stop', async () => {
+    wrapper = createWrapper({ props: { active: true } });
+    expect(wrapper.find('button').attributes('tabindex')).toBe('0');
+
+    await wrapper.setProps({ disabled: true });
+    expect(wrapper.find('button').attributes('tabindex')).toBe('-1');
+  });
+
+  it('should not emit click on a disabled link tab', async () => {
+    wrapper = createWrapper({ props: { link: true, to: '/tabs', disabled: true } });
+    const link = wrapper.find('a');
+    expect(link.attributes('aria-disabled')).toBe('true');
+    await link.trigger('click');
+    expect(wrapper.emitted('click')).toBeUndefined();
+  });
+
+  it('should take the segmented variant', () => {
+    wrapper = createWrapper({ props: { variant: 'segmented' } });
+    expect(wrapper.find('button').attributes('data-variant')).toBe('segmented');
+  });
+
+  it('should set tabindex to -1 for all inactive tab variations', async () => {
     let wrapper = createWrapper({ // starting with a disabled tab
       props: {
         disabled: true,

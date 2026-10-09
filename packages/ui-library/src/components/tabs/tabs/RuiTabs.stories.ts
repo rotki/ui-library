@@ -89,6 +89,7 @@ const meta = preview.meta({
     grow: { control: 'boolean', table: { category: 'State' } },
     indicatorPosition: { control: 'select', options: ['start', 'end'] },
     modelValue: { control: 'text' },
+    variant: { control: 'select', options: ['underline', 'segmented'] },
     vertical: { control: 'boolean', table: { category: 'State' } },
   },
   component: RuiTabs,
@@ -162,6 +163,86 @@ export const IndicatorPositionOnLeft = meta.story({
     indicatorPosition: 'start',
     vertical: true,
   },
+});
+
+export const KeyboardNavigation = meta.story({
+  args: {},
+  async play({ canvas, userEvent }) {
+    const tab1 = canvas.getByRole('tab', { name: /Tab 1/ });
+    await expect(tab1).toHaveAttribute('tabindex', '0');
+    tab1.focus();
+    // Tab 2 is disabled, so the arrow skips to Tab 3
+    await userEvent.keyboard('{ArrowRight}');
+    const tab3 = canvas.getByRole('tab', { name: 'Tab 3' });
+    await expect(tab3).toHaveFocus();
+    await expect(tab3).toHaveAttribute('aria-selected', 'true');
+    await userEvent.keyboard('{End}');
+    await expect(canvas.getByRole('tab', { name: /Tab 9/ })).toHaveAttribute('aria-selected', 'true');
+    await userEvent.keyboard('{Home}');
+    await expect(tab1).toHaveAttribute('aria-selected', 'true');
+  },
+});
+
+/**
+ * A segmented control: a few short options that switch a view in place.
+ *
+ * @param args - the story args
+ */
+function renderSegmented(args: ComponentPropsAndSlots<typeof RuiTabs>) {
+  return {
+    components: { RuiCard, RuiTab, RuiTabItem, RuiTabItems: RuiTabItems<number>, RuiTabs },
+    setup() {
+      const modelValue = ref<number | string>(0);
+      const ranges = ['1D', '1W', '1M', '1Y', 'All'];
+      return { args, modelValue, ranges };
+    },
+    template: `
+    <div class="flex gap-4" :class="args.vertical ? 'flex-row' : 'flex-col items-start'">
+      <RuiTabs v-bind="args" v-model="modelValue">
+        <RuiTab v-for="range in ranges" :key="range">{{ range }}</RuiTab>
+      </RuiTabs>
+      <RuiTabItems v-model="modelValue" class="w-full">
+        <RuiTabItem v-for="range in ranges" :key="range"><RuiCard>Balances over {{ range }}</RuiCard></RuiTabItem>
+      </RuiTabItems>
+    </div>
+  `,
+  };
+}
+
+export const Segmented = meta.story({
+  args: { variant: 'segmented' },
+  render: renderSegmented,
+  async play({ canvas, userEvent }) {
+    const week = canvas.getByRole('tab', { name: '1W' });
+    await userEvent.click(week);
+    await expect(week).toHaveAttribute('aria-selected', 'true');
+    await expect(week).toHaveAttribute('data-variant', 'segmented');
+  },
+});
+
+export const SegmentedGrow = meta.story({
+  args: { class: 'w-[420px]', grow: true, variant: 'segmented' },
+  render: renderSegmented,
+});
+
+export const SegmentedVertical = meta.story({
+  args: { class: 'w-[120px]', variant: 'segmented', vertical: true },
+  render: renderSegmented,
+});
+
+export const SegmentedWithIcons = meta.story({
+  args: { variant: 'segmented' },
+  render: args => ({
+    components: { RuiIcon, RuiTab, RuiTabs },
+    setup() {
+      return { args };
+    },
+    template: `
+      <RuiTabs v-bind="args">
+        <RuiTab><template #prepend><RuiIcon name="lu-list" /></template>List</RuiTab>
+        <RuiTab><template #prepend><RuiIcon name="lu-layout-grid" /></template>Grid</RuiTab>
+      </RuiTabs>`,
+  }),
 });
 
 export default meta;

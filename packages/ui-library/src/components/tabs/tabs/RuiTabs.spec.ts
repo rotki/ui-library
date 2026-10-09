@@ -200,6 +200,69 @@ describe('components/tabs/tabs/RuiTabs.vue', () => {
     expect(tabs[3]!.attributes('aria-selected')).toBe('false');
   });
 
+  it('should move and select with the arrow keys, Home and End', async () => {
+    const modelValue = ref<number | string>(0);
+    wrapper = createWrapper({
+      attachTo: document.body,
+      props: {
+        'modelValue': get(modelValue),
+        'onUpdate:modelValue': async (e: number | string) => {
+          set(modelValue, e);
+          await wrapper.setProps({ modelValue: e });
+        },
+      },
+    });
+
+    await nextTick();
+    const tabs = (): Element[] => wrapper.findAll('[role=tab]').map(tab => tab.element);
+    /** Sends a key to the focused tab, from where it bubbles to the tablist. */
+    const press = async (key: string): Promise<void> => {
+      document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
+      await nextTick();
+    };
+
+    wrapper.find<HTMLElement>('[role=tab]').element.focus();
+
+    await press('ArrowRight');
+    expect(get(modelValue)).toBe(1);
+    expect(document.activeElement).toBe(tabs()[1]);
+
+    await press('End');
+    expect(get(modelValue)).toBe(3);
+
+    // wraps around from the last tab
+    await press('ArrowRight');
+    expect(get(modelValue)).toBe(0);
+
+    await press('ArrowLeft');
+    expect(get(modelValue)).toBe(3);
+
+    await press('Home');
+    expect(get(modelValue)).toBe(0);
+  });
+
+  it('should render one indicator outside the tablist', async () => {
+    wrapper = createWrapper();
+    await nextTick();
+    await nextTick();
+
+    expect(wrapper.findAll('[data-id=tabs-indicator]')).toHaveLength(1);
+    expect(wrapper.find('[role=tablist] [data-id=tabs-indicator]').exists()).toBe(false);
+  });
+
+  it('should pass the variant to the tabs', async () => {
+    wrapper = createWrapper({ props: { variant: 'segmented' } });
+    await nextTick();
+
+    for (const tab of wrapper.findAll('[role=tab]'))
+      expect(tab.attributes('data-variant')).toBe('segmented');
+  });
+
+  it('should mark a vertical tablist', () => {
+    wrapper = createWrapper({ props: { vertical: true } });
+    expect(wrapper.find('[role=tablist]').attributes('aria-orientation')).toBe('vertical');
+  });
+
   it('should update aria-selected when tab changes', async () => {
     const modelValue = ref<number>();
     wrapper = createWrapper({

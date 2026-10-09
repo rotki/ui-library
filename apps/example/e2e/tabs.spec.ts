@@ -89,4 +89,47 @@ test.describe('tabs', () => {
     await tablist.locator('[role=tab]:first-child').click();
     await expect(tabcontent).toHaveText('Tab 1 Content');
   });
+
+  test('should move between enabled tabs with the arrow keys', async ({ page }) => {
+    const wrapper = page.locator('[data-id=wrapper-0]');
+    const tabs = wrapper.locator('[data-id=tabs] [role=tab]');
+    const tabcontent = wrapper.locator('[data-id=tab-items]');
+
+    // only the selected tab is a tab stop
+    await expect(tabs.first()).toHaveAttribute('tabindex', '0');
+    await expect(tabs.nth(2)).toHaveAttribute('tabindex', '-1');
+
+    await tabs.first().focus();
+    // Tab 2 is disabled, so the arrow skips it
+    await page.keyboard.press('ArrowRight');
+    await expect(tabs.nth(2)).toBeFocused();
+    await expect(tabs.nth(2)).toHaveAttribute('aria-selected', 'true');
+    await expect(tabcontent).toHaveText('Tab 3 Content');
+
+    await page.keyboard.press('ArrowLeft');
+    await expect(tabs.first()).toHaveAttribute('aria-selected', 'true');
+  });
+
+  test('should slide the indicator to the selected tab', async ({ page }) => {
+    const wrapper = page.locator('[data-id=wrapper-0]');
+    const indicator = wrapper.getByTestId('tabs-indicator');
+    const third = wrapper.locator('[data-id=tabs] [role=tab]').nth(2);
+
+    await third.click();
+    await expect(async () => {
+      const [line, tab] = await Promise.all([indicator.boundingBox(), third.boundingBox()]);
+      expect(Math.round(line?.x ?? 0)).toBe(Math.round(tab?.x ?? -1));
+      expect(Math.round(line?.width ?? 0)).toBe(Math.round(tab?.width ?? -1));
+    }).toPass();
+  });
+
+  test('should render the segmented variant', async ({ page }) => {
+    const wrapper = page.locator('[data-id=wrapper-4]'); // the segmented sets follow the two underline colors
+    const tabs = wrapper.locator('[data-id=tabs] [role=tab]');
+
+    await expect(tabs.first()).toHaveAttribute('data-variant', 'segmented');
+    await tabs.nth(3).click();
+    await expect(tabs.nth(3)).toHaveAttribute('aria-selected', 'true');
+    await expect(wrapper.locator('[data-id=tab-items]')).toHaveText('Tab 4 Content');
+  });
 });
