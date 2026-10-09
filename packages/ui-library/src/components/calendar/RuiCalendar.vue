@@ -44,7 +44,7 @@ const calendarStyles = tv({
   variants: {
     // standalone it sits on the card surface; borderless it lives inside a menu
     bordered: {
-      true: 'bg-rui-surface rounded-rui-panel shadow-xs border border-rui-divider',
+      true: 'bg-rui-surface rounded-rui-panel border border-rui-divider',
       false: 'bg-rui-menu',
     },
   },

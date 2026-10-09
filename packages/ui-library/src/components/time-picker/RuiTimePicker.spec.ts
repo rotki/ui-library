@@ -142,12 +142,30 @@ describe('components/time-picker/RuiTimePicker.vue', () => {
       },
     });
 
-    const buttons = wrapper.findAll('[role="button"]');
+    const buttons = wrapper.findAll('button');
     const labels = buttons.map(b => b.attributes('aria-label'));
 
     expect(labels).toContain('Select hours');
     expect(labels).toContain('Select minutes');
     expect(labels).toContain('Toggle AM/PM');
+  });
+
+  it('should mark the part being edited as pressed and switch with a click', async () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: new Date(2023, 0, 1, 10, 30),
+      },
+    });
+
+    const hours = wrapper.find('button[aria-label="Select hours"]');
+    const minutes = wrapper.find('button[aria-label="Select minutes"]');
+    expect(hours.attributes('type')).toBe('button');
+    expect(hours.attributes('aria-pressed')).toBe('true');
+    expect(minutes.attributes('aria-pressed')).toBe('false');
+
+    await minutes.trigger('click');
+    expect(minutes.attributes('aria-pressed')).toBe('true');
+    expect(wrapper.find('[role="listbox"]').attributes('aria-label')).toBe('Select minute');
   });
 
   it('should display midnight hour as 12', async () => {

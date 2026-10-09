@@ -8,9 +8,21 @@ test.describe('timepickers', () => {
   test('should render timepicker with initial values', async ({ page }) => {
     await expect(page.locator('h2[data-id=timepickers]')).toContainText('Time Pickers');
 
-    await expect(page.locator('[role=button][aria-label^="Select"]', { hasText: '08' }).first()).toBeVisible();
-    await expect(page.locator('[role=button][aria-label^="Select"]', { hasText: '20' }).first()).toBeVisible();
+    await expect(page.locator('button[aria-label^="Select"]', { hasText: '08' }).first()).toBeVisible();
+    await expect(page.locator('button[aria-label^="Select"]', { hasText: '20' }).first()).toBeVisible();
     await expect(page.getByText('PM').first()).toBeVisible();
+  });
+
+  test('should mark the digit being edited as pressed', async ({ page }) => {
+    const picker = page.locator('[data-id=timepicker-0]');
+    const hours = picker.getByRole('button', { name: 'Select hours' });
+    const minutes = picker.getByRole('button', { name: 'Select minutes' });
+
+    await expect(hours).toHaveAttribute('aria-pressed', 'true');
+    await minutes.focus();
+    await page.keyboard.press('Enter');
+    await expect(minutes).toHaveAttribute('aria-pressed', 'true');
+    await expect(hours).toHaveAttribute('aria-pressed', 'false');
   });
 
   test('should be able to select time', async ({ page }) => {
@@ -18,8 +30,8 @@ test.describe('timepickers', () => {
     await picker.locator('.rui-hour-06').click();
     await picker.locator('.rui-minute-30').click();
 
-    await expect(picker.locator('[role=button][aria-label^="Select"]', { hasText: '06' })).toBeVisible();
-    await expect(picker.locator('[role=button][aria-label^="Select"]', { hasText: '30' })).toBeVisible();
+    await expect(picker.locator('button[aria-label^="Select"]', { hasText: '06' })).toBeVisible();
+    await expect(picker.locator('button[aria-label^="Select"]', { hasText: '30' })).toBeVisible();
     await expect(picker.getByText('PM')).toBeVisible();
   });
 
@@ -38,7 +50,7 @@ test.describe('timepickers', () => {
     const picker = page.locator('[data-id=timepicker-1]');
 
     // Second picker has accuracy='second', should show seconds digit
-    const digits = picker.locator('[role=button][aria-label="Select seconds"]');
+    const digits = picker.locator('button[aria-label="Select seconds"]');
     await expect(digits).toBeVisible();
     await expect(digits).toContainText('45');
   });
@@ -82,7 +94,7 @@ test.describe('timepickers', () => {
     await expect(clockFace).toHaveAttribute('aria-label', 'Select minute');
 
     // The hour digit takes the face back to hour mode
-    await picker.locator('[role=button][aria-label="Select hours"]').click();
+    await picker.locator('button[aria-label="Select hours"]').click();
     await expect(clockFace).toHaveAttribute('aria-label', 'Select hour');
   });
 
@@ -91,15 +103,15 @@ test.describe('timepickers', () => {
     const clockFace = picker.locator('[role=listbox]');
 
     // Click minutes digit selector
-    await picker.locator('[role=button][aria-label="Select minutes"]').click();
+    await picker.locator('button[aria-label="Select minutes"]').click();
     await expect(clockFace).toHaveAttribute('aria-label', 'Select minute');
 
     // Click seconds digit selector
-    await picker.locator('[role=button][aria-label="Select seconds"]').click();
+    await picker.locator('button[aria-label="Select seconds"]').click();
     await expect(clockFace).toHaveAttribute('aria-label', 'Select second');
 
     // Click hours digit selector
-    await picker.locator('[role=button][aria-label="Select hours"]').click();
+    await picker.locator('button[aria-label="Select hours"]').click();
     await expect(clockFace).toHaveAttribute('aria-label', 'Select hour');
   });
 });

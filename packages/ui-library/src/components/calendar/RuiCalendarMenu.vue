@@ -40,20 +40,18 @@ const startYear = ref<number>(viewYear - 6);
 const months = getShortMonthNames();
 const calendarState = inject<RuiCalendarState>(CalendarStateSymbol) as RuiCalendarState;
 
-const navButtonClass = 'p-1 rounded-full text-rui-neutral-500 hover:text-rui-primary hover:bg-rui-neutral-100 dark:text-rui-neutral-400 dark:hover:bg-rui-neutral-600 dark:hover:text-rui-primary';
-
 const cellButton = tv({
-  base: 'h-9 w-full flex items-center justify-center text-sm font-medium rounded-md transition-colors duration-150 ease-in-out border-none outline-hidden cursor-pointer focus-visible:focus-ring',
+  base: 'h-9 w-full flex items-center justify-center text-sm font-medium rounded-rui-control transition-colors duration-150 ease-in-out border-none outline-hidden cursor-pointer focus-visible:focus-ring',
   variants: {
     selected: {
-      true: 'bg-rui-primary text-white hover:bg-rui-primary-darker active:bg-rui-primary-darker dark:bg-rui-primary dark:text-white dark:hover:bg-rui-primary-darker',
+      true: 'bg-rui-primary-fill text-rui-primary-foreground hover:bg-rui-primary-darker active:bg-rui-primary-darker',
     },
     inRange: {
-      true: 'text-rui-neutral-700 bg-transparent hover:bg-rui-neutral-100 active:bg-rui-neutral-200 dark:text-rui-neutral-300 dark:hover:bg-rui-neutral-700 dark:active:bg-rui-neutral-600',
-      false: 'opacity-50 cursor-not-allowed bg-transparent hover:bg-transparent active:bg-transparent dark:hover:bg-transparent dark:active:bg-transparent pointer-events-none text-rui-neutral-400 dark:text-rui-neutral-600',
+      true: 'text-rui-text bg-transparent hover:bg-rui-hover active:bg-rui-pressed',
+      false: 'cursor-not-allowed bg-transparent pointer-events-none text-rui-text-disabled',
     },
     selectedOutOfRange: {
-      true: 'bg-rui-neutral-300 text-rui-neutral-500 dark:bg-rui-neutral-600 dark:text-rui-neutral-400',
+      true: 'bg-rui-surface-muted text-rui-text-disabled',
     },
   },
 });
@@ -239,41 +237,38 @@ watch(
     :anchor-el="anchorEl"
     :options="MENU_OPTIONS"
   >
-    <div class="w-64 shadow-lg overflow-hidden">
-      <div class="flex items-center justify-center p-1 font-medium text-rui-neutral-800 dark:text-rui-neutral-200 border-b border-rui-divider cursor-pointer hover:bg-rui-neutral-100 dark:hover:bg-rui-neutral-700">
+    <div class="w-64 overflow-hidden">
+      <div class="flex items-center justify-between gap-1 border-b border-rui-divider px-1 pb-1 text-sm font-medium text-rui-text">
         <RuiButton
           type="button"
-          :class="navButtonClass"
           icon
+          size="sm"
+          aria-label="Previous"
           :disabled="!get(canGoToPrev)"
           variant="text"
           @click.stop="handlePrev()"
         >
-          <RuiIcon
-            name="lu-chevron-left"
-            size="20"
-          />
+          <RuiIcon name="lu-chevron-left" />
         </RuiButton>
 
-        <div
-          class="flex-1 text-center cursor-pointer"
+        <button
+          type="button"
+          class="flex-1 rounded-rui-control px-2 py-1 text-center transition-colors hover:bg-rui-hover outline-hidden focus-visible:focus-ring"
           @click.stop="toggleSelection()"
         >
           {{ get(title) }}
-        </div>
+        </button>
 
         <RuiButton
           type="button"
-          :class="navButtonClass"
           icon
+          size="sm"
+          aria-label="Next"
           :disabled="!get(canGoToNext)"
           variant="text"
           @click.stop="handleNext()"
         >
-          <RuiIcon
-            name="lu-chevron-right"
-            size="20"
-          />
+          <RuiIcon name="lu-chevron-right" />
         </RuiButton>
       </div>
 

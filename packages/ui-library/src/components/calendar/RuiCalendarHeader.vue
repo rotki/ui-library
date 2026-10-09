@@ -33,8 +33,6 @@ const anchorEl = ref<HTMLElement>();
 
 const calendarState = inject<RuiCalendarState>(CalendarStateSymbol) as RuiCalendarState;
 
-const navButtonClass = 'p-1 rounded-full text-rui-neutral-500 hover:text-rui-primary hover:bg-rui-neutral-100 dark:text-rui-neutral-400 dark:hover:bg-rui-neutral-600 dark:hover:text-rui-primary';
-
 const canGoToNext = computed<boolean>(() => {
   const { maxDate } = calendarState;
   if (!isDefined(maxDate)) {
@@ -56,7 +54,7 @@ const canGoToPrev = computed<boolean>(() => {
 });
 
 function handleTitleClick(e: Event): void {
-  set(anchorEl, (e.currentTarget as HTMLElement) ?? undefined);
+  set(anchorEl, e.currentTarget instanceof HTMLElement ? e.currentTarget : undefined);
   set(isMenuOpen, true);
 }
 
@@ -66,56 +64,61 @@ function handleDateSelection(selection: MonthYearSelection): void {
 </script>
 
 <template>
-  <div class="flex items-center justify-between px-4 py-3">
+  <div class="flex items-center justify-between px-3 py-2">
     <RuiButton
       type="button"
-      :class="navButtonClass"
       icon
+      size="sm"
       data-id="nav-prev"
+      aria-label="Previous month"
       :disabled="!canGoToPrev"
       variant="text"
       @click.stop="emit('prev-month')"
     >
-      <RuiIcon
-        name="lu-chevron-left"
-        size="20"
-      />
+      <RuiIcon name="lu-chevron-left" />
     </RuiButton>
 
-    <h3
-      class="font-medium text-rui-neutral-800 dark:text-rui-neutral-200 flex items-center cursor-pointer pl-8"
-      data-id="header-title"
-      @click.stop="handleTitleClick($event)"
-    >
-      {{ title }}
-      <RuiIcon
-        name="lu-chevron-down"
-        size="16"
-        class="ml-1"
-      />
-    </h3>
+    <!--
+      The title and its picker share the middle, so the picker's own wrapper is not a fourth flex item
+      that pulls the title off center. The month and year open the picker, so they are a button.
+    -->
+    <div class="flex min-w-0 flex-1 justify-center">
+      <button
+        type="button"
+        class="flex items-center gap-1 rounded-rui-control px-2 py-1 text-sm font-medium text-rui-text transition-colors hover:bg-rui-hover outline-hidden focus-visible:focus-ring"
+        data-id="header-title"
+        aria-haspopup="dialog"
+        :aria-expanded="isMenuOpen"
+        @click.stop="handleTitleClick($event)"
+      >
+        {{ title }}
+        <RuiIcon
+          name="lu-chevron-down"
+          size="14"
+          class="text-rui-text-secondary"
+        />
+      </button>
 
-    <RuiCalendarMenu
-      v-model="isMenuOpen"
-      :anchor-el="anchorEl"
-      :view-month="viewMonth"
-      :view-year="viewYear"
-      @select="handleDateSelection($event)"
-    />
+      <RuiCalendarMenu
+        v-model="isMenuOpen"
+        :anchor-el="anchorEl"
+        :view-month="viewMonth"
+        :view-year="viewYear"
+        @select="handleDateSelection($event)"
+      />
+    </div>
 
     <RuiButton
       type="button"
-      :class="navButtonClass"
       variant="text"
       icon
+      size="sm"
       data-id="nav-next"
+      aria-label="Next month"
       :disabled="!canGoToNext"
       @click.stop="emit('next-month')"
     >
-      <RuiIcon
-        name="lu-chevron-right"
-        size="20"
-      />
+      <RuiIcon name="lu-chevron-right" />
     </RuiButton>
   </div>
 </template>

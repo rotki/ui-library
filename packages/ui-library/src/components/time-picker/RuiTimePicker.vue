@@ -418,69 +418,71 @@ onMounted(() => {
     :class="ui.root({ bordered: !borderless })"
   >
     <div :class="ui.digitalDisplay()">
-      <div class="flex justify-center items-center gap-1">
-        <div
-          role="button"
+      <div :class="ui.time()">
+        <button
+          type="button"
           aria-label="Select hours"
+          :aria-pressed="editMode === 'hour'"
           :class="ui.digit({ active: editMode === 'hour' })"
           @click="editMode = 'hour'"
         >
           {{ formatValue(displayHour) }}
-        </div>
-        <div class="text-2xl font-semibold">
+        </button>
+        <div :class="ui.separator()">
           :
         </div>
-        <div
-          role="button"
+        <button
+          type="button"
           aria-label="Select minutes"
+          :aria-pressed="editMode === 'minute'"
           :class="ui.digit({ active: editMode === 'minute' })"
           @click="editMode = 'minute'"
         >
           {{ formatValue(selectedMinute) }}
-        </div>
+        </button>
         <div
           v-if="showSecond"
-          class="text-2xl font-semibold"
+          :class="ui.separator()"
         >
           :
         </div>
-        <div
+        <button
           v-if="showSecond"
-          role="button"
+          type="button"
           aria-label="Select seconds"
+          :aria-pressed="editMode === 'second'"
           :class="ui.digit({ active: editMode === 'second' })"
           @click="editMode = 'second'"
         >
           {{ formatValue(selectedSecond) }}
-        </div>
+        </button>
 
         <div
           v-if="showMillisecond"
-          class="text-lg font-semibold"
+          :class="ui.separator({ class: 'text-lg' })"
         >
           .
         </div>
 
-        <div
+        <button
           v-if="showMillisecond"
-          role="button"
+          type="button"
           aria-label="Select milliseconds"
-          :class="ui.digit({ active: editMode === 'millisecond', class: 'text-lg!' })"
+          :aria-pressed="editMode === 'millisecond'"
+          :class="ui.digit({ active: editMode === 'millisecond', class: 'text-lg' })"
           @click="editMode = 'millisecond'"
         >
           {{ formatValue(selectedMillisecond, 3) }}
-        </div>
-        <div class="text-xl">
-          <div
-            role="button"
-            aria-label="Toggle AM/PM"
-            class="rui-time-picker-period cursor-pointer"
-            @click="toggleAmPm()"
-          >
-            {{ period }}
-          </div>
-        </div>
+        </button>
       </div>
+      <button
+        type="button"
+        aria-label="Toggle AM/PM"
+        :class="ui.period()"
+        @click="toggleAmPm()"
+      >
+        {{ period }}
+      </button>
     </div>
 
     <div

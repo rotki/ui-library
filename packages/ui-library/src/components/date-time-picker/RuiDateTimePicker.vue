@@ -532,7 +532,7 @@ defineExpose({
     v-model="isOpen"
     v-bind="getRootAttrs($attrs, [])"
     :class="ui.wrapper({ class: cn($attrs.class) })"
-    :class-names="{ details: { 'px-0': !floating } }"
+    :class-names="{ details: { 'px-0': !floating }, content: 'p-0' }"
     :options="MENU_OPTIONS"
     :dense="dense"
     :hint="hint"
@@ -720,7 +720,13 @@ defineExpose({
         @set-today="setToday()"
         @clear="clear()"
       >
-        <slot name="menu-content" />
+        <!-- only when given, or the panel draws an empty third column with its divider -->
+        <template
+          v-if="$slots['menu-content']"
+          #default
+        >
+          <slot name="menu-content" />
+        </template>
       </RuiDateTimePickerMenu>
     </template>
   </RuiMenu>
