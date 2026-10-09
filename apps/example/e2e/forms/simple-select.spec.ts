@@ -13,13 +13,11 @@ test.describe('forms/SimpleSelect', () => {
     await expect(select).toHaveValue('Option 1');
   });
 
-  test('should render outlined variant', async ({ page }) => {
-    const wrapper = page.locator('[data-id=ss-outlined]');
-    const select = wrapper.locator('[data-id=select]');
+  test('should draw the field box like the other fields', async ({ page }) => {
+    const select = page.locator('[data-id=ss-default] [data-id=select]');
 
-    await expect(select).toBeVisible();
-    await expect(select).toHaveValue('Option 1');
-    await expect(select).toHaveClass(/border/);
+    await expect(select).toHaveCSS('height', '36px');
+    await expect(select).toHaveCSS('border-top-style', 'solid');
   });
 
   test('should change value on select', async ({ page }) => {
@@ -36,14 +34,6 @@ test.describe('forms/SimpleSelect', () => {
     const select = wrapper.locator('[data-id=select]');
 
     await expect(select).toBeDisabled();
-  });
-
-  test('should render disabled outlined variant', async ({ page }) => {
-    const wrapper = page.locator('[data-id=ss-disabled-outlined]');
-    const select = wrapper.locator('[data-id=select]');
-
-    await expect(select).toBeDisabled();
-    await expect(select).toHaveClass(/border/);
   });
 
   test('should have name attribute', async ({ page }) => {

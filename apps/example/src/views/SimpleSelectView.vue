@@ -6,9 +6,7 @@ const stringOptions: string[] = ['Option 1', 'Option 2', 'Option 3', 'Option 4',
 const numberOptions: number[] = [10, 20, 30, 40, 50];
 
 const defaultValue = ref<string>('Option 1');
-const outlinedValue = ref<string>('Option 1');
 const disabledValue = ref<string>('Option 1');
-const disabledOutlinedValue = ref<string>('Option 1');
 const namedValue = ref<string>('Option 1');
 const numberValue = ref<number>(10);
 </script>
@@ -34,19 +32,6 @@ const numberValue = ref<number>(10);
 
       <div>
         <h3 class="text-subtitle-1 mb-2">
-          Outlined
-        </h3>
-        <RuiSimpleSelect
-          v-model="outlinedValue"
-          :options="stringOptions"
-          label="Outlined select"
-          variant="outlined"
-          data-id="ss-outlined"
-        />
-      </div>
-
-      <div>
-        <h3 class="text-subtitle-1 mb-2">
           Disabled
         </h3>
         <RuiSimpleSelect
@@ -55,20 +40,6 @@ const numberValue = ref<number>(10);
           label="Disabled select"
           disabled
           data-id="ss-disabled"
-        />
-      </div>
-
-      <div>
-        <h3 class="text-subtitle-1 mb-2">
-          Disabled Outlined
-        </h3>
-        <RuiSimpleSelect
-          v-model="disabledOutlinedValue"
-          :options="stringOptions"
-          label="Disabled outlined select"
-          disabled
-          variant="outlined"
-          data-id="ss-disabled-outlined"
         />
       </div>
 

@@ -5,7 +5,7 @@ import preview from '~/.storybook/preview';
 
 type SimpleSelectProps = ComponentPropsAndSlots<typeof RuiSimpleSelect>;
 
-type SimpleSelectMetaArgs = Required<Pick<SimpleSelectProps, 'disabled' | 'options' | 'variant'>>;
+type SimpleSelectMetaArgs = Required<Pick<SimpleSelectProps, 'disabled' | 'options'>>;
 
 function render(args: SimpleSelectProps) {
   return {
@@ -31,17 +31,12 @@ const meta = preview.meta<typeof RuiSimpleSelect, Decorator, SimpleSelectMetaArg
   args: {
     disabled: false,
     options: Array.from(new Array(10), (_, i) => `Option ${i}`),
-    variant: 'default',
   },
   argTypes: {
     disabled: { control: 'boolean' },
     modelValue: { control: 'text' },
     name: { control: 'text' },
     options: { control: 'object' },
-    variant: {
-      control: 'select',
-      options: ['default', 'outlined'],
-    },
   },
   component: RuiSimpleSelect,
   parameters: {
@@ -66,25 +61,10 @@ export const Default = meta.story({
   },
 });
 
-export const DefaultDisabled = meta.story({
+export const Disabled = meta.story({
   args: {
     disabled: true,
     modelValue: 'Option 1',
-  },
-});
-
-export const Outlined = meta.story({
-  args: {
-    modelValue: 'Option 1',
-    variant: 'outlined',
-  },
-});
-
-export const OutlinedDisabled = meta.story({
-  args: {
-    disabled: true,
-    modelValue: 'Option 1',
-    variant: 'outlined',
   },
 });
 

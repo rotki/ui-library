@@ -61,16 +61,17 @@ describe('components/forms/select/RuiSimpleSelect.vue', () => {
     expect(optionElements[5]?.text()).toBe('Option 5');
   });
 
-  it('should render outlined variant', () => {
+  it('should always draw the field box', () => {
     wrapper = createWrapper({
       props: {
         modelValue: 'Option 0',
         options,
-        variant: 'outlined',
       },
     });
 
-    expect(wrapper.find('select').classes()).toContain('border');
+    const classes = wrapper.find('select').classes();
+    expect(classes).toContain('border');
+    expect(classes).toContain('h-9');
   });
 
   it('should render chevron icon', () => {
