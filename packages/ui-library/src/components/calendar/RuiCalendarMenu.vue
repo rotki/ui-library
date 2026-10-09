@@ -240,7 +240,7 @@ watch(
     :options="MENU_OPTIONS"
   >
     <div class="w-64 shadow-lg overflow-hidden">
-      <div class="flex items-center justify-center p-1 font-medium text-rui-neutral-800 dark:text-rui-neutral-200 border-b border-rui-grey-200 dark:border-rui-grey-800 cursor-pointer hover:bg-rui-grey-100 dark:hover:bg-rui-grey-800">
+      <div class="flex items-center justify-center p-1 font-medium text-rui-neutral-800 dark:text-rui-neutral-200 border-b border-rui-divider cursor-pointer hover:bg-rui-neutral-100 dark:hover:bg-rui-neutral-700">
         <RuiButton
           type="button"
           :class="navButtonClass"

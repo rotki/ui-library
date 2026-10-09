@@ -194,11 +194,7 @@ export function buildThemeCss(): string {
     '}',
     '',
     '@utility border-default {',
-    '  border-color: rgb(var(--rui-grey-200));',
-    '',
-    '  .dark & {',
-    '    border-color: rgb(var(--rui-grey-800));',
-    '  }',
+    '  border-color: var(--rui-divider);',
     '}',
     '',
     /*

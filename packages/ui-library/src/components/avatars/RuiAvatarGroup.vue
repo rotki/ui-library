@@ -51,7 +51,7 @@ provide(avatarGroupInjectionKey, computed(() => ({ size: get(resolvedSize), vari
 const groupStyles = tv({
   slots: {
     root: 'inline-flex items-center isolate',
-    item: 'relative ring-2 ring-white dark:ring-rui-grey-900 rounded-full',
+    item: 'relative ring-2 ring-rui-surface rounded-full',
   },
 });
 

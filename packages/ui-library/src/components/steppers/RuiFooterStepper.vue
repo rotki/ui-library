@@ -28,7 +28,7 @@ const {
 const footerStepper = {
   arrowButton: 'bg-white! !disabled:bg-white/60 dark:!disabled:bg-[rgb(50,50,50)]',
   bullet: tv({
-    base: 'rounded-full h-2 w-2 bg-black/26 dark:bg-white/30 transition-colors cursor-pointer hover:bg-rui-grey-300 dark:hover:bg-rui-grey-400',
+    base: 'rounded-full h-2 w-2 bg-black/26 dark:bg-white/30 transition-colors cursor-pointer hover:bg-rui-neutral-400 dark:hover:bg-rui-neutral-500',
     variants: {
       active: {
         true: 'bg-rui-primary dark:bg-rui-primary hover:bg-rui-primary dark:hover:bg-rui-primary',
@@ -36,7 +36,7 @@ const footerStepper = {
     },
   }),
   pill: tv({
-    base: 'rounded-full h-2 w-full bg-rui-grey-200 dark:bg-rui-grey-300 transition-colors',
+    base: 'rounded-full h-2 w-full bg-rui-neutral-200 dark:bg-rui-neutral-700 transition-colors',
     variants: {
       active: {
         true: 'bg-rui-primary dark:bg-rui-primary',

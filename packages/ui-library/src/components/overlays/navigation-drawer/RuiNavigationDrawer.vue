@@ -167,7 +167,7 @@ onClickOutside(content, () => {
         <div
           v-if="modelValue"
           data-id="overlay"
-          class="absolute inset-0 backdrop-blur-sm bg-rui-grey-500/50 dark:bg-black/50 z-10000"
+          class="absolute inset-0 backdrop-blur-sm bg-rui-neutral-950/40 dark:bg-black/60 z-10000"
           @click.stop="close()"
         />
       </Transition>

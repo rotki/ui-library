@@ -252,8 +252,7 @@ describe('components/forms/category-picker/RuiCategoryPicker.vue', () => {
 
     const footer = panel.querySelector<HTMLElement>('[data-id=footer-action]')?.parentElement;
     assertExists(footer);
-    expect(footer.className).toContain('bg-white');
-    expect(footer.className).toContain('dark:bg-rui-grey-900');
+    expect(footer.className).toContain('bg-rui-menu');
     // shrink-0 keeps the footer at its natural height inside the flex column.
     expect(footer.className).toContain('shrink-0');
   });

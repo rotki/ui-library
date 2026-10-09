@@ -390,7 +390,7 @@ export const ListVariantWithIcons = meta.story({
       return { args };
     },
     template: `
-      <div class="w-64 border border-rui-grey-200 dark:border-rui-grey-800 rounded-md overflow-hidden divide-y divide-rui-grey-200 dark:divide-rui-grey-800">
+      <div class="w-64 border border-rui-divider rounded-rui-panel overflow-hidden divide-y divide-rui-divider">
         <RuiButton v-bind="args" size="xs">
           <template #prepend><RuiIcon name="lu-settings" /></template>
           Extra small row

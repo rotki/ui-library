@@ -42,8 +42,8 @@ const textFields = ref<SliderData[]>([
     max: 2,
     showTicks: true,
     hideTrack: true,
-    sliderClass: '!bg-rui-grey-200 dark:!bg-rui-grey-800',
-    tickClass: '!bg-rui-grey-200 dark:!bg-rui-grey-800',
+    sliderClass: '!bg-rui-neutral-200 dark:!bg-rui-neutral-800',
+    tickClass: '!bg-rui-neutral-200 dark:!bg-rui-neutral-800',
     tickSize: 12,
   },
 
@@ -54,8 +54,8 @@ const textFields = ref<SliderData[]>([
     max: 2,
     showTicks: true,
     hideTrack: true,
-    sliderClass: '!bg-rui-grey-200 dark:!bg-rui-grey-800',
-    tickClass: '!bg-rui-grey-200 dark:!bg-rui-grey-800',
+    sliderClass: '!bg-rui-neutral-200 dark:!bg-rui-neutral-800',
+    tickClass: '!bg-rui-neutral-200 dark:!bg-rui-neutral-800',
     tickSize: 12,
   },
 ]);

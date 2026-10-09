@@ -130,7 +130,7 @@ const avatarStyles = tv({
       square: { root: 'rounded-none' },
     },
     color: {
-      default: { root: 'bg-rui-grey-200 text-rui-text dark:bg-rui-grey-800' },
+      default: { root: 'bg-rui-neutral-200 text-rui-text dark:bg-rui-neutral-700' },
       primary: { root: 'bg-rui-primary text-white' },
       secondary: { root: 'bg-rui-secondary text-white' },
       // in dark a status color's `main` is a text tone, so the fill is its deep `darker`

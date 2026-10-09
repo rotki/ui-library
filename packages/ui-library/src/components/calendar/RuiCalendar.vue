@@ -40,10 +40,12 @@ const viewYear = ref<number>(get(currentDate).getFullYear());
 const { isDark } = useRotkiTheme();
 
 const calendarStyles = tv({
-  base: 'w-75 bg-white dark:bg-rui-grey-900 overflow-hidden',
+  base: 'w-75 overflow-hidden',
   variants: {
+    // standalone it sits on the card surface; borderless it lives inside a menu
     bordered: {
-      true: 'rounded-rui-panel shadow-xs border border-rui-grey-200 dark:border-rui-grey-800',
+      true: 'bg-rui-surface rounded-rui-panel shadow-xs border border-rui-divider',
+      false: 'bg-rui-menu',
     },
   },
 });

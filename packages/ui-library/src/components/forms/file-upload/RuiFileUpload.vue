@@ -203,7 +203,7 @@ defineExpose({
   <div v-bind="getRootAttrs($attrs)">
     <div
       ref="wrapper"
-      class="p-4 border border-rui-grey-300 dark:border-rui-grey-800 rounded-rui-panel w-full relative border-dashed transition"
+      class="p-4 border border-rui-outline rounded-rui-panel w-full relative border-dashed transition"
       :class="{
         'border-rui-primary! bg-rui-primary/8': isOverDropZone && !disabled && !noDrop,
         'border-rui-error! border-solid! bg-rui-error/8': hasError,

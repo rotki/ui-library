@@ -135,7 +135,7 @@ const collapsedFull = ref<ExtendedUser[]>([]);
           <template #group.header="{ header, isOpen, toggle, colspan }">
             <td
               :colspan="colspan"
-              class="p-2 bg-rui-grey-100 dark:bg-rui-grey-800"
+              class="p-2 bg-rui-neutral-100 dark:bg-rui-neutral-800"
             >
               <RuiButton
                 size="sm"

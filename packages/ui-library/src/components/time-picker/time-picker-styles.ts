@@ -2,10 +2,10 @@ import { tv } from '@/utils/tv';
 
 export const timePickerStyles = tv({
   slots: {
-    root: 'bg-white overflow-hidden text-rui-text p-3 dark:bg-rui-grey-900',
+    root: 'overflow-hidden text-rui-text p-3',
     digitalDisplay: 'mb-2 text-center',
     digit: 'text-2xl font-semibold cursor-pointer',
-    clockFace: 'relative rounded-full w-64 h-64 mx-auto border border-rui-grey-200 dark:border-rui-grey-800',
+    clockFace: 'relative rounded-full w-64 h-64 mx-auto border border-rui-divider',
     centerDot: 'absolute rounded-full bg-rui-primary w-3 h-3',
     clockHand: 'absolute w-[1.5px] bg-rui-primary rounded-full',
     clockHandCircle: 'absolute border-2 border-rui-primary',
@@ -18,7 +18,10 @@ export const timePickerStyles = tv({
   variants: {
     bordered: {
       true: {
-        root: 'rounded-rui-panel shadow-xs border border-rui-grey-200 dark:border-rui-grey-800',
+        root: 'bg-rui-surface rounded-rui-panel shadow-xs border border-rui-divider',
+      },
+      false: {
+        root: 'bg-rui-menu',
       },
     },
     active: {

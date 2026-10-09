@@ -80,7 +80,7 @@ const actionConfig = computed<ActionConfig[]>(() => {
 
 <template>
   <div class="flex flex-col">
-    <div class="flex between:border-l between:border-r-0 between:border-rui-grey-200 dark:between:border-rui-grey-800">
+    <div class="flex between:border-l between:border-r-0 between:border-rui-divider">
       <RuiCalendar
         v-model="selectedDate"
         v-model:menu-open="calendarMenuOpen"
@@ -116,7 +116,7 @@ const actionConfig = computed<ActionConfig[]>(() => {
     <div
       v-if="actionConfig.length > 0"
       data-id="actions"
-      class="flex justify-end gap-1 px-3 py-2 border-t border-rui-grey-200 dark:border-rui-grey-800"
+      class="flex justify-end gap-1 px-3 py-2 border-t border-rui-divider"
     >
       <RuiButton
         v-for="action in actionConfig"
