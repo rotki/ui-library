@@ -102,8 +102,13 @@
   --rui-dark-overlay: var(--rui-neutral-800);
   --rui-light-divider: rgba(9, 9, 11, 0.1);
   --rui-dark-divider: rgba(250, 250, 250, 0.1);
-  --rui-light-outline: rgba(9, 9, 11, 0.18);
-  --rui-dark-outline: rgba(250, 250, 250, 0.16);
+  /*
+   * The edge that identifies a control (a field, an outlined button, a switch track): 3:1 against
+   * the page, the card and the menu in both themes, as WCAG 1.4.11 asks. Decorative lines use the
+   * lighter divider.
+   */
+  --rui-light-outline: rgba(9, 9, 11, 0.46);
+  --rui-dark-outline: rgba(250, 250, 250, 0.36);
   --rui-light-surface-muted: var(--rui-neutral-100);
   --rui-dark-surface-muted: var(--rui-neutral-800);
   --rui-light-surface-sunken: var(--rui-neutral-50);
@@ -135,26 +140,29 @@
   --rui-info-foreground: 255, 255, 255;
   --rui-success-foreground: 255, 255, 255;
   /*
-   * The chart palette: indigo, teal, orange, magenta, green, violet, blue and ochre, at even weight
-   * so no series looks primary by accident. Dark lifts each one to read on a near-black plot.
+   * The chart palette: indigo (the brand), orange, teal, pink, violet, sky, lime and plum. Each hue
+   * sits at the lightness where it looks clean, warm hues lighter and cool ones deeper, and every
+   * series clears 3:1 on its surface. Red and green stay out so no series reads as an error or a
+   * success; orange and sky are brighter than warning and info. The first four alternate warm and
+   * cool, so a chart with few series gets the most distinct colors.
    */
-  --rui-light-chart-1: 78, 91, 166;
-  --rui-light-chart-2: 13, 138, 138;
-  --rui-light-chart-3: 214, 122, 30;
-  --rui-light-chart-4: 176, 64, 120;
-  --rui-light-chart-5: 88, 140, 40;
-  --rui-light-chart-6: 120, 90, 190;
-  --rui-light-chart-7: 40, 125, 195;
-  --rui-light-chart-8: 165, 130, 35;
-  --rui-light-chart-other: var(--rui-neutral-400);
-  --rui-dark-chart-1: 129, 140, 220;
-  --rui-dark-chart-2: 45, 190, 185;
-  --rui-dark-chart-3: 240, 160, 80;
-  --rui-dark-chart-4: 225, 110, 165;
-  --rui-dark-chart-5: 130, 190, 80;
-  --rui-dark-chart-6: 165, 140, 235;
-  --rui-dark-chart-7: 95, 170, 235;
-  --rui-dark-chart-8: 215, 180, 80;
+  --rui-light-chart-1: 81, 95, 184;
+  --rui-light-chart-2: 228, 108, 29;
+  --rui-light-chart-3: 15, 148, 133;
+  --rui-light-chart-4: 200, 77, 131;
+  --rui-light-chart-5: 127, 85, 198;
+  --rui-light-chart-6: 43, 136, 192;
+  --rui-light-chart-7: 110, 156, 20;
+  --rui-light-chart-8: 120, 57, 118;
+  --rui-light-chart-other: var(--rui-neutral-500);
+  --rui-dark-chart-1: 138, 156, 252;
+  --rui-dark-chart-2: 254, 160, 110;
+  --rui-dark-chart-3: 95, 213, 195;
+  --rui-dark-chart-4: 254, 137, 183;
+  --rui-dark-chart-5: 185, 152, 253;
+  --rui-dark-chart-6: 127, 202, 254;
+  --rui-dark-chart-7: 169, 219, 97;
+  --rui-dark-chart-8: 199, 131, 196;
   --rui-dark-chart-other: var(--rui-neutral-500);
   /* The `rui-scrollbar` thumb, a step darker on hover and press. */
   --rui-light-scrollbar-thumb: rgb(var(--rui-neutral-300));

@@ -86,9 +86,8 @@
 }
 
 /*
- * Tailwind 3 preflight defaults that Tailwind 4 changed, kept so components and
- * consumer markup look the same after the move. The colors are Tailwind 3's
- * gray-200 and gray-400 as hex: Tailwind 4's grays are oklch and slightly off.
+ * Preflight defaults that Tailwind 4 changed. A bare `border` takes the adaptive divider, where
+ * Tailwind 3's fixed gray-200 drew a bright line in dark mode.
  */
 @layer base {
   *,
@@ -96,12 +95,18 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: #e5e7eb;
+    border-color: var(--rui-divider);
   }
 
+  /* 4.8:1 on white and 6.9:1 on the dark card; Tailwind 3's gray-400 was 2.5:1, below WCAG AA */
   input::placeholder,
   textarea::placeholder {
-    color: #9ca3af;
+    color: rgb(var(--rui-neutral-500));
+  }
+
+  :is(.dark, [data-theme='dark']) input::placeholder,
+  :is(.dark, [data-theme='dark']) textarea::placeholder {
+    color: rgb(var(--rui-neutral-400));
   }
 
   button:not(:disabled),

@@ -48,7 +48,8 @@ const stepper = tv({
     title: '',
     subtitle: '',
     label: 'flex flex-col items-start text-left ml-2',
-    divider: 'border-rui-outline',
+    // the connector is decoration, so it takes the light divider rather than a control's edge
+    divider: 'border-rui-divider',
   },
   variants: {
     orientation: {

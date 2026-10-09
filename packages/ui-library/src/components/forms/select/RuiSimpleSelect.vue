@@ -23,9 +23,9 @@ const selectClass = tv({
   base: [
     'appearance-none cursor-pointer m-0 w-full h-9 pl-3 pr-8 rounded-rui-control [font:inherit] text-sm text-rui-text',
     'border border-rui-outline bg-transparent transition-colors',
-    'hover:border-rui-neutral-400 dark:hover:border-rui-neutral-500',
+    'hover:border-rui-neutral-500 dark:hover:border-rui-neutral-400',
     'outline-hidden focus-visible:border-rui-primary focus-visible:ring-3 focus-visible:ring-rui-primary/20',
-    'disabled:cursor-default disabled:border-rui-outline disabled:bg-rui-neutral-50 disabled:text-rui-text-disabled',
+    'disabled:cursor-default disabled:border-rui-divider disabled:bg-rui-neutral-50 disabled:text-rui-text-disabled',
     'dark:disabled:bg-rui-neutral-900',
   ].join(' '),
 });

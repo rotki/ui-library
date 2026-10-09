@@ -116,7 +116,7 @@ export const buttonStyles = tv({
     // the same hover and pressed tints as a highlighted menu option
     { color: 'grey', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-hover active:bg-rui-pressed dark:bg-transparent dark:text-rui-text' } },
     { color: 'grey', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-rui-pressed dark:bg-rui-pressed' } },
-    // Material's 23% outline: at full strength a neutral edge reads as an error state next to the 50% context colours
+    // the shared control edge, 3:1 against the page like the 50% context colours beside it
     { color: 'grey', variant: 'outlined', class: { root: 'inset-ring-rui-outline' } },
     { color: 'grey', variant: 'text', class: { root: 'text-rui-text-secondary' } },
 

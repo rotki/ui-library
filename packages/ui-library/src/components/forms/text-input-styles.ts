@@ -22,14 +22,15 @@ export const textInputBase = tv({
     ].join(' '),
   },
   variants: {
+    // a step past the 3:1 resting edge; a disabled field drops to the divider, as nothing to act on
     hovered: {
-      true: { fieldset: 'border-rui-neutral-400 dark:border-rui-neutral-500' },
+      true: { fieldset: 'border-rui-neutral-500 dark:border-rui-neutral-400' },
     },
     focused: {
       true: { fieldset: 'ring-3 ring-rui-primary/20' },
     },
     disabled: {
-      true: { fieldset: '!border-rui-outline' },
+      true: { fieldset: '!border-rui-divider' },
     },
     validation: {
       error: { fieldset: '!border-rui-error ring-rui-error/20' },
@@ -101,7 +102,7 @@ export const activatorStyles = tv({
       true: {
         activator: 'bg-rui-neutral-50 dark:bg-rui-neutral-900 text-rui-text-disabled dark:text-rui-text-disabled active:text-rui-text-disabled cursor-default pointer-events-none',
         icon: 'text-rui-text-disabled',
-        fieldset: '!border-rui-outline',
+        fieldset: '!border-rui-divider',
       },
     },
     readonly: {
@@ -109,7 +110,7 @@ export const activatorStyles = tv({
       true: { activator: 'opacity-80 pointer-events-none cursor-default bg-rui-surface-sunken' },
     },
     hovered: {
-      true: { fieldset: 'border-rui-neutral-400 dark:border-rui-neutral-500' },
+      true: { fieldset: 'border-rui-neutral-500 dark:border-rui-neutral-400' },
     },
     opened: {
       true: {

@@ -41,19 +41,19 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
         color: 'primary',
       },
     });
-    expectToHaveClass(wrapper.element, /^between:border-rui-outline$/);
+    expectToHaveClass(wrapper.element, /^between:border-rui-divider$/);
     expectWrapperToHaveClass(wrapper, 'button', /bg-rui-primary/);
 
     await wrapper.setProps({ color: 'secondary' });
-    expectToHaveClass(wrapper.element, /^between:border-rui-outline$/);
+    expectToHaveClass(wrapper.element, /^between:border-rui-divider$/);
     expectWrapperToHaveClass(wrapper, 'button', /bg-rui-secondary/);
 
     await wrapper.setProps({ color: 'error' });
-    expectToHaveClass(wrapper.element, /^between:border-rui-outline$/);
+    expectToHaveClass(wrapper.element, /^between:border-rui-divider$/);
     expectWrapperToHaveClass(wrapper, 'button', /bg-rui-error/);
 
     await wrapper.setProps({ color: 'success' });
-    expectToHaveClass(wrapper.element, /^between:border-rui-outline$/);
+    expectToHaveClass(wrapper.element, /^between:border-rui-divider$/);
     expectWrapperToHaveClass(wrapper, 'button', /bg-rui-success/);
   });
 

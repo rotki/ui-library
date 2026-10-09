@@ -37,7 +37,8 @@ const slots = useSlots();
 
 const buttonGroupStyles = tv({
   slots: {
-    root: 'inline-flex rounded-rui-control between:border-l between:border-r-0 between:border-rui-outline outline-solid outline-1 outline-transparent -outline-offset-1',
+    // between filled buttons a separator only needs to part the fills, so it takes the light divider
+    root: 'inline-flex rounded-rui-control between:border-l between:border-r-0 between:border-rui-divider outline-solid outline-1 outline-transparent -outline-offset-1',
     button: 'border-0 inset-ring-0 focus:z-1',
   },
   variants: {
@@ -68,7 +69,7 @@ const buttonGroupStyles = tv({
     variant: {
       default: {},
       outlined: {
-        // Material's 23% neutral edge, matching RuiButton's colourless outlined treatment
+        // the control edge, matching RuiButton's colourless outlined treatment
         root: 'outline-rui-outline between:border-rui-outline',
       },
       text: {},
