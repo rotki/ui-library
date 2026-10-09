@@ -4,73 +4,62 @@ import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { StepperState } from '@/types/stepper';
 import { tv } from '@/utils/tv';
 
-interface StateIconProps {
-  name: RuiIcons;
-  class?: string;
-  size?: number;
-}
-
-const { state = StepperState.inactive, index } = defineProps<{
+const { state = StepperState.inactive, index, size = 'md' } = defineProps<{
   state?: StepperState;
   index: number;
+  /** md is 24px, the default stepper; lg is 32px, the `custom` one */
+  size?: 'md' | 'lg';
 }>();
 
-const stateIconMap: Partial<Record<StepperState, StateIconProps>> = {
-  [StepperState.done]: { name: 'lu-check', class: 'text-rui-dark-text dark:text-rui-light-text', size: 20 },
-  [StepperState.success]: { name: 'lu-circle-check' },
-  [StepperState.error]: { name: 'lu-circle-alert' },
-  [StepperState.warning]: { name: 'lu-triangle-alert' },
-  [StepperState.info]: { name: 'lu-info' },
+const statusIcons: Partial<Record<StepperState, RuiIcons>> = {
+  [StepperState.success]: 'lu-circle-check',
+  [StepperState.error]: 'lu-circle-alert',
+  [StepperState.warning]: 'lu-triangle-alert',
+  [StepperState.info]: 'lu-info',
 };
 
+/**
+ * The step marker: an outlined number ahead, a filled number with a soft halo
+ * for the current step, and a tinted check behind. A status state shows its
+ * icon at full size in the step's own color.
+ */
 const stepperIcon = tv({
-  slots: {
-    indicator: 'inline-flex items-center justify-center rounded-full h-6 w-6',
-    label: 'text-rui-dark-text',
-  },
+  base: 'inline-flex shrink-0 items-center justify-center rounded-full font-semibold tabular-nums transition-colors',
   variants: {
+    size: {
+      md: 'size-6 text-xs [--rui-icon-size:0.875rem]',
+      lg: 'size-8 text-sm [--rui-icon-size:1rem]',
+    },
     state: {
-      [StepperState.inactive]: {
-        indicator: 'bg-current text-xs',
-        label: 'dark:text-rui-light-text-secondary',
-      },
-      [StepperState.active]: {
-        indicator: 'bg-rui-primary text-xs',
-        label: 'dark:text-rui-light-text',
-      },
-      [StepperState.done]: {
-        indicator: 'bg-rui-primary text-xs',
-        label: 'dark:text-rui-light-text',
-      },
-      [StepperState.error]: {},
-      [StepperState.warning]: {},
-      [StepperState.info]: {},
-      [StepperState.success]: {},
+      [StepperState.inactive]: 'border border-rui-outline bg-rui-surface text-rui-text-secondary',
+      [StepperState.active]: 'bg-rui-primary-fill text-rui-primary-foreground ring-4 ring-rui-primary-soft',
+      [StepperState.done]: 'bg-rui-primary-soft text-rui-primary dark:text-rui-primary-lighter',
+      [StepperState.error]: '',
+      [StepperState.warning]: '',
+      [StepperState.info]: '',
+      [StepperState.success]: '',
+    },
+    status: {
+      true: '![--rui-icon-size:100%]',
+      false: '',
     },
   },
-  defaultVariants: { state: StepperState.inactive },
+  defaultVariants: { size: 'md', state: StepperState.inactive, status: false },
 });
 
-const ui = computed<ReturnType<typeof stepperIcon>>(() => stepperIcon({ state }));
-
-const showLabel = computed<boolean>(() => state === StepperState.inactive || state === StepperState.active);
-
-const iconProps = computed<StateIconProps | undefined>(() => stateIconMap[state]);
+const statusIcon = computed<RuiIcons | undefined>(() => statusIcons[state]);
 </script>
 
 <template>
-  <span :class="ui.indicator()">
-    <span
-      v-if="showLabel"
-      :class="ui.label()"
-    >
-      {{ index }}
-    </span>
+  <span :class="stepperIcon({ size, state, status: !!statusIcon })">
     <RuiIcon
-      v-else-if="iconProps"
-      :name="iconProps.name"
-      :class="iconProps.class"
-      :size="iconProps.size"
+      v-if="state === StepperState.done"
+      name="lu-check"
     />
+    <RuiIcon
+      v-else-if="statusIcon"
+      :name="statusIcon"
+    />
+    <span v-else>{{ index }}</span>
   </span>
 </template>

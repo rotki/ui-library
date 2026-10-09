@@ -26,17 +26,20 @@ const {
 } = defineProps<Props>();
 
 const footerStepper = {
-  arrowButton: 'bg-white! !disabled:bg-white/60 dark:!disabled:bg-[rgb(50,50,50)]',
+  // the current bullet stretches into a short bar, so position reads without relying on color
   bullet: tv({
-    base: 'rounded-full h-2 w-2 bg-black/26 dark:bg-white/30 transition-colors cursor-pointer hover:bg-rui-neutral-400 dark:hover:bg-rui-neutral-500',
+    base: [
+      'h-2 w-2 rounded-full bg-rui-neutral-300 transition-[width,background-color] duration-200 ease-out dark:bg-rui-neutral-600',
+      'hover:bg-rui-neutral-400 dark:hover:bg-rui-neutral-500 focus-visible:focus-ring outline-hidden',
+    ].join(' '),
     variants: {
       active: {
-        true: 'bg-rui-primary dark:bg-rui-primary hover:bg-rui-primary dark:hover:bg-rui-primary',
+        true: 'w-5 bg-rui-primary hover:bg-rui-primary dark:bg-rui-primary dark:hover:bg-rui-primary',
       },
     },
   }),
   pill: tv({
-    base: 'rounded-full h-2 w-full bg-rui-neutral-200 dark:bg-rui-neutral-700 transition-colors',
+    base: 'rounded-full h-1.5 w-full bg-rui-neutral-200 dark:bg-rui-neutral-700 transition-colors',
     variants: {
       active: {
         true: 'bg-rui-primary dark:bg-rui-primary',
@@ -88,44 +91,42 @@ function onClick(index: number): void {
       <RuiButton
         v-if="!hideButtons"
         aria-label="Previous"
-        :class="arrowButtons ? footerStepper.arrowButton : undefined"
         :disabled="modelValue <= 1"
         :icon="arrowButtons"
+        :size="arrowButtons ? 'sm' : undefined"
         :variant="arrowButtons ? 'outlined' : 'text'"
-        color="primary"
+        :color="arrowButtons ? undefined : 'primary'"
         @click="onPrev()"
       >
         <template
           v-if="!arrowButtons"
           #prepend
         >
-          <RuiIcon
-            :size="18"
-            name="lu-chevron-left"
-          />
+          <RuiIcon name="lu-chevron-left" />
         </template>
         <span v-if="!arrowButtons">Back</span>
         <RuiIcon
           v-else
-          :size="24"
-          name="lu-arrow-left"
+          name="lu-chevron-left"
         />
       </RuiButton>
       <span
         v-if="variantProp === FooterStepperVariant.numeric"
         data-id="numeric"
-        class="text-rui-text"
+        class="text-sm tabular-nums text-rui-text-secondary"
       >
         {{ modelValue }}/{{ pages }}
       </span>
       <div
         v-else-if="variantProp === FooterStepperVariant.bullet"
         data-id="bullets"
-        class="flex gap-x-1"
+        class="flex items-center gap-x-1.5"
       >
-        <span
+        <button
           v-for="i in pages"
           :key="i"
+          type="button"
+          :aria-label="`Step ${i}`"
           :aria-current="modelValue === i ? 'step' : undefined"
           :class="footerStepper.bullet({ active: modelValue === i })"
           @click="onClick(i)"
@@ -140,27 +141,23 @@ function onClick(index: number): void {
       <RuiButton
         v-if="!hideButtons"
         aria-label="Next"
-        :class="arrowButtons ? footerStepper.arrowButton : undefined"
         :disabled="modelValue >= pages"
         :icon="arrowButtons"
+        :size="arrowButtons ? 'sm' : undefined"
         :variant="arrowButtons ? 'outlined' : 'text'"
-        color="primary"
+        :color="arrowButtons ? undefined : 'primary'"
         @click="onNext()"
       >
         <span v-if="!arrowButtons">Next</span>
         <RuiIcon
           v-else
-          :size="24"
-          name="lu-arrow-right"
+          name="lu-chevron-right"
         />
         <template
           v-if="!arrowButtons"
           #append
         >
-          <RuiIcon
-            :size="18"
-            name="lu-chevron-right"
-          />
+          <RuiIcon name="lu-chevron-right" />
         </template>
       </RuiButton>
     </template>

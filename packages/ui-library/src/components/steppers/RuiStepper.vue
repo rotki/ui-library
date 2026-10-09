@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { VueClassValue } from '@/types/class-value';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
-import RuiStepperCustomIcon from '@/components/steppers/RuiStepperCustomIcon.vue';
 import RuiStepperIcon from '@/components/steppers/RuiStepperIcon.vue';
 import { StepperOrientation, StepperState, type StepperStep } from '@/types/stepper';
 import { tv } from '@/utils/tv';
@@ -60,15 +59,17 @@ const stepper = tv({
       },
       [StepperOrientation.vertical]: {
         root: 'flex-col inline-flex',
-        step: 'px-0 py-6',
-        divider: 'block min-h-12 min-w-0 max-h-full h-full self-start -my-4 mx-3 border-l',
+        // 4px in from the edge, so the scrolling root does not clip the active marker's halo
+        step: 'px-1 py-6',
+        divider: 'block min-h-12 min-w-0 max-h-full h-full self-start -my-4 mx-4 border-l',
       },
     },
     state: {
+      // an upcoming step is not disabled, so its text keeps the 4.5:1 of the secondary tone
       [StepperState.inactive]: {
         step: 'text-rui-text-disabled',
         title: 'text-rui-text-secondary',
-        subtitle: 'text-rui-text-disabled',
+        subtitle: 'text-rui-text-secondary',
       },
       [StepperState.active]: {
         step: 'text-rui-text',
@@ -114,6 +115,7 @@ const stepper = tv({
   },
   compoundVariants: [
     { custom: true, state: StepperState.inactive, class: { step: 'text-rui-text' } },
+    // the line runs through the 32px marker's center
     { orientation: StepperOrientation.vertical, custom: true, class: { divider: 'mx-5' } },
     { orientation: StepperOrientation.vertical, iconTop: true, class: { divider: 'self-center mx-auto' } },
   ],
@@ -197,8 +199,10 @@ watch(() => step, () => {
       v-for="({ title, description, state, loading }, index) in renderedStep"
       :key="index"
     >
+      <!-- a list may hold only its items, so the connector is drawn but kept out of the accessibility tree -->
       <hr
         v-if="index > 0"
+        aria-hidden="true"
         :class="ui.divider()"
       />
       <div
@@ -213,20 +217,15 @@ watch(() => step, () => {
           v-bind="{ state, index: index + 1 }"
         >
           <div class="relative flex py-2">
-            <RuiStepperCustomIcon
-              v-if="custom"
-              :index="index + 1"
-              :state="state"
-            />
             <RuiStepperIcon
-              v-else
               :index="index + 1"
               :state="state"
+              :size="custom ? 'lg' : 'md'"
             />
             <RuiProgress
               v-if="loading"
               class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
-              size="32"
+              :size="custom ? 40 : 32"
               variant="indeterminate"
               circular
               thickness="2"

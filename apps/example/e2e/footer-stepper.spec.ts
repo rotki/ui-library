@@ -24,7 +24,7 @@ test.describe('footer steppers', () => {
 
     await expect(bulletStepper.locator('button', { hasText: 'Back' })).toBeVisible();
     await expect(bulletStepper.locator('button', { hasText: 'Next' })).toBeVisible();
-    await expect(bulletStepper.locator('[data-id=bullets] span').first()).toBeVisible();
+    await expect(bulletStepper.locator('[data-id=bullets] button').first()).toBeVisible();
 
     await expect(progressStepper.locator('button', { hasText: 'Back' })).toBeVisible();
     await expect(progressStepper.locator('button', { hasText: 'Next' })).toBeVisible();
@@ -80,6 +80,9 @@ test.describe('footer steppers', () => {
 
   test('should hide buttons when hideButtons is true', async ({ page }) => {
     const stepper = page.locator('[data-id=footer-stepper-2]');
-    await expect(stepper.locator('button')).toHaveCount(0);
+    // only the step bullets are buttons there
+    await expect(stepper.getByRole('button', { name: 'Previous' })).toHaveCount(0);
+    await expect(stepper.getByRole('button', { name: 'Next' })).toHaveCount(0);
+    await expect(stepper.getByRole('button', { name: /^Step \d+$/ }).first()).toBeVisible();
   });
 });

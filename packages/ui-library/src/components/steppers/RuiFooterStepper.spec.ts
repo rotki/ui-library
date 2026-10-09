@@ -108,10 +108,27 @@ describe('components/steppers/RuiFooterStepper.vue', () => {
       },
     });
 
-    const bullets = wrapper.findAll('[data-id=bullets] span');
+    const bullets = wrapper.findAll('[data-id=bullets] button');
     expect(bullets).toHaveLength(5);
     expect(bullets[1]!.attributes('aria-current')).toBe('step');
     expect(bullets[0]!.attributes('aria-current')).toBeUndefined();
+  });
+
+  it('should jump to a step from its bullet, which is a labelled button', async () => {
+    wrapper = createWrapper({
+      props: {
+        'modelValue': 1,
+        'pages': 4,
+        'variant': 'bullet',
+        'onUpdate:modelValue': async (value: number) => wrapper.setProps({ modelValue: value }),
+      },
+    });
+
+    const third = wrapper.findAll('[data-id=bullets] button')[2]!;
+    expect(third.attributes('aria-label')).toBe('Step 3');
+    expect(third.attributes('type')).toBe('button');
+    await third.trigger('click');
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([3]);
   });
 
   it('should have aria-current="step" on active pill', () => {
@@ -139,7 +156,10 @@ describe('components/steppers/RuiFooterStepper.vue', () => {
       },
     });
 
-    expect(wrapper.findAll('button')).toHaveLength(0);
+    // only the step bullets are left
+    expect(wrapper.find('button[aria-label=Previous]').exists()).toBe(false);
+    expect(wrapper.find('button[aria-label=Next]').exists()).toBe(false);
+    expect(wrapper.findAll('button')).toHaveLength(5);
   });
 
   it('should pass props correctly', async () => {
