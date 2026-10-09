@@ -51,7 +51,7 @@ const switchStyles = tv({
       `before:content-[''] before:absolute before:size-10 before:bg-black dark:before:bg-white before:rounded-full`,
       'before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:transition-all before:ease-in-out before:opacity-0',
       'peer-active:before:opacity-20',
-      'group-hover/switch:shadow-1',
+      'group-hover/switch:shadow-rui-control',
     ].join(' '),
     label: 'text-rui-text text-body-1',
   },

@@ -56,7 +56,7 @@ export const buttonStyles = tv({
       default: {},
       outlined: {},
       text: { root: 'px-2' },
-      fab: { root: 'rounded-full py-2' },
+      fab: { root: 'rounded-full py-2 shadow-rui-control disabled:shadow-none' },
       // The label's 18px line-box matches the md icon box, so the two share an optical center (rotki/ui-library#515)
       list: { root: 'p-3 px-3 rounded-none w-full justify-start text-left', label: 'w-full leading-[1.125rem]' },
     },

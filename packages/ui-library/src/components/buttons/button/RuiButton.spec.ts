@@ -271,14 +271,11 @@ describe('components/buttons/button/RuiButton.vue', () => {
     });
   });
 
-  it('should pass elevation props and set to correct classes based on the state', async () => {
+  it('should raise only the fab variant, and drop the shadow when disabled', async () => {
     wrapper = createWrapper();
-    expectWrapperToHaveClass(wrapper, 'button', /shadow-0/);
+    expectWrapperNotToHaveClass(wrapper, 'button', /^shadow-rui-control$/);
     await wrapper.setProps({ variant: 'fab' });
-    expectWrapperToHaveClass(wrapper, 'button', /shadow-6/);
-    await wrapper.setProps({ elevation: 10 });
-    expectWrapperToHaveClass(wrapper, 'button', /shadow-10/);
-    await wrapper.setProps({ disabled: true });
-    expectWrapperToHaveClass(wrapper, 'button', /shadow-0/);
+    expectWrapperToHaveClass(wrapper, 'button', /^shadow-rui-control$/);
+    expectWrapperToHaveClass(wrapper, 'button', /^disabled:shadow-none$/);
   });
 });

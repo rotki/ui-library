@@ -36,7 +36,7 @@ export const sliderStyles = tv({
     track: 'transition-all ease-linear duration-75 h-full rounded-full',
     ticks: 'h-full absolute top-0 flex justify-between items-center',
     tick: 'rounded-full',
-    thumb: 'absolute top-1/2 transition-all ease-linear duration-75 -translate-y-1/2 -translate-x-1/2 w-3 h-3 rounded-full shadow-2',
+    thumb: 'absolute top-1/2 transition-all ease-linear duration-75 -translate-y-1/2 -translate-x-1/2 w-3 h-3 rounded-full shadow-rui-control',
     thumbRipple: [
       `before:content-[''] before:w-8 before:h-8 before:rounded-full before:absolute before:top-1/2 before:left-1/2`,
       'before:opacity-10 before:transition before:-translate-x-1/2 before:-translate-y-1/2 before:scale-0',

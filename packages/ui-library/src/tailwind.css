@@ -18,9 +18,6 @@
 @source './**/*.js';
 @source not './vite-plugin';
 
-/* `elevation` builds the class at runtime, so no source file names these. */
-@source inline('shadow-{1..24}');
-
 /*
  * Tailwind 3's divide and space selector. Tailwind 4's `divide-*` and
  * `space-*` style every child but the last (the bottom border, the end

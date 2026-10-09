@@ -14,7 +14,6 @@ export interface RuiCardClassNames {
 export interface Props {
   dense?: boolean;
   divide?: boolean;
-  elevation?: number;
   variant?: 'flat' | 'outlined';
   rounded?: 'sm' | 'md' | 'lg';
   noPadding?: boolean;
@@ -31,7 +30,6 @@ defineOptions({
 const {
   divide = false,
   dense = false,
-  elevation = 0,
   variant: cardVariant = 'outlined',
   rounded = 'md',
   noPadding = false,
@@ -95,7 +93,7 @@ const ui = computed<ReturnType<typeof card>>(() => card({ variant: cardVariant, 
 
 <template>
   <div
-    :class="ui.root({ class: [`shadow-${elevation}`, cn(classNames?.root ?? $attrs.class)] })"
+    :class="ui.root({ class: cn(classNames?.root ?? $attrs.class) })"
     v-bind="{ ...$attrs, class: undefined }"
   >
     <div

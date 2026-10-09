@@ -1,13 +1,13 @@
 /**
  * The theme's role tokens, named here so the generated theme and the class
  * merger agree on them: `rounded-rui-control` and `shadow-rui-menu` only
- * dedupe against `rounded-full` or `shadow-2` when the merger knows the names.
+ * dedupe against `rounded-full` or `shadow-lg` when the merger knows the names.
  */
-export const radiusRoles = ['control', 'panel', 'card', 'table', 'sm', 'lg'] as const;
+export const radiusRoles = ['control', 'panel', 'card', 'sm', 'lg'] as const;
 
 export type RadiusRole = (typeof radiusRoles)[number];
 
-export const shadowRoles = ['menu', 'drawer', 'tooltip'] as const;
+export const shadowRoles = ['menu', 'drawer', 'tooltip', 'control'] as const;
 
 export type ShadowRole = (typeof shadowRoles)[number];
 

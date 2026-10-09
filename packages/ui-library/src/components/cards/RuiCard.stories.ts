@@ -51,7 +51,6 @@ const meta = preview.meta({
     customHeader: '',
     dense: false,
     divide: false,
-    elevation: 0,
     header: '',
     image: '',
     prepend: '',
@@ -64,7 +63,6 @@ const meta = preview.meta({
     customHeader: { control: 'text' },
     dense: { control: 'boolean' },
     divide: { control: 'boolean' },
-    elevation: { control: 'number', max: 24, min: 1 },
     header: { control: 'text' },
     image: { control: 'text' },
     prepend: { control: 'text' },
@@ -235,7 +233,7 @@ export const DenseDivide = meta.story({
   },
 });
 
-export const Elevated = meta.story({
+export const Flat = meta.story({
   args: {
     actions: [
       {
@@ -250,29 +248,6 @@ export const Elevated = meta.story({
       },
     ],
     content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
-    elevation: 1,
-    header: 'Card header',
-    subheader: 'Card subheader',
-    variant: 'flat',
-  },
-});
-
-export const HighElevation = meta.story({
-  args: {
-    actions: [
-      {
-        color: 'secondary',
-        text: 'Action 1',
-        variant: 'text',
-      },
-      {
-        color: 'primary',
-        text: 'Action 2',
-        variant: 'text',
-      },
-    ],
-    content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
-    elevation: 4,
     header: 'Card header',
     subheader: 'Card subheader',
     variant: 'flat',
@@ -295,7 +270,6 @@ export const CustomHeader = meta.story({
     ],
     content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
     customHeader: 'Custom header',
-    elevation: 4,
     header: 'Card header',
     subheader: 'Card subheader',
     variant: 'flat',

@@ -28,7 +28,6 @@ const meta = preview.meta({
   argTypes: {
     color: { control: 'select', options: contextColors },
     disabled: { control: 'boolean', table: { category: 'State' } },
-    elevation: { control: 'number', table: { category: 'Shape' } },
     hideFocusIndicator: { control: 'boolean' },
     icon: { control: 'boolean', table: { category: 'Shape' } },
     label: { control: 'text' },
@@ -451,15 +450,6 @@ export const PrimaryLoading = meta.story({
     color: 'primary',
     label: 'Primary Loading',
     loading: true,
-  },
-});
-
-export const PrimaryOutlinedWithElevation = meta.story({
-  args: {
-    color: 'primary',
-    elevation: 4,
-    label: 'Primary Outlined',
-    variant: 'outlined',
   },
 });
 

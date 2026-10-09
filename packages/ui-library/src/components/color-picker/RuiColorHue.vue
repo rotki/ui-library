@@ -98,7 +98,7 @@ const rootStyle = tv({ base: 'relative w-full h-3.5 rounded-full cursor-pointer 
   >
     <div
       data-id="cursor"
-      class="absolute w-4 h-4 transform top-1/2 -translate-x-1/2 -translate-y-1/2 shadow-2 bg-white rounded-full"
+      class="absolute w-4 h-4 transform top-1/2 -translate-x-1/2 -translate-y-1/2 shadow-rui-control bg-white rounded-full"
       :style="cursorStyle"
     />
   </div>

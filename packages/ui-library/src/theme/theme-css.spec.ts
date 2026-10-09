@@ -21,9 +21,8 @@ describe('theme/theme-css', () => {
     }
   });
 
-  it('should define the elevation shadows 1 to 24', () => {
-    for (let level = 1; level <= 24; level++)
-      expect(committed).toContain(`--shadow-${level}:`);
+  it('should not define the Material elevation scale', () => {
+    expect(committed).not.toMatch(/--shadow-\d+:/);
   });
 
   it('should define every role token the class merger knows about', () => {
@@ -36,6 +35,14 @@ describe('theme/theme-css', () => {
   it('should define the whole neutral ramp', () => {
     for (const shade of neutralShades)
       expect(committed).toContain(`--color-rui-neutral-${shade}:`);
+  });
+
+  // UPGRADING.md moves the dark surfaces apps copied from 2.x onto these; keep them while that table stands
+  it('should keep a token for each 2.x surface apps copied', () => {
+    for (const surface of ['background', 'surface', 'menu', 'overlay']) {
+      for (const prefix of ['', 'dark-'])
+        expect(committed).toContain(`--color-rui-${prefix}${surface}:`);
+    }
   });
 
   it('should define each surface and line color for both themes and the adaptive one', () => {

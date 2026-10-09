@@ -97,8 +97,8 @@ describe('tv', () => {
     it('should merge the role tokens with the scale they stand in for', () => {
       expect(tv({ base: 'rounded-rui-control rounded-full' })()).toBe('rounded-full');
       expect(tv({ base: 'rounded-t-rui-control rounded-t-none' })()).toBe('rounded-t-none');
-      expect(tv({ base: 'shadow-rui-menu shadow-2' })()).toBe('shadow-2');
-      expect(tv({ base: 'shadow-2 shadow-rui-menu' })()).toBe('shadow-rui-menu');
+      expect(tv({ base: 'shadow-rui-menu shadow-lg' })()).toBe('shadow-lg');
+      expect(tv({ base: 'shadow-lg shadow-rui-menu' })()).toBe('shadow-rui-menu');
       expect(tv({ base: 'bg-rui-surface bg-white' })()).toBe('bg-white');
       expect(tv({ base: 'border-rui-divider border-rui-primary' })()).toBe('border-rui-primary');
     });

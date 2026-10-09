@@ -3,12 +3,13 @@ import { Meta } from '@storybook/addon-docs/blocks';
 <Meta title="Themes/Shadow" />
 
 # Shadow
-#### You also need to add class `.shadow` to use these classes.
+
+Surfaces have no shadow: borders and background steps separate them. Shadows are named by role.
 
 <div className="border grid grid-cols-2 md:grid-cols-4 md:gap-8 md:p-8 gap-4 p-4">
-  {[...Array(24)].map((item, i) => (
-    <div className={`h-32 shadow shadow-${i + 1} bg-white flex items-center justify-center rounded-lg font-bold`} key={`${i}`}>
-      <code>shadow-{i + 1}</code>
+  {['control', 'tooltip', 'menu', 'drawer'].map(role => (
+    <div className={`h-32 shadow-rui-${role} bg-rui-surface flex items-center justify-center rounded-rui-card font-bold`} key={role}>
+      <code>shadow-rui-{role}</code>
     </div>
   ))}
 </div>

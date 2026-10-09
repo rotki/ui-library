@@ -94,9 +94,8 @@ const sections = ref<CardData[]>([
       },
       {
         content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-        header: 'Elevated Card',
+        header: 'Outlined Card',
         subheader: 'Card subheader',
-        elevation: 1,
         actions: [
           { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
           { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
@@ -104,9 +103,8 @@ const sections = ref<CardData[]>([
       },
       {
         content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
-        header: 'Elevated Card',
+        header: 'Outlined Card',
         subheader: 'Card subheader',
-        elevation: 1,
         divide: true,
         actions: [
           { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
@@ -304,9 +302,8 @@ const sections = ref<CardData[]>([
       {
         content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
         variant: 'flat',
-        header: 'Elevated Card',
+        header: 'Flat Card',
         subheader: 'Card subheader',
-        elevation: 1,
         actions: [
           { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
           { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
@@ -315,9 +312,8 @@ const sections = ref<CardData[]>([
       {
         content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
         variant: 'flat',
-        header: 'Elevated Card',
+        header: 'Flat Card',
         subheader: 'Card subheader',
-        elevation: 1,
         divide: true,
         actions: [
           { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },

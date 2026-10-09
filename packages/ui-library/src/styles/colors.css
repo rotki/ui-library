@@ -281,9 +281,12 @@
   --rui-dark-success-main: var(--rui-green-400);
   --rui-dark-success-darker: var(--rui-green-700);
   --rui-dark-success-lighter: var(--rui-green-300);
-  --rui-shadow-primary: rgba(0, 0, 0, 0.2);
-  --rui-shadow-secondary: rgba(0, 0, 0, 0.14);
-  --rui-shadow-tertiary: rgba(0, 0, 0, 0.12);
+  --rui-light-shadow-primary: rgba(9, 9, 11, 0.1);
+  --rui-light-shadow-secondary: rgba(9, 9, 11, 0.06);
+  --rui-dark-shadow-primary: rgba(0, 0, 0, 0.5);
+  --rui-dark-shadow-secondary: rgba(0, 0, 0, 0.3);
+  --rui-shadow-primary: var(--rui-light-shadow-primary);
+  --rui-shadow-secondary: var(--rui-light-shadow-secondary);
   --rui-light-text-primary: rgba(0, 0, 0, 0.87);
   --rui-light-text-secondary: rgba(0, 0, 0, 0.6);
   --rui-light-text-disabled: rgba(0, 0, 0, 0.38);
@@ -305,22 +308,21 @@
   --rui-neutral-950: 9, 9, 11;
 
   /*
-   * Surfaces and lines. The surfaces are bare channels like the palette, the
-   * lines full colors like the text. The adaptive ones start on light, so an
-   * app that never sets a theme still gets colors.
+   * Surfaces (bare channels) and lines (full colors, translucent so one value reads on every
+   * surface). Dark surfaces step up the zinc ramp. The adaptive ones start on light.
    */
   --rui-light-surface: 255, 255, 255;
-  --rui-dark-surface: 30, 30, 30;
+  --rui-dark-surface: var(--rui-neutral-900);
   --rui-light-background: 255, 255, 255;
-  --rui-dark-background: 18, 18, 18;
+  --rui-dark-background: var(--rui-neutral-950);
   --rui-light-menu: 255, 255, 255;
-  --rui-dark-menu: 46, 46, 46;
+  --rui-dark-menu: var(--rui-neutral-800);
   --rui-light-overlay: 255, 255, 255;
-  --rui-dark-overlay: 54, 54, 54;
-  --rui-light-divider: rgba(0, 0, 0, 0.12);
-  --rui-dark-divider: rgba(255, 255, 255, 0.12);
-  --rui-light-outline: rgba(0, 0, 0, 0.23);
-  --rui-dark-outline: rgba(255, 255, 255, 0.23);
+  --rui-dark-overlay: var(--rui-neutral-800);
+  --rui-light-divider: rgba(9, 9, 11, 0.1);
+  --rui-dark-divider: rgba(250, 250, 250, 0.1);
+  --rui-light-outline: rgba(9, 9, 11, 0.18);
+  --rui-dark-outline: rgba(250, 250, 250, 0.16);
   --rui-surface: var(--rui-light-surface);
   --rui-background: var(--rui-light-background);
   --rui-menu: var(--rui-light-menu);
@@ -359,6 +361,8 @@ html.light {
   --rui-overlay: var(--rui-light-overlay);
   --rui-divider: var(--rui-light-divider);
   --rui-outline: var(--rui-light-outline);
+  --rui-shadow-primary: var(--rui-light-shadow-primary);
+  --rui-shadow-secondary: var(--rui-light-shadow-secondary);
 }
 
 html[data-theme='dark'],
@@ -390,4 +394,6 @@ html.dark {
   --rui-overlay: var(--rui-dark-overlay);
   --rui-divider: var(--rui-dark-divider);
   --rui-outline: var(--rui-dark-outline);
+  --rui-shadow-primary: var(--rui-dark-shadow-primary);
+  --rui-shadow-secondary: var(--rui-dark-shadow-secondary);
 }

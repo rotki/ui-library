@@ -18,7 +18,7 @@ export const dataTableStyles = tv({
     },
     rounded: {
       sm: { wrapper: 'rounded-rui-sm' },
-      md: { wrapper: 'rounded-rui-table' },
+      md: { wrapper: 'rounded-rui-card' },
       lg: { wrapper: 'rounded-rui-lg' },
     },
     dense: {

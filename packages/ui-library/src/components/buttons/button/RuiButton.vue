@@ -1,6 +1,6 @@
 <script lang="ts" generic="T = undefined" setup>
 import type { ContextColorsType } from '@/consts/colors';
-import { type ButtonSize, ButtonVariant, FAB_DEFAULT_ELEVATION, getButtonSpinnerSize, NO_ELEVATION } from '@/components/buttons/button/button-props';
+import { type ButtonSize, ButtonVariant, getButtonSpinnerSize } from '@/components/buttons/button/button-props';
 import { buttonStyles } from '@/components/buttons/button/button-styles';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { cn } from '@/utils/tv';
@@ -10,7 +10,6 @@ export interface Props<T = undefined> {
   loading?: boolean;
   color?: ContextColorsType;
   rounded?: boolean;
-  elevation?: number | string | null;
   variant?: ButtonVariant;
   icon?: boolean;
   active?: boolean;
@@ -31,7 +30,6 @@ const {
   loading = false,
   color = undefined,
   rounded = false,
-  elevation = null,
   variant = ButtonVariant.default,
   icon = false,
   active = false,
@@ -54,9 +52,6 @@ const slots = defineSlots<{
 
 const btnValue = computed<T | undefined>(() => modelValue);
 
-const defaultElevation = computed<number>(() => variant === ButtonVariant.fab ? FAB_DEFAULT_ELEVATION : NO_ELEVATION);
-const usedElevation = computed<number | string>(() => disabled ? NO_ELEVATION : elevation ?? get(defaultElevation));
-
 const spinnerSize = computed<number>(() => getButtonSpinnerSize(size));
 
 const ui = computed<ReturnType<typeof buttonStyles>>(() => buttonStyles({
@@ -74,10 +69,7 @@ const ui = computed<ReturnType<typeof buttonStyles>>(() => buttonStyles({
 <template>
   <Component
     :is="tag"
-    :class="[
-      ui.root({ class: cn($attrs.class) }),
-      `shadow-${usedElevation}`,
-    ]"
+    :class="ui.root({ class: cn($attrs.class) })"
     :disabled="disabled || loading"
     :type="tag === 'button' ? type : undefined"
     :data-variant="variant"

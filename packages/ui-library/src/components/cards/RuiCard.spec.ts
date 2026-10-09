@@ -21,7 +21,7 @@ describe('components/cards/RuiCard.vue', () => {
 
     expect(wrapper.exists()).toBeTruthy();
     expect(wrapper.classes()).toContain('border');
-    expect(wrapper.classes()).toContain('shadow-0');
+    expect(wrapper.classes().some(name => name.startsWith('shadow'))).toBe(false);
 
     expect(wrapper.find('[data-id=card-image]').exists()).toBeFalsy();
     expect(wrapper.find('[data-id=prepend]').exists()).toBeFalsy();
@@ -154,7 +154,6 @@ describe('components/cards/RuiCard.vue', () => {
       props: {
         dense: false,
         divide: false,
-        elevation: 0,
         variant: 'outlined',
       },
       slots: {
@@ -179,13 +178,10 @@ describe('components/cards/RuiCard.vue', () => {
     await wrapper.setProps({
       dense: true,
       divide: true,
-      elevation: 2,
       variant: 'flat',
     });
 
     expect(wrapper.classes()).not.toContain('border');
-    expect(wrapper.classes()).not.toContain('shadow-0');
-    expect(wrapper.classes()).toContain('shadow-2');
     expect(wrapper.classes()).toContain('between:border-t');
   });
 });
