@@ -15,7 +15,7 @@ test.describe('datetimepicker in a short window', () => {
     });
     await input.click();
 
-    const menu = page.locator('[role=menu]').last();
+    const menu = page.getByRole('dialog');
     await expect(menu).toBeVisible();
     const box = await menu.boundingBox();
     expect(box?.height).toBeGreaterThan(280);
@@ -247,7 +247,7 @@ test.describe('datetimepicker menu footer actions', () => {
   test('the default picker shows no timezone select and only the now action', async ({ page }) => {
     await page.getByRole('textbox').first().click();
 
-    const menu = page.getByRole('menu');
+    const menu = page.getByRole('dialog');
     await expect(menu.getByTestId('action-now')).toBeVisible();
     await expect(menu.getByTestId('action-today')).toBeHidden();
     await expect(menu.getByTestId('timezone-select')).toBeHidden();
@@ -256,7 +256,7 @@ test.describe('datetimepicker menu footer actions', () => {
   test('the timezone select is rendered when showTimezone is set', async ({ page }) => {
     await page.getByTestId('picker-timezone').locator('input').first().click();
 
-    await expect(page.getByRole('menu').getByTestId('timezone-select')).toBeVisible();
+    await expect(page.getByRole('dialog').getByTestId('timezone-select')).toBeVisible();
   });
 });
 
@@ -288,13 +288,13 @@ test.describe('datetimepicker keyboard passthrough', () => {
   test('the field can be opened and closed without a mouse', async ({ page }) => {
     const input = page.getByRole('textbox').first();
     await input.focus();
-    await expect(page.getByRole('menu')).toBeHidden();
+    await expect(page.getByRole('dialog')).toBeHidden();
 
     await page.keyboard.press('Alt+ArrowDown');
-    await expect(page.getByRole('menu')).toBeVisible();
+    await expect(page.getByRole('dialog')).toBeVisible();
 
     await page.keyboard.press('Escape');
-    await expect(page.getByRole('menu')).toBeHidden();
+    await expect(page.getByRole('dialog')).toBeHidden();
   });
 
   test('the append chevron is a real button that toggles the menu', async ({ page }) => {
@@ -302,17 +302,17 @@ test.describe('datetimepicker keyboard passthrough', () => {
     await expect(toggle).toHaveAttribute('aria-expanded', 'false');
 
     await toggle.click();
-    await expect(page.getByRole('menu')).toBeVisible();
+    await expect(page.getByRole('dialog')).toBeVisible();
     await expect(toggle).toHaveAttribute('aria-expanded', 'true');
   });
 
   test('escape closes the menu', async ({ page }) => {
     await page.getByRole('textbox').first().click();
-    await expect(page.getByRole('menu')).toBeVisible();
+    await expect(page.getByRole('dialog')).toBeVisible();
 
     await page.keyboard.press('Escape');
 
-    await expect(page.getByRole('menu')).toBeHidden();
+    await expect(page.getByRole('dialog')).toBeHidden();
   });
 });
 
@@ -356,7 +356,7 @@ test.describe('datetimepicker calendar keyboard', () => {
 
     await page.keyboard.press('Escape');
 
-    await expect(page.getByRole('menu')).toBeHidden();
+    await expect(page.getByRole('dialog')).toBeHidden();
     await expect(input).toBeFocused();
   });
 
@@ -551,7 +551,7 @@ test.describe('datetimepicker partial entries', () => {
 
     await page.keyboard.press('Alt+ArrowDown');
 
-    await expect(page.getByRole('menu')).toBeVisible();
+    await expect(page.getByRole('dialog')).toBeVisible();
   });
 
   // A bound typed as a bare date is committed by tabbing out, the same as by clicking away.

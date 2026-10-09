@@ -520,6 +520,8 @@ defineExpose({
     :close-on-content-click="false"
     :show-details="!hideDetails"
     :persistent="calendarMenuOpen"
+    :menu-label="fieldLabel"
+    role="dialog"
     full-width
     disable-auto-focus
   >

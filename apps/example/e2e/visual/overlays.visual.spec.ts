@@ -40,6 +40,7 @@ const cases: OverlayCase[] = [
       // the menu may slide over the field, so the pointer would rest on one of its buttons
       await page.mouse.move(1, 1);
     },
+    target: '[role=dialog]',
   },
   {
     // the whole viewport: the dialog's shadow and corners over the blurred backdrop

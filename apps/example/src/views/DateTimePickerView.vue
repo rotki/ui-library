@@ -128,6 +128,8 @@ const insideMenuValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
         v-model="parentMenuOpen"
         :persistent="pickerMenuOpen"
         :close-on-content-click="false"
+        role="dialog"
+        menu-label="Pick a date"
       >
         <template #activator="{ attrs }">
           <RuiButton

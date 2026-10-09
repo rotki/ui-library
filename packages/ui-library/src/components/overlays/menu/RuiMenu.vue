@@ -71,6 +71,11 @@ export interface MenuProps {
    * list opened by a `combobox`. The activator's `aria-haspopup` follows it.
    */
   role?: RuiMenuRole;
+  /**
+   * Accessible name of the teleported popover. A `dialog` popover needs one;
+   * the other roles take it from their activator or options.
+   */
+  menuLabel?: string;
 }
 
 defineOptions({
@@ -98,6 +103,7 @@ const {
   disableAutoFocus = false,
   anchorEl,
   role = 'menu',
+  menuLabel,
 } = defineProps<MenuProps>();
 
 defineSlots<{
@@ -353,6 +359,7 @@ onClickOutside(menu, () => {
         ref="menu"
         :class="ui.popover({ class: cn(classNames?.menu) })"
         :role="role"
+        :aria-label="menuLabel"
         :data-placement="currentPlacement"
         @click="closeOnContentClick ? onLeave() : undefined"
         @keydown.esc="onEscape($event)"

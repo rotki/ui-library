@@ -341,6 +341,20 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
 
       expect(wrapper.find('#trigger').attributes('aria-haspopup')).toBe('listbox');
     });
+
+    it('should name the popover with menuLabel', async () => {
+      wrapper = createWrapper({
+        props: {
+          role: 'dialog',
+          menuLabel: 'Filters',
+        },
+      });
+
+      await wrapper.find('#trigger').trigger('click');
+      await vi.runAllTimersAsync();
+
+      expect(queryByRole('dialog')?.getAttribute('aria-label')).toBe('Filters');
+    });
   });
 
   describe('escape propagation', () => {

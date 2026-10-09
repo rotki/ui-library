@@ -75,9 +75,9 @@ export const Default = meta.story({
     const input = canvas.getByRole('textbox');
     await userEvent.click(input);
     const body = within(document.body);
-    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+    await waitFor(() => expect(body.getByRole('dialog')).toBeVisible());
     await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+    await waitFor(() => expect(body.queryByRole('dialog')).toBeNull());
     // leave the story at rest, without a selected segment's focus ring
     input.blur();
     await expect(input).not.toHaveFocus();
@@ -173,10 +173,10 @@ export const WithTimezone = meta.story({
     const input = canvas.getByRole('textbox');
     await userEvent.click(input);
     const body = within(document.body);
-    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
-    await waitFor(() => expect(body.getByRole('menu').querySelector('[data-id="timezone-select"]')).toBeVisible());
+    await waitFor(() => expect(body.getByRole('dialog')).toBeVisible());
+    await waitFor(() => expect(body.getByRole('dialog').querySelector('[data-id="timezone-select"]')).toBeVisible());
     await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+    await waitFor(() => expect(body.queryByRole('dialog')).toBeNull());
     input.blur();
   },
 });
@@ -217,7 +217,7 @@ export const InsideParentMenu = meta.story({
       return { args, open, pickerMenuOpen };
     },
     template: `<div class="p-8">
-      <RuiMenu v-model="open" :persistent="pickerMenuOpen" :close-on-content-click="false">
+      <RuiMenu v-model="open" :persistent="pickerMenuOpen" :close-on-content-click="false" role="dialog" menu-label="Pick a date">
         <template #activator="{ attrs }">
           <RuiButton v-bind="attrs">Open parent menu</RuiButton>
         </template>
