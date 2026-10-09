@@ -43,6 +43,9 @@ defineSlots<{
 
 const rootStyle = tv({ base: 'relative inline-flex' });
 
+// wraps at `--rui-tooltip-max-width`; a `max-w-*` in `classNames.tooltip` replaces it
+const popoverStyle = tv({ base: 'w-max max-w-rui-tooltip z-rui-tooltip' });
+
 const tooltipId = useId();
 
 const {
@@ -107,8 +110,7 @@ defineExpose({
         v-if="visible"
         :id="tooltipId"
         ref="tooltip"
-        class="w-max z-9999"
-        :class="classNames?.tooltip"
+        :class="popoverStyle({ class: cn(classNames?.tooltip) })"
         :role="open ? 'tooltip' : undefined"
         :data-placement="currentPlacement"
       >
@@ -125,7 +127,7 @@ defineExpose({
           <div
             v-if="open"
             key="tooltip"
-            class="px-2 py-1.5 text-xs font-normal bg-rui-neutral-900 dark:bg-rui-neutral-700 text-white rounded-rui-control shadow-rui-tooltip"
+            class="px-2 py-1.5 text-xs font-normal wrap-break-word bg-rui-neutral-900 dark:bg-rui-neutral-700 text-white rounded-rui-control shadow-rui-tooltip"
             data-id="content"
             @mouseover="persistOnTooltipHover && onOpen()"
             @mouseleave="persistOnTooltipHover && onClose()"

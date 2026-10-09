@@ -32,63 +32,135 @@
   --color-rui-light-primary: rgb(var(--rui-light-primary-main));
   --color-rui-light-primary-darker: rgb(var(--rui-light-primary-darker));
   --color-rui-light-primary-lighter: rgb(var(--rui-light-primary-lighter));
+  --color-rui-light-primary-fill: rgb(var(--rui-light-primary-fill));
+  --color-rui-light-primary-subtle: color-mix(in oklab, rgb(var(--rui-light-primary-main)) 5%, transparent);
+  --color-rui-light-primary-soft: color-mix(in oklab, rgb(var(--rui-light-primary-main)) 10%, transparent);
+  --color-rui-light-primary-border: color-mix(in oklab, rgb(var(--rui-light-primary-main)) 30%, transparent);
   --color-rui-light-secondary: rgb(var(--rui-light-secondary-main));
   --color-rui-light-secondary-darker: rgb(var(--rui-light-secondary-darker));
   --color-rui-light-secondary-lighter: rgb(var(--rui-light-secondary-lighter));
+  --color-rui-light-secondary-fill: rgb(var(--rui-light-secondary-fill));
+  --color-rui-light-secondary-subtle: color-mix(in oklab, rgb(var(--rui-light-secondary-main)) 5%, transparent);
+  --color-rui-light-secondary-soft: color-mix(in oklab, rgb(var(--rui-light-secondary-main)) 10%, transparent);
+  --color-rui-light-secondary-border: color-mix(in oklab, rgb(var(--rui-light-secondary-main)) 30%, transparent);
   --color-rui-light-error: rgb(var(--rui-light-error-main));
   --color-rui-light-error-darker: rgb(var(--rui-light-error-darker));
   --color-rui-light-error-lighter: rgb(var(--rui-light-error-lighter));
+  --color-rui-light-error-fill: rgb(var(--rui-light-error-fill));
+  --color-rui-light-error-subtle: color-mix(in oklab, rgb(var(--rui-light-error-main)) 5%, transparent);
+  --color-rui-light-error-soft: color-mix(in oklab, rgb(var(--rui-light-error-main)) 10%, transparent);
+  --color-rui-light-error-border: color-mix(in oklab, rgb(var(--rui-light-error-main)) 30%, transparent);
   --color-rui-light-warning: rgb(var(--rui-light-warning-main));
   --color-rui-light-warning-darker: rgb(var(--rui-light-warning-darker));
   --color-rui-light-warning-lighter: rgb(var(--rui-light-warning-lighter));
+  --color-rui-light-warning-fill: rgb(var(--rui-light-warning-fill));
+  --color-rui-light-warning-subtle: color-mix(in oklab, rgb(var(--rui-light-warning-main)) 5%, transparent);
+  --color-rui-light-warning-soft: color-mix(in oklab, rgb(var(--rui-light-warning-main)) 10%, transparent);
+  --color-rui-light-warning-border: color-mix(in oklab, rgb(var(--rui-light-warning-main)) 30%, transparent);
   --color-rui-light-info: rgb(var(--rui-light-info-main));
   --color-rui-light-info-darker: rgb(var(--rui-light-info-darker));
   --color-rui-light-info-lighter: rgb(var(--rui-light-info-lighter));
+  --color-rui-light-info-fill: rgb(var(--rui-light-info-fill));
+  --color-rui-light-info-subtle: color-mix(in oklab, rgb(var(--rui-light-info-main)) 5%, transparent);
+  --color-rui-light-info-soft: color-mix(in oklab, rgb(var(--rui-light-info-main)) 10%, transparent);
+  --color-rui-light-info-border: color-mix(in oklab, rgb(var(--rui-light-info-main)) 30%, transparent);
   --color-rui-light-success: rgb(var(--rui-light-success-main));
   --color-rui-light-success-darker: rgb(var(--rui-light-success-darker));
   --color-rui-light-success-lighter: rgb(var(--rui-light-success-lighter));
+  --color-rui-light-success-fill: rgb(var(--rui-light-success-fill));
+  --color-rui-light-success-subtle: color-mix(in oklab, rgb(var(--rui-light-success-main)) 5%, transparent);
+  --color-rui-light-success-soft: color-mix(in oklab, rgb(var(--rui-light-success-main)) 10%, transparent);
+  --color-rui-light-success-border: color-mix(in oklab, rgb(var(--rui-light-success-main)) 30%, transparent);
   --color-rui-light-text: var(--rui-light-text-primary);
   --color-rui-light-text-secondary: var(--rui-light-text-secondary);
   --color-rui-light-text-disabled: var(--rui-light-text-disabled);
   --color-rui-dark-primary: rgb(var(--rui-dark-primary-main));
   --color-rui-dark-primary-darker: rgb(var(--rui-dark-primary-darker));
   --color-rui-dark-primary-lighter: rgb(var(--rui-dark-primary-lighter));
+  --color-rui-dark-primary-fill: rgb(var(--rui-dark-primary-fill));
+  --color-rui-dark-primary-subtle: color-mix(in oklab, rgb(var(--rui-dark-primary-main)) 5%, transparent);
+  --color-rui-dark-primary-soft: color-mix(in oklab, rgb(var(--rui-dark-primary-main)) 10%, transparent);
+  --color-rui-dark-primary-border: color-mix(in oklab, rgb(var(--rui-dark-primary-main)) 30%, transparent);
   --color-rui-dark-secondary: rgb(var(--rui-dark-secondary-main));
   --color-rui-dark-secondary-darker: rgb(var(--rui-dark-secondary-darker));
   --color-rui-dark-secondary-lighter: rgb(var(--rui-dark-secondary-lighter));
+  --color-rui-dark-secondary-fill: rgb(var(--rui-dark-secondary-fill));
+  --color-rui-dark-secondary-subtle: color-mix(in oklab, rgb(var(--rui-dark-secondary-main)) 5%, transparent);
+  --color-rui-dark-secondary-soft: color-mix(in oklab, rgb(var(--rui-dark-secondary-main)) 10%, transparent);
+  --color-rui-dark-secondary-border: color-mix(in oklab, rgb(var(--rui-dark-secondary-main)) 30%, transparent);
   --color-rui-dark-error: rgb(var(--rui-dark-error-main));
   --color-rui-dark-error-darker: rgb(var(--rui-dark-error-darker));
   --color-rui-dark-error-lighter: rgb(var(--rui-dark-error-lighter));
+  --color-rui-dark-error-fill: rgb(var(--rui-dark-error-fill));
+  --color-rui-dark-error-subtle: color-mix(in oklab, rgb(var(--rui-dark-error-main)) 5%, transparent);
+  --color-rui-dark-error-soft: color-mix(in oklab, rgb(var(--rui-dark-error-main)) 10%, transparent);
+  --color-rui-dark-error-border: color-mix(in oklab, rgb(var(--rui-dark-error-main)) 30%, transparent);
   --color-rui-dark-warning: rgb(var(--rui-dark-warning-main));
   --color-rui-dark-warning-darker: rgb(var(--rui-dark-warning-darker));
   --color-rui-dark-warning-lighter: rgb(var(--rui-dark-warning-lighter));
+  --color-rui-dark-warning-fill: rgb(var(--rui-dark-warning-fill));
+  --color-rui-dark-warning-subtle: color-mix(in oklab, rgb(var(--rui-dark-warning-main)) 5%, transparent);
+  --color-rui-dark-warning-soft: color-mix(in oklab, rgb(var(--rui-dark-warning-main)) 10%, transparent);
+  --color-rui-dark-warning-border: color-mix(in oklab, rgb(var(--rui-dark-warning-main)) 30%, transparent);
   --color-rui-dark-info: rgb(var(--rui-dark-info-main));
   --color-rui-dark-info-darker: rgb(var(--rui-dark-info-darker));
   --color-rui-dark-info-lighter: rgb(var(--rui-dark-info-lighter));
+  --color-rui-dark-info-fill: rgb(var(--rui-dark-info-fill));
+  --color-rui-dark-info-subtle: color-mix(in oklab, rgb(var(--rui-dark-info-main)) 5%, transparent);
+  --color-rui-dark-info-soft: color-mix(in oklab, rgb(var(--rui-dark-info-main)) 10%, transparent);
+  --color-rui-dark-info-border: color-mix(in oklab, rgb(var(--rui-dark-info-main)) 30%, transparent);
   --color-rui-dark-success: rgb(var(--rui-dark-success-main));
   --color-rui-dark-success-darker: rgb(var(--rui-dark-success-darker));
   --color-rui-dark-success-lighter: rgb(var(--rui-dark-success-lighter));
+  --color-rui-dark-success-fill: rgb(var(--rui-dark-success-fill));
+  --color-rui-dark-success-subtle: color-mix(in oklab, rgb(var(--rui-dark-success-main)) 5%, transparent);
+  --color-rui-dark-success-soft: color-mix(in oklab, rgb(var(--rui-dark-success-main)) 10%, transparent);
+  --color-rui-dark-success-border: color-mix(in oklab, rgb(var(--rui-dark-success-main)) 30%, transparent);
   --color-rui-dark-text: var(--rui-dark-text-primary);
   --color-rui-dark-text-secondary: var(--rui-dark-text-secondary);
   --color-rui-dark-text-disabled: var(--rui-dark-text-disabled);
   --color-rui-primary: rgb(var(--rui-primary-main));
   --color-rui-primary-darker: rgb(var(--rui-primary-darker));
   --color-rui-primary-lighter: rgb(var(--rui-primary-lighter));
+  --color-rui-primary-fill: rgb(var(--rui-primary-fill));
+  --color-rui-primary-subtle: color-mix(in oklab, rgb(var(--rui-primary-main)) 5%, transparent);
+  --color-rui-primary-soft: color-mix(in oklab, rgb(var(--rui-primary-main)) 10%, transparent);
+  --color-rui-primary-border: color-mix(in oklab, rgb(var(--rui-primary-main)) 30%, transparent);
   --color-rui-secondary: rgb(var(--rui-secondary-main));
   --color-rui-secondary-darker: rgb(var(--rui-secondary-darker));
   --color-rui-secondary-lighter: rgb(var(--rui-secondary-lighter));
+  --color-rui-secondary-fill: rgb(var(--rui-secondary-fill));
+  --color-rui-secondary-subtle: color-mix(in oklab, rgb(var(--rui-secondary-main)) 5%, transparent);
+  --color-rui-secondary-soft: color-mix(in oklab, rgb(var(--rui-secondary-main)) 10%, transparent);
+  --color-rui-secondary-border: color-mix(in oklab, rgb(var(--rui-secondary-main)) 30%, transparent);
   --color-rui-error: rgb(var(--rui-error-main));
   --color-rui-error-darker: rgb(var(--rui-error-darker));
   --color-rui-error-lighter: rgb(var(--rui-error-lighter));
+  --color-rui-error-fill: rgb(var(--rui-error-fill));
+  --color-rui-error-subtle: color-mix(in oklab, rgb(var(--rui-error-main)) 5%, transparent);
+  --color-rui-error-soft: color-mix(in oklab, rgb(var(--rui-error-main)) 10%, transparent);
+  --color-rui-error-border: color-mix(in oklab, rgb(var(--rui-error-main)) 30%, transparent);
   --color-rui-warning: rgb(var(--rui-warning-main));
   --color-rui-warning-darker: rgb(var(--rui-warning-darker));
   --color-rui-warning-lighter: rgb(var(--rui-warning-lighter));
+  --color-rui-warning-fill: rgb(var(--rui-warning-fill));
+  --color-rui-warning-subtle: color-mix(in oklab, rgb(var(--rui-warning-main)) 5%, transparent);
+  --color-rui-warning-soft: color-mix(in oklab, rgb(var(--rui-warning-main)) 10%, transparent);
+  --color-rui-warning-border: color-mix(in oklab, rgb(var(--rui-warning-main)) 30%, transparent);
   --color-rui-info: rgb(var(--rui-info-main));
   --color-rui-info-darker: rgb(var(--rui-info-darker));
   --color-rui-info-lighter: rgb(var(--rui-info-lighter));
+  --color-rui-info-fill: rgb(var(--rui-info-fill));
+  --color-rui-info-subtle: color-mix(in oklab, rgb(var(--rui-info-main)) 5%, transparent);
+  --color-rui-info-soft: color-mix(in oklab, rgb(var(--rui-info-main)) 10%, transparent);
+  --color-rui-info-border: color-mix(in oklab, rgb(var(--rui-info-main)) 30%, transparent);
   --color-rui-success: rgb(var(--rui-success-main));
   --color-rui-success-darker: rgb(var(--rui-success-darker));
   --color-rui-success-lighter: rgb(var(--rui-success-lighter));
+  --color-rui-success-fill: rgb(var(--rui-success-fill));
+  --color-rui-success-subtle: color-mix(in oklab, rgb(var(--rui-success-main)) 5%, transparent);
+  --color-rui-success-soft: color-mix(in oklab, rgb(var(--rui-success-main)) 10%, transparent);
+  --color-rui-success-border: color-mix(in oklab, rgb(var(--rui-success-main)) 30%, transparent);
   --color-rui-text: var(--rui-text-primary);
   --color-rui-text-secondary: var(--rui-text-secondary);
   --color-rui-text-disabled: var(--rui-text-disabled);
@@ -96,6 +168,18 @@
   --color-rui-light-surface: rgb(var(--rui-light-surface));
   --color-rui-light-menu: rgb(var(--rui-light-menu));
   --color-rui-light-overlay: rgb(var(--rui-light-overlay));
+  --color-rui-light-surface-muted: rgb(var(--rui-light-surface-muted));
+  --color-rui-light-surface-sunken: rgb(var(--rui-light-surface-sunken));
+  --color-rui-light-chart-1: rgb(var(--rui-light-chart-1));
+  --color-rui-light-chart-2: rgb(var(--rui-light-chart-2));
+  --color-rui-light-chart-3: rgb(var(--rui-light-chart-3));
+  --color-rui-light-chart-4: rgb(var(--rui-light-chart-4));
+  --color-rui-light-chart-5: rgb(var(--rui-light-chart-5));
+  --color-rui-light-chart-6: rgb(var(--rui-light-chart-6));
+  --color-rui-light-chart-7: rgb(var(--rui-light-chart-7));
+  --color-rui-light-chart-8: rgb(var(--rui-light-chart-8));
+  --color-rui-light-chart-other: rgb(var(--rui-light-chart-other));
+  --color-rui-light-link: rgb(var(--rui-light-link));
   --color-rui-light-divider: var(--rui-light-divider);
   --color-rui-light-outline: var(--rui-light-outline);
   --color-rui-light-hover: var(--rui-light-hover);
@@ -104,6 +188,18 @@
   --color-rui-dark-surface: rgb(var(--rui-dark-surface));
   --color-rui-dark-menu: rgb(var(--rui-dark-menu));
   --color-rui-dark-overlay: rgb(var(--rui-dark-overlay));
+  --color-rui-dark-surface-muted: rgb(var(--rui-dark-surface-muted));
+  --color-rui-dark-surface-sunken: rgb(var(--rui-dark-surface-sunken));
+  --color-rui-dark-chart-1: rgb(var(--rui-dark-chart-1));
+  --color-rui-dark-chart-2: rgb(var(--rui-dark-chart-2));
+  --color-rui-dark-chart-3: rgb(var(--rui-dark-chart-3));
+  --color-rui-dark-chart-4: rgb(var(--rui-dark-chart-4));
+  --color-rui-dark-chart-5: rgb(var(--rui-dark-chart-5));
+  --color-rui-dark-chart-6: rgb(var(--rui-dark-chart-6));
+  --color-rui-dark-chart-7: rgb(var(--rui-dark-chart-7));
+  --color-rui-dark-chart-8: rgb(var(--rui-dark-chart-8));
+  --color-rui-dark-chart-other: rgb(var(--rui-dark-chart-other));
+  --color-rui-dark-link: rgb(var(--rui-dark-link));
   --color-rui-dark-divider: var(--rui-dark-divider);
   --color-rui-dark-outline: var(--rui-dark-outline);
   --color-rui-dark-hover: var(--rui-dark-hover);
@@ -112,10 +208,94 @@
   --color-rui-surface: rgb(var(--rui-surface));
   --color-rui-menu: rgb(var(--rui-menu));
   --color-rui-overlay: rgb(var(--rui-overlay));
+  --color-rui-surface-muted: rgb(var(--rui-surface-muted));
+  --color-rui-surface-sunken: rgb(var(--rui-surface-sunken));
+  --color-rui-chart-1: rgb(var(--rui-chart-1));
+  --color-rui-chart-2: rgb(var(--rui-chart-2));
+  --color-rui-chart-3: rgb(var(--rui-chart-3));
+  --color-rui-chart-4: rgb(var(--rui-chart-4));
+  --color-rui-chart-5: rgb(var(--rui-chart-5));
+  --color-rui-chart-6: rgb(var(--rui-chart-6));
+  --color-rui-chart-7: rgb(var(--rui-chart-7));
+  --color-rui-chart-8: rgb(var(--rui-chart-8));
+  --color-rui-chart-other: rgb(var(--rui-chart-other));
+  --color-rui-link: rgb(var(--rui-link));
   --color-rui-divider: var(--rui-divider);
   --color-rui-outline: var(--rui-outline);
   --color-rui-hover: var(--rui-hover);
   --color-rui-pressed: var(--rui-pressed);
+  --color-rui-primary-foreground: rgb(var(--rui-primary-foreground));
+  --color-rui-secondary-foreground: rgb(var(--rui-secondary-foreground));
+  --color-rui-error-foreground: rgb(var(--rui-error-foreground));
+  --color-rui-warning-foreground: rgb(var(--rui-warning-foreground));
+  --color-rui-info-foreground: rgb(var(--rui-info-foreground));
+  --color-rui-success-foreground: rgb(var(--rui-success-foreground));
+  --color-rui-veil: color-mix(in oklab, rgb(var(--rui-surface)) 88%, transparent);
+}
+
+@theme inline {
+  --spacing-rui-app-bar: var(--rui-app-bar-height);
+  --container-rui-dialog-sm: var(--rui-dialog-sm);
+  --container-rui-dialog-md: var(--rui-dialog-md);
+  --container-rui-dialog-lg: var(--rui-dialog-lg);
+  --container-rui-dialog-xl: var(--rui-dialog-xl);
+  --container-rui-dialog-2xl: var(--rui-dialog-2xl);
+  --container-rui-tooltip: var(--rui-tooltip-max-width);
+}
+
+@utility z-rui-raised {
+  z-index: var(--rui-z-raised);
+}
+
+@utility z-rui-floating {
+  z-index: var(--rui-z-floating);
+}
+
+@utility z-rui-app-bar {
+  z-index: var(--rui-z-app-bar);
+}
+
+@utility z-rui-drawer {
+  z-index: var(--rui-z-drawer);
+}
+
+@utility z-rui-dialog {
+  z-index: var(--rui-z-dialog);
+}
+
+@utility z-rui-menu {
+  z-index: var(--rui-z-menu);
+}
+
+@utility z-rui-tooltip {
+  z-index: var(--rui-z-tooltip);
+}
+
+@utility z-rui-toast {
+  z-index: var(--rui-z-toast);
+}
+
+@utility z-rui-blocking {
+  z-index: var(--rui-z-blocking);
+}
+
+@utility rui-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--rui-scrollbar-thumb) transparent;
+  &::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background-color: var(--rui-scrollbar-thumb);
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--rui-scrollbar-thumb-hover);
+  }
+  &::-webkit-scrollbar-thumb:active {
+    background-color: var(--rui-scrollbar-thumb-active);
+  }
 }
 
 @theme {
@@ -170,6 +350,11 @@
 @utility text-caption {
   @apply text-xs;
   line-height: 1.25rem;
+}
+
+@utility text-caption-2 {
+  @apply text-[0.625rem];
+  line-height: 1rem;
 }
 
 @utility text-h1 {

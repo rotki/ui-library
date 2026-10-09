@@ -14,7 +14,7 @@
 import type { VueClassValue } from '@/types/class-value';
 import { createTV } from 'tailwind-variants';
 import { type ClassValue, normalizeClass } from 'vue';
-import { radiusRoles, shadowRoles } from '@/consts/tokens';
+import { dialogSizes, radiusRoles, shadowRoles, zLayers } from '@/consts/tokens';
 
 const isAny: (v: string) => boolean = () => true;
 
@@ -27,13 +27,17 @@ export const tv = /* #__PURE__ */ createTV({
       theme: {
         radius: [...radiusRoles.map(role => `rui-${role}`)],
         shadow: [...shadowRoles.map(role => `rui-${role}`), ...Array.from({ length: 24 }, (_, i) => `${i + 1}`)],
+        // `max-w-rui-tooltip` replaces a consumer's `max-w-40` on a tooltip, and the reverse
+        container: [...dialogSizes.map(size => `rui-dialog-${size}`), 'rui-tooltip'],
       },
       classGroups: {
         // `text-rui-*` is a text colour, so the merger stops classifying it as a font size like the typography utilities below
         'text-color': [{ 'text-rui': [isAny] }],
+        'z': [{ z: zLayers.map(layer => `rui-${layer}`) }],
         'font-size': [
           { 'text-body': [isAny] },
           'text-caption',
+          'text-caption-2',
           'text-overline',
           { 'text-h': [isAny] },
           { 'text-subtitle': [isAny] },

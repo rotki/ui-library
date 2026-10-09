@@ -249,7 +249,7 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
     assertExists(drawer);
     expect(drawer.classList.contains('z-[6]')).toBe(true);
     // the variant's own z-index must be gone, not merely outranked
-    expect(drawer.classList.contains('z-7')).toBe(false);
+    expect(drawer.classList.contains('z-rui-app-bar')).toBe(false);
   });
 
   it('should still apply the variant class when the consumer passes none', async () => {
@@ -266,7 +266,7 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
     const drawer = queryBody<HTMLElement>('aside[data-visible]');
     assertExists(drawer);
     expect(drawer.classList.contains('custom-drawer')).toBe(true);
-    expect(drawer.classList.contains('z-7')).toBe(true);
+    expect(drawer.classList.contains('z-rui-app-bar')).toBe(true);
   });
 
   it('should keep DOM element when miniVariant is true and modelValue is false', async () => {

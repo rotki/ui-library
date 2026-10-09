@@ -104,6 +104,65 @@
   --rui-dark-divider: rgba(250, 250, 250, 0.1);
   --rui-light-outline: rgba(9, 9, 11, 0.18);
   --rui-dark-outline: rgba(250, 250, 250, 0.16);
+  --rui-light-surface-muted: var(--rui-neutral-100);
+  --rui-dark-surface-muted: var(--rui-neutral-800);
+  --rui-light-surface-sunken: var(--rui-neutral-50);
+  --rui-dark-surface-sunken: var(--rui-neutral-950);
+  /* Links: the info blue, which reads as a link without competing with the indigo primary. */
+  --rui-light-link: 3, 105, 161;
+  --rui-dark-link: 108, 182, 255;
+  /*
+   * The solid fill behind light text. Primary and secondary fill with `main` in both themes; a status
+   * color fills with `main` in light and its deep `darker` in dark, where `main` is a text tone.
+   */
+  --rui-light-primary-fill: var(--rui-light-primary-main);
+  --rui-light-secondary-fill: var(--rui-light-secondary-main);
+  --rui-light-error-fill: var(--rui-light-error-main);
+  --rui-light-warning-fill: var(--rui-light-warning-main);
+  --rui-light-info-fill: var(--rui-light-info-main);
+  --rui-light-success-fill: var(--rui-light-success-main);
+  --rui-dark-primary-fill: var(--rui-dark-primary-main);
+  --rui-dark-secondary-fill: var(--rui-dark-secondary-main);
+  --rui-dark-error-fill: var(--rui-dark-error-darker);
+  --rui-dark-warning-fill: var(--rui-dark-warning-darker);
+  --rui-dark-info-fill: var(--rui-dark-info-darker);
+  --rui-dark-success-fill: var(--rui-dark-success-darker);
+  /* The text on a fill. White on every library color; an app that themes primary light sets its own. */
+  --rui-primary-foreground: 255, 255, 255;
+  --rui-secondary-foreground: 255, 255, 255;
+  --rui-error-foreground: 255, 255, 255;
+  --rui-warning-foreground: 255, 255, 255;
+  --rui-info-foreground: 255, 255, 255;
+  --rui-success-foreground: 255, 255, 255;
+  /*
+   * The chart palette: indigo, teal, orange, magenta, green, violet, blue and ochre, at even weight
+   * so no series looks primary by accident. Dark lifts each one to read on a near-black plot.
+   */
+  --rui-light-chart-1: 78, 91, 166;
+  --rui-light-chart-2: 13, 138, 138;
+  --rui-light-chart-3: 214, 122, 30;
+  --rui-light-chart-4: 176, 64, 120;
+  --rui-light-chart-5: 88, 140, 40;
+  --rui-light-chart-6: 120, 90, 190;
+  --rui-light-chart-7: 40, 125, 195;
+  --rui-light-chart-8: 165, 130, 35;
+  --rui-light-chart-other: var(--rui-neutral-400);
+  --rui-dark-chart-1: 129, 140, 220;
+  --rui-dark-chart-2: 45, 190, 185;
+  --rui-dark-chart-3: 240, 160, 80;
+  --rui-dark-chart-4: 225, 110, 165;
+  --rui-dark-chart-5: 130, 190, 80;
+  --rui-dark-chart-6: 165, 140, 235;
+  --rui-dark-chart-7: 95, 170, 235;
+  --rui-dark-chart-8: 215, 180, 80;
+  --rui-dark-chart-other: var(--rui-neutral-500);
+  /* The `rui-scrollbar` thumb, a step darker on hover and press. */
+  --rui-light-scrollbar-thumb: rgb(var(--rui-neutral-300));
+  --rui-light-scrollbar-thumb-hover: rgb(var(--rui-neutral-400));
+  --rui-light-scrollbar-thumb-active: rgb(var(--rui-neutral-500));
+  --rui-dark-scrollbar-thumb: rgb(var(--rui-neutral-700));
+  --rui-dark-scrollbar-thumb-hover: rgb(var(--rui-neutral-600));
+  --rui-dark-scrollbar-thumb-active: rgb(var(--rui-neutral-500));
   /* State layers, the same tints as a hovered or pressed text button. */
   --rui-light-hover: rgba(9, 9, 11, 0.05);
   --rui-light-pressed: rgba(9, 9, 11, 0.1);
@@ -117,6 +176,21 @@
   --rui-outline: var(--rui-light-outline);
   --rui-hover: var(--rui-light-hover);
   --rui-pressed: var(--rui-light-pressed);
+  --rui-surface-muted: var(--rui-light-surface-muted);
+  --rui-surface-sunken: var(--rui-light-surface-sunken);
+  --rui-link: var(--rui-light-link);
+  --rui-chart-1: var(--rui-light-chart-1);
+  --rui-chart-2: var(--rui-light-chart-2);
+  --rui-chart-3: var(--rui-light-chart-3);
+  --rui-chart-4: var(--rui-light-chart-4);
+  --rui-chart-5: var(--rui-light-chart-5);
+  --rui-chart-6: var(--rui-light-chart-6);
+  --rui-chart-7: var(--rui-light-chart-7);
+  --rui-chart-8: var(--rui-light-chart-8);
+  --rui-chart-other: var(--rui-light-chart-other);
+  --rui-scrollbar-thumb: var(--rui-light-scrollbar-thumb);
+  --rui-scrollbar-thumb-hover: var(--rui-light-scrollbar-thumb-hover);
+  --rui-scrollbar-thumb-active: var(--rui-light-scrollbar-thumb-active);
 }
 
 /* The adaptive variables alias whichever theme is showing. */
@@ -151,6 +225,27 @@ html.light {
   --rui-outline: var(--rui-light-outline);
   --rui-hover: var(--rui-light-hover);
   --rui-pressed: var(--rui-light-pressed);
+  --rui-primary-fill: var(--rui-light-primary-fill);
+  --rui-secondary-fill: var(--rui-light-secondary-fill);
+  --rui-error-fill: var(--rui-light-error-fill);
+  --rui-warning-fill: var(--rui-light-warning-fill);
+  --rui-info-fill: var(--rui-light-info-fill);
+  --rui-success-fill: var(--rui-light-success-fill);
+  --rui-surface-muted: var(--rui-light-surface-muted);
+  --rui-surface-sunken: var(--rui-light-surface-sunken);
+  --rui-link: var(--rui-light-link);
+  --rui-chart-1: var(--rui-light-chart-1);
+  --rui-chart-2: var(--rui-light-chart-2);
+  --rui-chart-3: var(--rui-light-chart-3);
+  --rui-chart-4: var(--rui-light-chart-4);
+  --rui-chart-5: var(--rui-light-chart-5);
+  --rui-chart-6: var(--rui-light-chart-6);
+  --rui-chart-7: var(--rui-light-chart-7);
+  --rui-chart-8: var(--rui-light-chart-8);
+  --rui-chart-other: var(--rui-light-chart-other);
+  --rui-scrollbar-thumb: var(--rui-light-scrollbar-thumb);
+  --rui-scrollbar-thumb-hover: var(--rui-light-scrollbar-thumb-hover);
+  --rui-scrollbar-thumb-active: var(--rui-light-scrollbar-thumb-active);
   --rui-shadow-primary: var(--rui-light-shadow-primary);
   --rui-shadow-secondary: var(--rui-light-shadow-secondary);
 }
@@ -186,6 +281,27 @@ html.dark {
   --rui-outline: var(--rui-dark-outline);
   --rui-hover: var(--rui-dark-hover);
   --rui-pressed: var(--rui-dark-pressed);
+  --rui-primary-fill: var(--rui-dark-primary-fill);
+  --rui-secondary-fill: var(--rui-dark-secondary-fill);
+  --rui-error-fill: var(--rui-dark-error-fill);
+  --rui-warning-fill: var(--rui-dark-warning-fill);
+  --rui-info-fill: var(--rui-dark-info-fill);
+  --rui-success-fill: var(--rui-dark-success-fill);
+  --rui-surface-muted: var(--rui-dark-surface-muted);
+  --rui-surface-sunken: var(--rui-dark-surface-sunken);
+  --rui-link: var(--rui-dark-link);
+  --rui-chart-1: var(--rui-dark-chart-1);
+  --rui-chart-2: var(--rui-dark-chart-2);
+  --rui-chart-3: var(--rui-dark-chart-3);
+  --rui-chart-4: var(--rui-dark-chart-4);
+  --rui-chart-5: var(--rui-dark-chart-5);
+  --rui-chart-6: var(--rui-dark-chart-6);
+  --rui-chart-7: var(--rui-dark-chart-7);
+  --rui-chart-8: var(--rui-dark-chart-8);
+  --rui-chart-other: var(--rui-dark-chart-other);
+  --rui-scrollbar-thumb: var(--rui-dark-scrollbar-thumb);
+  --rui-scrollbar-thumb-hover: var(--rui-dark-scrollbar-thumb-hover);
+  --rui-scrollbar-thumb-active: var(--rui-dark-scrollbar-thumb-active);
   --rui-shadow-primary: var(--rui-dark-shadow-primary);
   --rui-shadow-secondary: var(--rui-dark-shadow-secondary);
 }

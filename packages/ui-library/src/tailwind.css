@@ -13,6 +13,7 @@
  */
 @import './theme/theme.css';
 @import './styles/colors.css' layer(base);
+@import './styles/tokens.css' layer(base);
 
 /* The built components and their helpers; paths resolve from this file, next to them in dist. */
 @source './**/*.js';

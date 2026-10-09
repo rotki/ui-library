@@ -14,6 +14,7 @@ const copies: [from: string, to: string][] = [
   ['src/theme/theme.css', 'dist/theme/theme.css'],
   ['src/theme/theme.css', 'dist/theme.css'],
   ['src/styles/colors.css', 'dist/styles/colors.css'],
+  ['src/styles/tokens.css', 'dist/styles/tokens.css'],
 ];
 
 for (const [from, to] of copies) {

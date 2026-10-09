@@ -96,6 +96,33 @@ describe('components/overlays/dialog/RuiDialog.vue', () => {
     expect(contentWrapper.style.maxWidth).toBe('100%');
   });
 
+  it('should take a preset width from size, which an explicit maxWidth overrides', async () => {
+    wrapper = createWrapper({ props: { size: 'lg' } });
+    await vi.runAllTimersAsync();
+
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    const contentWrapper = queryByRole<HTMLDivElement>('dialog')?.querySelector<HTMLDivElement>('[data-id=content]');
+    assertExists(contentWrapper);
+    expect(contentWrapper.style.maxWidth).toBe('var(--rui-dialog-lg)');
+
+    await wrapper.setProps({ maxWidth: 720 });
+    expect(contentWrapper.style.maxWidth).toBe('720px');
+  });
+
+  it('should sit on the dialog layer', async () => {
+    wrapper = createWrapper();
+    await vi.runAllTimersAsync();
+
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    const dialog = queryByRole<HTMLDivElement>('dialog');
+    assertExists(dialog);
+    expect(dialog.style.zIndex).toBe('var(--rui-z-dialog)');
+  });
+
   it('should dialog works with `persistent=false`', async () => {
     wrapper = createWrapper();
     await vi.runAllTimersAsync();

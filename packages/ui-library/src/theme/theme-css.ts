@@ -9,7 +9,19 @@
  * writes it and a unit test fails when the committed file is stale.
  */
 import { baseColors, baseColorsIntensities, contextColors } from '../consts/colors';
-import { lineColors, neutralShades, type RadiusRole, type ShadowRole, stateColors, surfaceColors } from '../consts/tokens';
+import {
+  chartColors,
+  contextTints,
+  dialogSizes,
+  insetSurfaceColors,
+  lineColors,
+  neutralShades,
+  type RadiusRole,
+  type ShadowRole,
+  stateColors,
+  surfaceColors,
+  zLayers,
+} from '../consts/tokens';
 
 const themes = ['light', 'dark'] as const;
 
@@ -41,6 +53,8 @@ const typography: Typography[] = [
   { name: 'body-1', size: 'base' },
   { name: 'body-2', size: 'sm' },
   { name: 'caption', size: 'xs', lineHeight: '1.25rem' },
+  // 10px, for a dense tag or a meta line under a value; the smallest size the scale allows
+  { name: 'caption-2', size: '[0.625rem]', lineHeight: '1rem' },
   { name: 'h1', size: '6xl', lineHeight: '4.5rem', weight: 'semibold' },
   { name: 'h2', size: '5xl', lineHeight: '3.5rem', weight: 'semibold' },
   { name: 'h3', size: '4xl', lineHeight: '2.75rem', weight: 'semibold' },
@@ -76,6 +90,11 @@ function colorTokens(): string[] {
         `--color-rui-${prefix}${color}: rgb(var(--rui-${prefix}${color}-main));`,
         `--color-rui-${prefix}${color}-darker: rgb(var(--rui-${prefix}${color}-darker));`,
         `--color-rui-${prefix}${color}-lighter: rgb(var(--rui-${prefix}${color}-lighter));`,
+        // the solid fill behind light text: `main` in light, the deep `darker` for a status color in dark
+        `--color-rui-${prefix}${color}-fill: rgb(var(--rui-${prefix}${color}-fill));`,
+        // `color-mix`, since the channels are comma separated and `rgb(r, g, b / a)` is not valid CSS
+        ...Object.entries(contextTints).map(([tint, percent]) =>
+          `--color-rui-${prefix}${color}-${tint}: color-mix(in oklab, rgb(var(--rui-${prefix}${color}-main)) ${percent}%, transparent);`),
       );
     }
     lines.push(
@@ -91,11 +110,18 @@ function colorTokens(): string[] {
    * keeps one look.
    */
   for (const prefix of [...themes.map(theme => `${theme}-`), '']) {
-    for (const surface of surfaceColors)
+    for (const surface of [...surfaceColors, ...insetSurfaceColors, ...chartColors, 'link'])
       lines.push(`--color-rui-${prefix}${surface}: rgb(var(--rui-${prefix}${surface}));`);
     for (const line of [...lineColors, ...stateColors])
       lines.push(`--color-rui-${prefix}${line}: var(--rui-${prefix}${line});`);
   }
+
+  // text on a context fill; white for the library's colors, overridable for a light themed primary
+  for (const color of contextColors)
+    lines.push(`--color-rui-${color}-foreground: rgb(var(--rui-${color}-foreground));`);
+
+  // a loading veil: the surface, slightly see-through
+  lines.push('--color-rui-veil: color-mix(in oklab, rgb(var(--rui-surface)) 88%, transparent);');
 
   return lines;
 }
@@ -160,6 +186,15 @@ function typographyUtility({ name, size, lineHeight, weight, tracking }: Typogra
   return `@utility text-${name} {\n${body.join('\n')}\n}`;
 }
 
+/** The layout tokens, each a reference to its `--rui-*` variable. */
+function layoutTokens(): string[] {
+  return [
+    '--spacing-rui-app-bar: var(--rui-app-bar-height);',
+    ...dialogSizes.map(size => `--container-rui-dialog-${size}: var(--rui-dialog-${size});`),
+    '--container-rui-tooltip: var(--rui-tooltip-max-width);',
+  ];
+}
+
 function indent(lines: string[]): string {
   return lines.map(line => `  ${line}`).join('\n');
 }
@@ -187,6 +222,39 @@ export function buildThemeCss(): string {
      */
     '@theme inline {',
     indent(colorTokens()),
+    '}',
+    '',
+    /*
+     * Layout tokens, held in `--rui-*` (`tokens.css`) so the library's own components read the same
+     * values: the app bar height as a spacing (`h-`, `top-`, `mt-`, `scroll-pt-rui-app-bar`), and
+     * the dialog and tooltip widths as containers (`max-w-rui-dialog-md`).
+     */
+    '@theme inline {',
+    indent(layoutTokens()),
+    '}',
+    '',
+    ...zLayers.map(layer => `@utility z-rui-${layer} {\n  z-index: var(--rui-z-${layer});\n}\n`),
+    /*
+     * A thin scrollbar in the neutral ramp, opt-in as `rui-scrollbar` on a scrolling element. The
+     * standard properties cover Firefox and current Chromium; the pseudo-elements, older WebKit.
+     */
+    '@utility rui-scrollbar {',
+    '  scrollbar-width: thin;',
+    '  scrollbar-color: var(--rui-scrollbar-thumb) transparent;',
+    '  &::-webkit-scrollbar {',
+    '    width: 0.5rem;',
+    '    height: 0.5rem;',
+    '  }',
+    '  &::-webkit-scrollbar-thumb {',
+    '    border-radius: 9999px;',
+    '    background-color: var(--rui-scrollbar-thumb);',
+    '  }',
+    '  &::-webkit-scrollbar-thumb:hover {',
+    '    background-color: var(--rui-scrollbar-thumb-hover);',
+    '  }',
+    '  &::-webkit-scrollbar-thumb:active {',
+    '    background-color: var(--rui-scrollbar-thumb-active);',
+    '  }',
     '}',
     '',
     // not `inline`: these stay variables, so a consumer can retune one by setting it

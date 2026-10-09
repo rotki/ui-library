@@ -27,7 +27,7 @@ const style = computed<{ width: string | undefined }>(() => ({
 }));
 
 // a popup like a menu: panel corners, a hairline edge for dark backgrounds, and never wider than the screen
-const rootStyle = tv({ base: 'top-4 right-4 fixed z-50 max-w-[calc(100vw-2rem)] overflow-hidden rounded-rui-panel border shadow-rui-menu' });
+const rootStyle = tv({ base: 'top-4 right-4 fixed z-rui-toast max-w-[calc(100vw-2rem)] overflow-hidden rounded-rui-panel border shadow-rui-menu' });
 
 const { start, stop } = useTimeoutFn(() => {
   set(modelValue, false);

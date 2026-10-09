@@ -62,6 +62,25 @@ describe('components/overlays/tooltip/RuiTooltip.vue', () => {
     expect(tooltip?.querySelector(DATA_ATTRIBUTE_SELECTORS.ARROW)).toBeTruthy();
   });
 
+  it('should wrap at the token width unless the consumer sets its own', async () => {
+    wrapper = createWrapper({ props: { text } });
+    await hover(wrapper);
+
+    let tooltip = queryByRole<HTMLDivElement>('tooltip');
+    expect(tooltip?.classList.contains('max-w-rui-tooltip')).toBe(true);
+    expect(tooltip?.classList.contains('z-rui-tooltip')).toBe(true);
+
+    wrapper.unmount();
+    cleanupElements('[role="tooltip"]');
+
+    wrapper = createWrapper({ props: { text, classNames: { tooltip: 'max-w-40' } } });
+    await hover(wrapper);
+
+    tooltip = queryByRole<HTMLDivElement>('tooltip');
+    expect(tooltip?.classList.contains('max-w-40')).toBe(true);
+    expect(tooltip?.classList.contains('max-w-rui-tooltip')).toBe(false);
+  });
+
   it('should pass props correctly', () => {
     wrapper = createWrapper({
       props: {

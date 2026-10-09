@@ -79,9 +79,10 @@ const drawer = tv({
       true: 'translate-x-0',
       false: '',
     },
+    // a modal drawer covers the app bar; a docked one sits level with it
     withOverlay: {
-      true: 'z-10000',
-      false: 'z-7',
+      true: 'z-rui-drawer',
+      false: 'z-rui-app-bar',
     },
   },
   compoundVariants: [
@@ -164,7 +165,7 @@ onClickOutside(content, () => {
         <div
           v-if="modelValue"
           data-id="overlay"
-          class="absolute inset-0 backdrop-blur-sm bg-rui-neutral-950/40 dark:bg-black/60 z-10000"
+          class="absolute inset-0 backdrop-blur-sm bg-rui-neutral-950/40 dark:bg-black/60 z-rui-drawer"
           @click.stop="close()"
         />
       </Transition>

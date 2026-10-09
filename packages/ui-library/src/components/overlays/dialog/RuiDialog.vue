@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { DialogSize } from '@/consts/tokens';
 import type { VueClassValue } from '@/types/class-value';
 import { useDismissableOverlay } from '@/composables/overlay-stack';
 import { useTimeoutManager } from '@/composables/timeout-manager';
@@ -14,6 +15,8 @@ export interface DialogProps {
   persistent?: boolean;
   width?: string | number;
   maxWidth?: string | number;
+  /** A preset max width, `--rui-dialog-<size>`; an explicit `maxWidth` wins */
+  size?: DialogSize;
   bottomSheet?: boolean;
   classNames?: RuiDialogClassNames;
   zIndex?: string | number;
@@ -31,9 +34,10 @@ const {
   persistent = false,
   width = '98%',
   maxWidth,
+  size,
   bottomSheet = false,
   classNames,
-  zIndex = 9999,
+  zIndex = 'var(--rui-z-dialog)',
   ariaLabel,
 } = defineProps<DialogProps>();
 
@@ -63,14 +67,14 @@ const alive = computed<boolean>(() => get(modelValue) || get(transitioning));
 
 const style = computed<{ width: string | undefined; maxWidth: string | undefined }>(() => ({
   width: transformPropsUnit(width),
-  maxWidth: transformPropsUnit(maxWidth),
+  maxWidth: transformPropsUnit(maxWidth) ?? (size ? `var(--rui-dialog-${size})` : undefined),
 }));
 
 const dialog = tv({
   slots: {
     root: 'fixed inset-0',
     overlay: 'absolute inset-0 backdrop-blur-sm bg-rui-neutral-950/40 dark:bg-black/60',
-    content: 'absolute left-1/2 bottom-0 -translate-x-1/2 outline-hidden overflow-y-auto max-h-[90vh]',
+    content: 'absolute left-1/2 bottom-0 -translate-x-1/2 outline-hidden overflow-y-auto max-h-(--rui-dialog-max-height)',
   },
   variants: {
     /*

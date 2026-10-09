@@ -157,7 +157,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
 const menuStyles = tv({
   slots: {
     wrapper: 'relative inline-flex max-w-full',
-    popover: 'w-max z-9999',
+    popover: 'w-max z-rui-menu',
     // a hairline edge keeps the popup apart from a surface of nearly the same shade in dark mode
     content: 'rounded-rui-panel overflow-hidden shadow-rui-menu bg-rui-menu border border-rui-divider text-rui-text focus:outline-hidden p-1',
     details: 'pt-1',

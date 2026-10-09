@@ -1,0 +1,43 @@
+/*
+ * The library's layout tokens. The components read them, and `theme.css` maps them onto Tailwind
+ * (`z-rui-dialog`, `h-rui-app-bar`, `max-w-rui-dialog-md`), so an app that sets one here retunes
+ * the components and its own markup together.
+ */
+:root {
+  /*
+   * Stacking layers, lowest first. Sticky parts inside the content (a table's stuck header and
+   * pagination bar), the page's own fixed parts that float over it (a dock, a FAB, a side tab), the
+   * app's chrome, a modal drawer, then the popups: a menu or tooltip opened from a dialog sits above
+   * it, and a toast above everything but a blocking screen (an error or lock screen). Steps of 100
+   * between the popups leave room for an app's own layer in between.
+   */
+  --rui-z-raised: 10;
+  --rui-z-floating: 15;
+  --rui-z-app-bar: 20;
+  --rui-z-drawer: 30;
+  --rui-z-dialog: 1000;
+  --rui-z-menu: 1100;
+  --rui-z-tooltip: 1200;
+  --rui-z-toast: 1300;
+  --rui-z-blocking: 2000;
+
+  /* The app bar: 56px on a phone, 64px from md, as in rotki. */
+  --rui-app-bar-height: 3.5rem;
+
+  /* RuiDialog's `size` presets, which cover nearly every dialog in the rotki apps. */
+  --rui-dialog-sm: 400px;
+  --rui-dialog-md: 500px;
+  --rui-dialog-lg: 600px;
+  --rui-dialog-xl: 800px;
+  --rui-dialog-2xl: 1000px;
+  --rui-dialog-max-height: 90vh;
+
+  /* A tooltip wraps at this width rather than running across the screen. */
+  --rui-tooltip-max-width: 20rem;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --rui-app-bar-height: 4rem;
+  }
+}
