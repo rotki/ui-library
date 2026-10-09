@@ -5,7 +5,8 @@ import { useEffect, useGlobals } from 'storybook/preview-api';
 import { useRotkiTheme } from '@/composables/theme';
 import { RuiPlugin } from './rui';
 import './preview.css';
-import '@fontsource/roboto/latin.css';
+import '@fontsource-variable/inter/opsz.css';
+import '@fontsource-variable/geist-mono';
 
 setup((app) => {
   app.use(RuiPlugin);

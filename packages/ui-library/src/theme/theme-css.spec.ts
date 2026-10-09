@@ -32,6 +32,11 @@ describe('theme/theme-css', () => {
       expect(committed).toContain(`--shadow-rui-${role}:`);
   });
 
+  it('should name Inter and Geist Mono first in the font stacks', () => {
+    expect(committed).toContain(`--font-sans: 'Inter Variable', 'Inter',`);
+    expect(committed).toContain(`--font-mono: 'Geist Mono Variable', 'Geist Mono',`);
+  });
+
   it('should define the whole neutral ramp', () => {
     for (const shade of neutralShades)
       expect(committed).toContain(`--color-rui-neutral-${shade}:`);

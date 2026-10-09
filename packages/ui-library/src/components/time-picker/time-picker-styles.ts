@@ -28,7 +28,7 @@ export const timePickerStyles = tv({
     },
     selected: {
       true: {
-        clockNumber: 'bg-rui-primary text-rui-dark-text dark:text-rui-light-text z-10 font-bold',
+        clockNumber: 'bg-rui-primary text-rui-dark-text dark:text-rui-light-text z-10 font-semibold',
       },
     },
   },

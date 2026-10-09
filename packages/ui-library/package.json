@@ -126,7 +126,8 @@
     "tinycolor2": "catalog:"
   },
   "devDependencies": {
-    "@fontsource/roboto": "catalog:",
+    "@fontsource-variable/geist-mono": "catalog:",
+    "@fontsource-variable/inter": "catalog:",
     "@storybook/addon-a11y": "catalog:",
     "@storybook/addon-docs": "catalog:",
     "@storybook/addon-links": "catalog:",

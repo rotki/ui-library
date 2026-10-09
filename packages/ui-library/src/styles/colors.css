@@ -287,12 +287,13 @@
   --rui-dark-shadow-secondary: rgba(0, 0, 0, 0.3);
   --rui-shadow-primary: var(--rui-light-shadow-primary);
   --rui-shadow-secondary: var(--rui-light-shadow-secondary);
-  --rui-light-text-primary: rgba(0, 0, 0, 0.87);
-  --rui-light-text-secondary: rgba(0, 0, 0, 0.6);
-  --rui-light-text-disabled: rgba(0, 0, 0, 0.38);
-  --rui-dark-text-primary: rgb(255, 255, 255);
-  --rui-dark-text-secondary: rgba(255, 255, 255, 0.7);
-  --rui-dark-text-disabled: rgba(255, 255, 255, 0.5);
+  /* Solid zinc text, so a color reads the same on every surface; secondary keeps 4.5:1 on the menus. */
+  --rui-light-text-primary: rgb(9, 9, 11);
+  --rui-light-text-secondary: rgb(82, 82, 91);
+  --rui-light-text-disabled: rgb(161, 161, 170);
+  --rui-dark-text-primary: rgb(250, 250, 250);
+  --rui-dark-text-secondary: rgb(161, 161, 170);
+  --rui-dark-text-disabled: rgb(113, 113, 122);
 
   /* The neutral ramp: zinc, a near-pure grey that leaves the indigo primary as the one color. */
   --rui-neutral-50: 250, 250, 250;

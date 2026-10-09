@@ -61,7 +61,7 @@ export const categoryPickerStyles = tv({
     detail: 'flex flex-col gap-0.5 p-2 overflow-y-auto outline-hidden min-w-0',
     // Focus lives on the pane container, so this is the only per-item focus cue
     highlighted: '!bg-rui-grey-100 dark:!bg-rui-grey-800',
-    subheader: 'px-3 pt-3 pb-1 text-overline text-rui-text-secondary uppercase',
+    subheader: 'px-3 pt-3 pb-1 text-overline text-rui-text-secondary',
     empty: 'flex flex-1 items-center justify-center p-8 text-body-2 text-rui-text-secondary text-center',
     // Opaque panel surface so a scrolled pane never bleeds through the footer.
     footer: 'shrink-0 p-3 border-t border-rui-grey-200 dark:border-rui-grey-800 bg-white dark:bg-rui-grey-900',

@@ -9,7 +9,8 @@ import App from '@/App.vue';
 import { router } from '@/router';
 import { useDefaultsStore } from '@/stores/defaults';
 import '@/assets/main.css';
-import '@fontsource/roboto/latin.css';
+import '@fontsource-variable/inter/opsz.css';
+import '@fontsource-variable/geist-mono';
 
 // Create i18n instance
 const i18n = createI18n({

@@ -45,7 +45,7 @@ test.describe('theme', () => {
     expect(primaryMain).toBe('78, 91, 166');
 
     const textPrimary = await getAdaptiveVariable('--rui-text-primary')(page);
-    expect(textPrimary).toBe('rgba(0, 0, 0, 0.87)');
+    expect(textPrimary).toBe('rgb(9, 9, 11)');
   });
 
   test('should update adaptive CSS variables when switching to dark theme', async ({ page }) => {
@@ -57,7 +57,7 @@ test.describe('theme', () => {
     expect(primaryMain).toBe('91, 104, 178');
 
     const textPrimary = await getAdaptiveVariable('--rui-text-primary')(page);
-    expect(textPrimary).toBe('rgb(255, 255, 255)');
+    expect(textPrimary).toBe('rgb(250, 250, 250)');
   });
 
   test('should switch adaptive CSS variables back when toggling light to dark to light', async ({ page }) => {
