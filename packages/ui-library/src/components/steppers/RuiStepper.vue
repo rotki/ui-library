@@ -65,8 +65,9 @@ const stepper = tv({
       [StepperOrientation.vertical]: {
         root: 'flex-col inline-flex',
         // 4px in from the edge, so the scrolling root does not clip the active marker's halo
-        step: 'px-1 py-6',
-        divider: 'block min-h-12 min-w-0 max-h-full h-full self-start -my-4 mx-4 border-l',
+        step: 'px-1 py-3',
+        // reaches into both steps' padding, so the line runs from just under one marker to just over the next
+        divider: 'block min-h-6 min-w-0 max-h-full h-full self-start -my-3 mx-4 border-l',
       },
     },
     state: {
