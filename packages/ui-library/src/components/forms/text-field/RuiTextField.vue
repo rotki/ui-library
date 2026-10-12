@@ -67,6 +67,8 @@ const emit = defineEmits<{
 defineSlots<{
   prepend?: () => any;
   append?: () => any;
+  /** Rich hint content under the field, in place of the `hint` text; error and success messages still take precedence. */
+  hint?: () => any;
 }>();
 
 const isHovered = ref<boolean>(false);
@@ -244,6 +246,13 @@ defineExpose({
       :error-messages="errorMessages"
       :success-messages="successMessages"
       :hint="hint"
-    />
+    >
+      <template
+        v-if="$slots.hint"
+        #hint
+      >
+        <slot name="hint" />
+      </template>
+    </RuiFormTextDetail>
   </div>
 </template>

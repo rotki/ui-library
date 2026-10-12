@@ -11,6 +11,11 @@ const {
   hint?: string;
 }>();
 
+defineSlots<{
+  /** Rich hint content, shown in place of the `hint` text while there is no error or success message. */
+  hint?: () => any;
+}>();
+
 const { formattedErrorMessages, formattedSuccessMessages, hasError, hasSuccess } =
   useFormTextDetail(
     () => errorMessages,
@@ -45,11 +50,13 @@ const { formattedErrorMessages, formattedSuccessMessages, hasError, hasSuccess }
       {{ formattedSuccessMessages[0] }}
     </div>
     <div
-      v-else-if="hint"
+      v-else-if="$slots.hint || hint"
       key="hint"
       class="text-rui-text-secondary text-caption"
     >
-      {{ hint }}
+      <slot name="hint">
+        {{ hint }}
+      </slot>
     </div>
   </TransitionGroup>
 </template>

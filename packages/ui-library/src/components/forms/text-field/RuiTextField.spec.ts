@@ -166,6 +166,27 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
     expect(wrapper.find('.details div').text()).toBe(hint);
   });
 
+  it('should render the hint slot in place of the hint text', () => {
+    wrapper = createWrapper({
+      props: { modelValue: '', hint: 'plain hint' },
+      slots: { hint: () => h('strong', { 'data-id': 'rich-hint' }, '1,234.56 USD') },
+    });
+
+    expectWrapperToHaveClass(wrapper, '.details div', /text-rui-text-secondary/);
+    expect(wrapper.find('[data-id=rich-hint]').text()).toBe('1,234.56 USD');
+    expect(wrapper.find('.details').text()).not.toContain('plain hint');
+  });
+
+  it('should show an error message over the hint slot', () => {
+    wrapper = createWrapper({
+      props: { modelValue: '', errorMessages: ['Required'] },
+      slots: { hint: () => h('strong', { 'data-id': 'rich-hint' }, 'hint') },
+    });
+
+    expect(wrapper.find('[data-id=rich-hint]').exists()).toBeFalsy();
+    expect(wrapper.find('.details div').text()).toBe('Required');
+  });
+
   it('should pass hint errorMessages', async () => {
     wrapper = createWrapper({
       props: {
