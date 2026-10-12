@@ -99,7 +99,13 @@ export function useStickyPaginationBar(
   return canStick;
 }
 
-/** The height of each pagination bar stuck to the page, by table; the page's floating parts clear the tallest. */
+/**
+ * How far above the bar a bar resting at its own place still counts as covered: a part docked in the
+ * bottom corner (rotki's task dock is 82px with its offset) reaches over the bar's top by about this much.
+ */
+const RESTING_CLEARANCE = 48;
+
+/** How much of the view's bottom each pagination bar covers, by table; the page's floating parts clear the most. */
 const stuckBarHeights = new Map<symbol, number>();
 
 function publishStickyBottom(): void {
@@ -115,10 +121,12 @@ function publishStickyBottom(): void {
 /**
  * Publishes how much of the view's bottom a stuck pagination bar covers, as `--rui-sticky-bottom` on
  * the document root, so the page's own floating parts (a dock, a FAB) can rise above the bar instead of
- * covering its page buttons. Only a bar stuck to the page counts: one stuck inside a scrolling area
- * sits under nothing the page floats.
+ * covering its page buttons. A bar resting at its own place in the bottom band of the view counts too,
+ * since it sits in the same corner; it covers from its top down, which is more than its height when it
+ * rests above the view's bottom, so the parts keep the same gap above it as above a stuck bar. Only a
+ * bar at page level counts: one inside a scrolling area sits under nothing the page floats.
  *
- * @param sentinel - an empty element at the bar's own place after the rows; while it is below the view, the bar is stuck
+ * @param sentinel - an empty element at the bar's own place after the rows; while it is below the view's bottom band, the bar covers that corner
  * @param bar - the bar, measured for its height
  * @param canStick - whether the bar may stick at all
  */
@@ -130,7 +138,27 @@ export function useStickyBottomInset(
   const id = Symbol('sticky-pagination-bar');
   const belowView = shallowRef<boolean>(false);
   const pageLevel = shallowRef<boolean>(false);
+  const covered = shallowRef<number>(0);
   const { height } = useElementSize(bar, undefined, { box: 'border-box' });
+  const { height: viewHeight } = useWindowSize();
+  let frame = 0;
+
+  /** From the bar's top to the view's bottom; a stuck bar sits on that bottom, so this is its height. */
+  function measureCovered(): void {
+    frame = 0;
+    const element = unrefElement(bar);
+    if (!element)
+      return;
+    set(covered, Math.max(get(height), Math.ceil(get(viewHeight) - element.getBoundingClientRect().top)));
+  }
+
+  /** A resting bar moves with the page, so while it is in the band, follow it once per frame. */
+  function scheduleMeasure(): void {
+    if (get(belowView) && !frame)
+      frame = requestAnimationFrame(measureCovered);
+  }
+
+  useEventListener('scroll', scheduleMeasure, { capture: true, passive: true });
 
   onMounted(() => {
     const element = get(sentinel);
@@ -142,17 +170,24 @@ export function useStickyBottomInset(
       return;
     // no root bounds (a cross-origin frame) reads as not stuck, which leaves the floating parts where they are
     set(belowView, !entry.isIntersecting && entry.boundingClientRect.top >= (entry.rootBounds?.bottom ?? Number.POSITIVE_INFINITY));
+  }, {
+    // the view's bottom edge, raised by the band a resting bar covers
+    rootMargin: () => `0px 0px -${Math.ceil(get(height)) + RESTING_CLEARANCE}px 0px`,
   });
+
+  watch([belowView, height, viewHeight], () => measureCovered());
 
   watchEffect(() => {
     if (get(pageLevel) && toValue(canStick) && get(belowView) && get(height) > 0)
-      stuckBarHeights.set(id, get(height));
+      stuckBarHeights.set(id, Math.max(get(height), get(covered)));
     else
       stuckBarHeights.delete(id);
     publishStickyBottom();
   });
 
   onScopeDispose(() => {
+    if (frame)
+      cancelAnimationFrame(frame);
     stuckBarHeights.delete(id);
     publishStickyBottom();
   });

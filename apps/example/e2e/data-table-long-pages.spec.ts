@@ -105,6 +105,37 @@ test.describe('data tables - long pages', () => {
     await expect.poll(stickyBottom).toBe('0px');
   });
 
+  test('publishes the bar\'s height while it rests in the bottom corner, not further up', async ({ page }) => {
+    const table = page.locator('[data-id=long-single] [data-id=table]');
+    const bar = table.locator('[data-id=table-pagination]');
+    const sentinel = table.locator('[data-id=table-pagination-sentinel]');
+    const stickyBottom = async (): Promise<string> => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--rui-sticky-bottom').trim());
+
+    await scrollTo(table, APP_BAR);
+    const barHeight = Math.round((await bar.boundingBox())?.height ?? 0);
+
+    // the bar resting 10px above the view's bottom covers from its top down, so a rotki-style dock keeps its 16px gap
+    await scrollTo(sentinel, viewportHeight(page) - barHeight - 10);
+    expect(await bottomOf(bar)).toBe(viewportHeight(page) - 10);
+    // the bar's top can sit on a fraction of a pixel, which the inset rounds up
+    await expect.poll(async () => Math.abs(Number.parseFloat(await stickyBottom()) - (barHeight + 10))).toBeLessThanOrEqual(1);
+    const dockBottom = await page.evaluate(() => {
+      const dock = document.createElement('div');
+      Object.assign(dock.style, { position: 'fixed', right: '16px', width: '200px', height: '32px', bottom: 'calc(16px + var(--rui-sticky-bottom))' });
+      document.body.append(dock);
+      const bottom = dock.getBoundingClientRect().bottom;
+      dock.remove();
+      return Math.round(bottom);
+    });
+    const gap = await topOf(bar) - dockBottom;
+    expect(gap).toBeGreaterThanOrEqual(16);
+    expect(gap).toBeLessThanOrEqual(17);
+
+    // resting above that band, the bar is clear of the corner (higher still, the next table's own bar would stick)
+    await scrollTo(sentinel, viewportHeight(page) - barHeight - 80);
+    await expect.poll(stickyBottom).toBe('0px');
+  });
+
   test('leaves the bar under the rows while a table is only starting to scroll into view', async ({ page }) => {
     const table = page.locator('[data-id=long-stacked] [data-id=table-second]');
     const bar = table.locator('[data-id=table-pagination]');

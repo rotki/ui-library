@@ -287,7 +287,9 @@ Give it `z-rui-floating` (15): above the sticky parts of the content, below the 
 `TaskDock`, `PinnedSidebar`, the scroll-to-top FAB in `AppCore` and the dashboard's message banner.
 
 On top, a part in the bottom corner would hide the bar's page buttons. While a bar is stuck to the page,
-the table sets `--rui-sticky-bottom` on the root to the bar's height (`0px` otherwise), so lift the part
+or rests at its own place near the bottom of the view (within its height plus 48px), the table sets
+`--rui-sticky-bottom` on the root to how much of the view's bottom the bar covers, from its top down
+(the bar's height while stuck, `0px` otherwise), so lift the part
 by it: `bottom-[calc(1rem+var(--rui-sticky-bottom))] transition-[bottom]`. In rotki: `TaskDock` and the
 scroll-to-top FAB.
 
