@@ -4,7 +4,7 @@ import RuiProgress from '@/components/progress/RuiProgress.vue';
 import RuiStepperIcon from '@/components/steppers/RuiStepperIcon.vue';
 import { useKeyboardScroll } from '@/composables/keyboard-scroll';
 import { StepperOrientation, StepperState, type StepperStep } from '@/types/stepper';
-import { tv } from '@/utils/tv';
+import { cn, tv } from '@/utils/tv';
 
 export interface RuiStepperClassNames {
   root?: VueClassValue;
@@ -24,6 +24,7 @@ export interface Props {
 
 defineOptions({
   name: 'RuiStepper',
+  inheritAttrs: false,
 });
 
 const {
@@ -195,7 +196,8 @@ watch(() => step, () => {
     :tabindex="scrollTabindex"
     role="list"
     aria-label="Progress steps"
-    :class="ui.root()"
+    :class="ui.root({ class: cn([classNames?.root, $attrs.class]) })"
+    v-bind="{ ...$attrs, class: undefined }"
     :data-orientation="orientation"
     :data-icon-top="iconTop || undefined"
     :data-custom="custom || undefined"

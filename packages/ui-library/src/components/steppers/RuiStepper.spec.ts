@@ -98,6 +98,28 @@ describe('components/steppers/RuiStepper.vue', () => {
     expect(wrapper.element.getAttribute('data-orientation')).toBe(StepperOrientation.vertical);
   });
 
+  it('should let a consumer class replace the root display', () => {
+    wrapper = createWrapper({
+      props: { steps, orientation: StepperOrientation.vertical },
+      attrs: { 'class': 'hidden lg:flex', 'data-id': 'wizard-steps' },
+    });
+
+    const classes = wrapper.classes();
+    expect(classes).toContain('hidden');
+    expect(classes).toContain('lg:flex');
+    expect(classes).not.toContain('flex');
+    expect(classes).not.toContain('inline-flex');
+    expect(wrapper.attributes('data-id')).toBe('wizard-steps');
+  });
+
+  it('should apply classNames.root to the root', () => {
+    wrapper = createWrapper({
+      props: { steps, classNames: { root: 'gap-2' } },
+    });
+
+    expect(wrapper.classes()).toContain('gap-2');
+  });
+
   it('should render custom stepper variant', () => {
     wrapper = createWrapper({
       props: { steps, custom: true },
