@@ -75,6 +75,7 @@ catalog:
   tailwind-variants: 3.3.1
   tailwindcss: 4.3.3
   tinycolor2: 1.6.0
+  tinyglobby: 0.2.17
   tsc-alias: 1.9.4
   tsx: 4.23.13
   typescript: 6.0.3

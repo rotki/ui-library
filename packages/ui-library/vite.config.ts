@@ -97,7 +97,6 @@ export default defineConfig({
           'node:url',
           'fs',
           'path',
-          'fast-glob',
           'vite',
         ];
 

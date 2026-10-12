@@ -3,6 +3,7 @@ import type { RuiIconsPluginOptions, ScanResult } from './types';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { globSync } from 'tinyglobby';
 import {
   extractIconsFromSource,
   generateVirtualModule,
@@ -114,16 +115,13 @@ export function ruiIconsPlugin(options: RuiIconsPluginOptions = {}): Plugin {
   /**
    * Scans all matching files for icon usage
    */
-  async function scanFiles(): Promise<void> {
-    const fg = await import('fast-glob');
-    const glob = fg.default || fg;
-
+  function scanFiles(): void {
     scanResult = {
       icons: new Set([...libraryBaseline, ...include]),
       invalidIcons: new Map(),
     };
 
-    const files = glob.sync(scanPatterns, {
+    const files = globSync(scanPatterns, {
       cwd: root,
       ignore: EXCLUDED_PATTERNS,
       absolute: true,
@@ -237,8 +235,8 @@ export function ruiIconsPlugin(options: RuiIconsPluginOptions = {}): Plugin {
       server.watcher.on('add', handleFileChange);
     },
 
-    async buildStart() {
-      await scanFiles();
+    buildStart() {
+      scanFiles();
     },
 
     resolveId(id) {

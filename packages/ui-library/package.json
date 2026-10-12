@@ -121,7 +121,8 @@
     "@floating-ui/dom": "catalog:",
     "scule": "catalog:",
     "tailwind-variants": "catalog:",
-    "tinycolor2": "catalog:"
+    "tinycolor2": "catalog:",
+    "tinyglobby": "catalog:"
   },
   "devDependencies": {
     "@fontsource-variable/geist-mono": "catalog:",

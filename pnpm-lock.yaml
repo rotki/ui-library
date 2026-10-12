@@ -248,6 +248,9 @@ catalogs:
     tinycolor2:
       specifier: 1.6.0
       version: 1.6.0
+    tinyglobby:
+      specifier: 0.2.17
+      version: 0.2.17
     tsc-alias:
       specifier: 1.9.4
       version: 1.9.4
@@ -405,6 +408,9 @@ importers:
       tinycolor2:
         specifier: 'catalog:'
         version: 1.6.0
+      tinyglobby:
+        specifier: 'catalog:'
+        version: 0.2.17
     devDependencies:
       '@fontsource-variable/geist-mono':
         specifier: 'catalog:'
