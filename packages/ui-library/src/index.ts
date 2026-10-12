@@ -10,7 +10,7 @@ import {
 import { createIconDefaults, IconsSymbol } from '@/composables/icons';
 import { useRotkiTheme } from '@/composables/theme';
 import { RUI_I18N_INJECTION_KEY } from '@/composables/use-rui-i18n';
-import { StepperState } from '@/types/stepper';
+import { StepperOrientation, StepperState, type StepperStep } from '@/types/stepper';
 import '@/style.css';
 
 export * from '@/components';
@@ -29,7 +29,7 @@ export { translationKeys } from '@/i18n/keys';
 
 export * from '@/icons';
 
-export { StepperState };
+export { StepperOrientation, StepperState, type StepperStep };
 
 export type { VueClassValue } from '@/types/class-value';
 
