@@ -1,5 +1,5 @@
-import type { MaybeComputedElementRef } from '@vueuse/core';
 import type { MaybeRefOrGetter, Ref } from 'vue';
+import type { MaybeElementRef } from '@/types/dom';
 
 export interface UsePageScrollReturn {
   /** Scroll the table's top into view, if it has scrolled above the visible area. */
@@ -124,7 +124,7 @@ function publishStickyBottom(): void {
  */
 export function useStickyBottomInset(
   sentinel: Readonly<Ref<HTMLElement | null | undefined>>,
-  bar: MaybeComputedElementRef,
+  bar: MaybeElementRef,
   canStick: MaybeRefOrGetter<boolean>,
 ): void {
   const id = Symbol('sticky-pagination-bar');

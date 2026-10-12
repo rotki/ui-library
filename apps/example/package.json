@@ -17,6 +17,8 @@
   },
   "dependencies": {
     "@rotki/ui-library": "workspace:*",
+    "@vueuse/core": "catalog:",
+    "@vueuse/shared": "catalog:",
     "pinia": "catalog:",
     "tailwindcss": "catalog:",
     "vue": "catalog:",

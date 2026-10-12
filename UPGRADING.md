@@ -4,6 +4,17 @@
 ([#585](https://github.com/rotki/ui-library/issues/585)). This guide lists what an app has to change. It
 grows with the release branch.
 
+## VueUse
+
+The library no longer depends on `@vueuse/core` or `@vueuse/shared`: it bundles the parts it uses,
+tree-shaken, so an app can use any VueUse version (or none) without a second copy or a version clash.
+An app that imported VueUse without declaring it, relying on the library to bring it in, now has to
+add it to its own dependencies:
+
+```sh
+pnpm add @vueuse/core @vueuse/shared
+```
+
 ## Tailwind setup
 
 The app's own Tailwind 4 build now generates the library's classes. Replace the 2.x setup, the Tailwind 3

@@ -1,4 +1,4 @@
-import type { MaybeRefOrGetter, Ref, TemplateRef } from 'vue';
+import type { ComputedRef, MaybeRefOrGetter, Ref, TemplateRef } from 'vue';
 
 export type KeyOfType<T, V> = T extends string | number | boolean | symbol | null | undefined
   ? never
@@ -193,7 +193,8 @@ export function useDropdownMenu<TValue, TItem>({
     overscan,
   });
 
-  const renderedData = useArrayMap(list, ({ data, index: _index }) => ({ _index, item: data }));
+  // typed as a plain ComputedRef so the published return type names nothing from VueUse
+  const renderedData: ComputedRef<{ _index: number; item: TItem }[]> = useArrayMap(list, ({ data, index: _index }) => ({ _index, item: data }));
 
   const isOpen = externalIsOpen ?? shallowRef<boolean>(false);
 

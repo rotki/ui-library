@@ -1,3 +1,4 @@
+import type { MaybeElement } from '@/types/dom';
 import {
   arrow,
   autoUpdate,
@@ -10,7 +11,7 @@ import {
   shift,
   size,
 } from '@floating-ui/dom';
-import { type MaybeElement, unrefElement } from '@vueuse/core';
+import { unrefElement } from '@vueuse/core';
 import { type MaybeRefOrGetter, onMounted, type Ref, ref, watchEffect } from 'vue';
 import { useTimeoutManager } from './timeout-manager';
 

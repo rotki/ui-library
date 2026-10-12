@@ -83,7 +83,7 @@ Each component typically includes:
 
 - **Vite**: Primary build tool with custom multi-entry configuration
 - **Entry Points**: Separate builds for components, composables, icons, and theme
-- **External Dependencies**: Vue, VueUse, dayjs, and Tailwind are external dependencies
+- **External Dependencies**: Vue, vue-router, dayjs and Tailwind are external, along with everything in `dependencies`. VueUse is a devDependency on purpose: it is bundled and tree-shaken into `dist/vendor/`, so consumers can use any VueUse version. Public types must not name VueUse types (use `src/types/dom.ts` and friends); `verify:dist` fails on leaked pnpm paths
 - **CSS**: `src/style.css` is the Tailwind entry; `build:prod` fails if the shipped `style.css` grows past its gzip budget (`verify:css-size`)
 
 ### Testing Strategy

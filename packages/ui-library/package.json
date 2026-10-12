@@ -119,8 +119,6 @@
   "web-types": "dist/web-types.json",
   "dependencies": {
     "@floating-ui/dom": "catalog:",
-    "@vueuse/core": "catalog:",
-    "@vueuse/shared": "catalog:",
     "scule": "catalog:",
     "tailwind-variants": "catalog:",
     "tinycolor2": "catalog:"
@@ -145,6 +143,8 @@
     "@vitest/ui": "catalog:",
     "@vue/test-utils": "catalog:",
     "@vue/tsconfig": "catalog:",
+    "@vueuse/core": "catalog:",
+    "@vueuse/shared": "catalog:",
     "cac": "catalog:",
     "consola": "catalog:",
     "fast-glob": "catalog:",

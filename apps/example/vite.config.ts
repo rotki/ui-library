@@ -28,7 +28,6 @@ export default defineConfig({
       imports: [
         'vue',
         '@vueuse/core',
-        '@vueuse/math',
         'pinia',
         { '@vueuse/shared': ['get', 'set'] },
         'vue-router',

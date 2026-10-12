@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { MaybeElement } from '@vueuse/core';
 import type { ClassValue } from 'vue';
 import type { VueClassValue } from '@/types/class-value';
+import type { MaybeElement } from '@/types/dom';
 import { useTimeoutManager } from '@/composables/timeout-manager';
 import { getRootAttrs, transformPropsUnit } from '@/utils/helpers';
 import { cn, tv } from '@/utils/tv';

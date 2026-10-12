@@ -335,6 +335,12 @@ importers:
       '@rotki/ui-library':
         specifier: workspace:*
         version: link:../../packages/ui-library
+      '@vueuse/core':
+        specifier: 'catalog:'
+        version: 14.4.0(vue@3.5.42(typescript@6.0.3))
+      '@vueuse/shared':
+        specifier: 'catalog:'
+        version: 14.4.0(vue@3.5.42(typescript@6.0.3))
       pinia:
         specifier: 'catalog:'
         version: 4.0.3(@vue/devtools-api@8.1.5)(typescript@6.0.3)(vue@3.5.42(typescript@6.0.3))
@@ -387,12 +393,6 @@ importers:
       '@floating-ui/dom':
         specifier: 'catalog:'
         version: 1.8.0
-      '@vueuse/core':
-        specifier: 'catalog:'
-        version: 14.4.0(vue@3.5.42(typescript@6.0.3))
-      '@vueuse/shared':
-        specifier: 'catalog:'
-        version: 14.4.0(vue@3.5.42(typescript@6.0.3))
       dayjs:
         specifier: '>=1.11.13 <12'
         version: 1.11.19
@@ -463,6 +463,12 @@ importers:
       '@vue/tsconfig':
         specifier: 'catalog:'
         version: 0.9.1(typescript@6.0.3)(vue@3.5.42(typescript@6.0.3))
+      '@vueuse/core':
+        specifier: 'catalog:'
+        version: 14.4.0(vue@3.5.42(typescript@6.0.3))
+      '@vueuse/shared':
+        specifier: 'catalog:'
+        version: 14.4.0(vue@3.5.42(typescript@6.0.3))
       cac:
         specifier: 'catalog:'
         version: 7.0.0

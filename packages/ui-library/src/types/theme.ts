@@ -1,4 +1,3 @@
-import type { BasicColorMode, BasicColorSchema } from '@vueuse/core';
 import type { ComputedRef, Ref } from 'vue';
 import type { GeneratedIcon } from '@/types/icons';
 import { contextColors } from '@/consts/colors';
@@ -39,8 +38,8 @@ export interface ThemeContent {
   isDark: ComputedRef<boolean>;
   isLight: ComputedRef<boolean>;
   setThemeConfig: (newConfig: ThemeConfig) => void;
-  state: ComputedRef<ThemeMode | BasicColorMode>;
-  store: Ref<ThemeMode | BasicColorSchema>;
+  state: ComputedRef<ThemeMode>;
+  store: Ref<ThemeMode>;
   switchThemeScheme: (mode: ThemeMode) => void;
   theme: ComputedRef<ThemeData>;
   toggleThemeMode: () => void;
