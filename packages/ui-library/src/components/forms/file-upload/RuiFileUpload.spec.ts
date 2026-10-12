@@ -57,6 +57,23 @@ describe('components/forms/file-upload/RuiFileUpload.vue', () => {
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([file]);
   });
 
+  it('clears the input after a pick so the same file can be picked again', async () => {
+    wrapper = createWrapper({ props: { modelValue: undefined } });
+    const input = wrapper.find<HTMLInputElement>('input[type=file]');
+    let value = 'C:\\fakepath\\a.txt';
+    Object.defineProperty(input.element, 'value', {
+      get: () => value,
+      set: (next: string) => {
+        value = next;
+      },
+      configurable: true,
+    });
+    const file = makeFile('a.txt');
+    await emitChange(wrapper, [file]);
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([file]);
+    expect(value).toBe('');
+  });
+
   it('emits an array when multiple is true', async () => {
     wrapper = createWrapper({ props: { modelValue: undefined, multiple: true } });
     const files = [makeFile('a.txt'), makeFile('b.txt')];

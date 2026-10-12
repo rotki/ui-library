@@ -200,10 +200,13 @@ function removeFile(target?: File): void {
 }
 
 function onSelect(event: Event): void {
-  const target = event.target as HTMLInputElement;
-  if (!target?.files)
+  const target = event.target;
+  if (!(target instanceof HTMLInputElement) || !target.files)
     return;
-  setFiles(Array.from(target.files));
+  const picked = Array.from(target.files);
+  // the model owns the selection; a cleared input fires `change` for the same file again
+  target.value = '';
+  setFiles(picked);
 }
 
 function onDrop(dropped: File[] | null): void {
