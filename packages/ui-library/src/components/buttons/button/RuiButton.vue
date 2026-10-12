@@ -101,15 +101,6 @@ function onClick(): void {
     v-bind="{ ...$attrs, class: undefined }"
     @click="onClick()"
   >
-    <slot name="prepend" />
-    <span
-      v-if="slots.default"
-      :class="ui.label()"
-      data-id="btn-label"
-    >
-      <slot />
-    </span>
-    <slot name="append" />
     <!-- the button's aria-busy announces the wait, so the spinner stays out of the accessibility tree -->
     <RuiProgress
       v-if="loading"
@@ -121,5 +112,18 @@ function onClick(): void {
       thickness="2"
       :size="spinnerSize"
     />
+    <!-- while loading, the spinner stands in for the prepend icon; the label stays -->
+    <slot
+      v-if="!loading || icon"
+      name="prepend"
+    />
+    <span
+      v-if="slots.default"
+      :class="ui.label()"
+      data-id="btn-label"
+    >
+      <slot />
+    </span>
+    <slot name="append" />
   </Component>
 </template>

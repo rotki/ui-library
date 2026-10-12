@@ -50,7 +50,8 @@ export const buttonStyles = tv({
       'focus-visible:focus-ring',
     ].join(' '),
     label: 'inline-block text-nowrap',
-    spinner: 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
+    // inline in the prepend icon's place; an icon-only button centers it over its hidden glyph instead
+    spinner: 'shrink-0',
   },
   variants: {
     variant: {
@@ -95,8 +96,7 @@ export const buttonStyles = tv({
       false: {},
     },
     loading: {
-      // transparent rather than invisible, which would take the label out of the accessibility tree
-      true: { root: 'relative !cursor-progress space-x-0 [&>*:not([data-spinner])]:opacity-0' },
+      true: { root: 'relative !cursor-progress' },
       false: {},
     },
     hideFocusIndicator: {
@@ -110,6 +110,8 @@ export const buttonStyles = tv({
      * `not-disabled:` keeps a disabled or loading button flat; an `<a>` is never `:disabled`.
      */
     { variant: ['default', 'fab'], color: ['primary', 'secondary', 'error', 'warning', 'info', 'success'], class: { root: 'not-disabled:hover:state-layer-pressed' } },
+    // An icon-only button has no label to keep, so its glyph goes transparent (still in the accessibility tree) under a centered spinner
+    { loading: true, icon: true, class: { root: '[&>*:not([data-spinner])]:opacity-0', spinner: 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' } },
     // Disabled appearance: a flat neutral fill, skipped while loading so the variant color shows behind the spinner
     { loading: false, class: { root: 'disabled:!bg-rui-neutral-100 dark:disabled:!bg-rui-neutral-800 disabled:!text-rui-text-disabled disabled:active:!text-rui-text-disabled' } },
     { loading: false, variant: 'outlined', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent disabled:inset-ring-rui-text-disabled dark:disabled:inset-ring-rui-text-disabled' } },

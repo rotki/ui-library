@@ -1,5 +1,6 @@
 import { type ComponentMountingOptions, type DOMWrapper, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import { h } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
@@ -47,6 +48,32 @@ describe('components/buttons/button/RuiButton.vue', () => {
 
     await wrapper.setProps({ loading: false });
     expect(wrapper.find('[data-spinner]').exists()).toBeFalsy();
+  });
+
+  it('should keep the label and put the spinner in the prepend icon\'s place while loading', () => {
+    wrapper = createWrapper({
+      props: { loading: true },
+      slots: { default: () => 'Refresh', prepend: () => h('i', { 'data-id': 'prepend-icon' }) },
+    });
+
+    const button = wrapper.find('button');
+    expect(button.find('[data-id=prepend-icon]').exists()).toBeFalsy();
+    expect(button.element.firstElementChild?.hasAttribute('data-spinner')).toBeTruthy();
+    expect(button.classes()).not.toContain('[&>*:not([data-spinner])]:opacity-0');
+    expect(button.find('[data-spinner]').classes()).not.toContain('absolute');
+    expect(button.find('[data-id=btn-label]').text()).toBe('Refresh');
+  });
+
+  it('should center the spinner over an icon-only button while loading', () => {
+    wrapper = createWrapper({
+      props: { loading: true, icon: true },
+      slots: { default: () => h('i', { 'data-id': 'glyph' }) },
+    });
+
+    const button = wrapper.find('button');
+    expect(button.classes()).toContain('[&>*:not([data-spinner])]:opacity-0');
+    expect(button.find('[data-spinner]').classes()).toContain('absolute');
+    expect(button.find('[data-id=glyph]').exists()).toBeTruthy();
   });
 
   it('should pass color props', async () => {
