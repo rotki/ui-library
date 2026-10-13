@@ -24,6 +24,8 @@ const { formattedErrorMessages, formattedSuccessMessages, hasError, hasSuccess }
 </script>
 
 <template>
+  <!-- No `appear`: a hint present on first render is in place when the field shows, rather than
+       sliding in each time a dialog or page opens; only a change of message animates. -->
   <TransitionGroup
     tag="div"
     class="details min-h-6"
@@ -33,7 +35,6 @@ const { formattedErrorMessages, formattedSuccessMessages, hasError, hasSuccess }
     leave-from-class="opacity-100 -translate-y-2"
     leave-active-class="transform transition"
     leave-to-class="opacity-0 -translate-y-2 h-0"
-    appear
   >
     <div
       v-if="hasError"
