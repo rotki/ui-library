@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { isRuiIcon, RuiIcons } from '@/icons';
 
@@ -8,8 +10,10 @@ import { isRuiIcon, RuiIcons } from '@/icons';
  * consumers rely on.
  */
 describe('generated icons', () => {
-  it('should keep the icon count above the floor a version bump must not cross', () => {
-    expect(RuiIcons.length).toBeGreaterThan(1900);
+  it('should keep every name a release shipped', () => {
+    const file = path.resolve(import.meta.dirname, '../scripts/published-icons.json');
+    const published: string[] = JSON.parse(readFileSync(file, 'utf8'));
+    expect(published.filter(name => !isRuiIcon(name))).toEqual([]);
   });
 
   it('has no duplicate names', () => {

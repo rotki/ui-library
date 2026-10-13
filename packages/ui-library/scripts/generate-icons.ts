@@ -14,11 +14,16 @@
  * Output is chunked by `CHUNK_SIZE` so each generated file stays small enough
  * for IDE indexing. The chunked files are gitignored and rebuilt by
  * `pnpm run build`, or directly by `pnpm run generate-icons`.
+ *
+ * Every name a release shipped is recorded in `PUBLISHED_FILE`, and the run
+ * fails when one of them would no longer be generated, so a lucide bump
+ * cannot drop a name consumers use. `--update` records new names.
  */
 import type { GeneratedIcon } from '../src/types/icons.js';
 import { mkdirSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import process from 'node:process';
 import consola from 'consola';
 import fg from 'fast-glob';
 import { XMLParser } from 'fast-xml-parser';
@@ -28,6 +33,7 @@ const LUCIDE_PREFIX = 'lu-';
 const LUCIDE_EXT = '.mjs';
 const TARGET = 'src/icons';
 const CHUNK_SIZE = 500;
+const PUBLISHED_FILE = 'scripts/published-icons.json';
 /**
  * The module lucide ships every documented alias in: each line re-exports one
  * canonical icon's default under one or more names. Mining it lets consumers
@@ -344,6 +350,39 @@ async function writeMetadata(metadata: GeneratedIcon[]): Promise<void> {
   await Promise.all([...chunkWrites, indexWrite]);
 }
 
+/**
+ * Fails when a name a release shipped is no longer generated. A name lucide
+ * turned into a numbered alias goes in `LEGACY_ALIAS_NAMES`; a name dropped
+ * on purpose, in a breaking release, is removed from `PUBLISHED_FILE` by hand.
+ * With `update`, names generated for the first time are recorded.
+ *
+ * @param names - every generated icon name
+ * @param update - whether to record new names
+ */
+async function checkPublishedNames(names: string[], update: boolean): Promise<void> {
+  const file = resolveRoot(PUBLISHED_FILE);
+  const published: string[] = JSON.parse(await readFile(file, 'utf8'));
+  const generated = new Set(names);
+  const missing = published.filter(name => !generated.has(name));
+  if (missing.length > 0) {
+    throw new Error(`${missing.length} published icon name(s) are no longer generated: ${missing.join(', ')}. `
+      + `Map a lucide alias in LEGACY_ALIAS_NAMES, or drop the name from ${PUBLISHED_FILE} in a breaking release.`);
+  }
+
+  const known = new Set(published);
+  const added = names.filter(name => !known.has(name));
+  if (added.length === 0)
+    return;
+  if (!update) {
+    consola.info(`${added.length} new icon name(s); run \`pnpm run generate-icons --update\` to record them`);
+    return;
+  }
+  const all = [...published, ...added].sort();
+  await writeFile(file, `${JSON.stringify(all, null, 2)}\n`, 'utf8');
+  consola.success(`Recorded ${added.length} new icon name(s) in ${PUBLISHED_FILE}`);
+}
+
 mkdirSync(resolveRoot(TARGET), { recursive: true });
 const metadata = await collectAllIcons();
+await checkPublishedNames(metadata.map(icon => icon.name), process.argv.includes('--update'));
 await writeMetadata(metadata);
