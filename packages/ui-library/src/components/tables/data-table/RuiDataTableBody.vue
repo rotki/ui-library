@@ -34,6 +34,7 @@ defineSlots<Partial<
     }) => any;
     'group.header.content'?: (props: { header: GroupHeader<T>; groupKey: string }) => any;
     'expanded-item'?: (props: { row: T; index: number }) => any;
+    'row-append'?: (props: { row: T; index: number }) => any;
     'no-data'?: () => any;
     'empty-description'?: () => any;
     'error'?: () => any;
@@ -135,6 +136,16 @@ const stale = computed<boolean>(() => loading && !noData);
           <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
           <slot
             name="expanded-item"
+            v-bind="slotData"
+          />
+        </template>
+        <template
+          v-if="$slots['row-append']"
+          #row-append="slotData"
+        >
+          <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
+          <slot
+            name="row-append"
             v-bind="slotData"
           />
         </template>

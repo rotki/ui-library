@@ -126,4 +126,26 @@ test.describe('data tables - mobile', () => {
     const auto = page.locator('[data-id=table-mobile-auto] [data-id=table-auto]');
     await expect(auto.locator('thead')).toHaveCount(1);
   });
+
+  test('should end a card with its follow-up row, and with the open panel below it', async ({ page }) => {
+    const table = page.getByTestId('table-mobile-append').getByTestId('table-append');
+    const card = table.locator('tbody tr[data-id=row]').first();
+    const append = table.locator('tbody tr[data-id=row-append]').first();
+    const style = async (locator: typeof card, property: string): Promise<string> =>
+      locator.evaluate((element, name) => getComputedStyle(element).getPropertyValue(name), property);
+
+    await expect(append.getByTestId('row-note')).toBeVisible();
+    // no line between the card's fields and its follow-up row, which takes the card's rounded bottom
+    expect(await style(card, 'border-bottom-width')).toBe('0px');
+    expect(await style(append, 'border-top-width')).toBe('0px');
+    expect(await style(append, 'border-bottom-left-radius')).not.toBe('0px');
+
+    await card.getByTestId('expand-button').click();
+    const panel = table.locator('tbody tr[data-id=row-expanded]').first();
+    await expect(panel.getByTestId('expanded-panel-content')).toBeVisible();
+
+    // the open panel closes the card instead
+    expect(await style(append, 'border-bottom-left-radius')).toBe('0px');
+    expect(await style(panel, 'border-bottom-left-radius')).not.toBe('0px');
+  });
 });

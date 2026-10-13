@@ -12,6 +12,7 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
 const expandedMultiple = ref<ExtendedUser[]>([]);
 const expandedSingle = ref<ExtendedUser[]>([]);
 const expandedCustom = ref<ExtendedUser[]>([]);
+const expandedAppend = ref<ExtendedUser[]>([]);
 const expandedNested = ref<ExtendedUser[]>(fixedRows.slice(0, 1));
 
 const nestedOuterColumns = fixedColumns.filter(column => column.key === 'id' || column.key === 'name');
@@ -156,6 +157,44 @@ function toggleRow(row: BaseUser, expanded: ExtendedUser[]): void {
                 color="primary"
               />
             </RuiButton>
+          </template>
+          <template #expanded-item>
+            <RuiCard data-id="expanded-content">
+              <template #header>
+                Expanded content
+              </template>
+              <p>This is the expanded row content.</p>
+            </RuiCard>
+          </template>
+        </RuiDataTable>
+      </div>
+
+      <!-- Follow-up row together with an expanded panel -->
+      <div
+        class="flex flex-col space-y-3"
+        data-id="table-expandable-append"
+      >
+        <h4>Follow-up Row</h4>
+        <p class="text-sm text-rui-text-secondary">
+          Each row continues in a full-width follow-up row; an expanded panel opens below both
+        </p>
+        <RuiDataTable
+          v-model:expanded="expandedAppend"
+          :rows="fixedRows"
+          :cols="fixedColumns"
+          row-attr="id"
+          outlined
+          striped
+          single-expand
+          data-id="table"
+        >
+          <template #row-append="{ row }">
+            <p
+              class="text-sm text-rui-text-secondary"
+              data-id="row-note"
+            >
+              Note for {{ row.name }}: a longer text that would otherwise need a wide column of its own.
+            </p>
           </template>
           <template #expanded-item>
             <RuiCard data-id="expanded-content">

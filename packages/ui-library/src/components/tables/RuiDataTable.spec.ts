@@ -1897,9 +1897,97 @@ describe('components/tables/RuiDataTable.vue', () => {
       });
 
       // at zero specificity, so selected, hovered, expanded and group rows keep their own background
-      const stripes = wrapper.find('tbody').classes().filter(name => name.includes('nth-child(even)'));
+      const stripes = wrapper.find('tbody').classes().filter(name => name.includes('data-stripe'));
       expect(stripes).toHaveLength(2);
-      expect(stripes.every(name => name.includes('[:where(&>tr:nth-child(even))]'))).toBe(true);
+      expect(stripes.every(name => name.includes('[:where(&>tr[data-stripe])]'))).toBe(true);
+    });
+
+    it('should mark every second item for the stripe, whatever rows an open panel adds', async () => {
+      wrapper = createWrapper({
+        props: {
+          'cols': columns,
+          'expanded': [],
+          'onUpdate:expanded': async (expanded: User[] | undefined) => wrapper.setProps({ expanded }),
+          'rowAttr': 'id',
+          'rows': data,
+          'singleExpand': true,
+          'striped': true,
+        },
+        slots: { 'expanded-item': '<div data-id="expanded-content" />' },
+      });
+
+      const stripedIds = (): (string | undefined)[] =>
+        wrapper.findAll('tbody tr[data-id=row]').map(row => row.attributes('data-stripe'));
+      const before = stripedIds();
+
+      await wrapper.find('tbody tr[data-id=row] button[data-id=expand-button]').trigger('click');
+
+      expect(wrapper.find('[data-id=row-expanded]').exists()).toBe(true);
+      expect(before[0]).toBeUndefined();
+      expect(before[1]).toBe('');
+      expect(stripedIds()).toEqual(before);
+    });
+
+    /** A table whose every row has a follow-up row naming the row's id. */
+    function appendWrapper(props: Record<string, unknown> = {}) {
+      return createWrapper({
+        props: { cols: columns, rowAttr: 'id', rows: data, ...props },
+        slots: { 'row-append': '<template #row-append="{ row }"><span data-id="note">note {{ row.id }}</span></template>' },
+      });
+    }
+
+    it('should render a follow-up row after every row', () => {
+      wrapper = appendWrapper();
+
+      const rows = wrapper.findAll('tbody > tr');
+      const dataRows = wrapper.findAll('tbody tr[data-id=row]');
+      const appendRows = wrapper.findAll('tbody tr[data-id=row-append]');
+
+      expect(appendRows).toHaveLength(dataRows.length);
+      expect(rows[0]?.attributes('data-id')).toBe('row');
+      expect(rows[1]?.attributes('data-id')).toBe('row-append');
+      expect(appendRows[0]?.find('[data-id=note]').text()).toBe(`note ${data[0]?.id}`);
+    });
+
+    it('should span a follow-up row across the row without the divider above it', () => {
+      wrapper = appendWrapper();
+
+      const append = wrapper.find('tbody tr[data-id=row-append]');
+      const headerCells = wrapper.findAll('thead tr:first-child th').length;
+      expect(append.classes()).toContain('border-t-0!');
+      expect(append.find('td').attributes('colspan')).toBe(String(headerCells));
+    });
+
+    it('should give a follow-up row its row stripe and selected shade', () => {
+      wrapper = appendWrapper({ 'modelValue': [data[1]?.id], 'onUpdate:modelValue': () => {}, 'striped': true });
+
+      const dataRows = wrapper.findAll('tbody tr[data-id=row]');
+      const appendRows = wrapper.findAll('tbody tr[data-id=row-append]');
+
+      expect(appendRows[1]?.attributes('data-stripe')).toBe(dataRows[1]?.attributes('data-stripe'));
+      expect(appendRows[1]?.classes()).toContain('bg-rui-primary-soft');
+    });
+
+    it('should put a follow-up row before an open expanded panel', async () => {
+      wrapper = createWrapper({
+        props: {
+          'cols': columns,
+          'expanded': [],
+          'onUpdate:expanded': async (expanded: User[] | undefined) => wrapper.setProps({ expanded }),
+          'rowAttr': 'id',
+          'rows': data,
+          'singleExpand': true,
+        },
+        slots: {
+          'expanded-item': '<div data-id="expanded-content" />',
+          'row-append': '<span data-id="note">note</span>',
+        },
+      });
+
+      await wrapper.find('tbody tr[data-id=row] button[data-id=expand-button]').trigger('click');
+
+      const ids = wrapper.findAll('tbody > tr').slice(0, 3).map(row => row.attributes('data-id'));
+      expect(ids).toEqual(['row', 'row-append', 'row-expanded']);
     });
 
     it('should apply rounded variants to wrapper', () => {

@@ -207,6 +207,12 @@ const slots = defineSlots<Partial<
     }) => any;
     'group.header.content': (props: { header: GroupHeader<T>; groupKey: string }) => any;
     'expanded-item': (props: { row: T; index: number }) => any;
+    /**
+     * A full-width row after every row, read as the second half of the same item: no divider between
+     * them, one hover, the row's selected or open shade and stripe. For a long field, such as notes,
+     * that would otherwise widen the table. It comes before an open expanded panel.
+     */
+    'row-append': (props: { row: T; index: number }) => any;
     'no-data': () => any;
     'empty-description': () => any;
     'error': () => any;
@@ -701,6 +707,16 @@ provideDataTableContext<T, IdType>({
             <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
             <slot
               name="expanded-item"
+              v-bind="slotData"
+            />
+          </template>
+          <template
+            v-if="slots['row-append']"
+            #row-append="slotData"
+          >
+            <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
+            <slot
+              name="row-append"
               v-bind="slotData"
             />
           </template>

@@ -404,6 +404,41 @@ export const EmptyState = meta.story({
   },
 });
 
+/** A full-width follow-up row under every row, always shown; an expanded panel opens below both. */
+export const FollowUpRow = meta.story({
+  args: {
+    cols: columns,
+    outlined: true,
+    pagination: { limit: 5, page: 1, total: 50 },
+    rows: data,
+    singleExpand: true,
+    striped: true,
+  },
+  render: args => ({
+    components: { RuiDataTable },
+    setup() {
+      const expanded = ref<unknown[]>([]);
+      return { args, expanded };
+    },
+    template: `
+      <RuiDataTable v-bind="args" v-model:expanded="expanded">
+        <template #row-append="{ row }">
+          <p class="text-sm text-rui-text-secondary">Note for {{ row.name }}: longer text that would need a wide column.</p>
+        </template>
+        <template #expanded-item="{ row }">
+          <p class="py-2">Details for {{ row.name }}</p>
+        </template>
+      </RuiDataTable>
+    `,
+  }),
+  async play({ canvas, canvasElement, userEvent }) {
+    await expect(canvas.getAllByText(/^Note for/).length).toBeGreaterThan(0);
+    await userEvent.click(canvas.getAllByRole('button', { expanded: false })[0]);
+    const ids = [...canvasElement.querySelectorAll('tbody > tr')].slice(0, 3).map(row => row.getAttribute('data-id'));
+    await expect(ids).toEqual(['row', 'row-append', 'row-expanded']);
+  },
+});
+
 export const ErrorState = meta.story({
   args: {
     cols: columns,

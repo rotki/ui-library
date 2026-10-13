@@ -55,7 +55,7 @@ test.describe('data tables - basic', () => {
   test('should render striped table', async ({ page }) => {
     const tbody = page.locator('[data-id=table-striped] [data-id=table] tbody');
     await expect(tbody).toBeVisible();
-    await expect(tbody).toHaveClass(/nth-child\(even\)/);
+    await expect(tbody).toHaveClass(/data-stripe/);
   });
 
   test('should keep its full height in a scrolling flex column', async ({ page }) => {
@@ -779,6 +779,79 @@ test.describe('data tables - expandable', () => {
     await expect(button1).toHaveAttribute('aria-expanded', 'false');
     await expect(button2).toHaveAttribute('aria-expanded', 'true');
     await expect(table.locator('[data-id=expanded-content]')).toHaveCount(1);
+  });
+
+  test.describe('follow-up row with an expanded panel', () => {
+    test('should keep the follow-up row between its row and the open panel', async ({ page }) => {
+      const table = page.getByTestId('table-expandable-append').getByTestId('table');
+      const rowIds = async (): Promise<(string | null)[]> =>
+        table.locator('tbody > tr').evaluateAll(rows => rows.slice(0, 4).map(row => row.getAttribute('data-id')));
+
+      await expect(table.getByTestId('row-note').first()).toBeVisible();
+      expect(await rowIds()).toEqual(['row', 'row-append', 'row', 'row-append']);
+
+      const expand = table.locator('tbody tr[data-id=row] button[aria-expanded]').first();
+      await expand.click();
+      await expect(table.getByTestId('expanded-content')).toBeVisible();
+      expect(await rowIds()).toEqual(['row', 'row-append', 'row-expanded', 'row']);
+
+      // closing the panel keeps the follow-up row
+      await expand.click();
+      await expect(table.getByTestId('expanded-content')).toHaveCount(0);
+      expect(await rowIds()).toEqual(['row', 'row-append', 'row', 'row-append']);
+    });
+
+    test('should draw no divider between a row and its follow-up row', async ({ page }) => {
+      const table = page.getByTestId('table-expandable-append').getByTestId('table');
+      const append = table.locator('tbody tr[data-id=row-append]').first();
+      const nextRow = table.locator('tbody tr[data-id=row]').nth(1);
+
+      await expect(append).toBeVisible();
+      expect(await append.evaluate(row => getComputedStyle(row).borderTopWidth)).toBe('0px');
+      // the divider between items stays
+      expect(await nextRow.evaluate(row => getComputedStyle(row).borderTopWidth)).toBe('1px');
+    });
+
+    test('should highlight a row and its follow-up row together', async ({ page }) => {
+      const table = page.getByTestId('table-expandable-append').getByTestId('table');
+      const row = table.locator('tbody tr[data-id=row]').first();
+      const append = table.locator('tbody tr[data-id=row-append]').first();
+      const background = async (locator: typeof row): Promise<string> =>
+        locator.evaluate(element => getComputedStyle(element).backgroundColor);
+
+      const resting = await background(row);
+
+      await append.hover();
+      await expect.poll(async () => background(row)).not.toBe(resting);
+      expect(await background(row)).toBe(await background(append));
+
+      await row.hover();
+      await expect.poll(async () => background(append)).not.toBe(resting);
+      expect(await background(append)).toBe(await background(row));
+    });
+
+    test('should stripe by item, so an open panel shifts no stripe', async ({ page }) => {
+      const table = page.getByTestId('table-expandable-append').getByTestId('table');
+      const rows = table.locator('tbody tr[data-id=row]');
+      const appends = table.locator('tbody tr[data-id=row-append]');
+      const background = async (locator: typeof rows): Promise<string> =>
+        locator.evaluate(element => getComputedStyle(element).backgroundColor);
+
+      // away from the rows, so no hover shade gets in the way
+      await page.mouse.move(0, 0);
+      const second = await background(rows.nth(1));
+      const third = await background(rows.nth(2));
+      expect(second).not.toBe(third);
+      expect(await background(appends.nth(1))).toBe(second);
+
+      // the open panel adds a row above them; counting rows would swap their stripes
+      await rows.first().locator('button[aria-expanded]').click();
+      await expect(table.getByTestId('expanded-content')).toBeVisible();
+      await page.mouse.move(0, 0);
+
+      expect(await background(rows.nth(1))).toBe(second);
+      expect(await background(rows.nth(2))).toBe(third);
+    });
   });
 });
 

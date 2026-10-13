@@ -23,6 +23,7 @@ const sort = ref<DataTableSortData<ExtendedUser>>({ column: 'name', direction: '
 const pagination = ref<TablePaginationData>({ limit: 5, page: 1, total: fixedRows.length });
 
 const expanded = ref<ExtendedUser[]>([]);
+const expandedAppend = ref<ExtendedUser[]>([]);
 const selected = ref<ExtendedUser['id'][]>([]);
 </script>
 
@@ -185,6 +186,44 @@ const selected = ref<ExtendedUser['id'][]>([]);
               data-id="expanded-panel-content"
             >
               Details for {{ row.name }} ({{ row.email }})
+            </div>
+          </template>
+        </RuiDataTable>
+      </div>
+
+      <!-- Follow-up row + expandable rows -->
+      <div
+        class="flex flex-col space-y-3 max-w-md"
+        data-id="table-mobile-append"
+      >
+        <h4>Follow-up row + expandable rows</h4>
+        <p class="text-sm text-rui-text-secondary">
+          The follow-up row is the bottom of its card; an expanded panel attaches beneath it.
+        </p>
+        <RuiDataTable
+          v-model:expanded="expandedAppend"
+          :rows="fixedRows.slice(0, 3)"
+          :cols="columns"
+          mobile
+          hide-pagination
+          row-attr="id"
+          outlined
+          data-id="table-append"
+        >
+          <template #row-append="{ row }">
+            <p
+              class="text-sm text-rui-text-secondary"
+              data-id="row-note"
+            >
+              Note for {{ row.name }}
+            </p>
+          </template>
+          <template #expanded-item="{ row }">
+            <div
+              class="p-2 text-sm"
+              data-id="expanded-panel-content"
+            >
+              Details for {{ row.name }}
             </div>
           </template>
         </RuiDataTable>

@@ -48,9 +48,9 @@ export const dataTableStyles = tv({
       true: {},
       false: {},
     },
-    // a translucent tint under the hover one; `:where()` keeps it below every row state (selected, hover, expanded, group)
+    // under every row state through `:where()`; set per item (`data-stripe`), so a follow-up row or open panel shifts none
     striped: {
-      true: { tbody: '[:where(&>tr:nth-child(even))]:bg-rui-neutral-950/[0.03] dark:[:where(&>tr:nth-child(even))]:bg-white/[0.04]' },
+      true: { tbody: '[:where(&>tr[data-stripe])]:bg-rui-neutral-950/[0.03] dark:[:where(&>tr[data-stripe])]:bg-white/[0.04]' },
     },
     rowVariant: {
       selected: { tr: 'bg-rui-primary-soft' },

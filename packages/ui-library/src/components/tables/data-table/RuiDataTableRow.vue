@@ -2,6 +2,7 @@
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
 import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
 import { useDataTableColumns, useDataTableExpansion, useDataTableRowIdentity, useDataTableSelection, useDataTableStyling } from '@/components/tables/data-table/context';
+import RuiDataTableAppendRow from '@/components/tables/data-table/RuiDataTableAppendRow.vue';
 import RuiDataTableCell from '@/components/tables/data-table/RuiDataTableCell.vue';
 import RuiDataTableExpandedRow from '@/components/tables/data-table/RuiDataTableExpandedRow.vue';
 import RuiExpandButton from '@/components/tables/RuiExpandButton.vue';
@@ -17,6 +18,7 @@ const {
 const slots = defineSlots<Partial<
   Record<`item.${string}`, (props: { column: TableColumn<T>; row: T; index: number }) => any> & {
     'expanded-item'?: (props: { row: T; index: number }) => any;
+    'row-append'?: (props: { row: T; index: number }) => any;
   }
 >>();
 
@@ -79,6 +81,40 @@ const stateClass = computed<string>(() => {
   return get(classes).tr;
 });
 
+/** Whether the row has a follow-up row, which reads as the second half of the same item. */
+const appended = computed<boolean>(() => !!slots['row-append']);
+
+/**
+ * The stripe follows the item, not the `<tr>`: counting rows would shade an item and its follow-up
+ * differently, and an open panel would flip every stripe below it. The table's `striped` variant
+ * shades the marked rows.
+ */
+const stripe = computed<'' | undefined>(() => (index % 2 === 1 ? '' : undefined));
+
+/**
+ * The two rows of an item highlight together, whichever one the pointer is over. An open row keeps
+ * its band rather than taking the hover, as it does without a follow-up.
+ */
+const pairHoverClass = computed<string>(() => {
+  if (!get(appended) || get(expanded) || get(isMobile))
+    return '';
+  return 'has-[+[data-id=row-append]:hover]:bg-rui-hover';
+});
+const appendHoverClass = computed<string>(() => {
+  if (get(expanded) || get(isMobile))
+    return '';
+  return '[[data-id=row]:hover+&]:bg-rui-hover';
+});
+
+/**
+ * On mobile the follow-up is the bottom of the item's card: square on top, against the card, and
+ * rounded below unless an open panel follows it.
+ */
+const mobileAppendClass = computed<string>(() => {
+  const shared = 'block border-x border-b! border-rui-divider overflow-hidden';
+  return get(expanded) ? shared : `${shared} rounded-b-rui-card mb-3`;
+});
+
 /**
  * A column is pinned to the mobile card header when it is flagged
  * `mobileHeader`, typically an action column, or when it is the
@@ -136,12 +172,15 @@ const firstRowInset = computed<Record<string, string> | undefined>(() =>
  * `border-y!` defeats the `divide-y-0` on the mobile tbody, which otherwise
  * zeroes the top and bottom border on every card except the first. An expanded
  * card flattens its bottom edge so the expanded panel attaches flush beneath
- * it.
+ * it. A card with a follow-up row drops its bottom border too, so the
+ * follow-up continues it with no line between them, as on desktop.
  *
  * These bindings do not run through the class merger, so each state picks its
  * own utilities rather than emitting conflicting ones.
  */
 const mobileCardClass = computed<string>(() => {
+  if (get(appended))
+    return 'relative flex flex-col border-x border-t! border-rui-divider overflow-hidden rounded-t-rui-card mb-0';
   const shared = 'relative flex flex-col border border-y! border-rui-divider overflow-hidden';
   return get(expanded)
     ? `${shared} rounded-t-rui-card mb-0`
@@ -151,8 +190,9 @@ const mobileCardClass = computed<string>(() => {
 
 <template>
   <tr
-    :class="[stateClass, rowClass, isMobile ? mobileCardClass : '']"
+    :class="[stateClass, rowClass, pairHoverClass, isMobile ? mobileCardClass : '']"
     :aria-selected="selectedData ? selected : undefined"
+    :data-stripe="stripe"
     data-id="row"
   >
     <!-- Mobile card header: checkbox on the left, pinned action columns on the right -->
@@ -246,6 +286,24 @@ const mobileCardClass = computed<string>(() => {
       </template>
     </RuiDataTableCell>
   </tr>
+
+  <!-- no divider above: with its row it is one item, sharing the row's state, stripe and hover -->
+  <RuiDataTableAppendRow
+    v-if="slots['row-append']"
+    class="border-t-0!"
+    :class="[stateClass, rowClass, appendHoverClass, isMobile ? mobileAppendClass : '']"
+    :data-stripe="stripe"
+    :row="row"
+    :index="index"
+  >
+    <template #row-append="slotData">
+      <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
+      <slot
+        name="row-append"
+        v-bind="slotData"
+      />
+    </template>
+  </RuiDataTableAppendRow>
 
   <!-- opacity only: the rows below move once, at once, rather than sliding with a growing height -->
   <RuiDataTableExpandedRow
