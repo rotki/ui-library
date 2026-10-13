@@ -801,6 +801,28 @@ test.describe('data tables - expandable', () => {
       expect(await rowIds()).toEqual(['row', 'row-append', 'row', 'row-append']);
     });
 
+    test('should scroll a follow-up row sideways with its row', async ({ page }) => {
+      await page.setViewportSize({ width: 700, height: 800 });
+      const container = page.getByTestId('table-expandable-append');
+      const scroller = container.getByTestId('table-scroller').first();
+      const firstCell = container.locator('tbody tr[data-id=row] td').nth(1);
+      const note = container.getByTestId('row-note').first();
+      await expect(note).toBeVisible();
+      expect(await scroller.evaluate(element => element.scrollWidth - element.clientWidth)).toBeGreaterThan(40);
+
+      const left = async (locator: typeof note): Promise<number> => locator.evaluate(element => element.getBoundingClientRect().left);
+      const cellBefore = await left(firstCell);
+      const noteBefore = await left(note);
+
+      await scroller.evaluate((element) => {
+        element.scrollLeft = 40;
+      });
+
+      await expect.poll(async () => cellBefore - await left(firstCell)).toBe(40);
+      expect(noteBefore - await left(note)).toBe(40);
+      await page.setViewportSize({ width: 1280, height: 720 });
+    });
+
     test('should draw no divider between a row and its follow-up row', async ({ page }) => {
       const table = page.getByTestId('table-expandable-append').getByTestId('table');
       const append = table.locator('tbody tr[data-id=row-append]').first();
