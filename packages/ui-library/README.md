@@ -242,19 +242,30 @@ app.mount('#app');
 
 #### Available translation keys
 
-The UI library uses the following translation keys:
+The UI library reads these keys, defined in `src/i18n/keys.ts`. A key your messages leave out shows
+its English default, and `translationKeys()` returns the full list.
 
-```typescript
-// These are defined in src/i18n/keys.ts
-export const RUI_I18N_KEYS = {
-  dateTimePicker: {
-    dateAfterMax: 'rui.date_time_picker.date_after_max',
-    dateBeforeMin: 'rui.date_time_picker.date_before_min',
-    dateInFuture: 'rui.date_time_picker.date_in_future',
-    pasteUnreadable: 'rui.date_time_picker.paste_unreadable',
-  },
-} as const;
-```
+| Key                                     | English default                               |
+| --------------------------------------- | --------------------------------------------- |
+| `rui.date_time_picker.clear`            | Clear                                         |
+| `rui.date_time_picker.clear_value`      | Clear the date                                |
+| `rui.date_time_picker.close_calendar`   | Close the calendar                            |
+| `rui.date_time_picker.date_after_max`   | Date cannot be after `{date}`                 |
+| `rui.date_time_picker.date_before_min`  | Date cannot be before `{date}`                |
+| `rui.date_time_picker.date_in_future`   | The selected date cannot be in the future     |
+| `rui.date_time_picker.label`            | Pick a date                                   |
+| `rui.date_time_picker.now`              | Now                                           |
+| `rui.date_time_picker.open_calendar`    | Open the calendar                             |
+| `rui.date_time_picker.paste_unreadable` | Could not read a date from the pasted text    |
+| `rui.date_time_picker.today`            | Today                                         |
+| `rui.file_upload.click_to_upload`       | click to upload                               |
+| `rui.file_upload.drop_prefix`           | Drag and drop or                              |
+| `rui.file_upload.remove`                | Remove `{name}`                               |
+| `rui.file_upload.replace`               | replace file                                  |
+| `rui.file_upload.too_large`             | `{name}` exceeds the maximum size of `{size}` |
+| `rui.file_upload.too_many`              | Only one file can be uploaded                 |
+| `rui.file_upload.wrong_type`            | Only `{accept}` files are allowed             |
+| `rui.timezone_select.label`             | Timezone                                      |
 
 ### Use the @rotki/ui-library Tailwind CSS theme
 

@@ -3,6 +3,8 @@ import type { RuiIcons } from '@/icons';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
+import { useRuiI8n } from '@/composables/use-rui-i18n';
+import { RUI_I18N_KEYS } from '@/i18n/keys';
 import { useFormTextDetail } from '@/utils/form-text-detail';
 import { formatFileSize, getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
@@ -26,7 +28,10 @@ export interface FileUploadProps {
   hint?: string;
   /** Disable drag-and-drop; the dropzone becomes click-only (matches rotki.com use case). */
   noDrop?: boolean;
-  /** Replace the default "Drag and drop or \{button\}" copy. With `noDrop` the default is empty, so only the button shows. */
+  /**
+   * Replace the default "Drag and drop or \{button\}" copy. With `noDrop` the default is empty, so only the button shows.
+   * The defaults of this and the other texts, error messages included, come from the `rui.file_upload.*` translation keys.
+   */
   uploadText?: string;
   /** Label shown on the inline button when no file is selected. */
   clickToUploadText?: string;
@@ -55,8 +60,8 @@ const {
   hint = '',
   noDrop = false,
   uploadText = undefined,
-  clickToUploadText = 'click to upload',
-  replaceText = 'replace file',
+  clickToUploadText = undefined,
+  replaceText = undefined,
   hideDetails = false,
 } = defineProps<FileUploadProps>();
 
@@ -69,6 +74,8 @@ defineSlots<{
   icon?: () => any;
   description?: () => any;
 }>();
+
+const { t } = useRuiI8n();
 
 const wrapper = useTemplateRef<HTMLDivElement>('wrapper');
 const input = useTemplateRef<HTMLInputElement>('input');
@@ -97,7 +104,9 @@ const combinedErrorMessages = computed<string[]>(() => {
 const { hasError } = useFormTextDetail(combinedErrorMessages, () => []);
 
 // a click-only dropzone does not offer dragging
-const resolvedUploadText = computed<string>(() => uploadText ?? (noDrop ? '' : 'Drag and drop or'));
+const resolvedUploadText = computed<string>(() => uploadText ?? (noDrop ? '' : t(RUI_I18N_KEYS.fileUpload.dropPrefix, 'Drag and drop or')));
+const resolvedClickToUploadText = computed<string>(() => clickToUploadText ?? t(RUI_I18N_KEYS.fileUpload.clickToUpload, 'click to upload'));
+const resolvedReplaceText = computed<string>(() => replaceText ?? t(RUI_I18N_KEYS.fileUpload.replace, 'replace file'));
 
 type WellTone = 'primary' | 'error' | 'success';
 
@@ -158,17 +167,18 @@ function validate(candidates: File[]): File[] | undefined {
     return undefined;
 
   if (!multiple && candidates.length > 1) {
-    reportError('Only one file can be uploaded');
+    reportError(t(RUI_I18N_KEYS.fileUpload.tooMany, 'Only one file can be uploaded'));
     return undefined;
   }
 
   for (const file of candidates) {
     if (!matchesAccept(file, accept)) {
-      reportError(`Only ${accept} files are allowed`);
+      reportError(t(RUI_I18N_KEYS.fileUpload.wrongType, { accept }, `Only ${accept} files are allowed`));
       return undefined;
     }
     if (maxSize !== undefined && file.size > maxSize) {
-      reportError(`${file.name} exceeds the maximum size of ${formatFileSize(maxSize)}`);
+      const size = formatFileSize(maxSize);
+      reportError(t(RUI_I18N_KEYS.fileUpload.tooLarge, { name: file.name, size }, `${file.name} exceeds the maximum size of ${size}`));
       return undefined;
     }
   }
@@ -289,7 +299,7 @@ defineExpose({
                 type="button"
                 class="p-1 rounded-full hover:bg-rui-hover transition focus-visible:focus-ring outline-hidden"
                 :disabled="disabled"
-                :aria-label="`Remove ${file.name}`"
+                :aria-label="t(RUI_I18N_KEYS.fileUpload.remove, { name: file.name }, `Remove ${file.name}`)"
                 data-id="remove-file"
                 @click="removeFile(file)"
               >
@@ -327,7 +337,7 @@ defineExpose({
                 data-id="open-picker"
                 @click="openPicker()"
               >
-                {{ hasFiles ? replaceText : clickToUploadText }}
+                {{ hasFiles ? resolvedReplaceText : resolvedClickToUploadText }}
               </button>
             </div>
           </slot>

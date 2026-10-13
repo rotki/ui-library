@@ -12,6 +12,15 @@ export const RUI_I18N_KEYS = {
     pasteUnreadable: 'rui.date_time_picker.paste_unreadable',
     today: 'rui.date_time_picker.today',
   },
+  fileUpload: {
+    clickToUpload: 'rui.file_upload.click_to_upload',
+    dropPrefix: 'rui.file_upload.drop_prefix',
+    remove: 'rui.file_upload.remove',
+    replace: 'rui.file_upload.replace',
+    tooLarge: 'rui.file_upload.too_large',
+    tooMany: 'rui.file_upload.too_many',
+    wrongType: 'rui.file_upload.wrong_type',
+  },
   timezoneSelect: {
     label: 'rui.timezone_select.label',
   },

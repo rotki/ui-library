@@ -1,6 +1,8 @@
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiFileUpload from '@/components/forms/file-upload/RuiFileUpload.vue';
+import { RUI_I18N_INJECTION_KEY, type RuiI18nProvider } from '@/composables/use-rui-i18n';
+import { RUI_I18N_KEYS } from '@/i18n/keys';
 
 function createWrapper(options?: ComponentMountingOptions<typeof RuiFileUpload>) {
   return mount(RuiFileUpload, {
@@ -176,5 +178,44 @@ describe('components/forms/file-upload/RuiFileUpload.vue', () => {
     expect(removeButtons.length).toBeGreaterThan(0);
     await removeButtons[0]?.trigger('click');
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([[files[1]]]);
+  });
+
+  describe('with an app translator', () => {
+    const messages: Record<string, string> = {
+      [RUI_I18N_KEYS.fileUpload.clickToUpload]: 'datei wählen',
+      [RUI_I18N_KEYS.fileUpload.dropPrefix]: 'Ziehen oder',
+      [RUI_I18N_KEYS.fileUpload.wrongType]: 'Nur {accept}',
+    };
+
+    const translator: RuiI18nProvider = {
+      t: (key: string, params?: Record<string, any>): string =>
+        (messages[key] ?? key).replace(/\{(\w+)\}/g, (_, name: string) => String(params?.[name] ?? '')),
+      te: (key: string): boolean => key in messages,
+    };
+
+    function createTranslatedWrapper(options?: ComponentMountingOptions<typeof RuiFileUpload>) {
+      return mount(RuiFileUpload, {
+        ...options,
+        global: { provide: { [RUI_I18N_INJECTION_KEY]: translator }, stubs: ['rui-icon', 'rui-progress'] },
+      });
+    }
+
+    it('takes its default texts from the translator', () => {
+      wrapper = createTranslatedWrapper({ props: { modelValue: undefined } });
+      expect(wrapper.text()).toContain('Ziehen oder');
+      expect(wrapper.text()).toContain('datei wählen');
+    });
+
+    it('translates a validation error with its parameters', async () => {
+      wrapper = createTranslatedWrapper({ props: { modelValue: undefined, accept: '.csv' } });
+      await emitChange(wrapper, [makeFile('a.txt', { type: 'text/plain' })]);
+      expect(wrapper.emitted('error')?.[0]?.[0]).toBe('Nur .csv');
+    });
+
+    it('keeps an explicit text prop over the translation', () => {
+      wrapper = createTranslatedWrapper({ props: { modelValue: undefined, clickToUploadText: 'pick one' } });
+      expect(wrapper.text()).toContain('pick one');
+      expect(wrapper.text()).not.toContain('datei wählen');
+    });
   });
 });
