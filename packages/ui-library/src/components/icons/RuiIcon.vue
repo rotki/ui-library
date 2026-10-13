@@ -34,6 +34,11 @@ type SvgComponent = [tag: string, attrs: Record<string, string>];
  * The stroke is set on the svg as CSS, so `--rui-icon-stroke` can retune it.
  * Lucide's 2 reads heavy beside Inter; 1.5 would draw a 16px glyph at a
  * single, blurry pixel.
+ *
+ * The svg also carries the default paint, outlined in `currentColor`, and
+ * every primitive inherits it unless it sets its own `fill` or `stroke`. That
+ * is how lucide draws, so its solid dots (tag, palette) stay solid, and how an
+ * icon mixes a stroked outline with a solid mark.
  */
 const iconStyles = tv({
   base: 'shrink-0 w-(--rui-icon-size,1.5rem) h-(--rui-icon-size,1.5rem) [stroke-width:var(--rui-icon-stroke,1.75)]',
@@ -73,8 +78,6 @@ const sizeStyle = computed<Record<string, string> | undefined>(() => {
   return { '--rui-icon-size': value };
 });
 
-const isFill = computed<boolean>(() => name.endsWith('-fill'));
-
 /**
  * What is registered is the only thing that matters here. An app may register
  * its own icons through `createRui(\{ theme: \{ icons \} \})`, brand logos
@@ -104,6 +107,10 @@ const components = computed<SvgComponent[] | undefined>(() => {
     :style="sizeStyle"
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
     v-bind="objectOmit($attrs, ['class'])"
   >
     <component
@@ -111,12 +118,6 @@ const components = computed<SvgComponent[] | undefined>(() => {
       v-for="(component, index) in components"
       :key="index"
       v-bind="component[1]"
-      :fill="!isFill ? 'none' : 'currentColor'"
-      :stroke="!isFill ? 'currentColor' : 'none'"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      fill-rule="evenodd"
-      clip-rule="evenodd"
     />
   </svg>
 </template>

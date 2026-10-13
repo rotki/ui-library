@@ -214,6 +214,59 @@ describe('components/icons/RuiIcon.vue', () => {
     });
   });
 
+  describe('paint', () => {
+    /** A stroked outline beside a solid mark, as the solana accounts icon draws. */
+    const mixedIcon: GeneratedIcon = {
+      components: [
+        ['path', { d: 'M3 5v14' }],
+        ['path', { d: 'M13 13h9v2h-9z', fill: 'currentColor', stroke: 'none' }],
+      ],
+      name: 'lu-mixed',
+    };
+
+    function createWithIcon(icon: GeneratedIcon): VueWrapper<InstanceType<typeof RuiIcon>> {
+      return mount(RuiIcon, {
+        global: {
+          provide: {
+            [IconsSymbol]: createIconDefaults({ registeredIcons: [icon] }),
+          },
+        },
+        props: { name: icon.name },
+      });
+    }
+
+    it('should put the outlined default paint on the svg for every primitive to inherit', () => {
+      wrapper = createWithIcon(mixedIcon);
+
+      expect(wrapper.attributes('fill')).toBe('none');
+      expect(wrapper.attributes('stroke')).toBe('currentColor');
+      const outline = wrapper.find('path:nth-child(1)');
+      expect(outline.attributes('fill')).toBeUndefined();
+      expect(outline.attributes('stroke')).toBeUndefined();
+    });
+
+    it('should keep the paint a primitive carries', () => {
+      wrapper = createWithIcon(mixedIcon);
+
+      const solid = wrapper.find('path:nth-child(2)');
+      expect(solid.attributes('fill')).toBe('currentColor');
+      expect(solid.attributes('stroke')).toBe('none');
+    });
+
+    it('should not decide the paint from a `-fill` name', () => {
+      wrapper = createWithIcon({ ...mixedIcon, name: 'lu-mixed-fill' });
+
+      expect(wrapper.attributes('fill')).toBe('none');
+      expect(wrapper.find('path:nth-child(1)').attributes('fill')).toBeUndefined();
+    });
+
+    it('should draw the solid dot lucide marks on its tag icon', () => {
+      wrapper = createWrapper({ props: { name: 'lu-tag' } });
+
+      expect(wrapper.find('circle').attributes('fill')).toBe('currentColor');
+    });
+  });
+
   it('should render svg element', () => {
     wrapper = createWrapper({
       props: {

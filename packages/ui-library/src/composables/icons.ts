@@ -6,7 +6,6 @@ import {
   LuArrowRight,
   LuArrowUp,
   LuCheck,
-  LuCheckboxBlankCircle,
   LuChevronDown,
   LuChevronLeft,
   LuChevronRight,
@@ -22,7 +21,6 @@ import {
   LuEye,
   LuEyeOff,
   LuInfo,
-  LuRadioButtonFill,
   LuTriangleAlert,
   LuX,
 } from '@/icons';
@@ -50,8 +48,6 @@ const requiredIcons: GeneratedIcon[] = [
   LuCheck,
   LuCircleX,
   LuCircleCheck,
-  LuCheckboxBlankCircle,
-  LuRadioButtonFill,
   LuClock,
 ];
 
