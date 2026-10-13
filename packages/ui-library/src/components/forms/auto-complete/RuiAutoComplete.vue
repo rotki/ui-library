@@ -328,6 +328,7 @@ const ui = computed<ReturnType<typeof autoCompleteStyles>>(() => autoCompleteSty
   dense,
   disabled,
   readonly: readOnly,
+  multiple: get(multiple),
   hasError: get(hasError),
   hasSuccess: get(hasSuccess) && !get(hasError),
 }));

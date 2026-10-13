@@ -853,6 +853,40 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     expect(values).toEqual(['Germany,', 'Nigeria,', 'Greece']);
   });
 
+  it('should keep a single selection and the search input on one line', () => {
+    wrapper = createWrapper<string, SelectOption>({
+      props: {
+        keyAttr: 'id',
+        modelValue: '1',
+        options,
+        textAttr: 'label',
+      },
+      slots: {
+        selection: '<span>{{ params.item.label }}</span>',
+      },
+    });
+
+    const valueRow = wrapper.find('div[data-id=value]');
+    expect(valueRow.classes()).toContain('flex-nowrap');
+    expect(valueRow.classes()).not.toContain('flex-wrap');
+  });
+
+  it('should let multiple selections wrap onto new lines', () => {
+    wrapper = createWrapper<string[], SelectOption>({
+      props: {
+        chips: true,
+        keyAttr: 'id',
+        modelValue: ['1', '2', '3'],
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    const valueRow = wrapper.find('div[data-id=value]');
+    expect(valueRow.classes()).toContain('flex-wrap');
+    expect(valueRow.classes()).not.toContain('flex-nowrap');
+  });
+
   it('should show clear button and emit undefined on click', async () => {
     const option4 = options[4];
     assert(option4);

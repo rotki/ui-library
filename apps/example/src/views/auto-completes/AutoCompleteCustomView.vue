@@ -10,6 +10,7 @@ const options = createOptions();
 
 const activatorValue = ref<number>();
 const itemValue = ref<number>();
+const selectionValue = ref<number>();
 
 function getDisplayText(value?: SelectOption | SelectOption[]): string {
   const defaultText = 'Choose Option';
@@ -71,6 +72,29 @@ function getDisplayText(value?: SelectOption | SelectOption[]): string {
               name="lu-check"
               size="24"
             />
+          </template>
+        </RuiAutoComplete>
+      </div>
+
+      <div class="py-4">
+        <RuiAutoComplete
+          v-model="selectionValue"
+          :options="options"
+          key-attr="id"
+          text-attr="label"
+          class="w-56"
+          dense
+          label="Custom Selection"
+          data-id="ac-custom-selection"
+        >
+          <template #selection="{ item }">
+            <div class="flex items-center gap-2">
+              <RuiIcon
+                name="lu-globe"
+                size="16"
+              />
+              {{ item.label }}
+            </div>
           </template>
         </RuiAutoComplete>
       </div>

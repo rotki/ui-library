@@ -400,6 +400,21 @@ test.describe('auto-complete - custom slots', () => {
     const activeButton = page.locator('div[role=listbox] button[aria-selected=true]');
     await expect(activeButton.locator('svg')).toBeVisible();
   });
+
+  test('should keep a single field one line high after picking a value wider than it', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-custom-selection]');
+    const activator = ac.locator('[data-id=activator]');
+    const restingHeight = (await activator.boundingBox())?.height;
+
+    await activator.click();
+    await ac.locator('input').fill('very long');
+    await page.locator('div[role=listbox] button').first().click();
+
+    // the input keeps focus beside the slot-drawn value; it used to wrap onto a second line
+    await expect(ac.locator('input')).toBeFocused();
+    await expect(activator).toContainText('Option with very long name');
+    expect((await activator.boundingBox())?.height).toBe(restingHeight);
+  });
 });
 
 test.describe('auto-complete - keyboard', () => {

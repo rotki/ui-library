@@ -10,4 +10,13 @@ export const autoCompleteStyles = tv({
     value: 'flex gap-1 flex-wrap flex-1 transition-all duration-75',
     prepend: 'flex items-center shrink-0 me-2 text-rui-neutral-500 dark:text-rui-neutral-400',
   },
+  variants: {
+    /*
+     * One value never wraps: the focused search input sits beside it with no room left, and a
+     * wrapped input grew the field by a line until it lost focus.
+     */
+    multiple: {
+      false: { value: 'flex-nowrap min-w-0' },
+    },
+  },
 });
