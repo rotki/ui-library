@@ -57,7 +57,7 @@ export const Default = meta.story({
     variant: 'numeric',
   },
   async play({ canvas, userEvent }) {
-    const prevButton = canvas.getByRole('button', { name: 'Previous' });
+    const prevButton = canvas.getByRole('button', { name: 'Back' });
     const nextButton = canvas.getByRole('button', { name: 'Next' });
     await expect(prevButton).toBeDisabled();
     // Navigate forward

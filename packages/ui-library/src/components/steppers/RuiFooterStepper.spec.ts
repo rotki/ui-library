@@ -38,9 +38,26 @@ describe('components/steppers/RuiFooterStepper.vue', () => {
     expect(wrapper.element.getAttribute('aria-label')).toBe('Step navigation');
   });
 
-  it('should have aria-label on navigation buttons', () => {
+  it('should name text navigation buttons by their text', () => {
     wrapper = createWrapper({
       props: {
+        modelValue: 2,
+        pages: 5,
+      },
+    });
+
+    const buttons = wrapper.findAll('button');
+    expect(buttons).toHaveLength(2);
+    expect(buttons[0]!.attributes('aria-label')).toBeUndefined();
+    expect(buttons[0]!.text()).toBe('Back');
+    expect(buttons[1]!.attributes('aria-label')).toBeUndefined();
+    expect(buttons[1]!.text()).toBe('Next');
+  });
+
+  it('should have aria-label on arrow navigation buttons', () => {
+    wrapper = createWrapper({
+      props: {
+        arrowButtons: true,
         modelValue: 2,
         pages: 5,
       },
@@ -157,8 +174,8 @@ describe('components/steppers/RuiFooterStepper.vue', () => {
     });
 
     // only the step bullets are left
-    expect(wrapper.find('button[aria-label=Previous]').exists()).toBe(false);
-    expect(wrapper.find('button[aria-label=Next]').exists()).toBe(false);
+    expect(wrapper.find('[data-id=prev]').exists()).toBe(false);
+    expect(wrapper.find('[data-id=next]').exists()).toBe(false);
     expect(wrapper.findAll('button')).toHaveLength(5);
   });
 

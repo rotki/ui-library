@@ -90,7 +90,8 @@ function onClick(index: number): void {
     <template v-else>
       <RuiButton
         v-if="!hideButtons"
-        aria-label="Previous"
+        data-id="prev"
+        :aria-label="arrowButtons ? 'Previous' : undefined"
         :disabled="modelValue <= 1"
         :icon="arrowButtons"
         :size="arrowButtons ? 'sm' : undefined"
@@ -140,7 +141,8 @@ function onClick(index: number): void {
       />
       <RuiButton
         v-if="!hideButtons"
-        aria-label="Next"
+        data-id="next"
+        :aria-label="arrowButtons ? 'Next' : undefined"
         :disabled="modelValue >= pages"
         :icon="arrowButtons"
         :size="arrowButtons ? 'sm' : undefined"

@@ -40,8 +40,8 @@ test.describe('footer steppers', () => {
     await expect(stepper.locator('[data-id=numeric]')).toContainText('1/5');
 
     // Back should be disabled on first page
-    const backBtn = stepper.locator('button[aria-label=Previous]');
-    const nextBtn = stepper.locator('button[aria-label=Next]');
+    const backBtn = stepper.getByTestId('prev');
+    const nextBtn = stepper.getByTestId('next');
     await expect(backBtn).toBeDisabled();
 
     // Navigate forward
@@ -61,10 +61,10 @@ test.describe('footer steppers', () => {
     await expect(stepper).toHaveAttribute('aria-label', 'Step navigation');
   });
 
-  test('should have aria-label on navigation buttons', async ({ page }) => {
+  test('should name the navigation buttons', async ({ page }) => {
     const stepper = page.locator('[data-id=footer-stepper-0]');
-    await expect(stepper.locator('button[aria-label=Previous]')).toBeVisible();
-    await expect(stepper.locator('button[aria-label=Next]')).toBeVisible();
+    await expect(stepper.getByRole('button', { name: 'Back' })).toBeVisible();
+    await expect(stepper.getByRole('button', { name: 'Next' })).toBeVisible();
   });
 
   test('should have aria-current="step" on active bullet', async ({ page }) => {
@@ -73,7 +73,7 @@ test.describe('footer steppers', () => {
     await expect(activeBullet).toHaveCount(1);
 
     // Click Next to advance
-    await stepper.locator('button[aria-label=Next]').click();
+    await stepper.getByTestId('next').click();
     const newActive = stepper.locator('[aria-current=step]');
     await expect(newActive).toHaveCount(1);
   });
@@ -81,8 +81,8 @@ test.describe('footer steppers', () => {
   test('should hide buttons when hideButtons is true', async ({ page }) => {
     const stepper = page.locator('[data-id=footer-stepper-2]');
     // only the step bullets are buttons there
-    await expect(stepper.getByRole('button', { name: 'Previous' })).toHaveCount(0);
-    await expect(stepper.getByRole('button', { name: 'Next' })).toHaveCount(0);
+    await expect(stepper.getByTestId('prev')).toHaveCount(0);
+    await expect(stepper.getByTestId('next')).toHaveCount(0);
     await expect(stepper.getByRole('button', { name: /^Step \d+$/ }).first()).toBeVisible();
   });
 });
