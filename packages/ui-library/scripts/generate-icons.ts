@@ -73,8 +73,8 @@ function stripAttrPrefix(item: unknown): Record<string, string> {
 }
 
 /**
- * Attributes `RuiIcon` sets for every icon. A copy baked into a primitive
- * would beat what it inherits: a path's `stroke-width="2"` ignores
+ * Attributes `RuiIcon` sets on the svg for every icon. A copy baked into a
+ * primitive would beat what it inherits: a path's `stroke-width="2"` ignores
  * `--rui-icon-stroke` and draws heavier than the lucide icons beside it.
  */
 const RENDERER_ATTRS = new Set([
@@ -83,10 +83,13 @@ const RENDERER_ATTRS = new Set([
   'stroke-linejoin',
 ]);
 
+/** The paint `RuiIcon` puts on the svg, which every primitive inherits. */
+const DEFAULT_PAINT: Record<string, string> = { fill: 'none', stroke: 'currentColor' };
+
 /**
  * Drops the attributes `RuiIcon` owns and turns every paint colour into
  * `currentColor`, so a design tool's `black` follows the icon colour. `none`
- * survives.
+ * survives: it is how a solid mark drops the default outline.
  *
  * @param attrs - a primitive's attributes as drawn
  * @returns the attributes the icon ships with
@@ -99,6 +102,52 @@ function normalizeCustomAttrs(attrs: Record<string, string>): Record<string, str
     out[k] = (k === 'fill' || k === 'stroke') && v !== 'none' ? 'currentColor' : v;
   }
   return out;
+}
+
+/**
+ * Rejects an element's attributes when the generator would lose them.
+ *
+ * @param tag - the element's name
+ * @param attrs - its attributes
+ */
+function assertKeptAttrs(tag: string, attrs: Record<string, string>): void {
+  if (attrs.transform)
+    throw new Error(`<${tag} transform> is not supported; bake the transform into the coordinates`);
+  if (tag === 'g' && Object.keys(attrs).length > 0)
+    throw new Error(`attributes on <g> are dropped; move them to its primitives`);
+}
+
+/**
+ * Rejects what the generator would otherwise drop without a word: only
+ * primitives are kept, so a transform, or anything set on the svg or a
+ * group, would be lost and the icon would render differently from its file.
+ *
+ * @param root - the parsed `<svg>` element
+ */
+function assertSupportedSvg(root: unknown): void {
+  const rootAttrs = stripAttrPrefix(root);
+  if (rootAttrs.viewBox !== '0 0 24 24')
+    throw new Error(`viewBox must be "0 0 24 24", found "${rootAttrs.viewBox ?? 'none'}"`);
+  for (const [k, v] of Object.entries(DEFAULT_PAINT)) {
+    const own = rootAttrs[k];
+    if (own !== undefined && own !== v)
+      throw new Error(`<svg ${k}="${own}"> is dropped; set ${k} on the primitives instead`);
+  }
+
+  function visit(n: unknown, tag: string): void {
+    if (!n || typeof n !== 'object')
+      return;
+    assertKeptAttrs(tag, stripAttrPrefix(n));
+    for (const [key, value] of Object.entries(n as Record<string, unknown>)) {
+      if (key.startsWith('@_') || key === '#text')
+        continue;
+      if (key !== 'g' && !SVG_PRIMITIVES.has(key))
+        throw new Error(`<${key}> is not supported`);
+      for (const item of Array.isArray(value) ? value : [value]) visit(item, key);
+    }
+  }
+
+  visit(root, 'svg');
 }
 
 function extractComponentsFromXml(node: unknown): GeneratedIcon['components'] {
@@ -136,6 +185,7 @@ async function loadCustomIcon(file: string): Promise<GeneratedIcon | null> {
   const svg = await readFile(file, 'utf8');
   const parser = new XMLParser({ ignoreAttributes: false });
   const parsed = parser.parse(svg) as { svg: unknown };
+  assertSupportedSvg(parsed.svg);
   const components = extractComponentsFromXml(parsed.svg);
   if (components.length === 0) {
     consola.warn(`No primitives extracted from ${file}`);
