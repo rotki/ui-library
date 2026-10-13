@@ -61,9 +61,6 @@ jobs:
       - name: Build 👨🏻‍💻
         run: pnpm run build:prod
 
-      - name: Install npm 11
-        run: npm install -g npm@11
-
       # a prerelease (v3.0.0-beta.1) goes under its identifier (beta), so `latest` keeps the stable line
       - name: publish to npm
         run: |
