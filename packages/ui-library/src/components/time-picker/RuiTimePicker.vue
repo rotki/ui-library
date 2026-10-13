@@ -421,7 +421,8 @@ onMounted(() => {
       <div :class="ui.time()">
         <button
           type="button"
-          aria-label="Select hours"
+          data-id="hour"
+          :aria-label="`${formatValue(displayHour)} hours`"
           :aria-pressed="editMode === 'hour'"
           :class="ui.digit({ active: editMode === 'hour' })"
           @click="editMode = 'hour'"
@@ -433,7 +434,8 @@ onMounted(() => {
         </div>
         <button
           type="button"
-          aria-label="Select minutes"
+          data-id="minute"
+          :aria-label="`${formatValue(selectedMinute)} minutes`"
           :aria-pressed="editMode === 'minute'"
           :class="ui.digit({ active: editMode === 'minute' })"
           @click="editMode = 'minute'"
@@ -449,7 +451,8 @@ onMounted(() => {
         <button
           v-if="showSecond"
           type="button"
-          aria-label="Select seconds"
+          data-id="second"
+          :aria-label="`${formatValue(selectedSecond)} seconds`"
           :aria-pressed="editMode === 'second'"
           :class="ui.digit({ active: editMode === 'second' })"
           @click="editMode = 'second'"
@@ -467,7 +470,8 @@ onMounted(() => {
         <button
           v-if="showMillisecond"
           type="button"
-          aria-label="Select milliseconds"
+          data-id="millisecond"
+          :aria-label="`${formatValue(selectedMillisecond, 3)} milliseconds`"
           :aria-pressed="editMode === 'millisecond'"
           :class="ui.digit({ active: editMode === 'millisecond', class: 'text-lg' })"
           @click="editMode = 'millisecond'"

@@ -49,8 +49,8 @@ export const Default = meta.story({
     modelValue: new Date(),
   },
   async play({ canvas, userEvent }) {
-    const hourSelector = canvas.getByRole('button', { name: 'Select hours' });
-    const minuteSelector = canvas.getByRole('button', { name: 'Select minutes' });
+    const hourSelector = canvas.getByRole('button', { name: /hours$/ });
+    const minuteSelector = canvas.getByRole('button', { name: /minutes$/ });
     await expect(hourSelector).toBeVisible();
     await expect(minuteSelector).toBeVisible();
     await expect(canvas.getByRole('listbox')).toBeVisible();

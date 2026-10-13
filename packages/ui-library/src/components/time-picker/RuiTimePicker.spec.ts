@@ -135,18 +135,19 @@ describe('components/time-picker/RuiTimePicker.vue', () => {
     expect(selected.text()).toBe('3');
   });
 
-  it('should have aria-label on digit selectors and AM/PM toggle', () => {
+  it('should name digit selectors by their value and unit', async () => {
     wrapper = createWrapper({
       props: {
         modelValue: new Date(2023, 0, 1, 10, 30),
       },
     });
+    await nextTick();
 
     const buttons = wrapper.findAll('button');
     const labels = buttons.map(b => b.attributes('aria-label'));
 
-    expect(labels).toContain('Select hours');
-    expect(labels).toContain('Select minutes');
+    expect(labels).toContain('10 hours');
+    expect(labels).toContain('30 minutes');
     expect(labels).toContain('Toggle AM/PM');
   });
 
@@ -157,8 +158,8 @@ describe('components/time-picker/RuiTimePicker.vue', () => {
       },
     });
 
-    const hours = wrapper.find('button[aria-label="Select hours"]');
-    const minutes = wrapper.find('button[aria-label="Select minutes"]');
+    const hours = wrapper.find('[data-id="hour"]');
+    const minutes = wrapper.find('[data-id="minute"]');
     expect(hours.attributes('type')).toBe('button');
     expect(hours.attributes('aria-pressed')).toBe('true');
     expect(minutes.attributes('aria-pressed')).toBe('false');
