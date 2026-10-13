@@ -404,6 +404,25 @@ export const EmptyState = meta.story({
   },
 });
 
+export const ErrorState = meta.story({
+  args: {
+    cols: columns,
+    error: 'The accounts could not be read: the request timed out.',
+    errorTitle: 'Could not load the accounts',
+    modelValue: [],
+    outlined: true,
+    pagination: { limit: 5, page: 1, total: 0 },
+    rows: [],
+    sort: [
+      { column: 'name', direction: 'asc' },
+      { column: 'email', direction: 'asc' },
+    ],
+  },
+  async play({ canvas }) {
+    await expect(canvas.getByText('Could not load the accounts')).toBeVisible();
+  },
+});
+
 export const Expandable = meta.story({
   args: {
     cols: columns,

@@ -45,6 +45,17 @@ function renderWith(slot: string) {
 
 const render = renderWith(body);
 
+/** The header alone, for the states that stand in for the rows. */
+const head = `
+  <thead>
+    <tr>
+      <th scope="col">Node</th>
+      <th scope="col">Weight</th>
+      <th scope="col">Status</th>
+    </tr>
+  </thead>
+`;
+
 const meta = preview.meta({
   args: {
     dense: false,
@@ -103,6 +114,47 @@ export const CellOverride = meta.story({
 
     await expect(window.getComputedStyle(padded).paddingLeft).toBe('16px');
     await expect(window.getComputedStyle(flush).paddingLeft).toBe('0px');
+  },
+});
+
+export const Loading = meta.story({
+  args: { loading: true, variant: 'outlined' },
+  render: renderWith(head),
+});
+
+export const Empty = meta.story({
+  args: {
+    empty: { description: 'Add an RPC node to see it here.', label: 'No nodes' },
+    variant: 'outlined',
+  },
+  render: renderWith(head),
+});
+
+export const ErrorState = meta.story({
+  args: {
+    error: 'The node list could not be read: connection refused.',
+    errorTitle: 'Could not load the nodes',
+    retryText: 'Try again',
+    variant: 'outlined',
+  },
+  render: renderWith(head),
+  async play({ canvas }) {
+    await expect(canvas.getByText('Could not load the nodes')).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Try again' })).toBeVisible();
+  },
+});
+
+/** A failed read outranks an empty one: rows that did not arrive are not rows that are not there. */
+export const ErrorOverEmpty = meta.story({
+  args: {
+    empty: { label: 'No nodes' },
+    error: 'The node list could not be read.',
+    variant: 'outlined',
+  },
+  render: renderWith(head),
+  async play({ canvas }) {
+    await expect(canvas.getByText('The node list could not be read.')).toBeVisible();
+    await expect(canvas.queryByText('No nodes')).toBeNull();
   },
 });
 
