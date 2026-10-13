@@ -143,4 +143,80 @@ export const Stroke = meta.story({
   },
 });
 
+/** Every SVG in `src/custom-icons/`, by icon name. */
+const customIconNames: string[] = Object.keys(import.meta.glob('../../custom-icons/*.svg'))
+  .map(file => file.slice(file.lastIndexOf('/') + 1, -'.svg'.length))
+  .sort();
+
+const customIconNeighbours: Record<string, string> = {
+  'lu-balances': 'lu-wallet',
+  'lu-bitcoin-accounts': 'lu-wallet',
+  'lu-blockchain': 'lu-network',
+  'lu-cloud-download-2': 'lu-cloud-download',
+  'lu-cloud-sync-auto': 'lu-cloud',
+  'lu-cloud-upload-2': 'lu-cloud-upload',
+  'lu-coins-exchange': 'lu-arrow-right-left',
+  'lu-custom-assets': 'lu-database',
+  'lu-deposits': 'lu-log-in',
+  'lu-droplet-fill': 'lu-droplet',
+  'lu-droplet-half-fill': 'lu-droplet',
+  'lu-droplet-trending-down': 'lu-droplet',
+  'lu-evm-accounts': 'lu-wallet',
+  'lu-folder-shrink-1': 'lu-folder',
+  'lu-folder-shrink-2': 'lu-folder',
+  'lu-historic-prices': 'lu-receipt',
+  'lu-history-events': 'lu-square',
+  'lu-latest-prices': 'lu-receipt',
+  'lu-layers-in': 'lu-layers-2',
+  'lu-layers-out': 'lu-layers-2',
+  'lu-liabilities': 'lu-log-out',
+  'lu-manage-assets': 'lu-database',
+  'lu-manage-prices': 'lu-receipt',
+  'lu-more-assets': 'lu-database',
+  'lu-onchain': 'lu-box',
+  'lu-radio-checked': 'lu-circle-dot',
+  'lu-refund': 'lu-rotate-ccw',
+  'lu-solana-accounts': 'lu-wallet',
+  'lu-substrate-accounts': 'lu-wallet',
+  'lu-tag-manager': 'lu-tag',
+};
+
+/**
+ * The custom icons beside the lucide icon each one is drawn to match. Use it to check a new or
+ * edited SVG in `src/custom-icons/` against its family before shipping it. The play function checks
+ * that every SVG is listed and generated into something drawable.
+ */
+export const CustomIcons = meta.story({
+  render: () => ({
+    components: { RuiIcon },
+    setup() {
+      const rows = customIconNames.map(name => ({ name, neighbour: customIconNeighbours[name] }));
+      const sizes = [16, 20, 24, 40];
+      return { rows, sizes };
+    },
+    template: `
+      <table class="text-rui-text">
+        <tr class="text-caption text-rui-text-secondary text-left">
+          <th class="pr-6 pb-2 font-medium">icon</th>
+          <th class="pr-6 pb-2 font-medium">custom</th>
+          <th class="pb-2 font-medium">lucide neighbour</th>
+        </tr>
+        <tr v-for="row in rows" :key="row.name" :data-icon="row.name" class="between:border-t border-rui-divider">
+          <td class="pr-6 py-1.5 text-caption font-mono">{{ row.name }}</td>
+          <td class="pr-6 py-1.5"><div class="flex items-center gap-3"><RuiIcon v-for="size in sizes" :key="size" :name="row.name" :size="size" /></div></td>
+          <td class="py-1.5"><div v-if="row.neighbour" class="flex items-center gap-3">
+            <RuiIcon v-for="size in sizes" :key="size" :name="row.neighbour" :size="size" />
+            <span class="text-caption font-mono text-rui-text-secondary">{{ row.neighbour }}</span>
+          </div></td>
+        </tr>
+      </table>
+    `,
+  }),
+  async play({ canvasElement }) {
+    await expect(canvasElement.querySelectorAll('[data-icon]')).toHaveLength(customIconNames.length);
+    for (const row of canvasElement.querySelectorAll('[data-icon]'))
+      await expect(row.querySelector('td:nth-child(2) svg > *')).not.toBeNull();
+  },
+});
+
 export default meta;
