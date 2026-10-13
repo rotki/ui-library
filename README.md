@@ -458,7 +458,9 @@ When the dependency installed on the main project, it will run the `prepare` scr
 
 ### Generating the library icons
 
-We use [Lucide](https://lucide.dev/) icons as the base icon set. Brand icons (Discord, Reddit, X/Twitter, etc.) in the `src/custom-icons/` directory are sourced from [Simple Icons](https://simpleicons.org/).
+We use [Lucide](https://lucide.dev/) icons as the base icon set. `src/custom-icons/` holds the rotki-specific icons Lucide lacks, drawn on Lucide's 24×24 grid with round caps and joins. The library ships no brand logos; apps register their own.
+
+A custom SVG must use `viewBox="0 0 24 24"` and put everything on its primitives (`path`, `rect`, `circle`, ...): the generator rejects a `transform`, attributes on a `<g>`, and paint on the `<svg>` other than `fill="none"` / `stroke="currentColor"`. It drops `stroke-width`, `stroke-linecap` and `stroke-linejoin`, which `RuiIcon` sets, and turns any colour into `currentColor`. Icons are outlined by default; give a solid shape `fill="currentColor" stroke="none"`. The `CustomIcons` story in Storybook shows every custom icon beside its Lucide neighbour.
 
 The generator (`scripts/generate-icons.ts`) reads each Lucide icon's pre-parsed component data and the parsed XML of every SVG in `src/custom-icons/`, and emits one `[tag, attrs]` tuple per renderable primitive into `src/icons/icons_*.ts`. Multi-path icons stay as multiple entries — they are not collapsed into a single concatenated path. The generated files are gitignored and rebuilt by the `build` script; run the command below if you need to regenerate them by hand.
 

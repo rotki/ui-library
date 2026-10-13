@@ -342,6 +342,46 @@ Icons draw with a 1.75 stroke instead of Lucide's 2. Set `--rui-icon-stroke` on 
 it, for example `[--rui-icon-stroke:2]`. An icon inside a button inherits a smaller size: md is now 16px
 (was 18px) and sm is 14px (was 16px). A `size` prop on `RuiIcon` still wins.
 
+The custom icons now follow `--rui-icon-stroke` like the Lucide ones (most drew at a fixed 2 before),
+and the ones that duplicated a Lucide icon, or ended in `-fill` while drawing an outline, are renamed or
+gone. Icon names reach the frontend from the backend too, so search both for the old names.
+
+| 2.x                              | 3.0                   |
+| -------------------------------- | --------------------- |
+| `lu-cloud-fill`                  | `lu-cloud`            |
+| `lu-cloud-download-fill`         | `lu-cloud-download`   |
+| `lu-cloud-download-2-fill`       | `lu-cloud-download-2` |
+| `lu-cloud-upload-fill`           | `lu-cloud-upload`     |
+| `lu-cloud-upload-2-fill`         | `lu-cloud-upload-2`   |
+| `lu-cloud-off-fill`              | `lu-cloud-off`        |
+| `lu-cloud-sync-fill`             | `lu-cloud-sync-auto`  |
+| `lu-donate-fill`                 | `lu-hand-heart`       |
+| `lu-receive-donation-fill`       | `lu-heart-handshake`  |
+| `lu-history-events-fill`         | `lu-history-events`   |
+| `lu-solana-accounts-fill`        | `lu-solana-accounts`  |
+| `lu-radio-button-fill`           | `lu-radio-checked`    |
+| `lu-checkbox-blank-circle`       | `lu-circle`           |
+| `lu-checkbox-blank`              | `lu-square`           |
+| `lu-checkbox-fill`               | `lu-square-check`     |
+| `lu-checkbox-indeterminate-fill` | `lu-square-minus`     |
+| `lu-export`                      | `lu-upload`           |
+| `lu-eye-semi-off`                | `lu-eye-off`          |
+| `lu-slash-divider`               | `lu-slash`            |
+
+`lu-activate-premium`, `lu-checkbox-blank-circle-fill` and `lu-manual-balances` are removed with no
+replacement. `lu-droplet-fill` and `lu-droplet-half-fill` keep their names and now share `lu-droplet`'s
+shape.
+
+The checkbox and radio icons are no longer registered by default, since no component draws them. The
+icons plugin picks up the new names from your templates; add a name you only build at runtime to its
+`include` list.
+
+Paint comes from the icon data, not the name. An icon is outlined unless a shape sets its own paint, so
+a `-fill` suffix no longer turns an icon solid, and `fill-rule="evenodd"` is no longer forced on every
+shape. An icon your app registers through `createRui` that draws solid shapes needs
+`fill: 'currentColor', stroke: 'none'` on them, plus `'fill-rule': 'evenodd'` where a shape has holes.
+Lucide's solid dots, such as the one on `lu-tag`, now draw solid instead of as rings.
+
 ## Buttons, chips and controls
 
 - Hover and pressed tints are the same across components. Colored text and outlined buttons tint at 6%
