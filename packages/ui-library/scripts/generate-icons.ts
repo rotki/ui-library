@@ -72,13 +72,42 @@ function stripAttrPrefix(item: unknown): Record<string, string> {
   return attrs;
 }
 
+/**
+ * Attributes `RuiIcon` sets for every icon. A copy baked into a primitive
+ * would beat what it inherits: a path's `stroke-width="2"` ignores
+ * `--rui-icon-stroke` and draws heavier than the lucide icons beside it.
+ */
+const RENDERER_ATTRS = new Set([
+  'stroke-width',
+  'stroke-linecap',
+  'stroke-linejoin',
+]);
+
+/**
+ * Drops the attributes `RuiIcon` owns and turns every paint colour into
+ * `currentColor`, so a design tool's `black` follows the icon colour. `none`
+ * survives.
+ *
+ * @param attrs - a primitive's attributes as drawn
+ * @returns the attributes the icon ships with
+ */
+function normalizeCustomAttrs(attrs: Record<string, string>): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(attrs)) {
+    if (RENDERER_ATTRS.has(k))
+      continue;
+    out[k] = (k === 'fill' || k === 'stroke') && v !== 'none' ? 'currentColor' : v;
+  }
+  return out;
+}
+
 function extractComponentsFromXml(node: unknown): GeneratedIcon['components'] {
   const out: GeneratedIcon['components'] = [];
 
   function emit(tag: string, items: unknown[]): void {
     for (const item of items) {
       if (item && typeof item === 'object')
-        out.push([tag, stripAttrPrefix(item)]);
+        out.push([tag, normalizeCustomAttrs(stripAttrPrefix(item))]);
     }
   }
 
