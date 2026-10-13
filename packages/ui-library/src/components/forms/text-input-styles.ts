@@ -74,7 +74,8 @@ export const textInputBase = tv({
  */
 export const activatorStyles = tv({
   slots: {
-    wrapper: 'w-full inline-flex flex-col',
+    // top-aligned, since an inline box on the text baseline sat about 1.6px low in a block parent
+    wrapper: 'w-full inline-flex flex-col align-top',
     activator: [
       'group relative inline-flex items-center w-full',
       'outline-hidden focus:outline-hidden focus-within:outline-hidden cursor-pointer',

@@ -887,6 +887,19 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     expect(valueRow.classes()).not.toContain('flex-nowrap');
   });
 
+  it('should align its box to the top of a block parent rather than the text baseline', () => {
+    wrapper = createWrapper<string | undefined, SelectOption>({
+      props: {
+        keyAttr: 'id',
+        modelValue: undefined,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    expect(wrapper.find('div').classes()).toContain('align-top');
+  });
+
   it('should show clear button and emit undefined on click', async () => {
     const option4 = options[4];
     assert(option4);
