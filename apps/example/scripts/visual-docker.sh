@@ -21,7 +21,7 @@ set -euo pipefail
 
 # Keep this in sync with `pnpm-workspace.yaml -> @playwright/test` so the
 # image's bundled browser matches the test runner version.
-PLAYWRIGHT_IMAGE="${PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.62.1-noble}"
+PLAYWRIGHT_IMAGE="${PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.63.0-noble}"
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 
