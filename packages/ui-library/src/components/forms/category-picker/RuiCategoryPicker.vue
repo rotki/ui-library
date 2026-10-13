@@ -211,7 +211,9 @@ function dialogShellProps(): Record<string, unknown> {
  * it sits directly under the input instead of below the reserved details row,
  * and drops the menu's default vertical padding so the popover box equals the
  * panel: the size middleware caps the panel to the available height, and any
- * extra chrome padding would push the popover past the viewport edge.
+ * extra chrome padding would push the popover past the viewport edge. The
+ * popover is a dialog, as the activator's `aria-haspopup` says: it holds a
+ * tablist and a listbox, which a `menu` may not contain.
  */
 function menuShellProps(): Record<string, unknown> {
   return {
@@ -220,9 +222,11 @@ function menuShellProps(): Record<string, unknown> {
     closeOnContentClick: false,
     disableAutoFocus: true,
     fullWidth: true,
+    menuLabel: label,
     options: { placement: Placement.bottomStart, size: true },
     persistent: dialogOptions?.persistent,
     persistOnActivatorClick: true,
+    role: 'dialog',
   };
 }
 
