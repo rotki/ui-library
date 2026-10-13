@@ -36,6 +36,20 @@ const CHUNK_SIZE = 500;
  */
 const LUCIDE_ALIASES_FILE = 'iconsAndAliases.mjs';
 
+/**
+ * Names lucide once shipped as icons of their own and later kept only as an
+ * alias export. The alias file gives PascalCase names alone (`Trash2`), and
+ * `kebabCase` glues a trailing number (`trash2`), so without this list these
+ * names would come out spelled differently from the release that had them.
+ * When lucide turns another icon into an alias, its old name goes here.
+ */
+const LEGACY_ALIAS_NAMES = [
+  'lu-building-2', // now an alias of building-complex
+  'lu-flip-horizontal-2', // now an alias of triangles-centerline-dashed-horizontal
+  'lu-flip-vertical-2', // now an alias of triangles-centerline-dashed-vertical
+  'lu-trash-2', // now an alias of trash
+];
+
 const SVG_PRIMITIVES = new Set([
   'path',
   'rect',
@@ -221,6 +235,7 @@ async function buildAliases(
   const added = new Set<string>();
   // Exports are keyed by `pascalCase(name)`, so `arrow-down-0-1` and `arrow-down-01` would clash as `LuArrowDown01`
   const takenIds = new Set(Array.from(existing, name => pascalCase(name)));
+  const legacyByExportId = new Map(LEGACY_ALIAS_NAMES.map(name => [pascalCase(name), name]));
   const lineRe = /export\s*\{([^}]*)\}\s*from\s*'\.\/icons\/([^']+)\.mjs'/g;
   for (const line of source.matchAll(lineRe)) {
     const canonicalName = LUCIDE_PREFIX + line[2];
@@ -228,8 +243,9 @@ async function buildAliases(
     if (!components)
       continue;
     for (const name of line[1].matchAll(/default as (\w+)/g)) {
-      const aliasName = LUCIDE_PREFIX + kebabCase(name[1]);
-      const exportId = pascalCase(aliasName);
+      const defaultName = LUCIDE_PREFIX + kebabCase(name[1]);
+      const exportId = pascalCase(defaultName);
+      const aliasName = legacyByExportId.get(exportId) ?? defaultName;
       if (aliasName === canonicalName || existing.has(aliasName) || added.has(aliasName) || takenIds.has(exportId))
         continue;
       added.add(aliasName);

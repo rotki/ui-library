@@ -38,6 +38,13 @@ describe('generated icons', () => {
       expect(RuiIcons, name).toContain(name);
   });
 
+  it('should keep the numbered names lucide turned into aliases spelled as published (lu-trash-2, not lu-trash2)', () => {
+    for (const name of ['lu-trash-2', 'lu-building-2', 'lu-flip-horizontal-2', 'lu-flip-vertical-2'])
+      expect(RuiIcons, name).toContain(name);
+    for (const name of ['lu-trash2', 'lu-building2', 'lu-flip-horizontal2', 'lu-flip-vertical2'])
+      expect(RuiIcons, name).not.toContain(name);
+  });
+
   it('should ship no third-party brand logo, which an app registers itself', () => {
     for (const name of [
       'lu-github',
