@@ -26,6 +26,7 @@ const stackedSecond = ref<TablePaginationData>(firstPage(25, rows.length));
 const sideLeft = ref<TablePaginationData>(firstPage(25, rows.length));
 const sideRight = ref<TablePaginationData>(firstPage(25, rows.length));
 const nested = ref<TablePaginationData>(firstPage(25, rows.length));
+const inPlace = ref<TablePaginationData>(firstPage(25, rows.length));
 const dialogPagination = ref<TablePaginationData>(firstPage(25, rows.length));
 
 const expanded = ref<ExtendedUser[]>(nestedOuterRows.slice(0, 1));
@@ -141,6 +142,26 @@ const dialogOpen = ref<boolean>(false);
             />
           </template>
         </RuiDataTable>
+      </div>
+
+      <div
+        class="flex flex-col space-y-3"
+        data-id="long-in-place"
+      >
+        <h4>Bar in Place</h4>
+        <p class="text-sm text-rui-text-secondary">
+          With <code>disable-sticky-pagination</code>, the bar rests at the table's end, for a table that is
+          one section of a longer page
+        </p>
+        <RuiDataTable
+          v-model:pagination="inPlace"
+          :rows="rows"
+          :cols="fixedColumns"
+          row-attr="id"
+          outlined
+          disable-sticky-pagination
+          data-id="table"
+        />
       </div>
 
       <div

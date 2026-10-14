@@ -245,6 +245,26 @@ test.describe('data tables - long pages', () => {
     await expect.poll(stickyBottom).toBe('0px');
   });
 
+  test('leaves the bar at the table\'s end and publishes no inset with disable-sticky-pagination', async ({ page }) => {
+    const table = page.locator('[data-id=long-in-place] [data-id=table]');
+    const bar = table.locator('[data-id=table-pagination]');
+    const stickyBottom = async (): Promise<string> => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--rui-sticky-bottom').trim());
+
+    // where a sticking bar would ride the view's bottom over the rows
+    await scrollTo(table, APP_BAR);
+    await expect.poll(() => topOf(table.locator('tbody'))).toBeLessThan(viewportHeight(page));
+
+    await expect(bar).not.toHaveAttribute('data-sticky');
+    expect(await bar.evaluate(el => getComputedStyle(el).position)).not.toBe('sticky');
+    expect(await topOf(bar)).toBeGreaterThan(viewportHeight(page));
+    expect(await stickyBottom()).toBe('0px');
+
+    // scrolling the bar into the bottom corner, where a resting bar still counts as covered, publishes nothing either
+    await scrollTo(bar, viewportHeight(page) - 60);
+    await expect.poll(() => bottomOf(bar)).toBeLessThanOrEqual(viewportHeight(page));
+    expect(await stickyBottom()).toBe('0px');
+  });
+
   test('sticks the bar to the bottom of a dialog body', async ({ page }) => {
     await page.locator('[data-id=long-dialog-activator]').click();
     const scroller = page.locator('[data-id=long-dialog-scroller]');

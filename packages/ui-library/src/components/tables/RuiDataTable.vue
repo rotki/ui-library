@@ -110,6 +110,11 @@ export interface Props<T, K extends keyof T> {
   stickyHeader?: boolean;
   stickyOffset?: number;
   /**
+   * keep the pagination bar at the table's end instead of pinning it to the bottom of the view while
+   * the rows run past it, for a table that is one section of a longer page
+   */
+  disableStickyPagination?: boolean;
+  /**
    * Affects how the items per page work across the app.
    * When true, changing the items per page setting in one table will affect other tables.
    */
@@ -178,6 +183,7 @@ const {
   singleExpand = false,
   stickyHeader = false,
   stickyOffset,
+  disableStickyPagination = false,
   globalItemsPerPage = undefined,
   groupExpandButtonPosition = GroupExpandButtonPosition.start,
   disabledRows,
@@ -389,10 +395,12 @@ const showPagination = computed<boolean>(() => !!get(paginationData) && !hidePag
 /**
  * The one pagination bar sticks to the bottom of the view, so a long page can be turned without
  * scrolling down to it. `position: sticky` keeps it inside this table, so stacked and side-by-side
- * tables each hold their own bar. A nested table's bar stays in place: two stuck bars would stack.
+ * tables each hold their own bar. A nested table's bar stays in place, since two stuck bars would
+ * stack, as does the bar of a table with `disableStickyPagination`.
  */
-const canStickPagination = useStickyPaginationBar(tableWrapper, () => !isNestedTable && get(showPagination));
-const stickyPagination = computed<boolean>(() => !isNestedTable && get(canStickPagination));
+const paginationMayStick = computed<boolean>(() => !disableStickyPagination && !isNestedTable);
+const canStickPagination = useStickyPaginationBar(tableWrapper, () => get(paginationMayStick) && get(showPagination));
+const paginationStuck = computed<boolean>(() => get(paginationMayStick) && get(canStickPagination));
 
 const paginationBarElement = computed<HTMLElement | undefined>(() => {
   const element: unknown = get(paginationBar)?.$el;
@@ -400,7 +408,7 @@ const paginationBarElement = computed<HTMLElement | undefined>(() => {
 });
 
 // while the bar is stuck to the page, `--rui-sticky-bottom` tells the page's floating parts to rise above it
-useStickyBottomInset(paginationSentinel, paginationBarElement, stickyPagination);
+useStickyBottomInset(paginationSentinel, paginationBarElement, paginationStuck);
 
 /**
  * Grouped columns leave the column list, so their labels come from `cols`.
@@ -763,13 +771,13 @@ provideDataTableContext<T, IdType>({
       v-if="paginationData && showPagination"
       ref="paginationBar"
       v-model="paginationData"
-      :class="ui.pagination({ sticky: stickyPagination })"
+      :class="ui.pagination({ sticky: paginationStuck })"
       :dense="dense"
       :loading="loading"
       :mobile="isMobile"
       :disable-per-page="disablePerPage"
       :ranges-threshold="rangesThreshold"
-      :data-sticky="stickyPagination || undefined"
+      :data-sticky="paginationStuck || undefined"
       data-id="table-pagination"
       @update:model-value="onPaginate()"
     />

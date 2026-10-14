@@ -1224,6 +1224,23 @@ describe('components/tables/RuiDataTable.vue', () => {
     expect(pagination.classes()).toEqual(expect.arrayContaining(['sticky', 'bottom-0']));
   });
 
+  it('should leave the pagination bar under the rows with disableStickyPagination', () => {
+    wrapper = createWrapper({
+      props: {
+        cols: columns,
+        disableStickyPagination: true,
+        rowAttr: 'id',
+        rows: data,
+      },
+    });
+
+    const pagination = wrapper.find('[data-id="table-pagination"]');
+    expect(pagination.exists()).toBe(true);
+    expect(pagination.attributes('data-sticky')).toBeUndefined();
+    expect(pagination.classes()).not.toContain('sticky');
+    expect(pagination.classes()).not.toContain('bottom-0');
+  });
+
   it('should keep the pagination bar of an empty table', () => {
     wrapper = createWrapper({
       props: {
