@@ -496,6 +496,13 @@ Now only the made-up labels are title-cased. Drop `[&_th]:normal-case` workaroun
 After a page change, the table scrolls back to its first row, but only when its top had scrolled out of
 view. When the top is showing, nothing moves. The scroll leaves room for the `stickyOffset` app bar.
 
+A table that is one section of a longer page, where a bar following you past it would get in the way,
+takes `disable-sticky-pagination`: its bar rests at the table's end and it never sets
+`--rui-sticky-bottom`.
+
+While a table loads, the rows it already shows stay at full opacity (2.x dimmed them to 50%). The tbody
+still carries `data-stale` then, so a test or a style can pick that state up.
+
 | 2.x                            | 3.0                             |
 | ------------------------------ | ------------------------------- |
 | bar above and below the rows   | one bar, below the rows, sticky |
