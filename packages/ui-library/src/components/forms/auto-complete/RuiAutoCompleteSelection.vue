@@ -74,19 +74,22 @@ const showPlainSelection = computed<boolean>(() =>
         :data-selected="i === selectedIndex || undefined"
         v-bind="chipAttrs(item, i)"
       >
-        <div class="flex">
+        <template
+          v-if="slots.prepend"
+          #prepend
+        >
           <slot
             name="prepend"
             :index="i"
             v-bind="{ item }"
           />
-          <slot
-            :index="i"
-            v-bind="{ item, chipAttrs: chipAttrs(item, i) }"
-          >
-            {{ getText(item) }}
-          </slot>
-        </div>
+        </template>
+        <slot
+          :index="i"
+          v-bind="{ item, chipAttrs: chipAttrs(item, i) }"
+        >
+          {{ getText(item) }}
+        </slot>
       </RuiChip>
     </span>
     <div

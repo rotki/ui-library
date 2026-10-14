@@ -11,6 +11,7 @@ const options = createOptions();
 const activatorValue = ref<number>();
 const itemValue = ref<number>();
 const selectionValue = ref<number>();
+const chipPrependValue = ref<number[]>([1, 2]);
 
 function getDisplayText(value?: SelectOption | SelectOption[]): string {
   const defaultText = 'Choose Option';
@@ -95,6 +96,26 @@ function getDisplayText(value?: SelectOption | SelectOption[]): string {
               />
               {{ item.label }}
             </div>
+          </template>
+        </RuiAutoComplete>
+      </div>
+
+      <div class="py-4">
+        <RuiAutoComplete
+          v-model="chipPrependValue"
+          :options="options"
+          key-attr="id"
+          text-attr="label"
+          chips
+          label="Chip Prepend"
+          data-id="ac-custom-chip-prepend"
+        >
+          <template #selection.prepend>
+            <RuiIcon
+              name="lu-globe"
+              size="16"
+              data-id="chip-prepend-icon"
+            />
           </template>
         </RuiAutoComplete>
       </div>

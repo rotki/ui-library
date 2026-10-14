@@ -343,6 +343,49 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     expect(wrapper.emitted('update:modelValue')?.[2]).toEqual([newValue]);
   });
 
+  it('should render selection.prepend in the chip prepend, not the label', async () => {
+    wrapper = createWrapper<string[], SelectOption>({
+      props: {
+        chips: true,
+        keyAttr: 'id',
+        modelValue: ['7', '8'],
+        options,
+        textAttr: 'label',
+      },
+      slots: {
+        'selection.prepend': '<img data-id="chip-logo" alt="" />',
+      },
+    });
+    await vi.advanceTimersToNextTimerAsync();
+
+    const chips = wrapper.find('div[data-id=activator]').findAllComponents(RuiChip);
+    expect(chips).toHaveLength(2);
+    for (const chip of chips) {
+      const [prepend, label] = chip.element.children;
+      expect(prepend.querySelector('[data-id=chip-logo]')).not.toBeNull();
+      expect(label.querySelector('[data-id=chip-logo]')).toBeNull();
+      expect(label.textContent).toBe(chip.text());
+    }
+    expect(chips[0].text()).toBe('France');
+  });
+
+  it('should leave the chip prepend out without a selection.prepend slot', async () => {
+    wrapper = createWrapper<string[], SelectOption>({
+      props: {
+        chips: true,
+        keyAttr: 'id',
+        modelValue: ['7'],
+        options,
+        textAttr: 'label',
+      },
+    });
+    await vi.advanceTimersToNextTimerAsync();
+
+    const chip = wrapper.find('div[data-id=activator]').findComponent(RuiChip);
+    expect(chip.element.firstElementChild?.tagName).toBe('SPAN');
+    expect(chip.text()).toBe('France');
+  });
+
   it('should convert a chip back to editable text on Alt+Delete when customValue is set', async () => {
     wrapper = createWrapper<string[], SelectOption>({
       attachTo: document.body,

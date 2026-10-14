@@ -415,6 +415,25 @@ test.describe('auto-complete - custom slots', () => {
     await expect(activator).toContainText('Option with very long name');
     expect((await activator.boundingBox())?.height).toBe(restingHeight);
   });
+
+  test('should draw selection.prepend in the chip leading slot, not in its label', async ({ page }) => {
+    const ac = page.locator('[data-id=ac-custom-chip-prepend]');
+    const chips = ac.locator('[data-id=activator] [data-value]');
+    await expect(chips).toHaveCount(2);
+
+    for (const chip of await chips.all()) {
+      const icon = chip.getByTestId('chip-prepend-icon');
+      await expect(icon).toBeVisible();
+      // the icon sits in the chip's first child, the leading circle, and the label holds only text
+      await expect(chip.locator(':scope > :first-child').getByTestId('chip-prepend-icon')).toBeVisible();
+      await expect(chip.locator(':scope > span').getByTestId('chip-prepend-icon')).toHaveCount(0);
+
+      const chipX = (await chip.boundingBox())?.x ?? Number.NaN;
+      const iconX = (await icon.boundingBox())?.x ?? Number.NaN;
+      // the leading circle hugs the chip edge; inside the label it sat 16px in
+      expect(iconX - chipX).toBeLessThan(10);
+    }
+  });
 });
 
 test.describe('auto-complete - keyboard', () => {
