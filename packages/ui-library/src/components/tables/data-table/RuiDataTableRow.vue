@@ -98,12 +98,12 @@ const stripe = computed<'' | undefined>(() => (index % 2 === 1 ? '' : undefined)
 const pairHoverClass = computed<string>(() => {
   if (!get(appended) || get(expanded) || get(isMobile))
     return '';
-  return 'has-[+[data-id=row-append]:hover]:bg-rui-hover';
+  return 'has-[+[data-id=row-append]:hover]:bg-rui-neutral-950/[0.03] dark:has-[+[data-id=row-append]:hover]:bg-white/[0.04]';
 });
 const appendHoverClass = computed<string>(() => {
   if (get(expanded) || get(isMobile))
     return '';
-  return '[[data-id=row]:hover+&]:bg-rui-hover';
+  return '[[data-id=row]:hover+&]:bg-rui-neutral-950/[0.03] dark:[[data-id=row]:hover+&]:bg-white/[0.04]';
 });
 
 /**

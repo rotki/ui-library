@@ -24,7 +24,8 @@ export const dataTableStyles = tv({
     scroller: 'overflow-x-auto overflow-y-hidden [clip-path:inset(0_0_0_0)] outline-hidden focus-visible:focus-ring focus-visible:-outline-offset-2',
     table: 'min-w-full table-fixed between:border-t between:border-b-0 between:border-rui-divider whitespace-nowrap mx-auto my-0 max-w-fit relative border-rui-divider',
     tbody: 'between:border-t between:border-b-0 between:border-rui-divider',
-    tr: 'hover:bg-rui-hover',
+    // its own tint, lighter than `rui-hover`, which lands on the header and pagination grey
+    tr: 'hover:bg-rui-neutral-950/[0.03] dark:hover:bg-white/[0.04]',
     // numbers line up in columns; no slashed zero, which in Inter reads as a second, monospace font beside zero-free values
     td: '[:where(&)]:px-4 text-rui-text text-body-2 tabular-nums [text-wrap:initial]',
     checkbox: 'px-2 w-[3.625rem] max-w-[3.625rem] [&_label]:ml-0',
@@ -48,17 +49,17 @@ export const dataTableStyles = tv({
       true: {},
       false: {},
     },
-    // under every row state through `:where()`; set per item (`data-stripe`), so a follow-up row or open panel shifts none
+    // under every row state through `:where()`, per item (`data-stripe`); half the row hover, so a striped row still darkens on hover
     striped: {
-      true: { tbody: '[:where(&>tr[data-stripe])]:bg-rui-neutral-950/[0.03] dark:[:where(&>tr[data-stripe])]:bg-white/[0.04]' },
+      true: { tbody: '[:where(&>tr[data-stripe])]:bg-rui-neutral-950/[0.015] dark:[:where(&>tr[data-stripe])]:bg-white/[0.02]' },
     },
     rowVariant: {
       selected: { tr: 'bg-rui-primary-soft' },
-      empty: { tr: 'hover:bg-transparent' },
+      empty: { tr: 'hover:bg-transparent dark:hover:bg-transparent' },
       // a grey band darker than the header so the two never match, a step darker again inside another panel
       expandable: { tr: `bg-rui-neutral-950/[0.07] hover:bg-rui-neutral-950/[0.07] dark:bg-white/[0.09] dark:hover:bg-white/[0.09] ${NESTED_BAND} [[data-id=row-expanded]_&]:hover:bg-rui-neutral-950/[0.11] dark:[[data-id=row-expanded]_&]:hover:bg-white/[0.14] ${OPEN_ROW_RAIL} !border-t-0` },
       expandedParent: { tr: `bg-rui-neutral-950/[0.07] dark:bg-white/[0.09] ${NESTED_BAND} ${OPEN_ROW_RAIL}` },
-      group: { tr: 'bg-rui-neutral-100 dark:bg-white/[0.05]' },
+      group: { tr: 'bg-rui-neutral-100 hover:bg-rui-neutral-100 dark:bg-white/[0.05] dark:hover:bg-white/[0.05]' },
     },
     mobile: {
       true: {
