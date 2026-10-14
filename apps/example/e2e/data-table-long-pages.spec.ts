@@ -234,6 +234,17 @@ test.describe('data tables - long pages', () => {
     expect(await topOf(nestedBar)).toBeGreaterThan(viewportHeight(page));
   });
 
+  test('drops the inset once one jump carries a bar from below the view to far above it', async ({ page }) => {
+    const stickyBottom = async (): Promise<string> => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--rui-sticky-bottom').trim());
+    const single = page.locator('[data-id=long-single] [data-id=table]');
+    await scrollTo(single, APP_BAR);
+    await expect.poll(stickyBottom).not.toBe('0px');
+
+    // straight past the whole table: the observer never sees its bar's place intersect on the way
+    await scrollTo(page.locator('[data-id=long-dialog]'), APP_BAR);
+    await expect.poll(stickyBottom).toBe('0px');
+  });
+
   test('sticks the bar to the bottom of a dialog body', async ({ page }) => {
     await page.locator('[data-id=long-dialog-activator]').click();
     const scroller = page.locator('[data-id=long-dialog-scroller]');

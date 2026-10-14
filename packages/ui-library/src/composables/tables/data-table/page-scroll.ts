@@ -143,12 +143,22 @@ export function useStickyBottomInset(
   const { height: viewHeight } = useWindowSize();
   let frame = 0;
 
-  /** From the bar's top to the view's bottom; a stuck bar sits on that bottom, so this is its height. */
+  /**
+   * From the bar's top to the view's bottom; a stuck bar sits on that bottom, so this is its height.
+   * It first checks the sentinel is still below the band: one jump can carry it from below the band to
+   * above the view without the observer ever seeing it intersect, which would leave the bar counted
+   * while it sits far above the view.
+   */
   function measureCovered(): void {
     frame = 0;
     const element = unrefElement(bar);
     if (!element)
       return;
+    const place = get(sentinel)?.getBoundingClientRect().top;
+    if (place !== undefined && place < get(viewHeight) - Math.ceil(get(height)) - RESTING_CLEARANCE) {
+      set(belowView, false);
+      return;
+    }
     set(covered, Math.max(get(height), Math.ceil(get(viewHeight) - element.getBoundingClientRect().top)));
   }
 
