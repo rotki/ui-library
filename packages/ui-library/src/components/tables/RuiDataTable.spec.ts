@@ -1306,32 +1306,31 @@ describe('components/tables/RuiDataTable.vue', () => {
   });
 
   describe('stale rows', () => {
-    it('should dim rows from an earlier read while loading', () => {
+    it('should mark rows from an earlier read as stale without dimming them', () => {
       wrapper = createWrapper({
         props: { cols: columns, loading: true, rowAttr: 'id', rows: data.slice(0, 3) },
       });
 
       const tbody = wrapper.find('tbody');
       expect(tbody.attributes('data-stale')).toBe('true');
-      expect(tbody.classes()).toContain('opacity-50');
+      expect(tbody.classes()).not.toContain('opacity-50');
+      expect(wrapper.find('[data-id=thead-loader]').exists()).toBe(true);
     });
 
-    it('should not dim the loading row of an empty table', () => {
+    it('should not mark the loading row of an empty table as stale', () => {
       wrapper = createWrapper({
         props: { cols: columns, loading: true, rowAttr: 'id', rows: [] },
       });
 
-      const tbody = wrapper.find('tbody');
-      expect(tbody.attributes('data-stale')).toBeUndefined();
-      expect(tbody.classes()).not.toContain('opacity-50');
+      expect(wrapper.find('tbody').attributes('data-stale')).toBeUndefined();
     });
 
-    it('should not dim rows once loading ends', () => {
+    it('should drop the stale mark once loading ends', () => {
       wrapper = createWrapper({
         props: { cols: columns, rowAttr: 'id', rows: data.slice(0, 3) },
       });
 
-      expect(wrapper.find('tbody').classes()).not.toContain('opacity-50');
+      expect(wrapper.find('tbody').attributes('data-stale')).toBeUndefined();
     });
   });
 

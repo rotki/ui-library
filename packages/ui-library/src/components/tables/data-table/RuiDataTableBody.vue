@@ -53,16 +53,16 @@ const { getRowId } = useDataTableRowIdentity<T>();
 const showError = computed<boolean>(() => !!error && !loading);
 
 /**
- * Rows shown while a read is in flight are the previous result, so they dim
- * until it lands. An empty table shows its loading row instead, undimmed.
+ * Rows shown while a read is in flight are the previous result. They stay at
+ * full strength and usable, since a refresh can run for minutes; the header
+ * bar marks the read, and `data-stale` lets a consumer style them.
  */
 const stale = computed<boolean>(() => loading && !noData);
 </script>
 
 <template>
   <tbody
-    class="transition-opacity duration-150"
-    :class="[classes.tbody, { 'opacity-50': stale }]"
+    :class="classes.tbody"
     :data-stale="stale || undefined"
   >
     <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
