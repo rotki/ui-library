@@ -155,12 +155,12 @@ export const WithHint = meta.story({
 });
 
 /**
- * The same hint on two fields: the first draws it below the field, the second sets `hideDetails`,
- * which drops the hint and the line it would take.
+ * The same hint on two fields: the first draws it below the field, the second sets
+ * `details: 'hidden'`, which drops the hint and the line it would take.
  */
 export const HideDetails = meta.story({
   args: {
-    hideDetails: true,
+    details: 'hidden',
     hint: 'This hint is only drawn when details are shown',
     keyAttr: 'id',
     label: 'Details hidden',
@@ -176,7 +176,7 @@ export const HideDetails = meta.story({
     },
     template: `
       <div class="flex flex-col gap-4">
-        <RuiMenuSelect v-bind="args" v-model="shown" label="Details shown" :hide-details="false" />
+        <RuiMenuSelect v-bind="args" v-model="shown" label="Details shown" details="reserve" />
         <RuiMenuSelect v-bind="args" v-model="hidden" />
       </div>
     `,

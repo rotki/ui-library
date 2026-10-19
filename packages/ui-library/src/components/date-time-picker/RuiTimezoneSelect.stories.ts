@@ -20,9 +20,9 @@ const meta = preview.meta({
   argTypes: {
     'clearable': { control: 'boolean' },
     'dense': { control: 'boolean' },
+    'details': { control: 'select', options: ['reserve', 'auto', 'hidden'] },
     'disabled': { control: 'boolean' },
     'errorMessages': { control: 'object' },
-    'hideDetails': { control: 'boolean' },
     'hint': { control: 'text' },
     'label': { control: 'text' },
     'modelValue': { control: 'text' },

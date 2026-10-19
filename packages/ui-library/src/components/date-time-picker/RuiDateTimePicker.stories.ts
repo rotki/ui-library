@@ -152,7 +152,7 @@ export const WithHint = meta.story({
 /** A hint is set but not drawn, so nothing sits between the field and the readout below it. */
 export const HideDetails = meta.story({
   args: {
-    hideDetails: true,
+    details: 'hidden',
     hint: 'This hint is only drawn when details are shown',
     modelValue: new Date(),
   },

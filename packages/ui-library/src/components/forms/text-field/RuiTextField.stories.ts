@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import type { FormDetails } from '@/utils/form-text-detail';
 import { expect } from 'storybook/test';
 import RuiFieldDefaults from '@/components/forms/field-defaults/RuiFieldDefaults.vue';
 import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
@@ -39,9 +40,9 @@ const meta = preview.meta({
       table: { category: 'State' },
     },
     dense: { control: 'boolean', table: { category: 'State' } },
+    details: { control: 'select', options: ['reserve', 'auto', 'hidden'], table: { category: 'State' } },
     disabled: { control: 'boolean', table: { category: 'State' } },
     errorMessages: { control: 'object' },
-    hideDetails: { control: 'boolean', table: { category: 'State' } },
     hint: { control: 'text' },
     label: { control: 'text' },
     labelPlacement: { control: 'select', options: ['top', 'hidden'] },
@@ -131,27 +132,29 @@ export const WithHint = meta.story({
 });
 
 /**
- * The same hint on two fields: the first draws it below the field, the second sets `hideDetails`,
- * which drops the hint and the line it would take.
+ * The three `details` modes, each above another field. `reserve` keeps a 20px line under the field
+ * so an error moves nothing, `auto` takes no space until there is a message, and `hidden` drops the
+ * line and the text while the field still shows its error state. Set `errorMessages` to compare.
  */
-export const HideDetails = meta.story({
+export const DetailsModes = meta.story({
   args: {
-    hideDetails: true,
-    hint: 'This hint is only drawn when details are shown',
-    label: 'Details hidden',
+    errorMessages: [],
     placeholder: 'Placeholder',
   },
   render: args => ({
     components: { RuiTextField },
     setup() {
-      const shown = ref<string>('');
-      const hidden = ref<string>('');
-      return { args, hidden, shown };
+      const modes: FormDetails[] = ['reserve', 'auto', 'hidden'];
+      const values = ref<Record<FormDetails, string>>({ auto: '', hidden: '', reserve: '' });
+      const next = ref<string>('');
+      return { args, modes, next, values };
     },
     template: `
-      <div class="flex flex-col gap-4">
-        <RuiTextField v-bind="args" v-model="shown" label="Details shown" :hide-details="false" />
-        <RuiTextField v-bind="args" v-model="hidden" />
+      <div class="grid grid-cols-3 gap-6">
+        <div v-for="mode in modes" :key="mode">
+          <RuiTextField v-bind="args" v-model="values[mode]" :label="mode" :details="mode" />
+          <RuiTextField v-model="next" label="Next field" details="hidden" />
+        </div>
       </div>
     `,
   }),
@@ -270,10 +273,10 @@ export const FieldDefaults = meta.story({
               <div class="text-subtitle-2">{{ row.label }}</div>
               <div class="text-caption text-rui-text-secondary">{{ row.description }}</div>
             </div>
-            <RuiTextField v-model="row.value" :label="row.label" dense hide-details />
+            <RuiTextField v-model="row.value" :label="row.label" dense details="hidden" />
           </div>
           <div class="py-4">
-            <RuiTextField v-model="note" label="Note" label-placement="top" placeholder="Anything to remember" hide-details />
+            <RuiTextField v-model="note" label="Note" label-placement="top" placeholder="Anything to remember" details="hidden" />
           </div>
         </div>
       </RuiFieldDefaults>

@@ -34,9 +34,9 @@ const meta = preview.meta({
   },
   argTypes: {
     color: { control: 'select', options: contextColors },
+    details: { control: 'select', options: ['reserve', 'auto', 'hidden'], table: { category: 'State' } },
     disabled: { control: 'boolean', table: { category: 'State' } },
     errorMessages: { control: 'object' },
-    hideDetails: { control: 'boolean', table: { category: 'State' } },
     hideTrack: { control: 'boolean', table: { category: 'State' } },
     hint: { control: 'text' },
     label: { control: 'text' },
@@ -172,7 +172,7 @@ export const WithHint = meta.story({
 
 export const HideDetails = meta.story({
   args: {
-    hideDetails: true,
+    details: 'hidden',
     hint: 'Hint (should be invisible)',
     label: 'Label',
     modelValue: 40,

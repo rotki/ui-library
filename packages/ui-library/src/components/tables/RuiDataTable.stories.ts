@@ -112,7 +112,7 @@ function render(args: DataTableProps) {
           label-placement="hidden"
           class="w-1/2 lg:w-2/5"
           color="primary"
-          hide-details
+          details="hidden"
         />
         <span v-if="modelValue">selected: {{ modelValue.length }}</span>
       </div>

@@ -39,9 +39,9 @@ const meta = preview.meta({
       table: { category: 'State' },
     },
     dense: { control: 'boolean', table: { category: 'State' } },
+    details: { control: 'select', options: ['reserve', 'auto', 'hidden'], table: { category: 'State' } },
     disabled: { control: 'boolean', table: { category: 'State' } },
     errorMessages: { control: 'object' },
-    hideDetails: { control: 'boolean', table: { category: 'State' } },
     hint: { control: 'text' },
     label: { control: 'text' },
     maxRows: { control: 'number' },
@@ -123,12 +123,12 @@ export const WithHint = meta.story({
 });
 
 /**
- * The same hint on two fields: the first draws it below the field, the second sets `hideDetails`,
- * which drops the hint and the line it would take.
+ * The same hint on two fields: the first draws it below the field, the second sets
+ * `details: 'hidden'`, which drops the hint and the line it would take.
  */
 export const HideDetails = meta.story({
   args: {
-    hideDetails: true,
+    details: 'hidden',
     hint: 'This hint is only drawn when details are shown',
     label: 'Details hidden',
     placeholder: 'Placeholder',
@@ -142,7 +142,7 @@ export const HideDetails = meta.story({
     },
     template: `
       <div class="flex flex-col gap-4">
-        <RuiTextArea v-bind="args" v-model="shown" label="Details shown" :hide-details="false" />
+        <RuiTextArea v-bind="args" v-model="shown" label="Details shown" details="reserve" />
         <RuiTextArea v-bind="args" v-model="hidden" />
       </div>
     `,

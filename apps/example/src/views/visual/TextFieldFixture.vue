@@ -42,7 +42,7 @@ const values = ref<Record<string, string>>(
         :prepend-icon="cell.prepend ? 'lu-heart' : undefined"
         label="Label"
         placeholder="Placeholder"
-        hide-details
+        details="hidden"
       />
     </template>
   </VisualGrid>

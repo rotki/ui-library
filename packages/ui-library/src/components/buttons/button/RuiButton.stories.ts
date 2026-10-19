@@ -292,7 +292,7 @@ export const MatchesFieldHeight = meta.story({
           label-placement="hidden"
           placeholder="Search"
           color="primary"
-          hide-details
+          details="hidden"
         />
         <RuiButton v-bind="args" variant="outlined" icon aria-label="filter">
           <RuiIcon name="lu-funnel" />

@@ -114,7 +114,7 @@ const hintValue = ref<number>();
           :options="options"
           key-attr="id"
           text-attr="label"
-          hide-details
+          details="hidden"
           :error-messages="['This field is required']"
           data-id="ms-basic-hide-details"
         />

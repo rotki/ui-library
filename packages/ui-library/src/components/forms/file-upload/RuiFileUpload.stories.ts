@@ -30,9 +30,9 @@ const meta = preview.meta({
   argTypes: {
     accept: { control: 'text' },
     clickToUploadText: { control: 'text' },
+    details: { control: 'select', options: ['reserve', 'auto', 'hidden'] },
     disabled: { control: 'boolean', table: { category: 'State' } },
     errorMessages: { control: 'object' },
-    hideDetails: { control: 'boolean' },
     hint: { control: 'text' },
     loading: { control: 'boolean', table: { category: 'State' } },
     maxSize: { control: 'number' },

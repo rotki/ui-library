@@ -34,9 +34,9 @@ function render(args: ComponentPropsAndSlots<typeof RuiCheckboxGroup<string>>) {
 const meta = preview.meta({
   argTypes: {
     color: { control: 'select', options: contextColors },
+    details: { control: 'select', options: ['reserve', 'auto', 'hidden'] },
     disabled: { control: 'boolean', table: { category: 'State' } },
     errorMessages: { control: 'object' },
-    hideDetails: { control: 'boolean' },
     hint: { control: 'text' },
     inline: { control: 'boolean' },
     label: { control: 'text' },
@@ -90,7 +90,7 @@ export const WithHint = meta.story({
 
 export const HideDetails = meta.story({
   args: {
-    hideDetails: true,
+    details: 'hidden',
     hint: 'Hint (should be invisible)',
   },
 });

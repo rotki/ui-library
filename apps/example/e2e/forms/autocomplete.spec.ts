@@ -73,7 +73,7 @@ test.describe('auto-complete - basic', () => {
     await expect(ac).toContainText('Looks good!');
   });
 
-  test('should hide details when hideDetails is set', async ({ page }) => {
+  test('should hide details when details is hidden', async ({ page }) => {
     const ac = page.locator('[data-id=ac-basic-hide-details]');
     await expect(ac).toBeVisible();
     await expect(ac).not.toContainText('This field is required');

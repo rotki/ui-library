@@ -70,7 +70,7 @@ test.describe('menu-select - basic', () => {
     await expect(ms).toContainText('Looks good!');
   });
 
-  test('should hide details when hideDetails is set', async ({ page }) => {
+  test('should hide details when details is hidden', async ({ page }) => {
     const ms = page.locator('[data-id=ms-basic-hide-details]');
     await expect(ms).toBeVisible();
     await expect(ms).not.toContainText('This field is required');

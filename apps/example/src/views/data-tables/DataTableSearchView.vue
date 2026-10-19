@@ -37,7 +37,7 @@ const pagination = ref<TablePaginationData>({
           label="Search"
           class="w-1/2 lg:w-2/5"
           color="primary"
-          hide-details
+          details="hidden"
           data-id="search-input"
         />
         <RuiDataTable
@@ -75,7 +75,7 @@ const pagination = ref<TablePaginationData>({
           label="Search"
           class="w-1/2 lg:w-2/5"
           color="primary"
-          hide-details
+          details="hidden"
           data-id="search-input"
         />
         <RuiDataTable

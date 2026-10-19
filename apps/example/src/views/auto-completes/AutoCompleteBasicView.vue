@@ -113,7 +113,7 @@ const hintValue = ref<number>();
       <div class="py-4">
         <RuiAutoComplete
           v-model="hideDetailsValue"
-          hide-details
+          details="hidden"
           :error-messages="['This field is required']"
           :options="options"
           key-attr="id"

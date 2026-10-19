@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type ContextColorsType, RuiCheckbox, RuiCheckboxGroup } from '@rotki/ui-library';
+import { type ContextColorsType, type FormDetails, RuiCheckbox, RuiCheckboxGroup } from '@rotki/ui-library';
 import ComponentGroup from '@/components/ComponentGroup.vue';
 import ComponentView from '@/components/ComponentView.vue';
 
@@ -13,7 +13,7 @@ interface CheckboxData {
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
-  hideDetails?: boolean;
+  details?: FormDetails;
   required?: boolean;
 }
 
