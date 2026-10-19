@@ -15,6 +15,16 @@ describe('components/helpers/RuiFormTextDetail.vue', () => {
     return mount(RuiFormTextDetail, { global: { stubs: { 'transition': false, 'transition-group': false } }, props });
   }
 
+  it('should render a single root that keeps the class a parent passes', () => {
+    wrapper = mount(RuiFormTextDetail, {
+      attrs: { class: 'px-4' },
+      global: { stubs: { 'transition': false, 'transition-group': false } },
+    });
+
+    expect(wrapper.element.tagName).toBe('DIV');
+    expect(wrapper.classes()).toEqual(expect.arrayContaining(['details', 'px-4']));
+  });
+
   it('should render a hint present on first render in place, without the enter transition', () => {
     wrapper = createWrapper({ hint: 'A hint' });
 

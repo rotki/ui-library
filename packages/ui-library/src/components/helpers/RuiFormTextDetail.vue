@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { useFormTextDetail } from '@/utils/form-text-detail';
 
+/**
+ * The line under a control. The TransitionGroup has no `appear`: a hint present on first render is
+ * in place when the field shows, and only a change of message animates. The template keeps no
+ * comments, since a root-level one makes the component a fragment in development and drops the
+ * class a parent passes.
+ */
 const {
   errorMessages = [],
   successMessages = [],
@@ -24,8 +30,6 @@ const { formattedErrorMessages, formattedSuccessMessages, hasError, hasSuccess }
 </script>
 
 <template>
-  <!-- No `appear`: a hint present on first render is in place when the field shows, rather than
-       sliding in each time a dialog or page opens; only a change of message animates. -->
   <TransitionGroup
     tag="div"
     class="details min-h-6"
