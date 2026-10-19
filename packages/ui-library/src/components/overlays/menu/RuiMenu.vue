@@ -3,7 +3,7 @@ import type { VueClassValue } from '@/types/class-value';
 import { ButtonGroupBoundary } from '@/components/buttons/button-group/button-group-context';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { type FloatingOptions, useFloating } from '@/composables/floating';
-import { useFormTextDetail } from '@/utils/form-text-detail';
+import { type FormDetails, useFormTextDetail } from '@/utils/form-text-detail';
 import { cn, tv } from '@/utils/tv';
 
 interface BaseMenuAttrs { onMouseover?: () => void; onMouseleave?: () => void }
@@ -50,6 +50,8 @@ export interface MenuProps {
   errorMessages?: string | string[];
   successMessages?: string | string[];
   showDetails?: boolean;
+  /** With `showDetails`: `reserve` keeps the line while empty (default), `auto` takes no space until there is a message. */
+  details?: Exclude<FormDetails, 'hidden'>;
   dense?: boolean;
   /**
    * Keeps the menu open through the interactions that would otherwise dismiss
@@ -98,6 +100,7 @@ const {
   errorMessages = [],
   successMessages = [],
   showDetails = false,
+  details = 'reserve',
   dense = false,
   persistent = false,
   disableAutoFocus = false,
@@ -167,7 +170,7 @@ const menuStyles = tv({
     popover: 'w-max z-rui-menu',
     // a hairline edge keeps the popup apart from a surface of nearly the same shade in dark mode
     content: 'rounded-rui-panel overflow-hidden shadow-rui-menu bg-rui-menu border border-rui-divider text-rui-text focus:outline-hidden p-1',
-    details: 'pt-1',
+    details: '',
   },
   variants: {
     fullWidth: {
@@ -393,6 +396,7 @@ onClickOutside(menu, () => {
     </Teleport>
     <RuiFormTextDetail
       v-if="showDetails"
+      :details="details"
       :class="ui.details({ class: cn(classNames?.details) })"
       :error-messages="errorMessages"
       :success-messages="successMessages"

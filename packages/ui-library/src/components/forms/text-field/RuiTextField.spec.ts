@@ -215,15 +215,55 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
     expect(wrapper.find('.details div').text()).toBe(successMessage);
   });
 
-  it('should pass hideDetails', () => {
+  it('should reserve the details line by default', () => {
+    wrapper = createWrapper({ props: { modelValue: '' } });
+
+    const details = wrapper.find('.details');
+    expect(details.attributes('data-details')).toBe('reserve');
+    expect(details.classes()).toContain('min-h-5');
+  });
+
+  it('should take no space for an empty details line with details auto', () => {
+    wrapper = createWrapper({ props: { details: 'auto', modelValue: '' } });
+
+    const details = wrapper.find('.details');
+    expect(details.attributes('data-details')).toBe('auto');
+    expect(details.classes()).not.toContain('min-h-5');
+    expect(details.element.children).toHaveLength(0);
+  });
+
+  it('should show an error with details auto', async () => {
+    wrapper = createWrapper({ props: { details: 'auto', modelValue: '' } });
+
+    await wrapper.setProps({ errorMessages: ['Required'] });
+
+    expect(wrapper.find('.details div').text()).toBe('Required');
+  });
+
+  it('should drop the details line and keep the error state with details hidden', () => {
     wrapper = createWrapper({
       props: {
+        details: 'hidden',
+        errorMessages: ['Required'],
+        hint: 'This hint should not be rendered',
+        modelValue: '',
+      },
+    });
+
+    expect(wrapper.find('.details').exists()).toBeFalsy();
+    expect(wrapper.find('input').attributes('aria-invalid')).toBe('true');
+  });
+
+  it('should treat the deprecated hideDetails as details hidden', () => {
+    wrapper = createWrapper({
+      props: {
+        details: 'auto',
         hideDetails: true,
         hint: 'This hint should not be rendered',
         modelValue: '',
       },
     });
-    expect(wrapper.find('.details div').exists()).toBeFalsy();
+    expect(wrapper.find('.details').exists()).toBeFalsy();
   });
 
   it('should pass prependIcon', () => {

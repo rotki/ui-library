@@ -2,6 +2,27 @@ import type { ComputedRef, MaybeRefOrGetter } from 'vue';
 
 export type ValidationState = 'error' | 'success' | undefined;
 
+/**
+ * How a control handles the line under it for its hint, error or success message.
+ *
+ * - `reserve`: the line is always there, so a message never moves what is below (the default).
+ * - `auto`: no space while there is nothing to show; the line appears with a hint, error or
+ *   success message and pushes what is below down.
+ * - `hidden`: no line and no message text. An error still marks the control invalid.
+ */
+export type FormDetails = 'reserve' | 'auto' | 'hidden';
+
+/**
+ * The details mode a control uses: `hidden` while the deprecated `hideDetails` is set,
+ * otherwise its `details` prop, otherwise `reserve`.
+ */
+export function useFormDetails(
+  details: MaybeRefOrGetter<FormDetails | undefined>,
+  hideDetails: MaybeRefOrGetter<boolean>,
+): ComputedRef<FormDetails> {
+  return computed<FormDetails>(() => (toValue(hideDetails) ? 'hidden' : toValue(details) ?? 'reserve'));
+}
+
 export interface FormTextDetailReturn {
   formattedErrorMessages: ComputedRef<string[]>;
   formattedSuccessMessages: ComputedRef<string[]>;

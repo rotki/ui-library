@@ -15,7 +15,7 @@ import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { type LabelPlacement, useLabelPlacement } from '@/composables/defaults/field';
 import { Placement } from '@/composables/floating';
 import { useCategoryPicker } from '@/composables/forms/category-picker/use-category-picker';
-import { useFormTextDetail } from '@/utils/form-text-detail';
+import { type FormDetails, useFormDetails, useFormTextDetail } from '@/utils/form-text-detail';
 import { cn } from '@/utils/tv';
 
 export interface RuiCategoryPickerClassNames {
@@ -70,7 +70,9 @@ export interface RuiCategoryPickerProps<TValue, TItem> {
   successMessages?: string | string[];
   /** Hint rendered under the trigger field. */
   hint?: string;
-  /** Hide the details row (errors/success/hint) under the trigger field. */
+  /** The line under the trigger field for its hint and messages: `reserve` (default), `auto` or `hidden`. */
+  details?: FormDetails;
+  /** @deprecated Use `details="hidden"`. Removed in 4.0. */
   hideDetails?: boolean;
   /** Below this breakpoint the picker collapses to a single-pane drill-in. */
   mobileBreakpoint?: CategoryPickerBreakpoint;
@@ -110,6 +112,7 @@ const {
   errorMessages = [],
   successMessages = [],
   hint = '',
+  details = undefined,
   hideDetails = false,
   mobileBreakpoint = 'md',
   dialogOptions = undefined,
@@ -146,6 +149,7 @@ const isHovered = ref<boolean>(false);
 
 const { focused } = useFocus(activatorRef);
 const { hasError, hasSuccess } = useFormTextDetail(() => errorMessages, () => successMessages);
+const detailsMode = useFormDetails(() => details, () => hideDetails);
 
 const baseId = useId();
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -543,8 +547,8 @@ watch(isOpen, onOpenChanged);
             <fieldset :class="activatorUi.fieldset()" />
           </div>
           <RuiFormTextDetail
-            v-if="!hideDetails"
-            class="pt-1"
+            v-if="detailsMode !== 'hidden'"
+            :details="detailsMode"
             :error-messages="errorMessages"
             :success-messages="successMessages"
             :hint="hint"
@@ -576,7 +580,7 @@ watch(isOpen, onOpenChanged);
           :placeholder="placeholder"
           :dense="dense"
           prepend-icon="lu-search"
-          hide-details
+          details="hidden"
           clearable
           data-id="search"
         />

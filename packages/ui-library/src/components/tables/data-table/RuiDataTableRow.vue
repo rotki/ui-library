@@ -212,7 +212,7 @@ const mobileCardClass = computed<string>(() => {
         :size="dense ? 'sm' : undefined"
         color="primary"
         class="select-none"
-        hide-details
+        details="hidden"
         @update:model-value="onSelect($event, rowId, true)"
         @click="onCheckboxClick($event, rowId, index)"
       />
@@ -260,7 +260,7 @@ const mobileCardClass = computed<string>(() => {
         :size="dense ? 'sm' : undefined"
         color="primary"
         class="select-none"
-        hide-details
+        details="hidden"
         @update:model-value="onSelect($event, rowId, true)"
         @click="onCheckboxClick($event, rowId, index)"
       />

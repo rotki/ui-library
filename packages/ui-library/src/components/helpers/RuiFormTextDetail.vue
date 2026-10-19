@@ -1,20 +1,24 @@
 <script setup lang="ts">
-import { useFormTextDetail } from '@/utils/form-text-detail';
+import { type FormDetails, useFormTextDetail } from '@/utils/form-text-detail';
 
 /**
- * The line under a control. The TransitionGroup has no `appear`: a hint present on first render is
- * in place when the field shows, and only a change of message animates. The template keeps no
- * comments, since a root-level one makes the component a fragment in development and drops the
- * class a parent passes.
+ * The line under a control. It is 20px: 4px of padding on the message above a 16px caption line,
+ * so an `auto` line with nothing to show takes no space. The TransitionGroup has no `appear`: a
+ * hint present on first render is in place when the field shows, and only a change of message
+ * animates. The template keeps no comments, since a root-level one makes the component a fragment
+ * in development and drops the class a parent passes.
  */
 const {
   errorMessages = [],
   successMessages = [],
   hint = '',
+  details = 'reserve',
 } = defineProps<{
   errorMessages?: string | string[];
   successMessages?: string | string[];
   hint?: string;
+  /** `reserve` keeps the line while empty; `auto` takes no space until there is a message. */
+  details?: Exclude<FormDetails, 'hidden'>;
 }>();
 
 defineSlots<{
@@ -32,7 +36,9 @@ const { formattedErrorMessages, formattedSuccessMessages, hasError, hasSuccess }
 <template>
   <TransitionGroup
     tag="div"
-    class="details min-h-6"
+    class="details"
+    :class="{ 'min-h-5': details === 'reserve' }"
+    :data-details="details"
     enter-from-class="opacity-0 -translate-y-2 h-0"
     enter-active-class="transform transition"
     enter-to-class="opacity-100 translate-y-0"
@@ -43,21 +49,21 @@ const { formattedErrorMessages, formattedSuccessMessages, hasError, hasSuccess }
     <div
       v-if="hasError"
       key="error"
-      class="text-rui-error dark:text-rui-error-lighter text-caption"
+      class="pt-1 text-xs/4 text-rui-error dark:text-rui-error-lighter"
     >
       {{ formattedErrorMessages[0] }}
     </div>
     <div
       v-else-if="hasSuccess"
       key="success"
-      class="text-rui-success text-caption"
+      class="pt-1 text-xs/4 text-rui-success"
     >
       {{ formattedSuccessMessages[0] }}
     </div>
     <div
       v-else-if="$slots.hint || hint"
       key="hint"
-      class="text-rui-text-secondary text-caption"
+      class="pt-1 text-xs/4 text-rui-text-secondary"
     >
       <slot name="hint">
         {{ hint }}

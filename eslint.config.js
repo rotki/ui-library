@@ -64,9 +64,10 @@ export default rotki({
   /*
    * The exported components whose props are wider than that. Each is public
    * API, so cutting them into object props would break every consumer, and the
-   * ceiling still holds: RuiAutoComplete, the widest, declares 38.
+   * ceiling still holds: RuiAutoComplete, the widest, declares 39.
    */
   files: [
+    'packages/ui-library/src/components/date-time-picker/RuiDateTimePicker.vue',
     'packages/ui-library/src/components/forms/auto-complete/RuiAutoComplete.vue',
     'packages/ui-library/src/components/forms/category-picker/RuiCategoryPicker.vue',
     'packages/ui-library/src/components/forms/select/RuiMenuSelect.vue',

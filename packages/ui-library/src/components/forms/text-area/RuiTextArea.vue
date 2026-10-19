@@ -9,7 +9,7 @@ import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { type LabelPlacement, useLabelPlacement } from '@/composables/defaults/field';
 import { usePrependAppendWidth } from '@/composables/forms/use-prepend-append-width';
 import { useTimeoutManager } from '@/composables/timeout-manager';
-import { useFormTextDetail } from '@/utils/form-text-detail';
+import { type FormDetails, useFormDetails, useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
 export interface TextAreaProps {
@@ -24,6 +24,9 @@ export interface TextAreaProps {
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
+  /** The line under the field for its hint and messages: `reserve` (default), `auto` or `hidden`. */
+  details?: FormDetails;
+  /** @deprecated Use `details="hidden"`. Removed in 4.0. */
   hideDetails?: boolean;
   prependIcon?: RuiIcons;
   appendIcon?: RuiIcons;
@@ -55,6 +58,7 @@ const {
   hint = '',
   errorMessages = [],
   successMessages = [],
+  details = undefined,
   hideDetails = false,
   prependIcon = undefined,
   appendIcon = undefined,
@@ -96,6 +100,7 @@ const { hasError, hasSuccess, hasMessages, validation } = useFormTextDetail(
   () => errorMessages,
   () => successMessages,
 );
+const detailsMode = useFormDetails(() => details, () => hideDetails);
 
 const textareaId = computed<string>(() => {
   const id = attrs.id;
@@ -293,8 +298,8 @@ defineExpose({
       </div>
     </div>
     <RuiFormTextDetail
-      v-if="!hideDetails"
-      :class="ui.details()"
+      v-if="detailsMode !== 'hidden'"
+      :details="detailsMode"
       :error-messages="errorMessages"
       :success-messages="successMessages"
       :hint="hint"

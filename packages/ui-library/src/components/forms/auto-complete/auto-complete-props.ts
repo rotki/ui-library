@@ -3,6 +3,7 @@ import type { LabelPlacement } from '@/composables/defaults/field';
 import type { GroupBy, ItemDisabled, KeyOfType } from '@/composables/dropdown-menu';
 import type { RuiIcons } from '@/icons';
 import type { VueClassValue } from '@/types/class-value';
+import type { FormDetails } from '@/utils/form-text-detail';
 
 export type AutoCompleteModelValue<TValue> =
   TValue extends Array<infer U> ? U[] : TValue | undefined;
@@ -37,6 +38,9 @@ export interface AutoCompleteProps<TValue, TItem> {
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
+  /** The line under the field for its hint and messages: `reserve` (default), `auto` or `hidden`. */
+  details?: FormDetails;
+  /** @deprecated Use `details="hidden"`. Removed in 4.0. */
   hideDetails?: boolean;
   autoSelectFirst?: boolean;
   chips?: boolean;

@@ -4,7 +4,7 @@ import { objectPick } from '@vueuse/shared';
 import { checkControlStyles } from '@/components/forms/check-control-styles';
 import { RuiCheckboxGroupContextKey } from '@/components/forms/checkbox/checkbox-group/context';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
-import { useFormTextDetail } from '@/utils/form-text-detail';
+import { type FormDetails, useFormDetails, useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
 export interface Props<TValue> {
@@ -16,6 +16,9 @@ export interface Props<TValue> {
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
+  /** The line under the control for its hint and messages: `reserve` (default), `auto` or `hidden`. */
+  details?: FormDetails;
+  /** @deprecated Use `details="hidden"`. Removed in 4.0. */
   hideDetails?: boolean;
   required?: boolean;
 }
@@ -38,6 +41,7 @@ const {
   hint = '',
   errorMessages = [],
   successMessages = [],
+  details = undefined,
   hideDetails = false,
   required = false,
 } = defineProps<Props<TValue>>();
@@ -54,7 +58,10 @@ const disabled = computed<boolean>(() => disabledProp || (group ? toValue(group.
 const color = computed<ContextColorsType | undefined>(() => colorProp ?? (group ? toValue(group.color) : undefined));
 const size = computed<'sm' | 'lg' | undefined>(() => sizeProp ?? (group ? toValue(group.size) : undefined));
 // Suppress per-child details inside a group so the group's own hint/error wins.
-const effectiveHideDetails = computed<boolean>(() => hideDetails || (group !== undefined && value !== undefined));
+const detailsMode = useFormDetails(
+  () => (group !== undefined && value !== undefined ? 'hidden' : details),
+  () => hideDetails,
+);
 
 const { hasError, validation } = useFormTextDetail(
   () => errorMessages,
@@ -167,7 +174,8 @@ watch(internalModelValue, (val) => {
       </span>
     </label>
     <RuiFormTextDetail
-      v-if="!effectiveHideDetails"
+      v-if="detailsMode !== 'hidden'"
+      :details="detailsMode"
       :error-messages="errorMessages"
       :success-messages="successMessages"
       :hint="hint"

@@ -5,7 +5,7 @@ import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { useRuiI8n } from '@/composables/use-rui-i18n';
 import { RUI_I18N_KEYS } from '@/i18n/keys';
-import { useFormTextDetail } from '@/utils/form-text-detail';
+import { type FormDetails, useFormDetails, useFormTextDetail } from '@/utils/form-text-detail';
 import { formatFileSize, getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
 export interface FileUploadProps {
@@ -37,7 +37,9 @@ export interface FileUploadProps {
   clickToUploadText?: string;
   /** Label shown on the inline button when one or more files are already selected. */
   replaceText?: string;
-  /** Hide the bottom hint/error details strip. */
+  /** The line under the dropzone for its hint and errors: `reserve` (default), `auto` or `hidden`. */
+  details?: FormDetails;
+  /** @deprecated Use `details="hidden"`. Removed in 4.0. */
   hideDetails?: boolean;
 }
 
@@ -62,6 +64,7 @@ const {
   uploadText = undefined,
   clickToUploadText = undefined,
   replaceText = undefined,
+  details = undefined,
   hideDetails = false,
 } = defineProps<FileUploadProps>();
 
@@ -102,6 +105,7 @@ const combinedErrorMessages = computed<string[]>(() => {
 });
 
 const { hasError } = useFormTextDetail(combinedErrorMessages, () => []);
+const detailsMode = useFormDetails(() => details, () => hideDetails);
 
 // a click-only dropzone does not offer dragging
 const resolvedUploadText = computed<string>(() => uploadText ?? (noDrop ? '' : t(RUI_I18N_KEYS.fileUpload.dropPrefix, 'Drag and drop or')));
@@ -377,7 +381,8 @@ defineExpose({
       </div>
     </div>
     <RuiFormTextDetail
-      v-if="!hideDetails"
+      v-if="detailsMode !== 'hidden'"
+      :details="detailsMode"
       :error-messages="combinedErrorMessages"
       :hint="hint"
     />

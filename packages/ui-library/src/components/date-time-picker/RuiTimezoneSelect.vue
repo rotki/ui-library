@@ -2,6 +2,7 @@
 import type { RuiAutoCompleteClassNames } from '@/components/forms/auto-complete/auto-complete-props';
 import type { MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import type { LabelPlacement } from '@/composables/defaults/field';
+import type { FormDetails } from '@/utils/form-text-detail';
 import { timezones } from '@/components/date-time-picker/timezones';
 import RuiAutoComplete from '@/components/forms/auto-complete/RuiAutoComplete.vue';
 import { useRuiI8n } from '@/composables/use-rui-i18n';
@@ -18,6 +19,9 @@ export interface RuiTimezoneSelectProps {
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
+  /** The line under the field for its hint and messages: `reserve` (default), `auto` or `hidden`. */
+  details?: FormDetails;
+  /** @deprecated Use `details="hidden"`. Removed in 4.0. */
   hideDetails?: boolean;
   placeholder?: string;
   required?: boolean;
@@ -41,6 +45,7 @@ const {
   hint,
   errorMessages,
   successMessages,
+  details = undefined,
   hideDetails = false,
   placeholder,
   required = false,
@@ -79,7 +84,7 @@ const options: TimezoneOption[] = timezones.map(value => ({
     :hint="hint"
     :error-messages="errorMessages"
     :success-messages="successMessages"
-    :hide-details="hideDetails"
+    :details="hideDetails ? 'hidden' : details"
     :placeholder="placeholder"
     :required="required"
     :class-names="classNames"

@@ -152,7 +152,7 @@ const rangesId = useId();
         name="limit"
         key-attr="limit"
         text-attr="limit"
-        hide-details
+        details="hidden"
         dense
         data-id="table-pagination-limit"
       />
@@ -177,7 +177,7 @@ const rangesId = useId();
         min="1"
         :max="pages"
         inputmode="numeric"
-        hide-details
+        details="hidden"
         dense
         data-id="table-pagination-ranges-input"
         @blur="commitPageInput()"
@@ -194,7 +194,7 @@ const rangesId = useId();
         name="ranges"
         key-attr="page"
         text-attr="text"
-        hide-details
+        details="hidden"
         dense
         data-id="table-pagination-ranges"
       />

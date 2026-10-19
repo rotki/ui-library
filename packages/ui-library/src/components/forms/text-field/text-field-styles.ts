@@ -25,7 +25,6 @@ export const textFieldStyles = tv({
     prepend: 'flex items-center gap-1 shrink-0 pl-3',
     append: 'flex items-center gap-1 shrink-0 pr-3',
     icon: 'text-rui-neutral-500 dark:text-rui-neutral-400',
-    details: 'pt-1',
     // 24px round a 16px glyph; as the last control it pulls into the inset by its own padding
     clearButton: [
       '!p-1 last:-mr-1',

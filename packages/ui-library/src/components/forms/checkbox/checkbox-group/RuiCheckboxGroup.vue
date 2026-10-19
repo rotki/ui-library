@@ -2,6 +2,7 @@
 import type { ContextColorsType } from '@/consts/colors';
 import { RuiCheckboxGroupContextKey } from '@/components/forms/checkbox/checkbox-group/context';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
+import { type FormDetails, useFormDetails } from '@/utils/form-text-detail';
 
 export interface Props {
   inline?: boolean;
@@ -9,6 +10,9 @@ export interface Props {
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
+  /** The line under the group for its hint and messages: `reserve` (default), `auto` or `hidden`. */
+  details?: FormDetails;
+  /** @deprecated Use `details="hidden"`. Removed in 4.0. */
   hideDetails?: boolean;
   disabled?: boolean;
   color?: ContextColorsType;
@@ -29,6 +33,7 @@ const {
   hint = '',
   errorMessages = [],
   successMessages = [],
+  details = undefined,
   hideDetails = false,
   disabled = false,
   color,
@@ -39,6 +44,8 @@ const {
 defineSlots<{
   default?: () => any;
 }>();
+
+const detailsMode = useFormDetails(() => details, () => hideDetails);
 
 function arrayIncludes(arr: readonly TValue[], value: unknown): boolean {
   return Array.prototype.includes.call(arr, value);
@@ -83,7 +90,8 @@ provide(RuiCheckboxGroupContextKey, {
       <slot />
     </div>
     <RuiFormTextDetail
-      v-if="!hideDetails"
+      v-if="detailsMode !== 'hidden'"
+      :details="detailsMode"
       :error-messages="errorMessages"
       :success-messages="successMessages"
       :hint="hint"

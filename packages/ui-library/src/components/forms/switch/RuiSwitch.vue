@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { ContextColorsType } from '@/consts/colors';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
-import { useFormTextDetail } from '@/utils/form-text-detail';
+import { type FormDetails, useFormDetails, useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 import { tv } from '@/utils/tv';
 
@@ -13,6 +13,9 @@ export interface Props {
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
+  /** The line under the control for its hint and messages: `reserve` (default), `auto` or `hidden`. */
+  details?: FormDetails;
+  /** @deprecated Use `details="hidden"`. Removed in 4.0. */
   hideDetails?: boolean;
   required?: boolean;
 }
@@ -32,6 +35,7 @@ const {
   hint = '',
   errorMessages = [],
   successMessages = [],
+  details = undefined,
   hideDetails = false,
   required = false,
 } = defineProps<Props>();
@@ -121,6 +125,7 @@ const { hasError, validation } = useFormTextDetail(
   () => errorMessages,
   () => successMessages,
 );
+const detailsMode = useFormDetails(() => details, () => hideDetails);
 
 const ui = computed<ReturnType<typeof switchStyles>>(() => switchStyles({
   checked: get(modelValue),
@@ -171,8 +176,8 @@ function input(event: Event): void {
       </span>
     </label>
     <RuiFormTextDetail
-      v-if="!hideDetails"
-      class="pt-1"
+      v-if="detailsMode !== 'hidden'"
+      :details="detailsMode"
       :error-messages="errorMessages"
       :success-messages="successMessages"
       :hint="hint"

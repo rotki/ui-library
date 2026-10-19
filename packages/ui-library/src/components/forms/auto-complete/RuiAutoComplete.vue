@@ -22,7 +22,7 @@ import {
   useAutoCompleteSelection,
   useAutoCompleteValue,
 } from '@/composables/forms/auto-complete';
-import { useFormTextDetail } from '@/utils/form-text-detail';
+import { useFormDetails, useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 import { cn } from '@/utils/tv';
 
@@ -42,6 +42,7 @@ const {
   readOnly = false,
   dense = false,
   clearable = false,
+  details = undefined,
   hideDetails = false,
   chips = false,
   label = 'Select',
@@ -304,6 +305,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
   () => errorMessages,
   () => successMessages,
 );
+const detailsMode = useFormDetails(() => details, () => hideDetails);
 
 const valueSet = computed<boolean>(() => get(value).length > 0);
 
@@ -411,7 +413,8 @@ defineExpose({
     :success-messages="successMessages"
     :hint="hint"
     :dense="dense"
-    :show-details="!hideDetails"
+    :show-details="detailsMode !== 'hidden'"
+    :details="detailsMode === 'auto' ? 'auto' : 'reserve'"
     :disabled="disabled"
     disable-auto-focus
     role="listbox"

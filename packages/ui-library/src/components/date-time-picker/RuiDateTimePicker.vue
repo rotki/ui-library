@@ -16,7 +16,7 @@ import { type LabelPlacement, useLabelPlacement } from '@/composables/defaults/f
 import { type FloatingOptions, Placement } from '@/composables/floating';
 import { useRuiI8n } from '@/composables/use-rui-i18n';
 import { RUI_I18N_KEYS } from '@/i18n/keys';
-import { useFormTextDetail } from '@/utils/form-text-detail';
+import { type FormDetails, useFormDetails, useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 import { cn } from '@/utils/tv';
 
@@ -48,6 +48,9 @@ export interface RuiDateTimePickerProps {
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
+  /** The line under the field for its hint and messages: `reserve` (default), `auto` or `hidden`. */
+  details?: FormDetails;
+  /** @deprecated Use `details="hidden"`. Removed in 4.0. */
   hideDetails?: boolean;
   required?: boolean;
   /**
@@ -99,6 +102,7 @@ const {
   allowEmpty = false,
   dense = false,
   type = 'epoch-ms',
+  details = undefined,
   hideDetails = false,
   label,
   labelPlacement = undefined,
@@ -233,6 +237,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
   () => errorMessages,
   () => successMessages,
 );
+const detailsMode = useFormDetails(() => details, () => hideDetails);
 
 /** True once any segment holds a digit, even a partially typed date. */
 const anySegmentSet = computed<boolean>(() => [
@@ -518,7 +523,8 @@ defineExpose({
     :success-messages="successMessages"
     :error-messages="combinedErrorMessages"
     :close-on-content-click="false"
-    :show-details="!hideDetails"
+    :show-details="detailsMode !== 'hidden'"
+    :details="detailsMode === 'auto' ? 'auto' : 'reserve'"
     :persistent="calendarMenuOpen"
     :menu-label="fieldLabel"
     role="dialog"

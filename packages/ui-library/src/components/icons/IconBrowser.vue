@@ -66,7 +66,7 @@ function isCopied(icon: string): boolean {
         prepend-icon="lu-search"
         clearable
         dense
-        hide-details
+        details="hidden"
         label="Search icons"
         label-placement="hidden"
         class="flex-1 max-w-md"

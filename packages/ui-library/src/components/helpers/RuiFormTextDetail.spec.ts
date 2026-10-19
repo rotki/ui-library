@@ -33,6 +33,27 @@ describe('components/helpers/RuiFormTextDetail.vue', () => {
     expect(hint.classes()).not.toContain('opacity-0');
   });
 
+  it('should reserve a 20px line while empty', () => {
+    wrapper = createWrapper({});
+
+    expect(wrapper.classes()).toContain('min-h-5');
+    expect(wrapper.element.children).toHaveLength(0);
+  });
+
+  it('should take no space while empty with details auto', () => {
+    wrapper = createWrapper({ details: 'auto' });
+
+    expect(wrapper.classes()).not.toContain('min-h-5');
+    expect(wrapper.element.children).toHaveLength(0);
+  });
+
+  it('should put the message on a 16px line 4px below the control', () => {
+    wrapper = createWrapper({ details: 'auto', hint: 'A hint' });
+
+    const hint = wrapper.find('.text-rui-text-secondary');
+    expect(hint.classes()).toEqual(expect.arrayContaining(['pt-1', 'text-xs/4']));
+  });
+
   it('should still animate a hint that turns into an error', async () => {
     wrapper = createWrapper({ hint: 'A hint' });
 

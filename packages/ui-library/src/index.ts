@@ -43,6 +43,8 @@ export {
 
 export { createBlockie } from '@/utils/blockie';
 
+export type { FormDetails } from '@/utils/form-text-detail';
+
 export { cn, tv } from '@/utils/tv';
 
 export type { VariantProps } from 'tailwind-variants';

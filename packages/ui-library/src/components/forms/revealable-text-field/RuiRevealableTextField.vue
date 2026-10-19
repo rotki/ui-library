@@ -21,6 +21,7 @@ const {
   hint = '',
   errorMessages = [],
   successMessages = [],
+  details = undefined,
   hideDetails = false,
   readonly = false,
   clearable = false,
@@ -47,7 +48,7 @@ const hidden = ref<boolean>(true);
     :hint="hint"
     :error-messages="errorMessages"
     :success-messages="successMessages"
-    :hide-details="hideDetails"
+    :details="hideDetails ? 'hidden' : details"
     :readonly="readonly"
     :clearable="clearable"
     :required="required"

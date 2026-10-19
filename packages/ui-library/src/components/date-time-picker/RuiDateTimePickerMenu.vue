@@ -106,7 +106,7 @@ const actionConfig = computed<ActionConfig[]>(() => {
           <RuiTimezoneSelect
             v-model="selectedTimezone"
             data-id="timezone-select"
-            hide-details
+            details="hidden"
             class="pt-0 pr-0"
           />
         </div>

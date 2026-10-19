@@ -5,7 +5,7 @@ import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';
 import RuiSliderTicks from '@/components/forms/slider/RuiSliderTicks.vue';
 import { HIGHLIGHT_COLOR_MAP, HIGHLIGHT_DEFAULT, SliderInteraction, sliderStyles } from '@/components/forms/slider/slider-styles';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
-import { useFormTextDetail } from '@/utils/form-text-detail';
+import { type FormDetails, useFormDetails, useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 import { cn } from '@/utils/tv';
 
@@ -30,6 +30,9 @@ export interface Props {
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
+  /** The line under the slider for its hint and messages: `reserve` (default), `auto` or `hidden`. */
+  details?: FormDetails;
+  /** @deprecated Use `details="hidden"`. Removed in 4.0. */
   hideDetails?: boolean;
   classNames?: RuiSliderClassNames;
   required?: boolean;
@@ -57,6 +60,7 @@ const {
   hint = '',
   errorMessages = [],
   successMessages = [],
+  details = undefined,
   hideDetails = false,
   classNames,
   required = false,
@@ -77,6 +81,7 @@ const { hasError } = useFormTextDetail(
   () => errorMessages,
   () => successMessages,
 );
+const detailsMode = useFormDetails(() => details, () => hideDetails);
 
 // the label above points at the range input, keeping a consumer's own id
 const inputId = computed<string>(() => {
@@ -249,8 +254,8 @@ function isHighlightedTick(index: number): boolean {
       </div>
     </div>
     <RuiFormTextDetail
-      v-if="!hideDetails"
-      class="pt-1"
+      v-if="detailsMode !== 'hidden'"
+      :details="detailsMode"
       :error-messages="errorMessages"
       :success-messages="successMessages"
       :hint="hint"

@@ -9,7 +9,7 @@ import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { type LabelPlacement, useLabelPlacement } from '@/composables/defaults/field';
 import { getOptionHeight, type KeyOfType, useDropdownMenu } from '@/composables/dropdown-menu';
 import { type FloatingOptions, Placement } from '@/composables/floating';
-import { useFormTextDetail } from '@/utils/form-text-detail';
+import { type FormDetails, useFormDetails, useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 import { cn } from '@/utils/tv';
 
@@ -40,6 +40,9 @@ export interface MenuSelectProps<TValue, TItem> {
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
+  /** The line under the field for its hint and messages: `reserve` (default), `auto` or `hidden`. */
+  details?: FormDetails;
+  /** @deprecated Use `details="hidden"`. Removed in 4.0. */
   hideDetails?: boolean;
   autoSelectFirst?: boolean;
   hideNoData?: boolean;
@@ -61,6 +64,7 @@ const {
   readOnly = false,
   dense = false,
   clearable = false,
+  details = undefined,
   hideDetails = false,
   label = 'Select',
   labelPlacement = undefined,
@@ -110,6 +114,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
   () => errorMessages,
   () => successMessages,
 );
+const detailsMode = useFormDetails(() => details, () => hideDetails);
 
 const value = computed<TItem | undefined>({
   get: () => {
@@ -192,7 +197,8 @@ const menuFloatingOptions = computed<FloatingOptions>(() => ({
     :success-messages="successMessages"
     :hint="hint"
     :dense="dense"
-    :show-details="!hideDetails"
+    :show-details="detailsMode !== 'hidden'"
+    :details="detailsMode === 'auto' ? 'auto' : 'reserve'"
     :disabled="disabled"
     disable-auto-focus
     role="listbox"

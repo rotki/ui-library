@@ -273,7 +273,7 @@ function getHiddenHeaderText(column: TableColumn<T>): string {
           color="primary"
           data-id="table-toggle-check-all"
           aria-label="Select all rows"
-          hide-details
+          details="hidden"
           @update:model-value="onToggleAll($event)"
         />
       </th>

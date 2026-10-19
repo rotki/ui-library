@@ -121,7 +121,7 @@ watch(
       color="primary"
       aria-label="Hex color"
       dense
-      hide-details
+      details="hidden"
       @update:model-value="onInputChange(inputType, $event)"
       @blur="onBlurChange(inputType, $event)"
     >
@@ -142,7 +142,7 @@ watch(
         color="primary"
         :aria-label="RGB_CHANNELS[i]"
         dense
-        hide-details
+        details="hidden"
         @update:model-value="onInputChange(inputType, $event, i)"
         @blur="onBlurChange(inputType, $event, i)"
       />

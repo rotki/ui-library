@@ -2,7 +2,7 @@
 import type { ContextColorsType } from '@/consts/colors';
 import { checkControlStyles } from '@/components/forms/check-control-styles';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
-import { useFormTextDetail } from '@/utils/form-text-detail';
+import { type FormDetails, useFormDetails, useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
 export interface RadioProps<TValue> {
@@ -14,6 +14,9 @@ export interface RadioProps<TValue> {
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
+  /** The line under the control for its hint and messages: `reserve` (default), `auto` or `hidden`. */
+  details?: FormDetails;
+  /** @deprecated Use `details="hidden"`. Removed in 4.0. */
   hideDetails?: boolean;
   required?: boolean;
 }
@@ -34,6 +37,7 @@ const {
   hint = '',
   errorMessages = [],
   successMessages = [],
+  details = undefined,
   hideDetails = false,
   required = false,
 } = defineProps<RadioProps<TValue>>();
@@ -46,6 +50,7 @@ const { hasError, validation } = useFormTextDetail(
   () => errorMessages,
   () => successMessages,
 );
+const detailsMode = useFormDetails(() => details, () => hideDetails);
 
 const selected = computed<boolean>(() => get(modelValue) === value);
 
@@ -109,7 +114,8 @@ function input(event: Event): void {
       </div>
     </label>
     <RuiFormTextDetail
-      v-if="!hideDetails"
+      v-if="detailsMode !== 'hidden'"
+      :details="detailsMode"
       :error-messages="errorMessages"
       :success-messages="successMessages"
       :hint="hint"
