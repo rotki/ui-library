@@ -24,6 +24,11 @@ const vitestConfig = defineConfig({
     outputFile: {
       json: './tests/json/index.json',
     },
+    /*
+     * Each `vmThreads` worker holds its own happy-dom context, so one worker per core costs memory
+     * without speeding the run up: past four workers the suite gets no faster.
+     */
+    maxWorkers: 4,
     coverage: {
       provider: 'v8',
       reportsDirectory: 'tests/coverage',
