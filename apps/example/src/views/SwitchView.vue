@@ -21,6 +21,8 @@ const attributes: Partial<SwitchData>[] = [
 
 const switches = ref<SwitchData[]>([]);
 
+const underLabel = ref<{ sync: boolean; notify: boolean; wrap: boolean }>({ sync: true, notify: false, wrap: false });
+
 function createSwitch(color: typeof colors[number], options: Partial<SwitchData>): SwitchData {
   return {
     color,
@@ -62,5 +64,43 @@ onBeforeMount(() => {
         </RuiSwitch>
       </template>
     </ComponentGroup>
+
+    <h4 class="mt-10 mb-3">
+      Details under the label
+    </h4>
+    <div class="flex gap-10">
+      <div
+        class="flex flex-col w-80"
+        data-id="switch-under-label"
+      >
+        <RuiSwitch
+          v-model="underLabel.sync"
+          label="Sync balances on start"
+          hint="Refreshes every account when the app opens"
+          details="auto"
+          details-under-label
+          data-id="switch-under-label-md"
+        />
+        <RuiSwitch
+          v-model="underLabel.notify"
+          size="sm"
+          label="Notify me about new versions"
+          error-messages="Could not reach the update server"
+          details="auto"
+          details-under-label
+          data-id="switch-under-label-sm"
+        />
+      </div>
+      <div class="w-40">
+        <RuiSwitch
+          v-model="underLabel.wrap"
+          label="Show the long version of this label"
+          hint="A hint under two lines"
+          details="auto"
+          details-under-label
+          data-id="switch-under-label-wrap"
+        />
+      </div>
+    </div>
   </ComponentView>
 </template>

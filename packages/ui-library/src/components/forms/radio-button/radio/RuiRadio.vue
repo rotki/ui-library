@@ -18,6 +18,8 @@ export interface RadioProps<TValue> {
   details?: FormDetails;
   /** @deprecated Use `details="hidden"`. Removed in 4.0. */
   hideDetails?: boolean;
+  /** Puts the hint or message under the label text instead of under the radio, so a list of radios keeps one text column. */
+  detailsUnderLabel?: boolean;
   required?: boolean;
 }
 
@@ -39,6 +41,7 @@ const {
   successMessages = [],
   details = undefined,
   hideDetails = false,
+  detailsUnderLabel = false,
   required = false,
 } = defineProps<RadioProps<TValue>>();
 
@@ -61,6 +64,7 @@ const ui = computed<ReturnType<typeof checkControlStyles>>(() => checkControlSty
   checked: get(selected),
   validation: get(validation),
   color: color ?? 'grey',
+  underLabel: detailsUnderLabel,
 }));
 
 function input(event: Event): void {
@@ -115,6 +119,7 @@ function input(event: Event): void {
     </label>
     <RuiFormTextDetail
       v-if="detailsMode !== 'hidden'"
+      :class="ui.details()"
       :details="detailsMode"
       :error-messages="errorMessages"
       :success-messages="successMessages"

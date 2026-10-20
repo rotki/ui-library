@@ -20,6 +20,8 @@ export interface Props<TValue> {
   details?: FormDetails;
   /** @deprecated Use `details="hidden"`. Removed in 4.0. */
   hideDetails?: boolean;
+  /** Puts the hint or message under the label text instead of under the box, so a list of checkboxes keeps one text column. */
+  detailsUnderLabel?: boolean;
   required?: boolean;
 }
 
@@ -43,6 +45,7 @@ const {
   successMessages = [],
   details = undefined,
   hideDetails = false,
+  detailsUnderLabel = false,
   required = false,
 } = defineProps<Props<TValue>>();
 
@@ -90,6 +93,7 @@ const ui = computed<ReturnType<typeof checkControlStyles>>(() => checkControlSty
   checked: get(internalModelValue) || get(indeterminate),
   validation: get(validation),
   color: get(color) ?? 'grey',
+  underLabel: detailsUnderLabel,
 }));
 
 const markState = computed<'indeterminate' | 'checked' | 'unchecked'>(() => {
@@ -175,6 +179,7 @@ watch(internalModelValue, (val) => {
     </label>
     <RuiFormTextDetail
       v-if="detailsMode !== 'hidden'"
+      :class="ui.details()"
       :details="detailsMode"
       :error-messages="errorMessages"
       :success-messages="successMessages"

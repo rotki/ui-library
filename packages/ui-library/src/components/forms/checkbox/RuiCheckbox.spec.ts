@@ -126,4 +126,21 @@ describe('components/forms/checkbox/RuiCheckbox.vue', () => {
     await wrapper.setProps({ required: false });
     expect(wrapper.text()).not.toContain('*');
   });
+
+  it('should indent the details to the label and fit the row to the label with detailsUnderLabel', async () => {
+    wrapper = createWrapper({ props: { label: 'Sync', hint: 'Every hour', detailsUnderLabel: true } });
+    const details = (): string[] => wrapper.find('.details').classes();
+    const control = (): string[] => wrapper.find('label > span').classes();
+
+    expect(details()).toContain('pl-8.25');
+    expect(control()).toContain('-mb-[0.5625rem]');
+
+    await wrapper.setProps({ size: 'lg' });
+    expect(details()).toContain('pl-9.25');
+    expect(control()).toContain('-mb-[0.6875rem]');
+
+    await wrapper.setProps({ detailsUnderLabel: false });
+    expect(details()).not.toContain('pl-9.25');
+    expect(control()).not.toContain('-mb-[0.6875rem]');
+  });
 });

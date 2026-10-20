@@ -145,4 +145,14 @@ describe('components/forms/radio-button/radio/RuiRadio.vue', () => {
     await wrapper.setProps({ required: false });
     expect(wrapper.text()).not.toContain('*');
   });
+
+  it('should indent the details to the label with detailsUnderLabel', async () => {
+    wrapper = createWrapper({ props: { value: 'a', label: 'Daily', hint: 'At midnight' } });
+    const details = (): string[] => wrapper.find('.details').classes();
+    expect(details()).not.toContain('pl-8.25');
+
+    await wrapper.setProps({ detailsUnderLabel: true, size: 'sm' });
+    expect(details()).toContain('pl-7.25');
+    expect(wrapper.find('label > div').classes()).toContain('-mb-[0.4375rem]');
+  });
 });

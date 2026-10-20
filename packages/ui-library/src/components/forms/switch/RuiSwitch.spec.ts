@@ -108,4 +108,17 @@ describe('components/forms/switch/RuiSwitch.vue', () => {
     await wrapper.setProps({ required: false });
     expect(wrapper.text()).not.toContain('*');
   });
+
+  it('should indent the details to the label with detailsUnderLabel', async () => {
+    wrapper = createWrapper({ props: { label: 'Sync', hint: 'Every hour' } });
+    const details = (): string[] => wrapper.find('.details').classes();
+    expect(details()).not.toContain('pl-13.25');
+
+    await wrapper.setProps({ detailsUnderLabel: true });
+    expect(details()).toContain('pl-13.25');
+
+    await wrapper.setProps({ size: 'sm' });
+    expect(details()).toContain('pl-11.75');
+    expect(details()).not.toContain('pl-13.25');
+  });
 });

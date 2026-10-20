@@ -22,4 +22,15 @@ test.describe('forms/Switch', () => {
 
     await expect(disabledSwitch).toBeDisabled();
   });
+
+  test('details-under-label starts the message at the label text, right under it', async ({ page }) => {
+    for (const id of ['switch-under-label-md', 'switch-under-label-sm', 'switch-under-label-wrap']) {
+      const { left, gap } = await page.getByTestId(id).evaluate((root) => {
+        const label = root.querySelector('label > span:last-child')!.getBoundingClientRect();
+        const message = root.querySelector('.details > div')!.getBoundingClientRect();
+        return { left: Math.round(message.left - label.left), gap: Math.round(message.top - label.bottom) };
+      });
+      expect({ id, left, gap }).toEqual({ id, left: 0, gap: 0 });
+    }
+  });
 });

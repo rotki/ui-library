@@ -120,6 +120,16 @@ export const WithHint = meta.story({
   },
 });
 
+/** `details-under-label` starts the hint or message where the label text starts, so a list of switches keeps one text column. */
+export const DetailsUnderLabel = meta.story({
+  args: {
+    details: 'auto',
+    detailsUnderLabel: true,
+    hint: 'Refreshes every account when the app opens',
+    label: 'Sync balances on start',
+  },
+});
+
 export const HideDetails = meta.story({
   args: {
     details: 'hidden',

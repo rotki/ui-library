@@ -17,6 +17,8 @@ export interface Props {
   details?: FormDetails;
   /** @deprecated Use `details="hidden"`. Removed in 4.0. */
   hideDetails?: boolean;
+  /** Puts the hint or message under the label text instead of under the track, so a list of switches keeps one text column. */
+  detailsUnderLabel?: boolean;
   required?: boolean;
 }
 
@@ -37,6 +39,7 @@ const {
   successMessages = [],
   details = undefined,
   hideDetails = false,
+  detailsUnderLabel = false,
   required = false,
 } = defineProps<Props>();
 
@@ -57,8 +60,14 @@ const switchStyles = tv({
       'bg-white left-0.5 shadow-rui-control',
     ].join(' '),
     label: 'text-rui-text text-sm/6',
+    details: '',
   },
   variants: {
+    // indented by the track and the 13px gap, so the message starts where the label does
+    underLabel: {
+      true: { details: 'pl-13.25' },
+      false: {},
+    },
     checked: {
       true: {
         toggle: 'left-5',
@@ -114,6 +123,8 @@ const switchStyles = tv({
 
     // Size sm + checked: 34 - 14 - 2
     { size: 'sm', checked: true, class: { toggle: 'left-4.5' } },
+    // sm: a 34px track
+    { size: 'sm', underLabel: true, class: { details: 'pl-11.75' } },
   ],
   defaultVariants: {
     checked: false,
@@ -133,6 +144,7 @@ const ui = computed<ReturnType<typeof switchStyles>>(() => switchStyles({
   size,
   validation: get(validation),
   color,
+  underLabel: detailsUnderLabel,
 }));
 
 function input(event: Event): void {
@@ -177,6 +189,7 @@ function input(event: Event): void {
     </label>
     <RuiFormTextDetail
       v-if="detailsMode !== 'hidden'"
+      :class="ui.details()"
       :details="detailsMode"
       :error-messages="errorMessages"
       :success-messages="successMessages"

@@ -22,8 +22,19 @@ export const checkControlStyles = tv({
     glyph: 'size-3 text-white',
     dot: 'size-2 rounded-full bg-current',
     label: 'flex-1 text-rui-text text-sm/6 mt-[0.5625rem] mb-1',
+    details: '',
   },
   variants: {
+    /*
+     * The message under the label text: indented by the control slot less the wrapper's pull, and
+     * pulled up to 4px under the text. The label drops its bottom margin and the control gives back
+     * as much as the label sits below its top, so the row is as tall as the label at any line count.
+     * The control's lower part then hangs beside the message, never under it.
+     */
+    underLabel: {
+      true: { label: 'mb-0', control: '-mb-[0.5625rem]', details: 'pl-8.25' },
+      false: {},
+    },
     size: {
       sm: {
         control: 'size-9.5',
@@ -86,6 +97,10 @@ export const checkControlStyles = tv({
 
     // A dark check where the fill is light: grey and the pale context colors in dark mode
     { color: ['grey', 'warning', 'info', 'success'], class: { glyph: 'dark:text-rui-neutral-900' } },
+
+    // Under-label messages per size: a 38px slot with the label 7px down, a 46px one with it 11px down
+    { underLabel: true, size: 'sm', class: { control: '-mb-[0.4375rem]', details: 'pl-7.25' } },
+    { underLabel: true, size: 'lg', class: { control: '-mb-[0.6875rem]', details: 'pl-9.25' } },
   ],
   defaultVariants: {
     shape: 'square',

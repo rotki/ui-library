@@ -61,4 +61,15 @@ test.describe('forms/Checkbox', () => {
     await numericGroup.locator('label').nth(1).click(); // toggle "Two"
     await expect(hint).toContainText('2');
   });
+
+  test('details-under-label starts the message at the label text, right under it, at any line count', async ({ page }) => {
+    for (const id of ['checkbox-under-label-md', 'checkbox-under-label-lg', 'checkbox-under-label-wrap']) {
+      const { left, gap } = await page.getByTestId(id).evaluate((root) => {
+        const label = root.querySelector('label > span:last-child')!.getBoundingClientRect();
+        const message = root.querySelector('.details > div')!.getBoundingClientRect();
+        return { left: Math.round(message.left - label.left), gap: Math.round(message.top - label.bottom) };
+      });
+      expect({ id, left, gap }).toEqual({ id, left: 0, gap: 0 });
+    }
+  });
 });
