@@ -16,6 +16,7 @@ import RuiTablePagination, {
 import { GroupExpandButtonPosition } from '@/components/tables/table-props';
 import { useTable } from '@/composables/defaults/table';
 import { useKeyboardScroll } from '@/composables/keyboard-scroll';
+import { useStickyBlockerWarning } from '@/composables/sticky-blocker';
 import { useStickyTableHeader } from '@/composables/sticky-header';
 import { useTableColumns } from '@/composables/tables/data-table/columns';
 import { useTableExpansion } from '@/composables/tables/data-table/expansion';
@@ -413,6 +414,8 @@ const paginationBarElement = computed<HTMLElement | undefined>(() => {
 
 // while the bar is stuck to the page, `--rui-sticky-bottom` tells the page's floating parts to rise above it
 useStickyBottomInset(paginationSentinel, paginationBarElement, paginationStuck);
+
+useStickyBlockerWarning(paginationBarElement, () => get(paginationMayStick) && get(showPagination), 'The RuiDataTable pagination bar');
 
 /**
  * Grouped columns leave the column list, so their labels come from `cols`.

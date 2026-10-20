@@ -187,6 +187,22 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
           <p>Content below the table</p>
         </div>
       </div>
+
+      <div
+        class="flex flex-col space-y-3"
+        data-id="table-in-hidden-overflow"
+      >
+        <h4>In a box with overflow: hidden (warns in development)</h4>
+        <div class="overflow-hidden">
+          <RuiDataTable
+            :rows="fixedRows"
+            :cols="fixedColumns"
+            row-attr="id"
+            outlined
+            data-id="table"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>

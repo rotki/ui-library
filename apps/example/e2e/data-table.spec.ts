@@ -18,6 +18,26 @@ test.describe('data tables - basic', () => {
     await page.goto('/data-tables/basic');
   });
 
+  test('warns about an overflow: hidden ancestor of the sticky pagination bar in development only', async ({ page }) => {
+    const warnings: string[] = [];
+    page.on('console', (message) => {
+      if (message.type() === 'warning' && message.text().includes('cannot stick to the page'))
+        warnings.push(message.text());
+    });
+    await page.reload();
+    await expect(page.getByTestId('table-in-hidden-overflow').locator('[data-id=table]')).toBeVisible();
+    // the check waits a second for panels to settle
+    await page.waitForTimeout(1500);
+
+    if (process.env.DEV) {
+      expect(warnings).toHaveLength(1);
+      expect(warnings[0]).toContain('<div.overflow-hidden>');
+    }
+    else {
+      expect(warnings).toHaveLength(0);
+    }
+  });
+
   test('should render table with column definitions', async ({ page }) => {
     const table = page.locator('[data-id=table-columns-defined] [data-id=table]');
     await expect(table).toBeVisible();
