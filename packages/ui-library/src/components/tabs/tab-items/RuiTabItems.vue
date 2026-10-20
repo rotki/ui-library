@@ -1,5 +1,6 @@
 <script lang="ts" setup generic="T extends string | number">
 import { Fragment, isVNode } from 'vue';
+import { useClipWhileResizing } from '@/composables/clip-while-resizing';
 
 defineOptions({
   name: 'RuiTabItems',
@@ -22,8 +23,12 @@ const slots = useSlots();
 const currIndex = ref<number>(-1);
 const activeIndex = ref<number>(-1);
 const inner = useTemplateRef<HTMLDivElement>('inner');
+const root = useTemplateRef<HTMLDivElement>('root');
 
 const { height: innerHeight } = useElementSize(inner);
+
+// clip only while the height follows a panel change, so sticky content inside a panel works
+const clipped = useClipWhileResizing(root, () => get(innerHeight));
 
 const children = computed<VNode[]>(() => {
   const slotContent = slots.default?.() ?? [];
@@ -82,7 +87,10 @@ watch(currIndex, (index) => {
 
 <template>
   <div
-    class="grow transition-[height] duration-200 ease-out overflow-hidden motion-reduce:transition-none"
+    ref="root"
+    class="grow transition-[height] duration-200 ease-out motion-reduce:transition-none"
+    :class="{ 'overflow-hidden': clipped }"
+    :data-clipped="clipped || undefined"
     :style="{ height: `${innerHeight}px` }"
     v-bind="$attrs"
   >

@@ -132,4 +132,16 @@ test.describe('tabs', () => {
     await expect(tabs.nth(3)).toHaveAttribute('aria-selected', 'true');
     await expect(wrapper.locator('[data-id=tab-items]')).toHaveText('Tab 4 Content');
   });
+
+  test('tab panels clip only while their height changes, so sticky content inside works', async ({ page }) => {
+    const wrapper = page.locator('[data-id=wrapper-0]');
+    const items = wrapper.locator('[data-id=tab-items]');
+
+    await expect(items).not.toHaveCSS('overflow', 'hidden');
+
+    await wrapper.locator('[data-id=tabs] [role=tablist] [role=tab]:nth-child(3)').click();
+    await expect(items).toHaveText('Tab 3 Content');
+    await expect(items).not.toHaveAttribute('data-clipped');
+    await expect(items).not.toHaveCSS('overflow', 'hidden');
+  });
 });

@@ -108,4 +108,32 @@ test.describe('accordions', () => {
     await expect(trigger).toHaveAttribute('aria-controls', contentId!);
     await expect(content).toHaveAttribute('aria-labelledby', triggerId!);
   });
+
+  test('an open accordion does not clip, so a sticky header inside it sticks to the page', async ({ page }) => {
+    const accordion = page.getByTestId('sticky-accordions');
+    const content = accordion.locator('[data-accordion-content]');
+    const header = page.getByTestId('sticky-accordion-header');
+
+    await expect(content).not.toHaveAttribute('data-clipped');
+    await expect(content).not.toHaveCSS('overflow', 'hidden');
+
+    // scroll the page until the header's natural place is well above the scrollport
+    await page.getByText('Transaction 25', { exact: true }).scrollIntoViewIfNeeded();
+    const { headerTop, scrollportTop, contentTop } = await header.evaluate((el) => {
+      let scroller: HTMLElement | null = el.parentElement;
+      while (scroller && !(['auto', 'scroll'].includes(getComputedStyle(scroller).overflowY) && scroller.scrollHeight > scroller.clientHeight))
+        scroller = scroller.parentElement;
+      return {
+        headerTop: Math.round(el.getBoundingClientRect().top),
+        scrollportTop: Math.round(scroller ? scroller.getBoundingClientRect().top : 0),
+        contentTop: Math.round(el.closest('[data-accordion-content]')!.getBoundingClientRect().top),
+      };
+    });
+    expect(contentTop).toBeLessThan(scrollportTop);
+    expect(headerTop).toBe(scrollportTop);
+
+    // collapsing clips while it animates, then stays clipped only because it is closed
+    await accordion.locator('[data-accordion-trigger]').click();
+    await expect(page.getByTestId('sticky-accordion-header')).toBeHidden();
+  });
 });

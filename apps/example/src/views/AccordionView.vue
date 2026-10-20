@@ -19,6 +19,8 @@ const accordions = ref<AccordionItem[]>([
   },
 ]);
 
+const stickyOpen = ref<number>(0);
+
 // the panel clips the hover fill to its corners, so the focus ring is drawn inside the header
 const headerClass = 'px-4 py-3 font-medium hover:bg-rui-hover focus-visible:-outline-offset-2 focus-visible:rounded-none';
 </script>
@@ -72,5 +74,32 @@ const headerClass = 'px-4 py-3 font-medium hover:bg-rui-hover focus-visible:-out
         </div>
       </template>
     </div>
+
+    <h4 class="mt-10 mb-3">
+      Sticky content inside an open accordion
+    </h4>
+    <RuiAccordions
+      v-model="stickyOpen"
+      data-id="sticky-accordions"
+    >
+      <RuiAccordion header-grow>
+        <template #header>
+          Transactions
+        </template>
+        <div
+          class="sticky top-0 z-1 bg-rui-surface-muted px-4 py-2 text-body-2 font-medium"
+          data-id="sticky-accordion-header"
+        >
+          Date and amount
+        </div>
+        <p
+          v-for="n in 40"
+          :key="n"
+          class="px-4 py-2 text-body-2"
+        >
+          Transaction {{ n }}
+        </p>
+      </RuiAccordion>
+    </RuiAccordions>
   </ComponentView>
 </template>

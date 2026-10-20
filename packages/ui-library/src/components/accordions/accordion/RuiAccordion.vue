@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { VueClassValue } from '@/types/class-value';
 import Icon from '@/components/icons/RuiIcon.vue';
+import { useClipWhileResizing } from '@/composables/clip-while-resizing';
 import { cn, tv } from '@/utils/tv';
 
 export interface RuiAccordionClassNames {
@@ -38,12 +39,18 @@ defineSlots<{
 }>();
 
 const inner = useTemplateRef<HTMLDivElement>('inner');
+const content = useTemplateRef<HTMLDivElement>('content');
 
 const triggerId = useId();
 const contentId = useId();
 const { height: innerHeight } = useElementSize(inner);
 
 const contentHeight = computed<string>(() => (open ? `${get(innerHeight)}px` : '0px'));
+
+const resizing = useClipWhileResizing(content, contentHeight);
+
+// a closed `eager` panel keeps its content at height 0, so it clips; an open one only while it resizes, so sticky content works
+const clipped = computed<boolean>(() => !open || get(resizing));
 
 function toggle(): void {
   emit('click');
@@ -96,8 +103,10 @@ const rootStyle = tv({ base: 'flex flex-col items-start' });
     <div
       v-if="open || eager"
       :id="contentId"
-      class="grow transition-[height] duration-200 ease-out overflow-hidden w-full motion-reduce:transition-none"
-      :class="classNames?.content"
+      ref="content"
+      class="grow transition-[height] duration-200 ease-out w-full motion-reduce:transition-none"
+      :class="[{ 'overflow-hidden': clipped }, classNames?.content]"
+      :data-clipped="clipped || undefined"
       :style="{ height: contentHeight }"
       role="region"
       :aria-labelledby="triggerId"
