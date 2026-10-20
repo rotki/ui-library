@@ -81,12 +81,19 @@ const chipStyles = tv({
       false: { root: 'rounded-full' },
     },
     size: {
-      // 28px, to sit in a 44px table row; sm is 24px with 12px text, the smallest the library sets
+      // 28px, to sit in a 44px table row; sm is 24px with 12px text
       md: { root: 'min-h-7' },
       sm: {
         root: 'min-h-6',
         prepend: 'text-[0.5rem] p-[0.08rem] w-4 h-4',
         label: 'px-1.5 text-xs/4',
+        close: 'p-px',
+      },
+      // 20px for a count: 11px tabular figures keep a changing number from shifting the row
+      xs: {
+        root: 'min-h-5 px-1',
+        prepend: 'text-[0.5rem] p-[0.08rem] w-4 h-4',
+        label: 'px-1 text-[0.6875rem]/4 tabular-nums',
         close: 'p-px',
       },
     },
@@ -165,6 +172,8 @@ const chipStyles = tv({
     // the close button's round hover area mirrors the prefix: as far from the end edge as from the top
     { closeable: true, class: { root: 'pr-1', label: 'pr-1' } },
     { closeable: true, size: 'sm', class: { root: 'pr-1', label: 'pr-0.5' } },
+    // xs: the 12px close area sits 2px from the end edge, as the 16px prefix does from the start
+    { closeable: true, size: 'xs', class: { root: 'pr-0.5', label: 'pr-0.5' } },
 
     // Disabled: a flat neutral chip in any color, like a disabled button
     { disabled: true, variant: ['filled', 'tonal'], class: { root: '!bg-rui-neutral-100 dark:!bg-rui-neutral-800' } },

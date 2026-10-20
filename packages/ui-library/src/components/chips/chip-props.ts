@@ -1,4 +1,6 @@
 export const ChipSize = {
+  /** 20px with 11px tabular figures, for counts beside a heading or in a row */
+  xs: 'xs',
   sm: 'sm',
   md: 'md',
 } as const;
@@ -15,6 +17,7 @@ export const ChipVariant = {
 export type ChipVariant = (typeof ChipVariant)[keyof typeof ChipVariant];
 
 export const CHIP_CLOSE_ICON_SIZES: Record<ChipSize, number> = {
+  xs: 10,
   sm: 12,
   md: 14,
 };

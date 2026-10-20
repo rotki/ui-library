@@ -15,6 +15,8 @@ const attributes: Partial<ChipProps>[] = [
   { disabled: false, closeable: false, tile: true, clickable: true },
   { disabled: false, closeable: true, size: 'sm' },
   { disabled: true, closeable: true, size: 'sm' },
+  { disabled: false, closeable: false, size: 'xs' },
+  { disabled: false, closeable: true, size: 'xs' },
 ];
 
 const chips = ref<ChipProps[]>([]);

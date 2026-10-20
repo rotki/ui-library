@@ -43,7 +43,7 @@ const meta = preview.meta({
     prepend: { control: 'text' },
     size: {
       control: 'select',
-      options: ['sm', 'md'],
+      options: ['xs', 'sm', 'md'],
     },
     tile: { control: 'boolean' },
     variant: {
@@ -143,8 +143,8 @@ export const DismissiblePrefix = meta.story({
 });
 
 /**
- * Every variant in every color at both sizes, with the prefix, close and disabled states: three
- * variants of seven colors at two sizes, plus four state chips per variant. The disabled chips are
+ * Every variant in every color at every size, with the prefix, close and disabled states: three
+ * variants of seven colors at three sizes, plus four state chips per variant. The disabled chips are
  * left out of the accessibility check: WCAG exempts disabled controls from contrast, but a chip
  * that is not clickable has no role that can carry aria-disabled to tell axe so.
  */
@@ -157,7 +157,7 @@ export const Variants = meta.story({
     setup() {
       const variants = ['filled', 'outlined', 'tonal'] as const;
       const colors = ['grey', ...contextColors] as const;
-      const sizes = ['md', 'sm'] as const;
+      const sizes = ['md', 'sm', 'xs'] as const;
       return { colors, sizes, variants };
     },
     template: `
@@ -186,8 +186,25 @@ export const Variants = meta.story({
       </div>`,
   }),
   async play({ canvas }) {
-    await expect(canvas.getAllByText('primary')).toHaveLength(6);
+    await expect(canvas.getAllByText('primary')).toHaveLength(9);
     await expect(canvas.getAllByText('Disabled')).toHaveLength(6);
+  },
+});
+
+/** `xs` is a count beside a heading or in a group row: 20px, with tabular figures so a changing number keeps its width. */
+export const Counter = meta.story({
+  render: () => ({
+    components: { RuiChip },
+    template: `
+      <div class="flex flex-col gap-3 text-rui-text">
+        <div class="flex items-center gap-2 text-subtitle-2">Transactions <RuiChip size="xs">128</RuiChip></div>
+        <div class="flex items-center gap-2 text-subtitle-2">Ignored <RuiChip size="xs" color="warning" variant="tonal">11</RuiChip></div>
+        <div class="flex items-center gap-2 text-subtitle-2">Errors <RuiChip size="xs" color="error">3</RuiChip></div>
+      </div>`,
+  }),
+  async play({ canvas }) {
+    const count = canvas.getByText('128').closest('[data-variant]')!;
+    await expect(count.getBoundingClientRect().height).toBe(20);
   },
 });
 

@@ -135,6 +135,19 @@ describe('components/chips/RuiChip.vue', () => {
     expect(chip.classes()).not.toContain('min-h-7');
   });
 
+  it('should size an xs chip for counts, with tabular figures and a 10px close icon', async () => {
+    wrapper = createWrapper({ props: { size: 'xs' }, slots: { default: () => '12' } });
+
+    const chip = wrapper.find('div[data-variant]');
+    expect(chip.classes()).toEqual(expect.arrayContaining(['min-h-5', 'px-1']));
+    expect(chip.classes()).not.toContain('px-2');
+    expect(chip.find('span').classes()).toEqual(expect.arrayContaining(['px-1', 'text-[0.6875rem]/4', 'tabular-nums']));
+
+    await wrapper.setProps({ closeable: true });
+    expect(chip.classes()).toContain('pr-0.5');
+    expect(wrapper.find('button rui-icon-stub').attributes('size')).toBe('10');
+  });
+
   it('should apply color classes', async () => {
     wrapper = createWrapper({
       props: {
