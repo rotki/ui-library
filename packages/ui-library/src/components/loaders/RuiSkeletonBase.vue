@@ -25,11 +25,11 @@ const skeleton = tv({
   },
 });
 
+// the bar is decoration only, so it is aria-hidden: an alert role made a screen reader announce every bar
 const ui = computed<string>(() => skeleton({ rounded }));
 </script>
 
 <template>
-  <!-- decoration only: an alert role made a screen reader announce every bar -->
   <div
     :class="ui"
     data-id="skeleton"

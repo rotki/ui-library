@@ -8,6 +8,7 @@ export interface Props {
   icon?: RuiIcons;
 }
 
+// the button has a fixed name with aria-expanded carrying the state; a caller's aria-label in $attrs wins
 defineOptions({
   inheritAttrs: false,
 });
@@ -20,7 +21,6 @@ defineSlots<{
 </script>
 
 <template>
-  <!-- a fixed name with aria-expanded carrying the state; a caller's aria-label in $attrs wins -->
   <RuiButton
     class="relative"
     aria-label="Expand row"

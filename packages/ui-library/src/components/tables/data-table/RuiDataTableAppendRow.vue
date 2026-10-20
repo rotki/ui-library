@@ -10,15 +10,15 @@ defineSlots<{
   'row-append': (props: { row: T; index: number }) => any;
 }>();
 
+/*
+ * The cell drops the row height floor and the top padding: it reads as the end of the row above.
+ * Its content scrolls sideways with the row, unlike the expanded panel, which stays in view: a
+ * follow-up is part of the row, so its text keeps its place under the row's columns.
+ */
 const { classes, colspan } = useDataTableStyling();
 </script>
 
 <template>
-  <!--
-    The cell drops the row height floor and the top padding: it reads as the end of the row above.
-    Its content scrolls sideways with the row, unlike the expanded panel, which stays in view: a
-    follow-up is part of the row, so its text keeps its place under the row's columns.
-  -->
   <tr data-id="row-append">
     <td
       :colspan="colspan"

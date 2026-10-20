@@ -285,6 +285,11 @@ function onLeave(event?: KeyboardEvent): void {
  * A persistent menu leaves the key alone instead of swallowing it, so an inner
  * popover can close on Escape while the menu stays open, and an ancestor still
  * sees a key nothing consumed.
+ *
+ * Escape is swallowed only while the menu is open and not persistent
+ * (`onLeave` stops the event itself); a closed or persistent menu must let it
+ * through, or a consumer that closes its own editor on Escape never sees the
+ * key. The root element listens for it.
  */
 function onEscape(event: KeyboardEvent): void {
   if (persistent)
@@ -331,12 +336,6 @@ onClickOutside(menu, () => {
 </script>
 
 <template>
-  <!--
-    Escape is swallowed only while the menu is open and not persistent
-    (`onLeave` stops the event itself); a closed or persistent menu must let it
-    through, or a consumer that closes its own editor on Escape never sees the
-    key.
-  -->
   <div
     :class="classNames?.root"
     @keydown.esc="onEscape($event)"
