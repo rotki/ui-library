@@ -1899,6 +1899,23 @@ describe('components/tables/RuiDataTable.vue', () => {
       expect(customTfoot.exists()).toBeTruthy();
       expect(customTfoot.text()).toBe('Footer content');
     });
+
+    it('should give tfoot cells the body cell padding and density, and skip tfoot without the slot', async () => {
+      wrapper = createWrapper({
+        props: { cols: columns, rowAttr: 'id', rows: data.slice(0, 3) },
+        slots: { tfoot: '<tr><td>Total</td></tr>' },
+      });
+      const tfoot = (): string[] => wrapper.find('tfoot').classes();
+
+      expect(tfoot()).toEqual(expect.arrayContaining(['[:where(&>tr>*)]:px-4', '[:where(&>tr>*)]:py-1', '[:where(&>tr>*)]:h-11', 'tabular-nums']));
+      await wrapper.setProps({ dense: true });
+      expect(tfoot()).toContain('[:where(&>tr>*)]:h-9');
+      expect(tfoot()).not.toContain('[:where(&>tr>*)]:h-11');
+      wrapper.unmount();
+
+      wrapper = createWrapper({ props: { cols: columns, rowAttr: 'id', rows: data.slice(0, 3) } });
+      expect(wrapper.find('tfoot').exists()).toBe(false);
+    });
   });
 
   describe('visual props', () => {

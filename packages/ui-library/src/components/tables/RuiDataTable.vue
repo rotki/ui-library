@@ -222,6 +222,10 @@ const slots = defineSlots<Partial<
     'no-data': () => any;
     'empty-description': () => any;
     'error': () => any;
+    /**
+     * Rows under the body, such as a total, rendered in `<tfoot>`. Its cells take the body cells'
+     * padding, height (dense included) and text, under `:where()`, so a cell's own classes still win.
+     */
     'tfoot': () => any;
   }
 >>();
@@ -753,7 +757,11 @@ provideDataTableContext<T, IdType>({
             />
           </template>
         </RuiDataTableBody>
-        <tfoot>
+        <tfoot
+          v-if="slots.tfoot"
+          :class="ui.tfoot()"
+          data-id="table-tfoot"
+        >
           <!-- eslint-disable-next-line vue/require-explicit-slots -- defined via Partial<Record<...>> in defineSlots -->
           <slot name="tfoot" />
         </tfoot>

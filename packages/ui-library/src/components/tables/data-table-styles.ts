@@ -28,6 +28,8 @@ export const dataTableStyles = tv({
     tr: 'hover:bg-rui-neutral-950/[0.03] dark:hover:bg-white/[0.04]',
     // numbers line up in columns; no slashed zero, which in Inter reads as a second, monospace font beside zero-free values
     td: '[:where(&)]:px-4 text-rui-text text-body-2 tabular-nums [text-wrap:initial]',
+    // the `tfoot` slot's cells (a total row) take the body cells' padding, height and text, so a footer row lines up without its own classes
+    tfoot: '[:where(&>tr>*)]:px-4 text-rui-text text-body-2 tabular-nums',
     checkbox: 'px-2 w-[3.625rem] max-w-[3.625rem] [&_label]:ml-0',
     tbodyLoader: 'text-center',
     // tinted like the column header, the pair framing the body; opaque, so rows scroll behind a stuck bar
@@ -69,6 +71,7 @@ export const dataTableStyles = tv({
         tbody: 'block between:border-t-0',
         tr: 'block',
         td: 'block px-4 py-2',
+        tfoot: 'block [&>tr]:block [:where(&>tr>*)]:block [:where(&>tr>*)]:py-2',
       },
     },
   },
@@ -80,8 +83,8 @@ export const dataTableStyles = tv({
    */
   compoundVariants: [
     // a 4px inset under the height floor fits a 36px button in a 44px row (a 28px one in a dense 36px row)
-    { dense: false, mobile: false, class: { td: '[:where(&)]:py-1 [:where(&)]:h-11' } },
-    { dense: true, mobile: false, class: { td: '[:where(&)]:py-1 [:where(&)]:h-9' } },
+    { dense: false, mobile: false, class: { td: '[:where(&)]:py-1 [:where(&)]:h-11', tfoot: '[:where(&>tr>*)]:py-1 [:where(&>tr>*)]:h-11' } },
+    { dense: true, mobile: false, class: { td: '[:where(&)]:py-1 [:where(&)]:h-9', tfoot: '[:where(&>tr>*)]:py-1 [:where(&>tr>*)]:h-9' } },
   ],
   defaultVariants: {
     dense: false,

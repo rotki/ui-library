@@ -79,6 +79,19 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
               />
             </RuiButton>
           </template>
+          <template #tfoot>
+            <tr data-id="table-total">
+              <td class="font-medium">
+                Total
+              </td>
+              <td
+                :colspan="fixedColumns.length - 1"
+                class="text-right"
+              >
+                {{ fixedRows.length }} users
+              </td>
+            </tr>
+          </template>
         </RuiDataTable>
       </div>
 
@@ -107,6 +120,19 @@ import { fixedColumns, fixedRows } from '@/data/table-configs';
                 color="primary"
               />
             </RuiButton>
+          </template>
+          <template #tfoot>
+            <tr data-id="table-total">
+              <td class="font-medium">
+                Total
+              </td>
+              <td
+                :colspan="fixedColumns.length - 1"
+                class="text-right"
+              >
+                {{ fixedRows.length }} users
+              </td>
+            </tr>
           </template>
         </RuiDataTable>
       </div>

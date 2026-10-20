@@ -52,6 +52,20 @@ test.describe('data tables - basic', () => {
     await expect(td).toHaveClass(/py-/);
   });
 
+  test('a tfoot total row takes the body cell padding and row height at both densities', async ({ page }) => {
+    for (const [section, height] of [['table-outlined', '44px'], ['table-dense', '36px']] as const) {
+      const table = page.locator(`[data-id=${section}] [data-id=table]`);
+      const bodyCell = table.locator('tbody td').first();
+      const footCells = table.getByTestId('table-total').locator('td');
+
+      await expect(footCells.first()).toHaveCSS('height', height);
+      await expect(footCells.first()).toHaveCSS('padding-left', await bodyCell.evaluate(el => getComputedStyle(el).paddingLeft));
+      await expect(footCells.first()).toHaveCSS('font-size', await bodyCell.evaluate(el => getComputedStyle(el).fontSize));
+      // the consumer's own `text-right` still wins over the footer defaults
+      await expect(footCells.nth(1)).toHaveCSS('text-align', 'right');
+    }
+  });
+
   test('should render striped table', async ({ page }) => {
     const tbody = page.locator('[data-id=table-striped] [data-id=table] tbody');
     await expect(tbody).toBeVisible();
