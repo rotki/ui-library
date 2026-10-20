@@ -56,6 +56,30 @@ describe('components/cards/RuiCard.vue', () => {
     expect(wrapper.find('[data-id=subheader]').text()).toBe('Card Subtitle');
   });
 
+  it('should drop the content top padding under a header only with tightHeaderGap', async () => {
+    wrapper = createWrapper({ slots: { header: 'Title', default: 'Body' } });
+    const content = (): string[] => wrapper.find('[data-id=card-content]').classes();
+    expect(content()).toContain('p-4');
+    expect(content()).not.toContain('pt-0');
+
+    await wrapper.setProps({ tightHeaderGap: true });
+    expect(content()).toEqual(expect.arrayContaining(['p-4', 'pt-0']));
+
+    await wrapper.setProps({ dense: true });
+    expect(content()).toEqual(expect.arrayContaining(['p-3', 'pt-0']));
+
+    await wrapper.setProps({ divide: true });
+    expect(content()).not.toContain('pt-0');
+    wrapper.unmount();
+
+    wrapper = createWrapper({ props: { tightHeaderGap: true }, slots: { 'custom-header': '<div>Custom</div>', 'default': 'Body' } });
+    expect(content()).toContain('pt-0');
+    wrapper.unmount();
+
+    wrapper = createWrapper({ props: { tightHeaderGap: true }, slots: { default: 'Body' } });
+    expect(content()).not.toContain('pt-0');
+  });
+
   it('should render image slot', () => {
     wrapper = createWrapper({
       slots: {

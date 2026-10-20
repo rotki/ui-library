@@ -18,6 +18,12 @@ export interface Props {
   variant?: 'flat' | 'outlined';
   rounded?: 'sm' | 'md' | 'lg';
   noPadding?: boolean;
+  /**
+   * Drops the content's top padding when a header renders, so the header's bottom padding is the
+   * only gap between them (16px, 12px when `dense`) instead of both paddings stacked. Ignored with
+   * `divide`, which draws a border there.
+   */
+  tightHeaderGap?: boolean;
   classNames?: RuiCardClassNames;
 }
 
@@ -32,6 +38,7 @@ const {
   variant: cardVariant = 'outlined',
   rounded = 'md',
   noPadding = false,
+  tightHeaderGap = false,
   classNames,
 } = defineProps<Props>();
 
@@ -83,8 +90,12 @@ const card = tv({
       true: { footer: 'p-3 pt-1' },
       false: { footer: 'p-4 pt-2' },
     },
+    underHeader: {
+      true: { content: 'pt-0' },
+      false: {},
+    },
   },
-  defaultVariants: { variant: 'outlined', rounded: 'md', padding: 'normal', dense: false },
+  defaultVariants: { variant: 'outlined', rounded: 'md', padding: 'normal', dense: false, underHeader: false },
 });
 
 const content = useTemplateRef<HTMLDivElement>('content');
@@ -99,7 +110,17 @@ const contentPadding = computed<'none' | 'dense' | 'normal'>(() => {
   return dense ? 'dense' : 'normal';
 });
 
-const ui = computed<ReturnType<typeof card>>(() => card({ variant: cardVariant, rounded, divide, dense, padding: contentPadding.value }));
+// only under a header (built-in or `custom-header`), and not with `divide`, whose border needs space on both sides
+const underHeader = computed<boolean>(() => tightHeaderGap && !divide && (get(hasHeadContent) || !!slots['custom-header']));
+
+const ui = computed<ReturnType<typeof card>>(() => card({
+  variant: cardVariant,
+  rounded,
+  divide,
+  dense,
+  padding: get(contentPadding),
+  underHeader: get(underHeader),
+}));
 </script>
 
 <template>

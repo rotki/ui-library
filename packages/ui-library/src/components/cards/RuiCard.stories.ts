@@ -71,6 +71,7 @@ const meta = preview.meta({
       options: ['sm', 'md', 'lg'],
     },
     subheader: { control: 'text' },
+    tightHeaderGap: { control: 'boolean' },
     variant: {
       control: 'select',
       options: ['flat', 'outlined'],
@@ -95,6 +96,19 @@ export const Default = meta.story({
     content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
     header: 'Card header',
     subheader: 'Card subheader',
+  },
+});
+
+/** `tight-header-gap` drops the content's top padding, so the header's padding alone separates them. */
+export const TightHeaderGap = meta.story({
+  args: {
+    actions: [
+      { color: 'primary', text: 'Save', variant: 'text' },
+    ],
+    content: 'Lorem ipsum dolor sit amet consect '.repeat(10),
+    header: 'Card header',
+    subheader: 'Card subheader',
+    tightHeaderGap: true,
   },
 });
 

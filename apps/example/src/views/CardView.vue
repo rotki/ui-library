@@ -226,6 +226,23 @@ const sections = ref<CardData[]>([
         divide: true,
         dense: true,
       },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Card with tight header gap',
+        subheader: 'Card subheader',
+        tightHeaderGap: true,
+        actions: [
+          { variant: 'text', text: 'Action 1', color: 'secondary', clicks: 0 },
+          { variant: 'text', text: 'Action 2', color: 'primary', clicks: 0 },
+        ],
+      },
+      {
+        content: 'Lorem ipsum dolor sit amet consect '.repeat(4),
+        header: 'Dense Card with tight header gap',
+        subheader: 'Card subheader',
+        dense: true,
+        tightHeaderGap: true,
+      },
     ],
   },
   {

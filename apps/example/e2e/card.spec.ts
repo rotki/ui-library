@@ -38,6 +38,21 @@ test.describe('cards', () => {
     await expect(card.locator('img')).toHaveAttribute('src', /.+/);
   });
 
+  test('tight-header-gap leaves only the header padding between the subheader and the content', async ({ page }) => {
+    /** Reads both boxes in one evaluate, so images loading above cannot shift the page between two reads. */
+    async function gap(id: string): Promise<number> {
+      return page.getByTestId(id).evaluate((card) => {
+        const subheader = card.querySelector('[data-id=subheader]')!.getBoundingClientRect();
+        const text = card.querySelector('[data-id=card-content] p')!.getBoundingClientRect();
+        return Math.round(text.top - subheader.bottom);
+      });
+    }
+
+    expect(await gap('card-0-0')).toBe(32);
+    expect(await gap('card-0-20')).toBe(16);
+    expect(await gap('card-0-21')).toBe(12);
+  });
+
   test('should display a flat card with neither border nor shadow', async ({ page }) => {
     const card = page.locator('div[data-id=card-1-4]').first();
 
