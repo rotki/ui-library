@@ -1,7 +1,9 @@
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
+import { h } from 'vue';
 import RuiCheckboxGroup from '@/components/forms/checkbox/checkbox-group/RuiCheckboxGroup.vue';
 import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
+import RuiFieldDefaults from '@/components/forms/field-defaults/RuiFieldDefaults.vue';
 
 function createWrapper(
   options?: ComponentMountingOptions<typeof RuiCheckboxGroup>,
@@ -37,6 +39,26 @@ describe('components/forms/checkbox/checkbox-group/RuiCheckboxGroup.vue', () => 
     const updatedWrapper = wrapper.findAll('div[role=group] > div')[0];
     expect(updatedWrapper?.classes()).toContain('flex');
     expect(updatedWrapper?.classes()).toContain('between:ml-6');
+  });
+
+  it('should take details from RuiFieldDefaults and keep its children\'s lines hidden', () => {
+    const scoped = mount(RuiFieldDefaults, {
+      props: { details: 'auto' },
+      slots: {
+        default: () => [
+          h(RuiCheckboxGroup, { modelValue: [] }, () => [h(RuiCheckbox, { value: 'a', hint: 'Child hint' })]),
+          h(RuiCheckbox, { modelValue: false, hint: 'Standalone hint' }),
+        ],
+      },
+      global: { stubs: ['rui-icon'] },
+    });
+
+    const lines = scoped.findAll('.details');
+    expect(lines).toHaveLength(2);
+    expect(lines.map(line => line.attributes('data-details'))).toEqual(['auto', 'auto']);
+    expect(scoped.text()).not.toContain('Child hint');
+    expect(scoped.text()).toContain('Standalone hint');
+    scoped.unmount();
   });
 
   it('should pass hint props', async () => {

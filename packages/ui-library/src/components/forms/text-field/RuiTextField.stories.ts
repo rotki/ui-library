@@ -251,8 +251,9 @@ export const Clearable = meta.story({
 });
 
 /**
- * `RuiFieldDefaults` sets the label placement for every field inside it, here a settings list whose
- * rows carry their own titles. A field's own `label-placement` still wins, as the last row shows.
+ * `RuiFieldDefaults` sets the label placement and the details mode for every field inside it, here a
+ * settings list whose rows carry their own titles. A field's own `label-placement` or `details` still
+ * wins, as the last row shows.
  */
 export const FieldDefaults = meta.story({
   render: () => ({
@@ -266,17 +267,17 @@ export const FieldDefaults = meta.story({
       return { note, rows };
     },
     template: `
-      <RuiFieldDefaults label-placement="hidden">
+      <RuiFieldDefaults label-placement="hidden" details="hidden">
         <div class="flex flex-col divide-y divide-rui-divider max-w-2xl">
           <div v-for="row in rows" :key="row.label" class="grid grid-cols-1 md:grid-cols-2 gap-4 py-4 items-center">
             <div>
               <div class="text-subtitle-2">{{ row.label }}</div>
               <div class="text-caption text-rui-text-secondary">{{ row.description }}</div>
             </div>
-            <RuiTextField v-model="row.value" :label="row.label" dense details="hidden" />
+            <RuiTextField v-model="row.value" :label="row.label" dense />
           </div>
           <div class="py-4">
-            <RuiTextField v-model="note" label="Note" label-placement="top" placeholder="Anything to remember" details="hidden" />
+            <RuiTextField v-model="note" label="Note" label-placement="top" placeholder="Anything to remember" details="auto" hint="Saved with the portfolio" />
           </div>
         </div>
       </RuiFieldDefaults>
