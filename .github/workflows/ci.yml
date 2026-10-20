@@ -67,9 +67,9 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
 
-  # Cheap fast-feedback job: lint + example-app typecheck. Library typecheck
-  # is implicit in the build:types step that runs as part of `build:prod` in
-  # `unit`, `storybook`, `e2e` and `visual` — no need to repeat it here.
+  # Cheap fast-feedback job: lint + typecheck. The build:types step in
+  # `build:prod` only covers the library sources, so the library typecheck
+  # runs here for the spec and story files (tsconfig.vitest.json).
   validate:
     name: Lint & typecheck
     runs-on: ubuntu-latest
@@ -96,6 +96,9 @@ jobs:
 
       - name: Run linter 👀
         run: pnpm run lint
+
+      - name: Typecheck library, specs and stories
+        run: pnpm --filter @rotki/ui-library typecheck
 
       - name: Typecheck example app
         run: pnpm --filter example typecheck
