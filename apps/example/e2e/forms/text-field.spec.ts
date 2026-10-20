@@ -24,4 +24,15 @@ test.describe('forms/TextField', () => {
 
     await expect(disabledText).toBeDisabled();
   });
+
+  test('a long error is clamped to two lines with the full text in its title', async ({ page }) => {
+    const long = page.getByTestId('text-field-long-error').locator('[data-id=details-error]');
+    const short = page.getByTestId('text-field-short-error').locator('[data-id=details-error]');
+
+    // 4px above two 16px lines
+    await expect(long).toHaveCSS('height', '36px');
+    await expect(long).toHaveAttribute('title', /did not answer within 30 seconds.*try again\.$/);
+    await expect(short).toHaveCSS('height', '20px');
+    await expect(short).not.toHaveAttribute('title');
+  });
 });

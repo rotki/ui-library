@@ -54,6 +54,21 @@ describe('components/helpers/RuiFormTextDetail.vue', () => {
     expect(hint.classes()).toEqual(expect.arrayContaining(['pt-1', 'text-xs/4']));
   });
 
+  it('should clamp an error to two lines and leave hints and success messages whole', async () => {
+    wrapper = createWrapper({ errorMessages: ['Required'] });
+
+    const error = wrapper.find('[data-id=details-error]');
+    expect(error.classes()).toContain('line-clamp-2');
+    // nothing is cut off, so there is no title repeating the message
+    expect(error.attributes('title')).toBeUndefined();
+
+    await wrapper.setProps({ errorMessages: [], hint: 'A hint' });
+    expect(wrapper.find('.text-rui-text-secondary').classes()).not.toContain('line-clamp-2');
+
+    await wrapper.setProps({ hint: '', successMessages: ['Saved'] });
+    expect(wrapper.find('.text-rui-success').classes()).not.toContain('line-clamp-2');
+  });
+
   it('should still animate a hint that turns into an error', async () => {
     wrapper = createWrapper({ hint: 'A hint' });
 

@@ -7,6 +7,10 @@ import { type FormDetails, useFormTextDetail } from '@/utils/form-text-detail';
  * hint present on first render is in place when the field shows, and only a change of message
  * animates. The template keeps no comments, since a root-level one makes the component a fragment
  * in development and drops the class a parent passes.
+ *
+ * An error is clamped to two lines, since a backend error can run to several sentences and push a
+ * dialog's footer down; the full text goes in `title` only while it is cut off. Screen readers get
+ * all of it either way. Hints and success messages are not clamped: they are written for the field.
  */
 const {
   errorMessages = [],
@@ -31,6 +35,24 @@ const { formattedErrorMessages, formattedSuccessMessages, hasError, hasSuccess }
     () => errorMessages,
     () => successMessages,
   );
+
+const errorEl = useTemplateRef<HTMLDivElement>('error');
+
+const errorClamped = ref<boolean>(false);
+
+const errorMessage = computed<string | undefined>(() => get(formattedErrorMessages)[0]);
+
+function checkClamped(): void {
+  const el = get(errorEl);
+  set(errorClamped, !!el && el.scrollHeight > el.clientHeight + 1);
+}
+
+useResizeObserver(errorEl, checkClamped);
+
+watch(errorMessage, async () => {
+  await nextTick();
+  checkClamped();
+}, { flush: 'post' });
 </script>
 
 <template>
@@ -49,9 +71,12 @@ const { formattedErrorMessages, formattedSuccessMessages, hasError, hasSuccess }
     <div
       v-if="hasError"
       key="error"
-      class="pt-1 text-xs/4 text-rui-error dark:text-rui-error-lighter"
+      ref="error"
+      class="pt-1 text-xs/4 text-rui-error dark:text-rui-error-lighter line-clamp-2"
+      :title="errorClamped ? errorMessage : undefined"
+      data-id="details-error"
     >
-      {{ formattedErrorMessages[0] }}
+      {{ errorMessage }}
     </div>
     <div
       v-else-if="hasSuccess"

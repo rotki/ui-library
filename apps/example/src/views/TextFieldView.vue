@@ -202,6 +202,10 @@ const revealableTextFields = ref<RevealableTextFieldData[]>([
     modelValue: 'some values',
   },
 ]);
+
+const longErrorValue = ref<string>('https://node.example.com');
+
+const longError = 'The node at this address did not answer within 30 seconds. Check that it is running, that the address and port are correct, and that no firewall blocks the connection, then try again.';
 </script>
 
 <template>
@@ -246,6 +250,23 @@ const revealableTextFields = ref<RevealableTextFieldData[]>([
         v-model="field.modelValue"
         placeholder="Placeholder"
         v-bind="objectOmit(field, ['modelValue', 'append', 'prepend'])"
+      />
+    </div>
+    <h2 class="text-h4 mb-6 mt-14">
+      Long errors
+    </h2>
+    <div class="grid gap-4 grid-cols-3">
+      <RuiTextField
+        v-model="longErrorValue"
+        label="Endpoint"
+        :error-messages="[longError]"
+        data-id="text-field-long-error"
+      />
+      <RuiTextField
+        v-model="longErrorValue"
+        label="Endpoint"
+        error-messages="Required"
+        data-id="text-field-short-error"
       />
     </div>
   </ComponentView>
