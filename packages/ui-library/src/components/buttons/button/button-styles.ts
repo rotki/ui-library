@@ -104,6 +104,18 @@ export const buttonStyles = tv({
     hideFocusIndicator: {
       true: { root: 'focus-visible:!outline-hidden' },
     },
+    /*
+     * Below the breakpoint the label turns `sr-only`, so it still names the button, and the button
+     * takes its icon-only padding and glyph from the two properties the `collapsed` compounds seed
+     * per size. One static list per breakpoint, since Tailwind cannot see a generated class.
+     */
+    collapseBelow: {
+      'sm': { root: 'max-sm:gap-x-0 max-sm:p-(--rui-btn-collapsed-p) max-sm:![--rui-icon-size:var(--rui-btn-collapsed-icon)]', label: 'max-sm:sr-only' },
+      'md': { root: 'max-md:gap-x-0 max-md:p-(--rui-btn-collapsed-p) max-md:![--rui-icon-size:var(--rui-btn-collapsed-icon)]', label: 'max-md:sr-only' },
+      'lg': { root: 'max-lg:gap-x-0 max-lg:p-(--rui-btn-collapsed-p) max-lg:![--rui-icon-size:var(--rui-btn-collapsed-icon)]', label: 'max-lg:sr-only' },
+      'xl': { root: 'max-xl:gap-x-0 max-xl:p-(--rui-btn-collapsed-p) max-xl:![--rui-icon-size:var(--rui-btn-collapsed-icon)]', label: 'max-xl:sr-only' },
+      '2xl': { root: 'max-2xl:gap-x-0 max-2xl:p-(--rui-btn-collapsed-p) max-2xl:![--rui-icon-size:var(--rui-btn-collapsed-icon)]', label: 'max-2xl:sr-only' },
+    },
   },
   compoundVariants: [
     /*
@@ -182,6 +194,13 @@ export const buttonStyles = tv({
     { icon: true, size: 'xl', class: { root: 'p-2 ![--rui-icon-size:1.5rem]' } },
     { icon: true, size: '2xl', class: { root: 'p-2 ![--rui-icon-size:1.75rem]' } },
     { variant: 'fab', icon: true, size: 'sm', class: { root: 'px-2 py-2' } },
+    // A collapsed button's icon-only padding and glyph, the same table as `icon` above
+    { collapseBelow: ['sm', 'md', 'lg', 'xl', '2xl'], class: { root: '[--rui-btn-collapsed-p:0.5rem] [--rui-btn-collapsed-icon:1.25rem]' } },
+    { collapseBelow: ['sm', 'md', 'lg', 'xl', '2xl'], size: 'xs', class: { root: '[--rui-btn-collapsed-p:0.1875rem] [--rui-btn-collapsed-icon:0.875rem]' } },
+    { collapseBelow: ['sm', 'md', 'lg', 'xl', '2xl'], size: 'sm', class: { root: '[--rui-btn-collapsed-p:0.25rem] [--rui-btn-collapsed-icon:1.25rem]' } },
+    { collapseBelow: ['sm', 'md', 'lg', 'xl', '2xl'], size: 'lg', class: { root: '[--rui-btn-collapsed-p:0.375rem] [--rui-btn-collapsed-icon:1.5rem]' } },
+    { collapseBelow: ['sm', 'md', 'lg', 'xl', '2xl'], size: 'xl', class: { root: '[--rui-btn-collapsed-p:0.5rem] [--rui-btn-collapsed-icon:1.5rem]' } },
+    { collapseBelow: ['sm', 'md', 'lg', 'xl', '2xl'], size: '2xl', class: { root: '[--rui-btn-collapsed-p:0.5rem] [--rui-btn-collapsed-icon:1.75rem]' } },
 
     /*
      * === Link ===

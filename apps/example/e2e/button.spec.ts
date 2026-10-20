@@ -88,4 +88,26 @@ test.describe('buttons', () => {
     await link.hover();
     await expect(link).toHaveCSS('text-decoration-line', 'underline');
   });
+
+  test('collapse-below shows only the icon below the breakpoint and keeps the accessible name', async ({ page }) => {
+    const refresh = page.getByTestId('collapsing-refresh');
+    const settings = page.getByTestId('collapsing-settings');
+
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await expect(refresh.locator('[data-id=btn-label]')).toBeVisible();
+    await expect(refresh).toHaveCSS('column-gap', '8px');
+
+    await page.setViewportSize({ width: 900, height: 900 });
+    await expect(page.getByTestId('collapsing-toolbar').getByRole('button', { name: 'Refresh', exact: true })).toBeVisible();
+    await expect(refresh.locator('[data-id=btn-label]')).toHaveCSS('position', 'absolute');
+    await expect(refresh).toHaveCSS('column-gap', '0px');
+
+    // the md icon-only box: 8px padding around a 20px glyph, so 36px square like a text button's height
+    for (const [button, side, glyph] of [[refresh, 36, '20px'], [settings, 28, '20px']] as const) {
+      const box = await button.boundingBox();
+      expect(Math.round(box!.width)).toBe(side);
+      expect(Math.round(box!.height)).toBe(side);
+      await expect(button.locator('svg')).toHaveCSS('width', glyph);
+    }
+  });
 });

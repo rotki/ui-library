@@ -19,6 +19,9 @@ export const ButtonSize = {
 
 export type ButtonSize = (typeof ButtonSize)[keyof typeof ButtonSize];
 
+/** The Tailwind breakpoint below which `collapseBelow` hides a button's label. */
+export type ButtonCollapseBreakpoint = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+
 // the icon size plus 2px: the spinner takes the icon's place, a thin ring reading lighter than a glyph
 const SPINNER_SIZES: Record<string, number> = { 'xs': 12, 'sm': 16, 'lg': 22, 'xl': 24, '2xl': 24 };
 const DEFAULT_SPINNER_SIZE = 18;

@@ -138,6 +138,33 @@ describe('components/buttons/button/RuiButton.vue', () => {
     expect(classes()).not.toContain('hover:bg-rui-neutral-200');
   });
 
+  it('should collapse to its icons below collapseBelow, keeping the label for screen readers', async () => {
+    wrapper = createWrapper({
+      props: { collapseBelow: 'lg', size: 'sm' },
+      slots: { default: () => 'Export', prepend: () => h('i', { 'data-id': 'icon' }) },
+    });
+    const root = (): string[] => wrapper.find('button').classes();
+    const label = (): string[] => wrapper.find('[data-id=btn-label]').classes();
+
+    expect(label()).toContain('max-lg:sr-only');
+    expect(root()).toEqual(expect.arrayContaining([
+      'max-lg:gap-x-0',
+      'max-lg:p-(--rui-btn-collapsed-p)',
+      'max-lg:![--rui-icon-size:var(--rui-btn-collapsed-icon)]',
+      '[--rui-btn-collapsed-p:0.25rem]',
+      '[--rui-btn-collapsed-icon:1.25rem]',
+    ]));
+    expect(root()).not.toContain('[--rui-btn-collapsed-p:0.5rem]');
+    expect(wrapper.find('[data-id=btn-label]').text()).toBe('Export');
+
+    await wrapper.setProps({ collapseBelow: undefined });
+    expect(label()).not.toContain('max-lg:sr-only');
+    expect(root().some(name => name.includes('rui-btn-collapsed'))).toBe(false);
+
+    await wrapper.setProps({ collapseBelow: 'md', icon: true });
+    expect(root().some(name => name.includes('rui-btn-collapsed'))).toBe(false);
+  });
+
   it('should pass variant props', async () => {
     wrapper = createWrapper();
     expect(wrapper.attributes('data-variant')).toBe('default');

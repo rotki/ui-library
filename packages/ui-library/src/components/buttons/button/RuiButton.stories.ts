@@ -468,6 +468,38 @@ export const Link = meta.story({
   },
 });
 
+/**
+ * `collapse-below` hides the label under a breakpoint and gives the button its icon-only padding,
+ * for toolbars that run out of room on narrow screens. The label stays as screen-reader text, so the
+ * button keeps its accessible name. Resize the canvas below `lg` (1024px) to see it collapse.
+ */
+export const CollapseBelow = meta.story({
+  render() {
+    return {
+      components: { RuiButton, RuiIcon },
+      template: `
+        <div class="flex items-center gap-2">
+          <RuiButton variant="outlined" color="primary" collapse-below="lg">
+            <template #prepend><RuiIcon name="lu-refresh-ccw" /></template>
+            Refresh
+          </RuiButton>
+          <RuiButton variant="text" collapse-below="lg">
+            <template #prepend><RuiIcon name="lu-file-down" /></template>
+            Export
+          </RuiButton>
+          <RuiButton color="primary" size="sm" collapse-below="lg">
+            <template #prepend><RuiIcon name="lu-plus" /></template>
+            Add account
+          </RuiButton>
+        </div>`,
+    };
+  },
+  async play({ canvas }) {
+    await expect(canvas.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
+    await expect(canvas.getByRole('button', { name: 'Add account' })).toBeInTheDocument();
+  },
+});
+
 export const FloatingActionButton = meta.story({
   args: {
     color: 'primary',

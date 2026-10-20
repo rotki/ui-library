@@ -1,7 +1,7 @@
 <script lang="ts" generic="T = undefined" setup>
 import type { ContextColorsType } from '@/consts/colors';
 import { ButtonGroupKey } from '@/components/buttons/button-group/button-group-context';
-import { type ButtonSize, ButtonVariant, getButtonSpinnerSize } from '@/components/buttons/button/button-props';
+import { type ButtonCollapseBreakpoint, type ButtonSize, ButtonVariant, getButtonSpinnerSize } from '@/components/buttons/button/button-props';
 import { buttonStyles } from '@/components/buttons/button/button-styles';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { cn } from '@/utils/tv';
@@ -19,6 +19,12 @@ export interface Props<T = undefined> {
   type?: 'button' | 'submit';
   modelValue?: T;
   hideFocusIndicator?: boolean;
+  /**
+   * Below this breakpoint the button shows only its icons: the label becomes screen-reader text,
+   * so it still names the button, and the button takes its icon-only padding. Give it a `prepend`
+   * or `append` icon. Ignored on an `icon` button.
+   */
+  collapseBelow?: ButtonCollapseBreakpoint;
 }
 
 defineOptions({
@@ -39,6 +45,7 @@ const {
   type = 'button',
   modelValue = undefined,
   hideFocusIndicator = false,
+  collapseBelow = undefined,
 } = defineProps<Props<T>>();
 
 const emit = defineEmits<{
@@ -78,6 +85,7 @@ const ui = computed<ReturnType<typeof buttonStyles>>(() => buttonStyles({
   active: get(resolvedActive),
   loading,
   hideFocusIndicator,
+  collapseBelow: icon ? undefined : collapseBelow,
 }));
 
 function onClick(): void {
