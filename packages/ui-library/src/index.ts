@@ -19,7 +19,7 @@ export { activatorHandlers, type ActivatorHandlers } from '@/components/overlays
 
 export * from '@/composables';
 
-export { type FieldOptions, type LabelPlacement, provideFieldDefaults } from '@/composables/defaults/field';
+export { type FieldOptions, type FieldScopeOptions, type LabelPlacement, provideFieldDefaults } from '@/composables/defaults/field';
 
 export type { LogoOptions, LogoResolver } from '@/composables/defaults/logo';
 
@@ -53,7 +53,10 @@ export interface RuiOptions {
   theme?: InitThemeOptions;
   defaults?: {
     table?: Partial<TableOptions>;
-    /** `labelPlacement` for every text field, text area, select and picker; `top` when unset. */
+    /**
+     * `labelPlacement` for every text field, text area, select and picker (`top` when unset),
+     * and `details` for every form control (`reserve` when unset).
+     */
     field?: Partial<FieldOptions>;
   };
   /**

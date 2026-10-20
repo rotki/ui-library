@@ -70,7 +70,7 @@ export interface RuiCategoryPickerProps<TValue, TItem> {
   successMessages?: string | string[];
   /** Hint rendered under the trigger field. */
   hint?: string;
-  /** The line under the trigger field for its hint and messages: `reserve` (default), `auto` or `hidden`. */
+  /** The line under the trigger field for its hint and messages: `reserve`, `auto` or `hidden`; falls back to the nearest `RuiFieldDefaults`, then the app default, then `reserve`. */
   details?: FormDetails;
   /** @deprecated Use `details="hidden"`. Removed in 4.0. */
   hideDetails?: boolean;

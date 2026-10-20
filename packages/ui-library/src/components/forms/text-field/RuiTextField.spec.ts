@@ -100,6 +100,41 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
     own.unmount();
   });
 
+  it('should take details from its own prop, then the nearest RuiFieldDefaults, then the app default', () => {
+    const app = { labelPlacement: 'top' as const, details: 'hidden' as const };
+    const field = (props: Record<string, unknown> = {}): ReturnType<typeof h> => h(RuiTextField, { label: 'Field', modelValue: '', ...props });
+    const mountIn = (slot: () => ReturnType<typeof h>, props: Record<string, unknown> = {}): VueWrapper => mount(RuiFieldDefaults, {
+      props,
+      slots: { default: slot },
+      global: { stubs: ['rui-icon'], provide: { [FieldSymbol]: app } },
+    });
+
+    wrapper = mount(RuiTextField, {
+      props: { label: 'Field', modelValue: '' },
+      global: { stubs: ['rui-icon'], provide: { [FieldSymbol]: app } },
+    });
+    expect(wrapper.find('.details').exists()).toBeFalsy();
+    wrapper.unmount();
+
+    const scoped = mountIn(() => field(), { details: 'auto' });
+    expect(scoped.find('.details').attributes('data-details')).toBe('auto');
+    scoped.unmount();
+
+    const own = mountIn(() => field({ details: 'reserve' }), { details: 'auto' });
+    expect(own.find('.details').attributes('data-details')).toBe('reserve');
+    own.unmount();
+
+    const deprecated = mountIn(() => field({ hideDetails: true }), { details: 'auto' });
+    expect(deprecated.find('.details').exists()).toBeFalsy();
+    deprecated.unmount();
+
+    // an inner scope that sets only the placement keeps the outer scope's details
+    const nested = mountIn(() => h(RuiFieldDefaults, { labelPlacement: 'hidden' }, () => field()), { details: 'auto' });
+    expect(nested.find('.details').attributes('data-details')).toBe('auto');
+    expect(nested.find('[data-id=field-label]').classes()).toContain('sr-only');
+    nested.unmount();
+  });
+
   it('should pass disabled props', async () => {
     wrapper = createWrapper({
       props: {

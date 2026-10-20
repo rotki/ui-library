@@ -37,7 +37,7 @@ export interface FileUploadProps {
   clickToUploadText?: string;
   /** Label shown on the inline button when one or more files are already selected. */
   replaceText?: string;
-  /** The line under the dropzone for its hint and errors: `reserve` (default), `auto` or `hidden`. */
+  /** The line under the dropzone for its hint and errors: `reserve`, `auto` or `hidden`; falls back to the nearest `RuiFieldDefaults`, then the app default, then `reserve`. */
   details?: FormDetails;
   /** @deprecated Use `details="hidden"`. Removed in 4.0. */
   hideDetails?: boolean;

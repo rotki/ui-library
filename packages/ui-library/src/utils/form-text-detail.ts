@@ -1,4 +1,5 @@
 import type { ComputedRef, MaybeRefOrGetter } from 'vue';
+import { useInheritedDetails } from '@/composables/defaults/field';
 
 export type ValidationState = 'error' | 'success' | undefined;
 
@@ -14,13 +15,15 @@ export type FormDetails = 'reserve' | 'auto' | 'hidden';
 
 /**
  * The details mode a control uses: `hidden` while the deprecated `hideDetails` is set,
- * otherwise its `details` prop, otherwise `reserve`.
+ * otherwise its `details` prop, then the nearest `RuiFieldDefaults` scope, then the app
+ * default, then `reserve`.
  */
 export function useFormDetails(
   details: MaybeRefOrGetter<FormDetails | undefined>,
   hideDetails: MaybeRefOrGetter<boolean>,
 ): ComputedRef<FormDetails> {
-  return computed<FormDetails>(() => (toValue(hideDetails) ? 'hidden' : toValue(details) ?? 'reserve'));
+  const inherited = useInheritedDetails();
+  return computed<FormDetails>(() => (toValue(hideDetails) ? 'hidden' : toValue(details) ?? inherited() ?? 'reserve'));
 }
 
 export interface FormTextDetailReturn {
