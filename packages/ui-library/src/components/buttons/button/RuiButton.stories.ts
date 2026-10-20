@@ -38,7 +38,7 @@ const meta = preview.meta({
     type: { control: 'select', options: ['button', 'submit'] },
     variant: {
       control: 'select',
-      options: ['default', 'outlined', 'text', 'fab', 'list'],
+      options: ['default', 'outlined', 'text', 'fab', 'list', 'link'],
       table: { category: 'Shape' },
     },
   },
@@ -429,6 +429,42 @@ export const List = meta.story({
           <RuiButton variant="list" disabled>Admin</RuiButton>
         </div>`,
     };
+  },
+});
+
+/**
+ * `link` is an action inside running text: no padding or box, the font size and line height of the
+ * text around it, and an underline on hover. Icons scale with the text. Pass `color` for a link
+ * colour; unset, it draws in body text. For an icon-only action use `variant="text" icon`.
+ */
+export const Link = meta.story({
+  render() {
+    return {
+      components: { RuiButton, RuiIcon },
+      template: `
+        <div class="flex flex-col gap-3 max-w-xl text-rui-text">
+          <p class="text-sm">
+            Your API key is missing. <RuiButton variant="link" color="primary">Add it in settings</RuiButton> to sync balances.
+          </p>
+          <p class="text-body-1">
+            Snapshot taken 3 days ago.
+            <RuiButton variant="link" color="warning">
+              Take a new one
+              <template #append><RuiIcon name="lu-refresh-ccw" /></template>
+            </RuiButton>
+          </p>
+          <p class="text-caption text-rui-text-secondary">
+            Learn more <RuiButton variant="link">in the guide</RuiButton>, or
+            <RuiButton variant="link" color="primary" disabled>contact support</RuiButton>.
+          </p>
+        </div>`,
+    };
+  },
+  async play({ canvas }) {
+    const link = canvas.getByRole('button', { name: 'Add it in settings' });
+    await expect(getComputedStyle(link).paddingLeft).toBe('0px');
+    await expect(getComputedStyle(link).fontSize).toBe(getComputedStyle(link.parentElement!).fontSize);
+    await expect(canvas.getByRole('button', { name: 'contact support' })).toBeDisabled();
   },
 });
 

@@ -61,6 +61,8 @@ export const buttonStyles = tv({
       fab: { root: 'rounded-full py-2 shadow-rui-control disabled:shadow-none' },
       // The label's 16px line-box matches the md icon box, so the two share an optical center (rotki/ui-library#515)
       list: { root: 'p-3 px-3 rounded-rui-sm w-full justify-start text-left', label: 'w-full leading-4' },
+      // An action inside running text: no box, so its size, padding and fills are reset in the link compounds at the end
+      link: { root: 'inline-flex align-baseline gap-x-1 underline-offset-2 not-disabled:hover:underline' },
     },
     size: {
       'xs': { root: 'px-2 py-[0.125rem] text-[.75rem] leading-4 ![--rui-icon-size:0.75rem]' },
@@ -115,7 +117,7 @@ export const buttonStyles = tv({
     // Disabled appearance: a flat neutral fill, skipped while loading so the variant color shows behind the spinner
     { loading: false, class: { root: 'disabled:!bg-rui-neutral-100 dark:disabled:!bg-rui-neutral-800 disabled:!text-rui-text-disabled disabled:active:!text-rui-text-disabled' } },
     { loading: false, variant: 'outlined', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent disabled:inset-ring-rui-text-disabled dark:disabled:inset-ring-rui-text-disabled' } },
-    { loading: false, variant: 'text', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent' } },
+    { loading: false, variant: ['text', 'link'], class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent' } },
     { loading: false, variant: 'list', class: { root: 'disabled:!bg-transparent dark:disabled:!bg-transparent disabled:active:!bg-transparent' } },
 
     // === Grey color variants ===
@@ -180,6 +182,30 @@ export const buttonStyles = tv({
     { icon: true, size: 'xl', class: { root: 'p-2 ![--rui-icon-size:1.5rem]' } },
     { icon: true, size: '2xl', class: { root: 'p-2 ![--rui-icon-size:1.75rem]' } },
     { variant: 'fab', icon: true, size: 'sm', class: { root: 'px-2 py-2' } },
+
+    /*
+     * === Link ===
+     * Last, so they win over the size, colour and active entries above. The font size and line height
+     * come from the surrounding text and the icons follow it; a size only changes the spinner. The
+     * colour is the text tone of the outlined/text compounds, with no fill or tint in any state.
+     */
+    {
+      variant: 'link',
+      class: {
+        root: [
+          'p-0 text-[length:inherit] leading-[inherit] ![--rui-icon-size:1em]',
+          'bg-transparent hover:bg-transparent active:bg-transparent',
+          'dark:bg-transparent dark:hover:bg-transparent dark:active:bg-transparent',
+        ].join(' '),
+      },
+    },
+    { color: 'grey', variant: 'link', class: { root: 'text-rui-text dark:text-rui-text' } },
+    { color: 'primary', variant: 'link', class: { root: 'text-rui-primary dark:text-rui-primary-lighter' } },
+    { color: 'secondary', variant: 'link', class: { root: 'text-rui-secondary dark:text-rui-secondary-lighter' } },
+    { color: 'error', variant: 'link', class: { root: 'text-rui-error dark:text-rui-error-lighter' } },
+    { color: 'warning', variant: 'link', class: { root: 'text-rui-warning dark:text-rui-warning' } },
+    { color: 'info', variant: 'link', class: { root: 'text-rui-info dark:text-rui-info' } },
+    { color: 'success', variant: 'link', class: { root: 'text-rui-success dark:text-rui-success' } },
   ],
   compoundSlots: [
     // In dark a status color's `main` is a text tone, so a filled status button takes the deep `darker` fill

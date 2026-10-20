@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import ButtonGroups from '@/components/buttons/ButtonGroups.vue';
+import LinkButtons from '@/components/buttons/LinkButtons.vue';
 import ListButtons from '@/components/buttons/ListButtons.vue';
 import MultiToggleButtonGroups from '@/components/buttons/MultiToggleButtonGroups.vue';
 import SingleButtons from '@/components/buttons/SingleButtons.vue';
@@ -16,6 +17,7 @@ import ComponentView from '@/components/ComponentView.vue';
 
     <SingleButtons />
     <ListButtons />
+    <LinkButtons />
     <ButtonGroups />
     <SplitButtonGroups />
     <ToggleButtonGroups />

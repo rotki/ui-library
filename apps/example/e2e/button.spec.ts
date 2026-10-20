@@ -65,4 +65,27 @@ test.describe('buttons', () => {
     const iconCenter = iconBox!.y + iconBox!.height / 2;
     expect(Math.abs(labelCenter - iconCenter)).toBeLessThanOrEqual(1);
   });
+
+  test('a link button takes the size of the text around it and keeps the line height', async ({ page }) => {
+    for (const textSize of ['text-caption', 'text-sm', 'text-body-1', 'text-h6']) {
+      const paragraph = page.getByTestId(`link-text-${textSize}`);
+      const link = page.getByTestId(`link-button-${textSize}`);
+      const fontSize = await paragraph.evaluate(el => getComputedStyle(el).fontSize);
+
+      await expect(link).toHaveCSS('font-size', fontSize);
+      await expect(link).toHaveCSS('padding', '0px');
+      await expect(link).toHaveCSS('display', 'inline-flex');
+      await expect(link.locator('svg')).toHaveCSS('width', fontSize);
+
+      // the link sits in the line, so the paragraph stays one line tall
+      const lineHeight = await paragraph.evaluate(el => Number.parseFloat(getComputedStyle(el).lineHeight));
+      const box = await paragraph.boundingBox();
+      expect(box!.height).toBeLessThanOrEqual(lineHeight + 1);
+    }
+
+    const link = page.getByTestId('link-button-text-sm');
+    await expect(link).toHaveCSS('text-decoration-line', 'none');
+    await link.hover();
+    await expect(link).toHaveCSS('text-decoration-line', 'underline');
+  });
 });

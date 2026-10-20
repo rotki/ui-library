@@ -109,6 +109,35 @@ describe('components/buttons/button/RuiButton.vue', () => {
     expect(classes()).toContain('dark:text-rui-text');
   });
 
+  it('should draw a link as inline text that takes its size from the surrounding text', async () => {
+    wrapper = createWrapper({ props: { variant: 'link', color: 'primary', size: 'sm' }, slots: { default: () => 'Open' } });
+    const classes = (): string[] => wrapper.find('button').classes();
+
+    expect(wrapper.attributes('data-variant')).toBe('link');
+    expect(classes()).toEqual(expect.arrayContaining([
+      'inline-flex',
+      'p-0',
+      'text-[length:inherit]',
+      'leading-[inherit]',
+      '![--rui-icon-size:1em]',
+      'not-disabled:hover:underline',
+      'text-rui-primary',
+      'dark:text-rui-primary-lighter',
+      'bg-transparent',
+    ]));
+    for (const dropped of ['flex', 'px-2.5', 'py-1', 'text-[.8125rem]', 'leading-5', '![--rui-icon-size:0.875rem]', 'bg-rui-primary', 'text-rui-dark-text'])
+      expect(classes()).not.toContain(dropped);
+
+    await wrapper.setProps({ active: true });
+    expect(classes()).not.toContain('bg-rui-primary-darker');
+    expect(classes()).toContain('bg-transparent');
+
+    await wrapper.setProps({ active: false, color: undefined });
+    expect(classes()).toContain('text-rui-text');
+    expect(classes()).not.toContain('bg-rui-neutral-100');
+    expect(classes()).not.toContain('hover:bg-rui-neutral-200');
+  });
+
   it('should pass variant props', async () => {
     wrapper = createWrapper();
     expect(wrapper.attributes('data-variant')).toBe('default');

@@ -4,6 +4,7 @@ export const ButtonVariant = {
   text: 'text',
   fab: 'fab',
   list: 'list',
+  link: 'link',
 } as const;
 
 export type ButtonVariant = (typeof ButtonVariant)[keyof typeof ButtonVariant];
