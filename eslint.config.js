@@ -48,6 +48,8 @@ export default rotki({
   rotki: {
     overrides: {
       '@rotki/consistent-ref-type-annotation': 'off',
+      // a comment beside a template's root makes the component a fragment in development, which drops the class a parent passes; on here until @rotki/eslint-config enables it
+      '@rotki/no-template-root-comment': 'error',
     },
   },
 }, {
