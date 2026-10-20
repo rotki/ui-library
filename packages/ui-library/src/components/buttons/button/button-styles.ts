@@ -125,7 +125,8 @@ export const buttonStyles = tv({
     { color: 'grey', variant: ['outlined', 'text', 'list'], active: true, class: { root: 'bg-rui-pressed dark:bg-rui-pressed' } },
     // the shared control edge, 3:1 against the page like the 50% context colours beside it
     { color: 'grey', variant: 'outlined', class: { root: 'inset-ring-rui-outline' } },
-    { color: 'grey', variant: 'text', class: { root: 'text-rui-text-secondary' } },
+    // the dark variant overrides the shared compound's `dark:text-rui-text`, so a grey text button stays secondary in both themes
+    { color: 'grey', variant: 'text', class: { root: 'text-rui-text-secondary dark:text-rui-text-secondary' } },
 
     // `dark:text-rui-<color>` beats the filled buttons' `dark:text-rui-text`; primary, secondary and error use their lighter tone in dark for 4.5:1
     { color: 'primary', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-primary/6 active:bg-rui-primary/10 text-rui-primary dark:text-rui-primary-lighter' } },

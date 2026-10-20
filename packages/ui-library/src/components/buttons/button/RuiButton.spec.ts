@@ -94,6 +94,21 @@ describe('components/buttons/button/RuiButton.vue', () => {
     expectWrapperToHaveClass(wrapper, 'button', /bg-rui-success/);
   });
 
+  it('should keep a grey text button secondary in dark mode, and outlined and list grey buttons primary', async () => {
+    wrapper = createWrapper({ props: { color: 'grey', variant: 'text' } });
+    const classes = (): string[] => wrapper.find('button').classes();
+    expect(classes()).toContain('text-rui-text-secondary');
+    expect(classes()).toContain('dark:text-rui-text-secondary');
+    expect(classes()).not.toContain('dark:text-rui-text');
+
+    await wrapper.setProps({ variant: 'outlined' });
+    expect(classes()).toContain('dark:text-rui-text');
+    expect(classes()).not.toContain('text-rui-text-secondary');
+
+    await wrapper.setProps({ variant: 'list' });
+    expect(classes()).toContain('dark:text-rui-text');
+  });
+
   it('should pass variant props', async () => {
     wrapper = createWrapper();
     expect(wrapper.attributes('data-variant')).toBe('default');
