@@ -127,8 +127,8 @@ const tableHeadStyles = tv({
     columnText: 'text-rui-text-secondary font-medium text-[0.8125rem] leading-5',
     // the negative margin cancels the button's own padding so the label lines up with the cells below
     sortButton: 'inline-flex group/sort -mx-1.5',
-    // a faint resting icon marks sortable columns for keyboard and touch users
-    sortIcon: 'transition opacity-30 group-hover/sort:opacity-60 group-focus-visible/sort:opacity-60',
+    // a resting icon marks sortable columns for keyboard and touch users, at 3:1 on a nested table's darker header
+    sortIcon: 'transition opacity-75 group-hover/sort:opacity-100 group-focus-visible/sort:opacity-100',
     // tucked against the arrow, closer than the button's gap
     sortPosition: 'text-[0.6875rem] leading-none font-semibold tabular-nums text-rui-text-secondary',
     /*

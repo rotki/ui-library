@@ -13,8 +13,15 @@ const NESTED_BAND = '[[data-id=row-expanded]_&]:bg-rui-neutral-950/[0.11] dark:[
  * Header and pagination of a nested table, stepped by depth to stand off the band around them (about
  * 1.12:1 or more) as well as their own rows: past the lighter band one panel deep, short of the darker
  * band two deep. Nested bars never stick, so the tint can be translucent over the table's own surface.
+ * The dark tint stops where the secondary labels on it still reach 4.5:1.
  */
-export const NESTED_BAR = '[[data-id=row-expanded]_&]:bg-rui-neutral-950/[0.13] dark:[[data-id=row-expanded]_&]:bg-white/[0.16] [[data-id=row-expanded]_[data-id=row-expanded]_&]:bg-rui-neutral-950/[0.06] dark:[[data-id=row-expanded]_[data-id=row-expanded]_&]:bg-white/[0.07]';
+export const NESTED_BAR = '[[data-id=row-expanded]_&]:bg-rui-neutral-950/[0.13] dark:[[data-id=row-expanded]_&]:bg-white/[0.13] [[data-id=row-expanded]_[data-id=row-expanded]_&]:bg-rui-neutral-950/[0.06] dark:[[data-id=row-expanded]_[data-id=row-expanded]_&]:bg-white/[0.07]';
+
+/**
+ * The outline of a nested table, firm enough to hold its edge on the band around it. The translucent
+ * divider is clipped off the table's own surface, so it tints the band and not the white beneath it.
+ */
+const NESTED_EDGE = '[[data-id=row-expanded]_&]:bg-clip-padding [[data-id=row-expanded]_&]:border-rui-neutral-950/[0.16] dark:[[data-id=row-expanded]_&]:border-white/[0.12]';
 
 export const dataTableStyles = tv({
   slots: {
@@ -40,7 +47,7 @@ export const dataTableStyles = tv({
       true: { pagination: 'sticky bottom-0 z-rui-raised' },
     },
     outlined: {
-      true: { wrapper: 'border border-rui-divider' },
+      true: { wrapper: `border border-rui-divider ${NESTED_EDGE}` },
     },
     rounded: {
       sm: { wrapper: 'rounded-rui-sm' },
