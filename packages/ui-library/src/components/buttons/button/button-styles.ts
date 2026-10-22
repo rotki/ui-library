@@ -150,7 +150,7 @@ export const buttonStyles = tv({
     { color: 'info', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-info/6 active:bg-rui-info/10 text-rui-info dark:text-rui-info' } },
     { color: 'success', variant: ['outlined', 'text', 'list'], class: { root: 'bg-transparent hover:bg-rui-success/6 active:bg-rui-success/10 text-rui-success dark:text-rui-success' } },
 
-    // === Context colors — active default ===
+    // === Context colors: active default ===
     { color: 'primary', active: true, class: { root: 'bg-rui-primary-darker' } },
     { color: 'secondary', active: true, class: { root: 'bg-rui-secondary-darker' } },
     { color: 'error', active: true, class: { root: 'bg-rui-error-darker' } },
@@ -204,9 +204,9 @@ export const buttonStyles = tv({
 
     /*
      * === Link ===
-     * Last, so they win over the size, colour and active entries above. The font size and line height
-     * come from the surrounding text and the icons follow it; a size only changes the spinner. The
-     * colour is the text tone of the outlined/text compounds, with no fill or tint in any state.
+     * Last, so they win over the size, colour and active entries above. Font size and line height
+     * come from the surrounding text; a size only changes the spinner. The colour matches the
+     * outlined/text compounds, with no fill or tint.
      */
     {
       variant: 'link',

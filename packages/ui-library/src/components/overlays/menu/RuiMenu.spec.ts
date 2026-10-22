@@ -158,7 +158,6 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
 
     await vi.runAllTimersAsync();
 
-    menu = queryByRole('menu');
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
 
     await wrapper.setProps({ disabled: true });

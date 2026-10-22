@@ -2734,7 +2734,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
 
       const lastEmittedValue = wrapper.emitted('update:modelValue')?.at(-1)?.[0];
       assert(lastEmittedValue instanceof Date);
-      // the fake clock sits at 10:30:45.500 — none of that may leak in
+      // the fake clock sits at 10:30:45.500; none of that may leak in
       expect(lastEmittedValue.getSeconds()).toBe(0);
       expect(lastEmittedValue.getMilliseconds()).toBe(0);
     });

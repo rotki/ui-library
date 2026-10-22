@@ -191,7 +191,7 @@ const paginationLargeTotalDropdown = ref<TablePaginationData>({
       >
         <h4>Large Total (dropdown forced)</h4>
         <p class="text-sm text-rui-text-secondary">
-          Same total as above but with <code>rangesThreshold = 0</code> — the
+          Same total as above but with <code>rangesThreshold = 0</code>. The
           dropdown stays, so you can confirm the escape hatch works.
         </p>
         <RuiDataTable

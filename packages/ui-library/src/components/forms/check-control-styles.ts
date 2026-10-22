@@ -26,10 +26,9 @@ export const checkControlStyles = tv({
   },
   variants: {
     /*
-     * The message under the label text: indented by the control slot less the wrapper's pull, and
-     * pulled up to 4px under the text. The label drops its bottom margin and the control gives back
-     * as much as the label sits below its top, so the row is as tall as the label at any line count.
-     * The control's lower part then hangs beside the message, never under it.
+     * The message sits 4px under the label, indented by the control slot less the wrapper's pull.
+     * The control gives back the label's top offset, so the row is as tall as the label at any line
+     * count and the control's lower part hangs beside the message, never under it.
      */
     underLabel: {
       true: { label: 'mb-0', control: '-mb-[0.5625rem]', details: 'pl-8.25' },

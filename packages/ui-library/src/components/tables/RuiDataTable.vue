@@ -459,7 +459,7 @@ const showMobileSort = computed<boolean>(() =>
 
 const ITEM_SLOT_PREFIX = 'item.';
 
-// Slot keys are static for the component lifetime — no reactivity needed
+// Slot keys are static for the component lifetime, so no reactivity is needed
 const itemSlotKeys: Set<string> = new Set(
   Object.keys(slots)
     .filter((key): key is `item.${string}` => key.startsWith(ITEM_SLOT_PREFIX))
@@ -537,7 +537,7 @@ const classes = computed<DataTableClasses>(() => {
 });
 
 provideDataTableContext<T, IdType>({
-  // Reactive (ComputedRef/Ref) — destructuring preserves reactivity via Vue template auto-unwrap
+  // Reactive (ComputedRef/Ref): destructuring preserves reactivity via Vue template auto-unwrap
   classes,
   columns,
   colspan,

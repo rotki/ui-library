@@ -148,7 +148,7 @@ export const PersistentMenu = meta.story({
     await userEvent.click(activator);
     const body = within(document.body);
     await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
-    // Simulate click outside — persistent menu should stay open
+    // Simulate click outside: the persistent menu should stay open
     document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
     await expect(body.getByRole('menu')).toBeVisible();
     // Close via activator toggle

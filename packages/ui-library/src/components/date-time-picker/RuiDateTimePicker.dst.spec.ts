@@ -42,7 +42,7 @@ function createWrapper(
   });
 }
 
-describe('components/date-time-picker/RuiDateTimePicker.vue — DST', () => {
+describe('components/date-time-picker/RuiDateTimePicker.vue (DST)', () => {
   let wrapper: VueWrapper<InstanceType<typeof RuiDateTimePicker>>;
 
   vi.useFakeTimers();

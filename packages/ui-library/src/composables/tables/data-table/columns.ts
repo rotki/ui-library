@@ -98,7 +98,7 @@ export function useTableColumns<T extends object, IdType extends keyof T>(
     return columnLength;
   });
 
-  // Slot keys are static for the component lifetime — no reactivity needed
+  // Slot keys are static for the component lifetime, so no reactivity is needed
   const headerSlots: `header.${string}`[] = Object.keys(slots).filter(isHeaderSlot);
 
   function cellValue(row: T, key: TableColumn<T>['key']): T[TableRowKey<T>] {

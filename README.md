@@ -188,7 +188,7 @@ app.use(RuiPlugin);
 #### App-provided (brand/custom) icons
 
 The library ships general-purpose icons only. Brand and logo icons (social,
-company, product marks) are intentionally **not** included — they are
+company, product marks) are intentionally **not** included: they are
 third-party trademarks with their own usage rules, so they belong in the
 application, not in the shared design system.
 
@@ -196,12 +196,12 @@ To use one, register its data yourself and tell the plugin the name is
 app-provided so it is not reported as an unknown icon:
 
 ```typescript
-// vite.config.ts — mark app-provided names as valid (not shipped by the library)
+// vite.config.ts: mark app-provided names as valid (not shipped by the library)
 ruiIconsPlugin({ customIcons: ['lu-example-logo'] });
 ```
 
 ```typescript
-// main.ts — supply the actual SVG data alongside the auto-detected icons
+// main.ts: supply the actual SVG data alongside the auto-detected icons
 import icons from 'virtual:rotki-icons';
 
 const exampleLogo = {
@@ -473,7 +473,7 @@ We use [Lucide](https://lucide.dev/) icons as the base icon set. `src/custom-ico
 
 A custom SVG must use `viewBox="0 0 24 24"` and put everything on its primitives (`path`, `rect`, `circle`, ...): the generator rejects a `transform`, attributes on a `<g>`, and paint on the `<svg>` other than `fill="none"` / `stroke="currentColor"`. It drops `stroke-width`, `stroke-linecap` and `stroke-linejoin`, which `RuiIcon` sets, and turns any colour into `currentColor`. Icons are outlined by default; give a solid shape `fill="currentColor" stroke="none"`. The `CustomIcons` story in Storybook shows every custom icon beside its Lucide neighbour.
 
-The generator (`scripts/generate-icons.ts`) reads each Lucide icon's pre-parsed component data and the parsed XML of every SVG in `src/custom-icons/`, and emits one `[tag, attrs]` tuple per renderable primitive into `src/icons/icons_*.ts`. Multi-path icons stay as multiple entries — they are not collapsed into a single concatenated path. The generated files are gitignored and rebuilt by the `build` script; run the command below if you need to regenerate them by hand.
+The generator (`scripts/generate-icons.ts`) reads each Lucide icon's pre-parsed component data and the parsed XML of every SVG in `src/custom-icons/`, and emits one `[tag, attrs]` tuple per renderable primitive into `src/icons/icons_*.ts`. Multi-path icons stay as multiple entries; they are not collapsed into a single concatenated path. The generated files are gitignored and rebuilt by the `build` script; run the command below if you need to regenerate them by hand.
 
 ```
 pnpm run generate-icons

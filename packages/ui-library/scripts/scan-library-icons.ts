@@ -9,7 +9,7 @@ const root = resolve(import.meta.dirname, '..');
 const dist = resolve(root, 'dist');
 
 if (!existsSync(dist)) {
-  consola.error(`dist/ not found at ${dist} — run the main build first`);
+  consola.error(`dist/ not found at ${dist}: run the main build first`);
   process.exit(1);
 }
 

@@ -315,7 +315,7 @@ export const ConsumerIconSizeOverride = meta.story({
     docs: {
       description: {
         story:
-          'A `size` prop on `<RuiIcon>` overrides the button-driven glyph size. The icon stamps `style="--rui-icon-size: <n>px"` on its own svg, which beats the value inherited from the button (inline style wins over any inherited custom property, including ones flagged `!important` on an ancestor). This is the case from rotki/ui-library#512 — before the fix, the library\'s `!w-X` descendant rule always won and the `size` prop was a no-op inside any button. For inline "tiny button" cases (copy buttons, badge actions), reach for `size="xs"` first; use the icon-level override only when you specifically need a non-default ratio inside a given button size.',
+          'A `size` prop on `<RuiIcon>` overrides the button-driven glyph size. The icon stamps `style="--rui-icon-size: <n>px"` on its own svg, which beats the value inherited from the button (inline style wins over any inherited custom property, including ones flagged `!important` on an ancestor). This is the case from rotki/ui-library#512. Before the fix, the library\'s `!w-X` descendant rule always won and the `size` prop was a no-op inside any button. For inline "tiny button" cases (copy buttons, badge actions), reach for `size="xs"` first; use the icon-level override only when you specifically need a non-default ratio inside a given button size.',
       },
     },
   },
@@ -330,7 +330,7 @@ export const ConsumerIconSizeOverride = meta.story({
           <RuiButton v-bind="args" icon size="xs" aria-label="xs icon-only copy">
             <RuiIcon name="lu-copy" />
           </RuiButton>
-          <span class="text-rui-text-secondary text-sm">xs icon-only (20px box, 14px glyph) — preferred for inline copy / badge actions instead of overriding the glyph inside a larger button.</span>
+          <span class="text-rui-text-secondary text-sm">xs icon-only (20px box, 14px glyph), preferred for inline copy / badge actions instead of overriding the glyph inside a larger button.</span>
         </div>
         <div class="flex items-center gap-4">
           <RuiButton v-bind="args" icon size="sm" aria-label="default sm icon-only">
@@ -339,7 +339,7 @@ export const ConsumerIconSizeOverride = meta.story({
           <RuiButton v-bind="args" icon size="sm" aria-label="overridden sm icon-only">
             <RuiIcon name="lu-copy" :size="14" />
           </RuiButton>
-          <span class="text-rui-text-secondary text-sm">sm icon-only button — default 20px glyph vs. consumer-forced 14px</span>
+          <span class="text-rui-text-secondary text-sm">sm icon-only button: default 20px glyph vs. consumer-forced 14px</span>
         </div>
         <div class="flex items-center gap-4">
           <RuiButton v-bind="args" size="lg">
@@ -369,7 +369,7 @@ export const ListVariantWithIcons = meta.story({
     docs: {
       description: {
         story:
-          'List-variant buttons (used inside menus) keep the same icon-size contract as every other variant: the glyph scales in lockstep with the button `size`, and a consumer-supplied `size` on `<RuiIcon>` still wins. Use this story as the visual baseline for text-baseline alignment against the icon — rows should center cleanly without clipping or drift.',
+          'List-variant buttons (used inside menus) keep the same icon-size contract as every other variant: the glyph scales in lockstep with the button `size`, and a consumer-supplied `size` on `<RuiIcon>` still wins. Use this story as the visual baseline for text-baseline alignment against the icon. Rows should center cleanly without clipping or drift.',
       },
     },
   },

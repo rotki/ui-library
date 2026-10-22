@@ -55,29 +55,16 @@ const checker = createChecker(
  */
 const components = [];
 
-/**
- * The list of tag names to ignore generating web types for.
- */
-const excludeComponents = [];
-
 const componentFiles = fg.sync('src/components/**/*.vue', {
   cwd: path.resolve(__dirname, '..'),
   absolute: true,
 });
 
-const componentMeta = componentFiles.filter(file => !excludeComponents.some(tag => file.includes(tag)))
-  .map(file => ({
-    path: file,
-    tag: path.parse(file).name,
-    meta: checker.getComponentMeta(file),
-  }));
-
-/**
- * The filtered set of components to generate web types for.
- */
-const filteredComponents = componentMeta.filter(
-  c => !excludeComponents.includes(c.tag),
-);
+const componentMeta = componentFiles.map(file => ({
+  path: file,
+  tag: path.parse(file).name,
+  meta: checker.getComponentMeta(file),
+}));
 
 const contextColors = [
   'primary',
@@ -90,7 +77,7 @@ const contextColors = [
 
 const colors = contextColors.map(x => `'${x}'`).join(' | ');
 
-for (const component of filteredComponents) {
+for (const component of componentMeta) {
   consola.debug(`processing component ${component.tag}`);
   const attributes = [];
   const slots = [];

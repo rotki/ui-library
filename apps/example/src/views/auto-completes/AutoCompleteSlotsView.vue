@@ -12,7 +12,7 @@ const combinedValue = ref<number>();
 <template>
   <div data-id="auto-completes-slots">
     <h2 class="text-2xl font-bold mb-6">
-      Custom Slots — Placeholder &amp; Footer
+      Custom Slots: Placeholder &amp; Footer
     </h2>
 
     <div class="grid gap-6 grid-cols-2">

@@ -41,7 +41,7 @@ for await (const file of walk(DIST)) {
 if (offenders.length > 0) {
   console.error('\n❌ dist verification failed: pnpm-internal paths leaked into shipped code.\n');
   console.error('This means a runtime dependency was bundled instead of externalized.');
-  console.error('Add it to `dependencies` (or `peerDependencies`) in package.json — the');
+  console.error('Add it to `dependencies` (or `peerDependencies`) in package.json; the');
   console.error('rolldown `external` function picks those up automatically.\n');
   for (const { file, marker } of offenders)
     console.error(`  • dist/${file}  →  contains "${marker}"`);

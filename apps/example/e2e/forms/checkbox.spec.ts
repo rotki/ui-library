@@ -36,11 +36,11 @@ test.describe('forms/Checkbox', () => {
     // Initial: apples + oranges checked
     await expect(hint).toContainText('Selected: apples, oranges');
 
-    // Click third option (grapes) — adds to selection
+    // Click third option (grapes), which adds it to selection
     await firstGroup.locator('label').nth(2).click();
     await expect(hint).toContainText('grapes');
 
-    // Click first (apples) — removes from selection
+    // Click first (apples), which removes it from selection
     await firstGroup.locator('label').nth(0).click();
     await expect(hint).not.toContainText('apples');
   });

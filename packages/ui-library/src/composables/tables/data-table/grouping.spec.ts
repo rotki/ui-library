@@ -397,7 +397,7 @@ describe('composables/tables/data-table/grouping', () => {
     unmount = u;
 
     const groups = get(result.mappedGroups);
-    // Two distinct group keys — no collision between { name: 'foo', title: undefined } and { name: undefined, title: 'foo' }
+    // Two distinct group keys: no collision between { name: 'foo', title: undefined } and { name: undefined, title: 'foo' }
     expect(Object.keys(groups)).toHaveLength(2);
 
     const grouped = get(result.grouped);
@@ -439,7 +439,7 @@ describe('composables/tables/data-table/grouping', () => {
     expect(result.isExpandedGroup({ category: 'A', status: 'inactive' })).toBe(true);
     expect(result.isExpandedGroup({ category: 'B', status: 'active' })).toBe(true);
 
-    // Collapse the A+active group — find its key from the grouped output
+    // Collapse the A+active group, finding its key from the grouped output
     const grouped = get(result.grouped);
     const aActiveHeader = grouped.find(
       item => GROUP_HEADER_BRAND in item && 'identifier' in item,

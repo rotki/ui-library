@@ -10,10 +10,9 @@ const chromiumPath = process.env.PLAYWRIGHT_CHROMIUM_PATH;
 const isCI = process.env.CI === 'true';
 
 /*
- * `test.env` is applied inside the worker, which is too late for a `vmThreads` V8 context: the
- * context builds its `Date` from the timezone the process started with, so a spec pinning the
- * clock reads host-local hours and drifts by the local offset. Setting it here, on the parent,
- * means every worker inherits it before its context exists. `test.env` keeps it for the runtime.
+ * `test.env` applies inside the worker, too late for a `vmThreads` V8 context, which builds its
+ * `Date` from the timezone the process started with; a spec pinning the clock would drift by the
+ * local offset. Set on the parent, every worker inherits it. `test.env` still covers the runtime.
  */
 process.env.TZ = 'UTC';
 
@@ -48,10 +47,9 @@ const vitestConfig = defineConfig({
           globals: true,
           environment: 'happy-dom',
           /*
-           * `vmThreads` builds the happy-dom environment once per worker rather than once per
-           * file, which is where a quarter of the run went. `vmMemoryLimit` is not optional with
-           * it: the pool does not reclaim contexts reliably, and it is a top-level option rather
-           * than a `poolOptions` one, so a misplaced key silently does nothing.
+           * `vmThreads` builds happy-dom once per worker rather than per file, saving a quarter
+           * of the run. `vmMemoryLimit` is required with it, since the pool does not reclaim
+           * contexts reliably, and it is a top-level option: under `poolOptions` it does nothing.
            */
           pool: 'vmThreads',
           vmMemoryLimit: '512MB',

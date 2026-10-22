@@ -729,7 +729,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
       },
     });
 
-    // Open the menu — autoSelectFirst will highlight the first option.
+    // Open the menu; autoSelectFirst will highlight the first option.
     const activator = wrapper.find('div[data-id="activator"]');
     await activator.trigger('focus');
     await activator.trigger('click');

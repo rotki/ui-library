@@ -139,7 +139,7 @@ const chipStyles = tv({
     // Outlined: the border is the text color at 40%, so it follows the brighter text tone in dark
     { variant: 'outlined', class: { root: 'border border-current/40 bg-transparent' } },
 
-    // Context colors — filled bg
+    // Context colors: filled bg
     { color: 'primary', variant: 'filled', class: { root: 'bg-rui-primary' } },
     { color: 'secondary', variant: 'filled', class: { root: 'bg-rui-secondary' } },
     // in dark a status color's `main` is a text tone, so the fill is its deep `darker`

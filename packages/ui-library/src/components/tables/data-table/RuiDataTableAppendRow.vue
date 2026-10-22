@@ -11,9 +11,9 @@ defineSlots<{
 }>();
 
 /*
- * The cell drops the row height floor and the top padding: it reads as the end of the row above.
- * Its content scrolls sideways with the row, unlike the expanded panel, which stays in view: a
- * follow-up is part of the row, so its text keeps its place under the row's columns.
+ * No row height floor or top padding: the cell reads as the end of the row above. Unlike the
+ * expanded panel, which stays in view, its content scrolls sideways with the row, keeping its
+ * text under the row's columns.
  */
 const { classes, colspan } = useDataTableStyling();
 </script>

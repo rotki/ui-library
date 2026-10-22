@@ -27,10 +27,9 @@ export default defineConfig({
   expect: {
     timeout: 5000,
     /*
-     * Any color change counts: the default per-pixel tolerance (0.2) lets a whole palette shift
-     * through, such as gray turning zinc, which moves thousands of pixels by a level or two. Even
-     * in the pinned image a run can still differ from the last by a few dozen anti-aliased pixels,
-     * so a shot may differ in up to 64 pixels.
+     * Any color change counts: the default per-pixel tolerance (0.2) lets a palette shift such as
+     * gray turning zinc pass, since it moves thousands of pixels by a level or two. Runs on the
+     * pinned image still differ by a few dozen anti-aliased pixels, hence the 64.
      */
     toHaveScreenshot: { threshold: 0, maxDiffPixels: 64 },
   },

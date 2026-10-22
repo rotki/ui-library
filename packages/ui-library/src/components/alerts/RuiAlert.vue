@@ -67,10 +67,9 @@ const alertStyles = tv({
       outlined: { root: 'border -m-px bg-transparent' },
     },
     /*
-     * Each type names its color once, as `--rui-alert`, and the variants mix from it. The tints
-     * and shades used to be paused CSS animations behind an `@supports (color-mix())` check that
-     * never matched (it is not a valid condition), so every browser took the animation; mixing
-     * directly gives the same colors without it.
+     * Each type names its color once, as `--rui-alert`, and the variants mix from it. Tints and
+     * shades used to be paused CSS animations behind an `@supports (color-mix())` check that never
+     * matched (not a valid condition); mixing directly gives the same colors without them.
      */
     type: {
       primary: { root: '[--rui-alert:var(--rui-primary-main)]' },

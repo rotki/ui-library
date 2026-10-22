@@ -115,7 +115,7 @@ test.describe('datetimepicker segment typing', () => {
     const input = page.getByRole('textbox').first();
     const offsetX = await input.evaluate((el, args) => {
       if (!(el instanceof HTMLInputElement))
-        throw new Error('expected input element');
+        throw new TypeError('expected input element');
       const style = window.getComputedStyle(el);
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
@@ -152,7 +152,7 @@ test.describe('datetimepicker segment typing', () => {
     await page.getByRole('textbox').first().click();
     await selectSegment(page, 11, 13);
 
-    // Type "1" in HH — does not auto-advance yet (length < 2)
+    // Type "1" in HH: does not auto-advance yet (length < 2)
     await page.keyboard.press('1');
     expect(await readValue(page)).toMatch(/01:20$/);
 

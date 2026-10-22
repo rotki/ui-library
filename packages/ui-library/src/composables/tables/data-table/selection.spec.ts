@@ -417,7 +417,7 @@ describe('composables/tables/data-table/selection', () => {
     );
     unmount = u;
 
-    // Deselect id 2 which is not selected — should be a no-op
+    // Deselect id 2 which is not selected: should be a no-op
     result.onSelect(false, 2, true);
     expect(get(selectedData)).toEqual([1]);
   });

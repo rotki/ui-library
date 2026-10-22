@@ -4,6 +4,26 @@ import { describe, expect, it, vi } from 'vitest';
 import { TimeAccuracy } from '@/consts/time-accuracy';
 import { useKeyboardHandler } from './use-keyboard-handler';
 
+/**
+ * An input event as if dispatched on `target`, which a real dispatch would also run listeners for.
+ */
+function inputEvent(target: EventTarget): Event {
+  const event = new Event('input');
+  Object.defineProperty(event, 'target', { value: target });
+  return event;
+}
+
+/**
+ * A paste event carrying `text` (no clipboard data when `null`), with `preventDefault` spied on.
+ */
+function pasteEvent(text: string | null, target: EventTarget = document.createElement('input')): ClipboardEvent {
+  const event = new ClipboardEvent('paste');
+  Object.defineProperty(event, 'target', { value: target });
+  Object.defineProperty(event, 'clipboardData', { value: text === null ? null : { getData: vi.fn().mockReturnValue(text) } });
+  vi.spyOn(event, 'preventDefault');
+  return event;
+}
+
 function createMockOptions(overrides: Partial<Parameters<typeof useKeyboardHandler>[0]> = {}) {
   const segmentValues: Record<DateTimeSegmentType, number | undefined> = {
     DD: 15,
@@ -315,7 +335,7 @@ describe('use-keyboard-handler', () => {
       // currentValue must be cleared so the next digit doesn't combine with "1"
       expect(currentValue.value).toBeUndefined();
 
-      // Type "3" in mm — should become 3, not 13
+      // Type "3" in mm: should become 3, not 13
       const key3 = new KeyboardEvent('keydown', { key: '3' });
       Object.defineProperty(key3, 'target', { value: mmInput });
       handler.handleKeyDown(key3);
@@ -495,8 +515,7 @@ describe('use-keyboard-handler', () => {
         cursorPosition,
       });
 
-      const event = { target: mockInput } as unknown as Event;
-      handler.handleInputSelection(event);
+      handler.handleInputSelection(inputEvent(mockInput));
 
       expect(cursorPosition.value).toBe(5);
     });
@@ -506,20 +525,12 @@ describe('use-keyboard-handler', () => {
     it('should prevent default and attempt to parse pasted text', () => {
       const { handler } = createMockOptions();
 
-      const clipboardData = {
-        getData: vi.fn().mockReturnValue('25/12/2023 18:45'),
-      };
-
-      const event = {
-        clipboardData,
-        preventDefault: vi.fn(),
-        target: document.createElement('input'),
-      } as unknown as ClipboardEvent;
+      const event = pasteEvent('25/12/2023 18:45');
 
       handler.handlePaste(event);
 
       expect(event.preventDefault).toHaveBeenCalled();
-      expect(clipboardData.getData).toHaveBeenCalledWith('text');
+      expect(event.clipboardData?.getData).toHaveBeenCalledWith('text');
     });
 
     it('should not process paste when disabled', () => {
@@ -527,17 +538,12 @@ describe('use-keyboard-handler', () => {
         disabled: true,
       });
 
-      const preventDefaultMock = vi.fn();
-      const event = {
-        clipboardData: { getData: () => '25/12/2023 18:45' },
-        preventDefault: preventDefaultMock,
-        target: document.createElement('input'),
-      } as unknown as ClipboardEvent;
+      const event = pasteEvent('25/12/2023 18:45');
 
       handler.handlePaste(event);
 
       expect(mockSetValue).not.toHaveBeenCalled();
-      expect(preventDefaultMock).not.toHaveBeenCalled();
+      expect(event.preventDefault).not.toHaveBeenCalled();
     });
 
     it('should not process paste when readonly', () => {
@@ -545,39 +551,20 @@ describe('use-keyboard-handler', () => {
         readonly: true,
       });
 
-      const preventDefaultMock = vi.fn();
-      const event = {
-        clipboardData: { getData: () => '25/12/2023 18:45' },
-        preventDefault: preventDefaultMock,
-        target: document.createElement('input'),
-      } as unknown as ClipboardEvent;
+      const event = pasteEvent('25/12/2023 18:45');
 
       handler.handlePaste(event);
 
       expect(mockSetValue).not.toHaveBeenCalled();
-      expect(preventDefaultMock).not.toHaveBeenCalled();
+      expect(event.preventDefault).not.toHaveBeenCalled();
     });
 
     it('should handle invalid pasted text gracefully', () => {
       const { handler } = createMockOptions();
 
-      const event = {
-        clipboardData: { getData: () => 'invalid date' },
-        preventDefault: vi.fn(),
-        target: document.createElement('input'),
-      } as unknown as ClipboardEvent;
-
       // Should not throw
-      expect(() => handler.handlePaste(event)).not.toThrow();
+      expect(() => handler.handlePaste(pasteEvent('invalid date'))).not.toThrow();
     });
-
-    function pasteEvent(text: string): ClipboardEvent {
-      return {
-        clipboardData: { getData: () => text },
-        preventDefault: vi.fn(),
-        target: document.createElement('input'),
-      } as unknown as ClipboardEvent;
-    }
 
     it('should flag a paste it cannot read and leave the value alone', () => {
       const { handler, mockSetValue } = createMockOptions();
@@ -611,7 +598,7 @@ describe('use-keyboard-handler', () => {
     it.each([
       ['a key', (handler: ReturnType<typeof useKeyboardHandler>) => handler.handleKeyDown(new KeyboardEvent('keydown', { key: 'Shift' }))],
       ['blur', (handler: ReturnType<typeof useKeyboardHandler>) => handler.handleBlur()],
-      ['input', (handler: ReturnType<typeof useKeyboardHandler>) => handler.handleInput({ target: document.createElement('input') } as unknown as Event)],
+      ['input', (handler: ReturnType<typeof useKeyboardHandler>) => handler.handleInput(inputEvent(document.createElement('input')))],
     ])('should drop the flag on %s', (_, act) => {
       const { handler } = createMockOptions();
 
@@ -632,13 +619,7 @@ describe('use-keyboard-handler', () => {
     it('should not process paste without clipboardData', () => {
       const { handler, mockSetValue } = createMockOptions();
 
-      const event = {
-        clipboardData: null,
-        preventDefault: vi.fn(),
-        target: document.createElement('input'),
-      } as unknown as ClipboardEvent;
-
-      handler.handlePaste(event);
+      handler.handlePaste(pasteEvent(null));
 
       expect(mockSetValue).not.toHaveBeenCalled();
     });
@@ -646,13 +627,7 @@ describe('use-keyboard-handler', () => {
     it('should not process paste when target is not HTMLInputElement', () => {
       const { handler, mockSetValue } = createMockOptions();
 
-      const event = {
-        clipboardData: { getData: () => '25/12/2023 18:45' },
-        preventDefault: vi.fn(),
-        target: document.createElement('div'),
-      } as unknown as ClipboardEvent;
-
-      handler.handlePaste(event);
+      handler.handlePaste(pasteEvent('25/12/2023 18:45', document.createElement('div')));
 
       expect(mockSetValue).not.toHaveBeenCalled();
     });
@@ -665,10 +640,8 @@ describe('use-keyboard-handler', () => {
       const mockInput = document.createElement('input');
       mockInput.value = '31/12/2023 23:59';
 
-      const event = { target: mockInput } as unknown as Event;
-
       // Should not throw
-      expect(() => handler.handleInput(event)).not.toThrow();
+      expect(() => handler.handleInput(inputEvent(mockInput))).not.toThrow();
     });
 
     it('should not process input when disabled', () => {
@@ -679,8 +652,7 @@ describe('use-keyboard-handler', () => {
       const mockInput = document.createElement('input');
       mockInput.value = '31/12/2023 23:59';
 
-      const event = { target: mockInput } as unknown as Event;
-      handler.handleInput(event);
+      handler.handleInput(inputEvent(mockInput));
 
       expect(mockSetValue).not.toHaveBeenCalled();
     });
@@ -693,8 +665,7 @@ describe('use-keyboard-handler', () => {
       const mockInput = document.createElement('input');
       mockInput.value = '31/12/2023 23:59';
 
-      const event = { target: mockInput } as unknown as Event;
-      handler.handleInput(event);
+      handler.handleInput(inputEvent(mockInput));
 
       expect(mockSetValue).not.toHaveBeenCalled();
     });
@@ -705,8 +676,7 @@ describe('use-keyboard-handler', () => {
       const mockInput = document.createElement('input');
       mockInput.value = '';
 
-      const event = { target: mockInput } as unknown as Event;
-      handler.handleInput(event);
+      handler.handleInput(inputEvent(mockInput));
 
       expect(mockSetValue).not.toHaveBeenCalled();
     });
@@ -714,8 +684,7 @@ describe('use-keyboard-handler', () => {
     it('should not process input when target is not HTMLInputElement', () => {
       const { handler, mockSetValue } = createMockOptions();
 
-      const event = { target: document.createElement('div') } as unknown as Event;
-      handler.handleInput(event);
+      handler.handleInput(inputEvent(document.createElement('div')));
 
       expect(mockSetValue).not.toHaveBeenCalled();
     });
@@ -812,11 +781,7 @@ describe('use-keyboard-handler', () => {
         dateFormat: ref<string>('DD/MM/YYYY HH:mm:ss'),
       });
 
-      const event = {
-        clipboardData: { getData: vi.fn().mockReturnValue('25/12/2023 18:45:30') },
-        preventDefault: vi.fn(),
-        target: document.createElement('input'),
-      } as unknown as ClipboardEvent;
+      const event = pasteEvent('25/12/2023 18:45:30');
 
       // Should not throw
       expect(() => handler.handlePaste(event)).not.toThrow();
@@ -829,11 +794,7 @@ describe('use-keyboard-handler', () => {
         dateFormat: ref<string>('DD/MM/YYYY HH:mm:ss.SSS'),
       });
 
-      const event = {
-        clipboardData: { getData: vi.fn().mockReturnValue('25/12/2023 18:45:30.123') },
-        preventDefault: vi.fn(),
-        target: document.createElement('input'),
-      } as unknown as ClipboardEvent;
+      const event = pasteEvent('25/12/2023 18:45:30.123');
 
       // Should not throw
       expect(() => handler.handlePaste(event)).not.toThrow();

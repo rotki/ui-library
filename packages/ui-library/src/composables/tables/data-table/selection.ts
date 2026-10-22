@@ -153,6 +153,31 @@ export function useTableSelection<T extends object, IdType extends keyof T>(
       set(selectedData, get(internalSelectedData));
   }
 
+  /**
+   * Checks or unchecks every selectable row from `from` to `to`, updating the selection once.
+   */
+  function selectRange(from: number, to: number, checked: boolean): void {
+    const tableData = get(filtered);
+    const currentSelected = get(internalSelectedData);
+    const rangeIds: T[IdType][] = [];
+    for (let i = from; i <= to; i++) {
+      const currSelectedData = tableData[i];
+      assert(currSelectedData);
+      if (isRow(currSelectedData) && !isDisabledRow(currSelectedData[rowAttr]))
+        rangeIds.push(currSelectedData[rowAttr]);
+    }
+
+    if (checked) {
+      const existing = new Set(currentSelected);
+      const toAdd = rangeIds.filter(id => !existing.has(id));
+      set(internalSelectedData, [...currentSelected, ...toAdd]);
+    }
+    else {
+      const toRemove = new Set(rangeIds);
+      set(internalSelectedData, currentSelected.filter(id => !toRemove.has(id)));
+    }
+  }
+
   function onCheckboxClick(event: MouseEvent, value: T[IdType], index: number): void {
     const currentTarget = event.currentTarget;
     if (!(currentTarget instanceof HTMLElement))
@@ -171,40 +196,16 @@ export function useTableSelection<T extends object, IdType extends keyof T>(
           let lastIndex = get(lastSelectedIndex);
           if (lastIndex === -1)
             lastIndex = index;
-          const tableData = get(filtered);
-          const lastSelectedData = tableData[lastIndex];
+          const lastSelectedData = get(filtered)[lastIndex];
           assert(lastSelectedData);
 
           if (isRow(lastSelectedData)) {
             const valueToApply = isSelected(lastSelectedData[rowAttr]);
 
-            if (lastIndex === index) {
+            if (lastIndex === index)
               onSelect(!valueToApply, value);
-            }
-            else {
-              const from = Math.min(lastIndex, index);
-              const to = Math.max(lastIndex, index);
-
-              // Batch: collect all IDs in range, then update once
-              const currentSelected = get(internalSelectedData);
-              const rangeIds: T[IdType][] = [];
-              for (let i = from; i <= to; i++) {
-                const currSelectedData = tableData[i];
-                assert(currSelectedData);
-                if (isRow(currSelectedData) && !isDisabledRow(currSelectedData[rowAttr]))
-                  rangeIds.push(currSelectedData[rowAttr]);
-              }
-
-              if (valueToApply) {
-                const existing = new Set(currentSelected);
-                const toAdd = rangeIds.filter(id => !existing.has(id));
-                set(internalSelectedData, [...currentSelected, ...toAdd]);
-              }
-              else {
-                const toRemove = new Set(rangeIds);
-                set(internalSelectedData, currentSelected.filter(id => !toRemove.has(id)));
-              }
-            }
+            else
+              selectRange(Math.min(lastIndex, index), Math.max(lastIndex, index), valueToApply);
 
             set(lastSelectedIndex, index);
             set(selectedData, get(internalSelectedData));

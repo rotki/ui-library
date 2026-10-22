@@ -191,7 +191,7 @@ test.describe('menu', () => {
     await settle(page);
     await expect(outerContent).toBeVisible();
 
-    // only its own model closes it — also leaves the page clean for the next test
+    // only its own model closes it; this also leaves the page clean for the next test
     await outerContent.click();
     await expect(page.locator(menuContent)).toHaveCount(0);
   });

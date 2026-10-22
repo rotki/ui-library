@@ -156,7 +156,7 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
     if (tryApplyHighlight(event))
       return true;
 
-    // No options matched but custom values are allowed — accept the typed text.
+    // No options matched but custom values are allowed, so accept the typed text.
     return tryApplyCustom(event, true);
   }
 
