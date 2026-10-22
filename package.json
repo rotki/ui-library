@@ -52,6 +52,8 @@
     "bumpp": "catalog:",
     "eslint": "catalog:",
     "eslint-plugin-better-tailwindcss": "catalog:",
+    "eslint-plugin-slop": "catalog:",
+    "eslint-plugin-sonarjs": "catalog:",
     "eslint-plugin-storybook": "catalog:",
     "eslint-plugin-tsdoc": "catalog:",
     "husky": "catalog:",

@@ -121,6 +121,7 @@ const value = computed<TItem | undefined>({
     const value = get(modelValue);
     if (keyAttr)
       return options.find(option => option[keyAttr] === value);
+    // eslint-disable-next-line slop/no-chained-type-assertions -- without keyAttr the model holds the item itself, which the two generics cannot express
     return value as unknown as TItem;
   },
   set: (selected?: TItem) => {

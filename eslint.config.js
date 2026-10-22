@@ -45,11 +45,11 @@ export default rotki({
   storybook: true,
   test: true,
   regexp: true,
+  slop: true,
+  sonarjs: { cognitiveComplexity: 15 },
   rotki: {
     overrides: {
       '@rotki/consistent-ref-type-annotation': 'off',
-      // a comment beside a template's root makes the component a fragment in development, which drops the class a parent passes; on here until @rotki/eslint-config enables it
-      '@rotki/no-template-root-comment': 'error',
     },
   },
 }, {
@@ -103,9 +103,8 @@ export default rotki({
   /*
    * The package declares no side effects except CSS (`sideEffects` in its
    * package.json), so a consumer's bundler drops any module imported only for
-   * its effect. A bare import is a bug waiting to happen: export what the
-   * module sets up and import that instead. dayjs is the one library that needs
-   * setting up, so it comes from the module that registers its plugins.
+   * its effect. Export what the module sets up and import that instead. dayjs
+   * needs setup, so it comes from the module that registers its plugins.
    */
   files: ['packages/ui-library/src/**/*.{ts,vue}'],
   ignores: ['**/*.spec.ts', '**/*.stories.ts', '**/__test__/**'],
