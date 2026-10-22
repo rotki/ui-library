@@ -73,7 +73,7 @@ const combinedValue = ref<number>();
           <template #placeholder="{ disabled }">
             <span
               class="flex items-center gap-2"
-              :class="disabled ? 'text-rui-text-disabled' : 'text-rui-primary'"
+              :class="disabled ? 'text-rui-text-disabled' : 'text-rui-primary dark:text-rui-primary-lighter'"
             >
               <RuiIcon
                 name="lu-globe"

@@ -147,7 +147,7 @@ const badgeClearableValue = ref<number>(1);
             -->
             <span
               data-id="selection-badge"
-              class="ml-auto shrink-0 px-2 py-0.5 rounded-sm text-caption bg-rui-primary/10 text-rui-primary"
+              class="ml-auto shrink-0 px-2 py-0.5 rounded-sm text-caption bg-rui-primary/10 text-rui-primary dark:text-rui-primary-lighter"
             >
               {{ item.continent }}
             </span>
@@ -173,7 +173,7 @@ const badgeClearableValue = ref<number>(1);
             <span class="font-medium truncate">{{ item.label }}</span>
             <span
               data-id="selection-badge"
-              class="ml-auto shrink-0 px-2 py-0.5 rounded-sm text-caption bg-rui-primary/10 text-rui-primary"
+              class="ml-auto shrink-0 px-2 py-0.5 rounded-sm text-caption bg-rui-primary/10 text-rui-primary dark:text-rui-primary-lighter"
             >
               {{ item.continent }}
             </span>

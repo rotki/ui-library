@@ -187,6 +187,8 @@
   --rui-surface-muted: var(--rui-light-surface-muted);
   --rui-surface-sunken: var(--rui-light-surface-sunken);
   --rui-link: var(--rui-light-link);
+  /* The focus ring: primary in light, its lighter tone in dark, where `main` falls to 3:1 on raised surfaces. */
+  --rui-focus: var(--rui-light-primary-main);
   --rui-chart-1: var(--rui-light-chart-1);
   --rui-chart-2: var(--rui-light-chart-2);
   --rui-chart-3: var(--rui-light-chart-3);
@@ -242,6 +244,7 @@ html.light {
   --rui-surface-muted: var(--rui-light-surface-muted);
   --rui-surface-sunken: var(--rui-light-surface-sunken);
   --rui-link: var(--rui-light-link);
+  --rui-focus: var(--rui-primary-main);
   --rui-chart-1: var(--rui-light-chart-1);
   --rui-chart-2: var(--rui-light-chart-2);
   --rui-chart-3: var(--rui-light-chart-3);
@@ -298,6 +301,7 @@ html.dark {
   --rui-surface-muted: var(--rui-dark-surface-muted);
   --rui-surface-sunken: var(--rui-dark-surface-sunken);
   --rui-link: var(--rui-dark-link);
+  --rui-focus: var(--rui-primary-lighter);
   --rui-chart-1: var(--rui-dark-chart-1);
   --rui-chart-2: var(--rui-dark-chart-2);
   --rui-chart-3: var(--rui-dark-chart-3);

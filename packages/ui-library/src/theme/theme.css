@@ -327,7 +327,7 @@
 }
 
 @utility focus-ring {
-  outline: 2px solid rgb(var(--rui-primary-main));
+  outline: 2px solid rgb(var(--rui-focus));
   outline-offset: 2px;
 }
 

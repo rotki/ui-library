@@ -35,10 +35,10 @@ export const textFieldStyles = tv({
     dense: {
       true: { input: 'py-1' },
     },
-    // Icons keep the neutral tone; the color goes to the text around them
+    // Icons keep the neutral tone; the color goes to the text around them, primary and secondary in their lighter tone in dark for 4.5:1
     textColor: {
-      primary: { prepend: 'text-rui-primary', append: 'text-rui-primary', input: 'text-rui-primary' },
-      secondary: { prepend: 'text-rui-secondary', append: 'text-rui-secondary', input: 'text-rui-secondary' },
+      primary: { prepend: 'text-rui-primary dark:text-rui-primary-lighter', append: 'text-rui-primary dark:text-rui-primary-lighter', input: 'text-rui-primary dark:text-rui-primary-lighter' },
+      secondary: { prepend: 'text-rui-secondary dark:text-rui-secondary-lighter', append: 'text-rui-secondary dark:text-rui-secondary-lighter', input: 'text-rui-secondary dark:text-rui-secondary-lighter' },
       error: { prepend: 'text-rui-error', append: 'text-rui-error', input: 'text-rui-error' },
       warning: { prepend: 'text-rui-warning', append: 'text-rui-warning', input: 'text-rui-warning' },
       info: { prepend: 'text-rui-info', append: 'text-rui-info', input: 'text-rui-info' },

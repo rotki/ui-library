@@ -52,7 +52,7 @@ const sections = [
             <div class="flex items-center gap-2">
               <RuiIcon
                 :name="section.icon"
-                class="text-rui-primary"
+                class="text-rui-primary dark:text-rui-primary-lighter"
               />
               <span>{{ section.title }}</span>
             </div>

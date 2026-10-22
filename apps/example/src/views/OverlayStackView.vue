@@ -82,7 +82,7 @@ function onGuardedDismiss(): void {
             Open another on top
           </RuiButton>
           <RouterLink
-            class="text-rui-primary underline"
+            class="text-rui-primary dark:text-rui-primary-lighter underline"
             data-id="link-from-dialog"
             to="/tables"
           >

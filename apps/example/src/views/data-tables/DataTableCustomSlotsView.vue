@@ -44,7 +44,7 @@ const collapsedFull = ref<ExtendedUser[]>([]);
         >
           <template #header.name="{ column }">
             <span
-              class="inline-flex items-center gap-1 text-rui-primary"
+              class="inline-flex items-center gap-1 text-rui-primary dark:text-rui-primary-lighter"
               data-id="custom-header-name"
             >
               <RuiIcon

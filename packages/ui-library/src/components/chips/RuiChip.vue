@@ -73,7 +73,8 @@ const chipStyles = tv({
     label: 'truncate px-2 text-[0.8125rem]/5',
     // a round hover fill marks the close icon as its own button
     close: 'rounded-full flex items-center p-0.5 inset-y-0 focus:outline-hidden transition-colors hover:bg-rui-pressed',
-    closeIcon: 'opacity-60 hover:opacity-100 transition-opacity',
+    // 80% keeps the icon at 3:1 on a filled chip and on the page; full on hover
+    closeIcon: 'opacity-80 hover:opacity-100 transition-opacity',
   },
   variants: {
     tile: {

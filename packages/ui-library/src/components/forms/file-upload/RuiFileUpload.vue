@@ -324,6 +324,7 @@ defineExpose({
               <RuiIcon
                 :name="wellIcon"
                 :color="wellTone"
+                :class="{ 'dark:text-rui-primary-lighter': wellTone === 'primary' }"
               />
             </slot>
           </div>
@@ -335,7 +336,7 @@ defineExpose({
               <span v-if="resolvedUploadText">{{ resolvedUploadText }}</span>
               <button
                 type="button"
-                class="text-rui-primary underline disabled:no-underline disabled:text-rui-text-disabled"
+                class="text-rui-primary dark:text-rui-primary-lighter underline disabled:no-underline disabled:text-rui-text-disabled"
                 :class="{ 'first-letter:uppercase': !resolvedUploadText }"
                 :disabled="disabled"
                 data-id="open-picker"
