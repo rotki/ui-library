@@ -21,11 +21,13 @@ concurrency:
 permissions: { }
 
 # Layout note: jobs run fully in parallel. Each job that touches code does
-# its own `pnpm install` + (when needed) `pnpm run build:prod`; that
-# duplication (~90s per job, mostly cache-warm) is intentional — it keeps
+# its own `pnpm install` (~30s, cache-warm), and the jobs that test against
+# dist also run `pnpm run build:prod` (~16s); `unit` tests the sources and
+# only generates the icons. That duplication is intentional: it keeps
 # wall-time down by avoiding a serial `build` job that downstream tests
-# would have to wait on. Tests run while the build for the next test set
-# is still in flight.
+# would have to wait on. The browser jobs (`storybook`, `e2e`, `visual`)
+# run in the pinned Playwright image, which costs ~30s to start but skips
+# installing Chromium and its system packages.
 #
 # timeout-minutes on every job is generous headroom over observed run
 # times (~1-4m) so a genuine hang is killed quickly instead of running to
@@ -103,8 +105,10 @@ jobs:
       - name: Typecheck example app
         run: pnpm --filter example typecheck
 
-  # Vitest unit tests in browser mode. Uploads the blob-format coverage
-  # report so the `coverage` job can merge it with the storybook report.
+  # Vitest unit tests. They run in happy-dom against the sources, so the job
+  # needs no browser and no dist, only the generated icons. Uploads the
+  # blob-format coverage report so the `coverage` job can merge it with the
+  # storybook report.
   unit:
     name: Unit tests
     runs-on: ubuntu-latest
@@ -129,21 +133,8 @@ jobs:
       - name: Install dependencies 👨🏻‍💻
         run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm run build:prod
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-
-
-      - name: Install Playwright Browsers
-        working-directory: packages/ui-library
-        timeout-minutes: 10
-        run: pnpm exec playwright install --with-deps chromium
+      - name: Generate icons
+        run: pnpm --filter @rotki/ui-library generate-icons
 
       - name: Run Unit Tests with Coverage
         run: pnpm run coverage:unit
@@ -159,10 +150,22 @@ jobs:
   # Storybook play-function tests via Playwright. Split off from `unit` so
   # the storybook build (~30-60s) and its test run parallelise with the
   # vitest run instead of stacking serially.
+  #
+  # Runs in the same pinned Playwright image as `visual` (see there for the
+  # pin). The image is written once, here, and `e2e` and `visual` reuse it
+  # through the anchor; it has to match the `@playwright/test` version in
+  # pnpm-workspace.yaml and the tag in apps/example/scripts/visual-docker.sh.
+  # The image ships Chromium and its system packages; installing them on the
+  # runner meant an apt fetch that took anywhere from seconds to 8 minutes,
+  # depending on the Ubuntu mirror. `--ipc=host` gives Chromium the host's
+  # shared memory instead of Docker's 64MB /dev/shm.
   storybook:
     name: Storybook tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    container:
+      image: &playwright-image mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27
+      options: --ipc=host
     permissions:
       contents: read # clone the repository
     steps:
@@ -188,19 +191,6 @@ jobs:
 
       - name: Build Storybook
         run: pnpm run build:storybook
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-
-
-      - name: Install Playwright Browsers
-        working-directory: packages/ui-library
-        timeout-minutes: 10
-        run: pnpm exec playwright install --with-deps chromium
 
       - name: Run Storybook Tests with Coverage
         run: pnpm run coverage:storybook
@@ -255,6 +245,15 @@ jobs:
           name: vitest-report-storybook
           path: packages/ui-library/tests/.vitest-reports
 
+      # The blobs keep absolute source paths, and `storybook` runs in a
+      # container whose workspace is /__w/<repo>/<repo> instead of this
+      # runner's. Without the rewrite the merge finds two copies of every
+      # file and drops the container's, which lie outside the root.
+      - name: Map storybook coverage to the runner workspace
+        run: |
+          repo="${GITHUB_REPOSITORY#*/}"
+          sed -i "s#/__w/${repo}/${repo}/#${GITHUB_WORKSPACE}/#g" packages/ui-library/tests/.vitest-reports/storybook.json
+
       - name: Merge Coverage Reports
         run: pnpm run coverage:merge
 
@@ -270,10 +269,18 @@ jobs:
   #
   # `fail-fast: false` so one shard's failure doesn't cancel the other —
   # we want to see every failing spec in the same run.
+  #
+  # Runs in the pinned Playwright image, like `storybook`. Each shard runs
+  # two workers (the config keeps CI at one, which `visual` still uses):
+  # the runner has four cores and a shard spent ~2 minutes running its
+  # specs one after another.
   e2e:
     name: E2E tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    container:
+      image: *playwright-image
+      options: --ipc=host
     permissions:
       contents: read # clone the repository
     strategy:
@@ -304,24 +311,11 @@ jobs:
       - name: Build example app
         run: pnpm --filter example build:app
 
-      - name: Cache Playwright browsers
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-
-
-      - name: Install Playwright Browsers
-        working-directory: apps/example
-        timeout-minutes: 10
-        run: pnpm exec playwright install --with-deps chromium
-
       - name: Run Playwright tests (shard ${{ matrix.shard }}/2)
         working-directory: apps/example
         env:
           SHARD: ${{ matrix.shard }}
-        run: pnpm exec playwright test --shard="${SHARD}/2"
+        run: pnpm exec playwright test --shard="${SHARD}/2" --workers=2
 
       - name: Upload Playwright Report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -338,13 +332,14 @@ jobs:
   # matches what contributors get from `pnpm test:visual`. Without the pin,
   # snapshots captured locally and on CI would diverge by a handful of
   # antialiasing pixels and every run would fail. The image is pinned to its
-  # manifest-list digest (the tag is kept as a comment for readability).
+  # manifest-list digest (the tag is kept as a comment for readability). The
+  # image string lives on the `storybook` job, as the `playwright-image` anchor.
   visual:
     name: Visual regression
     runs-on: ubuntu-latest
     timeout-minutes: 15
     container:
-      image: mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27
+      image: *playwright-image
     permissions:
       contents: read # clone the repository
     steps:
