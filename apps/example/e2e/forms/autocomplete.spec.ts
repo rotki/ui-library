@@ -408,7 +408,11 @@ test.describe('auto-complete - custom slots', () => {
 
     await activator.click();
     await ac.locator('input').fill('very long');
-    await page.locator('div[role=listbox] button').first().click();
+
+    // The internal search is debounced, so the menu still lists every option for a moment
+    const options = page.locator('div[role=listbox] button');
+    await expect(options).toHaveCount(1);
+    await options.filter({ hasText: 'Option with very long name' }).click();
 
     // the input keeps focus beside the slot-drawn value; it used to wrap onto a second line
     await expect(ac.locator('input')).toBeFocused();
