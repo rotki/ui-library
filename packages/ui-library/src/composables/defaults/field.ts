@@ -29,8 +29,36 @@ interface FieldScope {
 /** The app-wide default, set through `createRui({ defaults: { field } })`. */
 export const FieldSymbol: InjectionKey<FieldOptions> = Symbol.for('rui:field');
 
-/** A default for every field below a component, set with `provideFieldDefaults` or `RuiFieldDefaults`. */
-const FieldScopeSymbol: InjectionKey<FieldScope> = Symbol.for('rui:field-scope');
+/**
+ * What 3.0 provided under the scope key: the placement itself. A 3.0 copy bundled into
+ * another package still provides it, and `Symbol.for` hands it to this copy.
+ */
+type LegacyFieldScope = MaybeRefOrGetter<LabelPlacement | undefined>;
+
+/**
+ * A default for every field below a component, set with `provideFieldDefaults` or `RuiFieldDefaults`.
+ * Every copy of the library on a page shares this key, so a change to what it holds must keep
+ * reading every shape an older copy provides.
+ */
+const FieldScopeSymbol: InjectionKey<FieldScope | LegacyFieldScope | null> = Symbol.for('rui:field-scope');
+
+function isFieldScope(scope: FieldScope | LegacyFieldScope): scope is FieldScope {
+  return typeof scope === 'object' && !isRef(scope) && typeof scope.labelPlacement === 'function';
+}
+
+/** The nearest scope, read in either shape. */
+function injectFieldScope(): FieldScope | undefined {
+  const scope = inject(FieldScopeSymbol, undefined);
+  if (scope === undefined || scope === null)
+    return undefined;
+  if (isFieldScope(scope))
+    return scope;
+
+  return {
+    labelPlacement: () => toValue(scope),
+    details: () => undefined,
+  };
+}
 
 export function createFieldDefaults(options?: Partial<FieldOptions>): FieldOptions {
   return {
@@ -52,7 +80,7 @@ function isScopeOptions(
  */
 export function provideFieldDefaults(options: FieldScopeOptions | MaybeRefOrGetter<LabelPlacement | undefined>): void {
   const { labelPlacement, details } = isScopeOptions(options) ? options : { labelPlacement: options, details: undefined };
-  const parent = inject(FieldScopeSymbol, undefined);
+  const parent = injectFieldScope();
 
   provide(FieldScopeSymbol, {
     labelPlacement: () => toValue(labelPlacement) ?? parent?.labelPlacement(),
@@ -65,7 +93,7 @@ export function provideFieldDefaults(options: FieldScopeOptions | MaybeRefOrGett
  * app default, then `top`.
  */
 export function useLabelPlacement(placement: MaybeRefOrGetter<LabelPlacement | undefined>): ComputedRef<LabelPlacement> {
-  const scope = inject(FieldScopeSymbol, undefined);
+  const scope = injectFieldScope();
   const app = inject(FieldSymbol, undefined);
 
   return computed<LabelPlacement>(() =>
@@ -85,7 +113,7 @@ export function useInheritedDetails(): () => FormDetails | undefined {
   if (!hasInjectionContext())
     return () => undefined;
 
-  const scope = inject(FieldScopeSymbol, undefined);
+  const scope = injectFieldScope();
   const app = inject(FieldSymbol, undefined);
 
   return () => scope?.details() ?? (app ? toValue(app.details) : undefined);

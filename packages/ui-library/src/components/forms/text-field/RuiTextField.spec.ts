@@ -1,6 +1,6 @@
 import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
-import { h } from 'vue';
+import { h, ref } from 'vue';
 import RuiFieldDefaults from '@/components/forms/field-defaults/RuiFieldDefaults.vue';
 import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
 import { textFieldStyles } from '@/components/forms/text-field/text-field-styles';
@@ -98,6 +98,38 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
     });
     expect(own.find('[data-id=field-label]').classes()).toContain('sr-only');
     own.unmount();
+  });
+
+  // a 3.0 copy bundled elsewhere provides the bare placement under the same Symbol.for key
+  it('should read a scope a 3.0 copy provided', () => {
+    const app = { labelPlacement: 'top' as const, details: 'hidden' as const };
+    const legacyScope = Symbol.for('rui:field-scope');
+
+    for (const placement of ['hidden', ref('hidden'), (): 'hidden' => 'hidden']) {
+      const legacy = mount(RuiTextField, {
+        props: { label: 'Field', modelValue: '' },
+        global: { stubs: ['rui-icon'], provide: { [FieldSymbol]: app, [legacyScope]: placement } },
+      });
+      expect(legacy.find('[data-id=field-label]').classes()).toContain('sr-only');
+      expect(legacy.find('.details').exists()).toBeFalsy();
+      legacy.unmount();
+    }
+
+    const empty = mount(RuiTextField, {
+      props: { label: 'Field', modelValue: '' },
+      global: { stubs: ['rui-icon'], provide: { [FieldSymbol]: app, [legacyScope]: null } },
+    });
+    expect(empty.find('[data-id=field-label]').classes()).not.toContain('sr-only');
+    empty.unmount();
+
+    const nested = mount(RuiFieldDefaults, {
+      props: { details: 'auto' },
+      slots: { default: () => h(RuiTextField, { label: 'Field', modelValue: '' }) },
+      global: { stubs: ['rui-icon'], provide: { [FieldSymbol]: app, [legacyScope]: 'hidden' } },
+    });
+    expect(nested.find('[data-id=field-label]').classes()).toContain('sr-only');
+    expect(nested.find('.details').attributes('data-details')).toBe('auto');
+    nested.unmount();
   });
 
   it('should take details from its own prop, then the nearest RuiFieldDefaults, then the app default', () => {
