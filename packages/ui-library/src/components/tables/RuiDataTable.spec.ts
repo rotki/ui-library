@@ -1351,6 +1351,36 @@ describe('components/tables/RuiDataTable.vue', () => {
     });
   });
 
+  describe('row identity', () => {
+    function rowElement(name: string): Element | undefined {
+      return wrapper.findAll('tbody tr[data-id=row]').find(row => row.text().includes(name))?.element;
+    }
+
+    it('should keep the element of a row that is still there when the rows shift by one', async () => {
+      wrapper = createWrapper({
+        props: { cols: columns, hidePagination: true, rowAttr: 'id', rows: data.slice(0, 5) },
+      });
+      const kept = rowElement('Lindsay Walton 3');
+      assert(kept);
+
+      await wrapper.setProps({ rows: data.slice(1, 6) });
+
+      expect(rowElement('Lindsay Walton 3')).toBe(kept);
+    });
+
+    it('should keep the element of a row when a row is added above it', async () => {
+      wrapper = createWrapper({
+        props: { cols: columns, hidePagination: true, rowAttr: 'id', rows: data.slice(1, 5) },
+      });
+      const kept = rowElement('Lindsay Walton 2');
+      assert(kept);
+
+      await wrapper.setProps({ rows: data.slice(0, 5) });
+
+      expect(rowElement('Lindsay Walton 2')).toBe(kept);
+    });
+  });
+
   describe('error state', () => {
     it('should replace the empty state with the error', () => {
       wrapper = createWrapper({

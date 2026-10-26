@@ -58,6 +58,15 @@ const showError = computed<boolean>(() => !!error && !loading);
  * bar marks the read, and `data-stale` lets a consumer style them.
  */
 const stale = computed<boolean>(() => loading && !noData);
+
+/**
+ * Keys each entry of the row loop, so a row keeps its DOM and component state while the rows
+ * around it change. Without it the loop patches entries by position, and a list that shifts by one
+ * row (a virtual window, a row added on top) rebuilds every row below the change.
+ */
+function getEntryKey(row: T | GroupHeader<T>): string {
+  return isRow(row) ? `row-${getRowId(row)}` : `group-${row.identifier}`;
+}
 </script>
 
 <template>
@@ -86,10 +95,12 @@ const stale = computed<boolean>(() => loading && !noData);
         <slot name="error" />
       </template>
     </RuiDataTableErrorRow>
-    <template v-for="(row, index) in filtered">
+    <template
+      v-for="(row, index) in filtered"
+      :key="getEntryKey(row)"
+    >
       <RuiDataTableGroupRow
         v-if="!isRow(row)"
-        :key="`group-${row.identifier}`"
         :row="row"
       >
         <template
@@ -115,7 +126,6 @@ const stale = computed<boolean>(() => loading && !noData);
       </RuiDataTableGroupRow>
       <RuiDataTableRow
         v-else
-        :key="`row-${getRowId(row)}`"
         :row="row"
         :index="index"
       >
