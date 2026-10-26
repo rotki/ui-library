@@ -390,6 +390,32 @@ function selectTopResult(): void {
     selectItem(item);
 }
 
+/**
+ * Keys in the search field: ArrowDown moves into the rail, Enter picks the top
+ * match, Escape closes.
+ *
+ * An IME that is composing owns all three: the arrows walk its candidate list,
+ * Enter confirms a candidate and Escape cancels it. While composing the field
+ * leaves them alone, default action included, so neither a pick nor a close
+ * lands mid-word.
+ */
+function onSearchKeydown(event: KeyboardEvent): void {
+  if (event.isComposing)
+    return;
+
+  if (event.key === 'ArrowDown') {
+    event.preventDefault();
+    focusPane('rail');
+  }
+  else if (event.key === 'Enter') {
+    event.preventDefault();
+    selectTopResult();
+  }
+  else if (event.key === 'Escape') {
+    close();
+  }
+}
+
 function resetHighlightToSelection(): void {
   const index = get(detailItems).findIndex(item => isSelected(item));
   set(highlightedItemIndex, index >= 0 ? index : 0);
@@ -512,9 +538,7 @@ watch(isOpen, onOpenChanged);
               class="bg-transparent outline-hidden"
               :class="[activatorUi.value(), !canType && 'cursor-pointer']"
               @input="onInput($event)"
-              @keydown.down.prevent="focusPane('rail')"
-              @keydown.enter.prevent="selectTopResult()"
-              @keydown.esc="close()"
+              @keydown="onSearchKeydown($event)"
             />
             <span
               v-if="showClear"

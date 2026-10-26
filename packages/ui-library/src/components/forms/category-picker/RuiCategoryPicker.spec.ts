@@ -197,6 +197,41 @@ describe('components/forms/category-picker/RuiCategoryPicker.vue', () => {
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['4']); // India
   });
 
+  it('leaves Enter, Escape and ArrowDown to an IME that is composing, since there they confirm, cancel or walk a candidate', async () => {
+    wrapper = mountPicker();
+    await openPicker(wrapper);
+
+    const field = wrapper.find('[data-id=search-input]');
+    await field.setValue('india');
+    await vi.runAllTimersAsync();
+
+    for (const key of ['Enter', 'ArrowDown', 'Escape']) {
+      const event = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, isComposing: true, key });
+      field.element.dispatchEvent(event);
+      await vi.runAllTimersAsync();
+      expect(event.defaultPrevented, key).toBe(false);
+    }
+
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+    expect(queryByDataId('panel', document.body)).toBeTruthy();
+    expect(document.activeElement).not.toBe(queryByDataId('rail', document.body));
+
+    await field.trigger('keydown', { key: 'Enter' });
+    await vi.runAllTimersAsync();
+
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['4']); // India
+  });
+
+  it('moves into the rail on ArrowDown from the field', async () => {
+    wrapper = mountPicker();
+    await openPicker(wrapper);
+
+    await wrapper.find('[data-id=search-input]').trigger('keydown', { key: 'ArrowDown' });
+    await vi.runAllTimersAsync();
+
+    expect(document.activeElement).toBe(queryByDataId('rail', document.body));
+  });
+
   it('surfaces matches globally when searching with a category selected', async () => {
     wrapper = mountPicker({ modelValue: '4' }); // India → opens on Asia
     const dialog = await openPicker(wrapper);
