@@ -429,6 +429,28 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
       host.unmount();
     });
 
+    it('should stay open on an escape an IME is composing, and let the key through, since there escape only cancels the candidate', async () => {
+      const host = createHost();
+
+      await host.find('#trigger').trigger('click');
+      await vi.runAllTimersAsync();
+      expect(document.body.innerHTML).toMatch(new RegExp(text));
+
+      const before = ancestorKeydowns(host);
+      await host.find('#trigger').trigger('keydown', { isComposing: true, key: 'Escape' });
+      await vi.runAllTimersAsync();
+
+      expect(document.body.innerHTML).toMatch(new RegExp(text));
+      expect(ancestorKeydowns(host)).toBe(before + 1);
+
+      await host.find('#trigger').trigger('keydown', { key: 'Escape' });
+      await vi.runAllTimersAsync();
+
+      expect(document.body.innerHTML).not.toMatch(new RegExp(text));
+
+      host.unmount();
+    });
+
     it('should still close a persistent menu through its model', async () => {
       const host = createHost(true);
 

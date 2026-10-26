@@ -126,7 +126,20 @@ function close(): void {
   set(modelValue, false);
 }
 
-function onEscClick(): void {
+/**
+ * Closes on Escape unless persistent, and reports the press as `click:esc`.
+ *
+ * @remarks
+ * An Escape that arrives while an IME is composing belongs to the IME, which
+ * cancels the candidate with it. The dialog leaves that key alone entirely: no
+ * close, no `click:esc`, and no `stopPropagation`, so a search field inside the
+ * dialog does not lose the dialog mid-word.
+ */
+function onEscKeydown(event: KeyboardEvent): void {
+  if (event.isComposing)
+    return;
+
+  event.stopPropagation();
   if (!persistent) {
     close();
   }
@@ -198,7 +211,7 @@ watch(contentRef, (ref) => {
         :aria-label="ariaLabel"
         tabindex="0"
         v-bind="getNonRootAttrs($attrs)"
-        @keydown.esc.stop="onEscClick()"
+        @keydown.esc="onEscKeydown($event)"
       >
         <Transition
           enter-from-class="opacity-0"

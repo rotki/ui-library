@@ -290,9 +290,13 @@ function onLeave(event?: KeyboardEvent): void {
  * (`onLeave` stops the event itself); a closed or persistent menu must let it
  * through, or a consumer that closes its own editor on Escape never sees the
  * key. The root element listens for it.
+ *
+ * An Escape that arrives while an IME is composing belongs to the IME, which
+ * cancels the candidate with it, so the menu leaves it alone the same way: a
+ * search field inside the menu would otherwise lose the whole menu mid-word.
  */
 function onEscape(event: KeyboardEvent): void {
-  if (persistent)
+  if (persistent || event.isComposing)
     return;
 
   onLeave(event);

@@ -199,6 +199,38 @@ describe('components/overlays/dialog/RuiDialog.vue', () => {
     assertExists(dialog);
   });
 
+  it('should stay open on an escape an IME is composing, emit nothing and let the key through, since there escape only cancels the candidate', async () => {
+    const clickEsc = vi.fn();
+    wrapper = createWrapper({ props: { 'onClick:esc': clickEsc } });
+    await vi.runAllTimersAsync();
+
+    await wrapper.find('#trigger').trigger('click');
+    await vi.runAllTimersAsync();
+
+    let dialog = queryByRole<HTMLDivElement>('dialog');
+    assertExists(dialog);
+    const ancestorKeydown = vi.fn();
+    document.body.addEventListener('keydown', ancestorKeydown);
+
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, isComposing: true, key: 'Escape' }));
+    await vi.runAllTimersAsync();
+
+    assertExists(queryByRole<HTMLDivElement>('dialog'));
+    expect(clickEsc).not.toHaveBeenCalled();
+    expect(ancestorKeydown).toHaveBeenCalledOnce();
+
+    dialog = queryByRole<HTMLDivElement>('dialog');
+    assertExists(dialog);
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'Escape' }));
+    await vi.runAllTimersAsync();
+
+    expect(queryByRole<HTMLDivElement>('dialog')).toBeFalsy();
+    expect(clickEsc).toHaveBeenCalledOnce();
+    expect(ancestorKeydown).toHaveBeenCalledOnce();
+
+    document.body.removeEventListener('keydown', ancestorKeydown);
+  });
+
   it('should have aria-modal="true" when open', async () => {
     wrapper = createWrapper();
     await vi.runAllTimersAsync();
