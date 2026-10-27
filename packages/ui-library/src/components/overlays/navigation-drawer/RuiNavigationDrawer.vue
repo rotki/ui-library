@@ -72,7 +72,7 @@ const activatorAttrs: { onClick: () => void } = {
 };
 
 const drawer = tv({
-  base: 'transition-[transform,width] duration-200 ease-in-out bottom-0 fixed text-rui-text',
+  base: 'transition-[transform,translate,width] duration-200 ease-in-out bottom-0 fixed text-rui-text',
   variants: {
     belowAppBar: {
       true: 'top-rui-app-bar',
@@ -110,6 +110,12 @@ const drawer = tv({
   ],
   defaultVariants: { position: 'left', visible: false, mini: false, withOverlay: false, temporary: false, belowAppBar: false },
 });
+
+/**
+ * Where the drawer starts its slide in: it mounts open, so the closed position has to be put on it for
+ * its first frame. Important, because the open position is already on the element.
+ */
+const enterFromClass = computed<string>(() => (position === 'left' ? '-translate-x-full!' : 'translate-x-full!'));
 
 // the overlay dims what the drawer covers: the whole view, or only the part below the app bar
 const overlayClass = computed<string>(() => cn([
@@ -195,20 +201,26 @@ onClickOutside(content, () => {
           @click.stop="close()"
         />
       </Transition>
-      <aside
-        v-if="alive"
-        ref="content"
-        data-id="drawer-content"
-        :style="style"
-        :data-visible="modelValue || undefined"
-        :data-position="position"
-        :data-mini="miniVariant || undefined"
-        :class="rootClass($attrs.class)"
-        :aria-label="ariaLabel"
-        v-bind="getRootAttrs($attrs, [])"
+      <!-- leaves with no transition: it has already slid out, and its own would hold the removal for a transitionend that never comes -->
+      <Transition
+        :enter-from-class="enterFromClass"
+        leave-active-class="duration-0!"
       >
-        <slot v-bind="{ attrs: activatorAttrs, close }" />
-      </aside>
+        <aside
+          v-if="alive"
+          ref="content"
+          data-id="drawer-content"
+          :style="style"
+          :data-visible="modelValue || undefined"
+          :data-position="position"
+          :data-mini="miniVariant || undefined"
+          :class="rootClass($attrs.class)"
+          :aria-label="ariaLabel"
+          v-bind="getRootAttrs($attrs, [])"
+        >
+          <slot v-bind="{ attrs: activatorAttrs, close }" />
+        </aside>
+      </Transition>
     </Teleport>
   </div>
 </template>

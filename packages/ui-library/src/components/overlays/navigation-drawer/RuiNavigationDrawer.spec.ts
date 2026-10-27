@@ -325,4 +325,39 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
     expect(drawerElement.hasAttribute('data-mini')).toBe(true);
     expect(drawerElement.hasAttribute('data-visible')).toBe(false);
   });
+
+  it('should mount an opening drawer at its closed position, so it slides in rather than appearing', async () => {
+    wrapper = mount(RuiNavigationDrawer, {
+      global: { stubs: { transition: false } },
+      props: { modelValue: false, position: 'right', temporary: true },
+      slots: { default: text },
+    });
+    await vi.runAllTimersAsync();
+
+    await wrapper.setProps({ modelValue: true });
+
+    const drawer = queryBody<HTMLElement>('aside[data-id=drawer-content]');
+    assertExists(drawer);
+    expect(drawer.classList.contains('translate-x-full!')).toBe(true);
+
+    await vi.runAllTimersAsync();
+
+    expect(drawer.classList.contains('translate-x-full!')).toBe(false);
+    expect(drawer.classList.contains('translate-x-0')).toBe(true);
+  });
+
+  it('should start a left drawer off the left edge', async () => {
+    wrapper = mount(RuiNavigationDrawer, {
+      global: { stubs: { transition: false } },
+      props: { modelValue: false, temporary: true },
+      slots: { default: text },
+    });
+    await vi.runAllTimersAsync();
+
+    await wrapper.setProps({ modelValue: true });
+
+    const drawer = queryBody<HTMLElement>('aside[data-id=drawer-content]');
+    assertExists(drawer);
+    expect(drawer.classList.contains('-translate-x-full!')).toBe(true);
+  });
 });

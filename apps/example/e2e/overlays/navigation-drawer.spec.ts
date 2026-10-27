@@ -1,4 +1,35 @@
-import { expect, test } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
+
+interface DrawerFrame {
+  at: number;
+  left: number | null;
+}
+
+/**
+ * Runs the action and returns the drawer's left edge on every frame for the next 600ms, timed from the
+ * action, so a test can tell a slide from a jump. A removed drawer reads as null.
+ */
+async function trackDrawer(page: Page, action: () => Promise<void>): Promise<DrawerFrame[]> {
+  await page.evaluate(() => {
+    const frames: { at: number; left: number | null }[] = [];
+    Reflect.set(window, '__drawerFrames', frames);
+    Reflect.set(window, '__drawerStart', undefined);
+
+    function sample(): void {
+      const start = Reflect.get(window, '__drawerStart');
+      const aside = document.querySelector('aside[data-id=drawer-content]');
+      if (typeof start === 'number')
+        frames.push({ at: performance.now() - start, left: aside ? Math.round(aside.getBoundingClientRect().left) : null });
+      if (typeof start !== 'number' || performance.now() - start < 600)
+        requestAnimationFrame(sample);
+    }
+    requestAnimationFrame(sample);
+  });
+  await page.evaluate(() => Reflect.set(window, '__drawerStart', performance.now()));
+  await action();
+  await page.waitForTimeout(700);
+  return page.evaluate(() => Reflect.get(window, '__drawerFrames'));
+}
 
 test.describe('navigation drawer', () => {
   test.beforeEach(async ({ page }) => {
@@ -107,6 +138,24 @@ test.describe('navigation drawer', () => {
 
     expect(Math.round((await aside.boundingBox())?.y ?? -1)).toBe(0);
     expect(Math.round((await page.locator('[data-id=overlay]').boundingBox())?.y ?? -1)).toBe(0);
+  });
+
+  test('slides a temporary drawer in when it opens and out when it closes', async ({ page }) => {
+    const activator = page.locator('div[data-id=navigation-drawer-1] [data-id=activator]');
+    const viewport = page.viewportSize()?.width ?? 0;
+    const between = (frame: DrawerFrame, open: number): boolean => frame.left !== null && frame.left > open && frame.left < viewport;
+
+    const opening = await trackDrawer(page, async () => activator.click());
+    const open = opening.at(-1)?.left ?? viewport;
+    expect(open).toBeLessThan(viewport);
+    expect(opening.some(frame => between(frame, open))).toBe(true);
+
+    const closing = await trackDrawer(page, async () => page.locator('h2[data-id=navigation-drawers]').click());
+    expect(closing.some(frame => between(frame, open))).toBe(true);
+    // removed as soon as the slide is over, not held for a transition end that never comes
+    const removedAt = closing.find(frame => frame.left === null)?.at;
+    expect(removedAt).toBeDefined();
+    expect(removedAt).toBeLessThan(400);
   });
 
   test('should have aria-label on drawer', async ({ page }) => {
