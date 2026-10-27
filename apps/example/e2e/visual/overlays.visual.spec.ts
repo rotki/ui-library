@@ -59,7 +59,11 @@ const cases: OverlayCase[] = [
     // the whole page: a docked drawer belongs to it, so its edge against the content is the point
     name: 'drawer-docked',
     route: '/navigation-drawers',
-    open: async page => page.locator('[data-id=navigation-drawer-2] [data-id=activator]').click(),
+    open: async (page) => {
+      await page.locator('[data-id=navigation-drawer-2] [data-id=activator]').click();
+      // the drawer slides over its activator under a still pointer, which would keep the activator's hover
+      await page.mouse.move(1, 1);
+    },
     target: 'body',
   },
   {
