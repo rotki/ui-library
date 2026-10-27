@@ -417,6 +417,36 @@ export const PrimaryLoading = meta.story({
   },
 });
 
+const loadingSizes = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'] as const;
+
+/**
+ * Each row pairs an idle button with a loading one of the same size: the spinner takes the prepend
+ * icon's place without making the button taller.
+ */
+export const LoadingKeepsHeight = meta.story({
+  render() {
+    return {
+      components: { RuiButton },
+      setup() {
+        return { sizes: loadingSizes };
+      },
+      template: `
+        <div class="flex flex-col items-start gap-3">
+          <div v-for="size in sizes" :key="size" class="flex items-start gap-3">
+            <RuiButton color="primary" :size="size === 'md' ? undefined : size" :data-testid="'idle-' + size">Continue</RuiButton>
+            <RuiButton color="primary" :size="size === 'md' ? undefined : size" :data-testid="'loading-' + size" loading>Continue</RuiButton>
+          </div>
+        </div>`,
+    };
+  },
+  async play({ canvas }) {
+    for (const size of loadingSizes) {
+      const idle = canvas.getByTestId(`idle-${size}`).getBoundingClientRect().height;
+      await expect(canvas.getByTestId(`loading-${size}`).getBoundingClientRect().height).toBe(idle);
+    }
+  },
+});
+
 export const List = meta.story({
   render() {
     return {

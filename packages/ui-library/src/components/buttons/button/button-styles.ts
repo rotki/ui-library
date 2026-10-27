@@ -50,8 +50,12 @@ export const buttonStyles = tv({
       'focus-visible:focus-ring',
     ].join(' '),
     label: 'inline-block text-nowrap',
-    // inline in the prepend icon's place; an icon-only button centers it over its hidden glyph instead
-    spinner: 'shrink-0',
+    /*
+     * Inline in the prepend icon's place; an icon-only button centers it over its hidden glyph instead.
+     * At lg the ring outgrows the label's line box, so its box is held to one line and the ring
+     * overflows it evenly: loading never changes the button's height.
+     */
+    spinner: 'shrink-0 h-lh items-center',
   },
   variants: {
     variant: {
