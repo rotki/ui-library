@@ -532,6 +532,21 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
     focus.mockRestore();
   });
 
+  it('should open a menu mounted with its model already true', async () => {
+    wrapper = createWrapper({ props: { modelValue: true } });
+    await vi.runAllTimersAsync();
+
+    expect(document.body.innerHTML).toMatch(new RegExp(text));
+    expect(wrapper.find('#trigger').attributes('aria-expanded')).toBe('true');
+  });
+
+  it('should keep a menu mounted with its model false closed', async () => {
+    wrapper = createWrapper({ props: { modelValue: false } });
+    await vi.runAllTimersAsync();
+
+    expect(document.body.innerHTML).not.toMatch(new RegExp(text));
+  });
+
   it('should menu works with `closeOnContentClick=true`', async () => {
     wrapper = createWrapper({
       props: {

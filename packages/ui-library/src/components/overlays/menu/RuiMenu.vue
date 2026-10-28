@@ -324,7 +324,7 @@ watch(modelValue, (value) => {
   else {
     onLeave();
   }
-});
+}, { immediate: true });
 
 watch(open, (open) => {
   set(modelValue, open);
