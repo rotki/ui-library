@@ -447,6 +447,69 @@ export const LoadingKeepsHeight = meta.story({
   },
 });
 
+interface ButtonLayout {
+  width: number;
+  height: number;
+  labelLeft: number;
+  labelTop: number;
+}
+
+function buttonLayout(button: HTMLElement): ButtonLayout {
+  const box = button.getBoundingClientRect();
+  const label = button.querySelector('[data-id="btn-label"]')?.getBoundingClientRect();
+  return { width: box.width, height: box.height, labelLeft: label?.left ?? Number.NaN, labelTop: label?.top ?? Number.NaN };
+}
+
+/**
+ * Toggling a button with a prepend icon in and out of loading never moves its label: the spinner
+ * is a little larger than the icon it replaces, so it overflows the icon's box evenly.
+ */
+export const LoadingKeepsLabelInPlace = meta.story({
+  render() {
+    return {
+      components: { RuiButton, RuiIcon },
+      setup() {
+        const loading = ref<boolean>(false);
+        return { loading, sizes: loadingSizes };
+      },
+      template: `
+        <div class="flex flex-col items-start gap-3">
+          <RuiButton variant="outlined" data-testid="toggle-loading" @click="loading = !loading">Toggle loading</RuiButton>
+          <RuiButton
+            v-for="size in sizes"
+            :key="size"
+            color="primary"
+            :size="size === 'md' ? undefined : size"
+            :data-testid="'refresh-' + size"
+            :loading="loading"
+          >
+            <template #prepend><RuiIcon name="lu-refresh-ccw" /></template>
+            Refresh
+          </RuiButton>
+        </div>`,
+    };
+  },
+  async play({ canvas, userEvent }) {
+    const buttons = loadingSizes.map(size => canvas.getByTestId(`refresh-${size}`));
+    const idle = buttons.map(buttonLayout);
+    const toggle = canvas.getByTestId('toggle-loading');
+
+    await userEvent.click(toggle);
+    await nextTick();
+    for (const [i, button] of buttons.entries()) {
+      await expect(button).toHaveAttribute('aria-busy', 'true');
+      await expect(buttonLayout(button)).toEqual(idle[i]);
+    }
+
+    await userEvent.click(toggle);
+    await nextTick();
+    for (const [i, button] of buttons.entries()) {
+      await expect(button).not.toHaveAttribute('aria-busy');
+      await expect(buttonLayout(button)).toEqual(idle[i]);
+    }
+  },
+});
+
 export const List = meta.story({
   render() {
     return {

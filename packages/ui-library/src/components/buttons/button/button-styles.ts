@@ -52,10 +52,10 @@ export const buttonStyles = tv({
     label: 'inline-block text-nowrap',
     /*
      * Inline in the prepend icon's place; an icon-only button centers it over its hidden glyph instead.
-     * At lg the ring outgrows the label's line box, so its box is held to one line and the ring
-     * overflows it evenly: loading never changes the button's height.
+     * The ring outgrows the icon, so its box is held to the icon's width and one line, and the ring
+     * overflows it evenly: loading never moves the label or resizes the button.
      */
-    spinner: 'shrink-0 h-lh items-center',
+    spinner: 'shrink-0 w-(--rui-icon-size) h-lh items-center justify-center [&>*]:shrink-0',
   },
   variants: {
     variant: {
