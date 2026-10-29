@@ -114,6 +114,35 @@ export const CustomMaxWidth = meta.story({
   },
 });
 
+/** 200 tooltips, as in a table with one per row: each sets up only on its first hover or focus. */
+export const ManyRows = meta.story({
+  render: () => ({
+    components: { RuiTooltip },
+    setup() {
+      const rows = Array.from({ length: 200 }, (_, index) => index + 1);
+      return { rows };
+    },
+    template: `
+      <div class="flex flex-col gap-1 p-4 max-w-md">
+        <div v-for="row in rows" :key="row">
+          <RuiTooltip :text="'Details for row ' + row">
+            <template #activator>
+              <span class="text-rui-primary">Row {{ row }}</span>
+            </template>
+          </RuiTooltip>
+        </div>
+      </div>`,
+  }),
+  async play({ canvas, userEvent }) {
+    const activator = canvas.getByText('Row 3');
+    await userEvent.hover(activator);
+    const body = within(document.body);
+    await waitFor(() => expect(body.getByRole('tooltip')).toHaveTextContent('Details for row 3'));
+    await userEvent.unhover(activator);
+    await waitFor(() => expect(body.queryByRole('tooltip')).toBeNull());
+  },
+});
+
 export const TooltipDisabled = meta.story({
   args: {
     disabled: true,

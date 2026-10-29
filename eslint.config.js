@@ -128,13 +128,9 @@ export default rotki({
   /*
    * Component scripts here are `<script setup>`, run per instance, so a `tv()`
    * in a `.vue` file builds its factory for every copy on the page.
-   * RuiTooltip's moves on feat/tooltip-lazy, which drops it from `ignores`.
    */
   files: ['packages/ui-library/src/**/*.vue'],
-  ignores: [
-    '**/__test__/**',
-    'packages/ui-library/src/components/overlays/tooltip/RuiTooltip.vue',
-  ],
+  ignores: ['**/__test__/**'],
   rules: {
     'no-restricted-syntax': ['error', ...packageSyntax, {
       selector: 'CallExpression[callee.name=\'tv\']',

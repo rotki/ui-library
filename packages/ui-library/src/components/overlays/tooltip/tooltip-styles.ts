@@ -25,3 +25,8 @@ export const tooltipStyles = tv({
   },
   defaultVariants: { open: false, side: 'bottom' },
 });
+
+export const tooltipRootStyles = tv({ base: 'relative inline-flex' });
+
+// wraps at `--rui-tooltip-max-width`; a `max-w-*` in `classNames.tooltip` replaces it
+export const tooltipPopoverStyles = tv({ base: 'w-max max-w-rui-tooltip z-rui-tooltip' });
