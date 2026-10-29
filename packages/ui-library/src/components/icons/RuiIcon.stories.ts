@@ -158,6 +158,7 @@ const customIconNeighbours: Record<string, string> = {
   'lu-coins-exchange': 'lu-arrow-right-left',
   'lu-custom-assets': 'lu-database',
   'lu-deposits': 'lu-log-in',
+  'lu-dogecoin-accounts': 'lu-wallet',
   'lu-droplet-fill': 'lu-droplet',
   'lu-droplet-half-fill': 'lu-droplet',
   'lu-droplet-trending-down': 'lu-droplet',
