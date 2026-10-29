@@ -12,7 +12,7 @@ import {
   size,
 } from '@floating-ui/dom';
 import { unrefElement } from '@vueuse/core';
-import { type MaybeRefOrGetter, onMounted, type Ref, ref, watchEffect } from 'vue';
+import { type MaybeRefOrGetter, type Ref, ref, watchEffect } from 'vue';
 import { useTimeoutManager } from './timeout-manager';
 
 type VirtualElement = FloatingVirtualElement;
@@ -156,9 +156,12 @@ export function useFloating(
   openDelay: MaybeRefOrGetter<number> = 0,
   closeDelay: MaybeRefOrGetter<number> = 0,
   virtualReference?: MaybeRefOrGetter<Element | VirtualElement | undefined>,
+  /** A popover template ref the caller already owns; the returned `popover` then stays unused. */
+  popoverElement?: Readonly<Ref<MaybeElement>>,
 ): UseFloatingReturn {
   const reference = ref<HTMLElement>();
   const popover = ref<MaybeElement>();
+  const popoverSource: Readonly<Ref<MaybeElement>> = popoverElement ?? popover;
   const open = shallowRef<boolean>(false);
   const visible = shallowRef<boolean>(false);
   const leavePending = shallowRef<boolean>(false);
@@ -216,10 +219,10 @@ export function useFloating(
   }
 
   function getValidElements(): { popoverEl: HTMLElement; referenceEl: Element | VirtualElement } | null {
-    if (!get(popover) || (!get(reference) && !toValue(virtualReference)))
+    if (!get(popoverSource) || (!get(reference) && !toValue(virtualReference)))
       return null;
 
-    const popoverEl = unrefElement(popover);
+    const popoverEl = unrefElement(popoverSource);
     const referenceEl = toValue(virtualReference) || unrefElement(reference);
 
     if (!(popoverEl instanceof HTMLElement) || !referenceEl)
@@ -288,11 +291,10 @@ export function useFloating(
     cleanupAutoUpdate = null;
   }
 
-  onMounted(() => {
-    watchEffect((onCleanup) => {
-      startAutoUpdate();
-      onCleanup(stopAutoUpdate);
-    });
+  // A run before the elements exist does nothing, and setting their refs runs it again, so it needs no mount hook
+  watchEffect((onCleanup) => {
+    startAutoUpdate();
+    onCleanup(stopAutoUpdate);
   });
 
   return {

@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { Reactive, Ref, WatchHandle } from 'vue';
 import type { VueClassValue } from '@/types/class-value';
 import { ButtonGroupBoundary } from '@/components/buttons/button-group/button-group-context';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
-import { type FloatingOptions, useFloating } from '@/composables/floating';
-import { type FormDetails, useFormTextDetail } from '@/utils/form-text-detail';
+import { type FloatingOptions, useFloating, type UseFloatingReturn } from '@/composables/floating';
+import { containsMessage, type FormDetails } from '@/utils/form-text-detail';
 import { cn, tv } from '@/utils/tv';
 
 interface BaseMenuAttrs { onMouseover?: () => void; onMouseleave?: () => void }
@@ -78,7 +79,22 @@ export interface MenuProps {
    * the other roles take it from their activator or options.
    */
   menuLabel?: string;
+  /**
+   * Defers the popover's setup (its positioning, the activator's size
+   * observer and the click-outside listeners) to first use: a click or a
+   * context menu on the activator, a hover with `openOnHover`, or the model
+   * turning `true`. Until then the menu renders its root, the wrapper and the
+   * activator, the same elements it keeps afterwards, so a table with a menu
+   * on every row pays for the menus that are opened. Read at mount.
+   */
+  lazy?: boolean;
 }
+
+/** What the menu sets up at mount, or on first use when `lazy`, with its refs unwrapped. */
+type MenuSetup = Reactive<{
+  floating: UseFloatingReturn;
+  width: Readonly<Ref<number>>;
+}>;
 
 defineOptions({
   name: 'RuiMenu',
@@ -107,6 +123,7 @@ const {
   anchorEl,
   role = 'menu',
   menuLabel,
+  lazy = false,
 } = defineProps<MenuProps>();
 
 defineSlots<{
@@ -131,38 +148,22 @@ defineSlots<{
 }>();
 
 const click = ref<boolean>(false);
+const activator = useTemplateRef<HTMLElement>('activator');
+const menu = useTemplateRef<HTMLElement>('menu');
 const menuContent = useTemplateRef<HTMLElement>('menuContent');
 const menuId = useId();
+const instance = getCurrentInstance();
+// Owned by this component, so whatever the setup starts stops on unmount even when it ran after mount
+const setupScope = effectScope();
+const menuSetup = shallowRef<MenuSetup>();
+let stopSetUpOnModel: WatchHandle | undefined;
 
 const FOCUSABLE_ELEMENTS_SELECTOR =
   'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
-const {
-  reference: activator,
-  popover: menu,
-  open,
-  visible,
-  currentPlacement,
-  leavePending,
-  onLeavePending,
-  onOpen,
-  onClose,
-  onLeaveComplete,
-  updatePosition,
-} = useFloating(
-  () => options ?? {},
-  () => disabled,
-  () => openDelay,
-  () => closeDelay,
-  () => anchorEl,
-);
-
-const { width } = useElementSize(activator);
-
-const { hasError, hasSuccess } = useFormTextDetail(
-  () => errorMessages,
-  () => successMessages,
-);
+// Only the two flags, not the formatted lists useFormTextDetail builds, since a table may hold hundreds of menus
+const hasError = computed<boolean>(() => containsMessage(errorMessages));
+const hasSuccess = computed<boolean>(() => containsMessage(successMessages));
 
 const menuStyles = tv({
   slots: {
@@ -189,8 +190,8 @@ const ui = computed<ReturnType<typeof menuStyles>>(() => menuStyles({
   dense,
 }));
 
-// `aria-haspopup="true"` means `"menu"`, and the default keeps emitting `true` for existing callers
-const ariaHasPopup = computed<RuiMenuRole | 'true'>(() => role === 'menu' ? 'true' : role);
+const open = computed<boolean>(() => get(menuSetup)?.floating.open ?? false);
+const visible = computed<boolean>(() => get(menuSetup)?.floating.visible ?? false);
 
 /**
  * The activator attributes.
@@ -208,13 +209,13 @@ const baseMenuAttrs = computed<BaseMenuAttrs>(() => {
       ? undefined
       : () => {
           if (openOnHover)
-            onOpen();
+            setUp()?.onOpen();
         },
     onMouseleave: disabled
       ? undefined
       : () => {
           if (openOnHover && !clickVal)
-            onClose();
+            activeFloating()?.onClose();
         },
   };
 });
@@ -222,11 +223,104 @@ const baseMenuAttrs = computed<BaseMenuAttrs>(() => {
 const menuAttrs = computed<MenuAttrs>(() => ({
   ...get(baseMenuAttrs),
   'onClick': disabled ? undefined : checkClick,
-  'aria-haspopup': get(ariaHasPopup),
+  // `aria-haspopup="true"` means `"menu"`, and the default keeps emitting `true` for existing callers
+  'aria-haspopup': role === 'menu' ? 'true' : role,
   'aria-expanded': get(open),
   // Only while the popover is in the DOM, so the reference never points at a missing element
   'aria-controls': get(visible) ? menuId : undefined,
 }));
+
+/**
+ * Sets a lazy menu up on its first use, on the wrapper so that it covers an
+ * activator that opens the menu through the model rather than through
+ * `attrs`. Hover and focus are left out: a cursor resting over a scrolling
+ * table or Tab moving down it would set up every row it passes. They stay
+ * after setup, where `setUp` only hands back what it already made.
+ */
+const firstUseListeners = { click: setUp, contextmenu: setUp };
+
+/**
+ * Sets the popover up once and hands back its floating state. It runs at
+ * mount, or for a `lazy` menu on first use, which can be after mount and
+ * inside another component's lifecycle hook, so what it starts must not
+ * attach itself to the current instance.
+ */
+function setUp(): MenuSetup['floating'] | undefined {
+  if (setupScope.active && !get(menuSetup)) {
+    set(menuSetup, setupScope.run(createSetup));
+    stopSetUpOnModel?.();
+  }
+  return activeFloating();
+}
+
+/**
+ * The floating state while the menu is alive. An event can still reach the
+ * activator after unmount, and must not start timers on a stopped menu.
+ */
+function activeFloating(): MenuSetup['floating'] | undefined {
+  return setupScope.active ? get(menuSetup)?.floating : undefined;
+}
+
+/** An element's content-box width, the box its resize observer reports. */
+function contentWidth(element: HTMLElement | null): number {
+  if (!element)
+    return 0;
+
+  const style = getComputedStyle(element);
+  const edges = [style.paddingLeft, style.paddingRight, style.borderLeftWidth, style.borderRightWidth];
+  return edges.reduce((width, edge) => width - (Number.parseFloat(edge) || 0), element.offsetWidth);
+}
+
+function createSetup(): MenuSetup {
+  const floating = useFloating(
+    () => options ?? {},
+    () => disabled,
+    () => openDelay,
+    () => closeDelay,
+    () => anchorEl ?? get(activator) ?? undefined,
+    menu,
+  );
+
+  const width = shallowRef<number>(0);
+  const readWidth = (): void => set(width, contentWidth(get(activator)));
+  useResizeObserver(activator, ([entry]) => {
+    if (entry)
+      set(width, entry.contentRect.width);
+  });
+  // Only the menu's own setup waits for its mount; a later one may run inside another component's hook
+  if (instance?.isMounted)
+    readWidth();
+  else
+    onMounted(readWidth);
+
+  // Immediate, so a model that is already `true` at setup opens the menu
+  watch(modelValue, (value) => {
+    if (get(floating.open) === value)
+      return;
+
+    if (value) {
+      floating.onOpen();
+      set(click, true);
+    }
+    else {
+      onLeave();
+    }
+  }, { immediate: true });
+
+  watch(floating.open, (isOpen) => {
+    set(modelValue, isOpen);
+    if (isOpen) {
+      focusMenu();
+    }
+  });
+
+  onClickOutside(menu, () => {
+    if (get(floating.open) && !persistent)
+      onLeave();
+  }, { ignore: [activator] });
+
+  return reactive({ floating, width });
+}
 
 /**
  * Moves focus into the open menu without scrolling the page. A menu taller than the space below its
@@ -261,9 +355,10 @@ function focusOnActivator() {
 }
 
 function onLeave(event?: KeyboardEvent): void {
-  if (!get(open))
+  const floating = activeFloating();
+  if (!floating?.open)
     return;
-  onClose();
+  floating.onClose();
   set(click, false);
   event?.stopPropagation();
 
@@ -303,40 +398,30 @@ function onEscape(event: KeyboardEvent): void {
 }
 
 function checkClick(): void {
-  if (get(open) && get(click)) {
+  const floating = setUp();
+  if (!floating)
+    return;
+
+  if (floating.open && get(click)) {
     if (!persistOnActivatorClick)
       onLeave();
   }
   else {
-    onOpen();
+    floating.onOpen();
     set(click, true);
   }
 }
 
-watch(modelValue, (value) => {
-  if (get(open) === value)
-    return;
-
-  if (value) {
-    onOpen();
-    set(click, true);
-  }
-  else {
-    onLeave();
-  }
-}, { immediate: true });
-
-watch(open, (open) => {
-  set(modelValue, open);
-  if (open) {
-    focusMenu();
-  }
-});
-
-onClickOutside(menu, () => {
-  if (get(open) && !persistent)
-    onLeave();
-}, { ignore: [activator] });
+// The setup's own watcher opens it; a disabled menu stays closed and unset, as an eager one stays closed
+if (!lazy || (get(modelValue) && !disabled)) {
+  setUp();
+}
+else {
+  stopSetUpOnModel = watch(modelValue, (value) => {
+    if (value && !disabled)
+      setUp();
+  });
+}
 </script>
 
 <template>
@@ -349,6 +434,7 @@ onClickOutside(menu, () => {
       ref="activator"
       :class="ui.wrapper({ class: cn(classNames?.wrapper) })"
       :data-menu-disabled="disabled"
+      v-on="lazy && !disabled ? firstUseListeners : {}"
     >
       <slot
         name="activator"
@@ -356,7 +442,7 @@ onClickOutside(menu, () => {
       />
     </div>
     <Teleport
-      v-if="!disabled"
+      v-if="!disabled && menuSetup"
       to="body"
     >
       <div
@@ -366,7 +452,7 @@ onClickOutside(menu, () => {
         :class="ui.popover({ class: cn(classNames?.menu) })"
         :role="role"
         :aria-label="menuLabel"
-        :data-placement="currentPlacement"
+        :data-placement="menuSetup.floating.currentPlacement"
         @click="closeOnContentClick ? onLeave() : undefined"
         @keydown.esc="onEscape($event)"
       >
@@ -377,9 +463,9 @@ onClickOutside(menu, () => {
           leave-active-class="transition ease-in duration-150"
           leave-from-class="opacity-100 translate-y-0"
           leave-to-class="opacity-0 translate-y-1"
-          @before-enter="updatePosition()"
-          @after-leave="leavePending ? onLeaveComplete() : undefined"
-          @before-leave="onLeavePending()"
+          @before-enter="menuSetup?.floating.updatePosition()"
+          @after-leave="menuSetup?.floating.leavePending ? menuSetup.floating.onLeaveComplete() : undefined"
+          @before-leave="menuSetup?.floating.onLeavePending()"
         >
           <div
             v-if="open"
@@ -391,7 +477,7 @@ onClickOutside(menu, () => {
             v-bind="baseMenuAttrs"
           >
             <ButtonGroupBoundary>
-              <slot v-bind="{ width }" />
+              <slot v-bind="{ width: menuSetup.width }" />
             </ButtonGroupBoundary>
           </div>
         </TransitionGroup>

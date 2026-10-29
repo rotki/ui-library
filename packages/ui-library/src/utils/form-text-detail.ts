@@ -35,6 +35,11 @@ export interface FormTextDetailReturn {
   validation: ComputedRef<ValidationState>;
 }
 
+/** Whether a message prop holds any non-empty message, without building the list. */
+export function containsMessage(messages: string | string[]): boolean {
+  return typeof messages === 'string' ? !!messages : messages.some(item => !!item);
+}
+
 export function useFormTextDetail(
   errorMessages: MaybeRefOrGetter<string | string[]>,
   successMessages: MaybeRefOrGetter<string | string[]>,

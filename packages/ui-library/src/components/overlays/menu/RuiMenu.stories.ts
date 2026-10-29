@@ -46,6 +46,7 @@ const meta = preview.meta({
     openDelay: { control: 'number' },
     openOnHover: { control: 'boolean' },
     persistOnActivatorClick: { control: 'boolean' },
+    lazy: { control: 'boolean' },
     options: { control: 'object' },
     role: {
       control: 'select',
@@ -124,6 +125,43 @@ export const Placements = meta.story({
         </RuiMenu>
       </div>`,
   }),
+});
+
+/**
+ * A menu on every row of a long list. With `lazy` each row renders only its
+ * activator until the pointer, focus or a click reaches it, so the list mounts
+ * without setting up two hundred popovers.
+ */
+export const LazyRows = meta.story({
+  render: () => ({
+    components: { RuiButton, RuiMenu },
+    setup() {
+      const rows = Array.from({ length: 200 }, (_, index) => index + 1);
+      return { rows };
+    },
+    template: `
+      <div class="flex flex-col gap-1 p-4 max-w-md">
+        <div v-for="row in rows" :key="row" class="flex items-center justify-between">
+          <span>Row {{ row }}</span>
+          <RuiMenu lazy>
+            <template #activator="{ attrs }">
+              <RuiButton v-bind="attrs" size="sm">Actions {{ row }}</RuiButton>
+            </template>
+            <div class="px-4 py-3">Actions for row {{ row }}</div>
+          </RuiMenu>
+        </div>
+      </div>`,
+  }),
+  async play({ canvas, userEvent }) {
+    const activator = canvas.getByRole('button', { name: 'Actions 3' });
+    await userEvent.click(activator);
+    const body = within(document.body);
+    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+    await waitFor(() => expect(body.getByText('Actions for row 3')).toBeVisible());
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(body.queryByRole('menu')).toBeNull());
+    await expect(activator).toHaveFocus();
+  },
 });
 
 export const MenuDisabled = meta.story({

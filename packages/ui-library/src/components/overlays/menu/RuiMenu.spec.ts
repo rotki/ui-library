@@ -1,9 +1,15 @@
+import { autoUpdate } from '@floating-ui/dom';
 import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
 import { assertExists, cleanupElements, queryBody, queryByDataId, queryByRole } from '~/tests/helpers/dom-helpers';
 import { DATA_ATTRIBUTE_SELECTORS } from '~/tests/helpers/selectors';
+
+vi.mock('@floating-ui/dom', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@floating-ui/dom')>();
+  return { ...actual, autoUpdate: vi.fn(actual.autoUpdate) };
+});
 
 const text = 'This is menu';
 
@@ -545,6 +551,420 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
     await vi.runAllTimersAsync();
 
     expect(document.body.innerHTML).not.toMatch(new RegExp(text));
+  });
+
+  it.each([
+    { errorMessages: [], successMessages: '', flags: 'false/false' },
+    { errorMessages: ['', ''], successMessages: [''], flags: 'false/false' },
+    { errorMessages: 'Required', successMessages: [], flags: 'true/false' },
+    { errorMessages: ['', 'Too long'], successMessages: ['Saved'], flags: 'true/true' },
+  ])('should tell the activator about its messages ($flags)', ({ errorMessages, successMessages, flags }) => {
+    wrapper = mount(RuiMenu, {
+      props: { errorMessages, successMessages },
+      slots: {
+        activator: `<template #activator="{ hasError, hasSuccess }"><span id="flags">{{ hasError }}/{{ hasSuccess }}</span></template>`,
+      },
+    });
+
+    expect(wrapper.find('#flags').text()).toBe(flags);
+  });
+
+  describe('lazy', () => {
+    const observe = vi.fn<(element: Element) => void>();
+    const SetupResizeObserver = globalThis.ResizeObserver;
+
+    /** A set-up menu observes its activator's size, which tells a set-up menu from one that is not. */
+    function observedElements(): Element[] {
+      return observe.mock.calls.map(([element]) => element);
+    }
+
+    function isSetUp(): boolean {
+      return observedElements().includes(wrapper.find('[data-menu-disabled]').element);
+    }
+
+    function clickOutsideListeners(): number {
+      return vi.mocked(window.addEventListener).mock.calls.filter(([type]) => type === 'pointerdown').length;
+    }
+
+    /** The callbacks of the observers watching each element (the menu's and floating-ui's), to report a resize. */
+    const resizeCallbacks = new Map<Element, ResizeObserverCallback[]>();
+
+    /** A menu whose content shows the width it gets from its slot. */
+    function mountWidthMenu(props: Record<string, unknown>): VueWrapper {
+      return mount(defineComponent({
+        components: { RuiButton, RuiMenu },
+        template: `
+          <RuiMenu v-bind="props">
+            <template #activator="{ attrs }">
+              <RuiButton id="trigger" v-bind="attrs">Click me!</RuiButton>
+            </template>
+            <template #default="{ width }">
+              <div data-id="width">{{ width }}</div>
+            </template>
+          </RuiMenu>`,
+        setup: () => ({ props }),
+      }));
+    }
+
+    beforeEach(() => {
+      observe.mockClear();
+      resizeCallbacks.clear();
+      vi.stubGlobal('ResizeObserver', class {
+        constructor(private readonly callback: ResizeObserverCallback) {}
+
+        observe = (element: Element): void => {
+          observe(element);
+          resizeCallbacks.set(element, [...resizeCallbacks.get(element) ?? [], this.callback]);
+        };
+
+        unobserve = vi.fn();
+        disconnect = vi.fn();
+      });
+      vi.spyOn(window, 'addEventListener');
+    });
+
+    afterEach(() => {
+      vi.stubGlobal('ResizeObserver', SetupResizeObserver);
+      vi.mocked(autoUpdate).mockReset();
+    });
+
+    it.each([
+      { lazy: true, listeners: 0 },
+      { lazy: false, listeners: 1 },
+    ])('should set up at mount only without lazy (lazy=$lazy)', async ({ lazy, listeners }) => {
+      wrapper = createWrapper({ props: { lazy } });
+      await vi.runAllTimersAsync();
+
+      expect(isSetUp()).toBe(!lazy);
+      expect(clickOutsideListeners()).toBe(listeners);
+    });
+
+    it.each(['mouse', 'pen', 'touch'])('should not set up on a %s pointerenter or on focus', async (pointerType) => {
+      wrapper = createWrapper({ props: { lazy: true } });
+      const activatorWrapper = wrapper.find('[data-menu-disabled]');
+
+      await activatorWrapper.trigger('pointerenter', { pointerType });
+      await wrapper.find('#trigger').trigger('focusin');
+
+      expect(isSetUp()).toBe(false);
+      expect(clickOutsideListeners()).toBe(0);
+    });
+
+    it('should open on the first click', async () => {
+      wrapper = createWrapper({ props: { lazy: true } });
+
+      await wrapper.find('#trigger').trigger('click');
+      await vi.runAllTimersAsync();
+
+      expect(document.body.innerHTML).toMatch(new RegExp(text));
+      expect(wrapper.find('#trigger').attributes('aria-expanded')).toBe('true');
+
+      document.body.click();
+      await vi.runAllTimersAsync();
+
+      expect(document.body.innerHTML).not.toMatch(new RegExp(text));
+    });
+
+    it('should close on a second activator click', async () => {
+      wrapper = createWrapper({ props: { lazy: true } });
+
+      await wrapper.find('#trigger').trigger('click');
+      await vi.runAllTimersAsync();
+      expect(document.body.innerHTML).toMatch(new RegExp(text));
+
+      await wrapper.find('#trigger').trigger('click');
+      await vi.runAllTimersAsync();
+
+      expect(document.body.innerHTML).not.toMatch(new RegExp(text));
+      expect(wrapper.find('#trigger').attributes('aria-expanded')).toBe('false');
+    });
+
+    it('should stay open on a second activator click with persistOnActivatorClick', async () => {
+      wrapper = createWrapper({ props: { lazy: true, persistOnActivatorClick: true } });
+
+      await wrapper.find('#trigger').trigger('click');
+      await vi.runAllTimersAsync();
+      await wrapper.find('#trigger').trigger('click');
+      await vi.runAllTimersAsync();
+
+      expect(document.body.innerHTML).toMatch(new RegExp(text));
+    });
+
+    it('should set up on a context menu', async () => {
+      wrapper = createWrapper({ props: { lazy: true } });
+
+      await wrapper.find('#trigger').trigger('contextmenu');
+
+      expect(isSetUp()).toBe(true);
+    });
+
+    it('should not set up on events that are not a first use', async () => {
+      wrapper = createWrapper({ props: { lazy: true } });
+
+      await wrapper.find('#trigger').trigger('keydown', { key: 'a' });
+      await wrapper.find('#trigger').trigger('mouseover');
+
+      expect(isSetUp()).toBe(false);
+    });
+
+    it('should not set up a disabled menu', async () => {
+      wrapper = createWrapper({ props: { disabled: true, lazy: true } });
+
+      await wrapper.find('#trigger').trigger('contextmenu');
+      await wrapper.find('#trigger').trigger('click');
+
+      expect(isSetUp()).toBe(false);
+    });
+
+    it('should not set up a disabled menu whose model is true', async () => {
+      wrapper = createWrapper({ props: { disabled: true, lazy: true, modelValue: true } });
+      await vi.runAllTimersAsync();
+
+      expect(isSetUp()).toBe(false);
+
+      await wrapper.setProps({ modelValue: false });
+      await wrapper.setProps({ modelValue: true });
+      await vi.runAllTimersAsync();
+
+      expect(isSetUp()).toBe(false);
+      expect(document.body.innerHTML).not.toMatch(new RegExp(text));
+    });
+
+    it('should set up and open on hover with openOnHover', async () => {
+      wrapper = createWrapper({ props: { lazy: true, openOnHover: true } });
+
+      // The activator's own handler, with no pointerenter first
+      await wrapper.find('#trigger').trigger('mouseover');
+      await vi.runAllTimersAsync();
+
+      expect(isSetUp()).toBe(true);
+      expect(document.body.innerHTML).toMatch(new RegExp(text));
+    });
+
+    it('should keep the same elements and markup around the activator across setup', async () => {
+      wrapper = createWrapper({ props: { lazy: true } });
+      const root = wrapper.element as HTMLElement;
+      const activatorWrapper = wrapper.find('[data-menu-disabled]').element;
+      const trigger = wrapper.find('#trigger').element;
+      const before = activatorWrapper.outerHTML;
+
+      await wrapper.find('#trigger').trigger('contextmenu');
+
+      expect(isSetUp()).toBe(true);
+      expect(wrapper.element).toBe(root);
+      expect(wrapper.find('[data-menu-disabled]').element).toBe(activatorWrapper);
+      expect(wrapper.find('#trigger').element).toBe(trigger);
+      expect(activatorWrapper.outerHTML).toBe(before);
+      expect(Array.from(root.children, child => child.outerHTML)).toEqual([before]);
+
+      // The comparison does see a change: opening the menu flips the activator's ARIA
+      await wrapper.find('#trigger').trigger('click');
+      await vi.runAllTimersAsync();
+
+      expect(activatorWrapper.outerHTML).not.toBe(before);
+    });
+
+    it('should keep keyboard focus on the activator across setup', async () => {
+      wrapper = createWrapper({ attachTo: document.body, props: { lazy: true } });
+      const trigger = wrapper.find('#trigger');
+      const triggerElement = trigger.element as HTMLElement;
+
+      // The context menu key on a focused activator
+      triggerElement.focus();
+      await trigger.trigger('contextmenu');
+      await vi.runAllTimersAsync();
+
+      expect(isSetUp()).toBe(true);
+      expect(document.activeElement).toBe(triggerElement);
+
+      // Focus does move once the menu opens, so the check above is not vacuous
+      await trigger.trigger('click');
+      await vi.runAllTimersAsync();
+
+      expect(document.activeElement).toBe(queryByDataId('content'));
+    });
+
+    it.each([true, false])('should keep the popover positioned with lazy=%s', async (lazy) => {
+      wrapper = createWrapper({ props: { lazy } });
+      await vi.runAllTimersAsync();
+      vi.mocked(autoUpdate).mockClear();
+
+      await wrapper.find('#trigger').trigger('click');
+      await vi.runAllTimersAsync();
+
+      const menu = queryByRole('menu');
+      assertExists(menu);
+      expect(autoUpdate).toHaveBeenCalledWith(
+        wrapper.find('[data-menu-disabled]').element,
+        menu,
+        expect.any(Function),
+        undefined,
+      );
+    });
+
+    it('should open a lazy menu mounted with its model already true', async () => {
+      wrapper = createWrapper({ props: { lazy: true, modelValue: true } });
+      await vi.runAllTimersAsync();
+
+      expect(isSetUp()).toBe(true);
+      expect(document.body.innerHTML).toMatch(new RegExp(text));
+    });
+
+    it('should set up and open when the model turns true', async () => {
+      wrapper = createWrapper({ props: { 'lazy': true, 'modelValue': false, 'onUpdate:modelValue': async (value: boolean) => wrapper.setProps({ modelValue: value }) } });
+      await vi.runAllTimersAsync();
+
+      expect(isSetUp()).toBe(false);
+      expect(document.body.innerHTML).not.toMatch(new RegExp(text));
+
+      await wrapper.setProps({ modelValue: true });
+      await vi.runAllTimersAsync();
+
+      expect(isSetUp()).toBe(true);
+      expect(document.body.innerHTML).toMatch(new RegExp(text));
+      expect(wrapper.find('#trigger').attributes('aria-expanded')).toBe('true');
+    });
+
+    it('should stop its listeners on unmount after a late setup', async () => {
+      const removeEventListener = vi.spyOn(window, 'removeEventListener');
+      wrapper = createWrapper({ props: { lazy: true } });
+      await wrapper.find('#trigger').trigger('contextmenu');
+
+      const removedPointerdown = (): unknown[] => removeEventListener.mock.calls.filter(([type]) => type === 'pointerdown');
+      const removedBefore = removedPointerdown().length;
+      wrapper.unmount();
+
+      expect(removedPointerdown()).toHaveLength(removedBefore + 1);
+    });
+
+    it('should start no timers from an activator used after unmount', async () => {
+      wrapper = createWrapper({ props: { lazy: true } });
+      await wrapper.find('#trigger').trigger('contextmenu');
+      expect(isSetUp()).toBe(true);
+      await vi.runAllTimersAsync();
+
+      const trigger = wrapper.find('#trigger').element as HTMLElement;
+      wrapper.unmount();
+      trigger.click();
+
+      expect(vi.getTimerCount()).toBe(0);
+    });
+
+    it('should start no timers from an escape that reaches an open menu after unmount', async () => {
+      wrapper = createWrapper({ props: { lazy: true } });
+      await wrapper.find('#trigger').trigger('click');
+      await vi.runAllTimersAsync();
+      expect(document.body.innerHTML).toMatch(new RegExp(text));
+
+      const trigger = wrapper.find('#trigger').element;
+      wrapper.unmount();
+      trigger.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'Escape' }));
+
+      expect(vi.getTimerCount()).toBe(0);
+    });
+
+    it('should tie a setup run from another component\'s mounted hook to the menu', async () => {
+      const stopAutoUpdate = vi.fn();
+      vi.mocked(autoUpdate).mockImplementation(() => stopAutoUpdate);
+
+      const Host = defineComponent({
+        components: { RuiButton, RuiMenu },
+        template: `
+          <div>
+            <RuiMenu v-if="show" lazy>
+              <template #activator="{ attrs }">
+                <RuiButton id="trigger" ref="trigger" v-bind="attrs">Click me!</RuiButton>
+              </template>
+              <div>${text}</div>
+            </RuiMenu>
+          </div>`,
+        setup() {
+          const show = ref<boolean>(true);
+          const trigger = useTemplateRef<{ $el: HTMLElement }>('trigger');
+          // A first use dispatched while this component's own mounted hook runs
+          onMounted(() => {
+            get(trigger)?.$el.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true }));
+          });
+          return { show };
+        },
+      });
+
+      const host = mount(Host);
+      await vi.runAllTimersAsync();
+      expect(observedElements()).toHaveLength(1);
+
+      await host.find('#trigger').trigger('click');
+      await vi.runAllTimersAsync();
+      expect(autoUpdate).toHaveBeenCalled();
+
+      host.vm.show = false;
+      await vi.runAllTimersAsync();
+
+      expect(stopAutoUpdate).toHaveBeenCalled();
+      host.unmount();
+    });
+
+    it.each([true, false])('should give the content the activator width with lazy=%s', async (lazy) => {
+      vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(80);
+      const host = mountWidthMenu({ lazy });
+
+      await host.find('#trigger').trigger('click');
+      await vi.runAllTimersAsync();
+      expect(queryByDataId('width')?.textContent).toBe('80');
+
+      const callbacks = resizeCallbacks.get(host.find('[data-menu-disabled]').element) ?? [];
+      for (const callback of callbacks)
+        callback([{ contentRect: { width: 150 } } as ResizeObserverEntry], {} as ResizeObserver);
+      await nextTick();
+
+      expect(queryByDataId('width')?.textContent).toBe('150');
+      host.unmount();
+    });
+
+    it('should measure the activator for a setup run from another component\'s mounted hook', async () => {
+      const Host = defineComponent({
+        components: { RuiButton, RuiMenu },
+        template: `
+          <RuiMenu lazy>
+            <template #activator="{ attrs }">
+              <RuiButton id="trigger" ref="trigger" v-bind="attrs">Click me!</RuiButton>
+            </template>
+            <template #default="{ width }">
+              <div data-id="width">{{ width }}</div>
+            </template>
+          </RuiMenu>`,
+        setup() {
+          const trigger = useTemplateRef<{ $el: HTMLElement }>('trigger');
+          onMounted(() => {
+            const element = get(trigger)?.$el;
+            assertExists(element?.parentElement);
+            Object.defineProperty(element.parentElement, 'offsetWidth', { value: 120 });
+            element.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true }));
+          });
+        },
+      });
+
+      const host = mount(Host);
+      await host.find('#trigger').trigger('click');
+      await vi.runAllTimersAsync();
+
+      // The stubbed observer never reports, so only the setup's own read can give the width
+      expect(queryByDataId('width')?.textContent).toBe('120');
+      host.unmount();
+    });
+
+    it('should ignore a first use that arrives after unmount', async () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      wrapper = createWrapper({ props: { lazy: true } });
+      const activatorWrapper = wrapper.find('[data-menu-disabled]').element;
+      wrapper.unmount();
+
+      activatorWrapper.dispatchEvent(new MouseEvent('click'));
+      activatorWrapper.dispatchEvent(new MouseEvent('contextmenu'));
+
+      expect(observedElements()).not.toContain(activatorWrapper);
+      expect(warn).not.toHaveBeenCalled();
+    });
   });
 
   it('should menu works with `closeOnContentClick=true`', async () => {
