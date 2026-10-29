@@ -4,7 +4,8 @@ import RuiColorBoard from '@/components/color-picker/RuiColorBoard.vue';
 import RuiColorDisplay from '@/components/color-picker/RuiColorDisplay.vue';
 import RuiColorHue from '@/components/color-picker/RuiColorHue.vue';
 import RuiColorInput from '@/components/color-picker/RuiColorInput.vue';
-import { cn, tv } from '@/utils/tv';
+import { cn } from '@/utils/tv';
+import { colorPickerStyles } from './color-picker-styles';
 import { Color } from './utils';
 
 defineOptions({
@@ -44,8 +45,6 @@ watch(
   },
   { immediate: true },
 );
-
-const rootStyle = tv({ base: 'relative select-none' });
 </script>
 
 <template>
@@ -53,7 +52,7 @@ const rootStyle = tv({ base: 'relative select-none' });
     role="application"
     aria-label="Color picker"
     data-id="color-picker"
-    :class="rootStyle({ class: cn($attrs.class) })"
+    :class="colorPickerStyles({ class: cn($attrs.class) })"
     v-bind="{ ...$attrs, class: undefined }"
   >
     <RuiColorBoard

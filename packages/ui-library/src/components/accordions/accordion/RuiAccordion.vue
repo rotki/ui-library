@@ -2,7 +2,8 @@
 import type { VueClassValue } from '@/types/class-value';
 import Icon from '@/components/icons/RuiIcon.vue';
 import { useClipWhileResizing } from '@/composables/clip-while-resizing';
-import { cn, tv } from '@/utils/tv';
+import { cn } from '@/utils/tv';
+import { accordionStyles } from './accordion-styles';
 
 export interface RuiAccordionClassNames {
   root?: VueClassValue;
@@ -62,13 +63,11 @@ function onKeydown(event: KeyboardEvent): void {
     toggle();
   }
 }
-
-const rootStyle = tv({ base: 'flex flex-col items-start' });
 </script>
 
 <template>
   <div
-    :class="rootStyle({ class: cn(classNames?.root ?? $attrs.class) })"
+    :class="accordionStyles({ class: cn(classNames?.root ?? $attrs.class) })"
     :data-state="open ? 'open' : 'closed'"
     data-accordion
     v-bind="{ ...$attrs, class: undefined }"

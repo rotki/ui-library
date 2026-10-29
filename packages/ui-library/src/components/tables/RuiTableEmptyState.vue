@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useRotkiTheme } from '@/composables/theme';
-import { tv } from '@/utils/tv';
+import { emptyStyles } from './table-empty-state-styles';
 import noDataPlaceholder from './table_no_data_placeholder.svg';
 import noDataPlaceholderDark from './table_no_data_placeholder_dark.svg';
 
@@ -25,25 +25,6 @@ defineSlots<{
 }>();
 
 const { isDark } = useRotkiTheme();
-
-const emptyStyles = tv({
-  slots: {
-    root: 'flex flex-col items-center justify-center flex-1',
-    title: 'text-body-1 font-semibold text-center text-current pb-0 mb-0',
-    subtitle: 'text-body-2 text-center text-rui-text-secondary pb-0 mb-0',
-  },
-  variants: {
-    compact: {
-      true: {
-        root: 'gap-1 py-6',
-        title: 'font-normal text-rui-text-secondary',
-      },
-      false: {
-        root: 'gap-3 min-h-56 my-4',
-      },
-    },
-  },
-});
 
 const ui = computed<ReturnType<typeof emptyStyles>>(() => emptyStyles({ compact }));
 </script>

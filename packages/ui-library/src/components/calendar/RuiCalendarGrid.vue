@@ -6,7 +6,7 @@ import {
   getDaysOfWeek,
   type RuiCalendarState,
 } from '@/components/calendar/state';
-import { tv } from '@/utils/tv';
+import { dayButtonStyles } from './calendar-grid-styles';
 
 defineOptions({
   name: 'RuiCalendarGrid',
@@ -36,35 +36,6 @@ function createDateKey(date: Date): string {
 const daysOfWeek = getDaysOfWeek();
 const today = new Date();
 const todayKey = createDateKey(today);
-
-const dayButton = tv({
-  base: 'h-9 w-full flex items-center justify-center text-sm rounded-rui-control mx-auto max-w-9 transition-colors duration-150 ease-in-out border-none outline-hidden cursor-pointer focus-visible:focus-ring',
-  variants: {
-    selected: {
-      true: 'bg-rui-primary-fill text-rui-primary-foreground hover:bg-rui-primary-fill hover:state-layer-pressed',
-    },
-    // the neighbouring months' days are a step quieter but still pickable, so they keep 4.5:1
-    currentMonth: {
-      true: 'text-rui-neutral-800 dark:text-rui-neutral-100',
-      false: 'text-rui-neutral-500 dark:text-rui-neutral-400',
-    },
-    inRange: {
-      false: 'opacity-50 cursor-not-allowed hover:bg-transparent',
-    },
-    today: {
-      true: 'inset-ring inset-ring-rui-outline font-semibold',
-    },
-  },
-  compoundVariants: [
-    // restated under `dark:`, which the current-month day color uses and would otherwise win
-    {
-      selected: true,
-      class: 'text-rui-primary-foreground dark:text-rui-primary-foreground',
-    },
-    // only a pickable, unselected day takes the grey hover; on the selected one it replaced the fill
-    { selected: false, inRange: true, class: 'hover:bg-rui-hover' },
-  ],
-});
 
 // Pre-calculated arrays for performance - using refs for better control
 const calendarDays = ref<
@@ -345,7 +316,7 @@ watch(
           :data-current-month="dayData.isCurrentMonth || undefined"
           :data-selected="dayData.isSelected || undefined"
           :data-today="(dayData.isToday && !dayData.isSelected) || undefined"
-          :class="dayButton({
+          :class="dayButtonStyles({
             selected: dayData.isSelected,
             currentMonth: !dayData.isSelected && dayData.isCurrentMonth,
             inRange: dayData.isInRange,

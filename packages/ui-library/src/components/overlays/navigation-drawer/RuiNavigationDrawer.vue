@@ -4,7 +4,8 @@ import type { VueClassValue } from '@/types/class-value';
 import type { MaybeElement } from '@/types/dom';
 import { useTimeoutManager } from '@/composables/timeout-manager';
 import { getRootAttrs, transformPropsUnit } from '@/utils/helpers';
-import { cn, tv } from '@/utils/tv';
+import { cn } from '@/utils/tv';
+import { navigationDrawerStyles } from './navigation-drawer-styles';
 
 export interface RuiNavigationDrawerClassNames {
   root?: VueClassValue;
@@ -71,46 +72,6 @@ const activatorAttrs: { onClick: () => void } = {
   onClick: toggle,
 };
 
-const drawer = tv({
-  base: 'transition-[transform,translate,width] duration-200 ease-in-out bottom-0 fixed text-rui-text',
-  variants: {
-    belowAppBar: {
-      true: 'top-rui-app-bar',
-      false: 'top-0',
-    },
-    // a temporary drawer floats on the overlay surface; a docked one is part of the page, edged by a hairline
-    temporary: {
-      true: 'bg-rui-overlay',
-      false: 'bg-rui-surface',
-    },
-    position: {
-      left: 'left-0',
-      right: 'right-0',
-    },
-    visible: {
-      true: 'translate-x-0',
-      false: '',
-    },
-    mini: {
-      true: 'translate-x-0',
-      false: '',
-    },
-    // a modal drawer covers the app bar; a docked one sits level with it
-    withOverlay: {
-      true: 'z-rui-drawer',
-      false: 'z-rui-app-bar',
-    },
-  },
-  compoundVariants: [
-    { position: 'left', visible: false, mini: false, class: '-translate-x-full' },
-    { position: 'right', visible: false, mini: false, class: 'translate-x-full' },
-    { mini: true, visible: false, class: 'w-14!' },
-    { temporary: false, position: 'left', class: 'border-r border-rui-divider' },
-    { temporary: false, position: 'right', class: 'border-l border-rui-divider' },
-  ],
-  defaultVariants: { position: 'left', visible: false, mini: false, withOverlay: false, temporary: false, belowAppBar: false },
-});
-
 /**
  * Where the drawer starts its slide in: it mounts open, so the closed position has to be put on it for
  * its first frame. Important, because the open position is already on the element.
@@ -124,13 +85,13 @@ const overlayClass = computed<string>(() => cn([
 ]) ?? '');
 
 /**
- * Consumer classes go through `drawer()` rather than alongside it, so
+ * Consumer classes go through `navigationDrawerStyles()` rather than alongside it, so
  * tailwind-variants' twMerge resolves conflicts in the consumer's favour.
  * Passed as an argument instead of read off `$attrs` here, so the template
  * keeps using `$attrs` directly.
  */
 function rootClass(attrsClass: ClassValue): string {
-  return drawer({
+  return navigationDrawerStyles({
     position,
     visible: modelValue.value,
     mini: miniVariant,

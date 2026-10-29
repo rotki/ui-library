@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
-import { tv } from '@/utils/tv';
+import { loadingStyles } from './table-loading-state-styles';
 
 export interface TableLoadingStateProps {
   /** Diameter of the spinner, in pixels. */
@@ -19,18 +19,6 @@ defineOptions({
 });
 
 const { size = 40, compact = false } = defineProps<TableLoadingStateProps>();
-
-const loadingStyles = tv({
-  slots: {
-    root: 'flex items-center justify-center',
-  },
-  variants: {
-    compact: {
-      true: { root: 'py-6' },
-      false: { root: 'min-h-56 py-8' },
-    },
-  },
-});
 
 const ui = computed<ReturnType<typeof loadingStyles>>(() => loadingStyles({ compact }));
 </script>

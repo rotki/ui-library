@@ -10,8 +10,8 @@ import {
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
 import { type FloatingOptions, Placement } from '@/composables/floating';
-import { tv } from '@/utils/tv';
 import RuiButton from '../buttons/button/RuiButton.vue';
+import { cellButtonStyles } from './calendar-menu-styles';
 
 defineOptions({
   name: 'RuiCalendarMenu',
@@ -39,22 +39,6 @@ const startYear = ref<number>(viewYear - 6);
 // Pre-calculated constants
 const months = getShortMonthNames();
 const calendarState = inject<RuiCalendarState>(CalendarStateSymbol) as RuiCalendarState;
-
-const cellButton = tv({
-  base: 'h-9 w-full flex items-center justify-center text-sm font-medium rounded-rui-control transition-colors duration-150 ease-in-out border-none outline-hidden cursor-pointer focus-visible:focus-ring',
-  variants: {
-    selected: {
-      true: 'bg-rui-primary-fill text-rui-primary-foreground hover:bg-rui-primary-darker active:bg-rui-primary-darker',
-    },
-    inRange: {
-      true: 'text-rui-text bg-transparent hover:bg-rui-hover active:bg-rui-pressed',
-      false: 'cursor-not-allowed bg-transparent pointer-events-none text-rui-text-disabled',
-    },
-    selectedOutOfRange: {
-      true: 'bg-rui-surface-muted text-rui-text-disabled',
-    },
-  },
-});
 
 // Pre-calculated arrays for performance - using refs for better control
 const yearRange = ref<number[]>([]);
@@ -280,7 +264,7 @@ watch(
           v-for="(month, index) in months"
           :key="month"
           type="button"
-          :class="cellButton({
+          :class="cellButtonStyles({
             selected: index === viewMonth && get(monthsInRange)[index],
             selectedOutOfRange: index === viewMonth && !get(monthsInRange)[index],
             inRange: index !== viewMonth ? get(monthsInRange)[index] : undefined,
@@ -300,7 +284,7 @@ watch(
           v-for="(year, index) in yearRange"
           :key="year"
           type="button"
-          :class="cellButton({
+          :class="cellButtonStyles({
             selected: year === viewYear && get(yearsInRange)[index],
             selectedOutOfRange: year === viewYear && !get(yearsInRange)[index],
             inRange: year !== viewYear ? get(yearsInRange)[index] : undefined,

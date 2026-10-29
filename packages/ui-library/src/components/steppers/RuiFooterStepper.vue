@@ -3,7 +3,7 @@ import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { FooterStepperVariant } from '@/components/steppers/footer-stepper-variant';
-import { tv } from '@/utils/tv';
+import { footerStepperStyles } from './footer-stepper-styles';
 
 export interface Props {
   pages: number;
@@ -24,29 +24,6 @@ const {
   arrowButtons = false,
   hideButtons = false,
 } = defineProps<Props>();
-
-const footerStepper = {
-  // the current bullet stretches into a short bar, so position reads without relying on color
-  bullet: tv({
-    base: [
-      'h-2 w-2 rounded-full bg-rui-neutral-300 transition-[width,background-color] duration-200 ease-out dark:bg-rui-neutral-600',
-      'hover:bg-rui-neutral-400 dark:hover:bg-rui-neutral-500 focus-visible:focus-ring outline-hidden',
-    ].join(' '),
-    variants: {
-      active: {
-        true: 'w-5 bg-rui-primary hover:bg-rui-primary dark:bg-rui-primary dark:hover:bg-rui-primary',
-      },
-    },
-  }),
-  pill: tv({
-    base: 'rounded-full h-1.5 w-full bg-rui-neutral-200 dark:bg-rui-neutral-700 transition-colors',
-    variants: {
-      active: {
-        true: 'bg-rui-primary dark:bg-rui-primary',
-      },
-    },
-  }),
-};
 
 function onChange(delta: number): void {
   set(modelValue, get(modelValue) + delta);
@@ -83,7 +60,7 @@ function onClick(index: number): void {
           v-for="i in pages"
           :key="i"
           :aria-current="modelValue === i ? 'step' : undefined"
-          :class="footerStepper.pill({ active: modelValue === i })"
+          :class="footerStepperStyles.pill({ active: modelValue === i })"
         />
       </div>
     </template>
@@ -129,7 +106,7 @@ function onClick(index: number): void {
           type="button"
           :aria-label="`Step ${i}`"
           :aria-current="modelValue === i ? 'step' : undefined"
-          :class="footerStepper.bullet({ active: modelValue === i })"
+          :class="footerStepperStyles.bullet({ active: modelValue === i })"
           @click="onClick(i)"
         />
       </div>

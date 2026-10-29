@@ -37,6 +37,12 @@ const tokenRule = ['error', {
   }],
 }];
 
+/** Syntax the package source must not use, shared by its `.ts` and `.vue` rules. */
+const packageSyntax = ['TSEnumDeclaration[const=true]', 'TSExportAssignment', {
+  selector: 'ImportDeclaration[specifiers.length=0]:not([importKind=\'type\']):not([source.value=/\\.s?css$/])',
+  message: 'The package is side-effect free, so a bundler may drop a module imported only for its effect. Export what it sets up and import that.',
+}];
+
 export default rotki({
   vue: true,
   typescript: true,
@@ -109,16 +115,30 @@ export default rotki({
   files: ['packages/ui-library/src/**/*.{ts,vue}'],
   ignores: ['**/*.spec.ts', '**/*.stories.ts', '**/__test__/**'],
   rules: {
-    'no-restricted-syntax': ['error', 'TSEnumDeclaration[const=true]', 'TSExportAssignment', {
-      selector: 'ImportDeclaration[specifiers.length=0]:not([importKind=\'type\']):not([source.value=/\\.s?css$/])',
-      message: 'The package is side-effect free, so a bundler may drop a module imported only for its effect. Export what it sets up and import that.',
-    }],
+    'no-restricted-syntax': ['error', ...packageSyntax],
     '@typescript-eslint/no-restricted-imports': ['error', {
       paths: [{
         name: 'dayjs',
         allowTypeImports: true,
         message: 'Import { dayjs } from \'@/components/date-time-picker/dayjs-setup\', which registers the plugins the library relies on.',
       }],
+    }],
+  },
+}, {
+  /*
+   * Component scripts here are `<script setup>`, run per instance, so a `tv()`
+   * in a `.vue` file builds its factory for every copy on the page.
+   * RuiTooltip's moves on feat/tooltip-lazy, which drops it from `ignores`.
+   */
+  files: ['packages/ui-library/src/**/*.vue'],
+  ignores: [
+    '**/__test__/**',
+    'packages/ui-library/src/components/overlays/tooltip/RuiTooltip.vue',
+  ],
+  rules: {
+    'no-restricted-syntax': ['error', ...packageSyntax, {
+      selector: 'CallExpression[callee.name=\'tv\']',
+      message: 'Build the style factory in a sibling *-styles.ts, which runs once, not in the component script, which runs per instance.',
     }],
   },
 }, {
