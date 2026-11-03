@@ -95,7 +95,9 @@ const vitestConfig = defineConfig({
             provider: playwright({
               launchOptions: {
                 ...(chromiumPath ? { executablePath: chromiumPath } : {}),
-                args: ['--disable-dev-shm-usage', '--no-sandbox'],
+                // Off in CI only, where containers cannot run the sandbox; Playwright then adds --no-sandbox itself.
+                chromiumSandbox: !process.env.CI,
+                args: ['--disable-dev-shm-usage'],
               },
               actionTimeout: 5_000,
             }),

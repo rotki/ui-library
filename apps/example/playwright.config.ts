@@ -44,12 +44,17 @@ export default defineConfig({
     video: process.env.CI ? 'on-first-retry' : 'off',
     screenshot: process.env.CI ? 'only-on-failure' : 'off',
     viewport: { width: 1280, height: 720 },
-    ...(chromiumPath && {
-      launchOptions: {
+    launchOptions: {
+      /*
+       * Playwright starts Chromium without its sandbox unless told otherwise. Containers cannot run
+       * it: CI, and the visual suite, which always runs in the Playwright image.
+       */
+      chromiumSandbox: !process.env.CI && !includeVisual,
+      ...(chromiumPath && {
         executablePath: chromiumPath,
         args: ['--headless=new'],
-      },
-    }),
+      }),
+    },
   },
   projects: [
     {
