@@ -1,4 +1,5 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends File | File[] | undefined">
+import type { Ref } from 'vue';
 import type { RuiIcons } from '@/icons';
 import type { InputAttributes } from '@/types/attributes';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
@@ -49,7 +50,12 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const modelValue = defineModel<File | File[] | undefined>({ required: true });
+/**
+ * The picked file, or `undefined`; with `multiple`, the picked files in an array. `T` is the bound
+ * value's type, so a `Ref<File[]>` takes the update as is. The component writes through the wider
+ * ref, in the shape `multiple` asks for.
+ */
+const modelValue: Ref<File | File[] | undefined> = defineModel<T>({ required: true });
 
 const {
   accept = '*',

@@ -1,6 +1,6 @@
 <script lang="ts" setup generic="TValue, TItem">
-import type { HTMLAttributes } from 'vue';
-import type { AutoCompleteModelValue, AutoCompleteProps } from '@/components/forms/auto-complete/auto-complete-props';
+import type { HTMLAttributes, Ref } from 'vue';
+import type { AutoCompleteProps } from '@/components/forms/auto-complete/auto-complete-props';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import { autoCompleteStyles } from '@/components/forms/auto-complete/auto-complete-styles';
 import RuiAutoCompleteOptionList from '@/components/forms/auto-complete/RuiAutoCompleteOptionList.vue';
@@ -32,7 +32,12 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const modelValue = defineModel<AutoCompleteModelValue<TValue>>({ required: true });
+/**
+ * The selected key, or keys in an array for a multiple select. Its type is the bound value's, so a
+ * `Ref<number>` takes the update as is. Clearing a single select sets it to `undefined`, and a
+ * multiple one to `[]`: the component writes through this wider ref.
+ */
+const modelValue: Ref<TValue | unknown[] | undefined> = defineModel<TValue>({ required: true });
 
 const searchInputModel = defineModel<string>('searchInput', { default: '' });
 
@@ -150,7 +155,7 @@ const shouldApplyValueAsSearch = computed<boolean>(
   () => !(slots.selection || get(multiple) || chips),
 );
 
-const { value } = useAutoCompleteValue<AutoCompleteModelValue<TValue>, TItem>(
+const { value } = useAutoCompleteValue<TValue | unknown[], TItem>(
   modelValue,
   () => options,
   {
@@ -289,7 +294,7 @@ const { clear, setSearchAsValue, setValue } = useAutoCompleteSelection<TItem>({
   isOpen,
   itemIndexInValue,
   multiple,
-  resetModel: (): void => set(modelValue, (Array.isArray(get(modelValue)) ? [] : undefined) as AutoCompleteModelValue<TValue>),
+  resetModel: (): void => set(modelValue, Array.isArray(get(modelValue)) ? [] : undefined),
   searchInputFocused,
   settleOnInput,
   shouldApplyValueAsSearch,

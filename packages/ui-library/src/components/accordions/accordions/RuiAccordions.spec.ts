@@ -5,7 +5,7 @@ import Accordions from '@/components/accordions/accordions/RuiAccordions.vue';
 import { assert } from '@/utils/assert';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-const createWrapper = createMounter(Accordions, {
+const createWrapper = createMounter(Accordions<number | number[]>, {
   global: {
     stubs: {
       Accordion,
@@ -34,7 +34,7 @@ const createWrapper = createMounter(Accordions, {
 });
 
 describe('components/accordions/accordions/RuiAccordions.vue', () => {
-  let wrapper: MountedWrapper<typeof Accordions>;
+  let wrapper: MountedWrapper<typeof Accordions<number | number[]>>;
 
   it('should render properly', () => {
     const modelValue = ref();

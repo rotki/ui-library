@@ -22,7 +22,7 @@ vi.mock('@/components/date-time-picker/utils', async (importOriginal) => {
   };
 });
 
-const createWrapper = createMounter(RuiDateTimePicker, {
+const createWrapper = createMounter(RuiDateTimePicker<'date' | 'epoch-ms' | 'epoch'>, {
   global: {
     stubs: {
       Teleport: {
@@ -45,7 +45,7 @@ function boundLabel(date: Date): string {
 }
 
 describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
-  let wrapper: MountedWrapper<typeof RuiDateTimePicker>;
+  let wrapper: MountedWrapper<typeof RuiDateTimePicker<'date' | 'epoch-ms' | 'epoch'>>;
 
   const fixedDate = new Date(2023, 0, 15, 10, 30, 45, 500);
   vi.useFakeTimers();

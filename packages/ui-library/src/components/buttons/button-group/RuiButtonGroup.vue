@@ -1,8 +1,9 @@
 <script lang="ts" generic="T = undefined" setup>
-import type { HTMLAttributes } from 'vue';
+import type { HTMLAttributes, Ref } from 'vue';
 import type { ButtonSize } from '@/components/buttons/button/button-props';
 import type { ContextColorsType } from '@/consts/colors';
 import { type ButtonGroupContext, ButtonGroupKey } from '@/components/buttons/button-group/button-group-context';
+import { type ModelValueEmits, usePropModel } from '@/composables/prop-model';
 import { cn } from '@/utils/tv';
 import { buttonGroupStyles } from './button-group-styles';
 
@@ -26,8 +27,6 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const modelValue = defineModel<T | T[]>();
-
 const {
   vertical = false,
   color,
@@ -37,11 +36,28 @@ const {
   gap,
   required = false,
   disabled = false,
-} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
+  modelValue: modelValueProp,
+} = defineProps<Props & {
+  /**
+   * The pressed button's value, or the pressed values in an array for a multiple select. `T` is the
+   * bound value's type, so a `Ref<number[]>` takes the update as is. A single select that is not
+   * `required` sets it to `undefined` when its button is pressed again: bind a type that allows it.
+   */
+  modelValue?: T;
+} & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
+
+defineEmits<ModelValueEmits<T>>();
 
 defineSlots<{
   default?: () => any;
 }>();
+
+/*
+ * A prop and an event rather than `defineModel`, so the update is typed without `undefined` in the
+ * modes that never send it. The buttons' values are their own generic, so the group handles the
+ * model as values of unknown type.
+ */
+const modelValue: Ref<unknown> = usePropModel('modelValue', () => modelValueProp);
 
 const ui = computed<ReturnType<typeof buttonGroupStyles>>(() => buttonGroupStyles({
   vertical,
@@ -63,14 +79,14 @@ function buttonColor(active: boolean): ContextColorsType | undefined {
   return active && activeColor ? activeColor : color;
 }
 
-function isActive(id: T, selected?: T | T[]): boolean {
+function isActive(id: unknown, selected: unknown): boolean {
   if (Array.isArray(selected))
     return selected.includes(id);
 
   return selected === id;
 }
 
-function onClick(id: T): void {
+function onClick(id: unknown): void {
   const selected = get(modelValue);
 
   if (Array.isArray(selected)) {
@@ -100,9 +116,9 @@ provide(ButtonGroupKey, {
   disabled: () => disabled,
   color: buttonColor,
   itemClass: () => get(ui).button(),
-  isActive: (value: T) => isActive(value, get(modelValue)),
+  isActive: (value: unknown) => isActive(value, get(modelValue)),
   toggle: onClick,
-} satisfies ButtonGroupContext<T>);
+} satisfies ButtonGroupContext<unknown>);
 </script>
 
 <template>

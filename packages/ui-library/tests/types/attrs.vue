@@ -193,7 +193,8 @@ function onText(value: string): string {
     aria-label="Timezone"
   />
   <RuiDateTimePicker
-    :model-value="time"
+    v-model="time"
+    type="date"
     aria-label="Date"
   />
   <RuiTimePicker

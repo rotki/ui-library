@@ -88,6 +88,16 @@ export default rotki({
   },
 }, {
   /*
+   * The table wires a composable per concern (columns, sort, pagination, grouping, selection, ...),
+   * and its optional models one more, `usePropModel`. Splitting the component to drop an import
+   * would only move that wiring somewhere less obvious.
+   */
+  files: ['packages/ui-library/src/components/tables/RuiDataTable.vue'],
+  rules: {
+    '@rotki/max-dependencies': ['error', { max: 21 }],
+  },
+}, {
+  /*
    * `/* @vue-ignore *\/` keeps the HTML attributes a component forwards out of its runtime props.
    * Rewritten as a JSDoc block it fails tsdoc, which takes no hyphen in a tag name.
    */

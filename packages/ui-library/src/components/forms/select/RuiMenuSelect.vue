@@ -1,5 +1,5 @@
 <script lang="ts" setup generic="TValue, TItem">
-import type { ButtonHTMLAttributes } from 'vue';
+import type { ButtonHTMLAttributes, Ref } from 'vue';
 import type { VueClassValue } from '@/types/class-value';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';
@@ -56,7 +56,12 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const modelValue = defineModel<TValue | undefined>({ required: true });
+/**
+ * The selected key, or the item itself without `keyAttr`. Its type is the bound value's, so a
+ * `Ref<number>` takes the update as is. `clearable` sets it to `undefined`: bind a type that allows
+ * it. The component writes through the wider ref.
+ */
+const modelValue: Ref<TValue | undefined> = defineModel<TValue>({ required: true });
 
 const {
   options,

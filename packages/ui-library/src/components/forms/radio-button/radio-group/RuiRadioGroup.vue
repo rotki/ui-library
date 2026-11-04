@@ -2,6 +2,7 @@
 import type { ContextColorsType } from '@/consts/colors';
 import { Fragment, type HTMLAttributes, isVNode } from 'vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
+import { type ModelValueEmits, usePropModel } from '@/composables/prop-model';
 import { assert } from '@/utils/assert';
 import { type FormDetails, useFormDetails } from '@/utils/form-text-detail';
 
@@ -26,8 +27,6 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const modelValue = defineModel<TValue>({ required: false });
-
 const {
   inline = false,
   label = '',
@@ -40,11 +39,20 @@ const {
   color,
   size,
   required = false,
-} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
+  modelValue: modelValueProp,
+} = defineProps<Props & {
+  /** The checked radio's value. Optional, and only ever updated to a radio's value. */
+  modelValue?: TValue;
+} & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
+
+defineEmits<ModelValueEmits<TValue>>();
 
 const slots = defineSlots<{
   default?: () => any;
 }>();
+
+// a prop and an event rather than `defineModel`, so the update is typed without `undefined`
+const modelValue = usePropModel('modelValue', () => modelValueProp);
 
 const radioGroupName = useId();
 const detailsMode = useFormDetails(() => details, () => hideDetails);

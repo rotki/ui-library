@@ -87,7 +87,7 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
   });
 
   it('should pass and emit values properly', async () => {
-    const wrapper = createWrapper<string, SelectOption>({
+    const wrapper = createWrapper<string | undefined, SelectOption>({
       attachTo: document.body,
       props: {
         autoSelectFirst: true,

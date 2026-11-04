@@ -5,9 +5,6 @@ import type { RuiIcons } from '@/icons';
 import type { VueClassValue } from '@/types/class-value';
 import type { FormDetails } from '@/utils/form-text-detail';
 
-export type AutoCompleteModelValue<TValue> =
-  TValue extends Array<infer U> ? U[] : TValue | undefined;
-
 export interface RuiAutoCompleteClassNames {
   root?: VueClassValue;
   label?: VueClassValue;

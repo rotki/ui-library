@@ -1,6 +1,6 @@
-<script lang="ts" setup>
+<script lang="ts" setup generic="T extends string | number">
 import type { ContextColorsType } from '@/consts/colors';
-import { Fragment, type HTMLAttributes, isVNode, type VNode } from 'vue';
+import { Fragment, type HTMLAttributes, isVNode, type Ref, type VNode } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { type TabAlignment, type TabIndicatorPosition, TabLayout, TabVariant } from '@/components/tabs/tab-props';
@@ -9,17 +9,10 @@ import { useTabKeyboard } from '@/components/tabs/tabs/use-tab-keyboard';
 import { useTabRouting } from '@/components/tabs/tabs/use-tab-routing';
 import { useTabScroll } from '@/components/tabs/tabs/use-tab-scroll';
 import { useKeyboardScroll } from '@/composables/keyboard-scroll';
+import { type ModelValueEmits, usePropModel } from '@/composables/prop-model';
 import { tabsStyles } from './tabs-styles';
 
-type ChildNode = VNode & { props: Record<string, any> };
-
-interface ResolvedTabProps {
-  value?: string | number;
-  to?: unknown;
-  link?: boolean;
-  exact?: boolean;
-}
-
+/** Comes first: the component is generic, and only the declarations that open the script are hoisted out of its setup function. */
 export interface Props {
   color?: ContextColorsType;
   vertical?: boolean;
@@ -30,16 +23,18 @@ export interface Props {
   variant?: TabVariant;
 }
 
+type ChildNode = VNode & { props: Record<string, any> };
+
+interface ResolvedTabProps {
+  value?: string | number;
+  to?: unknown;
+  link?: boolean;
+  exact?: boolean;
+}
+
 defineOptions({
   name: 'RuiTabs',
 });
-
-/**
- * The selected tab, defaulting to the first one. The default also narrows the
- * `update:modelValue` payload to `number | string`, so a consumer's handler
- * needs no undefined in its signature.
- */
-const modelValue = defineModel<number | string>({ default: 0 });
 
 const {
   color,
@@ -49,7 +44,26 @@ const {
   align = 'center',
   indicatorPosition = 'end',
   variant = TabVariant.underline,
-} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
+  modelValue: modelValueProp,
+} = defineProps<Props & {
+  /** The selected tab's value. `T` is the bound value's type, so a `Ref<'a' | 'b'>` takes the update as is. */
+  modelValue?: T;
+} & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
+
+defineEmits<ModelValueEmits<T>>();
+
+/*
+ * A prop and an event rather than `defineModel`: the `0` default is no `T`, and without a default
+ * the update would be typed with an `undefined` it never carries. The component writes through the
+ * wider ref.
+ */
+const model: Ref<string | number | undefined> = usePropModel('modelValue', () => modelValueProp);
+
+// the selected tab, the first one while the model is unbound or undefined
+const modelValue = computed<string | number>({
+  get: () => get(model) ?? 0,
+  set: (value: string | number) => set(model, value),
+});
 
 const internalModelValue = ref<string | number>();
 const bar = useTemplateRef<HTMLDivElement>('bar');

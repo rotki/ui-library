@@ -1,6 +1,6 @@
 <script lang="ts" setup generic="T extends object, IdType extends keyof T = keyof T">
 import type { HTMLAttributes } from 'vue';
-import type { GroupHeader } from '@/composables/tables/data-table/types';
+import type { DataTableModelEmits, DataTableModels, GroupHeader } from '@/composables/tables/data-table/types';
 import { dataTableStyles } from '@/components/tables/data-table-styles';
 import { type DataTableClasses, type DataTableGroupLabel, provideDataTableContext, provideDataTableNested, useDataTableNested } from '@/components/tables/data-table/context';
 import RuiDataTableBody from '@/components/tables/data-table/RuiDataTableBody.vue';
@@ -11,12 +11,11 @@ import RuiTableHead, {
   type TableRowKeyData,
   type TableSortData,
 } from '@/components/tables/RuiTableHead.vue';
-import RuiTablePagination, {
-  type TablePaginationData,
-} from '@/components/tables/RuiTablePagination.vue';
+import RuiTablePagination, { type TablePaginationData } from '@/components/tables/RuiTablePagination.vue';
 import { GroupExpandButtonPosition } from '@/components/tables/table-props';
 import { useTable } from '@/composables/defaults/table';
 import { useKeyboardScroll } from '@/composables/keyboard-scroll';
+import { usePropModel } from '@/composables/prop-model';
 import { useStickyBlockerWarning } from '@/composables/sticky-blocker';
 import { useStickyTableHeader } from '@/composables/sticky-header';
 import { useTableColumns } from '@/composables/tables/data-table/columns';
@@ -151,14 +150,6 @@ defineOptions({
   name: 'RuiDataTable',
 });
 
-const selectedData = defineModel<T[IdType][]>();
-
-const expanded = defineModel<T[]>('expanded');
-
-const [pagination, paginationModifiers] = defineModel<TablePaginationData, 'external'>('pagination');
-
-const [sort, sortModifiers] = defineModel<TableSortData<T>, 'external'>('sort');
-
 const group = defineModel<TableRowKeyData<T>>('group');
 
 const collapsed = defineModel<T[]>('collapsed');
@@ -194,9 +185,15 @@ const {
   mobileBreakpoint,
   mobileBreakpointBasis,
   mobile,
-} = defineProps<Props<T, IdType> & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props<T, IdType>>>();
+  modelValue: selectedProp,
+  expanded: expandedProp,
+  pagination: paginationProp,
+  paginationModifiers: paginationModifiersProp,
+  sort: sortProp,
+  sortModifiers: sortModifiersProp,
+} = defineProps<Props<T, IdType> & DataTableModels<T, IdType> & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props<T, IdType>>>();
 
-const emit = defineEmits<{
+const emit = defineEmits<DataTableModelEmits<T, IdType> & {
   'update:options': [value: { pagination?: TablePaginationData; sort?: TableSortData<T> }];
   'copy:group': [value: GroupData<T>];
   'retry': [];
@@ -231,6 +228,11 @@ const slots = defineSlots<Partial<
     'tfoot': () => any;
   }
 >>();
+
+const selectedData = usePropModel('modelValue', () => selectedProp);
+const expanded = usePropModel('expanded', () => expandedProp);
+const [pagination, paginationModifiers] = usePropModel<TablePaginationData, 'external'>('pagination', () => paginationProp, () => paginationModifiersProp);
+const [sort, sortModifiers] = usePropModel<TableSortData<T>, 'external'>('sort', () => sortProp, () => sortModifiersProp);
 
 const tableDefaults = useTable();
 

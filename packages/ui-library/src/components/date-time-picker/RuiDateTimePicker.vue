@@ -1,5 +1,5 @@
-<script lang="ts" setup>
-import type { ComponentPublicInstance, HTMLAttributes } from 'vue';
+<script lang="ts" setup generic="T extends 'date' | 'epoch-ms' | 'epoch' = 'epoch-ms'">
+import type { ComponentPublicInstance, HTMLAttributes, Ref } from 'vue';
 import type { DateTimePickerAction, DateTimeSegmentType } from '@/components/date-time-picker/types';
 import type { TimePickerSelection } from '@/components/time-picker/RuiTimePicker.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
@@ -20,23 +20,16 @@ import { type FormDetails, useFormDetails, useFormTextDetail } from '@/utils/for
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 import { cn } from '@/utils/tv';
 
-type DateFormat = 'year-first' | 'month-first' | 'day-first';
-
-type DateTimeModelType = 'date' | 'epoch-ms' | 'epoch';
-
-type ModelValueType<T extends DateTimeModelType> = T extends 'date'
-  ? Date | undefined
-  : T extends 'epoch-ms'
-    ? number | undefined
-    : T extends 'epoch'
-      ? number | undefined
-      : Date | number | undefined;
-
+/*
+ * The component is generic, so only the declarations that open the script are hoisted out of its
+ * setup function: this interface comes first and spells its unions out instead of naming the
+ * aliases below.
+ */
 export interface RuiDateTimePickerProps {
   minDate?: Date | number;
   maxDate?: Date | number | 'now';
-  format?: DateFormat;
-  type?: DateTimeModelType;
+  format?: 'year-first' | 'month-first' | 'day-first';
+  type?: 'date' | 'epoch-ms' | 'epoch';
   accuracy?: 'minute' | 'second' | 'millisecond';
   disabled?: boolean;
   allowEmpty?: boolean;
@@ -88,12 +81,28 @@ export interface RuiDateTimePickerProps {
   partialTime?: 'start' | 'end';
 }
 
+type DateFormat = NonNullable<RuiDateTimePickerProps['format']>;
+
+type DateTimeModelType = NonNullable<RuiDateTimePickerProps['type']>;
+
+type ModelValueType<T extends DateTimeModelType> = T extends 'date'
+  ? Date | undefined
+  : T extends 'epoch-ms'
+    ? number | undefined
+    : T extends 'epoch'
+      ? number | undefined
+      : Date | number | undefined;
+
 defineOptions({
   name: 'RuiDateTimePicker',
   inheritAttrs: false,
 });
 
-const modelValue = defineModel<ModelValueType<DateTimeModelType>>({ required: true });
+/**
+ * The picked moment in the shape `type` names: a `Date` for `date`, a number for `epoch-ms` (the
+ * default) and `epoch`. The component writes through the wider ref.
+ */
+const modelValue: Ref<ModelValueType<DateTimeModelType>> = defineModel<ModelValueType<T>>({ required: true });
 const menuOpen = defineModel<boolean>('menuOpen', { default: false });
 
 const {
@@ -101,7 +110,7 @@ const {
   readonly = false,
   allowEmpty = false,
   dense = false,
-  type = 'epoch-ms',
+  type: typeProp,
   details = undefined,
   hideDetails = false,
   label,
@@ -118,11 +127,14 @@ const {
   actions = ['now'],
   autofocus = false,
   partialTime,
-} = defineProps<RuiDateTimePickerProps & /* @vue-ignore */ Omit<HTMLAttributes, keyof RuiDateTimePickerProps>>();
+} = defineProps<Omit<RuiDateTimePickerProps, 'type'> & { type?: T } & /* @vue-ignore */ Omit<HTMLAttributes, keyof RuiDateTimePickerProps>>();
 
 defineSlots<{
   'menu-content': () => any;
 }>();
+
+// `epoch-ms` is no `T`, so the default is applied here rather than in the destructuring
+const modelType: DateTimeModelType = typeProp ?? 'epoch-ms';
 
 const MENU_OPTIONS: FloatingOptions = { placement: Placement.bottomStart };
 
@@ -200,7 +212,7 @@ const {
   minDate,
   modelValue,
   partialTime,
-  type,
+  type: modelType,
 });
 
 const { setValue, getCurrent } = useInputHandler(segmentData, currentValue);

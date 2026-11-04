@@ -1,5 +1,6 @@
-<script lang="ts" setup>
-import { Fragment, type HTMLAttributes, isVNode } from 'vue';
+<script lang="ts" setup generic="T extends number | number[]">
+import { Fragment, type HTMLAttributes, isVNode, type Ref } from 'vue';
+import { type ModelValueEmits, usePropModel } from '@/composables/prop-model';
 
 export interface Props {
   multiple?: boolean;
@@ -10,9 +11,25 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const modelValue = defineModel<number[] | number>({ default: -1 });
+const {
+  multiple = false,
+  modelValue: modelValueProp,
+} = defineProps<Props & {
+  /**
+   * The open panel's index, `-1` for none; with `multiple`, the open indices in an array. `T` is the
+   * bound value's type, so a `Ref<number[]>` takes the update as is. Unbound, it reads as `-1`.
+   */
+  modelValue?: T;
+} & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
-const { multiple = false } = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
+defineEmits<ModelValueEmits<T>>();
+
+/*
+ * A prop and an event rather than `defineModel`: the `-1` default is no `T`, and without a default
+ * the update would be typed with an `undefined` it never carries. The component writes through the
+ * wider ref.
+ */
+const modelValue: Ref<number | number[] | undefined> = usePropModel('modelValue', () => modelValueProp);
 
 const internalValue = ref<number[] | number>();
 
@@ -77,7 +94,7 @@ function updateValue(newModelValue: number): void {
 watch(
   [modelValue, () => multiple],
   ([value, isMultiple]) => {
-    let internal: number | number[] = value;
+    let internal: number | number[] = value ?? -1;
     if (isMultiple && !Array.isArray(internal))
       internal = internal === -1 ? [] : [internal];
     else if (!isMultiple && Array.isArray(internal))
