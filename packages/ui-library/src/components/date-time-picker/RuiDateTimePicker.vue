@@ -130,7 +130,7 @@ const {
 } = defineProps<Omit<RuiDateTimePickerProps, 'type'> & { type?: T } & /* @vue-ignore */ Omit<HTMLAttributes, keyof RuiDateTimePickerProps>>();
 
 defineSlots<{
-  'menu-content': () => any;
+  'menu-content'?: () => any;
 }>();
 
 // `epoch-ms` is no `T`, so the default is applied here rather than in the destructuring
