@@ -425,4 +425,18 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
     await wrapper.setProps({ required: false });
     expect(wrapper.find('label').text()).not.toContain('*');
   });
+
+  it('should trim the update with v-model.trim', async () => {
+    wrapper = createWrapper({
+      props: {
+        modelValue: '',
+        modelModifiers: { trim: true },
+      },
+    });
+
+    const input = wrapper.find('input');
+    await input.setValue('  value  ');
+
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['value']);
+  });
 });

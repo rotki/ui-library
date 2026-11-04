@@ -11,7 +11,8 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const modelValue = defineModel<string>({ required: true });
+// `v-model.trim` trims the update, which Vue applies to any model event
+const modelValue = defineModel<string, 'trim'>({ required: true });
 
 const {
   label = '',
