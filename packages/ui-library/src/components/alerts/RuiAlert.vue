@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { HTMLAttributes } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
@@ -28,7 +29,7 @@ const {
   variant = 'default',
   actionText = '',
   closeable = false,
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 const emit = defineEmits<{
   action: [];

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { HTMLAttributes } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
 import type { ContextColorsType } from '@/consts/colors';
 import type { VueClassValue } from '@/types/class-value';
@@ -49,7 +50,7 @@ const {
   align = TabAlignment.center,
   indicatorPosition = TabIndicatorPosition.end,
   variant = TabVariant.underline,
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props | 'onClick'>>();
 
 const emit = defineEmits<{
   click: [value: string | number];

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, type StyleValue, watch } from 'vue';
+import { computed, type HTMLAttributes, onMounted, ref, type StyleValue, watch } from 'vue';
 import { timePickerStyles } from '@/components/time-picker/time-picker-styles';
 import { TimeAccuracy } from '@/consts/time-accuracy';
 import { assert } from '@/utils/assert';
@@ -19,7 +19,7 @@ const selectedSecond = defineModel<number | undefined>('second');
 const selectedMillisecond = defineModel<number | undefined>('millisecond');
 const editMode = defineModel<TimePickerSelection>('selection', { default: 'hour' });
 
-const { accuracy = TimeAccuracy.MINUTE, borderless = false } = defineProps<RuiTimePickerProps>();
+const { accuracy = TimeAccuracy.MINUTE, borderless = false } = defineProps<RuiTimePickerProps & /* @vue-ignore */ Omit<HTMLAttributes, keyof RuiTimePickerProps>>();
 
 const ui = timePickerStyles();
 

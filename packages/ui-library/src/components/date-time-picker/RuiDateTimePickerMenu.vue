@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { HTMLAttributes } from 'vue';
 import type { DateTimePickerAction } from '@/components/date-time-picker/types';
 import type { TimeAccuracy } from '@/consts/time-accuracy';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
@@ -29,7 +30,7 @@ const { actions = [] } = defineProps<{
   maxDate?: Date | number;
   minDate?: Date | number;
   showTimezone?: boolean;
-}>();
+} & /* @vue-ignore */ HTMLAttributes>();
 
 const emit = defineEmits<{
   'set-now': [];

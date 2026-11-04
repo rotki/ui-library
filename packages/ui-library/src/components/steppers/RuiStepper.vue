@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { HTMLAttributes } from 'vue';
 import type { VueClassValue } from '@/types/class-value';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import RuiStepperIcon from '@/components/steppers/RuiStepperIcon.vue';
@@ -36,7 +37,7 @@ const {
   classNames,
   orientation = StepperOrientation.horizontal,
   keepActiveVisible = true,
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 defineSlots<{
   icon?: (props: { state: StepperState | undefined; index: number }) => any;

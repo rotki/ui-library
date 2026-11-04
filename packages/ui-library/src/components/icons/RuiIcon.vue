@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ClassValue } from 'vue';
+import type { ClassValue, SVGAttributes } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
 import { objectOmit } from '@vueuse/shared';
@@ -19,7 +19,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const { name, size, color } = defineProps<Props>();
+const { name, size, color } = defineProps<Props & /* @vue-ignore */ Omit<SVGAttributes, keyof Props>>();
 
 const { registeredIcons } = useIcons();
 

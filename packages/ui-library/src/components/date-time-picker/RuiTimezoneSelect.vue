@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { HTMLAttributes } from 'vue';
 import type { RuiAutoCompleteClassNames } from '@/components/forms/auto-complete/auto-complete-props';
 import type { MenuProps } from '@/components/overlays/menu/RuiMenu.vue';
 import type { LabelPlacement } from '@/composables/defaults/field';
@@ -51,7 +52,7 @@ const {
   required = false,
   classNames,
   menuOptions,
-} = defineProps<RuiTimezoneSelectProps>();
+} = defineProps<RuiTimezoneSelectProps & /* @vue-ignore */ Omit<HTMLAttributes, keyof RuiTimezoneSelectProps>>();
 
 const { t } = useRuiI8n();
 

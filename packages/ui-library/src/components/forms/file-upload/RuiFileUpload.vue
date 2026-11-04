@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { RuiIcons } from '@/icons';
+import type { InputAttributes } from '@/types/attributes';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
@@ -66,7 +67,7 @@ const {
   replaceText = undefined,
   details = undefined,
   hideDetails = false,
-} = defineProps<FileUploadProps>();
+} = defineProps<FileUploadProps & /* @vue-ignore */ Omit<InputAttributes, keyof FileUploadProps | 'onError'>>();
 
 const emit = defineEmits<{
   error: [message: string];

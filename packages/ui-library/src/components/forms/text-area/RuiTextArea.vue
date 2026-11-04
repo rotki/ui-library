@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { TextareaHTMLAttributes } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
@@ -70,7 +71,7 @@ const {
   maxRows = undefined,
   autoGrow = false,
   required = false,
-} = defineProps<TextAreaProps>();
+} = defineProps<TextAreaProps & /* @vue-ignore */ Omit<TextareaHTMLAttributes, keyof TextAreaProps>>();
 
 const emit = defineEmits<{
   'click:clear': [];

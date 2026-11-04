@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { HTMLAttributes } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
@@ -37,7 +38,7 @@ const {
   color = 'primary',
   offsetX = 0,
   offsetY = 0,
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 const slots = defineSlots<{
   default?: () => any;

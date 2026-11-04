@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { HTMLAttributes } from 'vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { simpleSelectStyles } from './simple-select-styles';
 
@@ -16,7 +17,7 @@ defineOptions({
 
 const modelValue = defineModel<string | number>({ required: true });
 
-const { options, disabled = false, label, name = '' } = defineProps<Props>();
+const { options, disabled = false, label, name = '' } = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 const ui = computed<string>(() => simpleSelectStyles());
 </script>

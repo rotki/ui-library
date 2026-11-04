@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ContextColorsType } from '@/consts/colors';
+import type { InputAttributes } from '@/types/attributes';
 import type { VueClassValue } from '@/types/class-value';
 import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';
 import RuiSliderTicks from '@/components/forms/slider/RuiSliderTicks.vue';
@@ -64,7 +65,7 @@ const {
   hideDetails = false,
   classNames,
   required = false,
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<InputAttributes, keyof Props>>();
 
 const BIG_TICK_THRESHOLD = 4;
 

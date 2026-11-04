@@ -11,6 +11,9 @@
     },
     {
       "path": "./.storybook/tsconfig.json"
+    },
+    {
+      "path": "./tsconfig.strict-templates.json"
     }
   ],
   "files": []

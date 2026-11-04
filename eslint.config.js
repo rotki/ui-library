@@ -88,6 +88,15 @@ export default rotki({
   },
 }, {
   /*
+   * `/* @vue-ignore *\/` keeps the HTML attributes a component forwards out of its runtime props.
+   * Rewritten as a JSDoc block it fails tsdoc, which takes no hyphen in a tag name.
+   */
+  files: ['packages/ui-library/src/**/*.vue'],
+  rules: {
+    'jsdoc/no-bad-blocks': ['error', { ignore: ['ts-check', 'ts-expect-error', 'ts-ignore', 'ts-nocheck', 'vue-ignore'] }],
+  },
+}, {
+  /*
    * These two keep deprecated props declared, so passing one stays a no-op
    * instead of falling through as an attribute. The rule cannot read
    * `@deprecated`, and its `ignorePublicMembers` option skips props.

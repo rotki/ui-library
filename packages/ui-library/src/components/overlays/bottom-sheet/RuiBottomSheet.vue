@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { HTMLAttributes } from 'vue';
 import RuiDialog from '@/components/overlays/dialog/RuiDialog.vue';
 
 /** The sheet's props, which stay in step with RuiDialog's. */
@@ -15,7 +16,7 @@ defineOptions({
 
 const modelValue = defineModel<boolean>({ default: false });
 
-const { persistent = false, width, maxWidth } = defineProps<BottomSheetProps>();
+const { persistent = false, width, maxWidth } = defineProps<BottomSheetProps & /* @vue-ignore */ Omit<HTMLAttributes, keyof BottomSheetProps>>();
 </script>
 
 <template>

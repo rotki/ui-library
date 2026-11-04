@@ -1,4 +1,5 @@
 <script lang="ts" generic="T = undefined" setup>
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
 import { ButtonGroupKey } from '@/components/buttons/button-group/button-group-context';
 import { type ButtonCollapseBreakpoint, type ButtonSize, ButtonVariant, getButtonSpinnerSize } from '@/components/buttons/button/button-props';
@@ -27,6 +28,11 @@ export interface Props<T = undefined> {
   collapseBelow?: ButtonCollapseBreakpoint;
 }
 
+/**
+ * What the rendered element takes through `$attrs`: a `<button>`, or an `<a>` when `tag` is `a`.
+ */
+type ButtonAttributes = ButtonHTMLAttributes & Pick<AnchorHTMLAttributes, 'href' | 'target' | 'rel' | 'download'>;
+
 defineOptions({
   name: 'RuiButton',
   inheritAttrs: false,
@@ -46,7 +52,7 @@ const {
   modelValue = undefined,
   hideFocusIndicator = false,
   collapseBelow = undefined,
-} = defineProps<Props<T>>();
+} = defineProps<Props<T> & /* @vue-ignore */ Omit<ButtonAttributes, keyof Props<T>>>();
 
 const emit = defineEmits<{
   'update:model-value': [value?: T];
@@ -96,7 +102,7 @@ function onClick(): void {
 </script>
 
 <template>
-  <Component
+  <component
     :is="tag"
     :class="ui.root({ class: cn([group?.itemClass(), $attrs.class]) })"
     :disabled="resolvedDisabled || loading"
@@ -133,5 +139,5 @@ function onClick(): void {
       <slot />
     </span>
     <slot name="append" />
-  </Component>
+  </component>
 </template>

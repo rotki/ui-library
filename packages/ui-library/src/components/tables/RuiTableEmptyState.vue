@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { HTMLAttributes } from 'vue';
 import { useRotkiTheme } from '@/composables/theme';
 import { emptyStyles } from './table-empty-state-styles';
 import noDataPlaceholder from './table_no_data_placeholder.svg';
@@ -18,7 +19,7 @@ defineOptions({
   name: 'RuiTableEmptyState',
 });
 
-const { label, description, compact = false } = defineProps<TableEmptyStateProps>();
+const { label, description, compact = false } = defineProps<TableEmptyStateProps & /* @vue-ignore */ Omit<HTMLAttributes, keyof TableEmptyStateProps>>();
 
 defineSlots<{
   description?: () => any;

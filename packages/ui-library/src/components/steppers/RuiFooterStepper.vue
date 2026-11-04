@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { HTMLAttributes } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
@@ -23,7 +24,7 @@ const {
   variant: variantProp = FooterStepperVariant.numeric,
   arrowButtons = false,
   hideButtons = false,
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 function onChange(delta: number): void {
   set(modelValue, get(modelValue) + delta);

@@ -1,5 +1,6 @@
 <script lang="ts" setup generic="TValue">
 import type { ContextColorsType } from '@/consts/colors';
+import type { InputAttributes } from '@/types/attributes';
 import { checkControlStyles } from '@/components/forms/check-control-styles';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { type FormDetails, useFormDetails, useFormTextDetail } from '@/utils/form-text-detail';
@@ -43,7 +44,7 @@ const {
   hideDetails = false,
   detailsUnderLabel = false,
   required = false,
-} = defineProps<RadioProps<TValue>>();
+} = defineProps<RadioProps<TValue> & /* @vue-ignore */ Omit<InputAttributes, keyof RadioProps<TValue>>>();
 
 defineSlots<{
   default?: () => any;

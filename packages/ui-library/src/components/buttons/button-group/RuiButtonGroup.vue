@@ -1,4 +1,5 @@
 <script lang="ts" generic="T = undefined" setup>
+import type { HTMLAttributes } from 'vue';
 import type { ButtonSize } from '@/components/buttons/button/button-props';
 import type { ContextColorsType } from '@/consts/colors';
 import { type ButtonGroupContext, ButtonGroupKey } from '@/components/buttons/button-group/button-group-context';
@@ -36,7 +37,7 @@ const {
   gap,
   required = false,
   disabled = false,
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 defineSlots<{
   default?: () => any;

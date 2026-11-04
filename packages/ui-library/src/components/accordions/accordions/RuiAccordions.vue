@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Fragment, isVNode } from 'vue';
+import { Fragment, type HTMLAttributes, isVNode } from 'vue';
 
 export interface Props {
   multiple?: boolean;
@@ -12,7 +12,7 @@ defineOptions({
 
 const modelValue = defineModel<number[] | number>({ default: -1 });
 
-const { multiple = false } = defineProps<Props>();
+const { multiple = false } = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 const internalValue = ref<number[] | number>();
 
@@ -91,7 +91,7 @@ watch(
 
 <template>
   <div v-bind="$attrs">
-    <Component
+    <component
       :is="child"
       v-for="(child, i) in children"
       :key="i"

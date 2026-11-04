@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Reactive, Ref, WatchHandle } from 'vue';
+import type { HTMLAttributes, Reactive, Ref, WatchHandle } from 'vue';
 import type { VueClassValue } from '@/types/class-value';
 import { ButtonGroupBoundary } from '@/components/buttons/button-group/button-group-context';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
@@ -125,7 +125,7 @@ const {
   role = 'menu',
   menuLabel,
   lazy = false,
-} = defineProps<MenuProps>();
+} = defineProps<MenuProps & /* @vue-ignore */ Omit<HTMLAttributes, keyof MenuProps>>();
 
 defineSlots<{
   activator?: (props: {

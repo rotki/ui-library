@@ -1,4 +1,5 @@
 <script lang="ts" setup generic="TValue, TItem">
+import type { HTMLAttributes } from 'vue';
 import type { AutoCompleteModelValue, AutoCompleteProps } from '@/components/forms/auto-complete/auto-complete-props';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import { autoCompleteStyles } from '@/components/forms/auto-complete/auto-complete-styles';
@@ -75,7 +76,7 @@ const {
   groupBy,
   itemDisabled,
   searchIncludesGroupLabel = false,
-} = defineProps<AutoCompleteProps<TValue, TItem>>();
+} = defineProps<AutoCompleteProps<TValue, TItem> & /* @vue-ignore */ Omit<HTMLAttributes, keyof AutoCompleteProps<TValue, TItem>>>();
 
 const slots = defineSlots<{
   'activator'?: (props: {

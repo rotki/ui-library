@@ -18,7 +18,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const modelValue = defineModel<boolean>();
+const modelValue = defineModel<boolean>({ required: true });
 
 const { viewMonth, viewYear } = defineProps<{
   anchorEl: HTMLElement | undefined;

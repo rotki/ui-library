@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { ContextColorsType } from '@/consts/colors';
-import { Fragment, isVNode, type VNode } from 'vue';
+import { Fragment, type HTMLAttributes, isVNode, type VNode } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { type TabAlignment, type TabIndicatorPosition, TabLayout, TabVariant } from '@/components/tabs/tab-props';
@@ -49,7 +49,7 @@ const {
   align = 'center',
   indicatorPosition = 'end',
   variant = TabVariant.underline,
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 const internalModelValue = ref<string | number>();
 const bar = useTemplateRef<HTMLDivElement>('bar');
@@ -240,7 +240,7 @@ onMounted(() => {
         :class="ui.wrapper()"
         @keydown="onKeydown($event)"
       >
-        <Component
+        <component
           :is="child"
           v-for="(child, i) in children"
           :key="i"

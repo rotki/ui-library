@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, type HTMLAttributes } from 'vue';
 import RuiTableEmptyState from '@/components/tables/RuiTableEmptyState.vue';
 import RuiTableErrorState from '@/components/tables/RuiTableErrorState.vue';
 import RuiTableLoadingState from '@/components/tables/RuiTableLoadingState.vue';
@@ -41,7 +41,7 @@ const {
   errorTitle = '',
   retryText = '',
   empty = false,
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 const emit = defineEmits<{
   retry: [];

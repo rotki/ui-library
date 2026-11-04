@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ClassValue } from 'vue';
+import type { ClassValue, HTMLAttributes } from 'vue';
 import type { VueClassValue } from '@/types/class-value';
 import type { MaybeElement } from '@/types/dom';
 import { useTimeoutManager } from '@/composables/timeout-manager';
@@ -46,7 +46,7 @@ const {
   classNames,
   ariaLabel,
   belowAppBar = false,
-} = defineProps<NavigationDrawerProps>();
+} = defineProps<NavigationDrawerProps & /* @vue-ignore */ Omit<HTMLAttributes, keyof NavigationDrawerProps>>();
 
 const emit = defineEmits<{
   closed: [];

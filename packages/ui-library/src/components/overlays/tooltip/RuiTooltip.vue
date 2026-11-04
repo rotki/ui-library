@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Reactive } from 'vue';
+import type { HTMLAttributes, Reactive } from 'vue';
 import type { VueClassValue } from '@/types/class-value';
 import { ButtonGroupBoundary } from '@/components/buttons/button-group/button-group-context';
 import { type FloatingOptions, useFloating, type UseFloatingReturn } from '@/composables/floating';
@@ -36,7 +36,7 @@ const {
   persistOnTooltipHover = false,
   options,
   classNames,
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 defineSlots<{
   activator?: (props: { open: boolean; close: () => void }) => any;

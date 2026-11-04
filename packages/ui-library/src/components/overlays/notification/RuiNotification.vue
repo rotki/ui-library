@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { HTMLAttributes } from 'vue';
 import { useTimeoutFn } from '@vueuse/core';
 import { transformPropsUnit } from '@/utils/helpers';
 import { cn } from '@/utils/tv';
@@ -17,7 +18,7 @@ defineOptions({
 
 const modelValue = defineModel<boolean>({ required: true });
 
-const { timeout, width = 400, theme } = defineProps<NotificationProps>();
+const { timeout, width = 400, theme } = defineProps<NotificationProps & /* @vue-ignore */ Omit<HTMLAttributes, keyof NotificationProps>>();
 
 defineSlots<{
   default?: () => any;

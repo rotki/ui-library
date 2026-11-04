@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ComponentPublicInstance } from 'vue';
+import type { ComponentPublicInstance, HTMLAttributes } from 'vue';
 import type { DateTimePickerAction, DateTimeSegmentType } from '@/components/date-time-picker/types';
 import type { TimePickerSelection } from '@/components/time-picker/RuiTimePicker.vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
@@ -118,7 +118,7 @@ const {
   actions = ['now'],
   autofocus = false,
   partialTime,
-} = defineProps<RuiDateTimePickerProps>();
+} = defineProps<RuiDateTimePickerProps & /* @vue-ignore */ Omit<HTMLAttributes, keyof RuiDateTimePickerProps>>();
 
 defineSlots<{
   'menu-content': () => any;

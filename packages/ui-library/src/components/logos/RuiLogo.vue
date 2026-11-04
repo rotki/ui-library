@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { HTMLAttributes } from 'vue';
 import fallback from '@/components/logos/logo.svg';
 import { getVerifiedLogoUrl, removeVerifiedLogoUrl, setVerifiedLogoUrl } from '@/components/logos/verified-logo';
 import { useLogoOptions } from '@/composables/defaults/logo';
@@ -22,7 +23,7 @@ defineOptions({
   name: 'RuiLogo',
 });
 
-const { text = false, logo, size = 3, uniqueKey, src } = defineProps<Props>();
+const { text = false, logo, size = 3, uniqueKey, src } = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 const appName = 'rotki';
 

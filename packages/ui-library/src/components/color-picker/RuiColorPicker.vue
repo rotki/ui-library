@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 // Inspired by https://github.com/aesoper101/vue3-colorpicker/
+import type { HTMLAttributes } from 'vue';
 import RuiColorBoard from '@/components/color-picker/RuiColorBoard.vue';
 import RuiColorDisplay from '@/components/color-picker/RuiColorDisplay.vue';
 import RuiColorHue from '@/components/color-picker/RuiColorHue.vue';
@@ -14,6 +15,9 @@ defineOptions({
 });
 
 const modelValue = defineModel<string>({ default: '' });
+
+// eslint-disable-next-line @stylistic/type-generic-spacing -- its fix deletes the comment, which keeps the attributes out of the runtime props
+defineProps</* @vue-ignore */ HTMLAttributes>();
 
 const state = reactive({
   color: new Color(get(modelValue)),

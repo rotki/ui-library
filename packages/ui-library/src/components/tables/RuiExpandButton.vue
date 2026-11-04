@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { ButtonHTMLAttributes } from 'vue';
 import type { RuiIcons } from '@/icons';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
@@ -13,7 +14,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const { expanded, icon = 'lu-chevron-down' } = defineProps<Props>();
+const { expanded, icon = 'lu-chevron-down' } = defineProps<Props & /* @vue-ignore */ Omit<ButtonHTMLAttributes, keyof Props>>();
 
 defineSlots<{
   default?: () => any;

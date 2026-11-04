@@ -1,4 +1,5 @@
 <script lang="ts" setup generic="TValue">
+import type { HTMLAttributes } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
 import { RuiCheckboxGroupContextKey } from '@/components/forms/checkbox/checkbox-group/context';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
@@ -39,7 +40,7 @@ const {
   color,
   size,
   required = false,
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 defineSlots<{
   default?: () => any;

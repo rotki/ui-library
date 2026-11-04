@@ -1,6 +1,6 @@
 <script lang="ts" setup generic="TValue">
 import type { ContextColorsType } from '@/consts/colors';
-import { Fragment, isVNode } from 'vue';
+import { Fragment, type HTMLAttributes, isVNode } from 'vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { assert } from '@/utils/assert';
 import { type FormDetails, useFormDetails } from '@/utils/form-text-detail';
@@ -40,7 +40,7 @@ const {
   color,
   size,
   required = false,
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 const slots = defineSlots<{
   default?: () => any;
@@ -82,7 +82,7 @@ const children = computed<VNode[]>(() => {
       </span>
     </div>
     <div :class="{ 'flex between:ml-6 between:mr-0': inline }">
-      <Component
+      <component
         :is="child"
         v-for="(child, i) in children"
         :key="i"

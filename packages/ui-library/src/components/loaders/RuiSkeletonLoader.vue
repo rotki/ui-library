@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { HTMLAttributes } from 'vue';
 import RuiSkeletonBase, {
   type Props as SkeletonBaseProps,
 } from '@/components/loaders/RuiSkeletonBase.vue';
@@ -15,7 +16,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const { type = SkeletonType.TEXT, rounded } = defineProps<Props>();
+const { type = SkeletonType.TEXT, rounded } = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 const multiLineTypes: SkeletonType[] = [SkeletonType.PARAGRAPH, SkeletonType.ARTICLE];
 

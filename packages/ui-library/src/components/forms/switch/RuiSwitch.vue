@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { ContextColorsType } from '@/consts/colors';
+import type { InputAttributes } from '@/types/attributes';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { type FormDetails, useFormDetails, useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
@@ -41,7 +42,7 @@ const {
   hideDetails = false,
   detailsUnderLabel = false,
   required = false,
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<InputAttributes, keyof Props>>();
 
 defineSlots<{
   default?: () => any;

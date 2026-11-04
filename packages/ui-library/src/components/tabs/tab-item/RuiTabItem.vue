@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { HTMLAttributes } from 'vue';
+
 export interface Props {
   active?: boolean;
   value?: number | string;
@@ -9,7 +11,7 @@ defineOptions({
   name: 'RuiTabItem',
 });
 
-const { active = false, value, eager = false } = defineProps<Props>();
+const { active = false, value, eager = false } = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 defineSlots<{
   default?: () => any;

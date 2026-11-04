@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { HTMLAttributes } from 'vue';
 import type { VueClassValue } from '@/types/class-value';
 import Icon from '@/components/icons/RuiIcon.vue';
 import { useClipWhileResizing } from '@/composables/clip-while-resizing';
@@ -28,7 +29,7 @@ const {
   eager = false,
   headerGrow = false,
   classNames,
-} = defineProps<AccordionProps>();
+} = defineProps<AccordionProps & /* @vue-ignore */ Omit<HTMLAttributes, keyof AccordionProps | 'onClick'>>();
 
 const emit = defineEmits<{
   click: [];

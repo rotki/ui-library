@@ -1,4 +1,5 @@
 <script lang="ts" setup generic="TItem">
+import type { ButtonHTMLAttributes } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 
 export interface AutoCompleteOptionProps<TItem> {
@@ -19,7 +20,7 @@ const {
   highlightedClass,
   item,
   text,
-} = defineProps<AutoCompleteOptionProps<TItem>>();
+} = defineProps<AutoCompleteOptionProps<TItem> & /* @vue-ignore */ Omit<ButtonHTMLAttributes, keyof AutoCompleteOptionProps<TItem> | 'onSelect'>>();
 
 const emit = defineEmits<{
   select: [item: TItem];

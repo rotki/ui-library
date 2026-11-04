@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { HTMLAttributes } from 'vue';
 import { cardHeaderStyles } from './card-header-styles';
 
 export interface Props {
@@ -10,7 +11,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const { dense = false } = defineProps<Props>();
+const { dense = false } = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 const slots = defineSlots<{
   prepend?: () => any;

@@ -1,5 +1,6 @@
 <script lang="ts" setup generic="TValue">
 import type { ContextColorsType } from '@/consts/colors';
+import type { InputAttributes } from '@/types/attributes';
 import { objectPick } from '@vueuse/shared';
 import { checkControlStyles } from '@/components/forms/check-control-styles';
 import { RuiCheckboxGroupContextKey } from '@/components/forms/checkbox/checkbox-group/context';
@@ -47,7 +48,7 @@ const {
   hideDetails = false,
   detailsUnderLabel = false,
   required = false,
-} = defineProps<Props<TValue>>();
+} = defineProps<Props<TValue> & /* @vue-ignore */ Omit<InputAttributes, keyof Props<TValue>>>();
 
 defineSlots<{
   default?: () => any;
@@ -102,6 +103,14 @@ const markState = computed<'indeterminate' | 'checked' | 'unchecked'>(() => {
   return get(internalModelValue) ? 'checked' : 'unchecked';
 });
 
+/*
+ * The click listener goes to the label, which wraps the input. Typed as the record `$attrs` is,
+ * so the template binds it like the root and input attributes.
+ */
+function getLabelAttrs(attrs: Record<string, unknown>): Record<string, unknown> {
+  return objectPick(attrs, ['onClick']);
+}
+
 watch(indeterminate, (val) => {
   const input = get(el);
   if (!input) {
@@ -122,7 +131,7 @@ watch(internalModelValue, (val) => {
   <div v-bind="getRootAttrs($attrs)">
     <label
       :class="ui.wrapper()"
-      v-bind="objectPick($attrs, ['onClick'])"
+      v-bind="getLabelAttrs($attrs)"
       :data-disabled="disabled || undefined"
       :data-checked="internalModelValue || indeterminate || undefined"
       :data-error="hasError ? '' : undefined"

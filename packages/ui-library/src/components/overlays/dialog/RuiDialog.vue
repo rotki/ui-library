@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { HTMLAttributes } from 'vue';
 import type { DialogSize } from '@/consts/tokens';
 import type { VueClassValue } from '@/types/class-value';
 import { ButtonGroupBoundary } from '@/components/buttons/button-group/button-group-context';
@@ -41,7 +42,7 @@ const {
   classNames,
   zIndex = 'var(--rui-z-dialog)',
   ariaLabel,
-} = defineProps<DialogProps>();
+} = defineProps<DialogProps & /* @vue-ignore */ Omit<HTMLAttributes, keyof DialogProps>>();
 
 const emit = defineEmits<{
   'closed': [];

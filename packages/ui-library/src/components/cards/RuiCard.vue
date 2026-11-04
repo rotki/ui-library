@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VueClassValue } from '@/types/class-value';
-import { computed } from 'vue';
+import { computed, type HTMLAttributes } from 'vue';
 import RuiCardHeader from '@/components/cards/RuiCardHeader.vue';
 import { useKeyboardScroll } from '@/composables/keyboard-scroll';
 import { cn } from '@/utils/tv';
@@ -41,7 +41,7 @@ const {
   noPadding = false,
   tightHeaderGap = false,
   classNames,
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 const slots = defineSlots<{
   'image'?: () => any;

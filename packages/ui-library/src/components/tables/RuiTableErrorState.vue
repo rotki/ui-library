@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { HTMLAttributes } from 'vue';
 import RuiAlert from '@/components/alerts/RuiAlert.vue';
 import { errorStyles } from './table-error-state-styles';
 
@@ -19,7 +20,7 @@ defineOptions({
   name: 'RuiTableErrorState',
 });
 
-const { title = '', message = '', actionText = '' } = defineProps<TableErrorStateProps>();
+const { title = '', message = '', actionText = '' } = defineProps<TableErrorStateProps & /* @vue-ignore */ Omit<HTMLAttributes, keyof TableErrorStateProps>>();
 
 const emit = defineEmits<{
   action: [];

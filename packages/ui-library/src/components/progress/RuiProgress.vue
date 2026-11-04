@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { HTMLAttributes } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
 import { ProgressVariant } from '@/components/progress/progress-props';
 import { progressStyles } from './progress-styles';
@@ -46,7 +47,7 @@ const {
   thickness = 4,
   size = 40,
   ariaLabel = 'Loading',
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 defineSlots<Record<string, never>>();
 

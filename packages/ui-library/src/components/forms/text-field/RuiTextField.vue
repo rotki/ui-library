@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
+import type { InputAttributes } from '@/types/attributes';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';
 import { textFieldStyles } from '@/components/forms/text-field/text-field-styles';
@@ -59,7 +60,7 @@ const {
   readonly = false,
   clearable = false,
   required = false,
-} = defineProps<TextFieldProps>();
+} = defineProps<TextFieldProps & /* @vue-ignore */ Omit<InputAttributes, keyof TextFieldProps | 'onBlur'>>();
 
 const emit = defineEmits<{
   'focus-input': [event: Event];

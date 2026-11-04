@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { HTMLAttributes } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
 import { get, set } from '@vueuse/shared';
@@ -39,7 +40,7 @@ const {
   variant,
   color = 'default',
   loading = 'lazy',
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props | 'onLoad' | 'onError'>>();
 
 const emit = defineEmits<{
   load: [event: Event];

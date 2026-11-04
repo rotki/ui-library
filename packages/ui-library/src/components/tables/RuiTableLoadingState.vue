@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, type HTMLAttributes } from 'vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { loadingStyles } from './table-loading-state-styles';
 
@@ -18,7 +18,7 @@ defineOptions({
   name: 'RuiTableLoadingState',
 });
 
-const { size = 40, compact = false } = defineProps<TableLoadingStateProps>();
+const { size = 40, compact = false } = defineProps<TableLoadingStateProps & /* @vue-ignore */ Omit<HTMLAttributes, keyof TableLoadingStateProps>>();
 
 const ui = computed<ReturnType<typeof loadingStyles>>(() => loadingStyles({ compact }));
 </script>

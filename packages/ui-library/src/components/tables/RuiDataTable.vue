@@ -1,4 +1,5 @@
 <script lang="ts" setup generic="T extends object, IdType extends keyof T = keyof T">
+import type { HTMLAttributes } from 'vue';
 import type { GroupHeader } from '@/composables/tables/data-table/types';
 import { dataTableStyles } from '@/components/tables/data-table-styles';
 import { type DataTableClasses, type DataTableGroupLabel, provideDataTableContext, provideDataTableNested, useDataTableNested } from '@/components/tables/data-table/context';
@@ -193,7 +194,7 @@ const {
   mobileBreakpoint,
   mobileBreakpointBasis,
   mobile,
-} = defineProps<Props<T, IdType>>();
+} = defineProps<Props<T, IdType> & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props<T, IdType>>>();
 
 const emit = defineEmits<{
   'update:options': [value: { pagination?: TablePaginationData; sort?: TableSortData<T> }];

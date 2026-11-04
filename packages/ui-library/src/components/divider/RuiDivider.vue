@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { HTMLAttributes } from 'vue';
+
 export interface Props {
   vertical?: boolean;
 }
@@ -8,7 +10,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const { vertical = false } = defineProps<Props>();
+const { vertical = false } = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 </script>
 
 <template>

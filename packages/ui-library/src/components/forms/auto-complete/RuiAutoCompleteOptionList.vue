@@ -1,5 +1,5 @@
 <script lang="ts" setup generic="TItem">
-import type { ComponentPublicInstance, Ref, StyleValue } from 'vue';
+import type { ComponentPublicInstance, HTMLAttributes, Ref, StyleValue } from 'vue';
 import type { DropdownOptionGroup } from '@/composables/dropdown-menu';
 import type { VueClassValue } from '@/types/class-value';
 import RuiAutoCompleteOption from '@/components/forms/auto-complete/RuiAutoCompleteOption.vue';
@@ -48,7 +48,7 @@ const {
   renderedData,
   setMenuRef,
   wrapperProps,
-} = defineProps<AutoCompleteOptionListProps<TItem>>();
+} = defineProps<AutoCompleteOptionListProps<TItem> & /* @vue-ignore */ Omit<HTMLAttributes, keyof AutoCompleteOptionListProps<TItem> | 'onSelect'>>();
 
 const emit = defineEmits<{
   'select': [item: TItem];

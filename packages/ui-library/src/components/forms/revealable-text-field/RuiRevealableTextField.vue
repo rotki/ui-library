@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { InputAttributes } from '@/types/attributes';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiTextField, { type TextFieldProps } from '@/components/forms/text-field/RuiTextField.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
@@ -26,7 +27,7 @@ const {
   readonly = false,
   clearable = false,
   required = false,
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<InputAttributes, keyof Props>>();
 
 defineSlots<{
   prepend?: () => any;

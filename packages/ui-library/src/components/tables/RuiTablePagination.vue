@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { HTMLAttributes } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiMenuSelect from '@/components/forms/select/RuiMenuSelect.vue';
 import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
@@ -35,7 +36,7 @@ const {
   disablePerPage = false,
   rangesThreshold = 500,
   mobile = false,
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 const ui = computed<ReturnType<typeof paginationStyles>>(() => paginationStyles({ dense, mobile }));
 

@@ -1,4 +1,5 @@
 <script lang="ts" setup generic="TValue, TItem">
+import type { HTMLAttributes } from 'vue';
 import type { KeyOfType } from '@/composables/dropdown-menu';
 import type { VueClassValue } from '@/types/class-value';
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
@@ -117,7 +118,7 @@ const {
   mobileBreakpoint = 'md',
   dialogOptions = undefined,
   classNames = undefined,
-} = defineProps<RuiCategoryPickerProps<TValue, TItem>>();
+} = defineProps<RuiCategoryPickerProps<TValue, TItem> & /* @vue-ignore */ Omit<HTMLAttributes, keyof RuiCategoryPickerProps<TValue, TItem> | 'onSelect'>>();
 
 const emit = defineEmits<{
   select: [item: TItem];

@@ -1,4 +1,5 @@
 <script lang="ts" setup generic="TValue, TItem">
+import type { ButtonHTMLAttributes } from 'vue';
 import type { VueClassValue } from '@/types/class-value';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';
@@ -82,7 +83,7 @@ const {
   hideNoData = false,
   noDataText = 'No data available',
   required = false,
-} = defineProps<MenuSelectProps<TValue, TItem>>();
+} = defineProps<MenuSelectProps<TValue, TItem> & /* @vue-ignore */ Omit<ButtonHTMLAttributes, keyof MenuSelectProps<TValue, TItem>>>();
 
 defineSlots<{
   'activator'?: (props: {

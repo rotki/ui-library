@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { get } from '@vueuse/shared';
-import { Comment, defineComponent, Fragment, Text, type VNode } from 'vue';
+import { Comment, defineComponent, Fragment, type HTMLAttributes, Text, type VNode } from 'vue';
 import {
   avatarGroupInjectionKey,
   AvatarGroupSpacing,
@@ -36,7 +36,7 @@ const {
   max,
   total,
   spacing = AvatarGroupSpacing.md,
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 
 const slots = defineSlots<{
   default?: () => VNode[];

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { StyleValue } from 'vue';
+import type { HTMLAttributes, StyleValue } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
 import type { VueClassValue } from '@/types/class-value';
@@ -51,7 +51,7 @@ const {
   bgColor = undefined,
   textColor = undefined,
   classNames,
-} = defineProps<Props>();
+} = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props | 'onClick'>>();
 
 const emit = defineEmits<{
   'click:close': [];

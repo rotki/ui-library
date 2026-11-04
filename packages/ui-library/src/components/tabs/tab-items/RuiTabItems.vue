@@ -1,5 +1,5 @@
 <script lang="ts" setup generic="T extends string | number">
-import { Fragment, isVNode } from 'vue';
+import { Fragment, type HTMLAttributes, isVNode } from 'vue';
 import { useClipWhileResizing } from '@/composables/clip-while-resizing';
 
 defineOptions({
@@ -17,6 +17,9 @@ defineOptions({
  * an element with no content.
  */
 const modelValue = defineModel<T>({ default: () => 0 as T });
+
+// eslint-disable-next-line @stylistic/type-generic-spacing -- its fix deletes the comment, which keeps the attributes out of the runtime props
+defineProps</* @vue-ignore */ HTMLAttributes>();
 
 const slots = useSlots();
 
@@ -95,7 +98,7 @@ watch(currIndex, (index) => {
     v-bind="$attrs"
   >
     <div ref="inner">
-      <Component
+      <component
         :is="child"
         v-for="(child, i) in children"
         :key="i"
