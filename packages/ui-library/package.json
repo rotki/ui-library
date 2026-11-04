@@ -103,7 +103,7 @@
     "coverage:storybook": "vitest run --project=storybook --reporter=blob --outputFile=tests/.vitest-reports/storybook.json --coverage",
     "coverage:merge": "vitest --merge-reports=tests/.vitest-reports --coverage --coverage.thresholds.statements=90 --coverage.thresholds.branches=83 --coverage.thresholds.functions=86 --coverage.thresholds.lines=89",
     "coverage:preview": "npx vite preview --open --outDir tests/coverage",
-    "typecheck": "vue-tsc --noEmit && vue-tsc --noEmit -p tsconfig.vitest.json",
+    "typecheck": "vue-tsc --noEmit && vue-tsc --noEmit -p tsconfig.vitest.json && vue-tsc --noEmit -p tsconfig.strict-templates.json",
     "new": "tsx scripts/new-story.ts"
   },
   "peerDependencies": {

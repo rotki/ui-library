@@ -89,6 +89,7 @@ Each component typically includes:
 ### Testing Strategy
 
 - **Unit Tests**: Vitest with Vue Test Utils for component testing
+- **Type Tests**: `packages/ui-library/tests/types/*.vue` are never rendered; `typecheck` checks them, with the library itself, under `tsconfig.strict-templates.json` (`strictTemplates`, as Vue Language Tools v4 always applies). A component that forwards `$attrs` types them as `Props & /* @vue-ignore */ Omit<XHTMLAttributes, keyof Props>`; an optional model whose update is never `undefined` is a prop and an event wired with `usePropModel`, since an optional `defineModel` update is typed `T | undefined`
 - **E2E Tests**: Playwright tests run against the example application
 - **Coverage**: Comprehensive test coverage tracking with v8
 - **Storybook**: Visual testing and component documentation
