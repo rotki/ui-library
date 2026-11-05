@@ -18,6 +18,8 @@ const {
   /**
    * The open panel's index, `-1` for none; with `multiple`, the open indices in an array. `T` is the
    * bound value's type, so a `Ref<number[]>` takes the update as is. Unbound, it reads as `-1`.
+   *
+   * @defaultValue -1
    */
   modelValue?: T;
 } & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();

@@ -46,7 +46,11 @@ const {
   variant = TabVariant.underline,
   modelValue: modelValueProp,
 } = defineProps<Props & {
-  /** The selected tab's value. `T` is the bound value's type, so a `Ref<'a' | 'b'>` takes the update as is. */
+  /**
+   * The selected tab's value. `T` is the bound value's type, so a `Ref<'a' | 'b'>` takes the update as is.
+   *
+   * @defaultValue 0
+   */
   modelValue?: T;
 } & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
 

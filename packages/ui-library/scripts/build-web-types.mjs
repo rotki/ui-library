@@ -33,6 +33,34 @@ function pathUnderSrc(filePath) {
 }
 
 /**
+ * The files that declare the HTML attributes a component forwards through `$attrs`. Components type
+ * them with `@vue-ignore`, so they are no props at runtime, but the checker still lists them.
+ */
+const FORWARDED_ATTRIBUTE_SOURCES = ['@vue/runtime-dom/', path.join('src', 'types', 'attributes.ts')];
+
+/**
+ * Whether a prop is one of the HTML attributes the component forwards rather than a prop of its own.
+ *
+ * @param prop - the prop as `vue-component-meta` lists it
+ * @returns true when every declaration of the prop comes from a forwarded attribute type
+ */
+function isForwardedAttribute(prop) {
+  return prop.declarations.length > 0
+    && prop.declarations.every(({ file }) => FORWARDED_ATTRIBUTE_SOURCES.some(source => file.includes(source)));
+}
+
+/**
+ * A prop's default: the one its destructuring gives, or else its `@defaultValue` tag, for a default
+ * applied in the script because it is no value of the prop's generic type.
+ *
+ * @param prop - the prop as `vue-component-meta` lists it
+ * @returns the default, or undefined when the prop has none
+ */
+function propDefault(prop) {
+  return prop.default ?? prop.tags.find(tag => tag.name === 'defaultValue')?.text;
+}
+
+/**
  * @typedef {import('vue-component-meta').MetaCheckerOptions} MetaCheckerOptions
  */
 
@@ -87,7 +115,7 @@ for (const component of componentMeta) {
   const vueModel = {};
 
   for (const prop of component.meta.props || []) {
-    if (prop.global)
+    if (prop.global || isForwardedAttribute(prop))
       continue;
 
     let propType = replaceDoubleQuote(prop.type);
@@ -101,7 +129,7 @@ for (const component of componentMeta) {
       name: kebabCase(prop.name),
       description: prop.description,
       required: prop.required,
-      default: replaceDoubleQuote(prop.default),
+      default: replaceDoubleQuote(propDefault(prop)),
       value: {
         kind: 'expression',
         type: propType,

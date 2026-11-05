@@ -127,7 +127,14 @@ const {
   actions = ['now'],
   autofocus = false,
   partialTime,
-} = defineProps<Omit<RuiDateTimePickerProps, 'type'> & { type?: T } & /* @vue-ignore */ Omit<HTMLAttributes, keyof RuiDateTimePickerProps>>();
+} = defineProps<Omit<RuiDateTimePickerProps, 'type'> & {
+  /**
+   * What the model holds: a `Date` for `date`, epoch milliseconds for `epoch-ms`, epoch seconds for `epoch`.
+   *
+   * @defaultValue 'epoch-ms'
+   */
+  type?: T;
+} & /* @vue-ignore */ Omit<HTMLAttributes, keyof RuiDateTimePickerProps>>();
 
 defineSlots<{
   'menu-content'?: () => any;

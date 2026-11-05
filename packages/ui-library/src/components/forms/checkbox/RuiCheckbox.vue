@@ -48,7 +48,7 @@ const {
   hideDetails = false,
   detailsUnderLabel = false,
   required = false,
-} = defineProps<Props<TValue> & /* @vue-ignore */ Omit<InputAttributes, keyof Props<TValue>>>();
+} = defineProps<Props<TValue> & /* @vue-ignore */ Omit<InputAttributes, keyof Props<TValue> | 'indeterminate'>>();
 
 defineSlots<{
   default?: () => any;
