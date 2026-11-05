@@ -1,18 +1,20 @@
 <script setup lang="ts">
-import type { ExtractPropTypes } from 'vue';
-import { RuiButton, RuiDateTimePicker, RuiMenu } from '@rotki/ui-library';
+import { RuiButton, RuiDateTimePicker, type RuiDateTimePickerProps, RuiMenu } from '@rotki/ui-library';
 import { objectOmit } from '@vueuse/shared';
 import ComponentView from '@/components/ComponentView.vue';
 
-type RuiDateTimePickerProps = ExtractPropTypes<typeof RuiDateTimePicker['props']>;
+/** A picker in the list. It keeps the default `epoch-ms` type, so its model holds milliseconds. */
+type DateTimePickerField = Omit<RuiDateTimePickerProps, 'type'> & { modelValue: number | undefined };
 
-const timePickers = ref<RuiDateTimePickerProps[]>([{
-  modelValue: new Date(2023, 0, 2, 20, 20),
+const initialValue = new Date(2023, 0, 2, 20, 20).getTime();
+
+const timePickers = ref<DateTimePickerField[]>([{
+  modelValue: initialValue,
 }]);
 
-const allActionsValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
-const timezoneValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
-const boundedValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
+const allActionsValue = ref<number | undefined>(initialValue);
+const timezoneValue = ref<number | undefined>(initialValue);
+const boundedValue = ref<number | undefined>(initialValue);
 const boundedMax = new Date(2023, 0, 10, 12, 0);
 // Left empty so a test can type a short entry; the strict one is the control, with no partial-time
 const partialStartValue = ref<number>();
@@ -20,7 +22,7 @@ const partialEndValue = ref<number>();
 const partialStrictValue = ref<number>();
 const parentMenuOpen = ref<boolean>(false);
 const pickerMenuOpen = ref<boolean>(false);
-const insideMenuValue = ref<Date | undefined>(new Date(2023, 0, 2, 20, 20));
+const insideMenuValue = ref<number | undefined>(initialValue);
 </script>
 
 <template>
