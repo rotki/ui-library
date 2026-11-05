@@ -1,13 +1,10 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import RuiTabItem from '@/components/tabs/tab-item/RuiTabItem.vue';
 import RuiTabItems from '@/components/tabs/tab-items/RuiTabItems.vue';
+import { syncAnimationFrames } from '~/tests/helpers/animation-frame';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
-  const now = Date.now();
-  cb(now);
-  return now;
-});
+syncAnimationFrames();
 
 const createWrapper = createMounter(RuiTabItems, {
   global: {

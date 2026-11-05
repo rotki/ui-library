@@ -6,12 +6,6 @@ import { assert } from '@/utils/assert';
 import { cleanupElements, expectWrapperToHaveClass, queryAllMenuButtons, queryByRole, queryMenuButton } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
-  const now = Date.now();
-  cb(now);
-  return now;
-});
-
 function createWrapper<TItem>(
   options?: ComponentMountingOptions<typeof RuiMenuSelect<string | undefined, TItem>>,
 ): MountedWrapper<typeof RuiMenuSelect<string | undefined, TItem>> {

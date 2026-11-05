@@ -5,12 +5,6 @@ import RuiCategoryPicker from '@/components/forms/category-picker/RuiCategoryPic
 import { assertExists, cleanupElements, queryByDataId } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-// RuiMenu positions via requestAnimationFrame; run it synchronously in tests.
-vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
-  cb(Date.now());
-  return 0;
-});
-
 type PickerProps = NonNullable<ComponentMountingOptions<typeof RuiCategoryPicker<string, GroupedSelectOption>>['props']>;
 
 const baseProps: PickerProps = {

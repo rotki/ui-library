@@ -5,6 +5,7 @@ import RuiChip from '@/components/chips/RuiChip.vue';
 import RuiAutoComplete from '@/components/forms/auto-complete/RuiAutoComplete.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { assert } from '@/utils/assert';
+import { syncAnimationFrames } from '~/tests/helpers/animation-frame';
 import {
   assertExists,
   cleanupElements,
@@ -29,11 +30,7 @@ function createWrapper<TValue, TItem>(
   })(options);
 }
 
-vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
-  const now = Date.now();
-  cb(now);
-  return now;
-});
+syncAnimationFrames();
 
 describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
   let wrapper: MountedWrapper<typeof RuiAutoComplete<any, any>>;

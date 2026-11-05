@@ -13,12 +13,6 @@ const createWrapper = createMounter(RuiTimezoneSelect, {
   },
 });
 
-vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
-  const now = Date.now();
-  cb(now);
-  return now;
-});
-
 describe('components/date-time-picker/RuiTimezoneSelect.vue', () => {
   let wrapper: MountedWrapper<typeof RuiTimezoneSelect>;
 

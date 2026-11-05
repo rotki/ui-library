@@ -46,6 +46,11 @@ const vitestConfig = defineConfig({
           },
           globals: true,
           environment: 'happy-dom',
+          // Spies, mock calls and stubbed globals are reset before each test, so none leaks into the next
+          clearMocks: true,
+          restoreMocks: true,
+          unstubEnvs: true,
+          unstubGlobals: true,
           /*
            * `vmThreads` builds happy-dom once per worker rather than per file, saving a quarter
            * of the run. `vmMemoryLimit` is required with it, since the pool does not reclaim
