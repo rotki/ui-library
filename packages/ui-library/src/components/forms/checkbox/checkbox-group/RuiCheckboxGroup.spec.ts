@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { h } from 'vue';
 import RuiCheckboxGroup from '@/components/forms/checkbox/checkbox-group/RuiCheckboxGroup.vue';
 import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
@@ -10,10 +10,6 @@ const createWrapper = createMounter(RuiCheckboxGroup, { global: { stubs: ['rui-i
 
 describe('components/forms/checkbox/checkbox-group/RuiCheckboxGroup.vue', () => {
   let wrapper: MountedWrapper<typeof RuiCheckboxGroup>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should have role="group" on wrapper', () => {
     wrapper = createWrapper();
@@ -48,7 +44,6 @@ describe('components/forms/checkbox/checkbox-group/RuiCheckboxGroup.vue', () => 
     expect(lines.map(line => line.attributes('data-details'))).toEqual(['auto', 'auto']);
     expect(scoped.text()).not.toContain('Child hint');
     expect(scoped.text()).toContain('Standalone hint');
-    scoped.unmount();
   });
 
   it('should pass hint props', async () => {
@@ -125,8 +120,6 @@ describe('components/forms/checkbox/checkbox-group/RuiCheckboxGroup.vue', () => 
 
     await inputs[0]!.setValue(false);
     expect(parent.vm.value).toEqual(['b']);
-
-    parent.unmount();
   });
 
   it('should propagate disabled to children', () => {
@@ -146,7 +139,5 @@ describe('components/forms/checkbox/checkbox-group/RuiCheckboxGroup.vue', () => 
     inputs.forEach((input) => {
       expect(input.attributes('disabled')).toBeDefined();
     });
-
-    parent.unmount();
   });
 });

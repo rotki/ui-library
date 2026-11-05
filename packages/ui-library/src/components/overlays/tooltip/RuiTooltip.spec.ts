@@ -53,11 +53,7 @@ describe('components/overlays/tooltip/RuiTooltip.vue', () => {
   });
 
   afterEach(() => {
-    wrapper?.unmount();
-
-    cleanupElements('[role="tooltip"]');
     vi.runOnlyPendingTimers();
-    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 

@@ -26,10 +26,7 @@ describe('components/logos/RuiLogo.vue', () => {
   });
 
   afterEach(() => {
-    wrapper?.unmount();
-
     vi.useRealTimers();
-    vi.clearAllMocks();
   });
 
   it('should render properly', () => {
@@ -106,10 +103,8 @@ describe('components/logos/RuiLogo.vue logo resolver', () => {
   let wrapper: MountedWrapper<typeof RuiLogo> | undefined;
 
   afterEach(() => {
-    wrapper?.unmount();
     wrapper = undefined;
     clearVerifiedLogoUrls();
-    vi.restoreAllMocks();
   });
 
   it('should show only the bundled logo without a resolver', async () => {
@@ -214,7 +209,6 @@ describe('components/logos/RuiLogo.vue hydration', () => {
     container?.remove();
     container = undefined;
     clearVerifiedLogoUrls();
-    vi.restoreAllMocks();
   });
 
   function createApp(props: Props, resolve: LogoResolver) {

@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiStepper from '@/components/steppers/RuiStepper.vue';
 import { StepperOrientation, StepperState, type StepperStep } from '@/types/stepper';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
@@ -7,10 +7,6 @@ const createWrapper = createMounter(RuiStepper);
 
 describe('components/steppers/RuiStepper.vue', () => {
   let wrapper: MountedWrapper<typeof RuiStepper>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   const steps: StepperStep[] = [
     { description: 'lorem ipsum', state: StepperState.done, title: 'Step' },

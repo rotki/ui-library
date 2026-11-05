@@ -1,5 +1,5 @@
 import type { GeneratedIcon } from '@/types/icons';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { createIconDefaults, IconsSymbol } from '@/composables/icons';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
@@ -8,10 +8,6 @@ const createWrapper = createMounter(RuiIcon);
 
 describe('components/icons/RuiIcon.vue', () => {
   let wrapper: MountedWrapper<typeof RuiIcon>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should render properly', () => {
     wrapper = createWrapper({

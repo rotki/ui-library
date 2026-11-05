@@ -24,9 +24,9 @@ vi.mock('@/components/date-time-picker/utils', async (importOriginal) => {
  * expects.
  *
  * @param composable - the composable to run
- * @returns what it returned, and a way to unmount the component holding it
+ * @returns what it returned
  */
-function withSetup<T>(composable: () => T): { result: T; unmount: () => void } {
+function withSetup<T>(composable: () => T): { result: T } {
   let result!: T;
   const TestComponent = defineComponent({
     setup() {
@@ -35,8 +35,8 @@ function withSetup<T>(composable: () => T): { result: T; unmount: () => void } {
     },
     template: '<div></div>',
   });
-  const wrapper = mount(TestComponent);
-  return { result, unmount: () => wrapper.unmount() };
+  mount(TestComponent);
+  return { result };
 }
 
 describe('use-date-time-selection', () => {
@@ -57,7 +57,7 @@ describe('use-date-time-selection', () => {
     it('should initialize with undefined values when allowEmpty is true and modelValue is undefined', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -73,14 +73,12 @@ describe('use-date-time-selection', () => {
       expect(get(result.modelHour)).toBeUndefined();
       expect(get(result.modelMinute)).toBeUndefined();
       expect(get(result.valueSet)).toBe(false);
-
-      unmount();
     });
 
     it('should initialize with current date when allowEmpty is false and modelValue is undefined', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { unmount } = withSetup(() => useDateTimeSelection({
+      withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: false,
         dateFormat,
@@ -97,15 +95,13 @@ describe('use-date-time-selection', () => {
       expect(emittedDate.year()).toBe(2023);
       expect(emittedDate.month()).toBe(5);
       expect(emittedDate.date()).toBe(15);
-
-      unmount();
     });
 
     it('should initialize with provided modelValue for epoch-ms type', async () => {
       const testDate = new Date(2022, 3, 20, 10, 15);
       const modelValue = ref<number | undefined>(testDate.getTime());
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: false,
         dateFormat,
@@ -122,8 +118,6 @@ describe('use-date-time-selection', () => {
       expect(get(result.modelDay)).toBe(20);
       expect(get(result.modelHour)).toBe(10);
       expect(get(result.modelMinute)).toBe(15);
-
-      unmount();
     });
 
     it('should initialize with provided modelValue for epoch type', async () => {
@@ -131,7 +125,7 @@ describe('use-date-time-selection', () => {
       const epochSeconds = Math.floor(testDate.getTime() / 1000);
       const modelValue = ref<number | undefined>(epochSeconds);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: false,
         dateFormat,
@@ -148,15 +142,13 @@ describe('use-date-time-selection', () => {
       expect(get(result.modelDay)).toBe(20);
       expect(get(result.modelHour)).toBe(10);
       expect(get(result.modelMinute)).toBe(15);
-
-      unmount();
     });
 
     it('should initialize with provided modelValue for date type', async () => {
       const testDate = new Date(2022, 3, 20, 10, 15);
       const modelValue = ref<Date | undefined>(testDate);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: false,
         dateFormat,
@@ -173,15 +165,13 @@ describe('use-date-time-selection', () => {
       expect(get(result.modelDay)).toBe(20);
       expect(get(result.modelHour)).toBe(10);
       expect(get(result.modelMinute)).toBe(15);
-
-      unmount();
     });
 
     it('should initialize with seconds when accuracy is second', async () => {
       const testDate = new Date(2022, 3, 20, 10, 15, 30);
       const modelValue = ref<number | undefined>(testDate.getTime());
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'second',
         allowEmpty: false,
         dateFormat,
@@ -194,15 +184,13 @@ describe('use-date-time-selection', () => {
       await nextTick();
 
       expect(get(result.modelSecond)).toBe(30);
-
-      unmount();
     });
 
     it('should initialize with milliseconds when accuracy is millisecond', async () => {
       const testDate = new Date(2022, 3, 20, 10, 15, 30, 456);
       const modelValue = ref<number | undefined>(testDate.getTime());
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'millisecond',
         allowEmpty: false,
         dateFormat,
@@ -216,8 +204,6 @@ describe('use-date-time-selection', () => {
 
       expect(get(result.modelSecond)).toBe(30);
       expect(get(result.modelMillisecond)).toBe(456);
-
-      unmount();
     });
   });
 
@@ -225,7 +211,7 @@ describe('use-date-time-selection', () => {
     it('should return undefined when the day is left unset', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -239,14 +225,12 @@ describe('use-date-time-selection', () => {
       set(result.modelMonth, 6);
 
       expect(get(result.selectedDate)).toBeUndefined();
-
-      unmount();
     });
 
     it('should return a Date when all date fields are set', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -265,14 +249,12 @@ describe('use-date-time-selection', () => {
       expect(selectedDate?.getFullYear()).toBe(2023);
       expect(selectedDate?.getMonth()).toBe(5); // June (0-indexed)
       expect(selectedDate?.getDate()).toBe(15);
-
-      unmount();
     });
 
     it('should handle month overflow correctly when setting date', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -292,8 +274,6 @@ describe('use-date-time-selection', () => {
 
       expect(get(result.modelMonth)).toBe(2); // February (1-indexed)
       expect(get(result.modelDay)).toBe(15);
-
-      unmount();
     });
   });
 
@@ -301,7 +281,7 @@ describe('use-date-time-selection', () => {
     it('should return undefined when the minute is left unset', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -314,14 +294,12 @@ describe('use-date-time-selection', () => {
       set(result.modelHour, 14);
 
       expect(get(result.selectedTime)).toBeUndefined();
-
-      unmount();
     });
 
     it('should return a Date when hour and minute are set', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -338,8 +316,6 @@ describe('use-date-time-selection', () => {
       expect(selectedTime).toBeInstanceOf(Date);
       expect(selectedTime?.getHours()).toBe(14);
       expect(selectedTime?.getMinutes()).toBe(30);
-
-      unmount();
     });
   });
 
@@ -347,7 +323,7 @@ describe('use-date-time-selection', () => {
     it('should return false when date or time is not fully set', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -363,14 +339,12 @@ describe('use-date-time-selection', () => {
       // Time is not set
 
       expect(get(result.valueSet)).toBe(false);
-
-      unmount();
     });
 
     it('should return true when both date and time are fully set', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -387,8 +361,6 @@ describe('use-date-time-selection', () => {
       set(result.modelMinute, 30);
 
       expect(get(result.valueSet)).toBe(true);
-
-      unmount();
     });
   });
 
@@ -396,7 +368,7 @@ describe('use-date-time-selection', () => {
     it('should return default min date (1970-01-01) when minDate is undefined', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -410,15 +382,13 @@ describe('use-date-time-selection', () => {
       expect(minDate.getFullYear()).toBe(1970);
       expect(minDate.getMonth()).toBe(0);
       expect(minDate.getDate()).toBe(1);
-
-      unmount();
     });
 
     it('should return the provided minDate as Date', () => {
       const modelValue = ref<number | undefined>(undefined);
       const minDate = new Date(2020, 0, 1);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -429,8 +399,6 @@ describe('use-date-time-selection', () => {
       }));
 
       expect(get(result.minAllowedDate)).toEqual(minDate);
-
-      unmount();
     });
 
     it('should convert epoch to Date for minDate when type is epoch', () => {
@@ -438,7 +406,7 @@ describe('use-date-time-selection', () => {
       const minDateTimestamp = new Date(2020, 0, 1);
       const minDateEpoch = Math.floor(minDateTimestamp.getTime() / 1000);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -452,8 +420,6 @@ describe('use-date-time-selection', () => {
       expect(minAllowed.getFullYear()).toBe(2020);
       expect(minAllowed.getMonth()).toBe(0);
       expect(minAllowed.getDate()).toBe(1);
-
-      unmount();
     });
   });
 
@@ -461,7 +427,7 @@ describe('use-date-time-selection', () => {
     it('should return undefined when maxDate is undefined', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -472,15 +438,13 @@ describe('use-date-time-selection', () => {
       }));
 
       expect(get(result.maxAllowedDate)).toBeUndefined();
-
-      unmount();
     });
 
     it('should return the provided maxDate as Date', () => {
       const modelValue = ref<number | undefined>(undefined);
       const maxDate = new Date(2025, 11, 31);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -491,14 +455,12 @@ describe('use-date-time-selection', () => {
       }));
 
       expect(get(result.maxAllowedDate)).toEqual(maxDate);
-
-      unmount();
     });
 
     it('should return current time when maxDate is "now"', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -513,8 +475,6 @@ describe('use-date-time-selection', () => {
       expect(maxAllowed?.getFullYear()).toBe(fixedDate.getFullYear());
       expect(maxAllowed?.getMonth()).toBe(fixedDate.getMonth());
       expect(maxAllowed?.getDate()).toBe(fixedDate.getDate());
-
-      unmount();
     });
 
     it('should convert epoch to Date for maxDate when type is epoch', () => {
@@ -522,7 +482,7 @@ describe('use-date-time-selection', () => {
       const maxDateTimestamp = new Date(2025, 11, 31);
       const maxDateEpoch = Math.floor(maxDateTimestamp.getTime() / 1000);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -536,8 +496,6 @@ describe('use-date-time-selection', () => {
       expect(maxAllowed?.getFullYear()).toBe(2025);
       expect(maxAllowed?.getMonth()).toBe(11);
       expect(maxAllowed?.getDate()).toBe(31);
-
-      unmount();
     });
   });
 
@@ -545,7 +503,7 @@ describe('use-date-time-selection', () => {
     it('should return true for valid date within bounds', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -558,15 +516,13 @@ describe('use-date-time-selection', () => {
       const testDate = dayjs('2023-06-15');
       expect(result.isDateValid(testDate)).toBe(true);
       expect(get(result.internalErrorMessages)).toHaveLength(0);
-
-      unmount();
     });
 
     it('should return false and set error when date is before minDate', () => {
       const modelValue = ref<number | undefined>(undefined);
       const minDate = new Date(2020, 0, 10);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -580,15 +536,13 @@ describe('use-date-time-selection', () => {
       expect(result.isDateValid(testDate)).toBe(false);
       expect(get(result.internalErrorMessages).length).toBeGreaterThan(0);
       expect(get(result.internalErrorMessages)[0]).toBe('Date cannot be before 10/01/2020 00:00');
-
-      unmount();
     });
 
     it('should return false and set error when date is after maxDate', () => {
       const modelValue = ref<number | undefined>(undefined);
       const maxDate = new Date(2023, 5, 1);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -602,14 +556,12 @@ describe('use-date-time-selection', () => {
       expect(result.isDateValid(testDate)).toBe(false);
       expect(get(result.internalErrorMessages).length).toBeGreaterThan(0);
       expect(get(result.internalErrorMessages)[0]).toBe('Date cannot be after 01/06/2023 00:00');
-
-      unmount();
     });
 
     it('should show future date error when maxDate is "now"', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -622,8 +574,6 @@ describe('use-date-time-selection', () => {
       const futureDate = dayjs('2024-01-01');
       expect(result.isDateValid(futureDate)).toBe(false);
       expect(get(result.internalErrorMessages)[0]).toContain('cannot be in the future');
-
-      unmount();
     });
   });
 
@@ -632,7 +582,7 @@ describe('use-date-time-selection', () => {
       const testDate = new Date(2022, 3, 20, 10, 15, 30, 456);
       const modelValue = ref<number | undefined>(testDate.getTime());
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'millisecond',
         allowEmpty: true,
         dateFormat,
@@ -659,15 +609,13 @@ describe('use-date-time-selection', () => {
       expect(get(result.modelSecond)).toBeUndefined();
       expect(get(result.modelMillisecond)).toBeUndefined();
       expect(get(modelValue)).toBeUndefined();
-
-      unmount();
     });
 
     it('should clear internal error messages', async () => {
       const modelValue = ref<number | undefined>(undefined);
       const minDate = new Date(2023, 5, 1);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -686,8 +634,6 @@ describe('use-date-time-selection', () => {
       result.clear();
 
       expect(get(result.internalErrorMessages)).toHaveLength(0);
-
-      unmount();
     });
   });
 
@@ -695,7 +641,7 @@ describe('use-date-time-selection', () => {
     it('should set all fields to current date and time', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -713,14 +659,12 @@ describe('use-date-time-selection', () => {
       expect(get(result.modelDay)).toBe(15);
       expect(get(result.modelHour)).toBe(14);
       expect(get(result.modelMinute)).toBe(30);
-
-      unmount();
     });
 
     it('should set seconds when accuracy is second', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'second',
         allowEmpty: true,
         dateFormat,
@@ -734,14 +678,12 @@ describe('use-date-time-selection', () => {
       await nextTick();
 
       expect(get(result.modelSecond)).toBe(45);
-
-      unmount();
     });
 
     it('should set milliseconds when accuracy is millisecond', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'millisecond',
         allowEmpty: true,
         dateFormat,
@@ -756,14 +698,12 @@ describe('use-date-time-selection', () => {
 
       expect(get(result.modelSecond)).toBe(45);
       expect(get(result.modelMillisecond)).toBe(500);
-
-      unmount();
     });
 
     it('should emit correct epoch-ms value', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -778,14 +718,12 @@ describe('use-date-time-selection', () => {
 
       const expected = dayjs(fixedDate).set('second', 0).set('millisecond', 0).valueOf();
       expect(get(modelValue)).toBe(expected);
-
-      unmount();
     });
 
     it('should emit correct epoch value', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -800,14 +738,12 @@ describe('use-date-time-selection', () => {
 
       const expected = dayjs(fixedDate).set('second', 0).set('millisecond', 0).valueOf() / 1000;
       expect(get(modelValue)).toBe(expected);
-
-      unmount();
     });
 
     it('should emit correct Date value', async () => {
       const modelValue = ref<Date | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -825,8 +761,6 @@ describe('use-date-time-selection', () => {
       expect(emittedDate.getFullYear()).toBe(2023);
       expect(emittedDate.getMonth()).toBe(5);
       expect(emittedDate.getDate()).toBe(15);
-
-      unmount();
     });
   });
 
@@ -834,7 +768,7 @@ describe('use-date-time-selection', () => {
     it('should return a dayjs object with all set values', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'millisecond',
         allowEmpty: true,
         dateFormat,
@@ -860,14 +794,12 @@ describe('use-date-time-selection', () => {
       expect(dateTime.minute()).toBe(30);
       expect(dateTime.second()).toBe(45);
       expect(dateTime.millisecond()).toBe(500);
-
-      unmount();
     });
 
     it('should handle day overflow when month has fewer days', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -884,8 +816,6 @@ describe('use-date-time-selection', () => {
       const dateTime = result.getDateTime();
       // Should clamp to max days in February
       expect(dateTime.date()).toBe(28);
-
-      unmount();
     });
   });
 
@@ -893,7 +823,7 @@ describe('use-date-time-selection', () => {
     it('should return the correct segment data structure', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -910,15 +840,13 @@ describe('use-date-time-selection', () => {
       expect(result.segmentData).toHaveProperty('mm');
       expect(result.segmentData).toHaveProperty('ss');
       expect(result.segmentData).toHaveProperty('SSS');
-
-      unmount();
     });
 
     it('should update model value when segment data is modified', async () => {
       const testDate = new Date(2022, 3, 20, 10, 15);
       const modelValue = ref<number | undefined>(testDate.getTime());
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: false,
         dateFormat,
@@ -935,8 +863,6 @@ describe('use-date-time-selection', () => {
       await nextTick();
 
       expect(get(result.modelDay)).toBe(25);
-
-      unmount();
     });
   });
 
@@ -945,7 +871,7 @@ describe('use-date-time-selection', () => {
       const initialDate = new Date(2022, 3, 20, 10, 15);
       const modelValue = ref<number | undefined>(initialDate.getTime());
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: false,
         dateFormat,
@@ -970,15 +896,13 @@ describe('use-date-time-selection', () => {
       expect(get(result.modelDay)).toBe(10);
       expect(get(result.modelHour)).toBe(16);
       expect(get(result.modelMinute)).toBe(45);
-
-      unmount();
     });
 
     it('should clear internal state when modelValue becomes undefined', async () => {
       const initialDate = new Date(2022, 3, 20, 10, 15);
       const modelValue = ref<number | undefined>(initialDate.getTime());
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -1000,15 +924,13 @@ describe('use-date-time-selection', () => {
       expect(get(result.modelYear)).toBeUndefined();
       expect(get(result.modelMonth)).toBeUndefined();
       expect(get(result.modelDay)).toBeUndefined();
-
-      unmount();
     });
 
     it('should emit updated model value when selection changes', async () => {
       const initialDate = new Date(2022, 3, 20, 10, 15);
       const modelValue = ref<number | undefined>(initialDate.getTime());
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: false,
         dateFormat,
@@ -1029,8 +951,6 @@ describe('use-date-time-selection', () => {
       expect(updatedValue).toBeDefined();
       const updatedDate = new Date(updatedValue!);
       expect(updatedDate.getFullYear()).toBe(2025);
-
-      unmount();
     });
   });
 
@@ -1038,7 +958,7 @@ describe('use-date-time-selection', () => {
     it('should use guessed timezone by default', () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -1049,8 +969,6 @@ describe('use-date-time-selection', () => {
       }));
 
       expect(get(result.modelTimezone)).toBe('UTC');
-
-      unmount();
     });
   });
 
@@ -1060,7 +978,7 @@ describe('use-date-time-selection', () => {
 
     function errorFor(format: string, min: boolean): string {
       const modelValue = ref<number | undefined>(undefined);
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat: ref(format),
@@ -1071,9 +989,7 @@ describe('use-date-time-selection', () => {
       }));
 
       result.isDateValid(dayjs(min ? '2020-01-01' : '2030-01-01'));
-      const message = get(result.internalErrorMessages)[0] ?? '';
-      unmount();
-      return message;
+      return get(result.internalErrorMessages)[0] ?? '';
     }
 
     it('should write a maximum day-first when the field is day-first', () => {
@@ -1103,7 +1019,7 @@ describe('use-date-time-selection', () => {
       const maxDate = new Date(2023, 5, 10, 9, 0);
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -1122,15 +1038,13 @@ describe('use-date-time-selection', () => {
       // the field and the model agree, so no error is raised
       expect(get(result.internalErrorMessages)).toEqual([]);
       expect(get(modelValue)).toBe(maxDate.getTime());
-
-      unmount();
     });
 
     it('should clamp now up to minDate', async () => {
       const minDate = new Date(2024, 0, 1, 8, 15);
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -1148,15 +1062,13 @@ describe('use-date-time-selection', () => {
       expect(get(result.modelDay)).toBe(1);
       expect(get(result.internalErrorMessages)).toEqual([]);
       expect(get(modelValue)).toBe(minDate.getTime());
-
-      unmount();
     });
 
     it('should clamp today when the kept time crosses maxDate', async () => {
       const maxDate = new Date(2023, 5, 15, 12, 0);
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -1178,14 +1090,12 @@ describe('use-date-time-selection', () => {
       expect(get(result.modelMinute)).toBe(0);
       expect(get(result.internalErrorMessages)).toEqual([]);
       expect(get(modelValue)).toBe(maxDate.getTime());
-
-      unmount();
     });
 
     it('should leave today alone when it sits inside the bounds', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -1205,15 +1115,13 @@ describe('use-date-time-selection', () => {
       expect(get(result.modelDay)).toBe(15);
       expect(get(result.modelHour)).toBe(8);
       expect(get(result.modelMinute)).toBe(5);
-
-      unmount();
     });
 
     it('should keep typed input diverging rather than clamping it', async () => {
       const maxDate = new Date(2023, 5, 20);
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'minute',
         allowEmpty: true,
         dateFormat,
@@ -1234,8 +1142,6 @@ describe('use-date-time-selection', () => {
       expect(get(result.modelYear)).toBe(2030);
       expect(get(modelValue)).toBeUndefined();
       expect(get(result.internalErrorMessages).length).toBeGreaterThan(0);
-
-      unmount();
     });
   });
 
@@ -1249,7 +1155,7 @@ describe('use-date-time-selection', () => {
     it('should leave an incomplete entry uncommitted without the option', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'second',
         allowEmpty: true,
         dateFormat,
@@ -1266,14 +1172,12 @@ describe('use-date-time-selection', () => {
 
       expect(get(modelValue)).toBeUndefined();
       expect(get(result.modelHour)).toBeUndefined();
-
-      unmount();
     });
 
     it('should give a bare date the start of its day', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'second',
         allowEmpty: true,
         dateFormat,
@@ -1294,14 +1198,12 @@ describe('use-date-time-selection', () => {
       expect(get(result.modelHour)).toBe(0);
       expect(get(result.modelMinute)).toBe(0);
       expect(get(result.modelSecond)).toBe(0);
-
-      unmount();
     });
 
     it('should give a bare date the end of its day', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'second',
         allowEmpty: true,
         dateFormat,
@@ -1321,14 +1223,12 @@ describe('use-date-time-selection', () => {
       expect(get(result.modelHour)).toBe(23);
       expect(get(result.modelMinute)).toBe(59);
       expect(get(result.modelSecond)).toBe(59);
-
-      unmount();
     });
 
     it('should fill only the segments left out', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'second',
         allowEmpty: true,
         dateFormat,
@@ -1347,8 +1247,6 @@ describe('use-date-time-selection', () => {
 
       // the typed hour stands; the minute and second it stopped short of run to the end
       expect(get(modelValue)).toBe(new Date(2023, 5, 15, 9, 59, 59).getTime());
-
-      unmount();
     });
 
     /*
@@ -1360,7 +1258,7 @@ describe('use-date-time-selection', () => {
     it('should treat a time entered down to the minute as complete', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'second',
         allowEmpty: true,
         dateFormat,
@@ -1383,14 +1281,12 @@ describe('use-date-time-selection', () => {
 
       expect(get(modelValue)).toBe(new Date(2023, 5, 15, 9, 30, 0).getTime());
       expect(get(result.modelSecond)).toBe(0);
-
-      unmount();
     });
 
     it('should not touch an entry that is already complete', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'second',
         allowEmpty: true,
         dateFormat,
@@ -1411,14 +1307,12 @@ describe('use-date-time-selection', () => {
 
       expect(get(modelValue)).toBe(new Date(2023, 5, 15, 9, 30, 15).getTime());
       expect(get(result.modelSecond)).toBe(15);
-
-      unmount();
     });
 
     it('should ignore a date that is still incomplete', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'second',
         allowEmpty: true,
         dateFormat,
@@ -1437,14 +1331,12 @@ describe('use-date-time-selection', () => {
 
       expect(get(modelValue)).toBeUndefined();
       expect(get(result.modelHour)).toBeUndefined();
-
-      unmount();
     });
 
     it('should pull the fill back to a bound it overshot', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'second',
         allowEmpty: true,
         dateFormat,
@@ -1463,14 +1355,12 @@ describe('use-date-time-selection', () => {
 
       expect(get(modelValue)).toBe(new Date(2023, 5, 15, 14, 30, 45).getTime());
       expect(get(result.internalErrorMessages)).toEqual([]);
-
-      unmount();
     });
 
     it('should refuse a date out of range rather than move it', async () => {
       const modelValue = ref<number | undefined>(undefined);
 
-      const { result, unmount } = withSetup(() => useDateTimeSelection({
+      const { result } = withSetup(() => useDateTimeSelection({
         accuracy: 'second',
         allowEmpty: true,
         dateFormat,
@@ -1492,8 +1382,6 @@ describe('use-date-time-selection', () => {
       expect(get(modelValue)).toBeUndefined();
       expect(get(result.modelYear)).toBe(2030);
       expect(get(result.internalErrorMessages).length).toBeGreaterThan(0);
-
-      unmount();
     });
   });
 });

@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiBadge from '@/components/overlays/badge/RuiBadge.vue';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
@@ -14,10 +14,6 @@ const createWrapper = createMounter(RuiBadge, {
 
 describe('components/overlays/badge/RuiBadge.vue', () => {
   let wrapper: MountedWrapper<typeof RuiBadge>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should render properly', async () => {
     wrapper = createWrapper({

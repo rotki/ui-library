@@ -46,9 +46,6 @@ describe('components/color-picker/RuiColorPicker.vue', () => {
   });
 
   afterEach(() => {
-    wrapper?.unmount();
-
-    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 

@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { TransitionGroupStub } from '@/__test__/transition-group-stub';
 import { assert } from '@/utils/assert';
@@ -42,10 +42,6 @@ describe('components/date-time-picker/RuiDateTimePicker.vue (DST)', () => {
 
   vi.useFakeTimers();
   vi.setSystemTime(new Date(2023, 0, 15, 10, 30));
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   async function pickDate(target: Date): Promise<void> {
     await vi.runOnlyPendingTimersAsync();

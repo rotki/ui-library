@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiTextArea from '@/components/forms/text-area/RuiTextArea.vue';
 import { textAreaStyles } from '@/components/forms/text-area/text-area-styles';
 import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
@@ -15,10 +15,6 @@ const createWrapper = createMounter(RuiTextArea, {
 
 describe('components/forms/text-area/RuiTextArea.vue', () => {
   let wrapper: MountedWrapper<typeof RuiTextArea>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should render properly', () => {
     const label = 'Text Area Label';

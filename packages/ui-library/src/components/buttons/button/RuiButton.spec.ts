@@ -11,10 +11,6 @@ const createWrapper = createMounter(RuiButton);
 describe('components/buttons/button/RuiButton.vue', () => {
   let wrapper: MountedWrapper<typeof RuiButton>;
 
-  afterEach(() => {
-    wrapper?.unmount();
-  });
-
   it('should render properly', () => {
     const label = 'Primary Button';
     wrapper = createWrapper({

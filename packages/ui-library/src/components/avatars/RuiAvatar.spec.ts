@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiAvatar from '@/components/avatars/RuiAvatar.vue';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
@@ -6,10 +6,6 @@ const createWrapper = createMounter(RuiAvatar);
 
 describe('components/avatars/RuiAvatar.vue', () => {
   let wrapper: MountedWrapper<typeof RuiAvatar>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('renders <img> when src is provided', () => {
     wrapper = createWrapper({

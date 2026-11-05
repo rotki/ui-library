@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { TransitionGroupStub } from '@/__test__/transition-group-stub';
 import { assert } from '@/utils/assert';
@@ -50,10 +50,6 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
   const fixedDate = new Date(2023, 0, 15, 10, 30, 45, 500);
   vi.useFakeTimers();
   vi.setSystemTime(fixedDate);
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should render properly', () => {
     wrapper = createWrapper({

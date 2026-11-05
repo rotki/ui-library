@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { defineComponent, nextTick, ref, shallowRef, toValue } from 'vue';
 import { useAutoCompleteValue, type UseAutoCompleteValueDeps, type UseAutoCompleteValueOptions, type UseAutoCompleteValueReturn } from '@/composables/forms/auto-complete/value';
 
@@ -8,7 +8,6 @@ interface Harness<TValue, TItem> {
   modelValue: Ref<TValue | undefined>;
   options: ShallowRef<TItem[]>;
   updateInternalSearch: ReturnType<typeof vi.fn>;
-  unmount: () => void;
 }
 
 function setup<TValue, TItem>(
@@ -44,21 +43,14 @@ function setup<TValue, TItem>(
     },
     template: '<div></div>',
   });
-  const wrapper = mount(TestComponent);
-  return { result, modelValue, options, updateInternalSearch, unmount: () => wrapper.unmount() };
+  mount(TestComponent);
+  return { result, modelValue, options, updateInternalSearch };
 }
 
 describe('composables/forms/auto-complete/value', () => {
-  let unmount: () => void;
-
-  afterEach(() => {
-    unmount?.();
-  });
-
   it('should not throw when custom-value starts as an empty string', () => {
     expect(() => {
       const h = setup<string, string>('', ['apple', 'banana'], { customValue: true });
-      unmount = h.unmount;
       expect(h.result.value.value).toEqual(['']);
     }).not.toThrow();
   });
@@ -66,20 +58,17 @@ describe('composables/forms/auto-complete/value', () => {
   it('should not throw when custom-value starts as the number zero', () => {
     expect(() => {
       const h = setup<number, number>(0, [1, 2, 3], { customValue: true });
-      unmount = h.unmount;
       expect(h.result.value.value).toEqual([0]);
     }).not.toThrow();
   });
 
   it('should treat null modelValue as empty selection', () => {
     const h = setup<string | null, string>(null, ['apple', 'banana'], { customValue: true });
-    unmount = h.unmount;
     expect(h.result.value.value).toEqual([]);
   });
 
   it('should resolve modelValue that matches an option', () => {
     const h = setup<string, string>('apple', ['apple', 'banana'], {});
-    unmount = h.unmount;
     expect(h.result.value.value).toEqual(['apple']);
   });
 
@@ -91,7 +80,6 @@ describe('composables/forms/auto-complete/value', () => {
    */
   it('should sync displayed text when options arrive after modelValue is set', async () => {
     const h = setup<string, string>('alice', [], {});
-    unmount = h.unmount;
 
     // The first watch runs against empty options, so the value cannot resolve and the search is cleared
     expect(h.updateInternalSearch).toHaveBeenCalledTimes(1);
@@ -109,7 +97,6 @@ describe('composables/forms/auto-complete/value', () => {
     const options: Item[] = [{ id: '', label: 'Unknown' }, { id: 'a', label: 'Apple' }];
     expect(() => {
       const h = setup<string, Item>('', options, { customValue: true, keyAttr: 'id' });
-      unmount = h.unmount;
       expect(h.result.value.value).toEqual([{ id: '', label: 'Unknown' }]);
     }).not.toThrow();
   });

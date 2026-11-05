@@ -1,5 +1,5 @@
 import type { ComponentMountingOptions } from '@vue/test-utils';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import RuiTab from '@/components/tabs/tab/RuiTab.vue';
 import RuiTabs from '@/components/tabs/tabs/RuiTabs.vue';
 import { assertExists } from '~/tests/helpers/dom-helpers';
@@ -47,10 +47,6 @@ function createWrapper(
 
 describe('components/tabs/tabs/RuiTabs.vue', () => {
   let wrapper: MountedWrapper<typeof RuiTabs>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should render properly', async () => {
     wrapper = createWrapper();

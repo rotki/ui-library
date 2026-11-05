@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiAvatar from '@/components/avatars/RuiAvatar.vue';
 import RuiAvatarGroup from '@/components/avatars/RuiAvatarGroup.vue';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
@@ -11,10 +11,6 @@ const createWrapper = createMounter(RuiAvatarGroup, {
 
 describe('components/avatars/RuiAvatarGroup.vue', () => {
   let wrapper: MountedWrapper<typeof RuiAvatarGroup>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('renders all children when max is not set', () => {
     wrapper = createWrapper({

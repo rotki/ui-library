@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiRadioGroup from '@/components/forms/radio-button/radio-group/RuiRadioGroup.vue';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
@@ -6,10 +6,6 @@ const createWrapper = createMounter(RuiRadioGroup, { global: { stubs: ['icon'] }
 
 describe('components/forms/radio-button/radio-group/RuiRadioGroup.vue', () => {
   let wrapper: MountedWrapper<typeof RuiRadioGroup>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should have role="radiogroup" on wrapper', () => {
     wrapper = createWrapper();

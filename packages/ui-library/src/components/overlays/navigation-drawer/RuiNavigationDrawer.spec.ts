@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiNavigationDrawer from '@/components/overlays/navigation-drawer/RuiNavigationDrawer.vue';
-import { assertExists, cleanupElements, queryBody } from '~/tests/helpers/dom-helpers';
+import { assertExists, queryBody } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 const text = 'Navigation Drawer Content';
@@ -33,10 +33,6 @@ describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => 
   });
 
   afterEach(() => {
-    wrapper?.unmount();
-
-    cleanupElements('*', document.body);
-    vi.restoreAllMocks();
     vi.useRealTimers();
   });
   it('should render properly', async () => {

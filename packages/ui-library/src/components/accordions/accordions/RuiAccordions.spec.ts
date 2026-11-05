@@ -36,10 +36,6 @@ const createWrapper = createMounter(Accordions, {
 describe('components/accordions/accordions/RuiAccordions.vue', () => {
   let wrapper: MountedWrapper<typeof Accordions>;
 
-  afterEach(() => {
-    wrapper?.unmount();
-  });
-
   it('should render properly', () => {
     const modelValue = ref();
     wrapper = createWrapper({
@@ -166,6 +162,5 @@ describe('components/accordions/accordions/RuiAccordions.vue', () => {
     const contents = list.findAll('[data-accordion-content]');
     expect(contents).toHaveLength(1);
     expect(contents[0]?.text()).toContain('Second content');
-    list.unmount();
   });
 });

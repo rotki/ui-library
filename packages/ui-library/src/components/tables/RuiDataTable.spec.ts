@@ -1,6 +1,6 @@
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
 import { mount } from '@vue/test-utils';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { type DeepReadonly, h } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiDataTable from '@/components/tables/RuiDataTable.vue';
@@ -59,10 +59,6 @@ describe('components/tables/RuiDataTable.vue', () => {
   }, {
     key: 'action',
   }];
-
-  afterEach(() => {
-    wrapper.unmount();
-  });
 
   it('should render properly', () => {
     wrapper = createWrapper({
@@ -2910,7 +2906,6 @@ describe('components/tables/RuiDataTable.vue', () => {
         global: { provide: { [TableSymbol.valueOf()]: globalDefaults } },
       });
       expect(overrideWrapper.find('table thead').exists()).toBeTruthy();
-      overrideWrapper.unmount();
     });
 
     it('should keep only the outermost table toolbar sticky when tables are nested', () => {

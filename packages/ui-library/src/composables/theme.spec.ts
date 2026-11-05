@@ -10,9 +10,9 @@ import { ThemeMode } from '@/types/theme';
  * expects.
  *
  * @param composable - the composable to run
- * @returns what it returned, and a way to unmount the component holding it
+ * @returns what it returned
  */
-function withSetup<T>(composable: () => T): { result: T; unmount: () => void } {
+function withSetup<T>(composable: () => T): { result: T } {
   let result!: T;
   const TestComponent = defineComponent({
     setup() {
@@ -21,8 +21,8 @@ function withSetup<T>(composable: () => T): { result: T; unmount: () => void } {
     },
     template: '<div></div>',
   });
-  const wrapper = mount(TestComponent);
-  return { result, unmount: () => wrapper.unmount() };
+  mount(TestComponent);
+  return { result };
 }
 
 describe('composables/theme', () => {
@@ -36,12 +36,11 @@ describe('composables/theme', () => {
     // Clean up
     document.documentElement.classList.remove('light', 'dark', 'auto');
     delete document.documentElement.dataset.theme;
-    vi.restoreAllMocks();
   });
 
   describe('useRotkiTheme', () => {
     it('should return all expected properties', () => {
-      const { result, unmount } = withSetup(() => useRotkiTheme());
+      const { result } = withSetup(() => useRotkiTheme());
 
       expect(result).toHaveProperty('config');
       expect(result).toHaveProperty('init');
@@ -54,12 +53,10 @@ describe('composables/theme', () => {
       expect(result).toHaveProperty('switchThemeScheme');
       expect(result).toHaveProperty('theme');
       expect(result).toHaveProperty('toggleThemeMode');
-
-      unmount();
     });
 
     it('should set both class and data-theme attribute when switching to light mode', async () => {
-      const { result, unmount } = withSetup(() => useRotkiTheme());
+      const { result } = withSetup(() => useRotkiTheme());
 
       result.switchThemeScheme(ThemeMode.light);
       await nextTick();
@@ -67,12 +64,10 @@ describe('composables/theme', () => {
       expect(document.documentElement.classList.contains('light')).toBe(true);
       expect(document.documentElement.dataset.theme).toBe('light');
       expect(document.documentElement.getAttribute('data-theme')).toBe('light');
-
-      unmount();
     });
 
     it('should set both class and data-theme attribute when switching to dark mode', async () => {
-      const { result, unmount } = withSetup(() => useRotkiTheme());
+      const { result } = withSetup(() => useRotkiTheme());
 
       result.switchThemeScheme(ThemeMode.dark);
       await nextTick();
@@ -80,12 +75,10 @@ describe('composables/theme', () => {
       expect(document.documentElement.classList.contains('dark')).toBe(true);
       expect(document.documentElement.dataset.theme).toBe('dark');
       expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
-
-      unmount();
     });
 
     it('should update both class and data-theme when toggling theme mode', async () => {
-      const { result, unmount } = withSetup(() => useRotkiTheme());
+      const { result } = withSetup(() => useRotkiTheme());
 
       // Start with light mode
       result.switchThemeScheme(ThemeMode.light);
@@ -100,12 +93,10 @@ describe('composables/theme', () => {
 
       expect(document.documentElement.classList.contains('dark')).toBe(true);
       expect(document.documentElement.dataset.theme).toBe('dark');
-
-      unmount();
     });
 
     it('should keep class and data-theme in sync through multiple theme changes', async () => {
-      const { result, unmount } = withSetup(() => useRotkiTheme());
+      const { result } = withSetup(() => useRotkiTheme());
 
       const modes: ThemeMode[] = [ThemeMode.light, ThemeMode.dark, ThemeMode.light, ThemeMode.dark];
 
@@ -116,12 +107,10 @@ describe('composables/theme', () => {
         const expectedClass = mode === ThemeMode.auto ? 'light' : mode;
         expect(document.documentElement.dataset.theme).toBe(expectedClass);
       }
-
-      unmount();
     });
 
     it('should correctly report isLight and isDark states', async () => {
-      const { result, unmount } = withSetup(() => useRotkiTheme());
+      const { result } = withSetup(() => useRotkiTheme());
 
       result.switchThemeScheme(ThemeMode.light);
       await nextTick();
@@ -134,12 +123,10 @@ describe('composables/theme', () => {
 
       expect(get(result.isLight)).toBe(false);
       expect(get(result.isDark)).toBe(true);
-
-      unmount();
     });
 
     it('should correctly report isAutoControlled state', async () => {
-      const { result, unmount } = withSetup(() => useRotkiTheme());
+      const { result } = withSetup(() => useRotkiTheme());
 
       result.switchThemeScheme(ThemeMode.auto);
       await nextTick();
@@ -150,8 +137,6 @@ describe('composables/theme', () => {
       await nextTick();
 
       expect(get(result.isAutoControlled)).toBe(false);
-
-      unmount();
     });
 
     it('should work with SSR handler and correctly set data-theme attribute', async () => {
@@ -168,7 +153,7 @@ describe('composables/theme', () => {
       // Re-import the composable after setting SSR handler and resetting modules
       const { useRotkiTheme: useRotkiThemeFresh } = await import('@/composables/theme');
 
-      const { result, unmount } = withSetup(() => useRotkiThemeFresh());
+      const { result } = withSetup(() => useRotkiThemeFresh());
 
       result.switchThemeScheme(ThemeMode.light);
       await nextTick();
@@ -194,8 +179,6 @@ describe('composables/theme', () => {
         attribute: 'data-theme',
         value: 'dark',
       });
-
-      unmount();
 
       // Reset SSR handler by setting to undefined
       setSSRHandler('updateHTMLAttrs', undefined as any);

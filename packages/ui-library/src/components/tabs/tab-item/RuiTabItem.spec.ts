@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiTabItem from '@/components/tabs/tab-item/RuiTabItem.vue';
 import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
@@ -16,10 +16,6 @@ const createWrapper = createMounter(RuiTabItem, {
 
 describe('components/tabs/tab-item/RuiTabItem.vue', () => {
   let wrapper: MountedWrapper<typeof RuiTabItem>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should have role="tabpanel" on root', () => {
     wrapper = createWrapper();

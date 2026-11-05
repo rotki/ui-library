@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiSlider from '@/components/forms/slider/RuiSlider.vue';
 import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
@@ -7,10 +7,6 @@ const createWrapper = createMounter(RuiSlider);
 
 describe('components/forms/slider/RuiSlider.vue', () => {
   let wrapper: MountedWrapper<typeof RuiSlider>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should render properly', () => {
     const label = 'Slider label';

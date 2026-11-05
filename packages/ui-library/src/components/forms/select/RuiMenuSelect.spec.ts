@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { options } from '@/__test__/options';
 import RuiMenuSelect from '@/components/forms/select/RuiMenuSelect.vue';
 import { assert } from '@/utils/assert';
-import { cleanupElements, expectWrapperToHaveClass, queryAllMenuButtons, queryByRole, queryMenuButton } from '~/tests/helpers/dom-helpers';
+import { expectWrapperToHaveClass, queryAllMenuButtons, queryByRole, queryMenuButton } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 function createWrapper<TItem>(
@@ -27,10 +27,6 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
   });
 
   afterEach(() => {
-    wrapper?.unmount();
-
-    cleanupElements('*', document.body);
-    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 

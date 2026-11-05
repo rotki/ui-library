@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { TimeAccuracy } from '@/consts/time-accuracy';
 import { assert } from '@/utils/assert';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
@@ -8,10 +8,6 @@ const createWrapper = createMounter(RuiTimePicker);
 
 describe('components/time-picker/RuiTimePicker.vue', () => {
   let wrapper: MountedWrapper<typeof RuiTimePicker>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should render properly', () => {
     wrapper = createWrapper({
@@ -218,8 +214,6 @@ describe('components/time-picker/RuiTimePicker.vue', () => {
     // Click minute to switch to second mode
     await wrapper.find('.rui-minute-15').trigger('click');
     expect(clockFace.attributes('aria-label')).toBe('Select second');
-
-    wrapper.unmount();
   });
 
   it('should apply bordered class by default and remove with borderless prop', async () => {

@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiSwitch from '@/components/forms/switch/RuiSwitch.vue';
 import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
@@ -7,10 +7,6 @@ const createWrapper = createMounter(RuiSwitch);
 
 describe('components/forms/switch/RuiSwitch.vue', () => {
   let wrapper: MountedWrapper<typeof RuiSwitch>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should render properly', () => {
     const label = 'Switch Label';

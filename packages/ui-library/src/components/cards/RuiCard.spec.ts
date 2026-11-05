@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCard from '@/components/cards/RuiCard.vue';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
@@ -7,10 +7,6 @@ const createWrapper = createMounter(RuiCard, { global: { stubs: { 'rui-button': 
 
 describe('components/cards/RuiCard.vue', () => {
   let wrapper: MountedWrapper<typeof RuiCard>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should render properly', () => {
     wrapper = createWrapper({});

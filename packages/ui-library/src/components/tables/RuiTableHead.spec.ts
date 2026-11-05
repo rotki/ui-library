@@ -1,5 +1,5 @@
 import type { ComponentMountingOptions } from '@vue/test-utils';
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiTableHead, { type TableColumn } from '@/components/tables/RuiTableHead.vue';
 import { SortDirection } from '@/components/tables/table-props';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
@@ -28,11 +28,6 @@ function createWrapper(
 
 describe('components/tables/RuiTableHead.vue', () => {
   let wrapper: MountedWrapper<typeof RuiTableHead<TestItem>>;
-
-  afterEach(() => {
-    wrapper.unmount();
-    document.querySelectorAll('table').forEach(el => el.remove());
-  });
 
   it('renders column headers from columns prop', () => {
     wrapper = createWrapper({

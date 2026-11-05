@@ -18,7 +18,6 @@ describe('composables/sticky-blocker', () => {
 
   afterEach(() => {
     outer.remove();
-    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 

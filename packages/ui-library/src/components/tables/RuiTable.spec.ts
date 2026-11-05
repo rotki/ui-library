@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiTable from '@/components/tables/RuiTable.vue';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
@@ -15,10 +15,6 @@ const createWrapper = createMounter(RuiTable, { slots: { default: rows } });
 
 describe('components/tables/RuiTable.vue', () => {
   let wrapper: MountedWrapper<typeof RuiTable>;
-
-  afterEach(() => {
-    wrapper.unmount();
-  });
 
   it('should render the slot markup inside a table', () => {
     wrapper = createWrapper();

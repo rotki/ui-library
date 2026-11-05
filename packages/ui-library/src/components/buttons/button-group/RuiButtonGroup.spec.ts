@@ -21,10 +21,6 @@ const createWrapper = createMounter(RuiButtonGroup, {
 describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
   let wrapper: MountedWrapper<typeof RuiButtonGroup>;
 
-  afterEach(() => {
-    wrapper?.unmount();
-  });
-
   it('should pass vertical props', async () => {
     wrapper = createWrapper();
     expectNotToHaveClass(wrapper.element, /flex-col/);
@@ -99,7 +95,6 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
     expect(buttons[0]!.classes()).toContain('py-1');
     // Second button inherits group size lg
     expect(buttons[1]!.classes()).toContain('text-[1rem]');
-    wrapperWithOverride.unmount();
   });
 
   it('should toggleable button group', async () => {
@@ -305,7 +300,6 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
         expect(button.attributes('disabled')).toBeDefined();
         expect(button.classes()).toContain('border-0');
       }
-      group.unmount();
     });
 
     it('should toggle the model from a nested button', async () => {
@@ -320,7 +314,6 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
       expect(group.props('modelValue')).toBe('c');
       expect(nested.attributes('data-active')).toBe('true');
       expect(group.find('[data-id=wrapper-a] button').attributes('data-active')).toBeUndefined();
-      group.unmount();
     });
   });
 

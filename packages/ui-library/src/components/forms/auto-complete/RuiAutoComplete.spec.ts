@@ -8,7 +8,6 @@ import { assert } from '@/utils/assert';
 import { syncAnimationFrames } from '~/tests/helpers/animation-frame';
 import {
   assertExists,
-  cleanupElements,
   expectWrapperToHaveClass,
   queryAllMenuButtons,
   queryBody,
@@ -40,9 +39,6 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
   });
 
   afterEach(() => {
-    wrapper?.unmount();
-
-    cleanupElements('*', document.body);
     vi.useRealTimers();
   });
 

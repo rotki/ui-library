@@ -1,7 +1,7 @@
 import type { SortColumn, TableColumn, TableRowKey } from '@/components/tables/RuiTableHead.vue';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiDataTableMobileSort from '@/components/tables/data-table/RuiDataTableMobileSort.vue';
-import { assertExists, cleanupElements, queryByDataId } from '~/tests/helpers/dom-helpers';
+import { assertExists, queryByDataId } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 interface User {
@@ -35,9 +35,6 @@ describe('components/tables/data-table/RuiDataTableMobileSort.vue', () => {
   });
 
   afterEach(() => {
-    wrapper?.unmount();
-    cleanupElements('*', document.body);
-    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 

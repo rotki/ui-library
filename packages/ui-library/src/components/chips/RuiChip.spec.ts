@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiChip from '@/components/chips/RuiChip.vue';
 import { expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
@@ -7,10 +7,6 @@ const createWrapper = createMounter(RuiChip, { global: { stubs: ['rui-icon'] } }
 
 describe('components/chips/RuiChip.vue', () => {
   let wrapper: MountedWrapper<typeof RuiChip>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should render properly', () => {
     const label = 'Chip';

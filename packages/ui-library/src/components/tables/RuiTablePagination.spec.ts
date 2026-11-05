@@ -1,6 +1,6 @@
 import type { ComponentMountingOptions } from '@vue/test-utils';
 import type { TablePaginationData } from '@/components/tables/use-pagination-navigation';
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiTablePagination from '@/components/tables/RuiTablePagination.vue';
 import { createTableDefaults, TableSymbol } from '@/composables/defaults/table';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
@@ -28,10 +28,6 @@ function createWrapper(
 
 describe('components/tables/RuiTablePagination.vue', () => {
   let wrapper: MountedWrapper<typeof RuiTablePagination>;
-
-  afterEach(() => {
-    wrapper.unmount();
-  });
 
   it('renders the pagination limit section', () => {
     wrapper = createWrapper({ page: 1, total: 50, limit: 10 });

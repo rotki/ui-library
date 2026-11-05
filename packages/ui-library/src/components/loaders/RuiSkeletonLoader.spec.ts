@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiSkeletonLoader from '@/components/loaders/RuiSkeletonLoader.vue';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
@@ -6,10 +6,6 @@ const createWrapper = createMounter(RuiSkeletonLoader);
 
 describe('components/loaders/RuiSkeletonLoader.vue', () => {
   let wrapper: MountedWrapper<typeof RuiSkeletonLoader>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should render properly', () => {
     wrapper = createWrapper();

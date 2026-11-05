@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiRevealableTextField from '@/components/forms/revealable-text-field/RuiRevealableTextField.vue';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
@@ -6,10 +6,6 @@ const createWrapper = createMounter(RuiRevealableTextField, { global: { stubs: [
 
 describe('components/forms/revealable-text-field/RuiRevealableTextField.vue', () => {
   let wrapper: MountedWrapper<typeof RuiRevealableTextField>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should render properly', () => {
     const label = 'Password';

@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
 import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
@@ -7,10 +7,6 @@ const createWrapper = createMounter(RuiCheckbox, { global: { stubs: ['rui-icon']
 
 describe('components/forms/checkbox/RuiCheckbox.vue', () => {
   let wrapper: MountedWrapper<typeof RuiCheckbox>;
-
-  afterEach(() => {
-    wrapper.unmount();
-  });
 
   it('should render properly', () => {
     const label = 'Checkbox Label';

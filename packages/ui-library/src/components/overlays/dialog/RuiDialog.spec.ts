@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiDialog from '@/components/overlays/dialog/RuiDialog.vue';
-import { assertExists, cleanupElements, queryByRole } from '~/tests/helpers/dom-helpers';
+import { assertExists, queryByRole } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 const text = 'This is content';
@@ -30,10 +30,6 @@ describe('components/overlays/dialog/RuiDialog.vue', () => {
   });
 
   afterEach(() => {
-    wrapper?.unmount();
-
-    cleanupElements('*', document.body);
-    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 

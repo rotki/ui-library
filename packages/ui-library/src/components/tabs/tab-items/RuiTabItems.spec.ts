@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiTabItem from '@/components/tabs/tab-item/RuiTabItem.vue';
 import RuiTabItems from '@/components/tabs/tab-items/RuiTabItems.vue';
 import { syncAnimationFrames } from '~/tests/helpers/animation-frame';
@@ -25,10 +25,6 @@ const createWrapper = createMounter(RuiTabItems, {
 
 describe('components/tabs/tab-items/RuiTabItems.vue', () => {
   let wrapper: MountedWrapper<typeof RuiTabItems>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should render properly', async () => {
     wrapper = createWrapper({

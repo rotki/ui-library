@@ -12,10 +12,6 @@ const createWrapper = createMounter(RuiAccordion, {
 describe('components/accordions/accordion/RuiAccordion.vue', () => {
   let wrapper: MountedWrapper<typeof RuiAccordion>;
 
-  afterEach(() => {
-    wrapper?.unmount();
-  });
-
   it('should render properly', () => {
     wrapper = createWrapper({
       props: {

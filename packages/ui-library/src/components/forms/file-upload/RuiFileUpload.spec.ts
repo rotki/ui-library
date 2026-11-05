@@ -1,5 +1,5 @@
 import { type ComponentMountingOptions, mount } from '@vue/test-utils';
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiFileUpload from '@/components/forms/file-upload/RuiFileUpload.vue';
 import { RUI_I18N_INJECTION_KEY, type RuiI18nProvider } from '@/composables/use-rui-i18n';
 import { RUI_I18N_KEYS } from '@/i18n/keys';
@@ -27,10 +27,6 @@ function emitChange(wrapper: MountedWrapper<typeof RuiFileUpload>, files: File[]
 
 describe('components/forms/file-upload/RuiFileUpload.vue', () => {
   let wrapper: MountedWrapper<typeof RuiFileUpload>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('renders the dropzone with default copy and no file', () => {
     wrapper = createWrapper({ props: { modelValue: undefined } });

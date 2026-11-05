@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { nextTick } from 'vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
@@ -10,10 +10,6 @@ const mountDetail = createMounter(RuiFormTextDetail, {
 
 describe('components/helpers/RuiFormTextDetail.vue', () => {
   let wrapper: MountedWrapper<typeof RuiFormTextDetail>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   function createWrapper(props: InstanceType<typeof RuiFormTextDetail>['$props']): MountedWrapper<typeof RuiFormTextDetail> {
     return mountDetail({ props });

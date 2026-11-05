@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createBlockie } from '@/utils/blockie';
 
 describe('utils/blockie.ts', () => {
@@ -15,14 +15,9 @@ describe('utils/blockie.ts', () => {
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
     mockCanvas.getContext.mockReturnValue(mockContext);
     mockCanvas.toDataURL.mockReturnValue('data:image/jpeg;base64,test');
     vi.spyOn(document, 'createElement').mockReturnValue(mockCanvas as any);
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
   });
 
   it('should create a blockie with default options', () => {

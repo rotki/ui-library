@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import RuiTab from '@/components/tabs/tab/RuiTab.vue';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
@@ -25,10 +25,6 @@ const createWrapper = createMounter(RuiTab, {
 
 describe('components/tabs/tab/RuiTab.vue', () => {
   let wrapper: MountedWrapper<typeof RuiTab>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should render properly', () => {
     const label = 'Tab 1';

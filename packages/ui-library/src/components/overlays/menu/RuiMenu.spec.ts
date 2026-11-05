@@ -3,7 +3,7 @@ import { mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
-import { assertExists, cleanupElements, queryBody, queryByDataId, queryByRole } from '~/tests/helpers/dom-helpers';
+import { assertExists, queryBody, queryByDataId, queryByRole } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 import { DATA_ATTRIBUTE_SELECTORS } from '~/tests/helpers/selectors';
 
@@ -34,9 +34,6 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
   });
 
   afterEach(() => {
-    wrapper?.unmount();
-    cleanupElements('*', document.body);
-    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 
@@ -393,8 +390,6 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
       await host.find('#trigger').trigger('keydown', { key: 'Escape' });
 
       expect(ancestorKeydowns(host)).toBe(1);
-
-      host.unmount();
     });
 
     it('should swallow escape while open and close the menu', async () => {
@@ -410,8 +405,6 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
 
       expect(ancestorKeydowns(host)).toBe(before);
       expect(document.body.innerHTML).not.toMatch(new RegExp(text));
-
-      host.unmount();
     });
 
     it('should keep a persistent menu open on escape and let the key through', async () => {
@@ -427,8 +420,6 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
 
       expect(document.body.innerHTML).toMatch(new RegExp(text));
       expect(ancestorKeydowns(host)).toBe(before + 1);
-
-      host.unmount();
     });
 
     it('should stay open on an escape an IME is composing, and let the key through, since there escape only cancels the candidate', async () => {
@@ -449,8 +440,6 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
       await vi.runAllTimersAsync();
 
       expect(document.body.innerHTML).not.toMatch(new RegExp(text));
-
-      host.unmount();
     });
 
     it('should still close a persistent menu through its model', async () => {
@@ -464,8 +453,6 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
       await vi.runAllTimersAsync();
 
       expect(document.body.innerHTML).not.toMatch(new RegExp(text));
-
-      host.unmount();
     });
 
     it('should let other keys through while open', async () => {
@@ -478,8 +465,6 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
       await host.find('#trigger').trigger('keydown', { key: 'a' });
 
       expect(ancestorKeydowns(host)).toBe(before + 1);
-
-      host.unmount();
     });
   });
 
@@ -897,7 +882,6 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
       await vi.runAllTimersAsync();
 
       expect(stopAutoUpdate).toHaveBeenCalled();
-      host.unmount();
     });
 
     it.each([true, false])('should give the content the activator width with lazy=%s', async (lazy) => {
@@ -914,7 +898,6 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
       await nextTick();
 
       expect(queryByDataId('width')?.textContent).toBe('150');
-      host.unmount();
     });
 
     it('should measure the activator for a setup run from another component\'s mounted hook', async () => {
@@ -946,7 +929,6 @@ describe('components/overlays/menu/RuiMenu.vue', () => {
 
       // The stubbed observer never reports, so only the setup's own read can give the width
       expect(queryByDataId('width')?.textContent).toBe('120');
-      host.unmount();
     });
 
     it('should ignore a first use that arrives after unmount', async () => {

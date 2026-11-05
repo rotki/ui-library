@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiTimezoneSelect from '@/components/date-time-picker/RuiTimezoneSelect.vue';
 import { timezones } from '@/components/date-time-picker/timezones';
-import { cleanupElements } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 const createWrapper = createMounter(RuiTimezoneSelect, {
@@ -21,8 +20,6 @@ describe('components/date-time-picker/RuiTimezoneSelect.vue', () => {
   });
 
   afterEach(() => {
-    wrapper?.unmount();
-    cleanupElements('*', document.body);
     vi.useRealTimers();
   });
 

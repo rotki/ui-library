@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiRadio from '@/components/forms/radio-button/radio/RuiRadio.vue';
 import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
@@ -7,10 +7,6 @@ const createWrapper = createMounter(RuiRadio, { global: { stubs: ['rui-icon'] } 
 
 describe('components/forms/radio-button/radio/RuiRadio.vue', () => {
   let wrapper: MountedWrapper<typeof RuiRadio>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should render properly', () => {
     const label = 'Radio Label';

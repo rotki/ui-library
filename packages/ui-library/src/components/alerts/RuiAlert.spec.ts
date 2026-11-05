@@ -7,10 +7,6 @@ const createWrapper = createMounter(RuiAlert, { global: { stubs: ['rui-icon'] } 
 describe('components/alerts/RuiAlert.vue', () => {
   let wrapper: MountedWrapper<typeof RuiAlert>;
 
-  afterEach(() => {
-    wrapper?.unmount();
-  });
-
   it('should render properly', () => {
     const title = 'Text Field Label';
     wrapper = createWrapper({

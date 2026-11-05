@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiDivider from '@/components/divider/RuiDivider.vue';
 import { expectNotToHaveClass, expectToHaveClass } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
@@ -7,10 +7,6 @@ const createWrapper = createMounter(RuiDivider);
 
 describe('components/divider/RuiDivider.vue', () => {
   let wrapper: MountedWrapper<typeof RuiDivider>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should render properly', () => {
     wrapper = createWrapper();

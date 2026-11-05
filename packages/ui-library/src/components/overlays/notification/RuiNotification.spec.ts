@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import RuiNotification from '@/components/overlays/notification/RuiNotification.vue';
-import { assertExists, cleanupElements, queryBody } from '~/tests/helpers/dom-helpers';
+import { assertExists, queryBody } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 const createWrapper = createMounter(RuiNotification, {
@@ -13,9 +13,6 @@ describe('components/overlays/notification/RuiNotification.vue', () => {
   let wrapper: MountedWrapper<typeof RuiNotification>;
 
   afterEach(() => {
-    wrapper?.unmount();
-    cleanupElements('*', document.body);
-    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 

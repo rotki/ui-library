@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import RuiTableEmptyState from '@/components/tables/RuiTableEmptyState.vue';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
@@ -6,10 +6,6 @@ const createWrapper = createMounter(RuiTableEmptyState);
 
 describe('components/tables/RuiTableEmptyState.vue', () => {
   let wrapper: MountedWrapper<typeof RuiTableEmptyState>;
-
-  afterEach(() => {
-    wrapper.unmount();
-  });
 
   it('should render placeholder image', () => {
     wrapper = createWrapper();

@@ -5,12 +5,10 @@ import { nextTick } from 'vue';
 import RuiBottomSheet from '@/components/overlays/bottom-sheet/RuiBottomSheet.vue';
 import RuiDialog from '@/components/overlays/dialog/RuiDialog.vue';
 import { resetOverlayStack, useOverlayStack } from '@/composables/overlay-stack';
-import { cleanupElements } from '~/tests/helpers/dom-helpers';
 
 describe('components/overlays/dialog/RuiDialog.vue overlay stack', () => {
   afterEach(() => {
     resetOverlayStack();
-    cleanupElements('*', document.body);
   });
 
   it('should put an open dialog in the stack and take it out again', async () => {
@@ -27,8 +25,6 @@ describe('components/overlays/dialog/RuiDialog.vue overlay stack', () => {
 
     await wrapper.setProps({ modelValue: false });
     expect(get(hasOverlay)).toBe(false);
-
-    wrapper.unmount();
   });
 
   it('should close on dismissal and say so', async () => {
@@ -44,8 +40,6 @@ describe('components/overlays/dialog/RuiDialog.vue overlay stack', () => {
 
     expect(wrapper.emitted('dismiss')).toHaveLength(1);
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([false]);
-
-    wrapper.unmount();
   });
 
   it('should refuse while persistent, and still swallow the gesture', async () => {
@@ -61,8 +55,6 @@ describe('components/overlays/dialog/RuiDialog.vue overlay stack', () => {
 
     expect(wrapper.emitted('dismiss')).toHaveLength(1);
     expect(wrapper.emitted('update:modelValue')).toBeUndefined();
-
-    wrapper.unmount();
   });
 
   it('should stay in the stack when it turns persistent partway through', async () => {
@@ -80,8 +72,6 @@ describe('components/overlays/dialog/RuiDialog.vue overlay stack', () => {
     await nextTick();
 
     expect(wrapper.emitted('update:modelValue')).toBeUndefined();
-
-    wrapper.unmount();
   });
 
   it('should reach a bottom sheet through the dialog it wraps', async () => {
@@ -100,8 +90,6 @@ describe('components/overlays/dialog/RuiDialog.vue overlay stack', () => {
     expect(wrapper.findComponent(RuiDialog).emitted('dismiss')).toHaveLength(1);
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([false]);
     expect(get(hasOverlay)).toBe(false);
-
-    wrapper.unmount();
   });
 
   it('should let go of the stack the moment it closes, not when it finishes leaving', async () => {
@@ -121,8 +109,6 @@ describe('components/overlays/dialog/RuiDialog.vue overlay stack', () => {
      */
     expect(get(hasOverlay)).toBe(false);
     expect(dismissTop()).toBe(false);
-
-    wrapper.unmount();
   });
 
   it('should keep escape and dismissal apart, so neither fires the other', async () => {
@@ -139,8 +125,6 @@ describe('components/overlays/dialog/RuiDialog.vue overlay stack', () => {
     expect(wrapper.emitted('dismiss')).toHaveLength(1);
     expect(wrapper.emitted('click:esc')).toBeUndefined();
     expect(wrapper.emitted('click:outside')).toBeUndefined();
-
-    wrapper.unmount();
   });
 
   it('should keep handing gestures to a refusing dialog rather than the one underneath', async () => {
@@ -163,9 +147,6 @@ describe('components/overlays/dialog/RuiDialog.vue overlay stack', () => {
     await nextTick();
     expect(upper.emitted('dismiss')).toHaveLength(2);
     expect(lower.emitted('dismiss')).toBeUndefined();
-
-    upper.unmount();
-    lower.unmount();
   });
 
   it('should hand a bottom sheet consumer the dismissal through attribute fallthrough', async () => {
@@ -181,8 +162,6 @@ describe('components/overlays/dialog/RuiDialog.vue overlay stack', () => {
 
     expect(wrapper.findComponent(RuiDialog).emitted('dismiss')).toHaveLength(1);
     expect(wrapper.props('modelValue')).toBe(true);
-
-    wrapper.unmount();
   });
 
   it('should leave the stack when the dialog is torn down while open', async () => {
@@ -211,8 +190,5 @@ describe('components/overlays/dialog/RuiDialog.vue overlay stack', () => {
 
     expect(upper.emitted('dismiss')).toHaveLength(1);
     expect(lower.emitted('dismiss')).toBeUndefined();
-
-    upper.unmount();
-    lower.unmount();
   });
 });

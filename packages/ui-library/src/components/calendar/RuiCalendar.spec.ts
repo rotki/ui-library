@@ -27,8 +27,6 @@ describe('components/calendar/RuiCalendar.vue', () => {
   });
 
   afterEach(() => {
-    wrapper?.unmount();
-
     vi.useRealTimers();
     // eslint-disable-next-line no-restricted-globals -- restoring the Date the test replaced needs the global itself
     global.Date = originalDate;

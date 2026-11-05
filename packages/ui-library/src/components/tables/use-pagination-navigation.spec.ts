@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { defineComponent, type Ref, ref } from 'vue';
 import { type TablePaginationData, usePaginationNavigation } from '@/components/tables/use-pagination-navigation';
 import { createTableDefaults, type TableOptions } from '@/composables/defaults/table';
@@ -20,22 +20,15 @@ function withSetup(
     },
     template: '<div></div>',
   });
-  const wrapper = mount(TestComponent);
+  mount(TestComponent);
 
-  return { result, modelValue, unmount: () => wrapper.unmount() };
+  return { result, modelValue };
 }
 
 describe('components/tables/use-pagination-navigation', () => {
-  let unmount: () => void;
-
-  afterEach(() => {
-    unmount?.();
-  });
-
   describe('limits', () => {
     it('should use default limits when none provided in model', () => {
-      const { result, unmount: u } = withSetup({ page: 1, total: 100, limit: 10 });
-      unmount = u;
+      const { result } = withSetup({ page: 1, total: 100, limit: 10 });
 
       expect(result.limits.value).toEqual([
         { limit: 10 },
@@ -46,13 +39,12 @@ describe('components/tables/use-pagination-navigation', () => {
     });
 
     it('should use custom limits from model when provided', () => {
-      const { result, unmount: u } = withSetup({
+      const { result } = withSetup({
         page: 1,
         total: 100,
         limit: 5,
         limits: [5, 15, 30],
       });
-      unmount = u;
 
       expect(result.limits.value).toEqual([
         { limit: 5 },
@@ -62,11 +54,10 @@ describe('components/tables/use-pagination-navigation', () => {
     });
 
     it('should use custom table default limits', () => {
-      const { result, unmount: u } = withSetup(
+      const { result } = withSetup(
         { page: 1, total: 50, limit: 20 },
         { limits: [20, 40, 60] },
       );
-      unmount = u;
 
       expect(result.limits.value).toEqual([
         { limit: 20 },
@@ -78,15 +69,13 @@ describe('components/tables/use-pagination-navigation', () => {
 
   describe('currentLimit', () => {
     it('should reflect the model limit', () => {
-      const { result, unmount: u } = withSetup({ page: 3, total: 100, limit: 25 });
-      unmount = u;
+      const { result } = withSetup({ page: 3, total: 100, limit: 25 });
 
       expect(result.currentLimit.value).toBe(25);
     });
 
     it('should reset page to 1 when limit changes', () => {
-      const { result, modelValue, unmount: u } = withSetup({ page: 3, total: 100, limit: 10 });
-      unmount = u;
+      const { result, modelValue } = withSetup({ page: 3, total: 100, limit: 10 });
 
       result.currentLimit.value = 25;
 
@@ -97,22 +86,19 @@ describe('components/tables/use-pagination-navigation', () => {
 
   describe('pages', () => {
     it('should calculate total pages correctly', () => {
-      const { result, unmount: u } = withSetup({ page: 1, total: 100, limit: 10 });
-      unmount = u;
+      const { result } = withSetup({ page: 1, total: 100, limit: 10 });
 
       expect(result.pages.value).toBe(10);
     });
 
     it('should round up for partial pages', () => {
-      const { result, unmount: u } = withSetup({ page: 1, total: 27, limit: 10 });
-      unmount = u;
+      const { result } = withSetup({ page: 1, total: 27, limit: 10 });
 
       expect(result.pages.value).toBe(3);
     });
 
     it('should return 0 when total is 0', () => {
-      const { result, unmount: u } = withSetup({ page: 1, total: 0, limit: 10 });
-      unmount = u;
+      const { result } = withSetup({ page: 1, total: 0, limit: 10 });
 
       expect(result.pages.value).toBe(0);
     });
@@ -120,8 +106,7 @@ describe('components/tables/use-pagination-navigation', () => {
 
   describe('ranges', () => {
     it('should generate correct range text for each page', () => {
-      const { result, unmount: u } = withSetup({ page: 1, total: 25, limit: 10 });
-      unmount = u;
+      const { result } = withSetup({ page: 1, total: 25, limit: 10 });
 
       expect(result.ranges.value).toEqual([
         { page: 1, text: '1–10' },
@@ -131,15 +116,13 @@ describe('components/tables/use-pagination-navigation', () => {
     });
 
     it('should be empty when total is 0', () => {
-      const { result, unmount: u } = withSetup({ page: 1, total: 0, limit: 10 });
-      unmount = u;
+      const { result } = withSetup({ page: 1, total: 0, limit: 10 });
 
       expect(result.ranges.value).toEqual([]);
     });
 
     it('should format large numbers with separators', () => {
-      const { result, unmount: u } = withSetup({ page: 1, total: 5000, limit: 2500 });
-      unmount = u;
+      const { result } = withSetup({ page: 1, total: 5000, limit: 2500 });
 
       expect(result.ranges.value).toEqual([
         { page: 1, text: '1–2,500' },
@@ -150,16 +133,14 @@ describe('components/tables/use-pagination-navigation', () => {
 
   describe('useInputJump / rangesThreshold', () => {
     it('should stay on the dropdown when pages fit within the default threshold', () => {
-      const { result, unmount: u } = withSetup({ page: 1, total: 5000, limit: 10 });
-      unmount = u;
+      const { result } = withSetup({ page: 1, total: 5000, limit: 10 });
 
       expect(result.useInputJump.value).toBe(false);
       expect(result.ranges.value).toHaveLength(500);
     });
 
     it('should flip to input mode and skip range materialisation above the threshold', () => {
-      const { result, unmount: u } = withSetup({ page: 1, total: 5010, limit: 10 });
-      unmount = u;
+      const { result } = withSetup({ page: 1, total: 5010, limit: 10 });
 
       expect(result.pages.value).toBe(501);
       expect(result.useInputJump.value).toBe(true);
@@ -167,27 +148,24 @@ describe('components/tables/use-pagination-navigation', () => {
     });
 
     it('should respect a custom threshold', () => {
-      const { result, unmount: u } = withSetup({ page: 1, total: 120, limit: 10 }, undefined, 5);
-      unmount = u;
+      const { result } = withSetup({ page: 1, total: 120, limit: 10 }, undefined, 5);
 
       expect(result.useInputJump.value).toBe(true);
       expect(result.ranges.value).toEqual([]);
     });
 
     it('should disable the input-mode switch when threshold is 0', () => {
-      const { result, unmount: u } = withSetup(
+      const { result } = withSetup(
         { page: 1, total: 100_000, limit: 10 },
         undefined,
         0,
       );
-      unmount = u;
 
       expect(result.useInputJump.value).toBe(false);
     });
 
     it('should avoid materialising millions of ranges when total is huge', () => {
-      const { result, unmount: u } = withSetup({ page: 1, total: 4_015_386, limit: 10 });
-      unmount = u;
+      const { result } = withSetup({ page: 1, total: 4_015_386, limit: 10 });
 
       expect(result.pages.value).toBe(401_539);
       expect(result.useInputJump.value).toBe(true);
@@ -197,30 +175,26 @@ describe('components/tables/use-pagination-navigation', () => {
 
   describe('indicatorText', () => {
     it('should show total count', () => {
-      const { result, unmount: u } = withSetup({ page: 1, total: 100, limit: 10 });
-      unmount = u;
+      const { result } = withSetup({ page: 1, total: 100, limit: 10 });
 
       expect(result.indicatorText.value).toBe('of 100');
     });
 
     it('should show "0 of 0" when total is 0', () => {
-      const { result, unmount: u } = withSetup({ page: 1, total: 0, limit: 10 });
-      unmount = u;
+      const { result } = withSetup({ page: 1, total: 0, limit: 10 });
 
       expect(result.indicatorText.value).toBe('0 of 0');
     });
 
     it('should format large totals', () => {
-      const { result, unmount: u } = withSetup({ page: 1, total: 10000, limit: 100 });
-      unmount = u;
+      const { result } = withSetup({ page: 1, total: 10000, limit: 100 });
 
       expect(result.useInputJump.value).toBe(false);
       expect(result.indicatorText.value).toBe('of 10,000');
     });
 
     it('should switch to page count in input mode', () => {
-      const { result, unmount: u } = withSetup({ page: 1, total: 100_000, limit: 10 });
-      unmount = u;
+      const { result } = withSetup({ page: 1, total: 100_000, limit: 10 });
 
       expect(result.useInputJump.value).toBe(true);
       expect(result.indicatorText.value).toBe('of 10,000');
@@ -229,15 +203,13 @@ describe('components/tables/use-pagination-navigation', () => {
 
   describe('currentRange', () => {
     it('should reflect the model page', () => {
-      const { result, unmount: u } = withSetup({ page: 3, total: 100, limit: 10 });
-      unmount = u;
+      const { result } = withSetup({ page: 3, total: 100, limit: 10 });
 
       expect(result.currentRange.value).toBe(3);
     });
 
     it('should update model page when set', () => {
-      const { result, modelValue, unmount: u } = withSetup({ page: 1, total: 100, limit: 10 });
-      unmount = u;
+      const { result, modelValue } = withSetup({ page: 1, total: 100, limit: 10 });
 
       result.currentRange.value = 5;
 
@@ -249,32 +221,28 @@ describe('components/tables/use-pagination-navigation', () => {
 
   describe('hasPrev / hasNext', () => {
     it('should not have prev on first page', () => {
-      const { result, unmount: u } = withSetup({ page: 1, total: 100, limit: 10 });
-      unmount = u;
+      const { result } = withSetup({ page: 1, total: 100, limit: 10 });
 
       expect(result.hasPrev.value).toBe(false);
       expect(result.hasNext.value).toBe(true);
     });
 
     it('should not have next on last page', () => {
-      const { result, unmount: u } = withSetup({ page: 10, total: 100, limit: 10 });
-      unmount = u;
+      const { result } = withSetup({ page: 10, total: 100, limit: 10 });
 
       expect(result.hasPrev.value).toBe(true);
       expect(result.hasNext.value).toBe(false);
     });
 
     it('should have both on a middle page', () => {
-      const { result, unmount: u } = withSetup({ page: 5, total: 100, limit: 10 });
-      unmount = u;
+      const { result } = withSetup({ page: 5, total: 100, limit: 10 });
 
       expect(result.hasPrev.value).toBe(true);
       expect(result.hasNext.value).toBe(true);
     });
 
     it('should have neither when total is 0', () => {
-      const { result, unmount: u } = withSetup({ page: 1, total: 0, limit: 10 });
-      unmount = u;
+      const { result } = withSetup({ page: 1, total: 0, limit: 10 });
 
       expect(result.hasPrev.value).toBe(false);
       expect(result.hasNext.value).toBe(false);
@@ -283,8 +251,7 @@ describe('components/tables/use-pagination-navigation', () => {
 
   describe('navigation', () => {
     it('onNext should advance to next page', () => {
-      const { result, modelValue, unmount: u } = withSetup({ page: 1, total: 100, limit: 10 });
-      unmount = u;
+      const { result, modelValue } = withSetup({ page: 1, total: 100, limit: 10 });
 
       result.onNext();
 
@@ -292,8 +259,7 @@ describe('components/tables/use-pagination-navigation', () => {
     });
 
     it('onPrev should go to previous page', () => {
-      const { result, modelValue, unmount: u } = withSetup({ page: 3, total: 100, limit: 10 });
-      unmount = u;
+      const { result, modelValue } = withSetup({ page: 3, total: 100, limit: 10 });
 
       result.onPrev();
 
@@ -301,8 +267,7 @@ describe('components/tables/use-pagination-navigation', () => {
     });
 
     it('onFirst should go to page 1', () => {
-      const { result, modelValue, unmount: u } = withSetup({ page: 5, total: 100, limit: 10 });
-      unmount = u;
+      const { result, modelValue } = withSetup({ page: 5, total: 100, limit: 10 });
 
       result.onFirst();
 
@@ -310,8 +275,7 @@ describe('components/tables/use-pagination-navigation', () => {
     });
 
     it('onLast should go to last page', () => {
-      const { result, modelValue, unmount: u } = withSetup({ page: 1, total: 100, limit: 10 });
-      unmount = u;
+      const { result, modelValue } = withSetup({ page: 1, total: 100, limit: 10 });
 
       result.onLast();
 
@@ -319,8 +283,7 @@ describe('components/tables/use-pagination-navigation', () => {
     });
 
     it('onPrev should be no-op on first page', () => {
-      const { result, modelValue, unmount: u } = withSetup({ page: 1, total: 100, limit: 10 });
-      unmount = u;
+      const { result, modelValue } = withSetup({ page: 1, total: 100, limit: 10 });
 
       result.onPrev();
 
@@ -328,8 +291,7 @@ describe('components/tables/use-pagination-navigation', () => {
     });
 
     it('onNext should be no-op on last page', () => {
-      const { result, modelValue, unmount: u } = withSetup({ page: 10, total: 100, limit: 10 });
-      unmount = u;
+      const { result, modelValue } = withSetup({ page: 10, total: 100, limit: 10 });
 
       result.onNext();
 
@@ -337,8 +299,7 @@ describe('components/tables/use-pagination-navigation', () => {
     });
 
     it('onFirst should be no-op on first page', () => {
-      const { result, modelValue, unmount: u } = withSetup({ page: 1, total: 100, limit: 10 });
-      unmount = u;
+      const { result, modelValue } = withSetup({ page: 1, total: 100, limit: 10 });
 
       result.onFirst();
 
@@ -346,8 +307,7 @@ describe('components/tables/use-pagination-navigation', () => {
     });
 
     it('onLast should be no-op on last page', () => {
-      const { result, modelValue, unmount: u } = withSetup({ page: 10, total: 100, limit: 10 });
-      unmount = u;
+      const { result, modelValue } = withSetup({ page: 10, total: 100, limit: 10 });
 
       result.onLast();
 
@@ -357,8 +317,7 @@ describe('components/tables/use-pagination-navigation', () => {
 
   describe('reactivity', () => {
     it('should update derived state when model changes externally', () => {
-      const { result, modelValue, unmount: u } = withSetup({ page: 1, total: 100, limit: 10 });
-      unmount = u;
+      const { result, modelValue } = withSetup({ page: 1, total: 100, limit: 10 });
 
       expect(result.pages.value).toBe(10);
       expect(result.hasNext.value).toBe(true);
@@ -371,8 +330,7 @@ describe('components/tables/use-pagination-navigation', () => {
     });
 
     it('should update ranges when limit changes', () => {
-      const { result, unmount: u } = withSetup({ page: 1, total: 30, limit: 10 });
-      unmount = u;
+      const { result } = withSetup({ page: 1, total: 30, limit: 10 });
 
       expect(result.ranges.value).toHaveLength(3);
 

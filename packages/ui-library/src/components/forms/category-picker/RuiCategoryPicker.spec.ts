@@ -2,7 +2,7 @@ import type { ComponentMountingOptions } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { groupedOptions, type GroupedSelectOption } from '@/__test__/options';
 import RuiCategoryPicker from '@/components/forms/category-picker/RuiCategoryPicker.vue';
-import { assertExists, cleanupElements, queryByDataId } from '~/tests/helpers/dom-helpers';
+import { assertExists, queryByDataId } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 type PickerProps = NonNullable<ComponentMountingOptions<typeof RuiCategoryPicker<string, GroupedSelectOption>>['props']>;
@@ -41,9 +41,6 @@ describe('components/forms/category-picker/RuiCategoryPicker.vue', () => {
   });
 
   afterEach(() => {
-    wrapper?.unmount();
-    cleanupElements('*', document.body);
-    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 

@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { defineComponent } from 'vue';
 import { isRouteLocation, useTabRouting } from '@/components/tabs/tabs/use-tab-routing';
 
@@ -69,10 +69,6 @@ describe('use-tab-routing', () => {
 
   describe('composable with router', () => {
     let result: SetupResult;
-
-    afterEach(() => {
-      vi.clearAllMocks();
-    });
 
     it('should detect router availability', () => {
       result = mountWithRouting();

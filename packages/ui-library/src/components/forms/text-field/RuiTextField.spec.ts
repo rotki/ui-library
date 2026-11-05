@@ -1,5 +1,5 @@
 import { mount, type VueWrapper } from '@vue/test-utils';
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { h, ref } from 'vue';
 import RuiFieldDefaults from '@/components/forms/field-defaults/RuiFieldDefaults.vue';
 import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
@@ -12,10 +12,6 @@ const createWrapper = createMounter(RuiTextField, { global: { stubs: ['rui-icon'
 
 describe('components/forms/text-field/RuiTextField.vue', () => {
   let wrapper: MountedWrapper<typeof RuiTextField>;
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   it('should render properly', () => {
     const label = 'Text Field Label';
@@ -94,7 +90,6 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
       global: { stubs: ['rui-icon'], provide: { [FieldSymbol]: app } },
     });
     expect(own.find('[data-id=field-label]').classes()).toContain('sr-only');
-    own.unmount();
   });
 
   // a 3.0 copy bundled elsewhere provides the bare placement under the same Symbol.for key
@@ -126,7 +121,6 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
     });
     expect(nested.find('[data-id=field-label]').classes()).toContain('sr-only');
     expect(nested.find('.details').attributes('data-details')).toBe('auto');
-    nested.unmount();
   });
 
   it('should take details from its own prop, then the nearest RuiFieldDefaults, then the app default', () => {
@@ -161,7 +155,6 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
     const nested = mountIn(() => h(RuiFieldDefaults, { labelPlacement: 'hidden' }, () => field()), { details: 'auto' });
     expect(nested.find('.details').attributes('data-details')).toBe('auto');
     expect(nested.find('[data-id=field-label]').classes()).toContain('sr-only');
-    nested.unmount();
   });
 
   it('should pass disabled props', async () => {
