@@ -67,7 +67,6 @@ describe('components/accordions/accordions/RuiAccordions.vue', () => {
     const firstAccordionHeader = wrapper.findAll('[data-accordion-trigger]')[0];
     assert(firstAccordionHeader);
     await firstAccordionHeader.trigger('click');
-    await nextTick();
     expect(get(modelValue)).toBe(0);
 
     expect(wrapper.findAll('[data-accordion-content]')).toHaveLength(1);
@@ -77,7 +76,6 @@ describe('components/accordions/accordions/RuiAccordions.vue', () => {
     const secondAccordionHeader = wrapper.findAll('[data-accordion-trigger]')[1];
     assert(secondAccordionHeader);
     await secondAccordionHeader.trigger('click');
-    await nextTick();
     expect(get(modelValue)).toBe(1);
 
     expect(wrapper.findAll('[data-accordion-content]')).toHaveLength(1);
@@ -85,7 +83,6 @@ describe('components/accordions/accordions/RuiAccordions.vue', () => {
 
     // Click second accordion, it should be closed now
     await secondAccordionHeader.trigger('click');
-    await nextTick();
     expect(get(modelValue)).toBe(-1);
 
     expect(wrapper.findAll('[data-accordion-content]')).toHaveLength(0);
@@ -110,7 +107,6 @@ describe('components/accordions/accordions/RuiAccordions.vue', () => {
     const firstAccordionHeader = wrapper.findAll('[data-accordion-trigger]')[0];
     assert(firstAccordionHeader);
     await firstAccordionHeader.trigger('click');
-    await nextTick();
     expect(get(modelValue)).toStrictEqual([0]);
 
     expect(wrapper.findAll('[data-accordion-content]')).toHaveLength(1);
@@ -120,14 +116,12 @@ describe('components/accordions/accordions/RuiAccordions.vue', () => {
     const secondAccordionHeader = wrapper.findAll('[data-accordion-trigger]')[1];
     assert(secondAccordionHeader);
     await secondAccordionHeader.trigger('click');
-    await nextTick();
     expect(get(modelValue)).toStrictEqual([0, 1]);
 
     expect(wrapper.findAll('[data-accordion-content]')).toHaveLength(2);
 
     // Click second accordion, only close this accordion
     await secondAccordionHeader.trigger('click');
-    await nextTick();
     expect(get(modelValue)).toStrictEqual([0]);
 
     expect(wrapper.findAll('[data-accordion-content]')).toHaveLength(1);
@@ -157,7 +151,6 @@ describe('components/accordions/accordions/RuiAccordions.vue', () => {
     const second = triggers[1];
     assert(second);
     await second.trigger('click');
-    await nextTick();
 
     const contents = list.findAll('[data-accordion-content]');
     expect(contents).toHaveLength(1);

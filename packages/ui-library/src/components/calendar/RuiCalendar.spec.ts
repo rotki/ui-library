@@ -109,7 +109,6 @@ describe('components/calendar/RuiCalendar.vue', () => {
       });
 
       await wrapper.setProps({ modelValue: newDate });
-      await nextTick();
 
       // Check that the new date is visually selected
       expect(wrapper.find('button[data-selected]').exists()).toBeTruthy();
@@ -343,7 +342,6 @@ describe('components/calendar/RuiCalendar.vue', () => {
       // Open the month/year selection menu
       const titleElement = wrapper.find('[data-id="header-title"]');
       await titleElement.trigger('click');
-      await nextTick();
 
       // Find the calendar menu component
       const calendarMenu = wrapper.findComponent({ name: 'RuiCalendarMenu' });
@@ -366,7 +364,6 @@ describe('components/calendar/RuiCalendar.vue', () => {
       // Open the month/year selection menu
       const titleElement = wrapper.find('[data-id="header-title"]');
       await titleElement.trigger('click');
-      await nextTick();
 
       const calendarMenu = wrapper.findComponent({ name: 'RuiCalendarMenu' });
       expect(calendarMenu.exists()).toBeTruthy();
@@ -398,7 +395,6 @@ describe('components/calendar/RuiCalendar.vue', () => {
       // Open the month/year selection menu
       const titleElement = wrapper.find('[data-id="header-title"]');
       await titleElement.trigger('click');
-      await nextTick();
 
       const calendarMenu = wrapper.findComponent({ name: 'RuiCalendarMenu' });
       expect(calendarMenu.exists()).toBeTruthy();
@@ -544,7 +540,6 @@ describe('components/calendar/RuiCalendar.vue', () => {
 
       // Click a non-current-month day and verify it emits
       await jan29.trigger('click');
-      await nextTick();
       expect(wrapper.emitted('update:modelValue')).toBeTruthy();
     });
   });
@@ -637,7 +632,6 @@ describe('components/calendar/RuiCalendar.vue', () => {
 
       // Clear selection
       await wrapper.setProps({ modelValue: undefined });
-      await nextTick();
 
       // View should remain on April
       expect(wrapper.text()).toContain('April 2023');
@@ -708,7 +702,6 @@ describe('components/calendar/RuiCalendar.vue', () => {
 
     async function pressOnGrid(view: MountedWrapper<typeof RuiCalendar>, key: string): Promise<void> {
       await view.find('[role=grid]').trigger('keydown', { key });
-      await nextTick();
       await nextTick();
     }
 

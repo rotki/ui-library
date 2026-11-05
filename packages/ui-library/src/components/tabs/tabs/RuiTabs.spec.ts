@@ -141,21 +141,18 @@ describe('components/tabs/tabs/RuiTabs.vue', () => {
     const button1 = buttons[1];
     assertExists(button1);
     await button1.trigger('click');
-    await nextTick();
     expect(get(modelValue)).toBe(1);
 
     buttons = wrapper.findAll('[data-id=tabs-wrapper] > button');
     const button2 = buttons[2];
     assertExists(button2);
     await button2.trigger('click');
-    await nextTick();
     expect(get(modelValue)).toBe(2);
 
     buttons = wrapper.findAll('[data-id=tabs-wrapper] > button');
     const button3 = buttons[3];
     assertExists(button3);
     await button3.trigger('click');
-    await nextTick();
     expect(get(modelValue)).toBe(3);
   });
 
@@ -280,7 +277,6 @@ describe('components/tabs/tabs/RuiTabs.vue', () => {
     const button2 = tabs[2];
     assertExists(button2);
     await button2.trigger('click');
-    await nextTick();
 
     tabs = wrapper.findAll('[role="tab"]');
     expect(tabs[0]!.attributes('aria-selected')).toBe('false');

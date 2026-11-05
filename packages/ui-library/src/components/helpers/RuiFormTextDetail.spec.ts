@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { nextTick } from 'vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
@@ -72,7 +71,6 @@ describe('components/helpers/RuiFormTextDetail.vue', () => {
     wrapper = createWrapper({ hint: 'A hint' });
 
     await wrapper.setProps({ errorMessages: ['Required'] });
-    await nextTick();
 
     const error = wrapper.find('.text-rui-error');
     expect(error.text()).toBe('Required');
