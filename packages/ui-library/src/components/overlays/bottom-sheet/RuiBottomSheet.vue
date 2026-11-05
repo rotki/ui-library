@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from 'vue';
 import RuiDialog from '@/components/overlays/dialog/RuiDialog.vue';
 
 /** The sheet's props, which stay in step with RuiDialog's. */
@@ -9,6 +8,12 @@ export interface BottomSheetProps {
   maxWidth?: string | number;
 }
 
+/**
+ * What the sheet forwards to its RuiDialog through `$attrs`: the dialog's other props and its events
+ * (`click:esc`, `click:outside`, `closed`, `dismiss`), besides the HTML attributes.
+ */
+type DialogAttributes = Omit<InstanceType<typeof RuiDialog>['$props'], keyof BottomSheetProps | 'bottomSheet' | 'modelValue' | 'onUpdate:modelValue'>;
+
 defineOptions({
   name: 'RuiBottomSheet',
   inheritAttrs: false,
@@ -16,7 +21,7 @@ defineOptions({
 
 const modelValue = defineModel<boolean>({ default: false });
 
-const { persistent = false, width, maxWidth } = defineProps<BottomSheetProps & /* @vue-ignore */ Omit<HTMLAttributes, keyof BottomSheetProps>>();
+const { persistent = false, width, maxWidth } = defineProps<BottomSheetProps & /* @vue-ignore */ DialogAttributes>();
 </script>
 
 <template>

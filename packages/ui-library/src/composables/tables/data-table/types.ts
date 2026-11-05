@@ -9,7 +9,7 @@ export interface TableOptions<T> {
 /**
  * The RuiDataTable models a consumer may leave unbound. Each is `undefined` until bound, which
  * switches off what it drives (selection, row expansion) or leaves it to the table (pagination,
- * sort), and the table never sets one back to `undefined`. They are props and events rather than
+ * sort, collapsed groups), and the table never sets one back to `undefined`. They are props and events rather than
  * `defineModel` calls so that the update is typed without that `undefined`; see `usePropModel`.
  */
 export interface DataTableModels<T, K extends keyof T> {
@@ -23,6 +23,8 @@ export interface DataTableModels<T, K extends keyof T> {
   /** The sorted column, or columns in an array. `.external` leaves sorting the rows to the consumer. */
   sort?: TableSortData<T>;
   sortModifiers?: { external?: true };
+  /** The rows of the collapsed groups. */
+  collapsed?: T[];
 }
 
 /** The updates of {@link DataTableModels}. */
@@ -31,6 +33,7 @@ export interface DataTableModelEmits<T, K extends keyof T> {
   'update:expanded': [value: T[]];
   'update:pagination': [value: TablePaginationData];
   'update:sort': [value: NonNullable<TableSortData<T>>];
+  'update:collapsed': [value: T[]];
 }
 
 export const GROUP_HEADER_BRAND: unique symbol = Symbol('GroupHeader');

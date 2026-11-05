@@ -61,6 +61,7 @@ const expanded = ref<Row[]>([]);
 const pagination = ref<TablePaginationData>({ page: 1, total: 0, limit: 10 });
 const sort = ref<DataTableSortData<Row>>([]);
 const sortColumns = ref<DataTableSortColumn<Row>[] | DataTableSortColumn<Row>>([]);
+const collapsed = ref<Row[]>([]);
 
 const flag = ref<boolean>(false);
 </script>
@@ -155,6 +156,7 @@ const flag = ref<boolean>(false);
     v-model:expanded="expanded"
     v-model:pagination="pagination"
     v-model:sort="sort"
+    v-model:collapsed="collapsed"
     :rows="options"
     :cols="columns"
     row-attr="id"

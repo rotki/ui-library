@@ -152,8 +152,6 @@ defineOptions({
 
 const group = defineModel<TableRowKeyData<T>>('group');
 
-const collapsed = defineModel<T[]>('collapsed');
-
 const {
   rows,
   rowAttr,
@@ -191,6 +189,7 @@ const {
   paginationModifiers: paginationModifiersProp,
   sort: sortProp,
   sortModifiers: sortModifiersProp,
+  collapsed: collapsedProp,
 } = defineProps<Props<T, IdType> & DataTableModels<T, IdType> & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props<T, IdType>>>();
 
 const emit = defineEmits<DataTableModelEmits<T, IdType> & {
@@ -233,6 +232,7 @@ const selectedData = usePropModel('modelValue', () => selectedProp);
 const expanded = usePropModel('expanded', () => expandedProp);
 const [pagination, paginationModifiers] = usePropModel<TablePaginationData, 'external'>('pagination', () => paginationProp, () => paginationModifiersProp);
 const [sort, sortModifiers] = usePropModel<TableSortData<T>, 'external'>('sort', () => sortProp, () => sortModifiersProp);
+const collapsed = usePropModel('collapsed', () => collapsedProp);
 
 const tableDefaults = useTable();
 

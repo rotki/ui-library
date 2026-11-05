@@ -1,10 +1,17 @@
 <script setup lang="ts">
-import type { InputAttributes } from '@/types/attributes';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiTextField, { type TextFieldProps } from '@/components/forms/text-field/RuiTextField.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 
 export interface Props extends TextFieldProps {}
+
+/**
+ * What the field forwards to its RuiTextField through `$attrs`: the input's attributes and the text
+ * field's events (`blur`, `clear`, `focus-input`, `remove`). The field sets `type` itself. A template
+ * listener `@focus-input` is checked as `onFocusInput`, which Vue also matches at runtime.
+ */
+type TextFieldAttributes = Omit<InstanceType<typeof RuiTextField>['$props'], keyof Props | 'modelValue' | 'onUpdate:modelValue' | 'modelModifiers' | 'type'>
+  & Partial<Record<'onFocusInput', (event: Event) => void>>;
 
 defineOptions({
   name: 'RuiRevealableTextField',
@@ -28,7 +35,7 @@ const {
   readonly = false,
   clearable = false,
   required = false,
-} = defineProps<Props & /* @vue-ignore */ Omit<InputAttributes, keyof Props>>();
+} = defineProps<Props & /* @vue-ignore */ TextFieldAttributes>();
 
 defineSlots<{
   prepend?: () => any;

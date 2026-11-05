@@ -87,6 +87,14 @@ function onFocus(event: FocusEvent): string {
 function onText(value: string): string {
   return value;
 }
+
+function onEvent(event: Event): string {
+  return event.type;
+}
+
+function onClear(): boolean {
+  return true;
+}
 </script>
 
 <template>
@@ -126,6 +134,8 @@ function onText(value: string): string {
     autocomplete="new-password"
     name="secret"
     @keydown.enter="onKey($event)"
+    @clear="onClear()"
+    @focus-input="onEvent($event)"
   />
   <RuiTextArea
     v-model="text"
@@ -241,6 +251,9 @@ function onText(value: string): string {
   <RuiBottomSheet
     v-model="open"
     aria-label="Sheet"
+    @click:esc="onClear()"
+    @click:outside="onClear()"
+    @dismiss="onClear()"
   />
   <RuiNavigationDrawer
     v-model="open"
