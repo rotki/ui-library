@@ -69,9 +69,9 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
 
   it('should take the placement from the nearest RuiFieldDefaults, then the app default', () => {
     const app = { labelPlacement: 'hidden' as const };
-    wrapper = mount(RuiTextField, {
+    wrapper = createWrapper({
       props: { label: 'Field', modelValue: '' },
-      global: { stubs: ['rui-icon'], provide: { [FieldSymbol]: app } },
+      global: { provide: { [FieldSymbol]: app } },
     });
     expect(wrapper.find('[data-id=field-label]').classes()).toContain('sr-only');
     wrapper.unmount();
@@ -98,18 +98,18 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
     const legacyScope = Symbol.for('rui:field-scope');
 
     for (const placement of ['hidden', ref('hidden'), (): 'hidden' => 'hidden']) {
-      const legacy = mount(RuiTextField, {
+      const legacy = createWrapper({
         props: { label: 'Field', modelValue: '' },
-        global: { stubs: ['rui-icon'], provide: { [FieldSymbol]: app, [legacyScope]: placement } },
+        global: { provide: { [FieldSymbol]: app, [legacyScope]: placement } },
       });
       expect(legacy.find('[data-id=field-label]').classes()).toContain('sr-only');
       expect(legacy.find('.details').exists()).toBeFalsy();
       legacy.unmount();
     }
 
-    const empty = mount(RuiTextField, {
+    const empty = createWrapper({
       props: { label: 'Field', modelValue: '' },
-      global: { stubs: ['rui-icon'], provide: { [FieldSymbol]: app, [legacyScope]: null } },
+      global: { provide: { [FieldSymbol]: app, [legacyScope]: null } },
     });
     expect(empty.find('[data-id=field-label]').classes()).not.toContain('sr-only');
     empty.unmount();
@@ -132,9 +132,9 @@ describe('components/forms/text-field/RuiTextField.vue', () => {
       global: { stubs: ['rui-icon'], provide: { [FieldSymbol]: app } },
     });
 
-    wrapper = mount(RuiTextField, {
+    wrapper = createWrapper({
       props: { label: 'Field', modelValue: '' },
-      global: { stubs: ['rui-icon'], provide: { [FieldSymbol]: app } },
+      global: { provide: { [FieldSymbol]: app } },
     });
     expect(wrapper.find('.details').exists()).toBeFalsy();
     wrapper.unmount();

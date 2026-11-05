@@ -1,4 +1,3 @@
-import { mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { h } from 'vue';
 import RuiButtonGroup from '@/components/buttons/button-group/RuiButtonGroup.vue';
@@ -81,7 +80,7 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
   });
 
   it('should let a child that sets its own size keep it, without changing its siblings', () => {
-    const wrapperWithOverride = mount(RuiButtonGroup, {
+    const wrapperWithOverride = createWrapper({
       props: { size: 'lg' },
       slots: {
         default: [
@@ -279,7 +278,7 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
 
   describe('wrapped buttons', () => {
     function mountWrapped(props: Record<string, unknown> = {}) {
-      return mount(RuiButtonGroup, {
+      return createWrapper({
         attachTo: document.body,
         props: { color: 'primary', size: 'sm', ...props },
         slots: {
@@ -319,7 +318,7 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
 
   it('should leave a button without a value out of the selection', async () => {
     const onUpdate = vi.fn();
-    wrapper = mount(RuiButtonGroup, {
+    wrapper = createWrapper({
       props: { 'modelValue': undefined, 'onUpdate:modelValue': onUpdate },
       slots: { default: () => [h(RuiButton, () => 'No value')] },
     });
@@ -331,7 +330,7 @@ describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
 
   it('should not reach the buttons inside an overlay\'s content', async () => {
     vi.useFakeTimers();
-    wrapper = mount(RuiButtonGroup, {
+    wrapper = createWrapper({
       attachTo: document.body,
       props: { color: 'primary' },
       slots: {

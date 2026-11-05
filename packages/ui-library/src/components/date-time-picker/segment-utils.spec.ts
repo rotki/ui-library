@@ -55,7 +55,8 @@ describe('date-time-picker/segment-utils', () => {
       const event = createMockMouseEvent(100, 200);
       const originalCaretPosition = document.caretPositionFromPoint;
       const originalCaretRange = document.caretRangeFromPoint;
-      document.caretPositionFromPoint = undefined as any;
+      // @ts-expect-error browsers without the API leave it undefined
+      document.caretPositionFromPoint = undefined;
       document.caretRangeFromPoint = vi.fn().mockReturnValue({ startOffset: 9 });
       try {
         expect(getClickPosition(event, input, true)).toBe(9);
@@ -71,7 +72,8 @@ describe('date-time-picker/segment-utils', () => {
       const event = createMockMouseEvent(100, 200);
       const originalCaretPosition = document.caretPositionFromPoint;
       const originalCaretRange = document.caretRangeFromPoint;
-      document.caretPositionFromPoint = undefined as any;
+      // @ts-expect-error browsers without the API leave it undefined
+      document.caretPositionFromPoint = undefined;
       document.caretRangeFromPoint = vi.fn().mockReturnValue(null);
       try {
         expect(getClickPosition(event, input, true)).toBe(4);

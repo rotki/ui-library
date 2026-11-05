@@ -2,12 +2,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createBlockie } from '@/utils/blockie';
 
 describe('utils/blockie.ts', () => {
-  const mockCanvas = {
+  const mockCanvas = Object.assign(document.createElement('canvas'), {
     getContext: vi.fn(),
-    height: 0,
     toDataURL: vi.fn(),
-    width: 0,
-  };
+  });
 
   const mockContext = {
     fillRect: vi.fn(),
@@ -17,7 +15,7 @@ describe('utils/blockie.ts', () => {
   beforeEach(() => {
     mockCanvas.getContext.mockReturnValue(mockContext);
     mockCanvas.toDataURL.mockReturnValue('data:image/jpeg;base64,test');
-    vi.spyOn(document, 'createElement').mockReturnValue(mockCanvas as any);
+    vi.spyOn(document, 'createElement').mockReturnValue(mockCanvas);
   });
 
   it('should create a blockie with default options', () => {

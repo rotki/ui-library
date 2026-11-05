@@ -353,7 +353,7 @@ describe('composables/tables/data-table/selection', () => {
       useTableSelection<TestItem, 'id'>(
         { rowAttr: 'id', multiPageSelect: false, disabledRows: () => undefined },
         {
-          selectedData: selectedData as any,
+          selectedData,
           filtered: computed(() => rows),
         },
       ),
@@ -392,7 +392,7 @@ describe('composables/tables/data-table/selection', () => {
       useTableSelection<TestItem, 'id'>(
         { rowAttr: 'id', multiPageSelect: false, disabledRows: () => undefined },
         {
-          selectedData: selectedData as any,
+          selectedData,
           filtered: computed(() => rows),
         },
       ),
@@ -428,7 +428,7 @@ describe('composables/tables/data-table/selection', () => {
       useTableSelection<TestItem, 'id'>(
         { rowAttr: 'id', multiPageSelect: false, disabledRows: () => undefined },
         {
-          selectedData: selectedData as any,
+          selectedData,
           filtered: computed(() => rows),
         },
       ),

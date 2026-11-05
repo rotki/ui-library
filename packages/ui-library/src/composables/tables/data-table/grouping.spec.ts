@@ -1,3 +1,4 @@
+import type { TableRowKeyData } from '@/components/tables/RuiTableHead.vue';
 import { afterEach, describe, expect, it } from 'vitest';
 import { useTableGrouping } from '@/composables/tables/data-table/grouping';
 import { GROUP_HEADER_BRAND } from '@/composables/tables/data-table/types';
@@ -44,7 +45,7 @@ describe('composables/tables/data-table/grouping', () => {
       useTableGrouping<TestItem, 'id'>(
         { rowAttr: 'id' },
         {
-          group: ref('title') as any,
+          group: ref<TableRowKeyData<TestItem>>('title'),
           collapsed: ref(undefined),
           sorted: computed(() => rows),
         },
@@ -62,7 +63,7 @@ describe('composables/tables/data-table/grouping', () => {
       useTableGrouping<TestItem, 'id'>(
         { rowAttr: 'id' },
         {
-          group: ref('title') as any,
+          group: ref<TableRowKeyData<TestItem>>('title'),
           collapsed: ref(undefined),
           sorted: computed(() => rows),
         },
@@ -83,7 +84,7 @@ describe('composables/tables/data-table/grouping', () => {
       useTableGrouping<TestItem, 'id'>(
         { rowAttr: 'id' },
         {
-          group: ref('title') as any,
+          group: ref<TableRowKeyData<TestItem>>('title'),
           collapsed,
           sorted: computed(() => rows),
         },
@@ -105,13 +106,13 @@ describe('composables/tables/data-table/grouping', () => {
   });
 
   it('should ungroup', () => {
-    const group = ref<string | undefined>('title');
+    const group = ref<TableRowKeyData<TestItem>>('title');
     const collapsed = ref<TestItem[]>([]);
     const { result, unmount: u } = withSetup(() =>
       useTableGrouping<TestItem, 'id'>(
         { rowAttr: 'id' },
         {
-          group: group as any,
+          group,
           collapsed,
           sorted: computed(() => rows),
         },
@@ -129,7 +130,7 @@ describe('composables/tables/data-table/grouping', () => {
       useTableGrouping<TestItem, 'id'>(
         { rowAttr: 'id' },
         {
-          group: ref(['name', 'title']) as any,
+          group: ref<TableRowKeyData<TestItem>>(['name', 'title']),
           collapsed: ref(undefined),
           sorted: computed(() => rows),
         },
@@ -148,7 +149,7 @@ describe('composables/tables/data-table/grouping', () => {
       useTableGrouping<TestItem, 'id'>(
         { rowAttr: 'id' },
         {
-          group: ref('title') as any,
+          group: ref<TableRowKeyData<TestItem>>('title'),
           collapsed,
           sorted: computed(() => rows),
         },
@@ -192,7 +193,7 @@ describe('composables/tables/data-table/grouping', () => {
       useTableGrouping<TestItem, 'id'>(
         { rowAttr: 'id' },
         {
-          group: ref('title') as any,
+          group: ref<TableRowKeyData<TestItem>>('title'),
           collapsed,
           sorted: computed(() => rows),
         },
@@ -213,7 +214,7 @@ describe('composables/tables/data-table/grouping', () => {
       useTableGrouping<TestItem, 'id'>(
         { rowAttr: 'id' },
         {
-          group: ref('title') as any,
+          group: ref<TableRowKeyData<TestItem>>('title'),
           collapsed: ref(undefined),
           sorted: computed(() => rows),
         },
@@ -251,7 +252,7 @@ describe('composables/tables/data-table/grouping', () => {
       useTableGrouping<TestItem, 'id'>(
         { rowAttr: 'id' },
         {
-          group: ref('title') as any,
+          group: ref<TableRowKeyData<TestItem>>('title'),
           collapsed: ref(undefined),
           sorted: computed(() => rows),
         },
@@ -286,7 +287,7 @@ describe('composables/tables/data-table/grouping', () => {
       useTableGrouping<TestItem, 'id'>(
         { rowAttr: 'id' },
         {
-          group: ref('title') as any,
+          group: ref<TableRowKeyData<TestItem>>('title'),
           collapsed,
           sorted: computed(() => rows),
         },
@@ -301,13 +302,13 @@ describe('composables/tables/data-table/grouping', () => {
   });
 
   it('should ungroup array group to empty array', () => {
-    const group = ref<string[]>(['title']);
+    const group = ref<TableRowKeyData<TestItem>>(['title']);
     const collapsed = ref<TestItem[]>([]);
     const { result, unmount: u } = withSetup(() =>
       useTableGrouping<TestItem, 'id'>(
         { rowAttr: 'id' },
         {
-          group: group as any,
+          group,
           collapsed,
           sorted: computed(() => rows),
         },
@@ -320,17 +321,23 @@ describe('composables/tables/data-table/grouping', () => {
   });
 
   it('should skip rows with empty identifier in mappedGroups', () => {
-    const rowsWithEmpty = [
+    interface EmptyIdItem {
+      id: number | string;
+      name: string;
+      title: string;
+    }
+
+    const rowsWithEmpty: EmptyIdItem[] = [
       { id: 1, name: 'Alice', title: 'Developer' },
-      { id: '' as any, name: 'Unknown', title: 'None' },
+      { id: '', name: 'Unknown', title: 'None' },
       { id: 3, name: 'Charlie', title: 'Developer' },
     ];
 
     const { result, unmount: u } = withSetup(() =>
-      useTableGrouping<TestItem, 'id'>(
+      useTableGrouping<EmptyIdItem, 'id'>(
         { rowAttr: 'id' },
         {
-          group: ref('title') as any,
+          group: ref<TableRowKeyData<EmptyIdItem>>('title'),
           collapsed: ref(undefined),
           sorted: computed(() => rowsWithEmpty),
         },
@@ -355,7 +362,7 @@ describe('composables/tables/data-table/grouping', () => {
       useTableGrouping<TestItem, 'id'>(
         { rowAttr: 'id' },
         {
-          group: ref(['name', 'title']) as any,
+          group: ref<TableRowKeyData<TestItem>>(['name', 'title']),
           collapsed: ref(undefined),
           sorted: computed(() => multiRows),
         },
@@ -388,7 +395,7 @@ describe('composables/tables/data-table/grouping', () => {
       useTableGrouping<PartialItem, 'id'>(
         { rowAttr: 'id' },
         {
-          group: ref(['name', 'title']) as any,
+          group: ref<TableRowKeyData<PartialItem>>(['name', 'title']),
           collapsed: ref(undefined),
           sorted: computed<readonly PartialItem[]>(() => partialRows),
         },
@@ -426,7 +433,7 @@ describe('composables/tables/data-table/grouping', () => {
       useTableGrouping<MultiKeyItem, 'id'>(
         { rowAttr: 'id' },
         {
-          group: ref(['category', 'status']) as any,
+          group: ref<TableRowKeyData<MultiKeyItem>>(['category', 'status']),
           collapsed,
           sorted: computed<readonly MultiKeyItem[]>(() => multiKeyRows),
         },
@@ -473,7 +480,7 @@ describe('composables/tables/data-table/grouping', () => {
       useTableGrouping<EmptyIdItem, 'id'>(
         { rowAttr: 'id' },
         {
-          group: ref('title') as any,
+          group: ref<TableRowKeyData<EmptyIdItem>>('title'),
           collapsed: ref(undefined),
           sorted: computed<readonly EmptyIdItem[]>(() => rowsWithEmptyId),
         },

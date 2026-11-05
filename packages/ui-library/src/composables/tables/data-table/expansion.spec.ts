@@ -82,7 +82,7 @@ describe('composables/tables/data-table/expansion', () => {
     const { result, unmount: u } = withSetup(() =>
       useTableExpansion<TestItem, 'id'>(
         { rowAttr: 'id', singleExpand: false },
-        { expanded: expanded as any },
+        { expanded },
       ),
     );
     unmount = u;

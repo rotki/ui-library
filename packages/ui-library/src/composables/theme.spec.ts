@@ -180,8 +180,8 @@ describe('composables/theme', () => {
         value: 'dark',
       });
 
-      // Reset SSR handler by setting to undefined
-      setSSRHandler('updateHTMLAttrs', undefined as any);
+      // @ts-expect-error clearing the SSR handler restores the fallback, which the types do not allow
+      setSSRHandler('updateHTMLAttrs', undefined);
     });
   });
 });

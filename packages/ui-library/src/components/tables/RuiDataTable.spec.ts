@@ -1,5 +1,5 @@
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
-import { mount } from '@vue/test-utils';
+import { type GlobalMountOptions, mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { type DeepReadonly, h } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
@@ -17,15 +17,19 @@ interface User {
   email: string;
 }
 
-const createWrapper = createMounter(RuiDataTable<User>, () => ({
-  global: {
-    provide: {
-      [TableSymbol.valueOf()]: createTableDefaults({
-        limits: [5, 10, 15, 25, 50, 100, 200],
-      }),
+function tableMountDefaults(): { global: GlobalMountOptions } {
+  return {
+    global: {
+      provide: {
+        [TableSymbol.valueOf()]: createTableDefaults({
+          limits: [5, 10, 15, 25, 50, 100, 200],
+        }),
+      },
     },
-  },
-}));
+  };
+}
+
+const createWrapper = createMounter(RuiDataTable<User>, tableMountDefaults);
 
 describe('components/tables/RuiDataTable.vue', () => {
   let wrapper: MountedWrapper<typeof RuiDataTable<User>>;
@@ -860,15 +864,22 @@ describe('components/tables/RuiDataTable.vue', () => {
 
   describe('auto-generated columns', () => {
     it('should generate columns from first row when cols prop is not provided', async () => {
-      const testData = [
+      interface Person {
+        age: number;
+        city: string;
+        id: number;
+        name: string;
+      }
+
+      const testData: Person[] = [
         { age: 25, city: 'NYC', id: 1, name: 'Alice' },
         { age: 30, city: 'LA', id: 2, name: 'Bob' },
       ];
 
-      wrapper = createWrapper({
+      const wrapper = createMounter(RuiDataTable<Person>, tableMountDefaults)({
         props: {
           rowAttr: 'id',
-          rows: testData as any,
+          rows: testData,
         },
       });
 
@@ -882,14 +893,14 @@ describe('components/tables/RuiDataTable.vue', () => {
     });
 
     it('should render row values when cols is not provided', async () => {
-      const testData = [
+      const testData: Pick<User, 'id' | 'name'>[] = [
         { id: 1, name: 'Alice' },
       ];
 
-      wrapper = createWrapper({
+      const wrapper = createMounter(RuiDataTable<Pick<User, 'id' | 'name'>>, tableMountDefaults)({
         props: {
           rowAttr: 'id',
-          rows: testData as any,
+          rows: testData,
         },
       });
 
@@ -2192,7 +2203,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         props: {
           collapsed: [],
           cols: columns,
-          group: ['title'] as any, // Array form of group
+          group: ['title'], // Array form of group
           rowAttr: 'id',
           rows: groupableData,
         },
@@ -2491,13 +2502,13 @@ describe('components/tables/RuiDataTable.vue', () => {
   describe('columnAttr prop', () => {
     it('should use custom columnAttr for header display', async () => {
       const columnsWithCustomAttr: TableColumn<User>[] = [
-        { key: 'id', label: 'ID Label', customTitle: 'Custom ID' } as any,
-        { key: 'name', label: 'Name Label', customTitle: 'Custom Name' } as any,
+        { key: 'id', label: 'ID Label', customTitle: 'Custom ID' },
+        { key: 'name', label: 'Name Label', customTitle: 'Custom Name' },
       ];
 
       wrapper = createWrapper({
         props: {
-          columnAttr: 'customTitle' as any,
+          columnAttr: 'customTitle',
           cols: columnsWithCustomAttr,
           rowAttr: 'id',
           rows: data.slice(0, 3),
@@ -2893,7 +2904,7 @@ describe('components/tables/RuiDataTable.vue', () => {
       const globalDefaults = createTableDefaults({ limits: [5, 10], mobileBreakpoint: 5000 });
 
       // No per-table breakpoint → inherits the global 5000 → stacked cards.
-      const globalWrapper = mount(RuiDataTable<User>, {
+      const globalWrapper = createWrapper({
         props: { cols: columns, rowAttr: 'id', rows: data },
         global: { provide: { [TableSymbol.valueOf()]: globalDefaults } },
       });
@@ -2901,7 +2912,7 @@ describe('components/tables/RuiDataTable.vue', () => {
       globalWrapper.unmount();
 
       // Per-table breakpoint overrides the global → normal table.
-      const overrideWrapper = mount(RuiDataTable<User>, {
+      const overrideWrapper = createWrapper({
         props: { cols: columns, mobileBreakpoint: 1, rowAttr: 'id', rows: data },
         global: { provide: { [TableSymbol.valueOf()]: globalDefaults } },
       });
