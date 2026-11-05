@@ -1,4 +1,4 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import type { ComponentMountingOptions } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { groupedOptions, type GroupedSelectOption, options, type SelectOption } from '@/__test__/options';
 import RuiChip from '@/components/chips/RuiChip.vue';
@@ -14,20 +14,19 @@ import {
   queryByDataId,
   queryByRole,
 } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 function createWrapper<TValue, TItem>(
   options?: ComponentMountingOptions<typeof RuiAutoComplete<TValue, TItem>>,
-) {
-  const opts: ComponentMountingOptions<typeof RuiAutoComplete<TValue, TItem>> = {
-    ...options,
+): MountedWrapper<typeof RuiAutoComplete<TValue, TItem>> {
+  return createMounter(RuiAutoComplete<TValue, TItem>, {
     global: {
       stubs: {
         Transition: false,
         TransitionGroup: false,
       },
     },
-  };
-  return mount(RuiAutoComplete, opts);
+  })(options);
 }
 
 vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
@@ -37,7 +36,7 @@ vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
 });
 
 describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
-  let wrapper: ReturnType<typeof createWrapper<any, any>>;
+  let wrapper: MountedWrapper<typeof RuiAutoComplete<any, any>>;
 
   beforeEach(() => {
     vi.useFakeTimers();

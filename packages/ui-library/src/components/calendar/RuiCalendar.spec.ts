@@ -1,26 +1,21 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import RuiCalendar from '@/components/calendar/RuiCalendar.vue';
 import { assert } from '@/utils/assert';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiCalendar>,
-): VueWrapper<InstanceType<typeof RuiCalendar>> {
-  return mount(RuiCalendar, {
-    global: {
-      stubs: {
-        Teleport: {
-          template: '<div data-id="teleport"><slot /></div>',
-        },
+const createWrapper = createMounter(RuiCalendar, {
+  global: {
+    stubs: {
+      Teleport: {
+        template: '<div data-id="teleport"><slot /></div>',
       },
     },
-    ...options,
-  });
-}
+  },
+});
 
 describe('components/calendar/RuiCalendar.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiCalendar>>;
+  let wrapper: MountedWrapper<typeof RuiCalendar>;
 
   const testDate = new Date(2023, 0, 15); // January 15, 2023
   let originalDate: typeof Date;
@@ -705,15 +700,15 @@ describe('components/calendar/RuiCalendar.vue', () => {
   });
 
   describe('keyboard navigation', () => {
-    function gridCells(view: VueWrapper<InstanceType<typeof RuiCalendar>>) {
+    function gridCells(view: MountedWrapper<typeof RuiCalendar>) {
       return view.findAll('[role=gridcell]');
     }
 
-    function tabbableKey(view: VueWrapper<InstanceType<typeof RuiCalendar>>): string | undefined {
+    function tabbableKey(view: MountedWrapper<typeof RuiCalendar>): string | undefined {
       return gridCells(view).find(cell => cell.attributes('tabindex') === '0')?.attributes('data-id');
     }
 
-    async function pressOnGrid(view: VueWrapper<InstanceType<typeof RuiCalendar>>, key: string): Promise<void> {
+    async function pressOnGrid(view: MountedWrapper<typeof RuiCalendar>, key: string): Promise<void> {
       await view.find('[role=grid]').trigger('keydown', { key });
       await nextTick();
       await nextTick();

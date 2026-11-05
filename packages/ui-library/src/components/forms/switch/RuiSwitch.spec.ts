@@ -1,16 +1,12 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiSwitch from '@/components/forms/switch/RuiSwitch.vue';
 import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiSwitch>,
-): VueWrapper<InstanceType<typeof RuiSwitch>> {
-  return mount(RuiSwitch, { ...options });
-}
+const createWrapper = createMounter(RuiSwitch);
 
 describe('components/forms/switch/RuiSwitch.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiSwitch>>;
+  let wrapper: MountedWrapper<typeof RuiSwitch>;
 
   afterEach(() => {
     wrapper?.unmount();

@@ -111,5 +111,16 @@ describe('tests/helpers/mount-component', () => {
       expect(createWrapper({ props: { size: 'lg' } }).text()).toBe('default:lg:provided');
       expect(createWrapper({ global: { provide: { [key]: 'test' } } }).text()).toBe('default:sm:test');
     });
+
+    it('should build defaults given as a function once per mount', () => {
+      let built = 0;
+      const createWrapper = createMounter(Probe, () => {
+        built += 1;
+        return { global: { provide: { [key]: `mount ${built}` } } };
+      });
+
+      expect(createWrapper().text()).toBe(':md:mount 1');
+      expect(createWrapper().text()).toBe(':md:mount 2');
+    });
   });
 });

@@ -1,26 +1,25 @@
-import { type ComponentMountingOptions, flushPromises, mount, type VueWrapper } from '@vue/test-utils';
+import { flushPromises } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createSSRApp, h } from 'vue';
 import { renderToString } from 'vue/server-renderer';
 import RuiLogo, { type Props } from '@/components/logos/RuiLogo.vue';
 import { clearVerifiedLogoUrls, setVerifiedLogoUrl } from '@/components/logos/verified-logo';
 import { type LogoResolver, LogoSymbol } from '@/composables/defaults/logo';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 const SEASONAL_URL = 'https://example.com/logos/website-logo.svg';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiLogo>): VueWrapper<InstanceType<typeof RuiLogo>> {
-  return mount(RuiLogo, { ...options });
-}
+const createWrapper = createMounter(RuiLogo);
 
-function mountWithResolver(resolve: LogoResolver, props: Props): VueWrapper<InstanceType<typeof RuiLogo>> {
-  return mount(RuiLogo, {
+function mountWithResolver(resolve: LogoResolver, props: Props): MountedWrapper<typeof RuiLogo> {
+  return createWrapper({
     props,
     global: { provide: { [LogoSymbol]: { resolve } } },
   });
 }
 
 describe('components/logos/RuiLogo.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiLogo>>;
+  let wrapper: MountedWrapper<typeof RuiLogo>;
 
   beforeEach(() => {
     vi.useFakeTimers();
@@ -104,7 +103,7 @@ describe('components/logos/RuiLogo.vue', () => {
 });
 
 describe('components/logos/RuiLogo.vue logo resolver', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiLogo>> | undefined;
+  let wrapper: MountedWrapper<typeof RuiLogo> | undefined;
 
   afterEach(() => {
     wrapper?.unmount();

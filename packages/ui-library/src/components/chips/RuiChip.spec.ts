@@ -1,14 +1,12 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiChip from '@/components/chips/RuiChip.vue';
 import { expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiChip>): VueWrapper<InstanceType<typeof RuiChip>> {
-  return mount(RuiChip, { ...options, global: { stubs: ['rui-icon'] } });
-}
+const createWrapper = createMounter(RuiChip, { global: { stubs: ['rui-icon'] } });
 
 describe('components/chips/RuiChip.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiChip>>;
+  let wrapper: MountedWrapper<typeof RuiChip>;
 
   afterEach(() => {
     wrapper?.unmount();

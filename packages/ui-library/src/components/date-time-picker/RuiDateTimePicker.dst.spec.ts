@@ -1,4 +1,3 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
@@ -6,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { TransitionGroupStub } from '@/__test__/transition-group-stub';
 import { assert } from '@/utils/assert';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 import RuiDateTimePicker from './RuiDateTimePicker.vue';
 
 dayjs.extend(utc);
@@ -26,24 +26,19 @@ vi.mock('@/components/date-time-picker/utils', async (importOriginal) => {
   };
 });
 
-function createWrapper(
-  options: ComponentMountingOptions<typeof RuiDateTimePicker>,
-): VueWrapper<InstanceType<typeof RuiDateTimePicker>> {
-  return mount(RuiDateTimePicker, {
-    global: {
-      stubs: {
-        Teleport: {
-          template: '<div data-id="teleport"><slot /></div>',
-        },
-        TransitionGroup: TransitionGroupStub,
+const createWrapper = createMounter(RuiDateTimePicker, {
+  global: {
+    stubs: {
+      Teleport: {
+        template: '<div data-id="teleport"><slot /></div>',
       },
+      TransitionGroup: TransitionGroupStub,
     },
-    ...options,
-  });
-}
+  },
+});
 
 describe('components/date-time-picker/RuiDateTimePicker.vue (DST)', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiDateTimePicker>>;
+  let wrapper: MountedWrapper<typeof RuiDateTimePicker>;
 
   vi.useFakeTimers();
   vi.setSystemTime(new Date(2023, 0, 15, 10, 30));

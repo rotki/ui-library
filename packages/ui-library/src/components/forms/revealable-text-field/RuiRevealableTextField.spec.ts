@@ -1,15 +1,11 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiRevealableTextField from '@/components/forms/revealable-text-field/RuiRevealableTextField.vue';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiRevealableTextField>,
-): VueWrapper<InstanceType<typeof RuiRevealableTextField>> {
-  return mount(RuiRevealableTextField, { ...options, global: { stubs: ['rui-icon'] } });
-}
+const createWrapper = createMounter(RuiRevealableTextField, { global: { stubs: ['rui-icon'] } });
 
 describe('components/forms/revealable-text-field/RuiRevealableTextField.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiRevealableTextField>>;
+  let wrapper: MountedWrapper<typeof RuiRevealableTextField>;
 
   afterEach(() => {
     wrapper?.unmount();

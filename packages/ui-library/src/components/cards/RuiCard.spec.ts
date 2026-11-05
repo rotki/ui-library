@@ -1,16 +1,12 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCard from '@/components/cards/RuiCard.vue';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options: ComponentMountingOptions<typeof RuiCard>,
-): VueWrapper<InstanceType<typeof RuiCard>> {
-  return mount(RuiCard, { ...options, global: { stubs: { 'rui-button': RuiButton } } });
-}
+const createWrapper = createMounter(RuiCard, { global: { stubs: { 'rui-button': RuiButton } } });
 
 describe('components/cards/RuiCard.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiCard>>;
+  let wrapper: MountedWrapper<typeof RuiCard>;
 
   afterEach(() => {
     wrapper?.unmount();

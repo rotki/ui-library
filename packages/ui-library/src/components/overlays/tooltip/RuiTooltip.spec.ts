@@ -1,10 +1,11 @@
 import { autoUpdate } from '@floating-ui/dom';
-import { type ComponentMountingOptions, flushPromises, mount, type VueWrapper } from '@vue/test-utils';
+import { type ComponentMountingOptions, flushPromises } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
 import { useFloating } from '@/composables/floating';
 import { cleanupElements, queryBody, queryByRole } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 import { DATA_ATTRIBUTE_SELECTORS } from '~/tests/helpers/selectors';
 
 vi.mock('@floating-ui/dom', async (importOriginal) => {
@@ -17,30 +18,33 @@ vi.mock('@/composables/floating', async (importOriginal) => {
   return { ...actual, useFloating: vi.fn(actual.useFloating) };
 });
 
+const mountTooltip = createMounter(RuiTooltip, {
+  global: {
+    stubs: { 'rui-button': RuiButton },
+  },
+  slots: {
+    activator: '<rui-button id="activator">Tooltip trigger</rui-button>',
+  },
+});
+
 function createWrapper(
   options?: ComponentMountingOptions<typeof RuiTooltip>,
-): VueWrapper<InstanceType<typeof RuiTooltip>> {
-  return mount(RuiTooltip, {
+): MountedWrapper<typeof RuiTooltip> {
+  return mountTooltip({
     ...options,
-    global: {
-      stubs: { 'rui-button': RuiButton },
-    },
-    slots: {
-      activator: '<rui-button id="activator">Tooltip trigger</rui-button>',
-      default: options?.props?.text ?? '',
-    },
+    slots: { default: options?.props?.text ?? '' },
   });
 }
 
 /** Hovers the activator and lets the open timer run, which is when the tooltip takes its role. */
-async function hover(target: VueWrapper<InstanceType<typeof RuiTooltip>>): Promise<void> {
+async function hover(target: MountedWrapper<typeof RuiTooltip>): Promise<void> {
   await target.trigger('mouseover');
   vi.advanceTimersByTime(1);
   await flushPromises();
 }
 
 describe('components/overlays/tooltip/RuiTooltip.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiTooltip>>;
+  let wrapper: MountedWrapper<typeof RuiTooltip>;
 
   const text = 'Tooltip content';
 

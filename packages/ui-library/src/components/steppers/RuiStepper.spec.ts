@@ -1,16 +1,12 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiStepper from '@/components/steppers/RuiStepper.vue';
 import { StepperOrientation, StepperState, type StepperStep } from '@/types/stepper';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options: ComponentMountingOptions<typeof RuiStepper>,
-): VueWrapper<InstanceType<typeof RuiStepper>> {
-  return mount(RuiStepper, options);
-}
+const createWrapper = createMounter(RuiStepper);
 
 describe('components/steppers/RuiStepper.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiStepper>>;
+  let wrapper: MountedWrapper<typeof RuiStepper>;
 
   afterEach(() => {
     wrapper?.unmount();

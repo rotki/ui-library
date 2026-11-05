@@ -1,15 +1,11 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiSkeletonLoader from '@/components/loaders/RuiSkeletonLoader.vue';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiSkeletonLoader>,
-): VueWrapper<InstanceType<typeof RuiSkeletonLoader>> {
-  return mount(RuiSkeletonLoader, options);
-}
+const createWrapper = createMounter(RuiSkeletonLoader);
 
 describe('components/loaders/RuiSkeletonLoader.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiSkeletonLoader>>;
+  let wrapper: MountedWrapper<typeof RuiSkeletonLoader>;
 
   afterEach(() => {
     wrapper?.unmount();

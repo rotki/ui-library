@@ -1,24 +1,16 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import RuiNotification from '@/components/overlays/notification/RuiNotification.vue';
 import { assertExists, cleanupElements, queryBody } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiNotification>,
-): VueWrapper<InstanceType<typeof RuiNotification>> {
-  return mount(RuiNotification, {
-    ...options,
-    slots: {
-      default: `<div id="content">Notification</div>`,
-    },
-    stubs: {
-      Transition: true,
-    },
-  });
-}
+const createWrapper = createMounter(RuiNotification, {
+  slots: {
+    default: `<div id="content">Notification</div>`,
+  },
+});
 
 describe('components/overlays/notification/RuiNotification.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiNotification>>;
+  let wrapper: MountedWrapper<typeof RuiNotification>;
 
   afterEach(() => {
     wrapper?.unmount();

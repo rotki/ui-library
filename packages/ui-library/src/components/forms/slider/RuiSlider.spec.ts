@@ -1,16 +1,12 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiSlider from '@/components/forms/slider/RuiSlider.vue';
 import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiSlider>,
-): VueWrapper<InstanceType<typeof RuiSlider>> {
-  return mount(RuiSlider, { ...options });
-}
+const createWrapper = createMounter(RuiSlider);
 
 describe('components/forms/slider/RuiSlider.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiSlider>>;
+  let wrapper: MountedWrapper<typeof RuiSlider>;
 
   afterEach(() => {
     wrapper?.unmount();

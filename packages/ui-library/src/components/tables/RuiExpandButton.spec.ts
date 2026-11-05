@@ -1,12 +1,8 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import RuiExpandButton from '@/components/tables/RuiExpandButton.vue';
+import { createMounter } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiExpandButton>,
-) {
-  return mount(RuiExpandButton, options);
-}
+const createWrapper = createMounter(RuiExpandButton);
 
 describe('components/tables/RuiExpandButton.vue', () => {
   it('should render with default props', () => {

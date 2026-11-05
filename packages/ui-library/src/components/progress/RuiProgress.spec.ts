@@ -1,15 +1,11 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiProgress>,
-): VueWrapper<InstanceType<typeof RuiProgress>> {
-  return mount(RuiProgress, options);
-}
+const createWrapper = createMounter(RuiProgress);
 
 describe('components/progress/RuiProgress.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiProgress>>;
+  let wrapper: MountedWrapper<typeof RuiProgress>;
 
   afterEach(() => {
     wrapper?.unmount();

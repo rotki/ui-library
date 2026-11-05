@@ -1,9 +1,10 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import type { ComponentMountingOptions } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { options } from '@/__test__/options';
 import RuiMenuSelect from '@/components/forms/select/RuiMenuSelect.vue';
 import { assert } from '@/utils/assert';
 import { cleanupElements, expectWrapperToHaveClass, queryAllMenuButtons, queryByRole, queryMenuButton } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
   const now = Date.now();
@@ -13,21 +14,19 @@ vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
 
 function createWrapper<TItem>(
   options?: ComponentMountingOptions<typeof RuiMenuSelect<string | undefined, TItem>>,
-) {
-  const opts: ComponentMountingOptions<typeof RuiMenuSelect<string | undefined, TItem>> = {
-    ...options,
+): MountedWrapper<typeof RuiMenuSelect<string | undefined, TItem>> {
+  return createMounter(RuiMenuSelect<string | undefined, TItem>, {
     global: {
       stubs: {
         RuiProgress: true,
         TransitionGroup: false,
       },
     },
-  };
-  return mount(RuiMenuSelect, opts);
+  })(options);
 }
 
 describe('components/forms/select/RuiMenuSelect.vue', () => {
-  let wrapper: ReturnType<typeof createWrapper<any>>;
+  let wrapper: MountedWrapper<typeof RuiMenuSelect<string | undefined, any>>;
 
   beforeEach(() => {
     vi.useFakeTimers();

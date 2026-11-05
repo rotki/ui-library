@@ -1,7 +1,7 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiColorPicker from '@/components/color-picker/RuiColorPicker.vue';
 import { roundTwoDecimal } from '@/components/color-picker/utils';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 /**
  * The picker reads the saturation area's size to turn a pointer position into a colour, and
@@ -30,19 +30,15 @@ function stubDivRect(): void {
  * @param wrapper - the mounted picker
  * @param format - the tab's label
  */
-async function selectFormat(wrapper: VueWrapper, format: 'Hex' | 'RGB'): Promise<void> {
+async function selectFormat(wrapper: MountedWrapper<typeof RuiColorPicker>, format: 'Hex' | 'RGB'): Promise<void> {
   const tab = wrapper.findAll('[data-id=color-format] [role=tab]').find(item => item.text() === format);
   await tab?.trigger('click');
 }
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiColorPicker>,
-): VueWrapper<InstanceType<typeof RuiColorPicker>> {
-  return mount(RuiColorPicker, { ...options, global: { stubs: ['rui-icon'] } });
-}
+const createWrapper = createMounter(RuiColorPicker, { global: { stubs: ['rui-icon'] } });
 
 describe('components/color-picker/RuiColorPicker.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiColorPicker>>;
+  let wrapper: MountedWrapper<typeof RuiColorPicker>;
 
   beforeEach(() => {
     vi.useFakeTimers();

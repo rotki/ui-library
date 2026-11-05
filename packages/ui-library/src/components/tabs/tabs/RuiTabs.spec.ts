@@ -1,8 +1,9 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import type { ComponentMountingOptions } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import RuiTab from '@/components/tabs/tab/RuiTab.vue';
 import RuiTabs from '@/components/tabs/tabs/RuiTabs.vue';
 import { assertExists } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 vi.mock('vue-router', () => ({
   useRoute: vi.fn().mockImplementation(() => reactive({ fullPath: '/' })),
@@ -18,17 +19,20 @@ vi.mock('vue-router', () => ({
   })),
 }));
 
+const mountTabs = createMounter(RuiTabs, {
+  global: {
+    stubs: {
+      RuiTab,
+    },
+  },
+});
+
 function createWrapper(
   options: ComponentMountingOptions<typeof RuiTabs> = {},
   customTabValue: boolean = false,
-) {
-  return mount(RuiTabs, {
+): MountedWrapper<typeof RuiTabs> {
+  return mountTabs({
     ...options,
-    global: {
-      stubs: {
-        RuiTab,
-      },
-    },
     slots: {
       default: Array.from(new Array(4).keys(), item => (
         {
@@ -42,7 +46,7 @@ function createWrapper(
 }
 
 describe('components/tabs/tabs/RuiTabs.vue', () => {
-  let wrapper: ReturnType<typeof createWrapper>;
+  let wrapper: MountedWrapper<typeof RuiTabs>;
 
   afterEach(() => {
     wrapper?.unmount();

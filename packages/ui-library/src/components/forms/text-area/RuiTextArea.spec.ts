@@ -1,28 +1,20 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiTextArea from '@/components/forms/text-area/RuiTextArea.vue';
 import { textAreaStyles } from '@/components/forms/text-area/text-area-styles';
 import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiTextArea>,
-): VueWrapper<InstanceType<typeof RuiTextArea>> {
-  const opts: ComponentMountingOptions<typeof RuiTextArea> = {
-    props: {
-      modelValue: '',
-    },
-    ...options,
-  };
-  return mount(RuiTextArea, {
-    ...opts,
-    global: {
-      stubs: { RuiIcon: true },
-    },
-  });
-}
+const createWrapper = createMounter(RuiTextArea, {
+  global: {
+    stubs: { RuiIcon: true },
+  },
+  props: {
+    modelValue: '',
+  },
+});
 
 describe('components/forms/text-area/RuiTextArea.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiTextArea>>;
+  let wrapper: MountedWrapper<typeof RuiTextArea>;
 
   afterEach(() => {
     wrapper?.unmount();

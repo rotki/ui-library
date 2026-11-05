@@ -1,29 +1,33 @@
+import type { ComponentMountingOptions } from '@vue/test-utils';
 import type { TablePaginationData } from '@/components/tables/use-pagination-navigation';
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiTablePagination from '@/components/tables/RuiTablePagination.vue';
 import { createTableDefaults, TableSymbol } from '@/composables/defaults/table';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
+
+const mountPagination = createMounter(RuiTablePagination, () => ({
+  global: {
+    provide: {
+      [TableSymbol.valueOf()]: createTableDefaults({ limits: [5, 10, 25] }),
+    },
+  },
+}));
 
 function createWrapper(
   modelValue: TablePaginationData,
-  options?: Partial<ComponentMountingOptions<typeof RuiTablePagination>>,
-) {
-  return mount(RuiTablePagination, {
+  options?: ComponentMountingOptions<typeof RuiTablePagination>,
+): MountedWrapper<typeof RuiTablePagination> {
+  return mountPagination({
+    ...options,
     props: {
       modelValue,
       ...options?.props,
-    },
-    global: {
-      provide: {
-        [TableSymbol.valueOf()]: createTableDefaults({ limits: [5, 10, 25] }),
-      },
-      ...options?.global,
     },
   });
 }
 
 describe('components/tables/RuiTablePagination.vue', () => {
-  let wrapper: ReturnType<typeof createWrapper>;
+  let wrapper: MountedWrapper<typeof RuiTablePagination>;
 
   afterEach(() => {
     wrapper.unmount();

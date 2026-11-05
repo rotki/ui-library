@@ -1,15 +1,11 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiSimpleSelect from '@/components/forms/select/RuiSimpleSelect.vue';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiSimpleSelect>,
-) {
-  return mount(RuiSimpleSelect, options);
-}
+const createWrapper = createMounter(RuiSimpleSelect);
 
 describe('components/forms/select/RuiSimpleSelect.vue', () => {
-  let wrapper: ReturnType<typeof createWrapper>;
+  let wrapper: MountedWrapper<typeof RuiSimpleSelect>;
 
   afterEach(() => {
     wrapper?.unmount();

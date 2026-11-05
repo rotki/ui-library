@@ -1,36 +1,32 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiNavigationDrawer from '@/components/overlays/navigation-drawer/RuiNavigationDrawer.vue';
 import { assertExists, cleanupElements, queryBody } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 const text = 'Navigation Drawer Content';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiNavigationDrawer>,
-): VueWrapper<InstanceType<typeof RuiNavigationDrawer>> {
-  return mount(RuiNavigationDrawer, {
-    ...options,
-    global: {
-      components: {
-        RuiButton,
-      },
+const createWrapper = createMounter(RuiNavigationDrawer, {
+  global: {
+    components: {
+      RuiButton,
     },
-    slots: {
-      activator: `<RuiButton id="trigger" v-bind="attrs">Click me!</RuiButton>`,
-      default: `
+  },
+  slots: {
+    activator: `<RuiButton id="trigger" v-bind="attrs">Click me!</RuiButton>`,
+    default: `
         <div>
           ${text}
 
           <RuiButton id="close" @click="close()" />
         </div>
       `,
-    },
-  });
-}
+  },
+});
 
 describe('components/overlays/navigation-drawer/RuiNavigationDrawer.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiNavigationDrawer>>;
+  let wrapper: MountedWrapper<typeof RuiNavigationDrawer>;
 
   beforeEach(() => {
     vi.useFakeTimers();

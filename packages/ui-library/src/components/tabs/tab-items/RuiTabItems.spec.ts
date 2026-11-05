@@ -1,7 +1,7 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import RuiTabItem from '@/components/tabs/tab-item/RuiTabItem.vue';
 import RuiTabItems from '@/components/tabs/tab-items/RuiTabItems.vue';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
   const now = Date.now();
@@ -9,30 +9,25 @@ vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
   return now;
 });
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiTabItems>,
-) {
-  return mount(RuiTabItems, {
-    ...options,
-    global: {
-      stubs: {
-        TabItem: RuiTabItem,
-        Transition: false,
-      },
+const createWrapper = createMounter(RuiTabItems, {
+  global: {
+    stubs: {
+      TabItem: RuiTabItem,
+      Transition: false,
     },
-    slots: {
-      default: [
-        { template: '<TabItem><div>Tab Content 1</div></TabItem>' },
-        { template: '<TabItem><div>Tab Content 2</div></TabItem>' },
-        { template: '<TabItem><div>Tab Content 3</div></TabItem>' },
-        { template: '<TabItem><div>Tab Content 4</div></TabItem>' },
-      ],
-    },
-  });
-}
+  },
+  slots: {
+    default: [
+      { template: '<TabItem><div>Tab Content 1</div></TabItem>' },
+      { template: '<TabItem><div>Tab Content 2</div></TabItem>' },
+      { template: '<TabItem><div>Tab Content 3</div></TabItem>' },
+      { template: '<TabItem><div>Tab Content 4</div></TabItem>' },
+    ],
+  },
+});
 
 describe('components/tabs/tab-items/RuiTabItems.vue', () => {
-  let wrapper: ReturnType<typeof createWrapper>;
+  let wrapper: MountedWrapper<typeof RuiTabItems>;
 
   afterEach(() => {
     wrapper?.unmount();

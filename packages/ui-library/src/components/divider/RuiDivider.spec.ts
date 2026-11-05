@@ -1,16 +1,12 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiDivider from '@/components/divider/RuiDivider.vue';
 import { expectNotToHaveClass, expectToHaveClass } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiDivider>,
-): VueWrapper<InstanceType<typeof RuiDivider>> {
-  return mount(RuiDivider, { ...options, stubs: { RuiIcon: true } });
-}
+const createWrapper = createMounter(RuiDivider);
 
 describe('components/divider/RuiDivider.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiDivider>>;
+  let wrapper: MountedWrapper<typeof RuiDivider>;
 
   afterEach(() => {
     wrapper?.unmount();

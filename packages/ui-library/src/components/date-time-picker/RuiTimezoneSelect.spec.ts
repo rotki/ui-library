@@ -1,22 +1,17 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiTimezoneSelect from '@/components/date-time-picker/RuiTimezoneSelect.vue';
 import { timezones } from '@/components/date-time-picker/timezones';
 import { cleanupElements } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiTimezoneSelect>,
-) {
-  return mount(RuiTimezoneSelect, {
-    ...options,
-    global: {
-      stubs: {
-        Transition: false,
-        TransitionGroup: false,
-      },
+const createWrapper = createMounter(RuiTimezoneSelect, {
+  global: {
+    stubs: {
+      Transition: false,
+      TransitionGroup: false,
     },
-  });
-}
+  },
+});
 
 vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
   const now = Date.now();
@@ -25,7 +20,7 @@ vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
 });
 
 describe('components/date-time-picker/RuiTimezoneSelect.vue', () => {
-  let wrapper: ReturnType<typeof createWrapper>;
+  let wrapper: MountedWrapper<typeof RuiTimezoneSelect>;
 
   beforeEach(() => {
     vi.useFakeTimers();

@@ -1,15 +1,13 @@
 import type { GeneratedIcon } from '@/types/icons';
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { createIconDefaults, IconsSymbol } from '@/composables/icons';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiIcon>): VueWrapper<InstanceType<typeof RuiIcon>> {
-  return mount(RuiIcon, options);
-}
+const createWrapper = createMounter(RuiIcon);
 
 describe('components/icons/RuiIcon.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiIcon>>;
+  let wrapper: MountedWrapper<typeof RuiIcon>;
 
   afterEach(() => {
     wrapper?.unmount();
@@ -181,8 +179,8 @@ describe('components/icons/RuiIcon.vue', () => {
 
     function createWithCustomIcon(
       name: string,
-    ): VueWrapper<InstanceType<typeof RuiIcon>> {
-      return mount(RuiIcon, {
+    ): MountedWrapper<typeof RuiIcon> {
+      return createWrapper({
         global: {
           provide: {
             [IconsSymbol]: createIconDefaults({ registeredIcons: [customIcon] }),
@@ -224,8 +222,8 @@ describe('components/icons/RuiIcon.vue', () => {
       name: 'lu-mixed',
     };
 
-    function createWithIcon(icon: GeneratedIcon): VueWrapper<InstanceType<typeof RuiIcon>> {
-      return mount(RuiIcon, {
+    function createWithIcon(icon: GeneratedIcon): MountedWrapper<typeof RuiIcon> {
+      return createWrapper({
         global: {
           provide: {
             [IconsSymbol]: createIconDefaults({ registeredIcons: [icon] }),

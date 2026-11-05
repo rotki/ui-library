@@ -1,4 +1,4 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { h } from 'vue';
 import RuiButtonGroup from '@/components/buttons/button-group/RuiButtonGroup.vue';
@@ -10,20 +10,16 @@ import {
   expectToHaveClass,
   expectWrapperToHaveClass,
 } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiButtonGroup>,
-) {
-  return mount(RuiButtonGroup, {
-    slots: {
-      default: () => [0, 1, 2].map(value => h(RuiButton, { modelValue: value }, () => `Button ${value}`)),
-    },
-    ...options,
-  });
-}
+const createWrapper = createMounter(RuiButtonGroup, {
+  slots: {
+    default: () => [0, 1, 2].map(value => h(RuiButton, { modelValue: value }, () => `Button ${value}`)),
+  },
+});
 
 describe('components/buttons/button-group/RuiButtonGroup.vue', () => {
-  let wrapper: ReturnType<typeof createWrapper>;
+  let wrapper: MountedWrapper<typeof RuiButtonGroup>;
 
   afterEach(() => {
     wrapper?.unmount();

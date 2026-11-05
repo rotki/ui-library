@@ -3,13 +3,11 @@ import { afterEach, describe, expect, it } from 'vitest';
 import RuiFileUpload from '@/components/forms/file-upload/RuiFileUpload.vue';
 import { RUI_I18N_INJECTION_KEY, type RuiI18nProvider } from '@/composables/use-rui-i18n';
 import { RUI_I18N_KEYS } from '@/i18n/keys';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiFileUpload>) {
-  return mount(RuiFileUpload, {
-    ...options,
-    global: { stubs: ['rui-icon', 'rui-progress'] },
-  });
-}
+const createWrapper = createMounter(RuiFileUpload, {
+  global: { stubs: ['rui-icon', 'rui-progress'] },
+});
 
 function makeFile(name: string, options: { type?: string; size?: number } = {}) {
   const { type = 'text/plain', size = 10 } = options;
@@ -18,7 +16,7 @@ function makeFile(name: string, options: { type?: string; size?: number } = {}) 
   return file;
 }
 
-function emitChange(wrapper: ReturnType<typeof createWrapper>, files: File[]): Promise<void> {
+function emitChange(wrapper: MountedWrapper<typeof RuiFileUpload>, files: File[]): Promise<void> {
   const input = wrapper.find<HTMLInputElement>('input[type=file]');
   Object.defineProperty(input.element, 'files', {
     value: files,
@@ -28,7 +26,7 @@ function emitChange(wrapper: ReturnType<typeof createWrapper>, files: File[]): P
 }
 
 describe('components/forms/file-upload/RuiFileUpload.vue', () => {
-  let wrapper: ReturnType<typeof createWrapper>;
+  let wrapper: MountedWrapper<typeof RuiFileUpload>;
 
   afterEach(() => {
     wrapper?.unmount();

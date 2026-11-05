@@ -1,4 +1,4 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
+import { mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import { h, ref } from 'vue';
 import RuiFieldDefaults from '@/components/forms/field-defaults/RuiFieldDefaults.vue';
@@ -6,15 +6,12 @@ import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
 import { textFieldStyles } from '@/components/forms/text-field/text-field-styles';
 import { FieldSymbol } from '@/composables/defaults/field';
 import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiTextField>,
-): VueWrapper<InstanceType<typeof RuiTextField>> {
-  return mount(RuiTextField, { ...options, global: { stubs: ['rui-icon'] } });
-}
+const createWrapper = createMounter(RuiTextField, { global: { stubs: ['rui-icon'] } });
 
 describe('components/forms/text-field/RuiTextField.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiTextField>>;
+  let wrapper: MountedWrapper<typeof RuiTextField>;
 
   afterEach(() => {
     wrapper?.unmount();

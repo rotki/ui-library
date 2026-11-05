@@ -1,9 +1,10 @@
 import { autoUpdate } from '@floating-ui/dom';
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
+import { mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
 import { assertExists, cleanupElements, queryBody, queryByDataId, queryByRole } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 import { DATA_ATTRIBUTE_SELECTORS } from '~/tests/helpers/selectors';
 
 vi.mock('@floating-ui/dom', async (importOriginal) => {
@@ -13,25 +14,20 @@ vi.mock('@floating-ui/dom', async (importOriginal) => {
 
 const text = 'This is menu';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiMenu>,
-): VueWrapper<InstanceType<typeof RuiMenu>> {
-  return mount(RuiMenu, {
-    ...options,
-    global: {
-      components: {
-        RuiButton,
-      },
+const createWrapper = createMounter(RuiMenu, {
+  global: {
+    components: {
+      RuiButton,
     },
-    slots: {
-      activator: `<RuiButton id="trigger" v-bind="attrs">Click me!</RuiButton>`,
-      default: `<div class="py-2 px-3">${text}</div>`,
-    },
-  });
-}
+  },
+  slots: {
+    activator: `<RuiButton id="trigger" v-bind="attrs">Click me!</RuiButton>`,
+    default: `<div class="py-2 px-3">${text}</div>`,
+  },
+});
 
 describe('components/overlays/menu/RuiMenu.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiMenu>>;
+  let wrapper: MountedWrapper<typeof RuiMenu>;
 
   beforeEach(() => {
     vi.useFakeTimers();

@@ -1,25 +1,15 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import { h } from 'vue';
 import RuiCheckboxGroup from '@/components/forms/checkbox/checkbox-group/RuiCheckboxGroup.vue';
 import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
 import RuiFieldDefaults from '@/components/forms/field-defaults/RuiFieldDefaults.vue';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiCheckboxGroup>,
-) {
-  const opts: ComponentMountingOptions<typeof RuiCheckboxGroup> = {
-    ...options,
-    global: {
-      stubs: ['rui-icon'],
-    },
-  };
-
-  return mount(RuiCheckboxGroup, opts);
-}
+const createWrapper = createMounter(RuiCheckboxGroup, { global: { stubs: ['rui-icon'] } });
 
 describe('components/forms/checkbox/checkbox-group/RuiCheckboxGroup.vue', () => {
-  let wrapper: ReturnType<typeof createWrapper>;
+  let wrapper: MountedWrapper<typeof RuiCheckboxGroup>;
 
   afterEach(() => {
     wrapper?.unmount();

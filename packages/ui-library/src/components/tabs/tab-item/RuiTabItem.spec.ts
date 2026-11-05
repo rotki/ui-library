@@ -1,7 +1,7 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import RuiTabItem from '@/components/tabs/tab-item/RuiTabItem.vue';
 import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
   const now = Date.now();
@@ -9,25 +9,19 @@ vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
   return now;
 });
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiTabItem>,
-) {
-  return mount(RuiTabItem, {
-    ...options,
-    global: {
-      stubs: {
-        Transition: false,
-      },
+const createWrapper = createMounter(RuiTabItem, {
+  global: {
+    stubs: {
+      Transition: false,
     },
-    props: {
-      value: 'value',
-      ...options?.props,
-    },
-  });
-}
+  },
+  props: {
+    value: 'value',
+  },
+});
 
 describe('components/tabs/tab-item/RuiTabItem.vue', () => {
-  let wrapper: ReturnType<typeof createWrapper>;
+  let wrapper: MountedWrapper<typeof RuiTabItem>;
 
   afterEach(() => {
     wrapper?.unmount();

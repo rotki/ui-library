@@ -77,9 +77,12 @@ export function mergeMountingOptions(
  * the options a test passes (see {@link mergeMountingOptions}). The mount
  * options and the wrapper are typed for `component`, generic SFCs included:
  * pass `RuiDataTable<User>` to fix a generic component's type parameters.
+ *
+ * Pass `defaults` as a function when they hold state, such as refs in a
+ * provided object, that each mount needs a fresh copy of.
  */
-export function createMounter<C>(component: C, defaults?: MountDefaults<C>): Mounter<C>;
+export function createMounter<C>(component: C, defaults?: MountDefaults<C> | (() => MountDefaults<C>)): Mounter<C>;
 
-export function createMounter(component: any, defaults: AnyMountOptions = {}): Mounter<any> {
-  return options => mount(component, mergeMountingOptions(defaults, options));
+export function createMounter(component: any, defaults: AnyMountOptions | (() => AnyMountOptions) = {}): Mounter<any> {
+  return options => mount(component, mergeMountingOptions(typeof defaults === 'function' ? defaults() : defaults, options));
 }

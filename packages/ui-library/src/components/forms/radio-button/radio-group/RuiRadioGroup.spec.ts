@@ -1,22 +1,11 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiRadioGroup from '@/components/forms/radio-button/radio-group/RuiRadioGroup.vue';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiRadioGroup>,
-) {
-  const opts: ComponentMountingOptions<typeof RuiRadioGroup> = {
-    ...options,
-    global: {
-      stubs: ['icon'],
-    },
-  };
-
-  return mount(RuiRadioGroup, opts);
-}
+const createWrapper = createMounter(RuiRadioGroup, { global: { stubs: ['icon'] } });
 
 describe('components/forms/radio-button/radio-group/RuiRadioGroup.vue', () => {
-  let wrapper: ReturnType<typeof createWrapper>;
+  let wrapper: MountedWrapper<typeof RuiRadioGroup>;
 
   afterEach(() => {
     wrapper?.unmount();

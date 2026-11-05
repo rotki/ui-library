@@ -1,15 +1,11 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiTableEmptyState from '@/components/tables/RuiTableEmptyState.vue';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiTableEmptyState>,
-) {
-  return mount(RuiTableEmptyState, options);
-}
+const createWrapper = createMounter(RuiTableEmptyState);
 
 describe('components/tables/RuiTableEmptyState.vue', () => {
-  let wrapper: ReturnType<typeof createWrapper>;
+  let wrapper: MountedWrapper<typeof RuiTableEmptyState>;
 
   afterEach(() => {
     wrapper.unmount();

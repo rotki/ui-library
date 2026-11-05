@@ -1,13 +1,23 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import type { ComponentMountingOptions } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import { TimeAccuracy } from '@/consts/time-accuracy';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 import RuiDateTimePickerMenu from './RuiDateTimePickerMenu.vue';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiDateTimePickerMenu>) {
-  return mount(RuiDateTimePickerMenu, {
-    global: {
-      stubs: ['RuiCalendar', 'RuiTimePicker', 'RuiAutoComplete', 'RuiButton', 'RuiIcon'],
-    },
+const mountMenu = createMounter(RuiDateTimePickerMenu, {
+  global: {
+    stubs: ['RuiCalendar', 'RuiTimePicker', 'RuiAutoComplete', 'RuiButton', 'RuiIcon'],
+  },
+});
+
+/**
+ * Props a test passes replace these defaults as a whole, so a test that
+ * leaves out `actions` or `showTimezone` gets the component's own defaults.
+ */
+function createWrapper(
+  options?: ComponentMountingOptions<typeof RuiDateTimePickerMenu>,
+): MountedWrapper<typeof RuiDateTimePickerMenu> {
+  return mountMenu({
     props: {
       accuracy: TimeAccuracy.MINUTE,
       actions: ['now'],

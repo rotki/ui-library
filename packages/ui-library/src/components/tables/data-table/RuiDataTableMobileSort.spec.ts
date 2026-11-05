@@ -1,8 +1,8 @@
 import type { SortColumn, TableColumn, TableRowKey } from '@/components/tables/RuiTableHead.vue';
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiDataTableMobileSort from '@/components/tables/data-table/RuiDataTableMobileSort.vue';
 import { assertExists, cleanupElements, queryByDataId } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 interface User {
   id: number;
@@ -20,21 +20,15 @@ function sortedMapFor(column?: TableRowKey<User>, direction: 'asc' | 'desc' = 'a
   return column ? { [column]: { column, direction } } : {};
 }
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiDataTableMobileSort<User>>,
-) {
-  return mount(RuiDataTableMobileSort<User>, {
-    ...options,
-    props: {
-      columns,
-      sortedMap: sortedMapFor(),
-      ...options?.props,
-    },
-  });
-}
+const createWrapper = createMounter(RuiDataTableMobileSort<User>, {
+  props: {
+    columns,
+    sortedMap: sortedMapFor(),
+  },
+});
 
 describe('components/tables/data-table/RuiDataTableMobileSort.vue', () => {
-  let wrapper: ReturnType<typeof createWrapper>;
+  let wrapper: MountedWrapper<typeof RuiDataTableMobileSort<User>>;
 
   beforeEach(() => {
     vi.useFakeTimers();

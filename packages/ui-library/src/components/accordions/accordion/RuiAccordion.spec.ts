@@ -1,21 +1,16 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import RuiAccordion from '@/components/accordions/accordion/RuiAccordion.vue';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiAccordion>,
-): VueWrapper<InstanceType<typeof RuiAccordion>> {
-  return mount(RuiAccordion, {
-    ...options,
-    slots: {
-      default: 'Accordion content',
-      header: 'Accordion header',
-    },
-  });
-}
+const createWrapper = createMounter(RuiAccordion, {
+  slots: {
+    default: 'Accordion content',
+    header: 'Accordion header',
+  },
+});
 
 describe('components/accordions/accordion/RuiAccordion.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiAccordion>>;
+  let wrapper: MountedWrapper<typeof RuiAccordion>;
 
   afterEach(() => {
     wrapper?.unmount();

@@ -1,5 +1,5 @@
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { type DeepReadonly, h } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
@@ -8,6 +8,7 @@ import RuiTablePagination from '@/components/tables/RuiTablePagination.vue';
 import { createTableDefaults, TableSymbol } from '@/composables/defaults/table';
 import { assert } from '@/utils/assert';
 import { expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 interface User {
   id: number;
@@ -16,23 +17,18 @@ interface User {
   email: string;
 }
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiDataTable<User>>,
-) {
-  return mount(RuiDataTable<User>, {
-    ...options,
-    global: {
-      provide: {
-        [TableSymbol.valueOf()]: createTableDefaults({
-          limits: [5, 10, 15, 25, 50, 100, 200],
-        }),
-      },
+const createWrapper = createMounter(RuiDataTable<User>, () => ({
+  global: {
+    provide: {
+      [TableSymbol.valueOf()]: createTableDefaults({
+        limits: [5, 10, 15, 25, 50, 100, 200],
+      }),
     },
-  });
-}
+  },
+}));
 
 describe('components/tables/RuiDataTable.vue', () => {
-  let wrapper: ReturnType<typeof createWrapper>;
+  let wrapper: MountedWrapper<typeof RuiDataTable<User>>;
 
   const data: User[] = [
     ...Array.from(new Array(50), (_, index) => ({

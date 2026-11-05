@@ -1,8 +1,9 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
+import type { ComponentMountingOptions } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { groupedOptions, type GroupedSelectOption } from '@/__test__/options';
 import RuiCategoryPicker from '@/components/forms/category-picker/RuiCategoryPicker.vue';
 import { assertExists, cleanupElements, queryByDataId } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 // RuiMenu positions via requestAnimationFrame; run it synchronously in tests.
 vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
@@ -22,16 +23,15 @@ const baseProps: PickerProps = {
 
 function createWrapper<TValue, TItem>(
   options?: ComponentMountingOptions<typeof RuiCategoryPicker<TValue, TItem>>,
-) {
-  const opts: ComponentMountingOptions<typeof RuiCategoryPicker<TValue, TItem>> = { ...options };
-  return mount(RuiCategoryPicker, opts);
+): MountedWrapper<typeof RuiCategoryPicker<TValue, TItem>> {
+  return createMounter(RuiCategoryPicker<TValue, TItem>)(options);
 }
 
-function mountPicker(extra?: Partial<PickerProps>) {
+function mountPicker(extra?: Partial<PickerProps>): MountedWrapper<typeof RuiCategoryPicker<string, GroupedSelectOption>> {
   return createWrapper<string, GroupedSelectOption>({ props: { ...baseProps, ...extra } });
 }
 
-async function openPicker(wrapper: VueWrapper<any>): Promise<HTMLElement> {
+async function openPicker(wrapper: MountedWrapper<typeof RuiCategoryPicker<string, GroupedSelectOption>>): Promise<HTMLElement> {
   await wrapper.find('[data-id=activator]').trigger('click');
   await vi.runAllTimersAsync();
   const panel = queryByDataId<HTMLElement>('panel', document.body);
@@ -40,7 +40,7 @@ async function openPicker(wrapper: VueWrapper<any>): Promise<HTMLElement> {
 }
 
 describe('components/forms/category-picker/RuiCategoryPicker.vue', () => {
-  let wrapper: ReturnType<typeof mountPicker>;
+  let wrapper: MountedWrapper<typeof RuiCategoryPicker<string, GroupedSelectOption>>;
 
   beforeEach(() => {
     vi.useFakeTimers();

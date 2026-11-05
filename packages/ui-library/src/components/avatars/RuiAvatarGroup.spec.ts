@@ -1,21 +1,16 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiAvatar from '@/components/avatars/RuiAvatar.vue';
 import RuiAvatarGroup from '@/components/avatars/RuiAvatarGroup.vue';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiAvatarGroup>,
-): VueWrapper<InstanceType<typeof RuiAvatarGroup>> {
-  return mount(RuiAvatarGroup, {
-    ...options,
-    global: {
-      components: { RuiAvatar },
-    },
-  });
-}
+const createWrapper = createMounter(RuiAvatarGroup, {
+  global: {
+    components: { RuiAvatar },
+  },
+});
 
 describe('components/avatars/RuiAvatarGroup.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiAvatarGroup>>;
+  let wrapper: MountedWrapper<typeof RuiAvatarGroup>;
 
   afterEach(() => {
     wrapper?.unmount();

@@ -1,7 +1,8 @@
-import { mount } from '@vue/test-utils';
+import type { ComponentMountingOptions } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiTableHead, { type TableColumn } from '@/components/tables/RuiTableHead.vue';
 import { SortDirection } from '@/components/tables/table-props';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 interface TestItem {
   id: number;
@@ -15,21 +16,18 @@ const columns: TableColumn<TestItem>[] = [
   { key: 'title', label: 'Title', sortable: true },
 ];
 
+const mountHead = createMounter(RuiTableHead<TestItem>);
+
 function createWrapper(
-  options?: { props?: Record<string, unknown> },
-): ReturnType<typeof mount> {
-  return mount(RuiTableHead, {
-    ...options,
-    attachTo: (() => {
-      const table = document.createElement('table');
-      document.body.appendChild(table);
-      return table;
-    })(),
-  });
+  options?: ComponentMountingOptions<typeof RuiTableHead<TestItem>>,
+): MountedWrapper<typeof RuiTableHead<TestItem>> {
+  const table = document.createElement('table');
+  document.body.appendChild(table);
+  return mountHead({ ...options, attachTo: table });
 }
 
 describe('components/tables/RuiTableHead.vue', () => {
-  let wrapper: ReturnType<typeof createWrapper>;
+  let wrapper: MountedWrapper<typeof RuiTableHead<TestItem>>;
 
   afterEach(() => {
     wrapper.unmount();

@@ -1,18 +1,15 @@
-import { type ComponentMountingOptions, type DOMWrapper, mount } from '@vue/test-utils';
+import type { DOMWrapper } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import { h } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof RuiButton>,
-) {
-  return mount(RuiButton, options);
-}
+const createWrapper = createMounter(RuiButton);
 
 describe('components/buttons/button/RuiButton.vue', () => {
-  let wrapper: ReturnType<typeof createWrapper>;
+  let wrapper: MountedWrapper<typeof RuiButton>;
 
   afterEach(() => {
     wrapper?.unmount();

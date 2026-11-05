@@ -1,17 +1,13 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import { TimeAccuracy } from '@/consts/time-accuracy';
 import { assert } from '@/utils/assert';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 import RuiTimePicker from './RuiTimePicker.vue';
 
-function createWrapper(
-  options: ComponentMountingOptions<typeof RuiTimePicker>,
-): VueWrapper<InstanceType<typeof RuiTimePicker>> {
-  return mount(RuiTimePicker, { ...options });
-}
+const createWrapper = createMounter(RuiTimePicker);
 
 describe('components/time-picker/RuiTimePicker.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiTimePicker>>;
+  let wrapper: MountedWrapper<typeof RuiTimePicker>;
 
   afterEach(() => {
     wrapper?.unmount();
@@ -30,7 +26,7 @@ describe('components/time-picker/RuiTimePicker.vue', () => {
   it('should select hour and minute and emit update:model-value event with correct date', async () => {
     const initialDate = new Date(2023, 0, 1, 10, 30, 0);
 
-    const wrapper = mount(RuiTimePicker, {
+    const wrapper = createWrapper({
       props: {
         'accuracy': TimeAccuracy.MINUTE,
         'modelValue': initialDate,
@@ -70,7 +66,7 @@ describe('components/time-picker/RuiTimePicker.vue', () => {
   it('should change mode when selecting AM/PM', async () => {
     const initialDate = new Date(2023, 0, 1, 10, 30, 0); // AM
 
-    const wrapper = mount(RuiTimePicker, {
+    const wrapper = createWrapper({
       props: {
         'accuracy': TimeAccuracy.MINUTE,
         'modelValue': initialDate,
@@ -204,7 +200,7 @@ describe('components/time-picker/RuiTimePicker.vue', () => {
   });
 
   it('should update clock face aria-label when mode changes', async () => {
-    const wrapper = mount(RuiTimePicker, {
+    const wrapper = createWrapper({
       props: {
         'accuracy': TimeAccuracy.SECOND,
         'modelValue': new Date(2023, 0, 1, 10, 30),
@@ -244,7 +240,7 @@ describe('components/time-picker/RuiTimePicker.vue', () => {
   it('should select time up to milliseconds and emit correct values', async () => {
     const initialDate = new Date(2023, 0, 1, 10, 30, 0, 0);
 
-    const wrapper = mount(RuiTimePicker, {
+    const wrapper = createWrapper({
       props: {
         'accuracy': TimeAccuracy.MILLISECOND,
         'modelValue': initialDate,

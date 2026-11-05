@@ -1,44 +1,40 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import Accordion from '@/components/accordions/accordion/RuiAccordion.vue';
 import Accordions from '@/components/accordions/accordions/RuiAccordions.vue';
 import { assert } from '@/utils/assert';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options?: ComponentMountingOptions<typeof Accordions>,
-): VueWrapper<InstanceType<typeof Accordions>> {
-  return mount(Accordions, {
-    ...options,
-    global: {
-      stubs: {
-        Accordion,
+const createWrapper = createMounter(Accordions, {
+  global: {
+    stubs: {
+      Accordion,
+    },
+  },
+  slots: {
+    default: [
+      {
+        template: `
+        <Accordion>
+          <template #header>Accordion 1 Header</template>
+          Accordion 1 Content
+        </Accordion>
+      `,
       },
-    },
-    slots: {
-      default: [
-        {
-          template: `
-          <Accordion>
-            <template #header>Accordion 1 Header</template>
-            Accordion 1 Content
-          </Accordion>
-        `,
-        },
-        {
-          template: `
-          <Accordion>
-            <template #header>Accordion 2 Header</template>
-            Accordion 2 Content
-          </Accordion>
-        `,
-        },
-      ],
-    },
-  });
-}
+      {
+        template: `
+        <Accordion>
+          <template #header>Accordion 2 Header</template>
+          Accordion 2 Content
+        </Accordion>
+      `,
+      },
+    ],
+  },
+});
 
 describe('components/accordions/accordions/RuiAccordions.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof Accordions>>;
+  let wrapper: MountedWrapper<typeof Accordions>;
 
   afterEach(() => {
     wrapper?.unmount();

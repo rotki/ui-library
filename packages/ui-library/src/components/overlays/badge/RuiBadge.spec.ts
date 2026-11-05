@@ -1,22 +1,19 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiBadge from '@/components/overlays/badge/RuiBadge.vue';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiBadge>): VueWrapper<InstanceType<typeof RuiBadge>> {
-  return mount(RuiBadge, {
-    ...options,
-    global: {
-      stubs: { 'rui-button': RuiButton },
-    },
-    slots: {
-      default: '<rui-button>Badge</rui-button>',
-    },
-  });
-}
+const createWrapper = createMounter(RuiBadge, {
+  global: {
+    stubs: { 'rui-button': RuiButton },
+  },
+  slots: {
+    default: '<rui-button>Badge</rui-button>',
+  },
+});
 
 describe('components/overlays/badge/RuiBadge.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiBadge>>;
+  let wrapper: MountedWrapper<typeof RuiBadge>;
 
   afterEach(() => {
     wrapper?.unmount();

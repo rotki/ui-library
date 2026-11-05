@@ -1,13 +1,11 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import RuiAlert from '@/components/alerts/RuiAlert.vue';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiAlert>): VueWrapper<InstanceType<typeof RuiAlert>> {
-  return mount(RuiAlert, { ...options, global: { stubs: ['rui-icon'] } });
-}
+const createWrapper = createMounter(RuiAlert, { global: { stubs: ['rui-icon'] } });
 
 describe('components/alerts/RuiAlert.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiAlert>>;
+  let wrapper: MountedWrapper<typeof RuiAlert>;
 
   afterEach(() => {
     wrapper?.unmount();

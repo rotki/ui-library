@@ -1,15 +1,11 @@
-import { type ComponentMountingOptions, mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiFooterStepper from '@/components/steppers/RuiFooterStepper.vue';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper(
-  options: ComponentMountingOptions<typeof RuiFooterStepper>,
-): VueWrapper<InstanceType<typeof RuiFooterStepper>> {
-  return mount(RuiFooterStepper, options);
-}
+const createWrapper = createMounter(RuiFooterStepper);
 
 describe('components/steppers/RuiFooterStepper.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiFooterStepper>>;
+  let wrapper: MountedWrapper<typeof RuiFooterStepper>;
 
   afterEach(() => {
     wrapper?.unmount();

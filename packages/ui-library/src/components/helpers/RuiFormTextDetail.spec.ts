@@ -1,24 +1,27 @@
-import { mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import { nextTick } from 'vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
+
+/** Mounts with real transitions, so the enter classes are applied as they are in the app. */
+const mountDetail = createMounter(RuiFormTextDetail, {
+  global: { stubs: { 'transition': false, 'transition-group': false } },
+});
 
 describe('components/helpers/RuiFormTextDetail.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof RuiFormTextDetail>>;
+  let wrapper: MountedWrapper<typeof RuiFormTextDetail>;
 
   afterEach(() => {
     wrapper?.unmount();
   });
 
-  /** Mounts with real transitions, so the enter classes are applied as they are in the app. */
-  function createWrapper(props: InstanceType<typeof RuiFormTextDetail>['$props']): VueWrapper<InstanceType<typeof RuiFormTextDetail>> {
-    return mount(RuiFormTextDetail, { global: { stubs: { 'transition': false, 'transition-group': false } }, props });
+  function createWrapper(props: InstanceType<typeof RuiFormTextDetail>['$props']): MountedWrapper<typeof RuiFormTextDetail> {
+    return mountDetail({ props });
   }
 
   it('should render a single root that keeps the class a parent passes', () => {
-    wrapper = mount(RuiFormTextDetail, {
+    wrapper = mountDetail({
       attrs: { class: 'px-4' },
-      global: { stubs: { 'transition': false, 'transition-group': false } },
     });
 
     expect(wrapper.element.tagName).toBe('DIV');

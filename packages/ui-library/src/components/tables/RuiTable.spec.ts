@@ -1,6 +1,6 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import RuiTable from '@/components/tables/RuiTable.vue';
+import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 const rows = `
   <thead>
@@ -11,15 +11,10 @@ const rows = `
   </tbody>
 `;
 
-function createWrapper(options?: ComponentMountingOptions<typeof RuiTable>) {
-  return mount(RuiTable, {
-    slots: { default: rows },
-    ...options,
-  });
-}
+const createWrapper = createMounter(RuiTable, { slots: { default: rows } });
 
 describe('components/tables/RuiTable.vue', () => {
-  let wrapper: ReturnType<typeof createWrapper>;
+  let wrapper: MountedWrapper<typeof RuiTable>;
 
   afterEach(() => {
     wrapper.unmount();
