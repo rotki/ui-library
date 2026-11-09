@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { BaseUser, ExtendedUser } from '@/data/tables';
+import type { ExtendedUser } from '@/data/tables';
 import {
   RuiButton,
   RuiCard,
@@ -17,14 +17,14 @@ const expandedNested = ref<ExtendedUser[]>(fixedRows.slice(0, 1));
 
 const nestedOuterColumns = fixedColumns.filter(column => column.key === 'id' || column.key === 'name');
 
-function isExpanded(row: BaseUser, expanded: ExtendedUser[]): boolean {
+function isExpanded(row: ExtendedUser, expanded: ExtendedUser[]): boolean {
   return expanded.some(item => item.id === row.id);
 }
 
-function toggleRow(row: BaseUser, expanded: ExtendedUser[]): void {
+function toggleRow(row: ExtendedUser, expanded: ExtendedUser[]): void {
   const index = expanded.findIndex(item => item.id === row.id);
   if (index === -1) {
-    expanded.push(row as ExtendedUser);
+    expanded.push(row);
   }
   else {
     expanded.splice(index, 1);

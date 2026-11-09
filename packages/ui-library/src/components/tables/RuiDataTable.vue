@@ -1,4 +1,4 @@
-<script lang="ts" setup generic="T extends object, IdType extends keyof T = keyof T">
+<script lang="ts" setup generic="T extends object, IdType extends keyof T = keyof T, TSort extends TableSortData<T> = TableSortData<T>">
 import type { HTMLAttributes } from 'vue';
 import type { DataTableModelEmits, DataTableModels, GroupHeader } from '@/composables/tables/data-table/types';
 import { dataTableStyles } from '@/components/tables/data-table-styles';
@@ -190,9 +190,9 @@ const {
   sort: sortProp,
   sortModifiers: sortModifiersProp,
   collapsed: collapsedProp,
-} = defineProps<Props<T, IdType> & DataTableModels<T, IdType> & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props<T, IdType>>>();
+} = defineProps<Props<T, IdType> & DataTableModels<T, IdType, TSort> & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props<T, IdType>>>();
 
-const emit = defineEmits<DataTableModelEmits<T, IdType> & {
+const emit = defineEmits<DataTableModelEmits<T, IdType, TSort> & {
   'update:options': [value: { pagination?: TablePaginationData; sort?: TableSortData<T> }];
   'copy:group': [value: GroupData<T>];
   'retry': [];

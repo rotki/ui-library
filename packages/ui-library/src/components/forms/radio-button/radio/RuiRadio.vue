@@ -3,6 +3,7 @@ import type { ContextColorsType } from '@/consts/colors';
 import type { InputAttributes } from '@/types/attributes';
 import { checkControlStyles } from '@/components/forms/check-control-styles';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
+import { type ModelValueEmits, usePropModel } from '@/composables/prop-model';
 import { type FormDetails, useFormDetails, useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 
@@ -29,8 +30,6 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const modelValue = defineModel<TValue>({ required: false });
-
 const {
   value,
   disabled = false,
@@ -44,11 +43,20 @@ const {
   hideDetails = false,
   detailsUnderLabel = false,
   required = false,
-} = defineProps<RadioProps<TValue> & /* @vue-ignore */ Omit<InputAttributes, keyof RadioProps<TValue>>>();
+  modelValue: modelValueProp,
+} = defineProps<RadioProps<TValue> & {
+  /** The checked radio's value. Optional, and only ever updated to this radio's `value`. */
+  modelValue?: TValue;
+} & /* @vue-ignore */ Omit<InputAttributes, keyof RadioProps<TValue>>>();
+
+defineEmits<ModelValueEmits<TValue>>();
 
 defineSlots<{
   default?: () => any;
 }>();
+
+// a prop and an event rather than `defineModel`, so the update is typed without `undefined`
+const modelValue = usePropModel('modelValue', () => modelValueProp);
 
 const { hasError, validation } = useFormTextDetail(
   () => errorMessages,

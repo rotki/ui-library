@@ -1,10 +1,10 @@
-<script lang="ts" setup>
+<script lang="ts" setup generic="TValue extends string | number">
 import type { HTMLAttributes } from 'vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { simpleSelectStyles } from './simple-select-styles';
 
-export interface Props {
-  options: string[] | number[];
+export interface Props<TValue extends string | number = string | number> {
+  options: TValue[];
   disabled?: boolean;
   label?: string;
   name?: string;
@@ -15,9 +15,9 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const modelValue = defineModel<string | number>({ required: true });
+const modelValue = defineModel<TValue>({ required: true });
 
-const { options, disabled = false, label, name = '' } = defineProps<Props & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props>>();
+const { options, disabled = false, label, name = '' } = defineProps<Props<TValue> & /* @vue-ignore */ Omit<HTMLAttributes, keyof Props<TValue>>>();
 
 const ui = computed<string>(() => simpleSelectStyles());
 </script>

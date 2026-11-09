@@ -1,20 +1,16 @@
 <script lang="ts" setup>
 import type { ExtendedUser } from '@/data/tables';
 import {
-  type DataTableColumn,
   RuiButton,
   RuiDataTable,
   RuiIcon,
 } from '@rotki/ui-library/components';
-import { fixedColumns as baseColumns, fixedRows } from '@/data/table-configs';
+import { fixedColumns, fixedRows } from '@/data/table-configs';
 
-// Cast columns to ExtendedUser type for proper typing
-const fixedColumns = baseColumns as DataTableColumn<ExtendedUser>[];
-
-const groupContent = ref<keyof ExtendedUser | (keyof ExtendedUser)[]>(['username']);
+const groupContent = ref<keyof ExtendedUser | (keyof ExtendedUser)[] | undefined>(['username']);
 const collapsedContent = ref<ExtendedUser[]>([]);
 
-const groupFull = ref<keyof ExtendedUser | (keyof ExtendedUser)[]>(['username']);
+const groupFull = ref<keyof ExtendedUser | (keyof ExtendedUser)[] | undefined>(['username']);
 const collapsedFull = ref<ExtendedUser[]>([]);
 </script>
 

@@ -52,8 +52,8 @@ const countryValue = ref<number>();
 const actionValue = ref<string>();
 const denseValue = ref<number>();
 const noSearchValue = ref<number>();
-const badgeValue = ref<number>(1);
-const badgeClearableValue = ref<number>(1);
+const badgeValue = ref<number | undefined>(1);
+const badgeClearableValue = ref<number | undefined>(1);
 </script>
 
 <template>

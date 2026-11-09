@@ -38,7 +38,7 @@ export const columns: DataTableColumn<BaseUser>[] = [{
   key: 'action',
 }];
 
-export const fixedColumns: DataTableColumn<BaseUser>[] = [{
+export const fixedColumns: DataTableColumn<ExtendedUser>[] = [{
   key: 'id',
   label: 'ID',
 }, {

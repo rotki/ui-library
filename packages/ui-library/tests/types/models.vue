@@ -19,6 +19,7 @@ import {
   RuiMenuSelect,
   RuiRadio,
   RuiRadioGroup,
+  RuiSimpleSelect,
   RuiTab,
   RuiTabs,
   type TablePaginationData,
@@ -61,6 +62,8 @@ const expanded = ref<Row[]>([]);
 const pagination = ref<TablePaginationData>({ page: 1, total: 0, limit: 10 });
 const sort = ref<DataTableSortData<Row>>([]);
 const sortColumns = ref<DataTableSortColumn<Row>[] | DataTableSortColumn<Row>>([]);
+const sortSingle = ref<DataTableSortColumn<Row>>({ column: 'name', direction: 'asc' });
+const sortMultiple = ref<DataTableSortColumn<Row>[]>([]);
 const collapsed = ref<Row[]>([]);
 
 const flag = ref<boolean>(false);
@@ -101,6 +104,19 @@ const flag = ref<boolean>(false);
   <RuiRadioGroup v-model="radio">
     <RuiRadio value="a" />
   </RuiRadioGroup>
+  <RuiRadio
+    v-model="radio"
+    value="a"
+  />
+
+  <RuiSimpleSelect
+    v-model="name"
+    :options="['one', 'two']"
+  />
+  <RuiSimpleSelect
+    v-model="id"
+    :options="[1, 2]"
+  />
 
   <RuiButtonGroup
     v-model="single"
@@ -168,6 +184,24 @@ const flag = ref<boolean>(false);
     row-attr="id"
   />
 
+  <RuiDataTable
+    v-model:sort="sortSingle"
+    :rows="options"
+    :cols="columns"
+    row-attr="id"
+  />
+  <RuiDataTable
+    v-model:sort="sortMultiple"
+    :rows="options"
+    :cols="columns"
+    row-attr="id"
+  />
+
+  <!-- @vue-expect-error a number model cannot take the strings these options update it to -->
+  <RuiSimpleSelect
+    v-model="id"
+    :options="['one']"
+  />
   <!-- @vue-expect-error a tab value is a string or a number -->
   <RuiTabs v-model="flag" />
   <!-- @vue-expect-error the picker emits an epoch when no type is given, not a Date -->

@@ -1,23 +1,19 @@
 <script lang="ts" setup>
 import type { ExtendedUser } from '@/data/tables';
 import {
-  type DataTableColumn,
   type GroupData,
   RuiButton,
   RuiDataTable,
   RuiIcon,
   type TablePaginationData,
 } from '@rotki/ui-library/components';
-import { fixedColumns as baseColumns, fixedRows } from '@/data/table-configs';
+import { fixedColumns, fixedRows } from '@/data/table-configs';
 
-// Cast columns to ExtendedUser type for proper typing
-const fixedColumns = baseColumns as DataTableColumn<ExtendedUser>[];
-
-const group = ref<keyof ExtendedUser | (keyof ExtendedUser)[]>(['username']);
+const group = ref<keyof ExtendedUser | (keyof ExtendedUser)[] | undefined>(['username']);
 const collapsed = ref<ExtendedUser[]>([]);
 const lastCopiedGroup = ref<string>('');
 
-const groupEnd = ref<keyof ExtendedUser | (keyof ExtendedUser)[]>(['username']);
+const groupEnd = ref<keyof ExtendedUser | (keyof ExtendedUser)[] | undefined>(['username']);
 const collapsedEnd = ref<ExtendedUser[]>([]);
 const pagination = ref<TablePaginationData>({
   limit: 10,

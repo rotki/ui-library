@@ -16,7 +16,6 @@ function render(args: SimpleSelectProps) {
           return args.modelValue;
         },
         set(val) {
-          // @ts-expect-error Storybook args are mutable but Vue extracts readonly props
           args.modelValue = val;
         },
       });

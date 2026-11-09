@@ -12,7 +12,7 @@ export interface TableOptions<T> {
  * sort, collapsed groups), and the table never sets one back to `undefined`. They are props and events rather than
  * `defineModel` calls so that the update is typed without that `undefined`; see `usePropModel`.
  */
-export interface DataTableModels<T, K extends keyof T> {
+export interface DataTableModels<T, K extends keyof T, S extends TableSortData<T> = TableSortData<T>> {
   /** The selected rows' identifiers. Bound, the rows take a checkbox. */
   modelValue?: T[K][];
   /** The expanded rows. Bound, with an `expanded-item` slot, the rows expand. */
@@ -20,19 +20,22 @@ export interface DataTableModels<T, K extends keyof T> {
   /** The page, its size and the total. `.external` leaves paging the rows to the consumer. */
   pagination?: TablePaginationData;
   paginationModifiers?: { external?: true };
-  /** The sorted column, or columns in an array. `.external` leaves sorting the rows to the consumer. */
-  sort?: TableSortData<T>;
+  /**
+   * The sorted column, or columns in an array. The table keeps the shape it is bound with, so the
+   * update has the bound type. `.external` leaves sorting the rows to the consumer.
+   */
+  sort?: S;
   sortModifiers?: { external?: true };
   /** The rows of the collapsed groups. */
   collapsed?: T[];
 }
 
 /** The updates of {@link DataTableModels}. */
-export interface DataTableModelEmits<T, K extends keyof T> {
+export interface DataTableModelEmits<T, K extends keyof T, S extends TableSortData<T> = TableSortData<T>> {
   'update:modelValue': [value: T[K][]];
   'update:expanded': [value: T[]];
   'update:pagination': [value: TablePaginationData];
-  'update:sort': [value: NonNullable<TableSortData<T>>];
+  'update:sort': [value: NonNullable<S>];
   'update:collapsed': [value: T[]];
 }
 
