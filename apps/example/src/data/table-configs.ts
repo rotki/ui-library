@@ -1,7 +1,7 @@
 import type { DataTableColumn } from '@rotki/ui-library/components';
-import type { BaseUser, ExtendedUser } from './tables';
+import type { ExtendedUser } from './tables';
 
-export const columns: DataTableColumn<BaseUser>[] = [{
+export const columns: DataTableColumn<ExtendedUser>[] = [{
   key: 'id',
   label: 'ID',
 }, {

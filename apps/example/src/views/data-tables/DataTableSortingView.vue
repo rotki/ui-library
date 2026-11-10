@@ -1,16 +1,12 @@
 <script lang="ts" setup>
 import type { ExtendedUser } from '@/data/tables';
 import {
-  type DataTableColumn,
   type DataTableSortData,
   RuiButton,
   RuiDataTable,
   RuiIcon,
 } from '@rotki/ui-library/components';
-import { columns as baseColumns, fixedRows } from '@/data/table-configs';
-
-// Cast columns to ExtendedUser type for proper typing
-const columns = baseColumns as DataTableColumn<ExtendedUser>[];
+import { columns, fixedRows } from '@/data/table-configs';
 
 const singleSort = ref<DataTableSortData<ExtendedUser>>({
   column: 'name',
