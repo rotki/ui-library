@@ -4,7 +4,7 @@ import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';
-import { getAlignClass, getSortButtonAlignClass, SortDirection, TableAlign } from '@/components/tables/table-props';
+import { getAlignClass, getColumnLabel, getSortButtonAlignClass, SortDirection, TableAlign } from '@/components/tables/table-props';
 import { tableHeadStyles } from './table-head-styles';
 
 /**
@@ -15,6 +15,8 @@ export type TableRowKey<T> = keyof T extends string ? keyof T : never;
 
 export interface BaseTableColumn<T> {
   key: TableRowKey<T> | string;
+  /** the header text, which the table reads unless `column-attr` names another property */
+  label?: string;
   sortable?: boolean;
   direction?: SortDirection;
   align?: TableAlign;
@@ -33,8 +35,6 @@ export interface BaseTableColumn<T> {
    * such as an overflow menu. Ignored on non-mobile layouts.
    */
   mobileHeader?: boolean;
-
-  [key: string]: any;
 }
 
 /**
@@ -89,7 +89,7 @@ export interface Props<T> {
   dense?: boolean;
   sortedMap?: Partial<Record<TableRowKey<T>, SortColumn<T>>>;
   sortData?: TableSortData<T>;
-  columnAttr?: keyof TableColumn<T>;
+  columnAttr?: string;
   dataId?: string;
 }
 
@@ -270,7 +270,7 @@ function getHiddenHeaderText(column: TableColumn<T>): string {
                 :name="`header.text.${column.key.toString()}`"
                 :column="column"
               >
-                {{ column[columnAttr] }}
+                {{ getColumnLabel(column, columnAttr) }}
               </slot>
             </span>
 
@@ -318,7 +318,7 @@ function getHiddenHeaderText(column: TableColumn<T>): string {
               :name="`header.text.${column.key.toString()}`"
               :column="column"
             >
-              <template v-if="column[columnAttr]">{{ column[columnAttr] }}</template>
+              <template v-if="getColumnLabel(column, columnAttr)">{{ getColumnLabel(column, columnAttr) }}</template>
               <span
                 v-else
                 class="sr-only"

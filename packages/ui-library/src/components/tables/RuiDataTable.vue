@@ -12,7 +12,7 @@ import RuiTableHead, {
   type TableSortData,
 } from '@/components/tables/RuiTableHead.vue';
 import RuiTablePagination, { type TablePaginationData } from '@/components/tables/RuiTablePagination.vue';
-import { GroupExpandButtonPosition } from '@/components/tables/table-props';
+import { getColumnLabel, GroupExpandButtonPosition } from '@/components/tables/table-props';
 import { useTable } from '@/composables/defaults/table';
 import { useKeyboardScroll } from '@/composables/keyboard-scroll';
 import { usePropModel } from '@/composables/prop-model';
@@ -51,9 +51,10 @@ export interface Props<T, K extends keyof T> {
    */
   cols?: TableColumn<T>[];
   /**
-   * attribute to use from column definitions to display column titles
+   * The column property holding the header text. Defaults to `label`; a property of the app's
+   * own goes on its column type, e.g. `TableColumn<Row> & { title: string }`.
    */
-  columnAttr?: keyof TableColumn<T>;
+  columnAttr?: string;
   /**
    * flag to show a more or less spacious table
    */
@@ -424,10 +425,10 @@ useStickyBlockerWarning(paginationBarElement, () => get(paginationMayStick) && g
  * Grouped columns leave the column list, so their labels come from `cols`.
  */
 const groupLabels = computed<DataTableGroupLabel[]>(() => get(groupKeys).map((key) => {
-  const label = cols?.find(column => column.key === key)?.[columnAttr];
+  const column = cols?.find(column => column.key === key);
   return {
     key: String(key),
-    label: label === undefined || label === null ? String(key) : String(label),
+    label: (column && getColumnLabel(column, columnAttr)) ?? String(key),
   };
 }));
 

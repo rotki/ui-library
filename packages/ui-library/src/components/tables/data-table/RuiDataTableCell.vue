@@ -2,6 +2,7 @@
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
 import { useDataTableColumns, useDataTableExpansion, useDataTableStyling } from '@/components/tables/data-table/context';
 import RuiExpandButton from '@/components/tables/RuiExpandButton.vue';
+import { getColumnLabel } from '@/components/tables/table-props';
 
 const { column, row } = defineProps<{
   column: TableColumn<T>;
@@ -26,10 +27,7 @@ const { isMobile } = useDataTableStyling();
  */
 const ownsExpandColumn = computed<boolean>(() => itemSlotKeys.has('expand'));
 
-const mobileLabel = computed<string>(() => {
-  const label = column[columnAttr];
-  return label === undefined || label === null ? '' : String(label);
-});
+const mobileLabel = computed<string>(() => getColumnLabel(column, columnAttr) ?? '');
 const showMobileLabel = computed<boolean>(() => get(isMobile) && column.key !== 'expand' && get(mobileLabel).length > 0);
 
 /** A stacked card shows a placeholder for an empty value rather than a bare label. */

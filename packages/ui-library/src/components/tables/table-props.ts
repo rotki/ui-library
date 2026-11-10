@@ -39,3 +39,16 @@ export function getAlignClass(align: TableAlign = TableAlign.start): string {
 export function getSortButtonAlignClass(align: TableAlign = TableAlign.start): string | undefined {
   return align === TableAlign.center ? 'ml-6' : undefined;
 }
+
+/**
+ * Reads a column's header text from the property `column-attr` names. That is `label` unless
+ * the app names one of its own, which its column type then declares.
+ *
+ * @param column - the column definition
+ * @param attr - the property holding the header text
+ * @returns the text, or `undefined` when the column has none
+ */
+export function getColumnLabel(column: object, attr: string): string | undefined {
+  const label: unknown = Reflect.get(column, attr);
+  return label === undefined || label === null ? undefined : String(label);
+}

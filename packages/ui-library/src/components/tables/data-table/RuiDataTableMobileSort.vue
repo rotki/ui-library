@@ -3,7 +3,7 @@ import type { SortColumn, TableColumn, TableRowKey } from '@/components/tables/R
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
-import { SortDirection } from '@/components/tables/table-props';
+import { getColumnLabel, SortDirection } from '@/components/tables/table-props';
 
 const {
   columns,
@@ -12,7 +12,7 @@ const {
   dense = false,
 } = defineProps<{
   columns: TableColumn<T>[];
-  columnAttr?: keyof TableColumn<T>;
+  columnAttr?: string;
   sortedMap: Partial<Record<TableRowKey<T>, SortColumn<T>>>;
   dense?: boolean;
 }>();
@@ -24,8 +24,7 @@ const emit = defineEmits<{
 const sortableColumns = computed<TableColumn<T>[]>(() => columns.filter(column => column.sortable));
 
 function columnLabel(column: TableColumn<T>): string {
-  const label = column[columnAttr];
-  return label === undefined || label === null ? String(column.key) : String(label);
+  return getColumnLabel(column, columnAttr) ?? String(column.key);
 }
 
 function sortDirection(key: TableColumn<T>['key']): SortDirection | undefined {

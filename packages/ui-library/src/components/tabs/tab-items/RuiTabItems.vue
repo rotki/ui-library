@@ -1,4 +1,5 @@
 <script lang="ts" setup generic="T extends string | number">
+import type { ModelValueEmits } from '@/composables/prop-model';
 import { Fragment, type HTMLAttributes, isVNode } from 'vue';
 import { useClipWhileResizing } from '@/composables/clip-while-resizing';
 
@@ -7,19 +8,24 @@ defineOptions({
   inheritAttrs: false,
 });
 
-/**
- * The tab whose panel is showing.
- *
- * The default matches RuiTabs. Without one, binding both components to the
- * same ref that starts as `undefined` leaves this component with
- * `modelValue === undefined`, so the `active = modelValue === value` check
- * fails for every tab: the panel renders but stays at height 0, which reads as
- * an element with no content.
- */
-const modelValue = defineModel<T>({ default: () => 0 as T });
+const { modelValue } = defineProps<{
+  /** The tab whose panel is showing. */
+  modelValue?: T;
+} & /* @vue-ignore */ HTMLAttributes>();
 
-// eslint-disable-next-line @stylistic/type-generic-spacing -- its fix deletes the comment, which keeps the attributes out of the runtime props
-defineProps</* @vue-ignore */ HTMLAttributes>();
+/*
+ * Declared so `v-model` binds the same ref RuiTabs updates. The panels only follow the model,
+ * so the component never emits it.
+ */
+defineEmits<ModelValueEmits<T>>();
+
+/**
+ * The selected tab, the first one while the model is unbound or undefined, as in RuiTabs.
+ * Without that fallback, binding both components to a ref that starts as `undefined` fails the
+ * `active` check for every tab: the panel renders but stays at height 0, which reads as an
+ * element with no content.
+ */
+const selected = computed<string | number>(() => modelValue ?? 0);
 
 const slots = useSlots();
 
@@ -41,7 +47,7 @@ const children = computed<VNode[]>(() => {
   let anyActive = false;
   const children = tabs.map((tab, index) => {
     const value = tab.props?.value ?? index;
-    const active = get(modelValue) === value;
+    const active = get(selected) === value;
     if (active) {
       anyActive = true;
       if (index !== get(currIndex))

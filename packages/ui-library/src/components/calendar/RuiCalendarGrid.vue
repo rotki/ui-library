@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { get, isDefined, set } from '@vueuse/core';
-import { computed, inject, nextTick, ref, useTemplateRef, watch } from 'vue';
-import {
-  CalendarStateSymbol,
-  getDaysOfWeek,
-  type RuiCalendarState,
-} from '@/components/calendar/state';
+import { computed, nextTick, ref, useTemplateRef, watch } from 'vue';
+import { getDaysOfWeek, useCalendarState } from '@/components/calendar/state';
 import { dayButtonStyles } from './calendar-grid-styles';
 
 defineOptions({
@@ -20,7 +16,7 @@ const { viewMonth, viewYear } = defineProps<{
   viewYear: number;
 }>();
 
-const calendarState = inject<RuiCalendarState>(CalendarStateSymbol) as RuiCalendarState;
+const calendarState = useCalendarState();
 
 /**
  * The `YYYY-MM-DD` key a day is tracked and focused by.

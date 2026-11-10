@@ -1,4 +1,4 @@
-import type { ComputedRef, InjectionKey, Ref } from 'vue';
+import { type ComputedRef, inject, type InjectionKey, type Ref } from 'vue';
 
 export const CalendarStateSymbol: InjectionKey<RuiCalendarState> = Symbol.for('rui:calendar');
 
@@ -10,6 +10,20 @@ export interface RuiCalendarState {
   minDate: ComputedRef<Date | undefined>;
   isDark: ComputedRef<boolean>;
   allowEmpty: boolean;
+}
+
+/**
+ * The state RuiCalendar provides to its grid, header and menu.
+ *
+ * @returns the view, selection and limits of the enclosing calendar
+ * @throws when used outside a RuiCalendar
+ */
+export function useCalendarState(): RuiCalendarState {
+  const state = inject(CalendarStateSymbol, undefined);
+  if (!state)
+    throw new Error('useCalendarState must be used within a RuiCalendar');
+
+  return state;
 }
 
 export interface MonthYearSelection {

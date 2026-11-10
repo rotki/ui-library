@@ -1,32 +1,35 @@
-import { inject } from 'vue';
+import { inject, type InjectionKey } from 'vue';
 
-export const RUI_I18N_INJECTION_KEY = Symbol('rui:i18n');
+/** The named parameters a translation interpolates. */
+export type RuiI18nParams = Record<string, unknown>;
 
 interface I18nProvider {
   t: {
     (key: string, fallback: string): string;
-    (key: string, params: Record<string, any>, fallback: string): string;
+    (key: string, params: RuiI18nParams, fallback: string): string;
   };
 }
 
 export interface RuiI18nProvider {
-  t: (key: string, params?: Record<string, any>) => string;
+  t: (key: string, params?: RuiI18nParams) => string;
   te: (key: string) => boolean;
 }
 
-export function useRuiI8n(): I18nProvider {
-  const i18nProvider = inject<RuiI18nProvider | undefined>(RUI_I18N_INJECTION_KEY, undefined);
+export const RUI_I18N_INJECTION_KEY: InjectionKey<RuiI18nProvider> = Symbol('rui:i18n');
 
-  const translate = (key: string, params?: Record<string, any>): string | undefined => {
+export function useRuiI8n(): I18nProvider {
+  const i18nProvider = inject(RUI_I18N_INJECTION_KEY, undefined);
+
+  const translate = (key: string, params?: RuiI18nParams): string | undefined => {
     if (i18nProvider?.te(key)) {
-      return i18nProvider?.t(key, params);
+      return i18nProvider.t(key, params);
     }
     return undefined;
   };
 
   const t = (
     key: string,
-    paramsOrFallback?: Record<string, any> | string,
+    paramsOrFallback?: RuiI18nParams | string,
     fallback?: string,
   ): string => {
     if (typeof paramsOrFallback === 'string') {

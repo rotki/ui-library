@@ -42,7 +42,7 @@ import RuiSkeletonLoader, { type Props as SkeletonLoaderProps } from '@/componen
 import RuiLogo, { type Props as LogoProps } from '@/components/logos/RuiLogo.vue';
 import RuiBadge, { type Props as BadgeProps } from '@/components/overlays/badge/RuiBadge.vue';
 import RuiBottomSheet, { type BottomSheetProps } from '@/components/overlays/bottom-sheet/RuiBottomSheet.vue';
-import RuiDialog, { type DialogProps, type RuiDialogClassNames } from '@/components/overlays/dialog/RuiDialog.vue';
+import RuiDialog, { type DialogProps, type DialogSlots, type RuiDialogClassNames } from '@/components/overlays/dialog/RuiDialog.vue';
 import RuiMenu, { type MenuProps, type RuiMenuClassNames, type RuiMenuRole } from '@/components/overlays/menu/RuiMenu.vue';
 import RuiNavigationDrawer, { type NavigationDrawerProps, type RuiNavigationDrawerClassNames } from '@/components/overlays/navigation-drawer/RuiNavigationDrawer.vue';
 import RuiNotification, { type NotificationProps } from '@/components/overlays/notification/RuiNotification.vue';
@@ -87,6 +87,7 @@ export type {
   DataTableSortColumn,
   DataTableSortData,
   DialogProps,
+  DialogSlots,
   DividerProps,
   ExpandButtonProps,
   FieldDefaultsProps,

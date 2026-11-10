@@ -21,6 +21,8 @@ import {
   RuiRadioGroup,
   RuiSimpleSelect,
   RuiTab,
+  RuiTabItem,
+  RuiTabItems,
   RuiTabs,
   type TablePaginationData,
 } from '@/components';
@@ -156,6 +158,12 @@ const flag = ref<boolean>(false);
   <RuiTabs v-model="numericTab">
     <RuiTab />
   </RuiTabs>
+  <RuiTabItems v-model="tab">
+    <RuiTabItem value="a" />
+  </RuiTabItems>
+  <RuiTabItems v-model="numericTab">
+    <RuiTabItem />
+  </RuiTabItems>
 
   <RuiDateTimePicker v-model="epoch" />
   <RuiDateTimePicker

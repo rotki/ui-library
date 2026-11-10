@@ -73,7 +73,7 @@ export function useAutoCompleteSearch<TItem>(
     if (typeof groupBy === 'function')
       return groupBy(item);
 
-    return String((item as any)?.[groupBy] ?? '');
+    return String(item?.[groupBy] ?? '');
   };
 
   const filteredOptions = computed<TItem[]>(() => {
@@ -99,10 +99,10 @@ export function useAutoCompleteSearch<TItem>(
           if (!item)
             return false;
 
-          const keywords: string[] = [getCachedTextToken(keyAttr ? String((item as any)[keyAttr]) : item.toString())];
+          const keywords: string[] = [getCachedTextToken(keyAttr ? String(item[keyAttr]) : item.toString())];
 
           if (textAttr && typeof item === 'object')
-            keywords.push(getCachedTextToken(String((item as any)[textAttr])));
+            keywords.push(getCachedTextToken(String(item[textAttr])));
 
           // Matching the group label too surfaces every item under a "Trade" section for "trade"
           if (searchIncludesGroupLabel && groupBy) {
@@ -126,7 +126,7 @@ export function useAutoCompleteSearch<TItem>(
         return false;
       }
 
-      const val = textAttr ? (item as any)[textAttr] : item.toString();
+      const val = textAttr ? item[textAttr] : item.toString();
       return val === search;
     });
 

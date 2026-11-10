@@ -84,19 +84,19 @@ function createImageData(size: number): number[] {
 }
 
 function buildOpts(opts: Partial<BlockieOptions>): BlockieOptions {
-  const newOpts: Partial<BlockieOptions> = {};
+  const seed = opts.seed || Math.floor(Math.random() * 10 ** 16).toString(16);
 
-  newOpts.seed = opts.seed || Math.floor(Math.random() * 10 ** 16).toString(16);
+  seedRand(seed);
 
-  seedRand(newOpts.seed);
-
-  newOpts.size = opts.size || 8;
-  newOpts.scale = opts.scale || 8;
-  newOpts.color = opts.color || createColor();
-  newOpts.bgcolor = opts.bgcolor || createColor();
-  newOpts.spotColor = opts.spotColor || createColor();
-
-  return newOpts as BlockieOptions;
+  // the colors draw from the seeded generator, so they keep this order
+  return {
+    seed,
+    size: opts.size || 8,
+    scale: opts.scale || 8,
+    color: opts.color || createColor(),
+    bgcolor: opts.bgcolor || createColor(),
+    spotColor: opts.spotColor || createColor(),
+  };
 }
 
 function renderIcon(opts: Partial<BlockieOptions>, canvas: HTMLCanvasElement): HTMLCanvasElement {
@@ -106,7 +106,7 @@ function renderIcon(opts: Partial<BlockieOptions>, canvas: HTMLCanvasElement): H
 
   canvas.width = canvas.height = newOpts.size * newOpts.scale;
 
-  const cc = canvas.getContext('2d') as CanvasRenderingContext2D;
+  const cc = canvas.getContext('2d');
   if (cc) {
     cc.fillStyle = newOpts.bgcolor;
     cc.fillRect(0, 0, canvas.width, canvas.height);

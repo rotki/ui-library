@@ -125,10 +125,10 @@ export function useDropdownMenu<TValue, TItem>({
   const getIdentifier = externalGetIdentifier ?? defaultGetIdentifier;
   const getText = externalGetText ?? defaultGetText;
 
-  const activeIdentifiers = computed<Set<any>>(() => {
+  const activeIdentifiers = computed<Set<unknown>>(() => {
     const val = get(value);
     const selected: TItem[] = toSelectedArray(val);
-    const identifiers = new Set<any>();
+    const identifiers = new Set<unknown>();
     for (const item of selected) {
       identifiers.add(getIdentifier(item));
     }

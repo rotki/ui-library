@@ -2,10 +2,9 @@
 import { get, isDefined, set } from '@vueuse/core';
 import { ref, watch } from 'vue';
 import {
-  CalendarStateSymbol,
   getShortMonthNames,
   type MonthYearSelection,
-  type RuiCalendarState,
+  useCalendarState,
 } from '@/components/calendar/state';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
@@ -38,7 +37,7 @@ const startYear = ref<number>(viewYear - 6);
 
 // Pre-calculated constants
 const months = getShortMonthNames();
-const calendarState = inject<RuiCalendarState>(CalendarStateSymbol) as RuiCalendarState;
+const calendarState = useCalendarState();
 
 // Pre-calculated arrays for performance - using refs for better control
 const yearRange = ref<number[]>([]);

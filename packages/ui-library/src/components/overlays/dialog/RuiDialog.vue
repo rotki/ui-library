@@ -26,6 +26,11 @@ export interface DialogProps {
   ariaLabel?: string;
 }
 
+export interface DialogSlots {
+  activator?: (props: { attrs: { onClick: () => void }; isOpen: boolean }) => any;
+  default?: (props: { isOpen: boolean; close: () => void }) => any;
+}
+
 defineOptions({
   name: 'RuiDialog',
   inheritAttrs: false,
@@ -56,10 +61,7 @@ const emit = defineEmits<{
   'dismiss': [];
 }>();
 
-defineSlots<{
-  activator?: (props: { attrs: { onClick: () => void }; isOpen: boolean }) => any;
-  default?: (props: { isOpen: boolean; close: () => void }) => any;
-}>();
+defineSlots<DialogSlots>();
 
 const transitioning = ref<boolean>(false);
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef');

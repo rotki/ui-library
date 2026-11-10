@@ -1,4 +1,4 @@
-import type { ComputedRef, Ref } from 'vue';
+import type { ComputedRef, InjectionKey, Ref } from 'vue';
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
 import type { GroupExpandButtonPosition } from '@/components/tables/table-props';
 import type { GroupHeader } from '@/composables/tables/data-table/types';
@@ -32,7 +32,7 @@ export interface DataTableColumnsContext<T extends object = any> {
   cellValue: (row: T, key: TableColumn<T>['key']) => T[keyof T];
   itemSlotKeys: Set<string>;
   /** the column definition attribute used as the visible label (e.g. `label`) */
-  columnAttr: keyof TableColumn<T>;
+  columnAttr: string;
 }
 
 export interface DataTableSelectionContext<T extends object = any, IdType extends keyof T = keyof T> {
@@ -84,18 +84,23 @@ export type DataTableContext<T extends object = any, IdType extends keyof T = ke
 
 // --- Per-concern symbols ---
 
-const DATA_TABLE_STYLING = Symbol('data-table-styling');
-const DATA_TABLE_COLUMNS = Symbol('data-table-columns');
-const DATA_TABLE_SELECTION = Symbol('data-table-selection');
-const DATA_TABLE_EXPANSION = Symbol('data-table-expansion');
-const DATA_TABLE_GROUPING = Symbol('data-table-grouping');
-const DATA_TABLE_ROW_IDENTITY = Symbol('data-table-row-identity');
-const DATA_TABLE_NESTED = Symbol('data-table-nested');
+/*
+ * A key cannot carry the row type: the table and its row components are generic
+ * components that each name `T` themselves. The keys erase it (the row type and
+ * its id key), and each `use*` below names the row type its caller passes.
+ */
+const DATA_TABLE_STYLING: InjectionKey<DataTableStylingContext> = Symbol('data-table-styling');
+const DATA_TABLE_COLUMNS: InjectionKey<DataTableColumnsContext> = Symbol('data-table-columns');
+const DATA_TABLE_SELECTION: InjectionKey<DataTableSelectionContext<any, any>> = Symbol('data-table-selection');
+const DATA_TABLE_EXPANSION: InjectionKey<DataTableExpansionContext<any, any>> = Symbol('data-table-expansion');
+const DATA_TABLE_GROUPING: InjectionKey<DataTableGroupingContext> = Symbol('data-table-grouping');
+const DATA_TABLE_ROW_IDENTITY: InjectionKey<DataTableRowIdentityContext<any, any>> = Symbol('data-table-row-identity');
+const DATA_TABLE_NESTED: InjectionKey<boolean> = Symbol('data-table-nested');
 
 // --- Per-concern provide/use pairs ---
 
-function injectOrThrow<C>(key: symbol, name: string): C {
-  const context = inject<C>(key);
+function injectOrThrow<C>(key: InjectionKey<C>, name: string): C {
+  const context = inject(key, undefined);
   if (context === undefined)
     throw new Error(`${name} must be used within a RuiDataTable`);
 
@@ -114,7 +119,7 @@ export function provideDataTableColumns<T extends object>(context: DataTableColu
   provide(DATA_TABLE_COLUMNS, context);
 }
 
-export function useDataTableColumns<T extends object = any>(): DataTableColumnsContext<T> {
+export function useDataTableColumns<T extends object>(): DataTableColumnsContext<T> {
   return injectOrThrow<DataTableColumnsContext<T>>(DATA_TABLE_COLUMNS, 'useDataTableColumns');
 }
 
@@ -122,7 +127,7 @@ export function provideDataTableSelection<T extends object, IdType extends keyof
   provide(DATA_TABLE_SELECTION, context);
 }
 
-export function useDataTableSelection<T extends object = any, IdType extends keyof T = keyof T>(): DataTableSelectionContext<T, IdType> {
+export function useDataTableSelection<T extends object, IdType extends keyof T = keyof T>(): DataTableSelectionContext<T, IdType> {
   return injectOrThrow<DataTableSelectionContext<T, IdType>>(DATA_TABLE_SELECTION, 'useDataTableSelection');
 }
 
@@ -130,7 +135,7 @@ export function provideDataTableExpansion<T extends object, IdType extends keyof
   provide(DATA_TABLE_EXPANSION, context);
 }
 
-export function useDataTableExpansion<T extends object = any, IdType extends keyof T = keyof T>(): DataTableExpansionContext<T, IdType> {
+export function useDataTableExpansion<T extends object, IdType extends keyof T = keyof T>(): DataTableExpansionContext<T, IdType> {
   return injectOrThrow<DataTableExpansionContext<T, IdType>>(DATA_TABLE_EXPANSION, 'useDataTableExpansion');
 }
 
@@ -138,7 +143,7 @@ export function provideDataTableGrouping<T extends object>(context: DataTableGro
   provide(DATA_TABLE_GROUPING, context);
 }
 
-export function useDataTableGrouping<T extends object = any>(): DataTableGroupingContext<T> {
+export function useDataTableGrouping<T extends object>(): DataTableGroupingContext<T> {
   return injectOrThrow<DataTableGroupingContext<T>>(DATA_TABLE_GROUPING, 'useDataTableGrouping');
 }
 
@@ -146,7 +151,7 @@ export function provideDataTableRowIdentity<T extends object, IdType extends key
   provide(DATA_TABLE_ROW_IDENTITY, context);
 }
 
-export function useDataTableRowIdentity<T extends object = any, IdType extends keyof T = keyof T>(): DataTableRowIdentityContext<T, IdType> {
+export function useDataTableRowIdentity<T extends object, IdType extends keyof T = keyof T>(): DataTableRowIdentityContext<T, IdType> {
   return injectOrThrow<DataTableRowIdentityContext<T, IdType>>(DATA_TABLE_ROW_IDENTITY, 'useDataTableRowIdentity');
 }
 
@@ -157,7 +162,7 @@ export function provideDataTableNested(): void {
 
 /** True when this data table is rendered inside another data table. */
 export function useDataTableNested(): boolean {
-  return inject<boolean>(DATA_TABLE_NESTED, false);
+  return inject(DATA_TABLE_NESTED, false);
 }
 
 // --- Backward-compatible facade ---

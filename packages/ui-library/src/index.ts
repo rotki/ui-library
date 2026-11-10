@@ -9,7 +9,7 @@ import {
 } from '@/composables/defaults/table';
 import { createIconDefaults, IconsSymbol } from '@/composables/icons';
 import { useRotkiTheme } from '@/composables/theme';
-import { RUI_I18N_INJECTION_KEY } from '@/composables/use-rui-i18n';
+import { RUI_I18N_INJECTION_KEY, type RuiI18nParams, type RuiI18nProvider } from '@/composables/use-rui-i18n';
 import { StepperOrientation, StepperState, type StepperStep } from '@/types/stepper';
 import '@/style.css';
 
@@ -22,6 +22,8 @@ export * from '@/composables';
 export { type FieldOptions, type FieldScopeOptions, type LabelPlacement, provideFieldDefaults } from '@/composables/defaults/field';
 
 export type { LogoOptions, LogoResolver } from '@/composables/defaults/logo';
+
+export type { RuiI18nParams, RuiI18nProvider };
 
 export { contextColors, type ContextColorsType } from '@/consts/colors';
 
@@ -94,28 +96,39 @@ export function createRui(options: RuiOptions = {}) {
   };
 }
 
-export function createRuiI8nPlugin(i18nInstance: any) {
-  if (!i18nInstance || typeof i18nInstance !== 'object') {
+/** What the i18n plugin reads from a vue-i18n instance (the result of `createI18n`). */
+export interface RuiI18nInstance {
+  global: RuiI18nProvider;
+}
+
+/**
+ * Checks the instance at runtime too, for callers the types do not reach.
+ */
+function assertI18nInstance(i18nInstance: unknown): asserts i18nInstance is RuiI18nInstance {
+  if (!i18nInstance || typeof i18nInstance !== 'object')
     throw new Error('i18nInstance must be an object');
-  }
 
-  if (!i18nInstance.global || typeof i18nInstance.global !== 'object') {
+  if (!('global' in i18nInstance) || !i18nInstance.global || typeof i18nInstance.global !== 'object')
     throw new Error('i18nInstance must have a global property');
-  }
 
-  if (!i18nInstance.global.t || typeof i18nInstance.global.t !== 'function') {
+  const global = i18nInstance.global;
+
+  if (!('t' in global) || typeof global.t !== 'function')
     throw new Error('i18nInstance.global.t must be a function');
-  }
 
-  if (!i18nInstance.global.te || typeof i18nInstance.global.te !== 'function') {
+  if (!('te' in global) || typeof global.te !== 'function')
     throw new Error('i18nInstance.global.te must be a function');
-  }
+}
+
+export function createRuiI8nPlugin(i18nInstance: RuiI18nInstance): { install: (app: App) => void } {
+  assertI18nInstance(i18nInstance);
+  const { global } = i18nInstance;
 
   return {
-    install: (app: App) => {
+    install: (app: App): void => {
       app.provide(RUI_I18N_INJECTION_KEY, {
-        t: i18nInstance.global.t.bind(i18nInstance.global),
-        te: i18nInstance.global.te.bind(i18nInstance.global),
+        t: global.t.bind(global),
+        te: global.te.bind(global),
       });
     },
   };

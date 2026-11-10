@@ -244,7 +244,7 @@ describe('components/tables/RuiTableHead.vue', () => {
   });
 
   it('uses custom columnAttr for header text', () => {
-    const customColumns: TableColumn<TestItem>[] = [
+    const customColumns: (TableColumn<TestItem> & { description: string })[] = [
       { key: 'id', label: 'ID', description: 'Identifier' },
       { key: 'name', label: 'Name', description: 'Full Name' },
     ];

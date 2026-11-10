@@ -20,7 +20,7 @@ export interface UseAutoCompleteValueReturn<TItem> {
 }
 
 export interface UseAutoCompleteValueDeps<TItem> {
-  getIdentifier: (item: TItem) => any;
+  getIdentifier: (item: TItem) => unknown;
   getText: (item: TItem) => string | undefined;
   textValueToProperValue: (val: any, returnObject?: boolean) => TItem;
   shouldApplyValueAsSearch: MaybeRefOrGetter<boolean>;
@@ -35,8 +35,8 @@ export function useAutoCompleteValue<TValue, TItem>(
   opts: UseAutoCompleteValueOptions<TItem>,
   deps: UseAutoCompleteValueDeps<TItem>,
 ): UseAutoCompleteValueReturn<TItem> {
-  function buildOptionsMap(optionsData: TItem[]): Map<any, TItem> {
-    const map = new Map<any, TItem>();
+  function buildOptionsMap(optionsData: TItem[]): Map<unknown, TItem> {
+    const map = new Map<unknown, TItem>();
     for (const item of optionsData) {
       map.set(deps.getIdentifier(item), item);
     }
@@ -44,7 +44,7 @@ export function useAutoCompleteValue<TValue, TItem>(
   }
 
   // Create maps for O(1) lookup performance
-  const optionsMap = computed<Map<any, TItem>>(() => buildOptionsMap(toValue(options)));
+  const optionsMap = computed<Map<unknown, TItem>>(() => buildOptionsMap(toValue(options)));
 
   function convertModelValueToArray(modelValueData: TValue | undefined): any[] {
     if (modelValueData === null || modelValueData === undefined)
@@ -54,7 +54,7 @@ export function useAutoCompleteValue<TValue, TItem>(
 
   function filterValues(
     valueArray: any[],
-    optionsMapData: Map<any, TItem>,
+    optionsMapData: Map<unknown, TItem>,
     customValue: boolean,
     returnObject: boolean,
     getKey: (val: any) => any,
@@ -72,7 +72,7 @@ export function useAutoCompleteValue<TValue, TItem>(
 
   function processReturnObjectValue(
     modelValueData: TValue | undefined,
-    optionsMapData: Map<any, TItem>,
+    optionsMapData: Map<unknown, TItem>,
     returnObject: boolean,
     customValue: boolean,
   ): TItem[] {
@@ -90,7 +90,7 @@ export function useAutoCompleteValue<TValue, TItem>(
 
   function processStandardValue(
     modelValueData: TValue | undefined,
-    optionsMapData: Map<any, TItem>,
+    optionsMapData: Map<unknown, TItem>,
     returnObject: boolean,
     customValue: boolean,
   ): TItem[] {
@@ -116,7 +116,7 @@ export function useAutoCompleteValue<TValue, TItem>(
     return onUpdateModelValue(selection[0] as TValue);
   }
 
-  function resolveAgainst(optionsMapData: Map<any, TItem>): TItem[] {
+  function resolveAgainst(optionsMapData: Map<unknown, TItem>): TItem[] {
     const modelValueData = get(modelValue);
     const keyAttr = toValue(opts.keyAttr);
     const returnObject = toValue(opts.returnObject) ?? false;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import RuiDialog from '@/components/overlays/dialog/RuiDialog.vue';
+import RuiDialog, { type DialogSlots } from '@/components/overlays/dialog/RuiDialog.vue';
 
 /** The sheet's props, which stay in step with RuiDialog's. */
 export interface BottomSheetProps {
@@ -22,6 +22,11 @@ defineOptions({
 const modelValue = defineModel<boolean>({ default: false });
 
 const { persistent = false, width, maxWidth } = defineProps<BottomSheetProps & /* @vue-ignore */ DialogAttributes>();
+
+defineSlots<{
+  activator?: DialogSlots['activator'];
+  default?: DialogSlots['default'];
+}>();
 </script>
 
 <template>
@@ -33,14 +38,14 @@ const { persistent = false, width, maxWidth } = defineProps<BottomSheetProps & /
     :width="width"
     :max-width="maxWidth"
   >
-    <template
-      v-for="slot in Object.keys($slots)"
-      #[slot]="scope"
-    >
+    <template #activator="scope">
       <slot
+        name="activator"
         v-bind="scope"
-        :name="slot"
       />
+    </template>
+    <template #default="scope">
+      <slot v-bind="scope" />
     </template>
   </RuiDialog>
 </template>

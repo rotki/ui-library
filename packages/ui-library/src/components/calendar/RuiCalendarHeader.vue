@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { get, isDefined, set } from '@vueuse/core';
-import { computed, inject, ref } from 'vue';
+import { computed, ref } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
-import {
-  CalendarStateSymbol,
-  type MonthYearSelection,
-  type RuiCalendarState,
-} from '@/components/calendar/state';
+import { type MonthYearSelection, useCalendarState } from '@/components/calendar/state';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiCalendarMenu from './RuiCalendarMenu.vue';
 
@@ -31,7 +27,7 @@ const emit = defineEmits<{
 
 const anchorEl = ref<HTMLElement>();
 
-const calendarState = inject<RuiCalendarState>(CalendarStateSymbol) as RuiCalendarState;
+const calendarState = useCalendarState();
 
 const canGoToNext = computed<boolean>(() => {
   const { maxDate } = calendarState;

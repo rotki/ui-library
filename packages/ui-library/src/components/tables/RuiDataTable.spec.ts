@@ -2501,7 +2501,7 @@ describe('components/tables/RuiDataTable.vue', () => {
 
   describe('columnAttr prop', () => {
     it('should use custom columnAttr for header display', async () => {
-      const columnsWithCustomAttr: TableColumn<User>[] = [
+      const columnsWithCustomAttr: (TableColumn<User> & { customTitle: string })[] = [
         { key: 'id', label: 'ID Label', customTitle: 'Custom ID' },
         { key: 'name', label: 'Name Label', customTitle: 'Custom Name' },
       ];
