@@ -16,10 +16,10 @@ import {
 } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper<TValue, TItem, TClear = never>(
-  options?: ComponentMountingOptions<typeof RuiAutoComplete<TValue, TItem, TClear>>,
-): MountedWrapper<typeof RuiAutoComplete<TValue, TItem, TClear>> {
-  return createMounter(RuiAutoComplete<TValue, TItem, TClear>, {
+function createWrapper<TValue, TItem, TClear = undefined>(
+  options?: ComponentMountingOptions<typeof RuiAutoComplete<TValue, TItem, TClear, boolean>>,
+): MountedWrapper<typeof RuiAutoComplete<TValue, TItem, TClear, boolean>> {
+  return createMounter(RuiAutoComplete<TValue, TItem, TClear, boolean>, {
     global: {
       stubs: {
         Transition: false,
@@ -32,7 +32,7 @@ function createWrapper<TValue, TItem, TClear = never>(
 syncAnimationFrames();
 
 describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
-  let wrapper: MountedWrapper<typeof RuiAutoComplete<any, any>>;
+  let wrapper: MountedWrapper<typeof RuiAutoComplete<any, any, undefined, boolean>>;
 
   beforeEach(() => {
     vi.useFakeTimers();
@@ -980,6 +980,52 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     await vi.advanceTimersToNextTimerAsync();
 
     expect(cleared.emitted('update:modelValue')?.[0]).toEqual(['']);
+  });
+
+  it('should leave a single select that is not clearable as it is on Backspace with nothing typed', async () => {
+    const option4 = options[4];
+    assert(option4);
+    wrapper = createWrapper<string, SelectOption>({
+      attachTo: document.body,
+      props: {
+        keyAttr: 'id',
+        modelValue: option4.id,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    await vi.advanceTimersToNextTimerAsync();
+    const input = wrapper.find('input');
+    await input.setValue('');
+    await input.trigger('keydown', { key: 'Backspace' });
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+  });
+
+  it('should clear a clearable single select to valueOnClear on Backspace with nothing typed', async () => {
+    const option4 = options[4];
+    assert(option4);
+    const cleared = createWrapper<string, SelectOption, string>({
+      attachTo: document.body,
+      props: {
+        clearable: true,
+        keyAttr: 'id',
+        modelValue: option4.id,
+        options,
+        textAttr: 'label',
+        valueOnClear: '',
+      },
+    });
+
+    await vi.advanceTimersToNextTimerAsync();
+    const input = cleared.find('input');
+    await input.setValue('');
+    await input.trigger('keydown', { key: 'Backspace' });
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(cleared.emitted('update:modelValue')?.at(-1)).toEqual(['']);
   });
 
   it('should still clear a multiple select to an empty list when valueOnClear is set', async () => {

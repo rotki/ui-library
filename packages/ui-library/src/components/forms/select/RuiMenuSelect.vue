@@ -1,6 +1,7 @@
-<script lang="ts" setup generic="TValue, TItem, TClear = never">
+<script lang="ts" setup generic="TValue, TItem, TClear = undefined, TClearable extends boolean = false">
 import type { ButtonHTMLAttributes, Ref } from 'vue';
 import type { VueClassValue } from '@/types/class-value';
+import type { ClearedValue } from '@/types/clear-value';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';
 import { menuSelectStyles } from '@/components/forms/select/menu-select-styles';
@@ -22,11 +23,11 @@ export interface RuiMenuSelectClassNames {
   option?: VueClassValue;
 }
 
-export interface MenuSelectProps<TValue, TItem, TClear = never> {
+export interface MenuSelectProps<TValue, TItem, TClear = undefined, TClearable extends boolean = boolean> {
   options: TItem[];
   /**
    * What `clearable` writes in place of `undefined`: `value-on-clear=""` keeps a `Ref<string>` a
-   * string. The update is typed with it, so `v-model` takes exactly what is sent.
+   * string. The update is typed with it once `clearable`, so `v-model` takes exactly what is sent.
    */
   valueOnClear?: TClear;
   keyAttr?: KeyOfType<TItem, TValue extends Array<infer U> ? U : TValue>;
@@ -35,7 +36,7 @@ export interface MenuSelectProps<TValue, TItem, TClear = never> {
   loading?: boolean;
   readOnly?: boolean;
   dense?: boolean;
-  clearable?: boolean;
+  clearable?: TClearable;
   label?: string;
   /** Where the label shows; falls back to the nearest `RuiFieldDefaults`, then the app default, then `top`. */
   labelPlacement?: LabelPlacement;
@@ -89,15 +90,15 @@ const {
   hideNoData = false,
   noDataText = 'No data available',
   required = false,
-} = defineProps<MenuSelectProps<TValue, TItem, TClear> & {
+} = defineProps<MenuSelectProps<TValue, TItem, TClear, TClearable> & {
   /**
    * The selected key, or the item itself without `keyAttr`. Its type is the bound value's, so a
    * `Ref<number>` takes the update as is.
    */
   modelValue: TValue;
-} & /* @vue-ignore */ Omit<ButtonHTMLAttributes, keyof MenuSelectProps<TValue, TItem, TClear> | 'modelValue'>>();
+} & /* @vue-ignore */ Omit<ButtonHTMLAttributes, keyof MenuSelectProps<TValue, TItem, TClear, TClearable> | 'modelValue'>>();
 
-defineEmits<ModelValueEmits<TValue | TClear>>();
+defineEmits<ModelValueEmits<TValue | ClearedValue<TValue, TClear, TClearable>>>();
 
 defineSlots<{
   'activator'?: (props: {

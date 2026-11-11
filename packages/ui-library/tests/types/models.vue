@@ -124,6 +124,27 @@ const flag = ref<boolean>(false);
     clearable
     :value-on-clear="null"
   />
+  <RuiAutoComplete
+    v-model="optionalId"
+    :options="options"
+    key-attr="id"
+    text-attr="name"
+    clearable
+  />
+  <RuiAutoComplete
+    v-model="optionalId"
+    :options="options"
+    key-attr="id"
+    text-attr="name"
+    :clearable="flag"
+  />
+  <RuiAutoComplete
+    v-model="ids"
+    :options="options"
+    key-attr="id"
+    text-attr="name"
+    clearable
+  />
 
   <RuiRadioGroup v-model="radio">
     <RuiRadio value="a" />
@@ -245,6 +266,28 @@ const flag = ref<boolean>(false);
   />
   <!-- @vue-expect-error a tab value is a string or a number -->
   <RuiTabs v-model="flag" />
+  <!-- @vue-expect-error a clearable select sends undefined unless it has a clear value -->
+  <RuiAutoComplete
+    v-model="name"
+    :options="['one', 'two']"
+    clearable
+  />
+  <!-- @vue-expect-error a clearable bound to a boolean may be on, so the update may be undefined -->
+  <RuiAutoComplete
+    v-model="id"
+    :options="options"
+    key-attr="id"
+    text-attr="name"
+    :clearable="flag"
+  />
+  <!-- @vue-expect-error a clearable select sends undefined unless it has a clear value -->
+  <RuiMenuSelect
+    v-model="id"
+    :options="options"
+    key-attr="id"
+    text-attr="name"
+    clearable
+  />
   <!-- @vue-expect-error clearing sends null, which a string model cannot take -->
   <RuiAutoComplete
     v-model="name"

@@ -6,10 +6,10 @@ import { assert } from '@/utils/assert';
 import { expectWrapperToHaveClass, queryAllMenuButtons, queryByRole, queryMenuButton } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper<TItem, TClear = never>(
-  options?: ComponentMountingOptions<typeof RuiMenuSelect<string | undefined, TItem, TClear>>,
-): MountedWrapper<typeof RuiMenuSelect<string | undefined, TItem, TClear>> {
-  return createMounter(RuiMenuSelect<string | undefined, TItem, TClear>, {
+function createWrapper<TItem, TClear = undefined>(
+  options?: ComponentMountingOptions<typeof RuiMenuSelect<string | undefined, TItem, TClear, boolean>>,
+): MountedWrapper<typeof RuiMenuSelect<string | undefined, TItem, TClear, boolean>> {
+  return createMounter(RuiMenuSelect<string | undefined, TItem, TClear, boolean>, {
     global: {
       stubs: {
         RuiProgress: true,
@@ -20,7 +20,7 @@ function createWrapper<TItem, TClear = never>(
 }
 
 describe('components/forms/select/RuiMenuSelect.vue', () => {
-  let wrapper: MountedWrapper<typeof RuiMenuSelect<string | undefined, any>>;
+  let wrapper: MountedWrapper<typeof RuiMenuSelect<string | undefined, any, undefined, boolean>>;
 
   beforeEach(() => {
     vi.useFakeTimers();

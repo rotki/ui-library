@@ -8,6 +8,8 @@ export interface UseAutoCompleteKeyboardNavigationOptions {
   customValue: MaybeRefOrGetter<boolean>;
   /** Whether selected values are displayed as chips. */
   chips: MaybeRefOrGetter<boolean>;
+  /** Whether a single select may be emptied: Backspace or Delete on an empty search clears it only then. */
+  clearable: MaybeRefOrGetter<boolean>;
 }
 
 export interface UseAutoCompleteKeyboardNavigationDeps<TItem> {
@@ -207,10 +209,11 @@ export function useAutoCompleteKeyboardNavigation<TItem>(
       deps.updateInternalSearch(deps.getText(item) ?? '');
   }
 
-  /** Backspace or Delete with nothing typed: steps onto the last value, or drops it outright. */
+  /** Backspace or Delete with nothing typed: clears a clearable single select, steps onto the last chip, or drops the last value. */
   function deleteFromEmptySearch(value: TItem[]): void {
     if (!toValue(options.multiple)) {
-      deps.clear();
+      if (toValue(options.clearable))
+        deps.clear();
       return;
     }
     if (toValue(options.chips)) {

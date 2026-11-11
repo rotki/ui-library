@@ -11,12 +11,12 @@ export interface RuiAutoCompleteClassNames {
   menu?: VueClassValue;
 }
 
-export interface AutoCompleteProps<TValue, TItem, TClear = never> {
+export interface AutoCompleteProps<TValue, TItem, TClear = undefined, TClearable extends boolean = boolean> {
   options?: TItem[];
   /**
-   * What a single select writes once it is cleared or its selection removed, in place of
-   * `undefined`: `value-on-clear=""` keeps a `Ref<string>` a string. The update is typed with it, so
-   * `v-model` takes exactly what is sent. A multiple select still clears to `[]`.
+   * What a single select writes when it is cleared, in place of `undefined`: `value-on-clear=""` keeps a
+   * `Ref<string>` a string. Only a `clearable` select is cleared by the user, so only then is the update
+   * typed with it. A multiple select clears to `[]`.
    */
   valueOnClear?: TClear;
   keyAttr?: KeyOfType<TItem, TValue extends Array<infer U> ? U : TValue>;
@@ -25,7 +25,8 @@ export interface AutoCompleteProps<TValue, TItem, TClear = never> {
   loading?: boolean;
   readOnly?: boolean;
   dense?: boolean;
-  clearable?: boolean;
+  /** Shows a clear button, and lets Backspace on an empty search clear a single select. */
+  clearable?: TClearable;
   label?: string;
   /** Where the label shows; falls back to the nearest `RuiFieldDefaults`, then the app default, then `top`. */
   labelPlacement?: LabelPlacement;

@@ -1,6 +1,7 @@
-<script lang="ts" setup generic="TValue, TItem, TClear = never">
+<script lang="ts" setup generic="TValue, TItem, TClear = undefined, TClearable extends boolean = false">
 import type { HTMLAttributes, Ref } from 'vue';
 import type { AutoCompleteProps } from '@/components/forms/auto-complete/auto-complete-props';
+import type { ClearedValue } from '@/types/clear-value';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import { autoCompleteStyles } from '@/components/forms/auto-complete/auto-complete-styles';
 import RuiAutoCompleteOptionList from '@/components/forms/auto-complete/RuiAutoCompleteOptionList.vue';
@@ -77,15 +78,15 @@ const {
   groupBy,
   itemDisabled,
   searchIncludesGroupLabel = false,
-} = defineProps<AutoCompleteProps<TValue, TItem, TClear> & {
+} = defineProps<AutoCompleteProps<TValue, TItem, TClear, TClearable> & {
   /**
    * The selected key, or keys in an array for a multiple select. Its type is the bound value's, so a
    * `Ref<number>` takes the update as is.
    */
   modelValue: TValue;
-} & /* @vue-ignore */ Omit<HTMLAttributes, keyof AutoCompleteProps<TValue, TItem, TClear> | 'modelValue'>>();
+} & /* @vue-ignore */ Omit<HTMLAttributes, keyof AutoCompleteProps<TValue, TItem, TClear, TClearable> | 'modelValue'>>();
 
-defineEmits<ModelValueEmits<TValue | TClear>>();
+defineEmits<ModelValueEmits<TValue | ClearedValue<TValue, TClear, TClearable>>>();
 
 const slots = defineSlots<{
   'activator'?: (props: {
@@ -231,6 +232,7 @@ const {
 } = useAutoCompleteKeyboardNavigation<TItem>(
   {
     chips: () => chips,
+    clearable: () => clearable,
     customValue: () => customValue,
     multiple,
   },
