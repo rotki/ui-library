@@ -36,7 +36,8 @@ export interface MenuSelectProps<TValue, TItem, TClear = undefined, TClearable e
   loading?: boolean;
   readOnly?: boolean;
   dense?: boolean;
-  clearable?: TClearable;
+  /** Shows a clear button. The `& boolean` gives the SFC compiler a `Boolean` prop to cast a bare attribute. */
+  clearable?: TClearable & boolean;
   label?: string;
   /** Where the label shows; falls back to the nearest `RuiFieldDefaults`, then the app default, then `top`. */
   labelPlacement?: LabelPlacement;

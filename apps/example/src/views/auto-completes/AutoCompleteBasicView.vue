@@ -4,9 +4,9 @@ import { createOptions } from '@/data/options';
 
 const options = createOptions();
 
-const defaultValue = ref<number>(1);
+const defaultValue = ref<number | undefined>(1);
 const hiddenLabelValue = ref<number>();
-const denseValue = ref<number>(1);
+const denseValue = ref<number | undefined>(1);
 const disabledValue = ref<number>(1);
 const loadingValue = ref<number>();
 const errorValue = ref<number>();

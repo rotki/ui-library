@@ -982,6 +982,24 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
     expect(cleared.emitted('update:modelValue')?.[0]).toEqual(['']);
   });
 
+  it('should show the clear button for a bare clearable attribute', async () => {
+    const option4 = options[4];
+    assert(option4);
+    wrapper = createWrapper<string, SelectOption>({
+      attachTo: document.body,
+      attrs: { clearable: '' },
+      props: {
+        keyAttr: 'id',
+        modelValue: option4.id,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    await vi.advanceTimersToNextTimerAsync();
+    expect(wrapper.find('[data-id=clear]').exists()).toBe(true);
+  });
+
   it('should leave a single select that is not clearable as it is on Backspace with nothing typed', async () => {
     const option4 = options[4];
     assert(option4);

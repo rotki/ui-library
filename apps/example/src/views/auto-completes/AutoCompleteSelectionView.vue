@@ -4,7 +4,7 @@ import { RuiAutoComplete } from '@rotki/ui-library/components';
 const primitiveOptions: string[] = ['Lorem', 'Ipsum', 'Dolor', 'Sit amet', 'Consecteur'];
 
 const singleValue = ref<string>();
-const singlePreselectedValue = ref<string>('Lorem');
+const singlePreselectedValue = ref<string | undefined>('Lorem');
 const multiValue = ref<string[]>([]);
 const multiPreselectedValue = ref<string[]>(['Lorem', 'Ipsum']);
 const autoFirstValue = ref<string>();

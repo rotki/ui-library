@@ -205,6 +205,22 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
     expect(wrapper.emitted('update:modelValue')).toEqual([[undefined]]);
   });
 
+  it('should show the clear button for a bare clearable attribute', () => {
+    const option0 = options[0];
+    assert(option0);
+    wrapper = createWrapper({
+      attrs: { clearable: '' },
+      props: {
+        keyAttr: 'id',
+        modelValue: option0.id,
+        options,
+        textAttr: 'label',
+      },
+    });
+
+    expect(wrapper.find('[data-id=clear]').exists()).toBe(true);
+  });
+
   it('should emit valueOnClear in place of undefined on clear', async () => {
     const option0 = options[0];
     assert(option0);

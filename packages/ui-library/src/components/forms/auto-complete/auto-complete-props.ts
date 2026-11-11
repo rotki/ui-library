@@ -25,8 +25,11 @@ export interface AutoCompleteProps<TValue, TItem, TClear = undefined, TClearable
   loading?: boolean;
   readOnly?: boolean;
   dense?: boolean;
-  /** Shows a clear button, and lets Backspace on an empty search clear a single select. */
-  clearable?: TClearable;
+  /**
+   * Shows a clear button, and lets Backspace on an empty search clear a single select. The `& boolean`
+   * is no-op to the type checker, but gives the SFC compiler a `Boolean` prop to cast a bare attribute.
+   */
+  clearable?: TClearable & boolean;
   label?: string;
   /** Where the label shows; falls back to the nearest `RuiFieldDefaults`, then the app default, then `top`. */
   labelPlacement?: LabelPlacement;

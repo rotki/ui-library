@@ -4,7 +4,7 @@ import { RuiMenuSelect } from '@rotki/ui-library';
 const primitiveOptions: string[] = ['Lorem', 'Ipsum', 'Dolor', 'Sit amet', 'Consecteur'];
 
 const singleValue = ref<string>();
-const preselectedValue = ref<string>('Lorem');
+const preselectedValue = ref<string | undefined>('Lorem');
 const autoFirstValue = ref<string>();
 const noDataValue = ref<string>();
 const hideNoDataValue = ref<string>();
