@@ -4,6 +4,10 @@
  * clears to an empty list, which its value type already holds.
  *
  * `TClearable` distributes, so a `:clearable` bound to a `boolean` counts as clearable.
+ *
+ * A wrapper that forwards `clearable` and `valueOnClear` types its update with this, and declares its
+ * own `clearable` as `TClearable & boolean`: a bare type parameter leaves the prop without a `Boolean`
+ * runtime type, so a bare `clearable` attribute arrives as `''` and the field is not clearable.
  */
 export type ClearedValue<TValue, TClear, TClearable extends boolean> = [TValue] extends [readonly unknown[]]
   ? never

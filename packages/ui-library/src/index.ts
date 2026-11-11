@@ -35,6 +35,8 @@ export { StepperOrientation, StepperState, type StepperStep };
 
 export type { VueClassValue } from '@/types/class-value';
 
+export type { ClearedValue } from '@/types/clear-value';
+
 export {
   type InitThemeOptions,
   type ThemeConfig,
