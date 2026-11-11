@@ -1,15 +1,15 @@
 import type { ComponentMountingOptions } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { options } from '@/__test__/options';
+import { options, type SelectOption } from '@/__test__/options';
 import RuiMenuSelect from '@/components/forms/select/RuiMenuSelect.vue';
 import { assert } from '@/utils/assert';
 import { expectWrapperToHaveClass, queryAllMenuButtons, queryByRole, queryMenuButton } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper<TItem>(
-  options?: ComponentMountingOptions<typeof RuiMenuSelect<string | undefined, TItem>>,
-): MountedWrapper<typeof RuiMenuSelect<string | undefined, TItem>> {
-  return createMounter(RuiMenuSelect<string | undefined, TItem>, {
+function createWrapper<TItem, TClear = never>(
+  options?: ComponentMountingOptions<typeof RuiMenuSelect<string | undefined, TItem, TClear>>,
+): MountedWrapper<typeof RuiMenuSelect<string | undefined, TItem, TClear>> {
+  return createMounter(RuiMenuSelect<string | undefined, TItem, TClear>, {
     global: {
       stubs: {
         RuiProgress: true,
@@ -203,6 +203,24 @@ describe('components/forms/select/RuiMenuSelect.vue', () => {
 
     await clearButton.trigger('click');
     expect(wrapper.emitted('update:modelValue')).toEqual([[undefined]]);
+  });
+
+  it('should emit valueOnClear in place of undefined on clear', async () => {
+    const option0 = options[0];
+    assert(option0);
+    const cleared = createWrapper<SelectOption, string>({
+      props: {
+        clearable: true,
+        keyAttr: 'id',
+        modelValue: option0.id,
+        options,
+        textAttr: 'label',
+        valueOnClear: '',
+      },
+    });
+
+    await cleared.find('[data-id=clear]').trigger('click');
+    expect(cleared.emitted('update:modelValue')).toEqual([['']]);
   });
 
   it('should keep the clear button clear of the chevron unless dense', async () => {

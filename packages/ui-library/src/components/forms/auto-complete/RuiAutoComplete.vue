@@ -1,4 +1,4 @@
-<script lang="ts" setup generic="TValue, TItem">
+<script lang="ts" setup generic="TValue, TItem, TClear = never">
 import type { HTMLAttributes, Ref } from 'vue';
 import type { AutoCompleteProps } from '@/components/forms/auto-complete/auto-complete-props';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
@@ -23,6 +23,7 @@ import {
   useAutoCompleteSelection,
   useAutoCompleteValue,
 } from '@/composables/forms/auto-complete';
+import { type ModelValueEmits, usePropModel } from '@/composables/prop-model';
 import { useFormDetails, useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 import { cn } from '@/utils/tv';
@@ -32,16 +33,11 @@ defineOptions({
   inheritAttrs: false,
 });
 
-/**
- * The selected key, or keys in an array for a multiple select. Its type is the bound value's, so a
- * `Ref<number>` takes the update as is. Clearing a single select sets it to `undefined`, and a
- * multiple one to `[]`: the component writes through this wider ref.
- */
-const modelValue: Ref<TValue | unknown[] | undefined> = defineModel<TValue>({ required: true });
-
 const searchInputModel = defineModel<string>('searchInput', { default: '' });
 
 const {
+  modelValue: modelValueProp,
+  valueOnClear,
   options = [],
   disabled = false,
   loading = false,
@@ -81,7 +77,15 @@ const {
   groupBy,
   itemDisabled,
   searchIncludesGroupLabel = false,
-} = defineProps<AutoCompleteProps<TValue, TItem> & /* @vue-ignore */ Omit<HTMLAttributes, keyof AutoCompleteProps<TValue, TItem>>>();
+} = defineProps<AutoCompleteProps<TValue, TItem, TClear> & {
+  /**
+   * The selected key, or keys in an array for a multiple select. Its type is the bound value's, so a
+   * `Ref<number>` takes the update as is.
+   */
+  modelValue: TValue;
+} & /* @vue-ignore */ Omit<HTMLAttributes, keyof AutoCompleteProps<TValue, TItem, TClear> | 'modelValue'>>();
+
+defineEmits<ModelValueEmits<TValue | TClear>>();
 
 const slots = defineSlots<{
   'activator'?: (props: {
@@ -103,6 +107,9 @@ const slots = defineSlots<{
   'placeholder'?: (props: { disabled: boolean; readOnly: boolean }) => any;
   'footer'?: () => any;
 }>();
+
+// The component writes through this wider ref: a single select clears to `valueOnClear`, a multiple one to `[]`
+const modelValue: Ref<TValue | TClear | unknown[] | undefined> = usePropModel('modelValue', () => modelValueProp);
 
 const { getText, getIdentifier } = useDropdownOptionProperty<TValue, TItem>({
   keyAttr,
@@ -155,10 +162,11 @@ const shouldApplyValueAsSearch = computed<boolean>(
   () => !(slots.selection || get(multiple) || chips),
 );
 
-const { value } = useAutoCompleteValue<TValue | unknown[], TItem>(
+const { value } = useAutoCompleteValue<TValue | TClear | unknown[], TItem>(
   modelValue,
   () => options,
   {
+    valueOnClear: () => valueOnClear,
     keyAttr: () => keyAttr,
     returnObject: () => returnObject,
     customValue: () => customValue,
@@ -294,7 +302,7 @@ const { clear, setSearchAsValue, setValue } = useAutoCompleteSelection<TItem>({
   isOpen,
   itemIndexInValue,
   multiple,
-  resetModel: (): void => set(modelValue, Array.isArray(get(modelValue)) ? [] : undefined),
+  resetModel: (): void => set(modelValue, Array.isArray(get(modelValue)) ? [] : valueOnClear),
   searchInputFocused,
   settleOnInput,
   shouldApplyValueAsSearch,

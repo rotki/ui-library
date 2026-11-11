@@ -1,4 +1,4 @@
-<script lang="ts" setup generic="TValue, TItem">
+<script lang="ts" setup generic="TValue, TItem, TClear = never">
 import type { ButtonHTMLAttributes, Ref } from 'vue';
 import type { VueClassValue } from '@/types/class-value';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
@@ -10,6 +10,7 @@ import RuiProgress from '@/components/progress/RuiProgress.vue';
 import { type LabelPlacement, useLabelPlacement } from '@/composables/defaults/field';
 import { getOptionHeight, type KeyOfType, useDropdownMenu } from '@/composables/dropdown-menu';
 import { type FloatingOptions, Placement } from '@/composables/floating';
+import { type ModelValueEmits, usePropModel } from '@/composables/prop-model';
 import { type FormDetails, useFormDetails, useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 import { cn } from '@/utils/tv';
@@ -21,8 +22,13 @@ export interface RuiMenuSelectClassNames {
   option?: VueClassValue;
 }
 
-export interface MenuSelectProps<TValue, TItem> {
+export interface MenuSelectProps<TValue, TItem, TClear = never> {
   options: TItem[];
+  /**
+   * What `clearable` writes in place of `undefined`: `value-on-clear=""` keeps a `Ref<string>` a
+   * string. The update is typed with it, so `v-model` takes exactly what is sent.
+   */
+  valueOnClear?: TClear;
   keyAttr?: KeyOfType<TItem, TValue extends Array<infer U> ? U : TValue>;
   textAttr?: keyof TItem;
   disabled?: boolean;
@@ -56,14 +62,9 @@ defineOptions({
   inheritAttrs: false,
 });
 
-/**
- * The selected key, or the item itself without `keyAttr`. Its type is the bound value's, so a
- * `Ref<number>` takes the update as is. `clearable` sets it to `undefined`: bind a type that allows
- * it. The component writes through the wider ref.
- */
-const modelValue: Ref<TValue | undefined> = defineModel<TValue>({ required: true });
-
 const {
+  modelValue: modelValueProp,
+  valueOnClear,
   options,
   disabled = false,
   loading = false,
@@ -88,7 +89,15 @@ const {
   hideNoData = false,
   noDataText = 'No data available',
   required = false,
-} = defineProps<MenuSelectProps<TValue, TItem> & /* @vue-ignore */ Omit<ButtonHTMLAttributes, keyof MenuSelectProps<TValue, TItem>>>();
+} = defineProps<MenuSelectProps<TValue, TItem, TClear> & {
+  /**
+   * The selected key, or the item itself without `keyAttr`. Its type is the bound value's, so a
+   * `Ref<number>` takes the update as is.
+   */
+  modelValue: TValue;
+} & /* @vue-ignore */ Omit<ButtonHTMLAttributes, keyof MenuSelectProps<TValue, TItem, TClear> | 'modelValue'>>();
+
+defineEmits<ModelValueEmits<TValue | TClear>>();
 
 defineSlots<{
   'activator'?: (props: {
@@ -107,6 +116,9 @@ defineSlots<{
   'item.append'?: (props: { disabled: boolean; item: TItem; active: boolean }) => any;
   'no-data'?: () => any;
 }>();
+
+// The component writes through this wider ref: `clearable` writes `valueOnClear`
+const modelValue: Ref<TValue | TClear | undefined> = usePropModel('modelValue', () => modelValueProp);
 
 const menuRef = useTemplateRef<HTMLDivElement>('menuRef');
 const activator = useTemplateRef<HTMLDivElement>('activator');
@@ -182,7 +194,7 @@ const ui = computed<ReturnType<typeof menuSelectStyles>>(() => menuSelectStyles(
 const highlightedClass = menuSelectStyles({}).highlighted();
 
 function clear(): void {
-  set(modelValue, undefined);
+  set(modelValue, valueOnClear);
 }
 
 const menuFloatingOptions = computed<FloatingOptions>(() => ({

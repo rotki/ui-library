@@ -16,10 +16,10 @@ import {
 } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
-function createWrapper<TValue, TItem>(
-  options?: ComponentMountingOptions<typeof RuiAutoComplete<TValue, TItem>>,
-): MountedWrapper<typeof RuiAutoComplete<TValue, TItem>> {
-  return createMounter(RuiAutoComplete<TValue, TItem>, {
+function createWrapper<TValue, TItem, TClear = never>(
+  options?: ComponentMountingOptions<typeof RuiAutoComplete<TValue, TItem, TClear>>,
+): MountedWrapper<typeof RuiAutoComplete<TValue, TItem, TClear>> {
+  return createMounter(RuiAutoComplete<TValue, TItem, TClear>, {
     global: {
       stubs: {
         Transition: false,
@@ -958,6 +958,50 @@ describe('components/forms/auto-complete/RuiAutoComplete.vue', () => {
 
     expect(wrapper.emitted()).toHaveProperty('update:modelValue');
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([undefined]);
+  });
+
+  it('should emit valueOnClear in place of undefined on clear', async () => {
+    const option4 = options[4];
+    assert(option4);
+    const cleared = createWrapper<string, SelectOption, string>({
+      attachTo: document.body,
+      props: {
+        clearable: true,
+        keyAttr: 'id',
+        modelValue: option4.id,
+        options,
+        textAttr: 'label',
+        valueOnClear: '',
+      },
+    });
+
+    await vi.advanceTimersToNextTimerAsync();
+    await cleared.find('[data-id=clear]').trigger('click');
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(cleared.emitted('update:modelValue')?.[0]).toEqual(['']);
+  });
+
+  it('should still clear a multiple select to an empty list when valueOnClear is set', async () => {
+    const option4 = options[4];
+    assert(option4);
+    const cleared = createWrapper<string[], SelectOption, string>({
+      attachTo: document.body,
+      props: {
+        clearable: true,
+        keyAttr: 'id',
+        modelValue: [option4.id],
+        options,
+        textAttr: 'label',
+        valueOnClear: '',
+      },
+    });
+
+    await vi.advanceTimersToNextTimerAsync();
+    await cleared.find('[data-id=clear]').trigger('click');
+    await vi.advanceTimersToNextTimerAsync();
+
+    expect(cleared.emitted('update:modelValue')?.[0]).toEqual([[]]);
   });
 
   it('should show all options when noFilter is true', async () => {

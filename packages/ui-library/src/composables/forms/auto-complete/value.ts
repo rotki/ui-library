@@ -3,13 +3,15 @@ import { get, set } from '@vueuse/shared';
 import { assert } from '@/utils/assert';
 import { isEqual } from '@/utils/is-equal';
 
-export interface UseAutoCompleteValueOptions<TItem> {
+export interface UseAutoCompleteValueOptions<TItem, TValue = unknown> {
   /** The property used as the unique identifier for each item. */
   keyAttr?: MaybeRefOrGetter<keyof TItem | undefined>;
   /** Whether to return the full item object instead of just the key. */
   returnObject?: MaybeRefOrGetter<boolean>;
   /** Whether custom (free-text) values are allowed. */
   customValue?: MaybeRefOrGetter<boolean>;
+  /** What a single select holds once nothing is selected; `undefined` when unset. */
+  valueOnClear?: MaybeRefOrGetter<TValue | undefined>;
 }
 
 export interface UseAutoCompleteValueReturn<TItem> {
@@ -32,7 +34,7 @@ export interface UseAutoCompleteValueDeps<TItem> {
 export function useAutoCompleteValue<TValue, TItem>(
   modelValue: Ref<TValue | undefined>,
   options: MaybeRefOrGetter<TItem[]>,
-  opts: UseAutoCompleteValueOptions<TItem>,
+  opts: UseAutoCompleteValueOptions<TItem, TValue>,
   deps: UseAutoCompleteValueDeps<TItem>,
 ): UseAutoCompleteValueReturn<TItem> {
   function buildOptionsMap(optionsData: TItem[]): Map<unknown, TItem> {
@@ -46,8 +48,9 @@ export function useAutoCompleteValue<TValue, TItem>(
   // Create maps for O(1) lookup performance
   const optionsMap = computed<Map<unknown, TItem>>(() => buildOptionsMap(toValue(options)));
 
+  /** The model as a list of keys; the clear value is no selection, even one a custom value could hold. */
   function convertModelValueToArray(modelValueData: TValue | undefined): any[] {
-    if (modelValueData === null || modelValueData === undefined)
+    if (modelValueData === null || modelValueData === undefined || modelValueData === toValue(opts.valueOnClear))
       return [];
     return Array.isArray(modelValueData) ? modelValueData : [modelValueData];
   }
@@ -111,7 +114,7 @@ export function useAutoCompleteValue<TValue, TItem>(
       return onUpdateModelValue(selection as TValue);
 
     if (selection.length === 0)
-      return onUpdateModelValue(undefined);
+      return onUpdateModelValue(toValue(opts.valueOnClear));
 
     return onUpdateModelValue(selection[0] as TValue);
   }

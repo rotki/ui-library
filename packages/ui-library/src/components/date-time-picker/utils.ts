@@ -7,6 +7,11 @@ export function guessTimezone() {
   return timezones.find(tz => tz === timezone);
 }
 
+/** Whether a picker's model holds a moment, rather than `undefined` or the value it clears to. */
+export function holdsMoment(value: unknown, valueOnClear: unknown): value is Date | number {
+  return (value instanceof Date || typeof value === 'number') && value !== valueOnClear;
+}
+
 export function includeSeconds(accuracy: TimeAccuracy): boolean {
   return accuracy === TimeAccuracy.SECOND || accuracy === TimeAccuracy.MILLISECOND;
 }

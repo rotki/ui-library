@@ -33,6 +33,17 @@ const createWrapper = createMounter(RuiDateTimePicker<'date' | 'epoch-ms' | 'epo
   },
 });
 
+const createNullableWrapper = createMounter(RuiDateTimePicker<'epoch-ms', null>, {
+  global: {
+    stubs: {
+      Teleport: {
+        template: '<div data-id="teleport"><slot /></div>',
+      },
+      TransitionGroup: TransitionGroupStub,
+    },
+  },
+});
+
 /**
  * A bound as an error message writes it: in the field's own format, which for
  * every picker here is the default `DD/MM/YYYY HH:mm`.
@@ -599,6 +610,37 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     assert(lastEmittedValue && lastEmittedValue instanceof Date);
     expect(dayjs(lastEmittedValue).isSame(dayjs('2021-03-03 10:08')), 'the emitted date was not the expected')
       .toBeTruthy();
+  });
+
+  it('should emit valueOnClear in place of undefined when cleared', async () => {
+    const nullable = createNullableWrapper({
+      props: {
+        allowEmpty: true,
+        modelValue: new Date(2023, 0, 15).getTime(),
+        valueOnClear: null,
+      },
+    });
+
+    await vi.runOnlyPendingTimersAsync();
+    await nullable.find('[data-id="clear-button"]').trigger('click');
+    await vi.runOnlyPendingTimersAsync();
+
+    expect(nullable.emitted('update:modelValue')?.[0]).toEqual([null]);
+  });
+
+  it('should read the clear value as empty rather than as a moment', async () => {
+    const nullable = createNullableWrapper({
+      props: {
+        allowEmpty: true,
+        modelValue: null,
+        valueOnClear: null,
+      },
+    });
+
+    await vi.runOnlyPendingTimersAsync();
+
+    expect(nullable.find('input').element.value).toBe('');
+    expect(nullable.emitted('update:modelValue')).toBeUndefined();
   });
 
   it('should clear the field on delete and allow the user to type a new date', async () => {

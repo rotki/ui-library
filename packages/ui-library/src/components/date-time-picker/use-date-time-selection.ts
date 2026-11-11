@@ -6,7 +6,7 @@ import { dayjs } from '@/components/date-time-picker/dayjs-setup';
 import { completePartialEntry, type PartialTimeMode } from '@/components/date-time-picker/partial-time';
 import { buildDateTime, clampToBounds } from '@/components/date-time-picker/segment-utils';
 import { useDateBounds } from '@/components/date-time-picker/use-date-bounds';
-import { formatWallClock, guessTimezone, includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
+import { formatWallClock, guessTimezone, holdsMoment, includeMilliseconds, includeSeconds } from '@/components/date-time-picker/utils';
 
 type DateTimeModelType = 'date' | 'epoch-ms' | 'epoch';
 
@@ -16,8 +16,10 @@ type ModelValueType<T extends DateTimeModelType> =
       T extends 'epoch' ? number | undefined :
         Date | number | undefined;
 
-interface DateTimeSelectionOptions<T extends DateTimeModelType> {
-  modelValue: Ref<ModelValueType<T>>;
+interface DateTimeSelectionOptions<T extends DateTimeModelType, TClear> {
+  modelValue: Ref<ModelValueType<T> | NoInfer<TClear>>;
+  /** What `clear` writes in place of `undefined`; a model holding it reads as empty. */
+  valueOnClear?: () => TClear | undefined;
   type: T;
   accuracy: TimeAccuracy;
   minDate: Date | number | undefined;
@@ -59,8 +61,8 @@ interface DateTimeSelectionReturn {
 
 const MILLISECONDS = 1000;
 
-export function useDateTimeSelection<T extends DateTimeModelType>(
-  options: DateTimeSelectionOptions<T>,
+export function useDateTimeSelection<T extends DateTimeModelType, TClear = undefined>(
+  options: DateTimeSelectionOptions<T, TClear>,
 ): DateTimeSelectionReturn {
   const {
     accuracy,
@@ -71,6 +73,7 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
     modelValue,
     partialTime,
     type,
+    valueOnClear,
   } = options;
 
   const modelYear = ref<number | undefined>();
@@ -195,16 +198,15 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
     emitUpdate(updatedModel);
   }
 
-  function clear(): void {
+  function clearSegments(): void {
     clearErrors();
-    set(modelYear, undefined);
-    set(modelMonth, undefined);
-    set(modelDay, undefined);
-    set(modelHour, undefined);
-    set(modelMinute, undefined);
-    set(modelSecond, undefined);
-    set(modelMillisecond, undefined);
-    set(modelValue, undefined as ModelValueType<T>);
+    for (const segment of [modelYear, modelMonth, modelDay, modelHour, modelMinute, modelSecond, modelMillisecond])
+      set(segment, undefined);
+  }
+
+  function clear(): void {
+    clearSegments();
+    set(modelValue, valueOnClear?.());
   }
 
   function clampToAllowed(date: Dayjs): Dayjs {
@@ -335,7 +337,7 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
     updateModelValue();
   }
 
-  function updateInternalModel(value: ModelValueType<T>): void {
+  function updateInternalModel(value: Date | number): void {
     ignoreUpdates(() => {
       const updatedValue = type === 'epoch' && typeof value === 'number'
         ? value * MILLISECONDS
@@ -355,17 +357,16 @@ export function useDateTimeSelection<T extends DateTimeModelType>(
 
   watch(modelValue, (value) => {
     set(now, dayjs());
-    if (value === undefined) {
-      clear();
-    }
-    else {
+    if (holdsMoment(value, valueOnClear?.()))
       updateInternalModel(value);
-    }
+    else
+      clearSegments();
   });
 
   onMounted(() => {
-    if (isDefined(modelValue)) {
-      updateInternalModel(get(modelValue));
+    const value = get(modelValue);
+    if (holdsMoment(value, valueOnClear?.())) {
+      updateInternalModel(value);
     }
     else if (!allowEmpty) {
       setNow();

@@ -13,7 +13,7 @@ interface Harness<TValue, TItem> {
 function setup<TValue, TItem>(
   initialModelValue: TValue | undefined,
   initialOptions: TItem[],
-  opts: UseAutoCompleteValueOptions<TItem>,
+  opts: UseAutoCompleteValueOptions<TItem, TValue>,
   depsOverride: Partial<UseAutoCompleteValueDeps<TItem>> = {},
 ): Harness<TValue, TItem> {
   const modelValue = ref(initialModelValue) as Ref<TValue | undefined>;
@@ -60,6 +60,23 @@ describe('composables/forms/auto-complete/value', () => {
       const h = setup<number, number>(0, [1, 2, 3], { customValue: true });
       expect(h.result.value.value).toEqual([0]);
     }).not.toThrow();
+  });
+
+  it('should write undefined when a single selection is removed', () => {
+    const h = setup<string, string>('apple', ['apple', 'banana'], {});
+    h.result.setSelected([]);
+    expect(h.modelValue.value).toBeUndefined();
+  });
+
+  it('should write the clear value when a single selection is removed', () => {
+    const h = setup<string, string>('apple', ['apple', 'banana'], { valueOnClear: '' });
+    h.result.setSelected([]);
+    expect(h.modelValue.value).toBe('');
+  });
+
+  it('should read the clear value as no selection, even with custom values', () => {
+    const h = setup<string, string>('', ['apple', 'banana'], { customValue: true, valueOnClear: '' });
+    expect(h.result.value.value).toEqual([]);
   });
 
   it('should treat null modelValue as empty selection', () => {

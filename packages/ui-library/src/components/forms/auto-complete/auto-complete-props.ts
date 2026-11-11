@@ -11,8 +11,14 @@ export interface RuiAutoCompleteClassNames {
   menu?: VueClassValue;
 }
 
-export interface AutoCompleteProps<TValue, TItem> {
+export interface AutoCompleteProps<TValue, TItem, TClear = never> {
   options?: TItem[];
+  /**
+   * What a single select writes once it is cleared or its selection removed, in place of
+   * `undefined`: `value-on-clear=""` keeps a `Ref<string>` a string. The update is typed with it, so
+   * `v-model` takes exactly what is sent. A multiple select still clears to `[]`.
+   */
+  valueOnClear?: TClear;
   keyAttr?: KeyOfType<TItem, TValue extends Array<infer U> ? U : TValue>;
   textAttr?: keyof TItem;
   disabled?: boolean;

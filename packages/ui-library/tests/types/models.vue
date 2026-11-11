@@ -39,6 +39,7 @@ const id = ref<number>(1);
 const optionalId = ref<number | undefined>();
 const ids = ref<number[]>([]);
 const name = ref<string>('one');
+const nullableName = ref<string | null>(null);
 
 const radio = ref<string>('a');
 
@@ -57,6 +58,8 @@ const literalTab = ref<'a' | 'b'>('a');
 const numericTab = ref<number>(0);
 
 const epoch = ref<number | undefined>();
+const nullableEpoch = ref<number | null>(null);
+const nullableDate = ref<Date | null>(null);
 const date = ref<Date | undefined>();
 
 const selected = ref<number[]>([]);
@@ -85,6 +88,13 @@ const flag = ref<boolean>(false);
     text-attr="name"
     clearable
   />
+  <RuiMenuSelect
+    v-model="name"
+    :options="[{ id: 'one' }]"
+    key-attr="id"
+    clearable
+    value-on-clear=""
+  />
 
   <RuiAutoComplete
     v-model="id"
@@ -101,6 +111,18 @@ const flag = ref<boolean>(false);
   <RuiAutoComplete
     v-model="name"
     :options="['one', 'two']"
+  />
+  <RuiAutoComplete
+    v-model="name"
+    :options="['one', 'two']"
+    clearable
+    value-on-clear=""
+  />
+  <RuiAutoComplete
+    v-model="nullableName"
+    :options="['one', 'two']"
+    clearable
+    :value-on-clear="null"
   />
 
   <RuiRadioGroup v-model="radio">
@@ -174,6 +196,17 @@ const flag = ref<boolean>(false);
     v-model="date"
     type="date"
   />
+  <RuiDateTimePicker
+    v-model="nullableEpoch"
+    allow-empty
+    :value-on-clear="null"
+  />
+  <RuiDateTimePicker
+    v-model="nullableDate"
+    type="date"
+    allow-empty
+    :value-on-clear="null"
+  />
 
   <RuiDataTable
     v-model="selected"
@@ -212,6 +245,18 @@ const flag = ref<boolean>(false);
   />
   <!-- @vue-expect-error a tab value is a string or a number -->
   <RuiTabs v-model="flag" />
+  <!-- @vue-expect-error clearing sends null, which a string model cannot take -->
+  <RuiAutoComplete
+    v-model="name"
+    :options="['one', 'two']"
+    clearable
+    :value-on-clear="null"
+  />
   <!-- @vue-expect-error the picker emits an epoch when no type is given, not a Date -->
   <RuiDateTimePicker v-model="date" />
+  <!-- @vue-expect-error clearing still sends undefined without a clear value -->
+  <RuiDateTimePicker
+    v-model="nullableEpoch"
+    allow-empty
+  />
 </template>

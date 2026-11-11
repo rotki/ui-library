@@ -1,4 +1,4 @@
-<script lang="ts" setup generic="T extends 'date' | 'epoch-ms' | 'epoch' = 'epoch-ms'">
+<script lang="ts" setup generic="T extends 'date' | 'epoch-ms' | 'epoch' = 'epoch-ms', TClear = undefined">
 import type { ComponentPublicInstance, HTMLAttributes, Ref } from 'vue';
 import type { DateTimePickerAction, DateTimeSegmentType } from '@/components/date-time-picker/types';
 import type { TimePickerSelection } from '@/components/time-picker/RuiTimePicker.vue';
@@ -14,6 +14,7 @@ import { activatorHandlers } from '@/components/overlays/menu/activator-handlers
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';
 import { type LabelPlacement, useLabelPlacement } from '@/composables/defaults/field';
 import { type FloatingOptions, Placement } from '@/composables/floating';
+import { type ModelValueEmits, usePropModel } from '@/composables/prop-model';
 import { useRuiI8n } from '@/composables/use-rui-i18n';
 import { RUI_I18N_KEYS } from '@/i18n/keys';
 import { type FormDetails, useFormDetails, useFormTextDetail } from '@/utils/form-text-detail';
@@ -98,14 +99,11 @@ defineOptions({
   inheritAttrs: false,
 });
 
-/**
- * The picked moment in the shape `type` names: a `Date` for `date`, a number for `epoch-ms` (the
- * default) and `epoch`. The component writes through the wider ref.
- */
-const modelValue: Ref<ModelValueType<DateTimeModelType>> = defineModel<ModelValueType<T>>({ required: true });
 const menuOpen = defineModel<boolean>('menuOpen', { default: false });
 
 const {
+  modelValue: modelValueProp,
+  valueOnClear,
   disabled = false,
   readonly = false,
   allowEmpty = false,
@@ -134,11 +132,27 @@ const {
    * @defaultValue 'epoch-ms'
    */
   type?: T;
-} & /* @vue-ignore */ Omit<HTMLAttributes, keyof RuiDateTimePickerProps>>();
+  /**
+   * The picked moment in the shape `type` names: a `Date` for `date`, a number for `epoch-ms` (the
+   * default) and `epoch`.
+   */
+  modelValue: Exclude<ModelValueType<T>, undefined> | NoInfer<TClear>;
+  /**
+   * What clearing writes in place of `undefined`: `:value-on-clear="null"` lets a `Ref<number | null>`
+   * take the update. The update is typed with it, so `v-model` takes exactly what is sent. A model
+   * holding it reads as empty, so pick a value the picker never emits.
+   */
+  valueOnClear?: TClear;
+} & /* @vue-ignore */ Omit<HTMLAttributes, keyof RuiDateTimePickerProps | 'modelValue' | 'valueOnClear'>>();
+
+defineEmits<ModelValueEmits<Exclude<ModelValueType<T>, undefined> | TClear>>();
 
 defineSlots<{
   'menu-content'?: () => any;
 }>();
+
+// The component writes through this wider ref: a picked moment of any `type`, or the clear value
+const modelValue: Ref<ModelValueType<DateTimeModelType> | TClear> = usePropModel('modelValue', () => modelValueProp);
 
 // `epoch-ms` is no `T`, so the default is applied here rather than in the destructuring
 const modelType: DateTimeModelType = typeProp ?? 'epoch-ms';
@@ -220,6 +234,7 @@ const {
   modelValue,
   partialTime,
   type: modelType,
+  valueOnClear: () => valueOnClear,
 });
 
 const { setValue, getCurrent } = useInputHandler(segmentData, currentValue);
