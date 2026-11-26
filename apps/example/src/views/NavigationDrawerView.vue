@@ -35,7 +35,8 @@ const navigationDrawers = ref<NavigationDrawerItem[]>([
       <div
         v-for="(navigationDrawer, i) in navigationDrawers"
         :key="i"
-        :data-id="`navigation-drawer-${i}`"
+        data-id="navigation-drawer"
+        :data-index="i"
       >
         <RuiNavigationDrawer
           v-bind="navigationDrawer"

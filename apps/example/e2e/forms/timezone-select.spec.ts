@@ -14,23 +14,23 @@ test.describe('timezone-select', () => {
   });
 
   test('should render the default Timezone label', async ({ page }) => {
-    const select = page.getByTestId('timezone-select-0');
+    const select = page.locator('[data-id=timezone-select][data-index="0"]');
     await expect(select).toBeVisible();
     await expect(select).toContainText('Timezone');
   });
 
   test('should display a pre-selected timezone', async ({ page }) => {
-    const select = page.getByTestId('timezone-select-1');
+    const select = page.locator('[data-id=timezone-select][data-index="1"]');
     await expect(select.locator('input').first()).toHaveValue('Europe/Madrid');
   });
 
   test('should display the selected timezone with underscores replaced by spaces', async ({ page }) => {
-    const select = page.getByTestId('timezone-select-2');
+    const select = page.locator('[data-id=timezone-select][data-index="2"]');
     await expect(select.locator('input').first()).toHaveValue('America/New York');
   });
 
   test('should not open the menu when disabled', async ({ page }) => {
-    const select = page.getByTestId('timezone-select-3');
+    const select = page.locator('[data-id=timezone-select][data-index="3"]');
     const activator = select.locator('[data-id=activator]');
     await expect(select.getByRole('combobox')).toBeDisabled();
     await activator.click({ force: true });
@@ -38,13 +38,13 @@ test.describe('timezone-select', () => {
   });
 
   test('should display error messages', async ({ page }) => {
-    const select = page.getByTestId('timezone-select-5');
+    const select = page.locator('[data-id=timezone-select][data-index="5"]');
     await expect(select).toContainText('A timezone is required');
     await expect(select.locator('input').first()).toHaveAttribute('aria-invalid', 'true');
   });
 
   test('should open the menu and filter timezones by search input', async ({ page }) => {
-    const select = page.getByTestId('timezone-select-0');
+    const select = page.locator('[data-id=timezone-select][data-index="0"]');
     const activator = select.locator('[data-id=activator]');
     await activator.click();
 
@@ -57,7 +57,7 @@ test.describe('timezone-select', () => {
   });
 
   test('should select a timezone from the menu', async ({ page }) => {
-    const select = page.getByTestId('timezone-select-0');
+    const select = page.locator('[data-id=timezone-select][data-index="0"]');
     const activator = select.locator('[data-id=activator]');
     await activator.click();
 

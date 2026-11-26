@@ -7,11 +7,12 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const { items, itemClass, getItemClass: getItemClassFn, getItemDataId } = defineProps<{
+const { items, itemClass, getItemClass: getItemClassFn, itemDataId } = defineProps<{
   items: T[];
   itemClass?: StaticClassProps | StaticClassProps[];
   getItemClass?: (item: T, index: number) => StaticClassProps;
-  getItemDataId?: (item: T, index: number) => string;
+  /** The `data-id` of every item, which also gets its index as `data-index` */
+  itemDataId?: string;
 }>();
 
 defineSlots<{
@@ -48,7 +49,8 @@ function getItemClass(item: T, index: number): StaticClassProps | StaticClassPro
       v-for="(item, i) in items"
       :key="i"
       :class="getItemClass(item, i)"
-      :data-id="getItemDataId?.(item, i)"
+      :data-id="itemDataId"
+      :data-index="itemDataId ? i : undefined"
     >
       <slot
         name="item"

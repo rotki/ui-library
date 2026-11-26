@@ -53,7 +53,7 @@ onBeforeMount(() => {
       :items="tabs"
       item-class="flex mb-6 gap-x-6"
       :get-item-class="item => item.vertical ? 'flex-row' : 'flex-col'"
-      :get-item-data-id="(_, i) => `wrapper-${i}`"
+      item-data-id="wrapper"
     >
       <template #item="{ item }">
         <RuiTabs

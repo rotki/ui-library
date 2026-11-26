@@ -21,7 +21,8 @@ defineSlots<{
       <div
         v-for="cell in cells"
         :key="cell.id"
-        :data-id="`cell-${cell.id}`"
+        data-id="cell"
+        :data-cell="cell.id"
         class="px-4 py-3 bg-white dark:bg-[#121212]"
         :class="cellWidth ?? 'w-[360px]'"
       >

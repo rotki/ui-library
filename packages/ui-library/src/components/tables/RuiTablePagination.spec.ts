@@ -172,9 +172,9 @@ describe('components/tables/RuiTablePagination.vue', () => {
   it('links each section label to its control', () => {
     wrapper = createWrapper({ page: 1, total: 50, limit: 10 });
 
-    for (const section of ['limit', 'ranges']) {
-      const label = wrapper.find(`[data-id="table-pagination-${section}-section"] label`);
-      const activator = wrapper.find(`[data-id="table-pagination-${section}"] [data-id="activator"]`);
+    for (const [section, control] of [['table-pagination-limit-section', 'table-pagination-limit'], ['table-pagination-ranges-section', 'table-pagination-ranges']]) {
+      const label = wrapper.find(`[data-id="${section}"] label`);
+      const activator = wrapper.find(`[data-id="${control}"] [data-id="activator"]`);
       expect(label.attributes('for')).toBeTruthy();
       expect(activator.attributes('id')).toBe(label.attributes('for'));
     }

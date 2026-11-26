@@ -207,7 +207,7 @@ test.describe('datetimepicker menu footer actions', () => {
     await expect(input).toHaveValue('02/01/2023 20:20:00');
 
     await input.click();
-    await page.getByTestId('action-today').click();
+    await page.locator('[data-id=action][data-action=today]').click();
 
     await expect(input).not.toHaveValue('02/01/2023 20:20:00');
     // only the date part moved
@@ -217,7 +217,7 @@ test.describe('datetimepicker menu footer actions', () => {
   test('now replaces both the date and the time', async ({ page }) => {
     const input = actionsInput(page);
     await input.click();
-    await page.getByTestId('action-now').click();
+    await page.locator('[data-id=action][data-action=now]').click();
 
     await expect(input).not.toHaveValue(/ 20:20:00$/);
     await expect(input).toHaveValue(/^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}$/);
@@ -233,7 +233,7 @@ test.describe('datetimepicker menu footer actions', () => {
       (scroller ?? document.scrollingElement)?.scrollBy({ top: el.getBoundingClientRect().top - 120, behavior: 'instant' });
     });
     await input.click();
-    await page.getByTestId('action-clear').click();
+    await page.locator('[data-id=action][data-action=clear]').click();
 
     // Focus sits on the footer button, so the emptied field shows its format as a placeholder
     await expect(input).toHaveValue('');
@@ -248,8 +248,8 @@ test.describe('datetimepicker menu footer actions', () => {
     await page.getByRole('textbox').first().click();
 
     const menu = page.getByRole('dialog');
-    await expect(menu.getByTestId('action-now')).toBeVisible();
-    await expect(menu.getByTestId('action-today')).toBeHidden();
+    await expect(menu.locator('[data-id=action][data-action=now]')).toBeVisible();
+    await expect(menu.locator('[data-id=action][data-action=today]')).toBeHidden();
     await expect(menu.getByTestId('timezone-select')).toBeHidden();
   });
 
@@ -339,10 +339,10 @@ test.describe('datetimepicker calendar keyboard', () => {
     // the initial value is 02/01/2023, so a week back lands in December
     await page.keyboard.press('ArrowUp');
     await expect(page.getByTestId('header-title')).toHaveText('December 2022');
-    await expect(grid.getByTestId('2022-12-26')).toBeFocused();
+    await expect(grid.locator('[data-id=calendar-day][data-date="2022-12-26"]')).toBeFocused();
 
     await page.keyboard.press('ArrowRight');
-    await expect(grid.getByTestId('2022-12-27')).toBeFocused();
+    await expect(grid.locator('[data-id=calendar-day][data-date="2022-12-27"]')).toBeFocused();
 
     await page.keyboard.press('Enter');
     await expect(input).toHaveValue('27/12/2022 20:20');
@@ -389,7 +389,7 @@ test.describe('datetimepicker across a DST boundary', () => {
     await expect(input).toHaveValue('29/10/2023 02:30');
 
     await page.keyboard.press('Alt+ArrowDown');
-    const day = page.getByRole('grid').getByTestId('2023-10-29');
+    const day = page.getByRole('grid').locator('[data-id=calendar-day][data-date="2023-10-29"]');
     await day.click();
     await expect(input).toHaveValue('29/10/2023 02:30');
 
@@ -408,7 +408,7 @@ test.describe('datetimepicker across a DST boundary', () => {
       await page.getByTestId('nav-next').click();
     await expect(page.getByTestId('header-title')).toHaveText('July 2023');
 
-    await page.getByTestId('2023-07-15').click();
+    await page.locator('[data-id=calendar-day][data-date="2023-07-15"]').click();
 
     await expect(input).toHaveValue('15/07/2023 20:20');
   });
@@ -432,7 +432,8 @@ test.describe('datetimepicker partial entries', () => {
    * @returns that picker's input
    */
   function partialInput(page: Page, mode: 'start' | 'end' | 'strict') {
-    return page.getByTestId(`picker-partial-${mode}`).locator('input');
+    const ids = { start: 'picker-partial-start', end: 'picker-partial-end', strict: 'picker-partial-strict' } as const;
+    return page.getByTestId(ids[mode]).locator('input');
   }
 
   /**
@@ -510,7 +511,7 @@ test.describe('datetimepicker partial entries', () => {
       const pad = (value: number): string => value.toString().padStart(2, '0');
       return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
     });
-    await page.getByRole('grid').getByTestId(today).click();
+    await page.getByRole('grid').locator(`[data-id=calendar-day][data-date="${today}"]`).click();
 
     // a date on its own is not yet a value
     await expect(page.getByTestId('picker-partial-start-value')).toHaveText('');
@@ -590,7 +591,7 @@ test.describe('datetimepicker footer actions against a bound', () => {
   test('now clamps to maxDate instead of leaving the field ahead of the model', async ({ page }) => {
     const input = boundedInput(page);
     await input.click();
-    await page.getByTestId('action-now').click();
+    await page.locator('[data-id=action][data-action=now]').click();
 
     await expect(input).toHaveValue('10/01/2023 12:00:00');
   });
@@ -598,7 +599,7 @@ test.describe('datetimepicker footer actions against a bound', () => {
   test('today clamps when the kept time would cross maxDate', async ({ page }) => {
     const input = boundedInput(page);
     await input.click();
-    await page.getByTestId('action-today').click();
+    await page.locator('[data-id=action][data-action=today]').click();
 
     await expect(input).toHaveValue('10/01/2023 12:00:00');
   });

@@ -46,7 +46,7 @@ test.describe('navigation drawer', () => {
   test('check non-persistent navigation-drawer', async ({ page }) => {
     await expect(page.locator('h2[data-id=navigation-drawers]')).toContainText('Navigation Drawers');
 
-    const defaultDrawer = page.locator('div[data-id=navigation-drawer-0]');
+    const defaultDrawer = page.locator('div[data-id=navigation-drawer][data-index="0"]');
 
     // open drawer
     const activator = defaultDrawer.locator('[data-id=activator]');
@@ -61,7 +61,7 @@ test.describe('navigation drawer', () => {
   });
 
   test('check persistent drawer', async ({ page }) => {
-    const defaultDrawer = page.locator('div[data-id=navigation-drawer-2]');
+    const defaultDrawer = page.locator('div[data-id=navigation-drawer][data-index="2"]');
 
     // open drawer
     const activator = defaultDrawer.locator('[data-id=activator]');
@@ -76,7 +76,7 @@ test.describe('navigation drawer', () => {
   });
 
   test('should render drawer on left by default', async ({ page }) => {
-    const defaultDrawer = page.locator('div[data-id=navigation-drawer-0]');
+    const defaultDrawer = page.locator('div[data-id=navigation-drawer][data-index="0"]');
     await defaultDrawer.locator('[data-id=activator]').click();
 
     const aside = page.locator('aside[data-visible]');
@@ -85,7 +85,7 @@ test.describe('navigation drawer', () => {
   });
 
   test('should render drawer on right with position="right"', async ({ page }) => {
-    const rightDrawer = page.locator('div[data-id=navigation-drawer-1]');
+    const rightDrawer = page.locator('div[data-id=navigation-drawer][data-index="1"]');
     await rightDrawer.locator('[data-id=activator]').click();
 
     const aside = page.locator('aside[data-visible]');
@@ -94,7 +94,7 @@ test.describe('navigation drawer', () => {
   });
 
   test('should show overlay when overlay prop is true', async ({ page }) => {
-    const overlayDrawer = page.locator('div[data-id=navigation-drawer-3]');
+    const overlayDrawer = page.locator('div[data-id=navigation-drawer][data-index="3"]');
     await overlayDrawer.locator('[data-id=activator]').click();
 
     const aside = page.locator('aside[data-visible]');
@@ -110,7 +110,7 @@ test.describe('navigation drawer', () => {
   });
 
   test('keeps the app bar uncovered and usable with belowAppBar', async ({ page }) => {
-    await page.locator('div[data-id=navigation-drawer-3] [data-id=activator]').click();
+    await page.locator('div[data-id=navigation-drawer][data-index="3"] [data-id=activator]').click();
     const aside = page.locator('aside[data-visible]');
     await expect(aside).toBeVisible();
 
@@ -132,7 +132,7 @@ test.describe('navigation drawer', () => {
   });
 
   test('covers the app bar with a full-height overlay drawer by default', async ({ page }) => {
-    await page.locator('div[data-id=navigation-drawer-4] [data-id=activator]').click();
+    await page.locator('div[data-id=navigation-drawer][data-index="4"] [data-id=activator]').click();
     const aside = page.locator('aside[data-visible]');
     await expect(aside).toBeVisible();
 
@@ -141,7 +141,7 @@ test.describe('navigation drawer', () => {
   });
 
   test('slides a temporary drawer in when it opens and out when it closes', async ({ page }) => {
-    const activator = page.locator('div[data-id=navigation-drawer-1] [data-id=activator]');
+    const activator = page.locator('div[data-id=navigation-drawer][data-index="1"] [data-id=activator]');
     const viewport = page.viewportSize()?.width ?? 0;
     const between = (frame: DrawerFrame, open: number): boolean => frame.left !== null && frame.left > open && frame.left < viewport;
 
@@ -159,7 +159,7 @@ test.describe('navigation drawer', () => {
   });
 
   test('should have aria-label on drawer', async ({ page }) => {
-    const defaultDrawer = page.locator('div[data-id=navigation-drawer-0]');
+    const defaultDrawer = page.locator('div[data-id=navigation-drawer][data-index="0"]');
     await defaultDrawer.locator('[data-id=activator]').click();
 
     const aside = page.locator('aside[data-visible]');

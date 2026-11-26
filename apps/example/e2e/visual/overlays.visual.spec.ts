@@ -18,7 +18,7 @@ const cases: OverlayCase[] = [
   {
     name: 'menu',
     route: '/menus',
-    open: async page => page.locator('[data-id=menu-0] [data-id=activator]').click(),
+    open: async page => page.locator('[data-id=menu][data-index="0"] [data-id=activator]').click(),
   },
   {
     name: 'menu-select',
@@ -46,13 +46,13 @@ const cases: OverlayCase[] = [
     // the whole viewport: the dialog's shadow and corners over the blurred backdrop
     name: 'dialog',
     route: '/dialogs',
-    open: async page => page.locator('[data-id=dialog-0] [data-id=activator]').click(),
+    open: async page => page.locator('[data-id=dialog][data-index="0"] [data-id=activator]').click(),
     target: '[role=dialog]',
   },
   {
     name: 'tooltip',
     route: '/tooltips',
-    open: async page => page.locator('div[data-id=tooltip-4]').hover(),
+    open: async page => page.locator('div[data-id=tooltip][data-index="4"]').hover(),
     target: '[role=tooltip]',
   },
   {
@@ -60,7 +60,7 @@ const cases: OverlayCase[] = [
     name: 'drawer-docked',
     route: '/navigation-drawers',
     open: async (page) => {
-      await page.locator('[data-id=navigation-drawer-2] [data-id=activator]').click();
+      await page.locator('[data-id=navigation-drawer][data-index="2"] [data-id=activator]').click();
       // the drawer slides over its activator under a still pointer, which would keep the activator's hover
       await page.mouse.move(1, 1);
     },
@@ -69,7 +69,7 @@ const cases: OverlayCase[] = [
   {
     name: 'drawer-temporary',
     route: '/navigation-drawers',
-    open: async page => page.locator('[data-id=navigation-drawer-0] [data-id=activator]').click(),
+    open: async page => page.locator('[data-id=navigation-drawer][data-index="0"] [data-id=activator]').click(),
     target: 'body',
   },
 ];

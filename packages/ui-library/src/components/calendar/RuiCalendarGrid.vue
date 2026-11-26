@@ -199,7 +199,7 @@ function keyToDate(key: string): Date {
 function focusKey(key: string): void {
   set(activeKey, key);
   nextTick(() => {
-    get(gridRef)?.querySelector<HTMLButtonElement>(`[data-id="${key}"]`)?.focus();
+    get(gridRef)?.querySelector<HTMLButtonElement>(`[data-id=calendar-day][data-date="${key}"]`)?.focus();
   });
 }
 
@@ -308,7 +308,8 @@ watch(
           :key="dayData.key"
           type="button"
           role="gridcell"
-          :data-id="dayData.key"
+          data-id="calendar-day"
+          :data-date="dayData.key"
           :data-current-month="dayData.isCurrentMonth || undefined"
           :data-selected="dayData.isSelected || undefined"
           :data-today="(dayData.isToday && !dayData.isSelected) || undefined"

@@ -17,7 +17,7 @@ test.describe('tooltip', () => {
   test('checks for and trigger tooltip', async ({ page }) => {
     await expect(page.locator('h2[data-id=tooltips]')).toContainText('Tooltips');
 
-    const defaultTooltip = page.locator('div[data-id=tooltip-0]');
+    const defaultTooltip = page.locator('div[data-id=tooltip][data-index="0"]');
 
     await expect(defaultTooltip.locator('#activator')).toBeVisible();
     await defaultTooltip.hover();
@@ -29,7 +29,7 @@ test.describe('tooltip', () => {
   });
 
   test('checks for and trigger arrow tooltip', async ({ page }) => {
-    const tooltipWithArrow = page.locator('div[data-id=tooltip-4]');
+    const tooltipWithArrow = page.locator('div[data-id=tooltip][data-index="4"]');
 
     await expect(tooltipWithArrow.locator('#activator')).toBeVisible();
     await tooltipWithArrow.hover();
@@ -45,7 +45,7 @@ test.describe('tooltip', () => {
   });
 
   test('disabled should not trigger tooltip', async ({ page }) => {
-    const disabledTooltip = page.locator('div[data-id=tooltip-12]'); // the first of the disabled ones
+    const disabledTooltip = page.locator('div[data-id=tooltip][data-index="12"]'); // the first of the disabled ones
     await disabledTooltip.scrollIntoViewIfNeeded();
 
     // Parked in a corner, so any tooltip left open from before closes
@@ -60,7 +60,7 @@ test.describe('tooltip', () => {
   });
 
   test('should show tooltip on keyboard focus', async ({ page }) => {
-    const defaultTooltip = page.locator('div[data-id=tooltip-0]');
+    const defaultTooltip = page.locator('div[data-id=tooltip][data-index="0"]');
     const activator = defaultTooltip.locator('#activator');
 
     // Focus the activator via keyboard (tab)
@@ -74,7 +74,7 @@ test.describe('tooltip', () => {
   });
 
   test('should have aria-describedby linking activator to tooltip', async ({ page }) => {
-    const defaultTooltip = page.locator('div[data-id=tooltip-0]');
+    const defaultTooltip = page.locator('div[data-id=tooltip][data-index="0"]');
 
     // Initially no aria-describedby
     await expect(defaultTooltip).not.toHaveAttribute('aria-describedby');

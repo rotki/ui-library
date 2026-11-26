@@ -16,7 +16,7 @@ premium components depend on.
   `src/composables/`, theme in `src/theme/`, icons generated into `src/icons/` (gitignored), the icon Vite
   plugin in `src/vite-plugin/`, type tests in `tests/types/`, build and verify scripts in `scripts/`.
 - `apps/example/`: an app built against the library's `dist/`. Routes come from `src/pages/` (thin wrappers
-  over `src/views/`); index views use a `RuiCard` grid with `data-id="link-${route}"`. e2e specs live in
+  over `src/views/`); index views use a `RuiCard` grid with `data-id="link"` and `data-route`. e2e specs live in
   `e2e/`, the screenshot suite in `e2e/visual/`.
 - Entry points: `@rotki/ui-library` (everything), `/components`, `/composables`, `/vite-plugin`, plus
   `theme.css`, `tailwind.css` and `style.css`. Keep the export structure; consumers tree-shake by it.
@@ -131,6 +131,10 @@ rules, and the prop-name rule except for `Omit<...>` and intersection props.
   go through `[:where(&)_td]:...`, so a consumer's plain class on the cell still wins.
 - Keep existing sizes, spacing and defaults unless the change is about them.
 - Test locators, in order: `getByTestId` (a `data-id` attribute), ARIA roles, CSS module class fragments.
+  A `data-id` is a literal, and the value that varies goes in its own attribute:
+  `data-id="chip" :data-index="index"`, selected as `[data-id=chip][data-index="1"]`. On a `Rui*`
+  component, pick a name it does not render itself (`data-variant`, `data-size` and `data-color` are taken): a fallthrough
+  attribute replaces the component's own. ESLint rejects a `data-id` built from a prefix and a value.
   No hard-coded class names, no matching on text the user cannot see.
 - Overlays teleport to `document.body`: unit specs clean up with `cleanupElements('*', document.body)`,
   e2e specs press Escape in `afterEach`.

@@ -26,7 +26,7 @@ test.describe('buttons', () => {
 
   test('a split button joins buttons wrapped in a tooltip and a menu activator', async ({ page }) => {
     for (const variant of ['default', 'outlined']) {
-      const group = page.getByTestId(`split-button-${variant}`);
+      const group = page.locator(`[data-id=split-button][data-group-variant="${variant}"]`);
       const action = group.getByTestId('split-button-action');
       const more = group.getByTestId('split-button-menu');
 
@@ -38,7 +38,7 @@ test.describe('buttons', () => {
       await expect(more).toHaveAttribute('data-color', 'primary');
     }
 
-    await page.getByTestId('split-button-default').getByTestId('split-button-menu').click();
+    await page.locator('[data-id=split-button][data-group-variant="default"]').getByTestId('split-button-menu').click();
     // the menu's own buttons are not part of the group
     await expect(page.getByTestId('split-button-option')).toBeVisible();
     await expect(page.getByTestId('split-button-option')).not.toHaveAttribute('data-color');
@@ -46,7 +46,7 @@ test.describe('buttons', () => {
   });
 
   test('list-variant button label shares the icon line-box (issue #515)', async ({ page }) => {
-    const button = page.getByTestId('list-button-md-settings');
+    const button = page.locator('[data-id=list-button][data-button-size="md"][data-label="Settings"]');
     const label = button.locator('[data-id="btn-label"]');
     const icon = button.locator('svg').first();
 
@@ -68,8 +68,8 @@ test.describe('buttons', () => {
 
   test('a link button takes the size of the text around it and keeps the line height', async ({ page }) => {
     for (const textSize of ['text-caption', 'text-sm', 'text-body-1', 'text-h6']) {
-      const paragraph = page.getByTestId(`link-text-${textSize}`);
-      const link = page.getByTestId(`link-button-${textSize}`);
+      const paragraph = page.locator(`[data-id=link-text][data-text-size="${textSize}"]`);
+      const link = page.locator(`[data-id=link-button][data-text-size="${textSize}"]`);
       const fontSize = await paragraph.evaluate(el => getComputedStyle(el).fontSize);
 
       await expect(link).toHaveCSS('font-size', fontSize);
@@ -83,15 +83,15 @@ test.describe('buttons', () => {
       expect(box!.height).toBeLessThanOrEqual(lineHeight + 1);
     }
 
-    const link = page.getByTestId('link-button-text-sm');
+    const link = page.locator('[data-id=link-button][data-text-size="text-sm"]');
     await expect(link).toHaveCSS('text-decoration-line', 'none');
     await link.hover();
     await expect(link).toHaveCSS('text-decoration-line', 'underline');
   });
 
   test('collapse-below shows only the icon below the breakpoint and keeps the accessible name', async ({ page }) => {
-    const refresh = page.getByTestId('collapsing-refresh');
-    const settings = page.getByTestId('collapsing-settings');
+    const refresh = page.locator('[data-id=collapsing][data-label="Refresh"]');
+    const settings = page.locator('[data-id=collapsing][data-label="Settings"]');
 
     await page.setViewportSize({ width: 1280, height: 900 });
     await expect(refresh.locator('[data-id=btn-label]')).toBeVisible();

@@ -112,7 +112,7 @@ describe('components/tables/RuiDataTable.vue', () => {
       },
     });
     expect(wrapper.find('table thead th [data-id=table-toggle-check-all]').exists()).toBeTruthy();
-    expect(wrapper.find('table tbody td [data-id*=table-toggle-check-]').exists()).toBeTruthy();
+    expect(wrapper.find('table tbody td [data-id=table-toggle-check]').exists()).toBeTruthy();
     expectWrapperToHaveClass(wrapper, 'table tbody td:nth-child(2)', /text-left/);
     expect(wrapper.find('div[data-id=table-pagination-limit-section]').exists()).toBeTruthy();
     expect(wrapper.find('div[data-id=table-pagination-ranges-section]').exists()).toBeTruthy();
@@ -181,14 +181,14 @@ describe('components/tables/RuiDataTable.vue', () => {
     await wrapper.find('thead tr [data-id=table-toggle-check-all] input').setValue(true);
 
     expect(wrapper.props().modelValue).toHaveLength(10);
-    expect(wrapper.find('tr [data-id*=table-toggle-check-] label[data-checked]').exists()).toBeTruthy();
-    expect(wrapper.findAll('tr [data-id*=table-toggle-check-] label[data-checked]')).toHaveLength(11);
+    expect(wrapper.find('thead tr [data-id=table-toggle-check-all] label[data-checked]').exists()).toBeTruthy();
+    expect(wrapper.findAll('tr [data-id=table-toggle-check] label[data-checked]')).toHaveLength(10);
 
     await wrapper.find('thead tr [data-id=table-toggle-check-all] input').setValue(false);
 
     expect(wrapper.props().modelValue).toHaveLength(0);
 
-    await wrapper.find('tr [data-id=table-toggle-check-0] input').setValue(true);
+    await wrapper.find('tr [data-id=table-toggle-check][data-index="0"] input').setValue(true);
 
     expect(wrapper.props().modelValue).toHaveLength(1);
   });
@@ -1628,7 +1628,7 @@ describe('components/tables/RuiDataTable.vue', () => {
         },
       });
 
-      const firstRowCheckbox = wrapper.find('tr [data-id=table-toggle-check-0] input');
+      const firstRowCheckbox = wrapper.find('tr [data-id=table-toggle-check][data-index="0"] input');
       expect(firstRowCheckbox.attributes('disabled')).toBeDefined();
 
       await wrapper.find('thead tr [data-id=table-toggle-check-all] input').setValue(true);

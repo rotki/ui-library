@@ -37,12 +37,12 @@ const cases: FocusCase[] = [
     // the first clickable chip: the fifth attribute row, grey
     name: 'chip',
     route: '/chips',
-    target: page => page.getByTestId('chip-28'),
+    target: page => page.locator('[data-id=chip][data-index="28"]'),
   },
   {
     name: 'accordion',
     route: '/accordions',
-    target: page => page.locator('[data-id=wrapper-0] [role=button]').first(),
+    target: page => page.locator('[data-id=wrapper][data-index="0"] [role=button]').first(),
   },
   {
     name: 'checkbox',

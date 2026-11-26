@@ -91,7 +91,8 @@ const sections = [
         <RuiCard
           variant="outlined"
           class="h-full hover:border-rui-primary transition-colors cursor-pointer"
-          :data-id="`link-${section.route}`"
+          data-id="link"
+          :data-route="section.route"
         >
           <template #header>
             <div class="flex items-center gap-2">

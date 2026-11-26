@@ -42,7 +42,7 @@ test.describe('data tables - mobile', () => {
 
     // Open the sort menu and toggle the "Full name" column (asc -> desc).
     await activator.click();
-    await page.getByTestId('table-mobile-sort-option-name').click();
+    await page.locator('[data-id=table-mobile-sort-option][data-column=name]').click();
 
     const toggled = await firstNameValue.textContent();
     expect(toggled).not.toEqual(initial);

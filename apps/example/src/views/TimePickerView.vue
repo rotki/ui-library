@@ -27,7 +27,8 @@ const timePickers = ref<RuiTimePickerProps[]>([
         v-for="(field, i) in timePickers"
         :key="i"
         v-model="field.modelValue"
-        :data-id="`timepicker-${i}`"
+        data-id="timepicker"
+        :data-index="i"
         v-bind="objectOmit(field, ['modelValue'])"
       />
     </div>

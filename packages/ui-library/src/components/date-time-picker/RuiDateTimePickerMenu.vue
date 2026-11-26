@@ -125,7 +125,8 @@ const actionConfig = computed<ActionConfig[]>(() => {
         variant="text"
         size="sm"
         color="primary"
-        :data-id="`action-${action.id}`"
+        data-id="action"
+        :data-action="action.id"
         @click="action.handler()"
       >
         <template #prepend>

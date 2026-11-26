@@ -4,7 +4,7 @@ test.describe('overlay stack', () => {
   test.beforeEach(async ({ page }) => {
     // Arrive from somewhere, so there is an entry underneath to be wrongly popped
     await page.goto('/cards');
-    await page.getByTestId('link-overlay-stack').click();
+    await page.locator('[data-id=nav-link][data-route=overlay-stack]').click();
     await expect(page).toHaveURL(/\/overlay-stack$/);
   });
 

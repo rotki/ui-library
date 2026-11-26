@@ -355,7 +355,8 @@ const footerSteppers = ref<FooterStepperData[]>([
     <RuiStepper
       v-for="(stepper, i) in steppers"
       :key="i"
-      :data-id="`stepper-${i}`"
+      data-id="stepper"
+      :data-index="i"
       class="mb-6"
       v-bind="stepper"
     />
@@ -369,7 +370,8 @@ const footerSteppers = ref<FooterStepperData[]>([
       v-for="(stepper, i) in footerSteppers"
       :key="i"
       v-model="stepper.value"
-      :data-id="`footer-stepper-${i}`"
+      data-id="footer-stepper"
+      :data-index="i"
       class="mb-6"
       v-bind="stepper"
     />

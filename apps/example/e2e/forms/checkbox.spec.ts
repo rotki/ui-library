@@ -30,7 +30,7 @@ test.describe('forms/Checkbox', () => {
   });
 
   test('toggles values into the checkbox group v-model', async ({ page }) => {
-    const firstGroup = page.locator('[data-id=checkbox-group-0]');
+    const firstGroup = page.locator('[data-id=checkbox-group][data-index="0"]');
     const hint = firstGroup.locator('.details').first();
 
     // Initial: apples + oranges checked
@@ -46,7 +46,7 @@ test.describe('forms/Checkbox', () => {
   });
 
   test('should propagate disabled from group to children', async ({ page }) => {
-    const disabledGroup = page.locator('[data-id=checkbox-group-2]');
+    const disabledGroup = page.locator('[data-id=checkbox-group][data-index="2"]');
     const inputs = disabledGroup.locator('input[type="checkbox"]');
     const count = await inputs.count();
     for (let i = 0; i < count; i++)

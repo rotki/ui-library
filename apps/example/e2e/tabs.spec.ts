@@ -8,7 +8,7 @@ test.describe('tabs', () => {
   test('should render tabs and handle navigation', async ({ page }) => {
     await expect(page.locator('h2[data-id=tabs]')).toContainText('Tabs');
 
-    const wrapper = page.locator('[data-id=wrapper-0]');
+    const wrapper = page.locator('[data-id=wrapper][data-index="0"]');
     const tablist = wrapper.locator('[data-id=tabs] [role=tablist]');
 
     await expect(tablist.locator('> *')).toHaveCount(6);
@@ -30,19 +30,19 @@ test.describe('tabs', () => {
   });
 
   test('should have role="tablist" on tab container', async ({ page }) => {
-    const wrapper = page.locator('[data-id=wrapper-0]');
+    const wrapper = page.locator('[data-id=wrapper][data-index="0"]');
     const tablist = wrapper.locator('[data-id=tabs] [role=tablist]');
     await expect(tablist).toBeVisible();
   });
 
   test('should have role="tab" on each tab button', async ({ page }) => {
-    const wrapper = page.locator('[data-id=wrapper-0]');
+    const wrapper = page.locator('[data-id=wrapper][data-index="0"]');
     const tabs = wrapper.locator('[data-id=tabs] [role=tab]');
     await expect(tabs).toHaveCount(6);
   });
 
   test('should have aria-selected on active tab', async ({ page }) => {
-    const wrapper = page.locator('[data-id=wrapper-0]');
+    const wrapper = page.locator('[data-id=wrapper][data-index="0"]');
     const tablist = wrapper.locator('[data-id=tabs] [role=tablist]');
 
     // First tab is active by default
@@ -56,13 +56,13 @@ test.describe('tabs', () => {
   });
 
   test('should have role="tabpanel" on tab content items', async ({ page }) => {
-    const wrapper = page.locator('[data-id=wrapper-0]');
+    const wrapper = page.locator('[data-id=wrapper][data-index="0"]');
     const panels = wrapper.locator('[data-id=tab-items] [role=tabpanel]');
     await expect(panels.first()).toBeVisible();
   });
 
   test('should render vertical tabs', async ({ page }) => {
-    const wrapper = page.locator('[data-id=wrapper-1]'); // the sets alternate horizontal then vertical, so the odd indices are the vertical ones
+    const wrapper = page.locator('[data-id=wrapper][data-index="1"]'); // the sets alternate horizontal then vertical, so the odd indices are the vertical ones
     const tablist = wrapper.locator('[data-id=tabs] [role=tablist]');
     await expect(tablist).toBeVisible();
 
@@ -71,7 +71,7 @@ test.describe('tabs', () => {
   });
 
   test('should switch content when clicking different tabs', async ({ page }) => {
-    const wrapper = page.locator('[data-id=wrapper-0]');
+    const wrapper = page.locator('[data-id=wrapper][data-index="0"]');
     const tablist = wrapper.locator('[data-id=tabs] [role=tablist]');
     const tabcontent = wrapper.locator('[data-id=tab-items]');
 
@@ -91,7 +91,7 @@ test.describe('tabs', () => {
   });
 
   test('should move between enabled tabs with the arrow keys', async ({ page }) => {
-    const wrapper = page.locator('[data-id=wrapper-0]');
+    const wrapper = page.locator('[data-id=wrapper][data-index="0"]');
     const tabs = wrapper.locator('[data-id=tabs] [role=tab]');
     const tabcontent = wrapper.locator('[data-id=tab-items]');
 
@@ -111,7 +111,7 @@ test.describe('tabs', () => {
   });
 
   test('should slide the indicator to the selected tab', async ({ page }) => {
-    const wrapper = page.locator('[data-id=wrapper-0]');
+    const wrapper = page.locator('[data-id=wrapper][data-index="0"]');
     const indicator = wrapper.getByTestId('tabs-indicator');
     const third = wrapper.locator('[data-id=tabs] [role=tab]').nth(2);
 
@@ -124,7 +124,7 @@ test.describe('tabs', () => {
   });
 
   test('should render the segmented variant', async ({ page }) => {
-    const wrapper = page.locator('[data-id=wrapper-4]'); // the segmented sets follow the two underline colors
+    const wrapper = page.locator('[data-id=wrapper][data-index="4"]'); // the segmented sets follow the two underline colors
     const tabs = wrapper.locator('[data-id=tabs] [role=tab]');
 
     await expect(tabs.first()).toHaveAttribute('data-variant', 'segmented');
@@ -134,7 +134,7 @@ test.describe('tabs', () => {
   });
 
   test('tab panels clip only while their height changes, so sticky content inside works', async ({ page }) => {
-    const wrapper = page.locator('[data-id=wrapper-0]');
+    const wrapper = page.locator('[data-id=wrapper][data-index="0"]');
     const items = wrapper.locator('[data-id=tab-items]');
 
     await expect(items).not.toHaveCSS('overflow', 'hidden');

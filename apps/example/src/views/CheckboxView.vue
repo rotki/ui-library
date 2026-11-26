@@ -144,7 +144,8 @@ const underLabel = ref<{ backup: boolean; terms: boolean; wrap: boolean }>({ bac
         :size="group.size"
         :inline="group.inline"
         :hint="`Selected: ${group.value.join(', ') || 'none'}`"
-        :data-id="`checkbox-group-${i}`"
+        data-id="checkbox-group"
+        :data-index="i"
       >
         <RuiCheckbox
           v-for="(option, j) in group.options"

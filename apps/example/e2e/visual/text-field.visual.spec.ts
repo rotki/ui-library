@@ -17,19 +17,19 @@ test.describe('visual/RuiTextField', () => {
 
         test.describe(`${variant} / ${density} / ${prepend}`, () => {
           test('resting', async ({ page }) => {
-            const cell = page.getByTestId(`cell-${cellId}`);
+            const cell = page.locator(`[data-id=cell][data-cell="${cellId}"]`);
             await expect(cell).toBeVisible();
             await expect(cell).toHaveScreenshot(`${cellId}-resting.png`);
           });
 
           test('focused-empty', async ({ page }) => {
-            const cell = page.getByTestId(`cell-${cellId}`);
+            const cell = page.locator(`[data-id=cell][data-cell="${cellId}"]`);
             await cell.locator('input').focus();
             await expect(cell).toHaveScreenshot(`${cellId}-focused-empty.png`);
           });
 
           test('with-value', async ({ page }) => {
-            const cell = page.getByTestId(`cell-${cellId}`);
+            const cell = page.locator(`[data-id=cell][data-cell="${cellId}"]`);
             await cell.locator('input').fill('Sample');
             await cell.locator('input').blur();
             await expect(cell).toHaveScreenshot(`${cellId}-with-value.png`);

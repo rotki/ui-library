@@ -1,7 +1,7 @@
 import type { SortColumn, TableColumn, TableRowKey } from '@/components/tables/RuiTableHead.vue';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RuiDataTableMobileSort from '@/components/tables/data-table/RuiDataTableMobileSort.vue';
-import { assertExists, queryByDataId } from '~/tests/helpers/dom-helpers';
+import { assertExists } from '~/tests/helpers/dom-helpers';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 
 interface User {
@@ -18,6 +18,11 @@ const columns: TableColumn<User>[] = [
 
 function sortedMapFor(column?: TableRowKey<User>, direction: 'asc' | 'desc' = 'asc'): Partial<Record<TableRowKey<User>, SortColumn<User>>> {
   return column ? { [column]: { column, direction } } : {};
+}
+
+/** The menu teleports to the body, so its options are found there. */
+function sortOption(column: string): HTMLElement | null {
+  return document.body.querySelector<HTMLElement>(`[data-id=table-mobile-sort-option][data-column=${column}]`);
 }
 
 const createWrapper = createMounter(RuiDataTableMobileSort<User>, {
@@ -54,10 +59,10 @@ describe('components/tables/data-table/RuiDataTableMobileSort.vue', () => {
     await wrapper.find('[data-id=table-mobile-sort-activator]').trigger('click');
     await vi.runAllTimersAsync();
 
-    expect(queryByDataId('table-mobile-sort-option-name')).toBeTruthy();
-    expect(queryByDataId('table-mobile-sort-option-title')).toBeTruthy();
+    expect(sortOption('name')).toBeTruthy();
+    expect(sortOption('title')).toBeTruthy();
     // Non-sortable columns get no option.
-    expect(queryByDataId('table-mobile-sort-option-id')).toBeFalsy();
+    expect(sortOption('id')).toBeFalsy();
   });
 
   it('should emit the column default direction so the sort composable can cycle', async () => {
@@ -66,7 +71,7 @@ describe('components/tables/data-table/RuiDataTableMobileSort.vue', () => {
     await wrapper.find('[data-id=table-mobile-sort-activator]').trigger('click');
     await vi.runAllTimersAsync();
 
-    const option = queryByDataId<HTMLElement>('table-mobile-sort-option-name');
+    const option = sortOption('name');
     assertExists(option);
     option.click();
     await vi.runAllTimersAsync();
@@ -80,7 +85,7 @@ describe('components/tables/data-table/RuiDataTableMobileSort.vue', () => {
     await wrapper.find('[data-id=table-mobile-sort-activator]').trigger('click');
     await vi.runAllTimersAsync();
 
-    const active = queryByDataId('table-mobile-sort-option-title');
+    const active = sortOption('title');
     assertExists(active);
     expect(active.getAttribute('data-active')).toBe('true');
     expect(active.getAttribute('data-direction')).toBe('desc');

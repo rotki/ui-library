@@ -13,7 +13,7 @@ test.describe('bottom-sheet', () => {
   test('check persistent bottom sheet', async ({ page }) => {
     await expect(page.locator('h2[data-id=bottom-sheets]')).toContainText('Bottom Sheets');
 
-    const defaultBottomSheet = page.locator('div[data-id=bottom-sheet-0]');
+    const defaultBottomSheet = page.locator('div[data-id=bottom-sheet][data-index="0"]');
 
     // open bottom sheet
     const activator = defaultBottomSheet.locator('[data-id=activator]');
@@ -34,7 +34,7 @@ test.describe('bottom-sheet', () => {
   });
 
   test('check non-persistent bottom sheet', async ({ page }) => {
-    const defaultBottomSheet = page.locator('div[data-id=bottom-sheet-1]');
+    const defaultBottomSheet = page.locator('div[data-id=bottom-sheet][data-index="1"]');
 
     // open bottom sheet
     const activator = defaultBottomSheet.locator('[data-id=activator]');
@@ -55,7 +55,7 @@ test.describe('bottom-sheet', () => {
   });
 
   test('should have aria-modal attribute when open', async ({ page }) => {
-    const defaultBottomSheet = page.locator('div[data-id=bottom-sheet-0]');
+    const defaultBottomSheet = page.locator('div[data-id=bottom-sheet][data-index="0"]');
 
     const activator = defaultBottomSheet.locator('[data-id=activator]');
     await activator.click();
@@ -69,7 +69,7 @@ test.describe('bottom-sheet', () => {
   });
 
   test('should apply custom width to bottom sheet content', async ({ page }) => {
-    const defaultBottomSheet = page.locator('div[data-id=bottom-sheet-0]');
+    const defaultBottomSheet = page.locator('div[data-id=bottom-sheet][data-index="0"]');
 
     const activator = defaultBottomSheet.locator('[data-id=activator]');
     await activator.click();

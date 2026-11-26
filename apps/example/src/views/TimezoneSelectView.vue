@@ -42,7 +42,8 @@ const timezoneSelects = ref<RuiTimezoneSelectProps[]>([
         v-for="(field, i) in timezoneSelects"
         :key="i"
         v-model="field.modelValue"
-        :data-id="`timezone-select-${i}`"
+        data-id="timezone-select"
+        :data-index="i"
         v-bind="objectOmit(field, ['modelValue'])"
       />
     </div>

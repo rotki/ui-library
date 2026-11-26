@@ -7,14 +7,14 @@ test.describe('menu-select - index', () => {
 
   test('should render navigation links', async ({ page }) => {
     await expect(page.locator('[data-id=menu-selects-index]')).toBeVisible();
-    await expect(page.locator('[data-id="link-/menu-selects/basic"]')).toBeVisible();
-    await expect(page.locator('[data-id="link-/menu-selects/selection"]')).toBeVisible();
-    await expect(page.locator('[data-id="link-/menu-selects/readonly"]')).toBeVisible();
-    await expect(page.locator('[data-id="link-/menu-selects/custom"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/menu-selects/basic"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/menu-selects/selection"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/menu-selects/readonly"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/menu-selects/custom"]')).toBeVisible();
   });
 
   test('should navigate to sub-routes', async ({ page }) => {
-    await page.locator('[data-id="link-/menu-selects/basic"]').click();
+    await page.locator('[data-id=link][data-route="/menu-selects/basic"]').click();
     await expect(page.locator('[data-id=menu-selects-basic]')).toBeVisible();
   });
 });

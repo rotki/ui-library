@@ -22,16 +22,16 @@ test.describe('forms/Slider', () => {
   });
 
   test('should display label text', async ({ page }) => {
-    const slider = page.locator('[data-id=slider-2]');
+    const slider = page.locator('[data-id=slider][data-index="2"]');
     await expect(slider).toContainText('With Label');
 
-    const noLabelSlider = page.locator('[data-id=slider-0]');
+    const noLabelSlider = page.locator('[data-id=slider][data-index="0"]');
     const labelDiv = noLabelSlider.locator('div[class*=label]');
     await expect(labelDiv).toHaveCount(0);
   });
 
   test('should show thumb label when showThumbLabel is true', async ({ page }) => {
-    const slider = page.locator('[data-id=slider-8]');
+    const slider = page.locator('[data-id=slider][data-index="8"]');
     await expect(slider).toContainText('Show Thumb Label');
 
     const input = slider.locator('input[type="range"]');
@@ -40,12 +40,12 @@ test.describe('forms/Slider', () => {
   });
 
   test('should display hint text', async ({ page }) => {
-    const slider = page.locator('[data-id=slider-12]');
+    const slider = page.locator('[data-id=slider][data-index="12"]');
     await expect(slider).toContainText('Slider hints');
   });
 
   test('should display error messages', async ({ page }) => {
-    const slider = page.locator('[data-id=slider-14]');
+    const slider = page.locator('[data-id=slider][data-index="14"]');
     await expect(slider).toContainText('Slider error messages');
 
     const input = slider.locator('input[type="range"]');
@@ -53,21 +53,21 @@ test.describe('forms/Slider', () => {
   });
 
   test('should display success messages', async ({ page }) => {
-    const slider = page.locator('[data-id=slider-15]');
+    const slider = page.locator('[data-id=slider][data-index="15"]');
     await expect(slider).toContainText('Slider success messages');
   });
 
   test('should have aria-label on input when label is provided', async ({ page }) => {
-    const input = page.locator('[data-id=slider-2] input[type="range"]');
+    const input = page.locator('[data-id=slider][data-index="2"] input[type="range"]');
     await expect(input).toHaveAttribute('aria-label', 'With Label');
 
     // Slider at index 0 has no label, so aria-label should not be present
-    const noLabelInput = page.locator('[data-id=slider-0] input[type="range"]');
+    const noLabelInput = page.locator('[data-id=slider][data-index="0"] input[type="range"]');
     await expect(noLabelInput).not.toHaveAttribute('aria-label');
   });
 
   test('should have aria-valuetext reflecting current value', async ({ page }) => {
-    const input = page.locator('[data-id=slider-0] input[type="range"]');
+    const input = page.locator('[data-id=slider][data-index="0"] input[type="range"]');
     await expect(input).toHaveAttribute('aria-valuetext', '50');
 
     await input.fill('25');
@@ -75,7 +75,7 @@ test.describe('forms/Slider', () => {
   });
 
   test('should not be interactable when disabled', async ({ page }) => {
-    const slider = page.locator('[data-id=slider-4]');
+    const slider = page.locator('[data-id=slider][data-index="4"]');
     const input = slider.locator('input[type="range"]');
 
     await expect(input).toBeDisabled();
@@ -87,7 +87,7 @@ test.describe('forms/Slider', () => {
   });
 
   test('should update value with keyboard interaction', async ({ page }) => {
-    const input = page.locator('[data-id=slider-0] input[type="range"]');
+    const input = page.locator('[data-id=slider][data-index="0"] input[type="range"]');
     await expect(input).toHaveValue('50');
 
     await input.focus();

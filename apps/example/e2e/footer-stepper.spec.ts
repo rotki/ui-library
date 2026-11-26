@@ -36,7 +36,7 @@ test.describe('footer steppers', () => {
   });
 
   test('should navigate forward and backward with buttons', async ({ page }) => {
-    const stepper = page.locator('[data-id=footer-stepper-0]');
+    const stepper = page.locator('[data-id=footer-stepper][data-index="0"]');
     await expect(stepper.locator('[data-id=numeric]')).toContainText('1/5');
 
     // Back should be disabled on first page
@@ -56,19 +56,19 @@ test.describe('footer steppers', () => {
   });
 
   test('should have role="navigation" and aria-label on root', async ({ page }) => {
-    const stepper = page.locator('[data-id=footer-stepper-0]');
+    const stepper = page.locator('[data-id=footer-stepper][data-index="0"]');
     await expect(stepper).toHaveAttribute('role', 'navigation');
     await expect(stepper).toHaveAttribute('aria-label', 'Step navigation');
   });
 
   test('should name the navigation buttons', async ({ page }) => {
-    const stepper = page.locator('[data-id=footer-stepper-0]');
+    const stepper = page.locator('[data-id=footer-stepper][data-index="0"]');
     await expect(stepper.getByRole('button', { name: 'Back' })).toBeVisible();
     await expect(stepper.getByRole('button', { name: 'Next' })).toBeVisible();
   });
 
   test('should have aria-current="step" on active bullet', async ({ page }) => {
-    const stepper = page.locator('[data-id=footer-stepper-1]'); // the bullet variant, on step 2
+    const stepper = page.locator('[data-id=footer-stepper][data-index="1"]'); // the bullet variant, on step 2
     const activeBullet = stepper.locator('[aria-current=step]');
     await expect(activeBullet).toHaveCount(1);
 
@@ -79,7 +79,7 @@ test.describe('footer steppers', () => {
   });
 
   test('should hide buttons when hideButtons is true', async ({ page }) => {
-    const stepper = page.locator('[data-id=footer-stepper-2]');
+    const stepper = page.locator('[data-id=footer-stepper][data-index="2"]');
     // only the step bullets are buttons there
     await expect(stepper.getByTestId('prev')).toHaveCount(0);
     await expect(stepper.getByTestId('next')).toHaveCount(0);

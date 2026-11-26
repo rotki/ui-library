@@ -31,7 +31,8 @@ const bottomSheets = ref<BottomSheetData[]>([
         :key="i"
         v-bind="bottomSheet"
         width="900px"
-        :data-id="`bottom-sheet-${i}`"
+        data-id="bottom-sheet"
+        :data-index="i"
       >
         <template #activator="{ attrs }">
           <RuiButton

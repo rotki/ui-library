@@ -14,7 +14,7 @@ test.describe('timepickers', () => {
   });
 
   test('should mark the digit being edited as pressed', async ({ page }) => {
-    const picker = page.locator('[data-id=timepicker-0]');
+    const picker = page.locator('[data-id=timepicker][data-index="0"]');
     const hours = picker.getByTestId('hour');
     const minutes = picker.getByTestId('minute');
 
@@ -26,7 +26,7 @@ test.describe('timepickers', () => {
   });
 
   test('should be able to select time', async ({ page }) => {
-    const picker = page.locator('[data-id=timepicker-0]');
+    const picker = page.locator('[data-id=timepicker][data-index="0"]');
     await picker.locator('.rui-hour-06').click();
     await picker.locator('.rui-minute-30').click();
 
@@ -36,7 +36,7 @@ test.describe('timepickers', () => {
   });
 
   test('should toggle AM/PM', async ({ page }) => {
-    const picker = page.locator('[data-id=timepicker-0]');
+    const picker = page.locator('[data-id=timepicker][data-index="0"]');
     const amPmToggle = picker.locator('.rui-time-picker-period');
 
     await expect(amPmToggle).toHaveText('PM');
@@ -47,7 +47,7 @@ test.describe('timepickers', () => {
   });
 
   test('should show seconds when accuracy includes seconds', async ({ page }) => {
-    const picker = page.locator('[data-id=timepicker-1]');
+    const picker = page.locator('[data-id=timepicker][data-index="1"]');
 
     // Second picker has accuracy='second', should show seconds digit
     const digits = picker.getByTestId('second');
@@ -57,14 +57,14 @@ test.describe('timepickers', () => {
   });
 
   test('should have aria-label on time picker root', async ({ page }) => {
-    const picker = page.locator('[data-id=timepicker-0]');
+    const picker = page.locator('[data-id=timepicker][data-index="0"]');
 
     await expect(picker).toHaveAttribute('role', 'group');
     await expect(picker).toHaveAttribute('aria-label', 'Time picker');
   });
 
   test('should have role="listbox" on clock face with aria-label', async ({ page }) => {
-    const picker = page.locator('[data-id=timepicker-0]');
+    const picker = page.locator('[data-id=timepicker][data-index="0"]');
     const clockFace = picker.locator('[role=listbox]');
 
     await expect(clockFace).toBeVisible();
@@ -72,7 +72,7 @@ test.describe('timepickers', () => {
   });
 
   test('should have role="option" with aria-selected on clock numbers', async ({ page }) => {
-    const picker = page.locator('[data-id=timepicker-0]');
+    const picker = page.locator('[data-id=timepicker][data-index="0"]');
     const options = picker.locator('[role=option]');
 
     await expect(options.first()).toBeVisible();
@@ -84,7 +84,7 @@ test.describe('timepickers', () => {
   });
 
   test('should update clock face aria-label when switching modes', async ({ page }) => {
-    const picker = page.locator('[data-id=timepicker-0]');
+    const picker = page.locator('[data-id=timepicker][data-index="0"]');
     const clockFace = picker.locator('[role=listbox]');
 
     // Initially in hour mode
@@ -100,7 +100,7 @@ test.describe('timepickers', () => {
   });
 
   test('should switch mode by clicking digit selectors', async ({ page }) => {
-    const picker = page.locator('[data-id=timepicker-1]');
+    const picker = page.locator('[data-id=timepicker][data-index="1"]');
     const clockFace = picker.locator('[role=listbox]');
 
     // Click minutes digit selector

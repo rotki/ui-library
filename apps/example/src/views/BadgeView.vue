@@ -77,7 +77,8 @@ onBeforeMount(() => {
       >
         <RuiBadge
           v-bind="badge"
-          :data-id="`badge-${i}`"
+          data-id="badge"
+          :data-index="i"
         >
           <RuiButton @click="badge.modelValue = !badge.modelValue">
             Badge

@@ -27,9 +27,9 @@ test.describe('menu', () => {
     await expect(page.locator('h2[data-id=menus]')).toContainText('Menus');
 
     await expect(page.locator('[data-id=content]')).toBeVisible();
-    await expect(page.locator('div[data-id=menu-0]')).toBeVisible();
+    await expect(page.locator('div[data-id=menu][data-index="0"]')).toBeVisible();
 
-    const defaultMenu = page.locator('div[data-id=menu-0]');
+    const defaultMenu = page.locator('div[data-id=menu][data-index="0"]');
     const activator = defaultMenu.locator('[data-id=activator]');
 
     await expect(activator).toBeVisible();
@@ -49,7 +49,7 @@ test.describe('menu', () => {
   });
 
   test('disabled should not trigger menu', async ({ page }) => {
-    const disabledMenu = page.locator('div[data-id=menu-4]');
+    const disabledMenu = page.locator('div[data-id=menu][data-index="4"]');
     const activator = disabledMenu.locator('[data-id=activator]');
 
     await expect(activator).toBeDisabled();
@@ -57,7 +57,7 @@ test.describe('menu', () => {
   });
 
   test('menu should be opened on hover', async ({ page }) => {
-    const menu = page.locator('div[data-id=menu-8]');
+    const menu = page.locator('div[data-id=menu][data-index="8"]');
     const activator = menu.locator('[data-id=activator]');
 
     await activator.hover();
@@ -81,7 +81,7 @@ test.describe('menu', () => {
   });
 
   test('should have aria-expanded toggle on open/close', async ({ page }) => {
-    const menu = page.locator('div[data-id=menu-0]');
+    const menu = page.locator('div[data-id=menu][data-index="0"]');
     const activator = menu.locator('[data-id=activator]');
 
     // The ARIA sits on the activator itself, never on a role-less wrapper
@@ -104,7 +104,7 @@ test.describe('menu', () => {
   });
 
   test('should close menu when clicking outside', async ({ page }) => {
-    const menu = page.locator('div[data-id=menu-0]');
+    const menu = page.locator('div[data-id=menu][data-index="0"]');
     await menu.locator('[data-id=activator]').click();
     await expect(page.locator(menuContent)).toBeVisible();
 
@@ -114,7 +114,7 @@ test.describe('menu', () => {
   });
 
   test('should not close persistent menu when clicking outside', async ({ page }) => {
-    const menu = page.locator('div[data-id=menu-16]');
+    const menu = page.locator('div[data-id=menu][data-index="16"]');
     await menu.scrollIntoViewIfNeeded();
     await menu.locator('[data-id=activator]').click();
 
@@ -131,7 +131,7 @@ test.describe('menu', () => {
   });
 
   test('should focus menu content on open and return focus to activator on close', async ({ page }) => {
-    const menu = page.locator('div[data-id=menu-0]');
+    const menu = page.locator('div[data-id=menu][data-index="0"]');
     const activator = menu.locator('[data-id=activator]');
 
     await activator.click();
@@ -197,7 +197,7 @@ test.describe('menu', () => {
   });
 
   test('menu should be closed by clicking the menu content', async ({ page }) => {
-    const menu = page.locator('div[data-id=menu-12]');
+    const menu = page.locator('div[data-id=menu][data-index="12"]');
     const activator = menu.locator('[data-id=activator]');
 
     await activator.click();

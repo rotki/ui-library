@@ -97,7 +97,8 @@ onBeforeMount(() => {
       <template #item="{ item, index }">
         <RuiTooltip
           v-bind="objectOmit(item, ['buttonColor'])"
-          :data-id="`tooltip-${index}`"
+          data-id="tooltip"
+          :data-index="index"
         >
           <template #activator>
             <RuiButton
@@ -126,7 +127,8 @@ onBeforeMount(() => {
           :key="index"
           v-bind="objectOmit(item, ['buttonColor'])"
           class="w-full"
-          :data-id="`tooltip-full-${index}`"
+          data-id="tooltip-full"
+          :data-index="index"
         >
           <template #activator>
             <RuiButton

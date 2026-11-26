@@ -37,6 +37,12 @@ const tokenRule = ['error', {
   }],
 }];
 
+/*
+ * A `data-id` is a literal that tests select by; the value that varies goes in an attribute of its
+ * own (`data-id="chip" :data-index="index"`, then `[data-id=chip][data-index="1"]`).
+ */
+const testIdMessage = 'Keep data-id a literal and put the varying value in its own data attribute: data-id="chip" :data-index="index".';
+
 /** Syntax the package source must not use, shared by its `.ts` and `.vue` rules. */
 const packageSyntax = ['TSEnumDeclaration[const=true]', 'TSExportAssignment', {
   selector: 'ImportDeclaration[specifiers.length=0]:not([importKind=\'type\']):not([source.value=/\\.s?css$/])',
@@ -67,6 +73,23 @@ export default rotki({
   files: ['**/*.vue'],
   rules: {
     'vue/no-dupe-keys': 'error',
+    // the first three are the shared config's own
+    'vue/no-restricted-syntax': ['error', 'DebuggerStatement', 'LabeledStatement', 'WithStatement', {
+      selector: 'VAttribute[directive=true][key.argument.name=/^data-(test)?id$/] :matches(TemplateLiteral[expressions.length>0], BinaryExpression[operator=\'+\'])',
+      message: testIdMessage,
+    }],
+  },
+}, {
+  // the specs select by those literals: no data-id assembled from a prefix and a value
+  files: ['**/*.spec.ts', 'apps/example/e2e/**/*.ts', 'packages/ui-library/tests/**/*.ts'],
+  rules: {
+    'no-restricted-syntax': ['error', 'TSEnumDeclaration[const=true]', 'TSExportAssignment', {
+      selector: 'CallExpression[callee.property.name=\'getByTestId\'] > TemplateLiteral[expressions.length>0]',
+      message: testIdMessage,
+    }, {
+      selector: String.raw`TemplateElement[value.raw=/data-id=["']?[\w-]+$/]`,
+      message: testIdMessage,
+    }],
   },
 }, {
   /*

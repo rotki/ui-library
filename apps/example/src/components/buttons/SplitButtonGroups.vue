@@ -21,7 +21,8 @@ const refreshed = ref<number>(0);
         :key="variant"
         :variant="variant"
         color="primary"
-        :data-id="`split-button-${variant}`"
+        data-id="split-button"
+        :data-group-variant="variant"
       >
         <RuiTooltip :open-delay="400">
           <template #activator>

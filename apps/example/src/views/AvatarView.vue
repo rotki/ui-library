@@ -27,7 +27,8 @@ const colors = ['default', 'primary', 'secondary', 'error', 'warning', 'info', '
             v-for="s in sizes"
             :key="s"
             :size="s"
-            :data-id="`avatar-image-${s}`"
+            data-id="avatar-image"
+            :data-avatar-size="s"
             src="https://avatars.githubusercontent.com/u/3921489"
             alt="Avatar image"
           />
@@ -43,7 +44,8 @@ const colors = ['default', 'primary', 'secondary', 'error', 'warning', 'info', '
             v-for="s in sizes"
             :key="s"
             :size="s"
-            :data-id="`avatar-initials-${s}`"
+            data-id="avatar-initials"
+            :data-avatar-size="s"
             text="Ada Lovelace"
             alt="Ada Lovelace"
           />
@@ -59,7 +61,8 @@ const colors = ['default', 'primary', 'secondary', 'error', 'warning', 'info', '
             v-for="s in sizes"
             :key="s"
             :size="s"
-            :data-id="`avatar-icon-${s}`"
+            data-id="avatar-icon"
+            :data-avatar-size="s"
             icon="lu-user"
             alt="User"
           />
@@ -88,7 +91,8 @@ const colors = ['default', 'primary', 'secondary', 'error', 'warning', 'info', '
             v-for="v in variants"
             :key="v"
             :variant="v"
-            :data-id="`avatar-variant-${v}`"
+            data-id="avatar-variant"
+            :data-avatar-variant="v"
             text="AL"
             size="lg"
           />
@@ -104,7 +108,8 @@ const colors = ['default', 'primary', 'secondary', 'error', 'warning', 'info', '
             v-for="c in colors"
             :key="c"
             :color="c"
-            :data-id="`avatar-color-${c}`"
+            data-id="avatar-color"
+            :data-avatar-color="c"
             text="AL"
           />
         </div>

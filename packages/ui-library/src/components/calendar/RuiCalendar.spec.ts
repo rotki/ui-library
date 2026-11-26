@@ -84,7 +84,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
       // Find the button for January 10, 2023
       const paddedMonth = (targetDate.getMonth() + 1).toString().padStart(2, '0');
       const paddedDay = targetDate.getDate().toString().padStart(2, '0');
-      const dayButton = wrapper.find(`button[data-id="${targetDate.getFullYear()}-${paddedMonth}-${paddedDay}"]`);
+      const dayButton = wrapper.find(`button[data-id=calendar-day][data-date="${targetDate.getFullYear()}-${paddedMonth}-${paddedDay}"]`);
 
       await dayButton.trigger('click');
 
@@ -527,13 +527,13 @@ describe('components/calendar/RuiCalendar.vue', () => {
       });
 
       // Previous month: Jan 29 should be in range and not disabled
-      const jan29 = wrapper.find('[data-id="2023-01-29"]');
+      const jan29 = wrapper.find('[data-id=calendar-day][data-date="2023-01-29"]');
       expect(jan29.exists()).toBeTruthy();
       expect(jan29.attributes('disabled')).toBeUndefined();
       expect(jan29.attributes('data-current-month')).toBeUndefined();
 
       // Next month: Mar 1 should be in range and not disabled
-      const mar1 = wrapper.find('[data-id="2023-03-01"]');
+      const mar1 = wrapper.find('[data-id=calendar-day][data-date="2023-03-01"]');
       expect(mar1.exists()).toBeTruthy();
       expect(mar1.attributes('disabled')).toBeUndefined();
       expect(mar1.attributes('data-current-month')).toBeUndefined();
@@ -697,7 +697,7 @@ describe('components/calendar/RuiCalendar.vue', () => {
     }
 
     function tabbableKey(view: MountedWrapper<typeof RuiCalendar>): string | undefined {
-      return gridCells(view).find(cell => cell.attributes('tabindex') === '0')?.attributes('data-id');
+      return gridCells(view).find(cell => cell.attributes('tabindex') === '0')?.attributes('data-date');
     }
 
     async function pressOnGrid(view: MountedWrapper<typeof RuiCalendar>, key: string): Promise<void> {
@@ -718,12 +718,12 @@ describe('components/calendar/RuiCalendar.vue', () => {
     it('names every day and marks the selected one', () => {
       wrapper = createWrapper({ props: { modelValue: new Date(2023, 0, 15) } });
 
-      const selected = gridCells(wrapper).find(cell => cell.attributes('data-id') === '2023-01-15');
+      const selected = gridCells(wrapper).find(cell => cell.attributes('data-date') === '2023-01-15');
       assert(selected);
       expect(selected.attributes('aria-label')).toBe('Sunday, January 15, 2023');
       expect(selected.attributes('aria-selected')).toBe('true');
 
-      const other = gridCells(wrapper).find(cell => cell.attributes('data-id') === '2023-01-16');
+      const other = gridCells(wrapper).find(cell => cell.attributes('data-date') === '2023-01-16');
       expect(other?.attributes('aria-selected')).toBe('false');
     });
 

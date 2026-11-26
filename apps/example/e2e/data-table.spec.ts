@@ -577,7 +577,7 @@ test.describe('data tables - selection', () => {
     await expect(table).toBeVisible();
 
     // Click first row checkbox
-    const firstRowCheckbox = table.locator('tbody tr:first-child [data-id*=table-toggle-check-] input');
+    const firstRowCheckbox = table.locator('tbody tr:first-child [data-id=table-toggle-check] input');
     await firstRowCheckbox.check();
 
     // First row should be selected (using aria-selected)
@@ -590,7 +590,7 @@ test.describe('data tables - selection', () => {
     const table = container.locator('[data-id=table]');
     await expect(table).toBeVisible();
 
-    const firstRowCheckbox = table.locator('tbody tr:first-child [data-id*=table-toggle-check-] input');
+    const firstRowCheckbox = table.locator('tbody tr:first-child [data-id=table-toggle-check] input');
     const firstRow = table.locator('tbody tr:first-child');
 
     // Select
@@ -645,7 +645,7 @@ test.describe('data tables - selection', () => {
     await expect(table).toBeVisible();
 
     // Select first row on page 1
-    const firstRowCheckbox = table.locator('tbody tr:first-child [data-id*=table-toggle-check-] input');
+    const firstRowCheckbox = table.locator('tbody tr:first-child [data-id=table-toggle-check] input');
     await firstRowCheckbox.check();
 
     // Verify first row is selected (using aria-selected)
@@ -672,7 +672,7 @@ test.describe('data tables - selection', () => {
     await expect(table).toBeVisible();
 
     // First row checkbox should be disabled
-    const firstRowCheckbox = table.locator('tbody tr:first-child [data-id*=table-toggle-check-] input');
+    const firstRowCheckbox = table.locator('tbody tr:first-child [data-id=table-toggle-check] input');
     await expect(firstRowCheckbox).toBeDisabled();
   });
 
@@ -686,7 +686,7 @@ test.describe('data tables - selection', () => {
     await selectAllCheckbox.click();
 
     // Count disabled checkboxes
-    const disabledCheckboxes = await table.locator('tbody tr [data-id*=table-toggle-check-] input:disabled').count();
+    const disabledCheckboxes = await table.locator('tbody tr [data-id=table-toggle-check] input:disabled').count();
     expect(disabledCheckboxes).toEqual(3); // First 3 rows are disabled
 
     // Count selected rows (using aria-selected)
@@ -705,7 +705,7 @@ test.describe('data tables - selection', () => {
     await expect(table).toBeVisible();
 
     // Focus the first row checkbox
-    const firstRowCheckbox = table.locator('tbody tr:first-child [data-id*=table-toggle-check-] input');
+    const firstRowCheckbox = table.locator('tbody tr:first-child [data-id=table-toggle-check] input');
     await firstRowCheckbox.focus();
 
     // Verify not selected initially
@@ -727,7 +727,7 @@ test.describe('data tables - selection', () => {
     await expect(table).toBeVisible();
 
     // Focus the first row checkbox directly and verify it's focusable
-    const firstRowCheckbox = table.locator('tbody tr:first-child [data-id*=table-toggle-check-] input');
+    const firstRowCheckbox = table.locator('tbody tr:first-child [data-id=table-toggle-check] input');
     await firstRowCheckbox.focus();
     await expect(firstRowCheckbox).toBeFocused();
 
@@ -1127,21 +1127,21 @@ test.describe('data tables - index', () => {
     await expect(page.locator('h2[data-id=datatables]')).toContainText('Data Tables');
 
     // Check navigation links exist (routes are now path-based)
-    await expect(page.locator('[data-id="link-/data-tables/basic"]')).toBeVisible();
-    await expect(page.locator('[data-id="link-/data-tables/sorting"]')).toBeVisible();
-    await expect(page.locator('[data-id="link-/data-tables/pagination"]')).toBeVisible();
-    await expect(page.locator('[data-id="link-/data-tables/search"]')).toBeVisible();
-    await expect(page.locator('[data-id="link-/data-tables/selection"]')).toBeVisible();
-    await expect(page.locator('[data-id="link-/data-tables/expandable"]')).toBeVisible();
-    await expect(page.locator('[data-id="link-/data-tables/grouping"]')).toBeVisible();
-    await expect(page.locator('[data-id="link-/data-tables/empty"]')).toBeVisible();
-    await expect(page.locator('[data-id="link-/data-tables/custom-slots"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/data-tables/basic"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/data-tables/sorting"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/data-tables/pagination"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/data-tables/search"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/data-tables/selection"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/data-tables/expandable"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/data-tables/grouping"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/data-tables/empty"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/data-tables/custom-slots"]')).toBeVisible();
   });
 
   test('should navigate to sub-pages', async ({ page }) => {
     await page.goto('/data-tables');
 
-    await page.locator('[data-id="link-/data-tables/basic"]').click();
+    await page.locator('[data-id=link][data-route="/data-tables/basic"]').click();
     await expect(page).toHaveURL(/\/data-tables\/basic/);
     await expect(page.locator('[data-id=data-tables-basic]')).toBeVisible();
   });

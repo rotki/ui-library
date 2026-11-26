@@ -85,7 +85,8 @@ const groupLabelSearchValue = ref<number>();
           <template #group-header="{ group, items }">
             <div
               class="px-3 py-2 bg-rui-primary/10 flex items-center justify-between"
-              :data-id="`custom-header-${group}`"
+              data-id="custom-header"
+              :data-group="group"
             >
               <span class="font-bold text-rui-primary dark:text-rui-primary-lighter">{{ group }}</span>
               <RuiChip size="sm">

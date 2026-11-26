@@ -14,13 +14,15 @@ const textSizes = ['text-caption', 'text-sm', 'text-body-1', 'text-h6'] as const
         v-for="textSize in textSizes"
         :key="textSize"
         :class="textSize"
-        :data-id="`link-text-${textSize}`"
+        data-id="link-text"
+        :data-text-size="textSize"
       >
         Balances are out of date.
         <RuiButton
           variant="link"
           color="primary"
-          :data-id="`link-button-${textSize}`"
+          data-id="link-button"
+          :data-text-size="textSize"
         >
           Refresh now
           <template #append>

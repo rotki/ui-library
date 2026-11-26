@@ -8,20 +8,20 @@ test.describe('steppers', () => {
   test('should render stepper with correct states', async ({ page }) => {
     await expect(page.locator('h2[data-id=steppers]')).toContainText('Steppers');
 
-    const horizontalStepper = page.locator('[data-id=stepper-0]');
+    const horizontalStepper = page.locator('[data-id=stepper][data-index="0"]');
 
     await expect(horizontalStepper.locator('[data-state=inactive]')).toContainText('Inactive');
     await expect(horizontalStepper.locator('[data-state=success]')).toContainText('Success');
   });
 
   test('should have role="list" and aria-label on stepper', async ({ page }) => {
-    const stepper = page.locator('[data-id=stepper-0]');
+    const stepper = page.locator('[data-id=stepper][data-index="0"]');
     await expect(stepper).toHaveAttribute('role', 'list');
     await expect(stepper).toHaveAttribute('aria-label', 'Progress steps');
   });
 
   test('should have role="listitem" on each step', async ({ page }) => {
-    const stepper = page.locator('[data-id=stepper-0]');
+    const stepper = page.locator('[data-id=stepper][data-index="0"]');
     const items = stepper.locator('[role=listitem]');
 
     // First stepper has 7 steps
@@ -29,7 +29,7 @@ test.describe('steppers', () => {
   });
 
   test('should have aria-current="step" on active step', async ({ page }) => {
-    const stepper = page.locator('[data-id=stepper-0]');
+    const stepper = page.locator('[data-id=stepper][data-index="0"]');
     const activeStep = stepper.locator('[aria-current=step]');
 
     await expect(activeStep).toHaveCount(1);
@@ -37,7 +37,7 @@ test.describe('steppers', () => {
   });
 
   test('should render vertical stepper', async ({ page }) => {
-    const stepper = page.locator('[data-id=stepper-1]');
+    const stepper = page.locator('[data-id=stepper][data-index="1"]');
     await expect(stepper).toBeVisible();
 
     const items = stepper.locator('[role=listitem]');
@@ -45,7 +45,7 @@ test.describe('steppers', () => {
   });
 
   test('should render icon-top stepper', async ({ page }) => {
-    const stepper = page.locator('[data-id=stepper-2]');
+    const stepper = page.locator('[data-id=stepper][data-index="2"]');
     await expect(stepper).toBeVisible();
 
     const items = stepper.locator('[role=listitem]');
@@ -53,7 +53,7 @@ test.describe('steppers', () => {
   });
 
   test('should render custom stepper variant', async ({ page }) => {
-    const stepper = page.locator('[data-id=stepper-4]');
+    const stepper = page.locator('[data-id=stepper][data-index="4"]');
     await expect(stepper).toBeVisible();
 
     const items = stepper.locator('[role=listitem]');

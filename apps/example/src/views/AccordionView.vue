@@ -42,7 +42,8 @@ const headerClass = 'px-4 py-3 font-medium hover:bg-rui-hover focus-visible:-out
       >
         <div
           class="flex flex-col gap-3"
-          :data-id="`wrapper-${i}`"
+          data-id="wrapper"
+          :data-index="i"
         >
           <h3 class="text-body-1 font-medium">
             {{ accordion.label }}

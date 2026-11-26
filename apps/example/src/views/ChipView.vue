@@ -77,7 +77,8 @@ onBeforeMount(() => {
     >
       <template #item="{ item, index }">
         <RuiChip
-          :data-id="`chip-${index}`"
+          data-id="chip"
+          :data-index="index"
           v-bind="item"
           @click:close="onRemove(index)"
         >
@@ -99,7 +100,8 @@ onBeforeMount(() => {
       </template>
       <template #item="{ item, index }">
         <RuiChip
-          :data-id="`pre-chip-${index}`"
+          data-id="pre-chip"
+          :data-index="index"
           v-bind="item"
           @click:close="onRemove(`pre-${index}`)"
         >

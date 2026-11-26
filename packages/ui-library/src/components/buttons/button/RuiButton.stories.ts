@@ -434,19 +434,29 @@ export const LoadingKeepsHeight = meta.story({
       template: `
         <div class="flex flex-col items-start gap-3">
           <div v-for="size in sizes" :key="size" class="flex items-start gap-3">
-            <RuiButton color="primary" :size="size === 'md' ? undefined : size" :data-testid="'idle-' + size">Continue</RuiButton>
-            <RuiButton color="primary" :size="size === 'md' ? undefined : size" :data-testid="'loading-' + size" loading>Continue</RuiButton>
+            <RuiButton color="primary" :size="size === 'md' ? undefined : size" data-testid="idle">Continue</RuiButton>
+            <RuiButton color="primary" :size="size === 'md' ? undefined : size" data-testid="loading" loading>Continue</RuiButton>
           </div>
         </div>`,
     };
   },
   async play({ canvas }) {
+    const idleButtons = canvas.getAllByTestId('idle');
+    const loadingButtons = canvas.getAllByTestId('loading');
     for (const size of loadingSizes) {
-      const idle = canvas.getByTestId(`idle-${size}`).getBoundingClientRect().height;
-      await expect(canvas.getByTestId(`loading-${size}`).getBoundingClientRect().height).toBe(idle);
+      const idle = buttonOfSize(idleButtons, size).getBoundingClientRect().height;
+      await expect(buttonOfSize(loadingButtons, size).getBoundingClientRect().height).toBe(idle);
     }
   },
 });
+
+/** The button of one size among several sharing a test id, by the `data-size` RuiButton renders. */
+function buttonOfSize(buttons: HTMLElement[], size: string): HTMLElement {
+  const button = buttons.find(element => element.dataset.size === size);
+  if (!button)
+    throw new Error(`no button of size ${size}`);
+  return button;
+}
 
 interface ButtonLayout {
   width: number;
@@ -481,7 +491,7 @@ export const LoadingKeepsLabelInPlace = meta.story({
             :key="size"
             color="primary"
             :size="size === 'md' ? undefined : size"
-            :data-testid="'refresh-' + size"
+            data-testid="refresh"
             :loading="loading"
           >
             <template #prepend><RuiIcon name="lu-refresh-ccw" /></template>
@@ -491,7 +501,8 @@ export const LoadingKeepsLabelInPlace = meta.story({
     };
   },
   async play({ canvas, userEvent }) {
-    const buttons = loadingSizes.map(size => canvas.getByTestId(`refresh-${size}`));
+    const refreshButtons = canvas.getAllByTestId('refresh');
+    const buttons = loadingSizes.map(size => buttonOfSize(refreshButtons, size));
     const idle = buttons.map(buttonLayout);
     const toggle = canvas.getByTestId('toggle-loading');
 

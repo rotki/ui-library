@@ -303,7 +303,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     await vi.runOnlyPendingTimersAsync();
     await wrapper.find('[data-id=activator]').trigger('click');
     await vi.runOnlyPendingTimersAsync();
-    await wrapper.find('[data-id=action-now]').trigger('click');
+    await wrapper.find('[data-id=action][data-action=now]').trigger('click');
 
     const modelValue = wrapper.emitted('update:modelValue');
     expect(modelValue).toBeTruthy();
@@ -333,7 +333,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     await vi.runOnlyPendingTimersAsync();
     await wrapper.find('[data-id=activator]').trigger('click');
     await vi.runOnlyPendingTimersAsync();
-    await wrapper.find('[data-id=action-now]').trigger('click');
+    await wrapper.find('[data-id=action][data-action=now]').trigger('click');
 
     const modelValue = wrapper.emitted('update:modelValue');
     expect(modelValue).toBeTruthy();
@@ -563,7 +563,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
     await vi.runOnlyPendingTimersAsync();
     await wrapper.find('[data-id=activator]').trigger('click');
     await vi.runOnlyPendingTimersAsync();
-    await wrapper.find('[data-id=action-now]').trigger('click');
+    await wrapper.find('[data-id=action][data-action=now]').trigger('click');
 
     const modelValue = wrapper.emitted('update:modelValue');
     expect(modelValue).toBeTruthy();
@@ -1173,7 +1173,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       await wrapper.find('[data-id=activator]').trigger('click');
       await vi.runOnlyPendingTimersAsync();
       const expectedSeconds = new Date().getSeconds();
-      await wrapper.find('[data-id=action-now]').trigger('click');
+      await wrapper.find('[data-id=action][data-action=now]').trigger('click');
       await vi.runOnlyPendingTimersAsync();
 
       const modelValue = wrapper.emitted('update:modelValue');
@@ -1198,7 +1198,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       await vi.runOnlyPendingTimersAsync();
       await wrapper.find('[data-id=activator]').trigger('click');
       await vi.runOnlyPendingTimersAsync();
-      await wrapper.find('[data-id=action-now]').trigger('click');
+      await wrapper.find('[data-id=action][data-action=now]').trigger('click');
       await vi.runOnlyPendingTimersAsync();
 
       const modelValue = wrapper.emitted('update:modelValue');
@@ -2716,7 +2716,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       await vi.runOnlyPendingTimersAsync();
       await wrapper.find('[data-id="activator"]').trigger('click');
       await vi.runOnlyPendingTimersAsync();
-      await wrapper.find('[data-id=action-now]').trigger('click');
+      await wrapper.find('[data-id=action][data-action=now]').trigger('click');
 
       const lastEmittedValue = wrapper.emitted('update:modelValue')?.at(-1)?.[0];
       assert(typeof lastEmittedValue === 'number');
@@ -2787,9 +2787,9 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       await wrapper.find('[data-id="activator"]').trigger('click');
       await vi.runOnlyPendingTimersAsync();
 
-      expect(wrapper.find('[data-id=action-now]').exists()).toBe(true);
-      expect(wrapper.find('[data-id=action-today]').exists()).toBe(false);
-      expect(wrapper.find('[data-id=action-clear]').exists()).toBe(false);
+      expect(wrapper.find('[data-id=action][data-action=now]').exists()).toBe(true);
+      expect(wrapper.find('[data-id=action][data-action=today]').exists()).toBe(false);
+      expect(wrapper.find('[data-id=action][data-action=clear]').exists()).toBe(false);
     });
 
     it('moves the date to today and keeps the picked time', async () => {
@@ -2804,7 +2804,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       await vi.runOnlyPendingTimersAsync();
       await wrapper.find('[data-id="activator"]').trigger('click');
       await vi.runOnlyPendingTimersAsync();
-      await wrapper.find('[data-id=action-today]').trigger('click');
+      await wrapper.find('[data-id=action][data-action=today]').trigger('click');
       await vi.runOnlyPendingTimersAsync();
 
       const lastEmittedValue = wrapper.emitted('update:modelValue')?.at(-1)?.[0];
@@ -2826,7 +2826,7 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       await vi.runOnlyPendingTimersAsync();
       await wrapper.find('[data-id="activator"]').trigger('click');
       await vi.runOnlyPendingTimersAsync();
-      await wrapper.find('[data-id=action-clear]').trigger('click');
+      await wrapper.find('[data-id=action][data-action=clear]').trigger('click');
       await vi.runOnlyPendingTimersAsync();
 
       expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toBeUndefined();
@@ -2844,8 +2844,8 @@ describe('components/date-time-picker/RuiDateTimePicker.vue', () => {
       await wrapper.find('[data-id="activator"]').trigger('click');
       await vi.runOnlyPendingTimersAsync();
 
-      expect(wrapper.find('[data-id=action-now]').exists()).toBe(true);
-      expect(wrapper.find('[data-id=action-clear]').exists()).toBe(false);
+      expect(wrapper.find('[data-id=action][data-action=now]').exists()).toBe(true);
+      expect(wrapper.find('[data-id=action][data-action=clear]').exists()).toBe(false);
     });
 
     it('renders no footer when actions is empty', async () => {

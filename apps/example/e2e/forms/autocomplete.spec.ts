@@ -7,17 +7,17 @@ test.describe('auto-complete - index', () => {
 
   test('should render navigation links', async ({ page }) => {
     await expect(page.locator('[data-id=auto-completes-index]')).toBeVisible();
-    await expect(page.locator('[data-id="link-/auto-completes/basic"]')).toBeVisible();
-    await expect(page.locator('[data-id="link-/auto-completes/selection"]')).toBeVisible();
-    await expect(page.locator('[data-id="link-/auto-completes/search"]')).toBeVisible();
-    await expect(page.locator('[data-id="link-/auto-completes/readonly"]')).toBeVisible();
-    await expect(page.locator('[data-id="link-/auto-completes/custom"]')).toBeVisible();
-    await expect(page.locator('[data-id="link-/auto-completes/keyboard"]')).toBeVisible();
-    await expect(page.locator('[data-id="link-/auto-completes/advanced"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/auto-completes/basic"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/auto-completes/selection"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/auto-completes/search"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/auto-completes/readonly"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/auto-completes/custom"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/auto-completes/keyboard"]')).toBeVisible();
+    await expect(page.locator('[data-id=link][data-route="/auto-completes/advanced"]')).toBeVisible();
   });
 
   test('should navigate to sub-routes', async ({ page }) => {
-    await page.locator('[data-id="link-/auto-completes/basic"]').click();
+    await page.locator('[data-id=link][data-route="/auto-completes/basic"]').click();
     await expect(page.locator('[data-id=auto-completes-basic]')).toBeVisible();
   });
 });
@@ -703,8 +703,8 @@ test.describe('auto-complete - grouping', () => {
 
   test('should be reachable from the index navigation', async ({ page }) => {
     await page.goto('/auto-completes');
-    await expect(page.locator('[data-id="link-/auto-completes/grouping"]')).toBeVisible();
-    await page.locator('[data-id="link-/auto-completes/grouping"]').click();
+    await expect(page.locator('[data-id=link][data-route="/auto-completes/grouping"]')).toBeVisible();
+    await page.locator('[data-id=link][data-route="/auto-completes/grouping"]').click();
     await expect(page.locator('[data-id=auto-completes-grouping]')).toBeVisible();
   });
 
@@ -739,16 +739,16 @@ test.describe('auto-complete - grouping', () => {
     const ac = page.locator('[data-id=ac-grouping-custom-header]');
     await ac.locator('[data-id=activator]').click();
 
-    const customEurope = page.locator('[data-id="custom-header-Europe"]');
+    const customEurope = page.locator('[data-id=custom-header][data-group="Europe"]');
     await expect(customEurope).toBeVisible();
     await expect(customEurope).toContainText('Europe');
     await expect(customEurope).toContainText('3');
 
-    const customAsia = page.locator('[data-id="custom-header-Asia"]');
+    const customAsia = page.locator('[data-id=custom-header][data-group="Asia"]');
     await expect(customAsia).toContainText('Asia');
     await expect(customAsia).toContainText('2');
 
-    const customAfrica = page.locator('[data-id="custom-header-Africa"]');
+    const customAfrica = page.locator('[data-id=custom-header][data-group="Africa"]');
     await expect(customAfrica).toContainText('Africa');
     await expect(customAfrica).toContainText('1');
   });
@@ -856,8 +856,8 @@ test.describe('auto-complete - slots (placeholder & footer)', () => {
 
   test('should be reachable from the index navigation', async ({ page }) => {
     await page.goto('/auto-completes');
-    await expect(page.locator('[data-id="link-/auto-completes/slots"]')).toBeVisible();
-    await page.locator('[data-id="link-/auto-completes/slots"]').click();
+    await expect(page.locator('[data-id=link][data-route="/auto-completes/slots"]')).toBeVisible();
+    await page.locator('[data-id=link][data-route="/auto-completes/slots"]').click();
     await expect(page.locator('[data-id=auto-completes-slots]')).toBeVisible();
   });
 

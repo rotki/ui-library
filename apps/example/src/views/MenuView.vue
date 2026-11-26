@@ -141,7 +141,8 @@ const persistentNestedOpen = ref<boolean>(false);
       >
         <RuiMenu
           v-bind="objectOmit(menu, ['buttonColor'])"
-          :data-id="`menu-${i}`"
+          data-id="menu"
+          :data-index="i"
           :open-delay="10"
         >
           <template #activator="{ attrs, disabled }">

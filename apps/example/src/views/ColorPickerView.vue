@@ -27,7 +27,8 @@ const colorPickers = ref<ColorPickerItem[]>([
         <RuiCard class="mb-2">
           <RuiColorPicker
             v-model="item.modelValue"
-            :data-id="`color-picker-${i}`"
+            data-id="color-picker"
+            :data-index="i"
           />
         </RuiCard>
         Selected value: {{ item.modelValue }}

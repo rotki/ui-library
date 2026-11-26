@@ -534,7 +534,9 @@ const sections = ref<CardData[]>([
                 'actions',
               ])
             "
-            :data-id="`card-${i}-${j}`"
+            data-id="card"
+            :data-section="i"
+            :data-index="j"
           >
             <template
               v-if="card.image"
@@ -588,7 +590,8 @@ const sections = ref<CardData[]>([
                 v-for="(action, k) in card.actions"
                 v-bind="objectOmit(action, ['clicks', 'text'])"
                 :key="k"
-                :data-id="`card-action-${k}`"
+                data-id="card-action"
+                :data-index="k"
                 @click="action.clicks++"
               >
                 {{ action.text }}

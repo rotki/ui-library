@@ -32,7 +32,8 @@ const buttons: ToolbarButton[] = [
         :size="button.size"
         color="primary"
         collapse-below="lg"
-        :data-id="`collapsing-${button.label.toLowerCase().replace(' ', '-')}`"
+        data-id="collapsing"
+        :data-label="button.label"
       >
         <template #prepend>
           <RuiIcon :name="button.icon" />

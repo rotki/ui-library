@@ -54,7 +54,7 @@ describe('ruiDateTimePickerMenu', () => {
 
   it('renders set-now button', () => {
     const wrapper = createWrapper();
-    expect(wrapper.find('[data-id=action-now]').exists()).toBe(true);
+    expect(wrapper.find('[data-id=action][data-action=now]').exists()).toBe(true);
   });
 
   it('renders timezone autocomplete when showTimezone is set', () => {
@@ -121,9 +121,9 @@ describe('ruiDateTimePickerMenu', () => {
         },
       });
 
-      const rendered = wrapper.findAll('[data-id=actions] [data-id^=action-]');
-      expect(rendered.map(button => button.attributes('data-id')))
-        .toEqual(['action-today', 'action-now', 'action-clear']);
+      const rendered = wrapper.findAll('[data-id=actions] [data-id=action]');
+      expect(rendered.map(button => button.attributes('data-action')))
+        .toEqual(['today', 'now', 'clear']);
     });
 
     it.each([
@@ -147,7 +147,7 @@ describe('ruiDateTimePickerMenu', () => {
         },
       });
 
-      await wrapper.find(`[data-id=action-${action}]`).trigger('click');
+      await wrapper.find(`[data-id=action][data-action=${action}]`).trigger('click');
 
       expect(wrapper.emitted(event)).toHaveLength(1);
     });
@@ -302,7 +302,7 @@ describe('ruiDateTimePickerMenu', () => {
     it('should emit set-now event when clicked', async () => {
       const wrapper = createWrapper();
 
-      await wrapper.find('[data-id=action-now]').trigger('click');
+      await wrapper.find('[data-id=action][data-action=now]').trigger('click');
 
       expect(wrapper.emitted('set-now')).toBeTruthy();
       expect(wrapper.emitted('set-now')?.length).toBe(1);

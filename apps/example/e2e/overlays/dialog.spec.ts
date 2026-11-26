@@ -13,7 +13,7 @@ test.describe('dialog', () => {
   test('check persistent dialog', async ({ page }) => {
     await expect(page.locator('h2[data-id=dialogs]')).toContainText('Dialogs');
 
-    const defaultDialog = page.locator('div[data-id=dialog-0]');
+    const defaultDialog = page.locator('div[data-id=dialog][data-index="0"]');
 
     // open dialog
     const activator = defaultDialog.locator('[data-id=activator]');
@@ -34,7 +34,7 @@ test.describe('dialog', () => {
   });
 
   test('should have aria-modal attribute when open', async ({ page }) => {
-    const defaultDialog = page.locator('div[data-id=dialog-0]');
+    const defaultDialog = page.locator('div[data-id=dialog][data-index="0"]');
 
     const activator = defaultDialog.locator('[data-id=activator]');
     await activator.click();
@@ -48,7 +48,7 @@ test.describe('dialog', () => {
   });
 
   test('should have aria-label attribute when provided', async ({ page }) => {
-    const defaultDialog = page.locator('div[data-id=dialog-0]');
+    const defaultDialog = page.locator('div[data-id=dialog][data-index="0"]');
 
     const activator = defaultDialog.locator('[data-id=activator]');
     await activator.click();
@@ -62,7 +62,7 @@ test.describe('dialog', () => {
   });
 
   test('should display content inside dialog', async ({ page }) => {
-    const defaultDialog = page.locator('div[data-id=dialog-0]');
+    const defaultDialog = page.locator('div[data-id=dialog][data-index="0"]');
 
     const activator = defaultDialog.locator('[data-id=activator]');
     await activator.click();
@@ -76,7 +76,7 @@ test.describe('dialog', () => {
   });
 
   test('check non-persistent dialog', async ({ page }) => {
-    const defaultDialog = page.locator('div[data-id=dialog-1]');
+    const defaultDialog = page.locator('div[data-id=dialog][data-index="1"]');
 
     // open dialog
     const activator = defaultDialog.locator('[data-id=activator]');

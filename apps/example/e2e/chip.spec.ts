@@ -6,16 +6,16 @@ test.describe('chips', () => {
   });
 
   test('should render chip with text', async ({ page }) => {
-    const chip = page.locator('[data-id=chip-0]');
+    const chip = page.locator('[data-id=chip][data-index="0"]');
     await expect(chip).toBeVisible();
     await expect(chip).toContainText('Chip');
   });
 
   test('should render closeable chip with close button', async ({ page }) => {
-    const closeableChip = page.locator('[data-id=chip-0]');
+    const closeableChip = page.locator('[data-id=chip][data-index="0"]');
     await expect(closeableChip.locator('button')).toBeVisible();
 
-    const nonCloseableChip = page.locator('[data-id=chip-14]');
+    const nonCloseableChip = page.locator('[data-id=chip][data-index="14"]');
     await expect(nonCloseableChip.locator('button')).toHaveCount(0);
   });
 
@@ -24,13 +24,13 @@ test.describe('chips', () => {
     expect(colorCount).toBeGreaterThan(0);
 
     for (let i = 0; i < colorCount; i++) {
-      const chip = page.locator(`[data-id=chip-${i}]`);
+      const chip = page.locator(`[data-id=chip][data-index="${i}"]`);
       await expect(chip).toBeVisible();
     }
   });
 
   test('should render small size chips', async ({ page }) => {
-    const smChip = page.locator('[data-id=chip-35]'); // the first of the closeable small ones
+    const smChip = page.locator('[data-id=chip][data-index="35"]'); // the first of the closeable small ones
     await expect(smChip).toBeVisible();
     await expect(smChip.locator('button')).toBeVisible();
   });
@@ -39,9 +39,9 @@ test.describe('chips', () => {
     await expect(page.locator('h2[data-id=chips]')).toContainText('Chips');
 
     const content = page.locator('[data-id=content]');
-    const dismissibleChip = content.locator('[data-id=chip-0]');
-    const disabledChip = content.locator('[data-id=chip-7]');
-    const inDismissibleChip = content.locator('[data-id=chip-14]');
+    const dismissibleChip = content.locator('[data-id=chip][data-index="0"]');
+    const disabledChip = content.locator('[data-id=chip][data-index="7"]');
+    const inDismissibleChip = content.locator('[data-id=chip][data-index="14"]');
 
     await expect(dismissibleChip.locator('button')).not.toBeDisabled();
     await dismissibleChip.locator('button').click();

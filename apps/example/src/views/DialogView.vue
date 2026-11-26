@@ -31,7 +31,8 @@ const dialogs = ref<DialogData[]>([
         :key="i"
         v-bind="dialog"
         width="900px"
-        :data-id="`dialog-${i}`"
+        data-id="dialog"
+        :data-index="i"
       >
         <template #activator="{ attrs }">
           <RuiButton

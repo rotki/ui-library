@@ -8,15 +8,15 @@ test.describe('color pickers', () => {
   test('should render color picker with initial values', async ({ page }) => {
     await expect(page.locator('h2[data-id=color-pickers]')).toContainText('Color Pickers');
 
-    const firstColorPicker = page.locator('div[data-id=color-picker-0]');
+    const firstColorPicker = page.locator('div[data-id=color-picker][data-index="0"]');
     await expect(firstColorPicker.locator('input')).toHaveValue(/000000/);
 
-    const secondColorPicker = page.locator('div[data-id=color-picker-1]');
+    const secondColorPicker = page.locator('div[data-id=color-picker][data-index="1"]');
     await expect(secondColorPicker.locator('input')).toHaveValue(/45858a/);
   });
 
   test('should update color when typing hex value', async ({ page }) => {
-    const picker = page.locator('div[data-id=color-picker-0]');
+    const picker = page.locator('div[data-id=color-picker][data-index="0"]');
     const input = picker.locator('input');
 
     await input.fill('ff0000');
@@ -28,7 +28,7 @@ test.describe('color pickers', () => {
   });
 
   test('should switch between hex and RGB input modes', async ({ page }) => {
-    const picker = page.locator('div[data-id=color-picker-1]');
+    const picker = page.locator('div[data-id=color-picker][data-index="1"]');
 
     // Initially in hex mode - single input
     await expect(picker.locator('input')).toHaveCount(1);
@@ -48,7 +48,7 @@ test.describe('color pickers', () => {
   });
 
   test('should have aria-label on picker', async ({ page }) => {
-    const picker = page.locator('div[data-id=color-picker-0]');
+    const picker = page.locator('div[data-id=color-picker][data-index="0"]');
     await expect(picker).toHaveAttribute('role', 'application');
     await expect(picker).toHaveAttribute('aria-label', 'Color picker');
 

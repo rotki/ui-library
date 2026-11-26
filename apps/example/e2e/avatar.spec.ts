@@ -8,21 +8,21 @@ test.describe('avatars', () => {
   test('renders image avatar', async ({ page }) => {
     await expect(page.locator('h2[data-id=avatars]')).toContainText('Avatars');
 
-    const avatar = page.getByTestId('avatar-image-lg');
+    const avatar = page.locator('[data-id=avatar-image][data-avatar-size="lg"]');
     await expect(avatar).toBeVisible();
     await expect(avatar.locator('img')).toHaveAttribute('src', /.+/);
   });
 
   test('renders initials fallback at each size', async ({ page }) => {
     for (const size of ['xs', 'sm', 'md', 'lg', 'xl', '2xl']) {
-      const avatar = page.getByTestId(`avatar-initials-${size}`);
+      const avatar = page.locator(`[data-id=avatar-initials][data-avatar-size="${size}"]`);
       await expect(avatar).toBeVisible();
       await expect(avatar).toContainText('AL');
     }
   });
 
   test('renders icon fallback', async ({ page }) => {
-    const avatar = page.getByTestId('avatar-icon-md');
+    const avatar = page.locator('[data-id=avatar-icon][data-avatar-size="md"]');
     await expect(avatar).toBeVisible();
     await expect(avatar.locator('svg')).toBeVisible();
   });
@@ -35,11 +35,11 @@ test.describe('avatars', () => {
   });
 
   test('applies variant and color data attributes', async ({ page }) => {
-    await expect(page.getByTestId('avatar-variant-circular')).toHaveAttribute('data-variant', 'circular');
-    await expect(page.getByTestId('avatar-variant-rounded')).toHaveAttribute('data-variant', 'rounded');
-    await expect(page.getByTestId('avatar-variant-square')).toHaveAttribute('data-variant', 'square');
-    await expect(page.getByTestId('avatar-color-primary')).toHaveAttribute('data-color', 'primary');
-    await expect(page.getByTestId('avatar-color-success')).toHaveAttribute('data-color', 'success');
+    await expect(page.locator('[data-id=avatar-variant][data-avatar-variant="circular"]')).toHaveAttribute('data-variant', 'circular');
+    await expect(page.locator('[data-id=avatar-variant][data-avatar-variant="rounded"]')).toHaveAttribute('data-variant', 'rounded');
+    await expect(page.locator('[data-id=avatar-variant][data-avatar-variant="square"]')).toHaveAttribute('data-variant', 'square');
+    await expect(page.locator('[data-id=avatar-color][data-avatar-color="primary"]')).toHaveAttribute('data-color', 'primary');
+    await expect(page.locator('[data-id=avatar-color][data-avatar-color="success"]')).toHaveAttribute('data-color', 'success');
   });
 
   test('connection indicator dot renders via RuiBadge wrapper', async ({ page }) => {
@@ -71,7 +71,7 @@ test.describe('avatars', () => {
   });
 
   test('avatar root is not focusable by default', async ({ page }) => {
-    const avatar = page.getByTestId('avatar-initials-md');
+    const avatar = page.locator('[data-id=avatar-initials][data-avatar-size="md"]');
     const tabindex = await avatar.getAttribute('tabindex');
     expect(tabindex).toBeNull();
   });

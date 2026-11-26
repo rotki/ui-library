@@ -25,7 +25,8 @@ const sizes = ['xs', 'sm', undefined, 'lg', 'xl', '2xl'] as const;
         v-for="size in sizes"
         :key="size ?? 'md'"
         class="rounded-rui-panel border border-rui-divider overflow-hidden w-56"
-        :data-id="`list-button-card-${size ?? 'md'}`"
+        data-id="list-button-card"
+        :data-button-size="size ?? 'md'"
       >
         <div class="px-3 py-2 text-caption text-rui-text-secondary border-b border-rui-grey-200 dark:border-rui-grey-800">
           size: {{ size ?? 'md (default)' }}
@@ -35,7 +36,9 @@ const sizes = ['xs', 'sm', undefined, 'lg', 'xl', '2xl'] as const;
           :key="item.label"
           variant="list"
           :size="size"
-          :data-id="`list-button-${size ?? 'md'}-${item.label.toLowerCase()}`"
+          data-id="list-button"
+          :data-button-size="size ?? 'md'"
+          :data-label="item.label"
         >
           <template #prepend>
             <RuiIcon :name="item.icon" />
