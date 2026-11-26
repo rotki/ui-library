@@ -215,6 +215,7 @@ jobs:
     permissions:
       contents: read # clone the repository
       actions: read # download the coverage artifacts uploaded by unit/storybook
+      id-token: write # authenticate the codecov upload with OIDC
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -260,7 +261,7 @@ jobs:
       - name: Upload coverage
         uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
 
   # Behavioural Playwright e2e suite against the example app. Sharded ×2
   # so each shard runs ~half the specs in parallel — wall-time drops as
