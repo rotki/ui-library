@@ -16,7 +16,8 @@ Installation, styles, icons, i18n and theming are described in
 [packages/ui-library/README.md](./packages/ui-library/README.md), which is also the README published to
 npm. Moving from 2.x to 3.0 is covered in [UPGRADING.md](./UPGRADING.md).
 
-Component documentation lives in Storybook: `pnpm run storybook` from a checkout.
+Component documentation lives in Storybook, published at <https://rotki.github.io/ui-library/> from `main`,
+or `pnpm run storybook` from a checkout.
 
 ## Repository layout
 

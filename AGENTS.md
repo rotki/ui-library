@@ -69,7 +69,7 @@ disagree with this file, this file wins. In particular, `vue-testing-best-practi
 
 ## Hard rules
 
-Each of these has broken something before.
+Follow these in every change. Where existing code breaks one, leave it unless the change touches it.
 
 - **No auto-imports.** Every import is explicit: Vue APIs from `vue`, `get`/`set` from `@vueuse/shared`,
   other VueUse functions from `@vueuse/core`, types with `import type` (or inline `type`), components from
@@ -78,10 +78,10 @@ Each of these has broken something before.
 - **Never import a name that is also a prop of the component.** In the template the import wins over the
   prop: `readonly` imported from `vue` made every field with a `readonly` prop read-only.
   `vue/no-dupe-keys` catches it, except for props declared through `Omit<...>` or an intersection.
-- **No `as` type assertions.** Use type guards, generics or a restructure. A cast that truly cannot be
-  avoided needs a comment saying why.
-- **No HTML comments in `<template>`.** A comment beside the root makes the component a fragment in dev
-  builds, which breaks transitions and attribute fallthrough.
+- **No new `as` type assertions.** Use type guards, generics or a restructure. A cast that truly cannot be
+  avoided needs a comment saying why. Older code still has casts.
+- **No new HTML comments in `<template>`.** A comment beside the root makes the component a fragment in dev
+  builds, which breaks transitions and attribute fallthrough. Older templates still have nested comments.
 - **No side-effect modules.** The package declares `"sideEffects": ["**/*.css"]`, so a consumer's bundler
   drops a bare `import './x'` and top-level setup calls. Put setup in the initializer of an export the
   dependent code imports (`src/components/date-time-picker/dayjs-setup.ts`); library code imports dayjs
@@ -102,8 +102,8 @@ Each of these has broken something before.
   no `eslint-disable`, `@ts-expect-error` or skipped tests, unless the commit explains why the check is
   wrong for this case.
 
-ESLint (`eslint.config.js` on top of `@rotki/eslint-config`) enforces the side-effect, `tv()`, token and
-prop-name rules.
+ESLint (`eslint.config.js` on top of `@rotki/eslint-config`) enforces the side-effect, `tv()` and token
+rules, and the prop-name rule except for `Omit<...>` and intersection props.
 
 ## Code conventions
 
@@ -130,13 +130,14 @@ prop-name rules.
   not deduplicated); put variant-specific classes only in the variants. Rules that style descendant cells
   go through `[:where(&)_td]:...`, so a consumer's plain class on the cell still wins.
 - Keep existing sizes, spacing and defaults unless the change is about them.
-- Tests: hooks are `data-id` attributes (`getByTestId` in Playwright). Locators in order of preference:
-  `getByTestId`, ARIA roles, CSS module class fragments; no hard-coded class names, no matching on text
-  the user cannot see. Overlays teleport to `document.body`: unit specs clean up with
-  `cleanupElements('*', document.body)`, e2e specs press Escape in `afterEach`. happy-dom has no layout, so
-  sizes, scrolling and the cascade are tested in e2e. Virtual lists render a subset; never assert totals.
-  Clock-pinning specs use fake timers with `advanceTimersToNextTimerAsync`; the suite runs with `TZ=UTC`.
-  The example app's `SelectOption` is `{ id: number, label }` (`@/data/options`); unit tests use
+- Test locators, in order: `getByTestId` (a `data-id` attribute), ARIA roles, CSS module class fragments.
+  No hard-coded class names, no matching on text the user cannot see.
+- Overlays teleport to `document.body`: unit specs clean up with `cleanupElements('*', document.body)`,
+  e2e specs press Escape in `afterEach`.
+- happy-dom has no layout: test sizes, scrolling and the cascade in e2e. Virtual lists render a subset;
+  never assert totals.
+- Specs that pin the clock use fake timers with `advanceTimersToNextTimerAsync`; the suite runs with
+  `TZ=UTC`. Example app options are `{ id: number, label }` (`@/data/options`), unit test options
   `{ id: string, label }` (`@/__test__/options`).
 
 ## Verify before you finish

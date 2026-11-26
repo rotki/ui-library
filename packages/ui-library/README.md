@@ -1,6 +1,7 @@
 # @rotki/ui-library
 
-A Vue component library and design system for rotki
+A Vue component library and design system for rotki. Every component is documented in
+[Storybook](https://rotki.github.io/ui-library/).
 
 [![npm (scoped)](https://img.shields.io/npm/v/@rotki/ui-library?style=flat-square)](https://www.npmjs.com/package/@rotki/ui-library)
 [![ci](https://github.com/rotki/ui-library/actions/workflows/ci.yml/badge.svg)](https://github.com/rotki/ui-library/actions/workflows/ci.yml)

@@ -57,9 +57,11 @@ for consumers, add the migration notes above the generated list with
 
 ## Dependency updates
 
-Versions live in the `catalog:` of `pnpm-workspace.yaml`. Renovate lists the available updates on the
-[Dependency Dashboard](https://github.com/rotki/ui-library/issues/170). Apply them in a pass, on one branch
-from the latest `main` and one pull request, rather than merging Renovate's pull requests one by one.
+Versions live in the `catalog:` of `pnpm-workspace.yaml`. Renovate (configured in `.github/renovate.json5`)
+lists the available updates on the [Dependency Dashboard](https://github.com/rotki/ui-library/issues/170)
+and opens a pull request only for an update ticked there. Use the dashboard as the list and apply the
+updates in a pass, on one branch from the latest `main` and one pull request; a version cap that should
+outlive one pass goes in `renovate.json5` with a `description`.
 
 - pnpm refuses versions published less than 7 days ago (`minimumReleaseAge`), so take the newest version
   past that. The dashboard lags npm; check with `pnpm view <pkg> time --json`.
@@ -88,8 +90,10 @@ affected version the typecheck reports `Cannot find name 's'`.
 
 `.github/workflows/ci.yml` runs on pull requests and on pushes to `main`; the comments there explain the
 jobs. Jobs: `commit-lint`, `workflow-lint`, `validate` (lint and typecheck), `unit`, `storybook`,
-`coverage`, `e2e` and `visual`. The browser jobs run inside the pinned Playwright image. `deploy.yml`
-publishes Storybook to GitHub Pages on pushes to `main`; `codeql-analysis.yml` runs CodeQL.
+`coverage`, `e2e` and `visual`. The browser jobs run inside the pinned Playwright image. Coverage uploads
+to Codecov through OIDC; once uploads from `main` succeed, the old `CODECOV_TOKEN` repository secret is
+unused and can be deleted. `deploy.yml` publishes Storybook to <https://rotki.github.io/ui-library/> on
+pushes to `main`; `codeql-analysis.yml` runs CodeQL.
 
 Triage a failure from the log, not the summary: `gh run view --repo rotki/ui-library --job <id> --log`.
 
@@ -105,8 +109,8 @@ Changes under `.github/workflows/` must pass actionlint and zizmor: the `workflo
 about the YAML anchors in `ci.yml`; that is expected. A finding that is a deliberate choice gets an inline
 `# zizmor: ignore[<rule>] <reason>`, never an ignore without a reason.
 
-`workflow-lint` is a required check. On a pull request that changes nothing under `.github/` it skips both
-tools but still reports, so it never blocks such a pull request. Do not replace that with a `paths:` filter:
+`workflow-lint` belongs in `main`'s required checks. On a pull request that changes nothing under
+`.github/` it skips both tools but still reports, so it never blocks such a pull request. Do not replace that with a `paths:` filter:
 a required check that never runs blocks the pull request.
 
 Two rules no tool checks: every job has `timeout-minutes`, and every permission has a comment saying what
