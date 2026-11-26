@@ -173,8 +173,10 @@ commands you ran and their result; if you skipped one, say so and why.
 4. Styles that move pixels: `pnpm run test:visual`. Update baselines only on purpose, in their own commit,
    and say in the message what changed and why.
 5. Exports, entry points, dependencies or build config: `pnpm run build:prod` must pass all its verify
-   steps.
-6. Look at it: Storybook or the example app in a browser, light and dark theme. Tests do not catch a color
+   steps. A dependency pass follows the flow in MAINTAINING.md, "Dependency updates".
+6. Anything under `.github/workflows/`: actionlint and zizmor, with the commands in MAINTAINING.md,
+   "Workflow checks". Pin every action to a commit SHA.
+7. Look at it: Storybook or the example app in a browser, light and dark theme. Tests do not catch a color
    that disappeared or a class that stopped applying.
 
 When a check fails, find the cause. Do not retry until it passes, and do not edit the test to match broken
@@ -192,7 +194,22 @@ After `pnpm run lint:fix` or any mass edit, read the diff: autofix can turn an i
   subject is one changelog line written for consumers.
 - Each commit builds, lints and passes tests on its own. When a dependency bump needs fixes, commit the
   fixes first, then the bump.
-- No AI attribution in commits, PRs or code (no `Co-Authored-By` for a tool, no "generated with").
+- When you create or amend a commit, end it with exactly one of each trailer, separated from the body by a
+  blank line. Use the model selected in the current session and the actual harness name and version from
+  runtime metadata. If you cannot verify either, ask before committing; do not infer it from a configured
+  default. A `Fix #<issue>` line stays above the trailers.
+
+  ```text
+  LLM-Model: <provider>/<model-id>
+  Harness: <harness-name> <version>
+  ```
+
+  Take the harness version from the process that runs you, not from a CLI on `PATH`: a desktop app ships
+  its own copy. On 2026-11-26 the Claude desktop app ran Claude Code 2.1.330 while `claude --version` on
+  `PATH` said 2.1.318. Walk up the parent processes (`ps -o pid=,args= -p <ppid>`) to the binary and ask
+  it for `--version`.
+
+- No AI `Co-Authored-By` trailers in commits or PRs, and no "generated with" lines in commits, PRs or code.
 - Do not push to `main`, merge pull requests, create tags or run `pnpm run release` unless the maintainer
   asks for that specific step. Landing and releasing are described in MAINTAINING.md.
 - In the PR description, list what you verified and how.
@@ -205,7 +222,9 @@ If so, add it, short and concrete, with the fix or the reason:
 
 - A rule about code: the "Hard rules" or "Code conventions" section of this file.
 - A tooling, CI, dependency or release trap: "Known traps" or "Versions held on purpose" in MAINTAINING.md.
-- Unfinished work you discovered: "Open work" in MAINTAINING.md, or a GitHub issue.
+- Unfinished work you discovered: a GitHub issue, never these files. They describe how the library works
+  and how to work on it; a to-do list in them goes stale. Propose the issue to the maintainer before
+  filing it.
 
 Date entries that describe a state that can change ("held at 3.3.11 as of 2026-11"), so the next reader
 knows to re-check them.

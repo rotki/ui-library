@@ -146,6 +146,7 @@ failing CI run is the slow way to find out.
 | Styles that move pixels                | `pnpm run test:visual` (Docker)                                                      |
 | Exports, entry points, dependencies    | `pnpm run build:prod` (it verifies dist paths, tree-shaking and the CSS size budget) |
 | Theme tokens                           | `generate-theme`, then the e2e and visual suites                                     |
+| Workflows in `.github/workflows/`      | actionlint and zizmor (commands in MAINTAINING.md, "Workflow checks")                |
 
 What each command checks:
 
@@ -214,6 +215,8 @@ release.
   appear in the notes.
 - Each commit stands alone: it builds, lints, typechecks and passes the tests on its own. Group commits by
   topic. When a dependency bump needs code fixes, the fixes come first in their own commit, then the bump.
+- A commit made by an AI agent ends with `LLM-Model:` and `Harness:` trailers and has no AI
+  `Co-Authored-By`; the exact format is in AGENTS.md, and matches rotki's.
 - The pre-commit hook runs ESLint on staged files (lint-staged); do not skip it.
 - Open the pull request against `main`. Fill in the template and link the issue. Describe what you verified
   and how, including anything you checked by hand in the browser.

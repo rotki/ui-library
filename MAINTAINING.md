@@ -98,19 +98,80 @@ gh release edit vX.Y.Z --repo rotki/ui-library --notes-file notes.md
 A major version also needs its `UPGRADING.md` section. Write it while the changes land, not at release
 time.
 
+After the release, bump `@rotki/ui-library` in the consumers that should get it (rotki first; the
+premium components follow rotki's pin). A version nobody installs has not been tested in a real app.
+
 ## Dependency updates
 
-Renovate opens the [Dependency Dashboard](https://github.com/rotki/ui-library/issues/170) and groups
-updates. Work through it in passes rather than merging each Renovate PR:
+Renovate keeps the [Dependency Dashboard](https://github.com/rotki/ui-library/issues/170) up to date.
+Do not merge its pull requests one by one: run a pass, about monthly, as one branch and one pull request.
+All versions live in the `catalog:` of `pnpm-workspace.yaml`; package manifests say `catalog:`.
 
-- One branch per pass. One commit per bump (or per group that must move together), each with its own
-  fallout fixed in the same commit, or fixes first and the bump after.
-- A lint config major (`@rotki/eslint-config`) lands its rule migrations as separate commits by rule
-  family, before the bump.
-- Run everything: lint, typecheck, unit, storybook, `build:prod`, e2e, visual. A lockfile refresh can change
-  behaviour through a transitive dependency: an axe-core bump once surfaced real a11y bugs in Storybook.
-- The dashboard lags npm by about a week. Check the registry (`pnpm view <pkg> time --json`) for the newest
-  version past the 7 day window.
+1. **Branch.** `git fetch upstream && git switch -c chore/deps-YYYY-MM upstream/main`.
+2. **List the candidates.** The dashboard lags npm by about a week, so ask the registry. pnpm refuses
+   anything published less than 7 days ago (`minimumReleaseAge`), so take for each package the newest
+   stable version older than that:
+
+   ```bash
+   cutoff=$(date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%SZ)
+   sed -n '/^catalog:/,$p' pnpm-workspace.yaml | grep -E '^  ' | sed -E "s/^  '?([^':]+)'?: (.*)$/\1 \2/" |
+     while read -r name current; do
+       pnpm view "$name" time --json | jq -r --arg c "$cutoff" --arg cur "$current" --arg n "$name" '
+         def v: split(".") | map(tonumber? // 0);
+         [to_entries[] | select(.key | test("^[0-9]+\\.[0-9]+\\.[0-9]+$")) | select(.value <= $c)]
+         | sort_by(.key | v) | last
+         | if (.key | v) > ($cur | v) then "\($n) \($cur) -> \(.key) (\(.value[0:10]))" else empty end'
+     done
+   ```
+
+   Also check `packageManager` in the root `package.json` (`pnpm view pnpm time --json`) and the pinned
+   actions in `.github/workflows/` (the dashboard lists them).
+
+3. **Sort them.** Leave out what "Versions held on purpose" and "Deferred, not held" below cover; re-check
+   each hold first. A major gets its own pull request unless it needs no code change.
+4. **Bump in groups, one commit each,** roughly in this order: Vue; Vite; Tailwind; Storybook; test tooling
+   (Vitest, test-utils, msw, happy-dom); lint tooling; vue-router, vue-i18n, Pinia; Lucide; small build
+   tools; Playwright with its image; the GitHub actions; pnpm. Packages that must move together share a
+   commit (all `@storybook/*`, all `@vitest/*`). When a bump needs code changes, commit those first, on
+   their own, so they build on the old version too; then the bump.
+5. **For each group:** edit the catalog, `pnpm install`, then make sure the old version is gone from the
+   lockfile (`grep -c '<pkg>@<old>' pnpm-lock.yaml`; see the traps below if it is not). Run `pnpm run lint`,
+   `pnpm run build:prod`, `pnpm run typecheck` and `pnpm run test:run`. Some groups need more:
+
+   | Group                    | Also check                                                                                        |
+   | ------------------------ | ------------------------------------------------------------------------------------------------- |
+   | Storybook, Vitest        | `pnpm run test:storybook`, `pnpm run build:storybook`                                             |
+   | Tailwind, tv()           | diff `packages/ui-library/dist/style.css` before and after; see the tailwind-variants audit below |
+   | Lucide                   | `generate-icons`, no published name lost, then `generate-icons --update` (see CONTRIBUTING.md)    |
+   | Build tools (tsc-alias…) | diff `packages/ui-library/dist` before and after                                                  |
+   | Playwright               | the image digest in all three places, then `pnpm run test:visual`                                 |
+   | GitHub actions           | pin the new commit SHA (below), run the workflow checks from the CI section                       |
+   | pnpm                     | `packageManager` only; the lockfile changes only pnpm's own entries                               |
+
+   To pin an action, take the commit behind the tag, not the tag object, and check its release date
+   against the same 7 days:
+
+   ```bash
+   gh api repos/OWNER/REPO/git/ref/tags/vX.Y.Z --jq '.object.type + " " + .object.sha'
+   # if the type is "tag", dereference it:
+   gh api repos/OWNER/REPO/git/tags/<sha> --jq .object.sha
+   gh api repos/OWNER/REPO/releases/tags/vX.Y.Z --jq .published_at
+   ```
+
+   Then replace every `uses: OWNER/REPO@<old sha> # vOLD` with `@<new sha> # vX.Y.Z` in all workflows.
+
+6. **At the head of the branch,** run the whole suite: lint, typecheck, unit, Storybook, `build:prod`,
+   e2e and visual. A lockfile refresh can change behaviour through a transitive dependency: an axe-core
+   bump once surfaced real a11y bugs in Storybook.
+7. **Open one pull request** with a table of what moved, the fallout each bump needed, and what was not
+   taken and why. Land it like any other pull request.
+8. **Update this file:** the held and deferred lists, with the date you checked them, and any trap you hit.
+
+A lint config major (`@rotki/eslint-config`) lands its rule migrations as separate commits by rule family,
+before the bump.
+
+Traps:
+
 - `minimumReleaseAge` is 7 days. `@rotki/eslint-config` and `@rotki/eslint-plugin` are exempt.
   `pnpm add --config.minimumReleaseAge=0` is not a one-off: later installs reject the lockfile. If a
   same-day version is truly needed, add a dated `minimumReleaseAgeExclude` entry and remove it later.
@@ -180,15 +241,16 @@ with `RuiFooterStepper`.
 `.github/workflows/ci.yml` runs on pull requests and on pushes to `main`. Jobs run in parallel, each with its
 own install:
 
-| Job           | Checks                                                                             |
-| ------------- | ---------------------------------------------------------------------------------- |
-| `commit-lint` | commitlint over the PR's commits                                                   |
-| `validate`    | `pnpm run lint`, library typecheck (sources, specs, type tests), example typecheck |
-| `unit`        | Vitest unit project with coverage (no browser, no build; generates icons only)     |
-| `storybook`   | `build:prod`, Storybook build, story tests in Chromium with coverage               |
-| `coverage`    | merges the unit and storybook coverage, enforces thresholds, uploads to Codecov    |
-| `e2e`         | `build:prod`, example app build, Playwright in two shards with two workers each    |
-| `visual`      | screenshot suite in the pinned Playwright image                                    |
+| Job             | Checks                                                                             |
+| --------------- | ---------------------------------------------------------------------------------- |
+| `commit-lint`   | commitlint over the PR's commits                                                   |
+| `workflow-lint` | actionlint and zizmor over `.github/workflows/` (see "Workflow checks")            |
+| `validate`      | `pnpm run lint`, library typecheck (sources, specs, type tests), example typecheck |
+| `unit`          | Vitest unit project with coverage (no browser, no build; generates icons only)     |
+| `storybook`     | `build:prod`, Storybook build, story tests in Chromium with coverage               |
+| `coverage`      | merges the unit and storybook coverage, enforces thresholds, uploads to Codecov    |
+| `e2e`           | `build:prod`, example app build, Playwright in two shards with two workers each    |
+| `visual`        | screenshot suite in the pinned Playwright image                                    |
 
 Browser jobs run inside the Playwright container, so nothing installs Chromium or apt packages.
 `deploy.yml` publishes Storybook to GitHub Pages on pushes to `main`. `codeql-analysis.yml` runs CodeQL.
@@ -202,8 +264,34 @@ Triage a failure from the log, not the summary: `gh run view --repo rotki/ui-lib
   rise, drop the flag.
 - The coverage job rewrites the storybook blob's paths (`/__w/<repo>/<repo>/`) to the runner's workspace;
   blobs keep absolute paths and would not merge otherwise.
-- Lint workflows with `/usr/bin/actionlint`; older builds (an old `~/go/bin/actionlint` on PATH) reject the
-  YAML anchors.
+
+### Workflow checks
+
+Every change under `.github/workflows/` goes through two tools, in CI (`workflow-lint`) and locally before
+you push:
+
+- **actionlint** checks workflow syntax, expressions, job references and, through shellcheck, the shell
+  in `run:` steps.
+- **zizmor** checks for security problems: actions not pinned to a commit SHA, `${{ }}` expressions that
+  can inject into a shell, credentials left in the checkout, broader `permissions:` than a job needs, and
+  (online) pinned commits that are not on the action's repository or have known advisories.
+
+Run them the way CI does, so local and CI versions match:
+
+```bash
+docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667 -color
+GH_TOKEN=$(gh auth token) uvx --from zizmor==1.32.0 zizmor .github/workflows
+```
+
+zizmor warns that the workflows use YAML anchors (`&playwright-image`); that is expected. A finding that
+is a deliberate choice gets an inline `# zizmor: ignore[<rule>] <reason>` on the line, as rotki does;
+never an ignore without a reason. The versions of both tools are pinned in `ci.yml`; bump them in the
+dependency pass, local commands with them.
+
+Rules the workflows here already follow, and new jobs must too: every `uses:` pinned to a full commit SHA
+with the tag as a comment; `permissions: { }` at the top and the minimum per job, each with a comment
+saying what it is for; `persist-credentials: false` on every checkout; values from `${{ }}` passed to
+`run:` through `env:`, never inlined; `timeout-minutes` on every job.
 
 ## Known traps
 
@@ -285,33 +373,3 @@ Each of these cost real time once. They are not caught by any tool unless noted.
 
 - zsh aborts a command on an unmatched glob: quote globs (`grep --include='*.ts'`). `echo ===` fails
   (`=` expansion).
-
-## Open work (as of 2026-11-26)
-
-Verify each item against the code before acting on it; some may have been done since.
-
-- [#611](https://github.com/rotki/ui-library/issues/611): bundled translations, defaults as data, and
-  structured `RuiFileUpload` errors on top of the `rui.*` i18n keys. Deferred on 2026-10-20.
-- [#170](https://github.com/rotki/ui-library/issues/170): the Dependency Dashboard, see above.
-- `RuiLogo` `preloadImage()` (`RuiLogo.vue`, around line 55) dedupes with `link.href === url`. `link.href`
-  is absolute, so a resolver that returns a relative URL adds a preload link per mount. Compare with
-  `new URL(url, document.baseURI).href`. Not filed.
-- Sticky pagination inset (`composables/tables/data-table/page-scroll.ts`): `findScroller` treats an
-  `overflow: hidden` ancestor as page level, so a table that cannot stick still publishes
-  `--rui-sticky-bottom`; and the covered height is not re-measured when rows load after the first measure.
-  Fix ideas: treat any non-`visible`/`clip` overflow as a scroller, re-measure on a `ResizeObserver`; test
-  with rows arriving after mount and with a table inside `RuiTabItems`.
-- `RuiAutoComplete` `#trigger` slot, the last gap from #536. rotki's `HistoryEventActionPicker` would shrink
-  to a wrapper once it exists.
-- Example app page backgrounds (`apps/example/src/assets/main.css`: white and `#121212`) differ from rotki's
-  (`bg-rui-grey-50` / `bg-rui-background`), so contrast checked in the example is checked on the wrong
-  ground. Aligning them regenerates every visual baseline; do it in its own commit.
-- Two weak e2e specs in `apps/example/e2e/forms/autocomplete.spec.ts` ("should filter options by typing",
-  "should not filter when noFilter is set") count options right after `fill()`, before the debounce, so the
-  noFilter one would pass with noFilter broken.
-- CI ideas, unverified: the `storybook` job may not need `build:prod`; Codecov could move to OIDC uploads
-  and drop the `CODECOV_TOKEN` secret.
-- `RuiDataTable.vue` is at the 800 line warning threshold; the next feature there should move logic into a
-  composable.
-- Open design calls: the field border overlay under the content (clears Storybook contrast warnings); the
-  split refresh button collapsing to an empty box while loading.
