@@ -111,6 +111,11 @@ describe('tv', () => {
       expect(tv({ base: 'ring-2 ring-rui-primary/50' })()).toBe('ring-2 ring-rui-primary/50');
     });
 
+    it('should let an inline padding replace its start and end sides', () => {
+      expect(tv({ base: 'flex-1 ps-8' })({ class: 'px-8' })).toBe('flex-1 px-8');
+      expect(tv({ base: 'pe-2' })({ class: 'px-0' })).toBe('px-0');
+    });
+
     it('should keep an outline style, width and colour side by side', () => {
       expect(tv({ base: 'outline-solid outline-1 outline-transparent' })()).toBe('outline-solid outline-1 outline-transparent');
       // Widths still replace one another, and the style keywords still conflict with each other

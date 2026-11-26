@@ -5,14 +5,15 @@
  * `createTV()` teaches the conflict resolver about the theme's own class
  * groups, so `text-rui-primary` reads as a colour rather than a font size.
  *
- * The resolver ships inside tailwind-variants as of 3.3, which is why there is
- * no `tailwind-merge` dependency: the peer is optional and nothing imports it.
+ * The resolver ships inside tailwind-variants, so there is no `tailwind-merge`
+ * dependency. Custom groups need the `/config` entry: the default one throws
+ * when given a `twMergeConfig`.
  *
  * @see https://www.tailwind-variants.org/docs/introduction
  */
 
 import type { VueClassValue } from '@/types/class-value';
-import { createTV } from 'tailwind-variants';
+import { createTV } from 'tailwind-variants/config';
 import { type ClassValue, normalizeClass } from 'vue';
 import { dialogSizes, radiusRoles, shadowRoles, zLayers } from '@/consts/tokens';
 
@@ -21,7 +22,7 @@ const isAny: (v: string) => boolean = () => true;
 /** The library's tailwind-variants instance, with its own tw-merge groups. */
 export const tv = /* #__PURE__ */ createTV({
   twMergeConfig: {
-    // `extend` appends to the built-in groups, which is what the flat form these sat in folded into
+    // `extend` appends to the built-in groups
     extend: {
       // the role tokens, so `rounded-rui-control` replaces `rounded-full` and `shadow-rui-menu` replaces `shadow-lg`
       theme: {

@@ -19,12 +19,6 @@
       "matchPackageNames": ["tailwindcss", "@tailwindcss/vite"]
     },
     {
-      "description": "tailwind-variants 4 changes how conflicting classes merge; it needs an audit of the library's class lists first.",
-      "allowedVersions": "/^(3)\\./",
-      "groupName": "tailwind-variants",
-      "matchPackageNames": ["tailwind-variants"]
-    },
-    {
       "groupName": "vitest monorepo",
       "matchPackageNames": ["vitest", "@vitest/browser", "@vitest/browser-playwright", "@vitest/coverage-v8", "@vitest/ui"]
     },

@@ -144,6 +144,10 @@ Each of these cost real time once, and no tool catches them.
 
 ### Styling
 
+- `src/utils/tv.ts` imports `createTV` from `tailwind-variants/config`. The default entry throws when given
+  a `twMergeConfig`; only `/config` ships the compiler for custom merge groups. A merge rule splits class
+  names on `-`, so `{ 'text-h': [...] }` never matches `text-h6`; `src/utils/tv.spec.ts` checks every
+  theme token.
 - The `tv()` merger only knows Tailwind 4 class names. A Tailwind 3 utility (`bg-opacity-40`,
   `flex-shrink-0`) is misclassified and can drop the class it conflicts with (a slider once lost its color).
 - `p-*` is emitted before `py-*`, so a component class `py-3` beats a consumer's `py-0` on the same element.
