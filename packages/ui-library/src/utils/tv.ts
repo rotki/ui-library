@@ -23,10 +23,10 @@ export const tv = /* #__PURE__ */ createTV({
   twMergeConfig: {
     // `extend` appends to the built-in groups, which is what the flat form these sat in folded into
     extend: {
-      // the role tokens, so `rounded-rui-control` replaces `rounded-full` and `shadow-rui-menu` replaces `shadow-2`
+      // the role tokens, so `rounded-rui-control` replaces `rounded-full` and `shadow-rui-menu` replaces `shadow-lg`
       theme: {
         radius: [...radiusRoles.map(role => `rui-${role}`)],
-        shadow: [...shadowRoles.map(role => `rui-${role}`), ...Array.from({ length: 24 }, (_, i) => `${i + 1}`)],
+        shadow: [...shadowRoles.map(role => `rui-${role}`)],
         // `max-w-rui-tooltip` replaces a consumer's `max-w-40` on a tooltip, and the reverse
         container: [...dialogSizes.map(size => `rui-dialog-${size}`), 'rui-tooltip'],
         // `top-rui-app-bar` replaces a consumer's `top-16` on a drawer, and the reverse
@@ -41,7 +41,13 @@ export const tv = /* #__PURE__ */ createTV({
           'text-caption',
           'text-caption-2',
           'text-overline',
-          { 'text-h': [isAny] },
+          // listed, because the merger splits class names on `-`: `text-h6` has no `text-h` part to match
+          'text-h1',
+          'text-h2',
+          'text-h3',
+          'text-h4',
+          'text-h5',
+          'text-h6',
           { 'text-subtitle': [isAny] },
         ],
       },

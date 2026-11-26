@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { dialogSizes, radiusRoles, shadowRoles, zLayers } from '@/consts/tokens';
 import { tv } from './tv';
 
 describe('tv', () => {
@@ -187,6 +188,61 @@ describe('tv', () => {
       const ui = component({ size: 'sm', disabled: true });
       expect(ui.root()).toBe('flex gap-1 opacity-50');
       expect(ui.label()).toBe('text-sm text-gray-400');
+    });
+  });
+
+  /*
+   * The merger only dedupes a theme class when it knows the class's group, so each token the theme
+   * defines is checked here against a stock class of the same group, in both orders: the later
+   * class must win. A consumer's class on a component then replaces the component's own.
+   */
+  describe('theme tokens', () => {
+    const merge = (classes: string): string => tv({ base: classes })();
+    const typeScale = ['body-1', 'body-2', 'caption', 'caption-2', 'overline', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'subtitle-1', 'subtitle-2'];
+
+    function expectLaterWins(a: string, b: string): void {
+      expect(merge(`${a} ${b}`)).toBe(b);
+      expect(merge(`${b} ${a}`)).toBe(a);
+    }
+
+    it.each(radiusRoles)('replaces a stock radius with rounded-rui-%s', (role) => {
+      expectLaterWins('rounded-full', `rounded-rui-${role}`);
+    });
+
+    it.each(shadowRoles)('replaces a stock shadow with shadow-rui-%s', (role) => {
+      expectLaterWins('shadow-lg', `shadow-rui-${role}`);
+    });
+
+    it.each([...dialogSizes.map(size => `dialog-${size}`), 'tooltip'])('replaces a stock max width with max-w-rui-%s', (size) => {
+      expectLaterWins('max-w-40', `max-w-rui-${size}`);
+    });
+
+    it('replaces a stock inset with the app bar spacing', () => {
+      expectLaterWins('top-16', 'top-rui-app-bar');
+    });
+
+    it.each(zLayers)('replaces a stock z-index with z-rui-%s', (layer) => {
+      expectLaterWins('z-10', `z-rui-${layer}`);
+    });
+
+    it.each(typeScale)('replaces a stock font size with text-%s', (step) => {
+      expectLaterWins('text-sm', `text-${step}`);
+    });
+
+    it.each(typeScale)('keeps a text colour next to text-%s', (step) => {
+      expect(merge(`text-rui-primary text-${step}`)).toBe(`text-rui-primary text-${step}`);
+      expect(merge(`text-${step} text-rui-primary`)).toBe(`text-${step} text-rui-primary`);
+    });
+
+    it('treats two type scale steps as one group', () => {
+      expectLaterWins('text-h6', 'text-body-1');
+      expectLaterWins('text-h1', 'text-h6');
+    });
+
+    it('treats theme colours as colours', () => {
+      expectLaterWins('text-white', 'text-rui-primary');
+      expectLaterWins('bg-white', 'bg-rui-surface');
+      expectLaterWins('border-red-500', 'border-rui-divider');
     });
   });
 });
