@@ -26,7 +26,7 @@ overrides:
   jiti: ^2.6.1
   # oxfmt 0.35, which eslint-plugin-format caps us at, pins tinypool 2.1.0
   # (GHSA advisories fixed in 2.1.2).
-  oxfmt>tinypool: 2.1.2
+  oxfmt>tinypool: 2.2.0
 
 allowBuilds:
   '@parcel/watcher': true
@@ -49,8 +49,8 @@ catalog:
   '@storybook/addon-vitest': 10.6.7
   '@storybook/vue3-vite': 10.6.7
   '@tailwindcss/vite': 4.3.5
-  '@tsconfig/node24': 24.0.5
-  '@types/node': 24.19.1
+  '@tsconfig/node24': 24.0.6
+  '@types/node': 24.19.2
   '@types/tinycolor2': 1.4.6
   '@vitejs/plugin-vue': 6.0.11
   '@vitest/browser': 5.1.1
@@ -62,7 +62,7 @@ catalog:
   '@vueuse/core': 15.0.0
   '@vueuse/shared': 15.0.0
   bumpp: 12.3.0
-  cac: 7.0.0
+  cac: 7.1.0
   consola: 3.4.2
   eslint: 10.15.0
   eslint-plugin-better-tailwindcss: 4.11.0
@@ -71,7 +71,7 @@ catalog:
   eslint-plugin-storybook: 10.6.7
   eslint-plugin-tsdoc: 0.5.4
   fast-glob: 3.3.3
-  fast-xml-parser: 5.11.2
+  fast-xml-parser: 5.12.1
   happy-dom: 21.0.4
   husky: 9.1.7
   lint-staged: 17.6.1
@@ -84,7 +84,7 @@ catalog:
   tailwindcss: 4.3.5
   tinycolor2: 1.6.0
   tinyglobby: 0.2.17
-  tsc-alias: 1.9.7
+  tsc-alias: 1.9.10
   tsx: 4.23.15
   typescript: 6.0.3
   vite: 8.3.8
