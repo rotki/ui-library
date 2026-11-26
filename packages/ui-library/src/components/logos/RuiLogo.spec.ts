@@ -191,6 +191,27 @@ describe('components/logos/RuiLogo.vue logo resolver', () => {
     expect(wrapper.find('img[data-image=custom]').attributes('src')).toBe('https://example.com/website.svg');
   });
 
+  it.each<[string, string]>([
+    ['a relative', '/api/logo/website'],
+    ['an absolute', SEASONAL_URL],
+  ])('should add a single preload link for %s URL across mounts', async (_name, url) => {
+    const preloads = (): HTMLLinkElement[] => [...document.head.querySelectorAll<HTMLLinkElement>('link[rel="preload"][as="image"]')];
+    for (const link of preloads())
+      link.remove();
+
+    wrapper = mountWithResolver(() => url, { logo: 'website' });
+    await flushPromises();
+    wrapper.unmount();
+    wrapper = mountWithResolver(() => url, { logo: 'website' });
+    await flushPromises();
+
+    const links = preloads();
+    expect(links).toHaveLength(1);
+    expect(links[0]?.href).toBe(new URL(url, document.baseURI).href);
+    for (const link of links)
+      link.remove();
+  });
+
   it('should show a URL that already decoded in this session straight away', async () => {
     setVerifiedLogoUrl('website', SEASONAL_URL);
 

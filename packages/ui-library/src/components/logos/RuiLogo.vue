@@ -51,17 +51,22 @@ const externalSource = computed<string | undefined>(() => {
 
 const showCustom = computed<boolean>(() => !!src || (!!get(externalSource) && get(seasonalReady) && !get(error)));
 
+/**
+ * Adds a preload link for the URL unless one exists. `link.href` reads back
+ * absolute, so a relative URL is resolved before comparing.
+ */
 function preloadImage(url: string): void {
+  const href = new URL(url, document.baseURI).href;
   const existing = document.head.querySelectorAll<HTMLLinkElement>('link[rel="preload"][as="image"]');
   for (const link of existing) {
-    if (link.href === url)
+    if (link.href === href)
       return;
   }
 
   const link = document.createElement('link');
   link.rel = 'preload';
   link.as = 'image';
-  link.href = url;
+  link.href = href;
   document.head.appendChild(link);
 }
 
