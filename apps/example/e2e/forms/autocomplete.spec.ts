@@ -237,10 +237,10 @@ test.describe('auto-complete - search', () => {
     await expect(page.locator('div[role=listbox] button')).toHaveCount(1);
     await expect(page.locator('div[role=listbox] button').first()).toContainText('Germany');
 
-    // Type a broader search to verify results change
-    await ac.locator('input').fill('Gr');
-    const filteredCount = await page.locator('div[role=listbox] button').count();
-    expect(filteredCount).toBeGreaterThanOrEqual(1);
+    // A different query only shows once the debounced search has run again
+    await ac.locator('input').fill('Gree');
+    await expect(page.locator('div[role=listbox] button')).toHaveCount(1);
+    await expect(page.locator('div[role=listbox] button').first()).toContainText('Greece');
   });
 
   test('should not filter when noFilter is set', async ({ page }) => {
@@ -250,12 +250,13 @@ test.describe('auto-complete - search', () => {
     await activator.click();
     await expect(page.locator('div[role=listbox]')).toBeVisible();
 
-    const initialCount = await page.locator('div[role=listbox] button').count();
-    expect(initialCount).toBe(5);
+    const options = page.locator('div[role=listbox] button');
+    await expect(options).toHaveCount(5);
 
-    await ac.locator('input').fill('xyz');
-    const filteredCount = await page.locator('div[role=listbox] button').count();
-    expect(filteredCount).toBe(5);
+    await ac.locator('input').fill('Lorem');
+    // Nothing changes on screen when filtering is off, so give the 50ms debounced search time to run
+    await page.waitForTimeout(300);
+    await expect(options).toHaveCount(5);
   });
 
   test('should allow custom value entry', async ({ page }) => {
