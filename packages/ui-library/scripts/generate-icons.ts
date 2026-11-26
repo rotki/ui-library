@@ -53,6 +53,9 @@ const LEGACY_ALIAS_NAMES = [
   'lu-building-2', // now an alias of building-complex
   'lu-flip-horizontal-2', // now an alias of triangles-centerline-dashed-horizontal
   'lu-flip-vertical-2', // now an alias of triangles-centerline-dashed-vertical
+  'lu-music-2', // now an alias of eighth-note
+  'lu-music-3', // now an alias of half-note
+  'lu-music-4', // now an alias of sixteenth-notes
   'lu-trash-2', // now an alias of trash
 ];
 
