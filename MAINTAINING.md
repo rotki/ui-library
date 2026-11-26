@@ -1,11 +1,8 @@
 # Maintaining @rotki/ui-library
 
-How to land changes, release, keep dependencies current, and read CI, plus the traps that already cost
-time once. [CONTRIBUTING.md](./CONTRIBUTING.md) covers conventions and verification; read it first.
-
-**Keep this file current.** When you learn something the hard way (a tool that misleads, a bump that
-breaks in a non-obvious place, a decision that should not be reopened), add it here, or to AGENTS.md if it
-is a rule for code, in the same pull request. There is no other place this knowledge lives.
+How to land changes, release, keep dependencies current and read CI, plus the traps no tool catches.
+[AGENTS.md](./AGENTS.md) has the rules for code and the checks; [CONTRIBUTING.md](./CONTRIBUTING.md) has
+setup and the commit format.
 
 ## Ownership
 
@@ -27,7 +24,8 @@ pnpm view @rotki/ui-library maintainers
 ## Landing pull requests
 
 A pull request can land when it is based on the latest `main` (rebase it if not, never merge `main` into
-it), CI is green, `license/cla` included, and it has an approving review.
+it), CI is green, `license/cla` included, and another member of `@rotki/maintainers` has approved it. An
+admin can merge without the approval when no other maintainer is available.
 
 Land it with GitHub's **Rebase and merge** when every commit is a standalone conventional commit, or with
 **Squash and merge** otherwise. When squashing, edit the commit message into one conventional commit
@@ -39,7 +37,8 @@ Land it with GitHub's **Rebase and merge** when every commit is a standalone con
    `!` or `BREAKING CHANGE:` since the last tag means major, a `feat` minor, anything else patch. It sets
    the version in the three `package.json` files and commits `chore: release vX.Y.Z`.
 2. **Land it.** Open a pull request and land it with Rebase and merge.
-3. **Tag the merged commit:**
+3. **Tag the merged commit.** `upstream` below is the remote for `rotki/ui-library` (`origin` in a direct
+   clone):
 
    ```bash
    git fetch upstream
@@ -68,13 +67,14 @@ from the latest `main` and one pull request, rather than merging Renovate's pull
   a bump needs go in their own commit before it.
 - After each bump: `pnpm install`, lint, `build:prod`, typecheck and unit tests. At the end, the whole suite,
   e2e and visual included.
-- Pin GitHub actions to a commit SHA with the tag as a comment, and run the workflow checks.
+- Pin GitHub actions to a commit SHA with the tag as a comment, and run `pnpm run lint:workflows`.
 - `@playwright/test` moves together with the Playwright image in `ci.yml` and
-  `apps/example/scripts/visual-docker.sh`.
+  `apps/example/scripts/visual-docker.sh`. The actionlint and zizmor versions in `ci.yml` move together
+  with the `lint:workflows` script.
 
 ### Versions held on purpose
 
-Re-check each condition before bumping, with the repository's own checks. Last checked 2026-11-26.
+Re-check each condition before bumping, with the repository's own checks.
 
 | Package                         | Held at | Why                                                                             | Bump when                                      |
 | ------------------------------- | ------- | ------------------------------------------------------------------------------- | ---------------------------------------------- |
@@ -86,79 +86,38 @@ affected version the typecheck reports `Cannot find name 's'`.
 
 ## CI
 
-`.github/workflows/ci.yml` runs on pull requests and on pushes to `main`. Jobs run in parallel, each with its
-own install:
-
-| Job             | Checks                                                                             |
-| --------------- | ---------------------------------------------------------------------------------- |
-| `commit-lint`   | commitlint over the PR's commits                                                   |
-| `workflow-lint` | actionlint and zizmor over `.github/workflows/` (see "Workflow checks")            |
-| `validate`      | `pnpm run lint`, library typecheck (sources, specs, type tests), example typecheck |
-| `unit`          | Vitest unit project with coverage (no browser, no build; generates icons only)     |
-| `storybook`     | `build:prod`, Storybook build, story tests in Chromium with coverage               |
-| `coverage`      | merges the unit and storybook coverage, enforces thresholds, uploads to Codecov    |
-| `e2e`           | `build:prod`, example app build, Playwright in two shards with two workers each    |
-| `visual`        | screenshot suite in the pinned Playwright image                                    |
-
-Browser jobs run inside the Playwright container, so nothing installs Chromium or apt packages.
-`deploy.yml` publishes Storybook to GitHub Pages on pushes to `main`. `codeql-analysis.yml` runs CodeQL.
+`.github/workflows/ci.yml` runs on pull requests and on pushes to `main`; the comments there explain the
+jobs. Jobs: `commit-lint`, `workflow-lint`, `validate` (lint and typecheck), `unit`, `storybook`,
+`coverage`, `e2e` and `visual`. The browser jobs run inside the pinned Playwright image. `deploy.yml`
+publishes Storybook to GitHub Pages on pushes to `main`; `codeql-analysis.yml` runs CodeQL.
 
 Triage a failure from the log, not the summary: `gh run view --repo rotki/ui-library --job <id> --log`.
 
 - An e2e failure at 0ms with `net::ERR_NETWORK_CHANGED` is the runner's network, not the code: re-run.
 - An autocomplete spec that clicks right after `fill()` races the 50ms debounced search. Wait for the
   filtered option count before clicking.
-- Each e2e shard runs two workers (`--workers=2`, set 2026-10-23 as an experiment). If retries or flakes
-  rise, drop the flag.
-- The coverage job rewrites the storybook blob's paths (`/__w/<repo>/<repo>/`) to the runner's workspace;
-  blobs keep absolute paths and would not merge otherwise.
+- If e2e retries or flakes rise, drop `--workers=2` from the e2e job.
 
 ### Workflow checks
 
-Every change under `.github/workflows/` goes through two tools, in CI (`workflow-lint`) and locally before
-you push:
+Changes under `.github/workflows/` must pass actionlint and zizmor: the `workflow-lint` job, or
+`pnpm run lint:workflows` locally (`GH_TOKEN=$(gh auth token)` adds zizmor's online audits). zizmor warns
+about the YAML anchors in `ci.yml`; that is expected. A finding that is a deliberate choice gets an inline
+`# zizmor: ignore[<rule>] <reason>`, never an ignore without a reason.
 
-- **actionlint** checks workflow syntax, expressions, job references and, through shellcheck, the shell
-  in `run:` steps.
-- **zizmor** checks for security problems: actions not pinned to a commit SHA, `${{ }}` expressions that
-  can inject into a shell, credentials left in the checkout, broader `permissions:` than a job needs, and
-  (online) pinned commits that are not on the action's repository or have known advisories.
-
-Run them the way CI does, so local and CI versions match:
-
-```bash
-docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667 -color
-GH_TOKEN=$(gh auth token) uvx --from zizmor==1.32.0 zizmor .github/workflows
-```
-
-zizmor warns that the workflows use YAML anchors (`&playwright-image`); that is expected. A finding that
-is a deliberate choice gets an inline `# zizmor: ignore[<rule>] <reason>` on the line, as rotki does;
-never an ignore without a reason. The versions of both tools are pinned in `ci.yml`; bump them in the
-dependency pass, local commands with them.
-
-Rules the workflows here already follow, and new jobs must too: every `uses:` pinned to a full commit SHA
-with the tag as a comment; `permissions: { }` at the top and the minimum per job, each with a comment
-saying what it is for; `persist-credentials: false` on every checkout; values from `${{ }}` passed to
-`run:` through `env:`, never inlined; `timeout-minutes` on every job.
+Two rules no tool checks: every job has `timeout-minutes`, and every permission has a comment saying what
+it is for.
 
 ## Known traps
 
-Each of these cost real time once. They are not caught by any tool unless noted.
+Each of these cost real time once, and no tool catches them.
 
 ### Build and package
 
-- `"sideEffects": ["**/*.css"]` means a consumer's bundler keeps a module only as far as a used export
-  needs it. A bare `import './setup'` is dropped, and so is `dayjs.extend(x)` at top level next to
-  `export { dayjs }` (the re-export is wired straight to the dayjs package). What works is
+- Under `"sideEffects": ["**/*.css"]`, top-level `dayjs.extend(x)` next to `export { dayjs }` is dropped
+  too: the re-export is wired straight to the dayjs package. What works is
   `export const dayjs = withPlugins()`, a new binding whose initializer runs the setup. Unit tests never see
-  this; `verify:tree-shaking` (part of `build:prod`) bundles small consumer apps and does.
-- VueUse is a devDependency on purpose: it is bundled into `dist/vendor/` and tree-shaken, so consumers can
-  use any VueUse version. Public types must not name VueUse types (use `src/types/dom.ts` and friends).
-  `verify:dist` fails if a pnpm store path leaks into `dist/`.
-- `build:prod` fails if the gzipped `style.css` grows past its budget (`verify:css-size`). Raise the budget
-  only for a reason you can name in the commit.
-- The example app and its typecheck read the library from `dist/`. After changing library code, rebuild
-  before trusting an example typecheck error or an e2e result.
+  this; `verify:tree-shaking` (part of `build:prod`) does.
 - Vite's dev server can serve a stale SFC after a rebase or two quick edits. Make a real edit to the file
   or restart.
 - `pnpm install` runs the library's `prepare` script, which can run a full `build:prod` when the install is
@@ -166,33 +125,19 @@ Each of these cost real time once. They are not caught by any tool unless noted.
 
 ### Vue and TypeScript
 
-- An import named like a prop shadows the prop in the template. A component with a `readonly` prop that
-  also imports `readonly` from `vue` renders `:readonly="readonly"` as the function, which is truthy. The
-  typecheck does not always catch this (it missed it in the generic `RuiDateTimePicker`). Never import a
-  name that is also a prop of the component.
-- Vue coerces an absent boolean prop to `false`, never `undefined`, even with type-only `defineProps`. A
-  check like `mobile !== undefined` is always true. Debug props in the browser through
-  `el.__vueParentComponent.props` and setup state through `el.__vueParentComponent.setupState`.
-- `@vue-ignore` is only honoured on an `extends` clause or intersection of a whole type, not before a single
-  prop.
+- To see what a component actually received, read `el.__vueParentComponent.props` and
+  `el.__vueParentComponent.setupState` in the browser console.
 - Generic SFCs hoist only the leading `export` block: a local type declared before `export interface Props`
   gives TS1184 / TS4025. `InstanceType<typeof GenericSfc>` does not work; specs use
   `ReturnType<typeof createWrapper>`.
 - `strictTemplates` rejects `data-*` attributes unless `dataAttributes: ['data-*']` is set in the
   `vueCompilerOptions` (it is, in each tsconfig that needs it).
-- ESLint autofix can turn a merged import type-only (`computed` imported as a type), rewrite
-  `/* @vue-ignore */` into a JSDoc block, or delete a comment right after `defineProps<`. Read the diff after
-  `lint:fix`.
-- A removed prop does not fail a consumer's typecheck; Vue passes it on as an attribute. To find them in a
-  consumer, run vue-tsc with `checkUnknownProps`.
+- To find removed props a consumer still passes, run vue-tsc there with `checkUnknownProps`.
 
 ### Styling
 
-- `tv()` `extend` and base slots do not deduplicate against variants: both classes reach the DOM and
-  Tailwind's CSS order picks the winner. Never put a class in a base slot that a variant overrides.
 - The `tv()` merger only knows Tailwind 4 class names. A Tailwind 3 utility (`bg-opacity-40`,
   `flex-shrink-0`) is misclassified and can drop the class it conflicts with (a slider once lost its color).
-  Use v4 names.
 - `p-*` is emitted before `py-*`, so a component class `py-3` beats a consumer's `py-0` on the same element.
   Default paddings on table cells live in `:where()` for that reason; keep new ones there.
 - Tailwind 4 `dark:` defaults to `:where()` (no specificity); the library's dark variant uses `:is()` so it
@@ -201,8 +146,9 @@ Each of these cost real time once. They are not caught by any tool unless noted.
 - Quoted attribute selectors in arbitrary variants compile to invalid CSS in some consumer builds
   (lightningcss drops the rule). Select on an unquoted `data-*` attribute.
 - The example app scrolls inside `body`: element screenshots need
-  `html, body { height: auto; overflow: visible }` and a static header. The buttons page is route `/`, not `/buttons`. Scope page selectors to
-  `getByTestId('page-content')`, or they hit the header's theme toggle.
+  `html, body { height: auto; overflow: visible }` and a static header.
+- The buttons page is route `/`, not `/buttons`. Scope page selectors to `getByTestId('page-content')`, or
+  they hit the header's theme toggle.
 
 ### Dependencies
 
@@ -216,16 +162,13 @@ Each of these cost real time once. They are not caught by any tool unless noted.
 
 ### Tests
 
-- happy-dom has no layout (`scrollHeight` is 0) and does not expand the `overflow` shorthand; set
-  `overflowX`/`overflowY` in specs and test layout in e2e. Storybook's `userEvent.hover` does not trigger CSS
-  `:hover`.
+- happy-dom does not expand the `overflow` shorthand; set `overflowX`/`overflowY` in specs. Storybook's
+  `userEvent.hover` does not trigger CSS `:hover`.
 - Measure two boxes in one `page.evaluate`: images loading elsewhere shift the layout between two separate
   `boundingBox()` calls.
 - `pnpm run test:visual:update <file>` does not filter: the script passes `--update-snapshots` first, so the
   file becomes its value. Call `visual-docker.sh` directly with `--update-snapshots=missing` or the file
   last.
-- A green unit run says nothing about a bundle, a consumer's CSS, or real layout. Those are covered only by
-  `build:prod`, e2e and visual.
 
 ### Shell
 

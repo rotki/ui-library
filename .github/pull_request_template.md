@@ -8,7 +8,7 @@ Closes #(issue_number)
 
 ## Verification
 
-<!-- Tick what you ran and note anything checked by hand. See CONTRIBUTING.md, "Verifying a change". -->
+<!-- Tick what the table in AGENTS.md, "Verify before you finish", asks for your change; note anything checked by hand. -->
 
 - [ ] `pnpm run lint`
 - [ ] `pnpm run typecheck`
@@ -16,5 +16,6 @@ Closes #(issue_number)
 - [ ] `pnpm run test:storybook`
 - [ ] `pnpm run build:prod`
 - [ ] `pnpm run test:e2e`
-- [ ] `pnpm run test:visual` (if styles changed)
+- [ ] `pnpm run test:visual`
+- [ ] `pnpm run lint:workflows`
 - [ ] Looked at it in Storybook or the example app, light and dark

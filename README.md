@@ -28,10 +28,9 @@ Component documentation lives in Storybook: `pnpm run storybook` from a checkout
 
 ## Working on the library
 
-- [CONTRIBUTING.md](./CONTRIBUTING.md): setup, conventions, how to test and verify a change, pull requests.
-- [MAINTAINING.md](./MAINTAINING.md): releases, dependency updates, CI, and the known traps.
-- [AGENTS.md](./AGENTS.md): the rules for LLM coding agents working in this repository. Humans can read
-  it too; it is the condensed version of the two documents above.
+- [AGENTS.md](./AGENTS.md): the rules for the code and the checks to run, for people and coding agents.
+- [CONTRIBUTING.md](./CONTRIBUTING.md): setup, repository layout, icons, commits and pull requests.
+- [MAINTAINING.md](./MAINTAINING.md): landing, releases, dependency updates, CI and known traps.
 
 ## License
 
