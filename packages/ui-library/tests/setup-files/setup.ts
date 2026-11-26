@@ -26,7 +26,7 @@ beforeEach(() => {
 });
 
 // An unhandled request fails the test, so a network call slipping into the library shows up
-beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+beforeAll(() => server.listen({ onUnhandledFrame: 'error' }));
 
 /*
  * `afterEach` hooks run in reverse order, so this one runs after the auto unmount below: whatever
