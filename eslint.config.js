@@ -60,6 +60,16 @@ export default rotki({
   },
 }, {
   /*
+   * In a template, an import wins over a prop of the same name: importing `readonly`
+   * from vue made every field with a `readonly` prop read-only. The shared config
+   * turns this rule off.
+   */
+  files: ['**/*.vue'],
+  rules: {
+    'vue/no-dupe-keys': 'error',
+  },
+}, {
+  /*
    * A component takes more props than the default eight, but a sub-component
    * the package never exports has no public API to answer for and stays near
    * the widest of them, RuiAutoCompleteOptionList at 16.
