@@ -53,10 +53,10 @@ catalog:
   '@types/node': 24.19.1
   '@types/tinycolor2': 1.4.6
   '@vitejs/plugin-vue': 6.0.9
-  '@vitest/browser': 5.0.3
-  '@vitest/browser-playwright': 5.0.3
-  '@vitest/coverage-v8': 5.0.3
-  '@vitest/ui': 5.0.3
+  '@vitest/browser': 5.1.1
+  '@vitest/browser-playwright': 5.1.1
+  '@vitest/coverage-v8': 5.1.1
+  '@vitest/ui': 5.1.1
   '@vue/test-utils': 2.5.1
   '@vue/tsconfig': 0.9.1
   '@vueuse/core': 15.0.0
@@ -88,7 +88,7 @@ catalog:
   tsx: 4.23.15
   typescript: 6.0.3
   vite: 8.3.3
-  vitest: 5.0.3
+  vitest: 5.1.1
   vue: 3.5.43
   vue-component-meta: 3.3.11
   vue-i18n: 11.4.13
