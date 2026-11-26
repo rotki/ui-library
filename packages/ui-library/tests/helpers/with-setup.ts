@@ -1,4 +1,4 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { type GlobalMountOptions, mount } from '@vue/test-utils';
 import { defineComponent } from 'vue';
 
 /**
@@ -6,12 +6,12 @@ import { defineComponent } from 'vue';
  * lifecycle (provide/inject, watchers, etc.) is available.
  *
  * @param composable - factory that calls the composable under test
- * @param options    - optional Vue Test Utils mounting options (e.g. `global.provide`)
+ * @param options    - optional global mounting options (e.g. `global.provide`)
  * @returns `{ result, unmount }`: the composable's return value and a teardown function
  */
 export function withSetup<T>(
   composable: () => T,
-  options?: ComponentMountingOptions<any>,
+  options?: { global?: GlobalMountOptions },
 ): { result: T; unmount: () => void } {
   let result!: T;
   const TestComponent = defineComponent({
