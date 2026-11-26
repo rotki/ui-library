@@ -1,6 +1,7 @@
 # @rotki/ui-library
 
-A Vue component library and design system for rotki
+A Vue component library and design system for rotki. Every component is documented in
+[Storybook](https://rotki.github.io/ui-library/).
 
 [![npm (scoped)](https://img.shields.io/npm/v/@rotki/ui-library?style=flat-square)](https://www.npmjs.com/package/@rotki/ui-library)
 [![ci](https://github.com/rotki/ui-library/actions/workflows/ci.yml/badge.svg)](https://github.com/rotki/ui-library/actions/workflows/ci.yml)
@@ -39,6 +40,13 @@ headings get the display cut; `@fontsource-variable/inter` alone is about a thir
 `@fontsource/inter` and `@fontsource/geist-mono` builds work too. Self-host the fonts rather than loading
 them from a CDN, so an offline app still renders them.
 
+### Tree-shaking
+
+The package declares no side effects apart from its CSS, so your bundler ships only the components you
+import. Importing the library does not set anything up globally. In particular, it registers the dayjs
+`utc`, `timezone` and `customParseFormat` plugins only when `RuiDateTimePicker` is part of your bundle. If
+your own code relies on those plugins, register them yourself.
+
 ### Using the plugin
 
 To use the library you must install the library plugin:
@@ -52,7 +60,7 @@ app.use(RuiPlugin);
 
 ### Using the components
 
-Then you can you the library components e.g.:
+Then you can use the library components e.g.:
 
 ```vue
 <script setup lang="ts">
@@ -178,6 +186,39 @@ const RuiPlugin = createRui({
 app.use(RuiPlugin);
 ```
 
+#### App-provided (brand/custom) icons
+
+The library ships general-purpose icons only. Brand and logo icons (social,
+company, product marks) are intentionally **not** included: they are
+third-party trademarks with their own usage rules, so they belong in the
+application, not in the shared design system.
+
+To use one, register its data yourself and tell the plugin the name is
+app-provided so it is not reported as an unknown icon:
+
+```typescript
+// vite.config.ts: mark app-provided names as valid (not shipped by the library)
+ruiIconsPlugin({ customIcons: ['lu-example-logo'] });
+```
+
+```typescript
+// main.ts: supply the actual SVG data alongside the auto-detected icons
+import icons from 'virtual:rotki-icons';
+
+const exampleLogo = {
+  name: 'lu-example-logo',
+  components: [['path', { d: 'M…' }]], // one [tag, attrs] tuple per SVG primitive
+};
+
+const RuiPlugin = createRui({
+  theme: { icons: [...icons, exampleLogo] },
+});
+```
+
+Source brand logos from a dedicated, maintained set such as
+[Simple Icons](https://simpleicons.org), and follow each brand's usage
+guidelines. `<RuiIcon name="lu-example-logo" />` then renders as usual.
+
 #### Using Icons in Templates
 
 ```vue
@@ -192,6 +233,58 @@ import { RuiIcon } from '@rotki/ui-library';
   </div>
 </template>
 ```
+
+### Logo images
+
+The library makes no network requests. `RuiLogo` shows its bundled logo until the app tells it where a
+named logo lives, through the `logo.resolve` option of `createRui`:
+
+```typescript
+const RuiPlugin = createRui({
+  logo: {
+    // Return an image URL for a logo name, or undefined to keep the bundled logo
+    resolve: name => `/api/logo/${name}`,
+  },
+});
+```
+
+```vue
+<RuiLogo logo="website" />
+```
+
+The resolver runs in the browser after mount, never on the server, so server-rendered pages hydrate
+without mismatches. It may return a promise. Fetching, caching and validating the URL are up to the app,
+and a resolver that throws leaves the bundled logo in place.
+
+To keep the seasonal logos that rotki publishes in [rotki/data](https://github.com/rotki/data), the app
+looks up the mapping itself:
+
+```typescript
+const branch = 'main';
+const base = `https://raw.githubusercontent.com/rotki/data/${branch}`;
+let mappings: Promise<Record<string, string> | undefined> | undefined;
+
+async function loadMappings(): Promise<Record<string, string> | undefined> {
+  const response = await fetch(`${base}/constants/asset-mappings.json`);
+  return response.ok ? (await response.json()).logo : undefined;
+}
+
+const RuiPlugin = createRui({
+  logo: {
+    async resolve(name) {
+      mappings ??= loadMappings().catch(() => undefined);
+      const file = (await mappings)?.[name];
+      // Accept only a plain image filename, so the mapping cannot point anywhere else
+      if (!file || !/^[\w.-]+\.(?:png|svg|webp|gif|jpe?g)$/i.test(file))
+        return undefined;
+      return `${base}/assets/icons/${file}`;
+    },
+  },
+});
+```
+
+Keys are looked up as they appear in `asset-mappings.json` (for example `empty_screen`). `uniqueKey` still
+appends `key=<value>` to the resolved URL, and `src` still bypasses the resolver.
 
 ### Setting up internationalization (i18n)
 
@@ -289,103 +382,17 @@ classes would override your responsive ones (`lg:grid-cols-3`) by loading later.
 
 The theme gives you the `rui-*` colors (`bg-rui-primary`, `text-rui-text-secondary`), the semantic surfaces and lines (`bg-rui-surface`, `border-rui-divider`, `border-rui-outline`), the role radii (`rounded-rui-control`, `rounded-rui-card`), the role shadows (`shadow-rui-menu`, `shadow-rui-drawer`, `shadow-rui-tooltip`, `shadow-rui-control`), the typography classes (`text-body-1`, `text-h6`) and a `dark:` variant that follows the theme `useRotkiTheme` sets. The tokens are CSS variables, so `--radius-rui-control` and the other role tokens can be retuned in your own CSS.
 
+## Upgrading
+
+Moving from 2.x to 3.0 is covered in [UPGRADING.md](https://github.com/rotki/ui-library/blob/main/UPGRADING.md).
+Later releases list their changes, and any migration notes, on the
+[releases page](https://github.com/rotki/ui-library/releases).
+
 ## Development
 
-### Installation
-
-To install the dependencies you need to run on the root of the repository
-
-```
-pnpm install --frozen-lockfile
-```
-
-### Compiles and minifies for production
-
-The following command when executed from the project root will build the `@rotki/ui-library` bundle.
-This command will create the bundle for both Vue version >=3.4.3.
-
-```
-pnpm run build:prod
-```
-
-If you want to build for specific version, you can run:
-
-```
-pnpm run build
-```
-
-### Lint check
-
-```
-pnpm run lint
-```
-
-### Lints and fixes files
-
-```
-pnpm run lint:fix
-```
-
-### Type check
-
-```
-pnpm run typecheck
-```
-
-### Storybook
-
-In order to run the storybook, you can run:
-
-```
-pnpm run storybook
-```
-
-### Testing: Unit
-
-In order to test the components, you can run:
-
-```
-pnpm run test
-```
-
-### Testing: end-to-end
-
-In order to test the components in use in a vue 3 project, you can run:
-
-```
-pnpm run test:e2e
-```
-
-coverage results can be generated and previewed with:
-
-```
-pnpm run coverage
-pnpm run coverage:preview
-```
-
-### Locally testing the library
-
-After you build the bundle, in the `package.json` on your main project, you can add this to the dependencies:
-
-```json
-{
-  "@rotki/ui-library": "file:...path_of_this_directory"
-}
-```
-
-When the dependency installed on the main project, it will run the `prepare` script.
-
-### Generating the library icons
-
-We use [Lucide](https://lucide.dev/) icons as the base icon set. `src/custom-icons/` holds the rotki-specific icons Lucide lacks, drawn on Lucide's 24×24 grid with round caps and joins. The library ships no brand logos; apps register their own.
-
-A custom SVG must use `viewBox="0 0 24 24"` and put everything on its primitives (`path`, `rect`, `circle`, ...): the generator rejects a `transform`, attributes on a `<g>`, and paint on the `<svg>` other than `fill="none"` / `stroke="currentColor"`. It drops `stroke-width`, `stroke-linecap` and `stroke-linejoin`, which `RuiIcon` sets, and turns any colour into `currentColor`. Icons are outlined by default; give a solid shape `fill="currentColor" stroke="none"`. The `CustomIcons` story in Storybook shows every custom icon beside its Lucide neighbour.
-
-The generator (`scripts/generate-icons.ts`) reads each Lucide icon's pre-parsed component data and the parsed XML of every SVG in `src/custom-icons/`, and emits one `[tag, attrs]` tuple per renderable primitive into `src/icons/icons_*.ts`. Multi-path icons stay as multiple entries — they are not collapsed into a single concatenated path. The generated files are gitignored and rebuilt by the `build` script; run the command below if you need to regenerate them by hand.
-
-```
-pnpm run generate-icons
-```
+Working on the library itself (setup, tests, releases) is described in the repository's
+[CONTRIBUTING.md](https://github.com/rotki/ui-library/blob/main/CONTRIBUTING.md) and
+[MAINTAINING.md](https://github.com/rotki/ui-library/blob/main/MAINTAINING.md).
 
 ## License
 

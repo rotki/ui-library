@@ -1,249 +1,98 @@
-# Contribution Guide
+# Contributing to @rotki/ui-library
 
-Thank you for considering contributing to @rotki/ui-library! We welcome all kinds of contributions, from code to documentation, and everything in between. This guide will help you get started with contributing to our project.
+How to set up the repository, where things live, and how commits and pull requests look. The rules for the
+code itself and the checks to run before a change is done are in [AGENTS.md](./AGENTS.md), which applies to
+people as much as to agents. Releases, dependency updates and CI are in [MAINTAINING.md](./MAINTAINING.md).
 
-## Getting Started
+## Setup
 
-Before you start contributing, make sure you read our contribution guide to understand what we expect from a contribution.
+Requirements:
 
-### Guidelines for Vue and TypeScript
-
-We use Vue and TypeScript in our project. Please familiarize yourself with our style and structure guidelines to ensure consistency across the codebase.
-
-**[Vue TypeScript Guide](https://docs.rotki.com/contribution-guides/vue-typescript.html#vue)**
-
-This guide provides detailed instructions and best practices for working with Vue and TypeScript in our project. Please make sure you follow these guidelines when contributing to our codebase.
-
-### Managing Dependencies
-
-Proper dependency management is crucial for maintaining a healthy codebase. Please refer to the section on dependencies for more details.
-
-**[Dependencies Guide](https://docs.rotki.com/contribution-guides/vue-typescript.html#dependencies)**
-
-This section outlines how to add, update, and manage dependencies in our project. Understanding and following these rules will help us avoid common pitfalls associated with dependencies.
-
-## Commit Style
-
-We use Conventional Commits as our commit style to ensure consistent and descriptive commit messages. This helps in automatically generating changelogs, determining the nature of changes (major, minor, patch), and for generally keeping our project's history clean and readable.
-
-### Conventional Commits
-
-A specification for adding human and machine-readable meaning to commit messages. The commit message should be structured as follows:
+- The Node version in `.nvmrc`; `engines` rejects other majors.
+- A recent pnpm; it switches itself to the version pinned in `packageManager` (root `package.json`) on
+  first use.
+- Chromium for the browser tests: `pnpm exec playwright install chromium`, or a system Chromium with
+  `PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/chromium` in your shell profile.
+- Docker for the visual suite and `lint:workflows`, and [uv](https://docs.astral.sh/uv/) for the latter.
 
 ```bash
-[type(scope)]: message
-
-[optional body]
-[optional footer(s)]
+pnpm install --frozen-lockfile
+pnpm run build:prod
 ```
 
-**Types**:
-
-- `feat`: A new feature
-- `fix`: A bug fix
-- `docs`: Documentation only changes
-- `style`: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
-- `refactor`: A code change that neither fixes a bug nor adds a feature
-- `perf`: A code change that improves performance
-- `test`: Adding missing or correcting existing tests
-- `chore`: Changes to the build process or auxiliary tools and libraries such as documentation generation
-
-#### Reverting and Breaking Changes
-
-- If your commit reverts a previous commit, add `revert: ` before the type. E.g., `revert: feat(pencil): add 'graphiteWidth' option`.
-- Breaking changes should start with the word BREAKING CHANGE: with a space or two newlines. The rest of the commit message is then used to describe the change, its rationale, and migration notes.
-
-**Example**:
-
-#### Commit a new feature
-
-```text
-feat(AutoComplete): add keyboard navigation support
-
-Added keyboard navigation support to the AutoComplete component.
-Users can now use arrow keys to navigate through the suggestions and press Enter to select one.
-
-Addresses issue #123.
-```
-
-#### Commiting a fix
-
-```text
-fix(Dialog): correct modal closure on background click
-
-Fixed an issue where the RuiDialog modal would not close when clicking the background.
-The event listener for closing the modal on background click was not properly attached.
-
-Closes issue #456.
-```
-
-#### Commiting a breaking change
-
-```text
-feat(Menu)!: refactor Menu component API
-
-Refactored the Menu component to improve usability and flexibility.
-The following breaking changes were made:
-- `menuItems` prop renamed to `items`.
-- `onSelect` method now passes an event object as the first argument.
-- Removed deprecated `itemStyle` prop in favor of `styleClasses`.
-
-BREAKING CHANGE: The Menu component API has been changed. Ensure to update the usage of `menuItems` to `items`, adjust `onSelect` method calls according to the new signature, and replace any usage of `itemStyle` with `styleClasses`.
-
-Closes issue #789.
-```
-
-### Changelog Generation
-
-Ensure that any changes that should be included in the change log are properly prefixed with `feat:` or `fix:`.
-By following these guidelines, you will help ensure that our project remains maintainable and understandable for everyone involved.
-
-## Testing
-
-All changes must be accompanied by appropriate unit and integration tests. This ensures that new features work as expected and that bugs are fixed without introducing regressions.
-
-- **Unit Tests**: We use **Vitest** for unit testing. Unit tests should cover individual functions or components to ensure they work as intended in isolation.
-- **E2E Tests**: We use **Playwright** for end-to-end testing. E2E tests should verify that different parts of the application work together as expected.
-
-Before submitting a pull request, please ensure:
-
-- Your changes are fully covered by unit tests.
-- Your changes are fully covered by integration tests.
-- All tests pass successfully.
-
-This helps maintain the overall health and stability of the codebase.
-
-### Running Tests
-
-```sh
-# Unit tests
-pnpm run test           # Run with Vitest UI
-pnpm run test:run       # Run without UI
-pnpm run coverage       # Run with coverage report
-
-# E2E tests
-pnpm run test:e2e       # Build and run against production build (CI mode)
-pnpm run test:e2e:dev   # Run against dev server (local development)
-pnpm run test:e2e:ui    # Run with Playwright UI (debugging)
-```
-
-### E2E Test Prerequisites
-
-E2E tests require Chromium. You have two options:
-
-1. **Install Playwright browsers** (downloads Chromium managed by Playwright):
-
-   ```sh
-   npx playwright install chromium
-   ```
-
-2. **Use system Chromium** (recommended for Arch Linux and other distros):
-
-   ```sh
-   # Install chromium via your package manager, e.g.:
-   # Arch: pacman -S chromium
-   # Ubuntu/Debian: apt install chromium-browser
-
-   # Then set the environment variable:
-   export PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/chromium
-   ```
-
-   You can add the export to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.) for persistence.
-
-### Writing E2E Tests
-
-E2E tests are located in `apps/example/e2e/` and organized by component category:
-
-- `forms/` - Form component tests (autocomplete, checkbox, radio, etc.)
-- `overlays/` - Overlay component tests (dialog, menu, tooltip, etc.)
-- Root level - General component tests (button, card, tabs, etc.)
-
-**Test file naming**: Use `{component-name}.spec.ts` format.
-
-**Test structure**:
-
-```typescript
-import { expect, test } from '@playwright/test';
-
-test.describe('component name', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/route');
-  });
-
-  test.afterEach(async ({ page }) => {
-    // Clean up open overlays to prevent test pollution
-    await page.keyboard.press('Escape');
-  });
-
-  test('should do something', async ({ page }) => {
-    await expect(page.locator('[data-id=element]')).toBeVisible();
-  });
-});
-```
-
-**Locator strategy** (in order of preference):
-
-1. `[data-id=...]` - Test-specific data attributes (preferred)
-2. `[role=...]` - ARIA roles for accessibility
-3. `[data-id=...]` - Component identifiers
-4. `[class*=_name_]` - CSS module classes (last resort)
-
-## Linting
-
-We use `@rotki/eslint-config` for linting to ensure code quality and consistency. Please make sure your code adheres to the project's linting rules before submitting a pull request.
-
-### Running Linting
-
-To run the linter, use the following command:
-
-```sh
-pnpm run lint
-```
-
-### Fixing Linting Issues
-
-If you encounter any linting issues, you can attempt to auto-fix them using:
-
-```sh
-pnpm run lint:fix
-```
-
-Ensure that your code passes all linting checks before submitting your pull request. Proper linting helps maintain readability and reduces potential errors in the codebase.
-
-## Releases
-
-We use `bumpp` to handle versioning for our releases, following Semantic Versioning principles. The release process involves updating the version and pushing a tag to trigger the release flow.
-
-### Semantic Versioning
-
-We follow [Semantic Versioning](https://semver.org/) to label our releases. The version number is of the format `MAJOR.MINOR.PATCH`:
-
-- **MAJOR**: Incompatible API changes
-- **MINOR**: Added functionality in a backwards-compatible manner
-- **PATCH**: Backwards-compatible bug fixes
-
-### Steps for Releasing
-
-1. **Update Version**: Use `bumpp` to update the project version.
-
-   ```sh
-   pnpm run release
-   ```
-
-   Follow the prompts to select the appropriate version bump (e.g., patch, minor, major) based on the nature of the changes.
-
-2. **Push Tag**: After updating the version, push the tag to remote to trigger the release flow.
-
-   ```sh
-   git push --follow-tags
-   ```
-
-3. **Trigger Release Flow**: The pushed tag will trigger the CI/CD pipeline to handle the remainder of the release process.
-
-By following these steps and using semantic versioning, you ensure that releases are handled consistently and correctly, providing clear information about the nature of changes in each release.
+The install generates the icon data (`packages/ui-library/src/icons/`, gitignored). The build is needed once
+because the example app, its typecheck and the e2e tests read the library's `dist/`.
+
+Use pnpm for everything (`pnpm dlx` instead of `npx`) and pass arguments without `--`:
+`pnpm run test:run --testNamePattern=foo`. pnpm refuses packages published less than 7 days ago
+(`minimumReleaseAge`); if an install fails on a fresh release, wait or pick an older version.
+
+## Repository layout
+
+| Path                                    | What it is                                                                       |
+| --------------------------------------- | -------------------------------------------------------------------------------- |
+| `packages/ui-library/src/components/`   | Components, one folder per component or family                                   |
+| `packages/ui-library/src/composables/`  | Composables, exported from `@rotki/ui-library/composables`                       |
+| `packages/ui-library/src/theme/`        | `theme-css.ts` (source of truth for tokens) and the generated `theme.css`        |
+| `packages/ui-library/src/custom-icons/` | rotki icons Lucide lacks, as SVG                                                 |
+| `packages/ui-library/src/vite-plugin/`  | `ruiIconsPlugin`, shipped as `@rotki/ui-library/vite-plugin`                     |
+| `packages/ui-library/tests/types/`      | Type tests: files that are only typechecked, never run                           |
+| `packages/ui-library/scripts/`          | Build, generation and verification scripts                                       |
+| `packages/ui-library/docs/`             | Storybook MDX pages (colors, tokens, typography)                                 |
+| `apps/example/src/`                     | The example app; routes come from `src/pages/`, which wrap views in `src/views/` |
+| `apps/example/e2e/`                     | Playwright e2e specs; `e2e/visual/` holds the screenshot suite                   |
+
+A component folder usually holds `RuiThing.vue`, its `tv()` style factory `thing-styles.ts`, unit tests
+`RuiThing.spec.ts`, stories `RuiThing.stories.ts` (stories with a `play` function run as browser tests),
+and composables split out of the component with their own specs. A new public component is exported from
+`packages/ui-library/src/components/index.ts` with its props type, and gets a page in the example app and an
+e2e spec. `pnpm run new <directory> <ComponentName>` scaffolds the `.vue`, spec and story files.
+
+## Trying a build in a consumer
+
+To test an unreleased build in rotki, rotki.com or the premium components: run `pnpm run build:prod`, then
+`pnpm --filter @rotki/ui-library pack`, and give the tarball a unique name (pnpm reuses a same-named
+tarball). In the consumer, point `@rotki/ui-library` at the tarball under `overrides:` in its
+`pnpm-workspace.yaml` (pnpm no longer reads `pnpm.overrides` from `package.json`, and catalogs reject
+`file:`).
+
+## Icons
+
+Icons come from [Lucide](https://lucide.dev/) plus `packages/ui-library/src/custom-icons/`. The library ships
+no brand logos; apps register their own.
+
+A custom SVG uses `viewBox="0 0 24 24"` and puts everything on its primitives (`path`, `rect`, `circle`, ...).
+The generator rejects a `transform`, attributes on a `<g>`, and paint on the `<svg>` other than
+`fill="none"` / `stroke="currentColor"`. It drops `stroke-width`, `stroke-linecap` and `stroke-linejoin`
+(set by `RuiIcon`) and turns any color into `currentColor`. Icons are outlined; give a solid shape
+`fill="currentColor" stroke="none"`. The `CustomIcons` story shows each custom icon beside its Lucide
+neighbour.
+
+`pnpm --filter @rotki/ui-library generate-icons` writes `src/icons/`. Every icon name ever published is
+listed in `scripts/published-icons.json`, and the generator fails if one disappears, since consumers may use
+it. After a Lucide bump adds icons, `generate-icons --update` records the new names; commit that file with
+the bump.
+
+When a Lucide bump fails with "published icon name(s) are no longer generated", Lucide has usually renamed
+the icon and kept the old name as a numbered alias (`Music2` for `eighth-note`), which the generator would
+turn into `lu-music2`. Add the old name to `LEGACY_ALIAS_NAMES` in `scripts/generate-icons.ts` with the icon
+it now points to (look the alias up in `node_modules/lucide/dist/esm/lucide.mjs`). Remove a name from
+`published-icons.json` only in a breaking release.
+
+## Commits and pull requests
+
+- Conventional commits, with the types `@commitlint/config-conventional` accepts: `type(scope): subject`,
+  imperative, lower case, no trailing period. A breaking change gets `!` (`feat(menu)!: ...`) and a
+  `BREAKING CHANGE:` footer with the migration. commitlint checks this in CI and in the `commit-msg` hook.
+- The GitHub release notes are generated from the commit subjects, so make each subject say what changed
+  for a consumer. Bodies and `style:` commits do not appear in the notes.
+- Each commit stands alone: it builds, lints, typechecks and passes the tests. When a change needs code
+  fixes first (a dependency bump, say), the fixes go in their own commit before it.
+- A commit made by an AI agent ends with the `LLM-Model:` and `Harness:` trailers described in AGENTS.md.
+- The pre-commit hook runs ESLint on staged files; do not skip it.
+- A pull request targets `main` and is based on the latest `main`; rebase it when `main` moves, never merge
+  `main` into it. Fill in the template.
 
 ## Contact
 
-If you have any questions or need assistance, feel free to reach out to the [maintainers](https://discord.rotki.com) or open an issue on our repository.
-
-Happy coding!
+Questions go to the [rotki Discord](https://discord.rotki.com) or an issue on this repository.
