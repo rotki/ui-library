@@ -33,7 +33,7 @@ const tokenRule = ['error', {
     message: 'Use the theme palette (rui-neutral-*, rui-grey-*, rui-primary, ...) instead of Tailwind\'s own colors.',
   }, {
     pattern: String.raw`^(.*:)?!?shadow-\[.*$`,
-    message: 'Use an elevation (shadow-1 to shadow-24) or a role shadow (shadow-rui-menu, ...) instead of an arbitrary one.',
+    message: 'Use a role shadow (shadow-rui-menu, ...) or Tailwind\'s own (shadow-sm to shadow-2xl) instead of an arbitrary one.',
   }],
 }];
 
