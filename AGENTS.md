@@ -210,9 +210,10 @@ After `pnpm run lint:fix` or any mass edit, read the diff: autofix can turn an i
   it for `--version`.
 
 - No AI `Co-Authored-By` trailers in commits or PRs, and no "generated with" lines in commits, PRs or code.
+- Base every pull request on the latest `main` and rebase it when `main` moves; never merge `main` in. Fill
+  in the template, including what you verified.
 - Do not push to `main`, merge pull requests, create tags or run `pnpm run release` unless the maintainer
   asks for that specific step. Landing and releasing are described in MAINTAINING.md.
-- In the PR description, list what you verified and how.
 
 ## Recording what you learn
 

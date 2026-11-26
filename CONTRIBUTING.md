@@ -218,10 +218,8 @@ release.
 - A commit made by an AI agent ends with `LLM-Model:` and `Harness:` trailers and has no AI
   `Co-Authored-By`; the exact format is in AGENTS.md, and matches rotki's.
 - The pre-commit hook runs ESLint on staged files (lint-staged); do not skip it.
-- Open the pull request against `main`. Fill in the template and link the issue. Describe what you verified
-  and how, including anything you checked by hand in the browser.
-- Mention consumer impact: a changed default, a new required setup step, a visual change. Those go into the
-  release notes by hand.
+- A pull request targets `main` and is based on the latest `main`; rebase it when `main` moves, never merge
+  `main` into it. Fill in the template.
 
 ## Contact
 
