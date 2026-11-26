@@ -21,7 +21,7 @@ set -euo pipefail
 
 # Keep this in sync with `pnpm-workspace.yaml -> @playwright/test` so the
 # image's bundled browser matches the test runner version.
-PLAYWRIGHT_IMAGE="${PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.63.0-noble}"
+PLAYWRIGHT_IMAGE="${PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.65.1-noble}"
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 
@@ -35,8 +35,12 @@ fi
 # `--network=host` lets the dev/preview server bind on the same loopback
 # Playwright connects to without a separate compose stack.
 #
-# Corepack installs its shims into a writable `/tmp/bin` on PATH rather than
-# the default `/usr/bin`, which the non-root `--user` below cannot write to.
+# The image's Node is whatever Playwright ships (Node 26 from 1.65), which
+# has no corepack and is outside the repo's `engines`. So the container
+# bootstraps the `packageManager` pnpm with the image's npm, and pnpm installs
+# the Node version in `.nvmrc`, matching CI's setup-node. Both go under
+# `/tmp`, writable by the non-root `--user` below; the runtime is cached in
+# `$CACHE_DIR/pnpm-home` between runs.
 #
 # `--user $UID:$GID` keeps any files written into the bind-mounted repo
 # (dist/, test-results/, playwright-report/, baselines, etc.) owned by the
@@ -56,7 +60,8 @@ mkdir -p \
   "$CACHE_DIR/node_modules" \
   "$CACHE_DIR/example-node_modules" \
   "$CACHE_DIR/library-node_modules" \
-  "$CACHE_DIR/pnpm-store"
+  "$CACHE_DIR/pnpm-store" \
+  "$CACHE_DIR/pnpm-home"
 
 exec docker run --rm \
   --ipc=host \
@@ -67,9 +72,11 @@ exec docker run --rm \
   -v "$CACHE_DIR/example-node_modules:/work/apps/example/node_modules" \
   -v "$CACHE_DIR/library-node_modules:/work/packages/ui-library/node_modules" \
   -v "$CACHE_DIR/pnpm-store:/pnpm-store" \
+  -v "$CACHE_DIR/pnpm-home:/tmp/pnpm-home" \
   -e HOME=/tmp \
+  -e PNPM_HOME=/tmp/pnpm-home \
   -e PLAYWRIGHT_VISUAL=1 \
   -e CI="${CI:-}" \
   -w /work \
   "$PLAYWRIGHT_IMAGE" \
-  bash -c "set -euo pipefail; mkdir -p /tmp/bin; corepack enable --install-directory /tmp/bin; export PATH=/tmp/bin:\$PATH; pnpm install --frozen-lockfile --store-dir /pnpm-store; pnpm --filter @rotki/ui-library build:prod >/dev/null; pnpm --filter example build:app >/dev/null; cd apps/example; pnpm exec playwright test e2e/visual $*"
+  bash -c "set -euo pipefail; pnpm_version=\$(node -p \"require('./package.json').packageManager.split('@')[1]\"); npm install --global --prefix /tmp/pnpm-bootstrap --silent \"pnpm@\$pnpm_version\"; export PATH=\$PNPM_HOME/bin:/tmp/pnpm-bootstrap/bin:\$PATH; pnpm runtime set node \"\$(cat .nvmrc)\" -g; echo \"node \$(node --version), pnpm \$(pnpm --version)\"; pnpm install --frozen-lockfile --store-dir /pnpm-store; pnpm --filter @rotki/ui-library build:prod >/dev/null; pnpm --filter example build:app >/dev/null; cd apps/example; pnpm exec playwright test e2e/visual $*"
