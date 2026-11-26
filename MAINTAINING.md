@@ -9,7 +9,9 @@ is a rule for code, in the same pull request. There is no other place this knowl
 
 ## Ownership
 
-- `CODEOWNERS` assigns everything to `@rotki/frontend`.
+- `CODEOWNERS` assigns everything to `@rotki/maintainers` (LefterisJP, kelsos, yabirgb as of 2026-11-26).
+  GitHub ignores a code owner without write access to the repository, so the team must keep its access
+  in the repository settings (Collaborators and teams); `gh api repos/rotki/ui-library/teams` lists it.
 - Access, as of 2026-11-26. Re-check after any team change. A release needs an approver of the `npm`
   environment; changing the package's npm settings (trusted publishing, owners) needs an npm owner.
   - npm package owners: `kelsos`, `lefterisjp` (`pnpm view @rotki/ui-library maintainers`).
