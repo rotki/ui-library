@@ -69,10 +69,8 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
 
-  # Workflow checks: actionlint for syntax, expressions and the shell in
-  # `run:` steps (the image bundles shellcheck), zizmor for security issues
-  # such as unpinned actions, injectable expressions and broad permissions.
-  # Both are pinned; bump them like any other dependency.
+  # actionlint (syntax, expressions, shellcheck) and zizmor (security). Keep
+  # the versions in step with `lint:workflows` in the root package.json.
   workflow-lint:
     name: Workflow lint
     runs-on: ubuntu-latest
