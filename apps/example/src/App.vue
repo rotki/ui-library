@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { ref } from 'vue';
 import { RouterView } from 'vue-router';
 import AppFooter from '@/components/AppFooter.vue';
 import AppFootNav from '@/components/AppFootNav.vue';

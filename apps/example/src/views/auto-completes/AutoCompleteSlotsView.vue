@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { RuiAutoComplete, RuiIcon } from '@rotki/ui-library/components';
+import { ref } from 'vue';
 import { createOptions } from '@/data/options';
 
 const options = createOptions();

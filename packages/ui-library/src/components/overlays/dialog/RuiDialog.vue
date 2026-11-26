@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from 'vue';
 import type { DialogSize } from '@/consts/tokens';
 import type { VueClassValue } from '@/types/class-value';
+import { get, set } from '@vueuse/shared';
+import { computed, type HTMLAttributes, nextTick, ref, useTemplateRef, watch } from 'vue';
 import { ButtonGroupBoundary } from '@/components/buttons/button-group/button-group-context';
 import { useDismissableOverlay } from '@/composables/overlay-stack';
 import { useTimeoutManager } from '@/composables/timeout-manager';

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { HTMLAttributes } from 'vue';
+import { computed, type HTMLAttributes, useAttrs } from 'vue';
 import RuiSkeletonBase, {
   type Props as SkeletonBaseProps,
 } from '@/components/loaders/RuiSkeletonBase.vue';

@@ -7,6 +7,8 @@ import {
   RuiIcon,
   type TablePaginationData,
 } from '@rotki/ui-library/components';
+import { get, set } from '@vueuse/shared';
+import { computed, ref } from 'vue';
 import { fixedColumns, fixedRows } from '@/data/table-configs';
 
 const group = ref<keyof ExtendedUser | (keyof ExtendedUser)[] | undefined>(['username']);

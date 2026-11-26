@@ -6,6 +6,7 @@ import {
   type StepperProps,
   StepperState,
 } from '@rotki/ui-library';
+import { ref } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 const steppers = ref<StepperProps[]>([

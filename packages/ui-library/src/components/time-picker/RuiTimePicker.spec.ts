@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { nextTick } from 'vue';
 import { TimeAccuracy } from '@/consts/time-accuracy';
 import { assert } from '@/utils/assert';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';

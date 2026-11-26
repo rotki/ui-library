@@ -1,4 +1,5 @@
-import type { ComputedRef, Ref } from 'vue';
+import { get, set } from '@vueuse/shared';
+import { type ComputedRef, nextTick, type Ref } from 'vue';
 
 export interface UseAutoCompleteSelectionDeps<TItem> {
   value: Ref<TItem[]>;

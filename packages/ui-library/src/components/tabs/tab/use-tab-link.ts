@@ -1,4 +1,5 @@
-import { type ComputedRef, getCurrentInstance, type MaybeRefOrGetter } from 'vue';
+import { get } from '@vueuse/shared';
+import { computed, type ComputedRef, getCurrentInstance, type MaybeRefOrGetter, toValue } from 'vue';
 import { type RouteLocationRaw, useLink } from 'vue-router';
 
 interface UseTabLinkOptions {

@@ -6,6 +6,7 @@ import {
   RuiCard,
 } from '@rotki/ui-library/components';
 import { objectOmit } from '@vueuse/shared';
+import { ref } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 interface CardData {

@@ -1,4 +1,6 @@
-import type { ComputedRef, CSSProperties, MaybeRefOrGetter, Ref, ShallowRef } from 'vue';
+import { useMutationObserver, useResizeObserver } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { computed, type ComputedRef, type CSSProperties, type MaybeRefOrGetter, onMounted, readonly, type Ref, type ShallowRef, shallowRef, toValue } from 'vue';
 import { TabVariant } from '@/components/tabs/tab-props';
 
 interface UseTabIndicatorOptions {

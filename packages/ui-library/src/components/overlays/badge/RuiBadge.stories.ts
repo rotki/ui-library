@@ -1,6 +1,7 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { objectOmit } from '@vueuse/shared';
 import { expect } from 'storybook/test';
+import { computed } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiBadge from '@/components/overlays/badge/RuiBadge.vue';

@@ -12,7 +12,8 @@ import {
   size,
 } from '@floating-ui/dom';
 import { unrefElement } from '@vueuse/core';
-import { type MaybeRefOrGetter, type Ref, ref, watchEffect } from 'vue';
+import { get, set } from '@vueuse/shared';
+import { type MaybeRefOrGetter, readonly, type Ref, ref, shallowRef, toValue, watchEffect } from 'vue';
 import { useTimeoutManager } from './timeout-manager';
 
 type VirtualElement = FloatingVirtualElement;

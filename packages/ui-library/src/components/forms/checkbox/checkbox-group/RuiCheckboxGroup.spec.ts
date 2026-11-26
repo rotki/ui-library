@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
-import { h } from 'vue';
+import { defineComponent, h } from 'vue';
 import RuiCheckboxGroup from '@/components/forms/checkbox/checkbox-group/RuiCheckboxGroup.vue';
 import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
 import RuiFieldDefaults from '@/components/forms/field-defaults/RuiFieldDefaults.vue';

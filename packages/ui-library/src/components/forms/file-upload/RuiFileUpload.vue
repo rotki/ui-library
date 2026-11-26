@@ -1,7 +1,9 @@
 <script setup lang="ts" generic="T extends File | File[] | undefined">
-import type { Ref } from 'vue';
 import type { RuiIcons } from '@/icons';
 import type { InputAttributes } from '@/types/attributes';
+import { useDropZone } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { computed, type Ref, ref, useTemplateRef, watch } from 'vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiProgress from '@/components/progress/RuiProgress.vue';

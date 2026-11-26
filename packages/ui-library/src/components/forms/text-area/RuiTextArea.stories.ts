@@ -1,5 +1,6 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { expect } from 'storybook/test';
+import { computed, ref } from 'vue';
 import RuiTextArea from '@/components/forms/text-area/RuiTextArea.vue';
 import { contextColors } from '@/consts/colors';
 import preview from '~/.storybook/preview';

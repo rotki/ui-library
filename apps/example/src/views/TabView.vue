@@ -8,6 +8,8 @@ import {
   RuiTabItems,
   RuiTabs,
 } from '@rotki/ui-library';
+import { set } from '@vueuse/shared';
+import { onBeforeMount, ref } from 'vue';
 import ComponentGroup from '@/components/ComponentGroup.vue';
 import ComponentView from '@/components/ComponentView.vue';
 

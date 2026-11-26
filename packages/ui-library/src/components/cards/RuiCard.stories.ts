@@ -1,5 +1,6 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { objectOmit } from '@vueuse/shared';
+import { computed } from 'vue';
 import RuiButton, { type Props as ButtonProps } from '@/components/buttons/button/RuiButton.vue';
 import RuiCard from '@/components/cards/RuiCard.vue';
 import preview from '~/.storybook/preview';

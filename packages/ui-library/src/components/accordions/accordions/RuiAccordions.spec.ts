@@ -1,5 +1,7 @@
 import { mount } from '@vue/test-utils';
+import { get, set } from '@vueuse/shared';
 import { describe, expect, it } from 'vitest';
+import { ref } from 'vue';
 import Accordion from '@/components/accordions/accordion/RuiAccordion.vue';
 import Accordions from '@/components/accordions/accordions/RuiAccordions.vue';
 import { assert } from '@/utils/assert';

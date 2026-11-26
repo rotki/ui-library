@@ -1,4 +1,6 @@
-import type { ComputedRef, MaybeRefOrGetter, Ref, TemplateRef } from 'vue';
+import { watchDebounced } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { computed, type ComputedRef, type MaybeRefOrGetter, nextTick, type Ref, shallowRef, type TemplateRef, toValue, watch } from 'vue';
 
 export interface UseAutoCompleteFocusOptions {
   /** Whether custom (free-text) values are allowed. */

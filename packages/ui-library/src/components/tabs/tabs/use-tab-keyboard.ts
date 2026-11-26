@@ -1,4 +1,5 @@
-import type { MaybeRefOrGetter, ShallowRef } from 'vue';
+import { get } from '@vueuse/shared';
+import { type MaybeRefOrGetter, type ShallowRef, toValue } from 'vue';
 
 interface UseTabKeyboardOptions {
   /** The tablist element */

@@ -1,5 +1,6 @@
 <script lang="ts" setup generic="T extends object">
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
+import { computed } from 'vue';
 import { useDataTableColumns, useDataTableRowIdentity, useDataTableStyling } from '@/components/tables/data-table/context';
 import RuiDataTableEmptyRow from '@/components/tables/data-table/RuiDataTableEmptyRow.vue';
 import RuiDataTableErrorRow from '@/components/tables/data-table/RuiDataTableErrorRow.vue';

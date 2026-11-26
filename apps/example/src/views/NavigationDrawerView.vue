@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { RuiButton, RuiNavigationDrawer } from '@rotki/ui-library';
+import { ref } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 interface NavigationDrawerItem {

@@ -1,4 +1,6 @@
-import type { ShallowRef } from 'vue';
+import { useResizeObserver } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { readonly, type ShallowRef, shallowRef } from 'vue';
 import { assert } from '@/utils/assert';
 
 export interface PrependAppendWidth {

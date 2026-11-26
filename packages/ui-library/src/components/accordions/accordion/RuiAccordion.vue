@@ -1,6 +1,8 @@
 <script lang="ts" setup>
-import type { HTMLAttributes } from 'vue';
 import type { VueClassValue } from '@/types/class-value';
+import { useElementSize } from '@vueuse/core';
+import { get } from '@vueuse/shared';
+import { computed, type HTMLAttributes, useId, useTemplateRef } from 'vue';
 import Icon from '@/components/icons/RuiIcon.vue';
 import { useClipWhileResizing } from '@/composables/clip-while-resizing';
 import { cn } from '@/utils/tv';

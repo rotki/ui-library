@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { ref } from 'vue';
 import RuiTab from '@/components/tabs/tab/RuiTab.vue';
 import { createMounter, type MountedWrapper } from '~/tests/helpers/mount-component';
 

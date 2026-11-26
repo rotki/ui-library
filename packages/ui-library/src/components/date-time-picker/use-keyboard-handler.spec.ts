@@ -1,6 +1,7 @@
 import type { DateTimeSegmentType } from '@/components/date-time-picker/types';
 import dayjs from 'dayjs';
 import { describe, expect, it, vi } from 'vitest';
+import { nextTick, ref } from 'vue';
 import { TimeAccuracy } from '@/consts/time-accuracy';
 import { useKeyboardHandler } from './use-keyboard-handler';
 

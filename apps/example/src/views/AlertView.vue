@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { type AlertProps, RuiAlert } from '@rotki/ui-library';
+import { set } from '@vueuse/shared';
+import { onBeforeMount, ref } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 interface AlertData extends Omit<AlertProps, 'title' | 'description'> {

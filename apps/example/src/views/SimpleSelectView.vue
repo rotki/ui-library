@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { RuiSimpleSelect } from '@rotki/ui-library';
+import { ref } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 const stringOptions: string[] = ['Option 1', 'Option 2', 'Option 3', 'Option 4', 'Option 5'];

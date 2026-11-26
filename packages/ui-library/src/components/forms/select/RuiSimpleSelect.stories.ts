@@ -1,5 +1,6 @@
 import type { ComponentPropsAndSlots, Decorator } from '@storybook/vue3-vite';
 import { expect } from 'storybook/test';
+import { computed } from 'vue';
 import RuiSimpleSelect from '@/components/forms/select/RuiSimpleSelect.vue';
 import preview from '~/.storybook/preview';
 

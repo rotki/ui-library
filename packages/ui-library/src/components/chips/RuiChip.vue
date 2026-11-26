@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import type { HTMLAttributes, StyleValue } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
 import type { VueClassValue } from '@/types/class-value';
-import { objectOmit } from '@vueuse/shared';
+import { get, objectOmit } from '@vueuse/shared';
+import { computed, type HTMLAttributes, type StyleValue, useTemplateRef } from 'vue';
 import { CHIP_CLOSE_ICON_SIZES, ChipSize, ChipVariant } from '@/components/chips/chip-props';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { cn } from '@/utils/tv';

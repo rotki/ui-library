@@ -1,4 +1,5 @@
 import type { RouteMatchOptions } from '@/components/tabs/tab-props';
+import { getCurrentInstance, watch } from 'vue';
 import { type RouteLocationRaw, useRoute, useRouter } from 'vue-router';
 
 interface UseTabRoutingOptions {

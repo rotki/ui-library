@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { nextTick } from 'vue';
 import RuiTextArea from '@/components/forms/text-area/RuiTextArea.vue';
 import { textAreaStyles } from '@/components/forms/text-area/text-area-styles';
 import { expectWrapperNotToHaveClass, expectWrapperToHaveClass } from '~/tests/helpers/dom-helpers';

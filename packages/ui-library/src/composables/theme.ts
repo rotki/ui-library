@@ -1,4 +1,5 @@
-import { defaultWindow, getSSRHandler, useColorMode } from '@vueuse/core';
+import { createSharedComposable, defaultWindow, getSSRHandler, useColorMode } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
 import { computed, type ComputedRef, type Ref, ref } from 'vue';
 import {
   defaultTheme,

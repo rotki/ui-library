@@ -1,5 +1,5 @@
-import type { MaybeRefOrGetter, Ref, TemplateRef } from 'vue';
 import { get, set } from '@vueuse/shared';
+import { type MaybeRefOrGetter, type Ref, ref, type TemplateRef, toValue, watch } from 'vue';
 
 export interface UseAutoCompleteKeyboardNavigationOptions {
   /** Whether multiple items can be selected. */

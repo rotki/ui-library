@@ -1,5 +1,6 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { expect, waitFor, within } from 'storybook/test';
+import { computed } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiNotification from '@/components/overlays/notification/RuiNotification.vue';
 import preview from '~/.storybook/preview';

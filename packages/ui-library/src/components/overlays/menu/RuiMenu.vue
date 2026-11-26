@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import type { HTMLAttributes, Reactive, Ref, WatchHandle } from 'vue';
 import type { VueClassValue } from '@/types/class-value';
+import { onClickOutside, useResizeObserver } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { computed, effectScope, getCurrentInstance, type HTMLAttributes, nextTick, onMounted, type Reactive, reactive, type Ref, ref, shallowRef, useId, useTemplateRef, watch, type WatchHandle } from 'vue';
 import { ButtonGroupBoundary } from '@/components/buttons/button-group/button-group-context';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { type FloatingOptions, useFloating, type UseFloatingReturn } from '@/composables/floating';

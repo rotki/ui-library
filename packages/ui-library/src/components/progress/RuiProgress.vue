@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import type { HTMLAttributes } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
+import { get } from '@vueuse/shared';
+import { computed, type HTMLAttributes } from 'vue';
 import { ProgressVariant } from '@/components/progress/progress-props';
 import { progressStyles } from './progress-styles';
 

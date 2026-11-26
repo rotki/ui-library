@@ -1,5 +1,6 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { expect } from 'storybook/test';
+import { computed } from 'vue';
 import RuiCalendar from '@/components/calendar/RuiCalendar.vue';
 import preview from '~/.storybook/preview';
 

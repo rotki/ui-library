@@ -1,4 +1,4 @@
-import type { ComputedRef, MaybeRefOrGetter } from 'vue';
+import { computed, type ComputedRef, type MaybeRefOrGetter, toValue, useId } from 'vue';
 
 export interface UseAutoCompleteComboboxReturn {
   /** Prefix of each option's id, an option's id being `${prefix}-${index}` in the flat option list. */

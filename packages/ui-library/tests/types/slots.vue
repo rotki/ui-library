@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
 /*
  * Checked by `vue-tsc -p tsconfig.strict-templates.json`, never rendered. A component that passes
  * its slots on to another one types them as that component does.

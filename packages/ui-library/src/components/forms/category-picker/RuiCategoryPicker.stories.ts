@@ -1,5 +1,7 @@
 import type { ComponentPropsAndSlots, Decorator } from '@storybook/vue3-vite';
+import { get } from '@vueuse/shared';
 import { expect, waitFor, within } from 'storybook/test';
+import { computed } from 'vue';
 import { groupedOptions, type GroupedSelectOption } from '@/__test__/options';
 import RuiCategoryPicker from '@/components/forms/category-picker/RuiCategoryPicker.vue';
 import preview from '~/.storybook/preview';

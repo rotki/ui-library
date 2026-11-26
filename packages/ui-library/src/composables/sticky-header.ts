@@ -1,4 +1,6 @@
-import type { MaybeRefOrGetter, Ref, ShallowRef } from 'vue';
+import { useEventListener, useMutationObserver, useResizeObserver } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { type MaybeRefOrGetter, onMounted, readonly, type Ref, type ShallowRef, shallowRef, toValue } from 'vue';
 
 export interface UseStickyTableHeaderRefs {
   table: Readonly<ShallowRef<HTMLTableElement | null>>;

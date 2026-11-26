@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
 /*
  * Checked by `vue-tsc -p tsconfig.strict-templates.json`, never rendered. Every component that
  * forwards `$attrs` must accept the HTML attributes and listeners of the element they reach.

@@ -2,6 +2,7 @@ import type { ComponentPropsAndSlots, Decorator } from '@storybook/vue3-vite';
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
 import { objectOmit } from '@vueuse/shared';
 import { expect } from 'storybook/test';
+import { computed, ref } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiCard from '@/components/cards/RuiCard.vue';
 import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';

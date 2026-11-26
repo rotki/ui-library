@@ -1,6 +1,7 @@
 <script lang="ts" setup generic="TValue">
-import type { HTMLAttributes } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
+import { get, set } from '@vueuse/shared';
+import { type HTMLAttributes, provide } from 'vue';
 import { RuiCheckboxGroupContextKey } from '@/components/forms/checkbox/checkbox-group/context';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { type FormDetails, useFormDetails } from '@/utils/form-text-detail';

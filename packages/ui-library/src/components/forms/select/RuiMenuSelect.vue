@@ -1,7 +1,9 @@
 <script lang="ts" setup generic="TValue, TItem, TClear = undefined, TClearable extends boolean = false">
-import type { ButtonHTMLAttributes, Ref } from 'vue';
 import type { VueClassValue } from '@/types/class-value';
 import type { ClearedValue } from '@/types/clear-value';
+import { useFocus } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { type ButtonHTMLAttributes, computed, type Ref, ref, useId, useTemplateRef } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';
 import { menuSelectStyles } from '@/components/forms/select/menu-select-styles';

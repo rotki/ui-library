@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { RuiIcons } from '@/icons';
+import { computed } from 'vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { StepperState } from '@/types/stepper';
 import { stepperIconStyles } from './stepper-icon-styles';

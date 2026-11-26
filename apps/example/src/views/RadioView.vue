@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { type RadioProps, RuiRadio, RuiRadioGroup } from '@rotki/ui-library';
+import { ref } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 type RadioData = RadioProps<string> & {

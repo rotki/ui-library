@@ -1,5 +1,6 @@
+import { set } from '@vueuse/shared';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { effectScope, nextTick } from 'vue';
+import { effectScope, nextTick, ref } from 'vue';
 import { findStickyBlocker, useStickyBlockerWarning } from '@/composables/sticky-blocker';
 
 describe('composables/sticky-blocker', () => {

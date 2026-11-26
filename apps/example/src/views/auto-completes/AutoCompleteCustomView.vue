@@ -4,6 +4,7 @@ import {
   RuiButton,
   RuiIcon,
 } from '@rotki/ui-library/components';
+import { ref } from 'vue';
 import { createOptions, type SelectOption } from '@/data/options';
 
 const options = createOptions();

@@ -1,5 +1,5 @@
 import type { FormDetails } from '@/utils/form-text-detail';
-import { type ComputedRef, hasInjectionContext, type InjectionKey, type MaybeRef, type MaybeRefOrGetter } from 'vue';
+import { computed, type ComputedRef, hasInjectionContext, inject, type InjectionKey, isRef, type MaybeRef, type MaybeRefOrGetter, provide, toValue } from 'vue';
 
 /**
  * Where a field shows its label.

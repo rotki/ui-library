@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { computed } from 'vue';
 import { skeletonBaseStyles } from './skeleton-base-styles';
 
 export interface Props {

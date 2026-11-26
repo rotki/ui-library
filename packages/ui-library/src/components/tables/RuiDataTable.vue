@@ -1,6 +1,8 @@
 <script lang="ts" setup generic="T extends object, IdType extends keyof T = keyof T, TSort extends TableSortData<T> = TableSortData<T>">
-import type { HTMLAttributes } from 'vue';
 import type { DataTableModelEmits, DataTableModels, GroupHeader } from '@/composables/tables/data-table/types';
+import { useElementSize, useWindowSize } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { computed, type HTMLAttributes, onMounted, toValue, useTemplateRef, watch } from 'vue';
 import { dataTableStyles } from '@/components/tables/data-table-styles';
 import { type DataTableClasses, type DataTableGroupLabel, provideDataTableContext, provideDataTableNested, useDataTableNested } from '@/components/tables/data-table/context';
 import RuiDataTableBody from '@/components/tables/data-table/RuiDataTableBody.vue';

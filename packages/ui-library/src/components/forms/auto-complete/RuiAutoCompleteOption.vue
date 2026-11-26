@@ -1,5 +1,5 @@
 <script lang="ts" setup generic="TItem">
-import type { ButtonHTMLAttributes } from 'vue';
+import { type ButtonHTMLAttributes, computed } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 
 export interface AutoCompleteOptionProps<TItem> {

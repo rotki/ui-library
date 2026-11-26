@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { ExtractPropTypes } from 'vue';
 import { RuiTimezoneSelect } from '@rotki/ui-library';
 import { objectOmit } from '@vueuse/shared';
+import { type ExtractPropTypes, ref } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 type RuiTimezoneSelectProps = ExtractPropTypes<typeof RuiTimezoneSelect['props']>;

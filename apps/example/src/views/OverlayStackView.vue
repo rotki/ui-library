@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { RuiBottomSheet, RuiButton, RuiCard, RuiDialog, useOverlayStack } from '@rotki/ui-library';
+import { get, set } from '@vueuse/shared';
+import { ref } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 const outer = ref<boolean>(false);

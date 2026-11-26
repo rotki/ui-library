@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import type { ClassValue, HTMLAttributes } from 'vue';
 import type { VueClassValue } from '@/types/class-value';
 import type { MaybeElement } from '@/types/dom';
+import { onClickOutside } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { type ClassValue, computed, type HTMLAttributes, ref, useTemplateRef, watch } from 'vue';
 import { useTimeoutManager } from '@/composables/timeout-manager';
 import { getRootAttrs, transformPropsUnit } from '@/utils/helpers';
 import { cn } from '@/utils/tv';

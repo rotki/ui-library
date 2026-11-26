@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { RuiMenuSelect } from '@rotki/ui-library';
+import { ref } from 'vue';
 
 const primitiveOptions: string[] = ['Lorem', 'Ipsum', 'Dolor', 'Sit amet', 'Consecteur'];
 

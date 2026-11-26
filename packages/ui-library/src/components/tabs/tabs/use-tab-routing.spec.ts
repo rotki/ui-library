@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
-import { defineComponent } from 'vue';
+import { defineComponent, reactive } from 'vue';
 import { isRouteLocation, useTabRouting } from '@/components/tabs/tabs/use-tab-routing';
 
 vi.mock('vue-router', () => ({

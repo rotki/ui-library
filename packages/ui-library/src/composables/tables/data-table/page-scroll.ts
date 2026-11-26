@@ -1,5 +1,7 @@
-import type { MaybeRefOrGetter, Ref } from 'vue';
 import type { MaybeElementRef } from '@/types/dom';
+import { unrefElement, useElementSize, useEventListener, useIntersectionObserver, useWindowSize } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { type MaybeRefOrGetter, nextTick, onMounted, onScopeDispose, type Ref, shallowRef, toValue, watch, watchEffect } from 'vue';
 
 export interface UsePageScrollReturn {
   /** Scroll the table's top into view, if it has scrolled above the visible area. */

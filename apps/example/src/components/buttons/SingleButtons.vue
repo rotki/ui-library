@@ -1,5 +1,7 @@
 <script lang='ts' setup>
 import { type ButtonProps, contextColors, type ContextColorsType, RuiButton, RuiIcon, type RuiIcons } from '@rotki/ui-library';
+import { set } from '@vueuse/shared';
+import { onMounted, ref } from 'vue';
 import ComponentGroup from '@/components/ComponentGroup.vue';
 
 interface ExtraProperties {

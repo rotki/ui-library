@@ -1,5 +1,6 @@
+import { get, set } from '@vueuse/shared';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { effectScope, nextTick } from 'vue';
+import { type ComputedRef, effectScope, nextTick, type Ref, ref } from 'vue';
 import { useClipWhileResizing } from '@/composables/clip-while-resizing';
 
 describe('composables/clip-while-resizing', () => {

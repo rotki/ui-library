@@ -1,6 +1,6 @@
 <script lang="ts" setup generic="TValue">
 import type { ContextColorsType } from '@/consts/colors';
-import { Fragment, type HTMLAttributes, isVNode } from 'vue';
+import { computed, Fragment, type HTMLAttributes, isVNode, useId, type VNode } from 'vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { type ModelValueEmits, usePropModel } from '@/composables/prop-model';
 import { assert } from '@/utils/assert';

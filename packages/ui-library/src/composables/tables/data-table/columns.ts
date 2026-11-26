@@ -1,9 +1,10 @@
-import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue';
 import type {
   NoneSortableTableColumn,
   TableColumn,
   TableRowKey,
 } from '@/components/tables/RuiTableHead.vue';
+import { get } from '@vueuse/shared';
+import { computed, type ComputedRef, type MaybeRefOrGetter, type Ref, toValue } from 'vue';
 import { getAlignClass, TableAlign } from '@/components/tables/table-props';
 import { getObjectKeys, isHeaderSlot } from '@/composables/tables/data-table/types';
 

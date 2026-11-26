@@ -1,6 +1,8 @@
 <script lang="ts" setup generic="T extends string | number">
 import type { ContextColorsType } from '@/consts/colors';
-import { Fragment, type HTMLAttributes, isVNode, type Ref, type VNode } from 'vue';
+import { watchImmediate } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { computed, Fragment, type HTMLAttributes, isVNode, nextTick, onMounted, ref, type Ref, useSlots, useTemplateRef, type VNode, watch } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { type TabAlignment, type TabIndicatorPosition, TabLayout, TabVariant } from '@/components/tabs/tab-props';

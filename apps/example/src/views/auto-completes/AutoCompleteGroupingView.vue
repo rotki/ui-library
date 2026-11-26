@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { RuiAutoComplete, RuiChip } from '@rotki/ui-library/components';
+import { ref } from 'vue';
 
 interface CountryOption {
   id: number;

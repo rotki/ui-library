@@ -1,4 +1,6 @@
-import type { ComputedRef, MaybeRefOrGetter, Ref, ShallowRef } from 'vue';
+import { useElementSize, useResizeObserver, useScroll } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { computed, type ComputedRef, type MaybeRefOrGetter, nextTick, readonly, type Ref, type ShallowRef, shallowRef, toRefs, toValue } from 'vue';
 
 interface UseTabScrollOptions {
   /** The scrollable bar container element */

@@ -1,6 +1,8 @@
 <script lang="ts" setup generic="T extends string | number">
 import type { ModelValueEmits } from '@/composables/prop-model';
-import { Fragment, type HTMLAttributes, isVNode } from 'vue';
+import { useElementSize } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { computed, Fragment, type HTMLAttributes, isVNode, nextTick, ref, useSlots, useTemplateRef, type VNode, watch } from 'vue';
 import { useClipWhileResizing } from '@/composables/clip-while-resizing';
 
 defineOptions({

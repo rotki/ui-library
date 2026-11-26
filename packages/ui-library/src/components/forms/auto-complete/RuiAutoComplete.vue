@@ -1,7 +1,9 @@
 <script lang="ts" setup generic="TValue, TItem, TClear = undefined, TClearable extends boolean = false">
-import type { HTMLAttributes, Ref } from 'vue';
 import type { AutoCompleteProps } from '@/components/forms/auto-complete/auto-complete-props';
 import type { ClearedValue } from '@/types/clear-value';
+import { useFocus, useFocusWithin } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { type ComponentPublicInstance, computed, type HTMLAttributes, type Ref, ref, shallowRef, useId, useTemplateRef } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import { autoCompleteStyles } from '@/components/forms/auto-complete/auto-complete-styles';
 import RuiAutoCompleteOptionList from '@/components/forms/auto-complete/RuiAutoCompleteOptionList.vue';

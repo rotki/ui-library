@@ -6,6 +6,8 @@ import {
   RuiDataTable,
   RuiIcon,
 } from '@rotki/ui-library/components';
+import { get } from '@vueuse/shared';
+import { computed, ref } from 'vue';
 import { columns, fixedRows } from '@/data/table-configs';
 
 const singleSort = ref<DataTableSortData<ExtendedUser>>({

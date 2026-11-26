@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { type LogoProps, RuiIcon, type RuiIcons, RuiLogo } from '@rotki/ui-library';
+import { ref } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 const icons = ref<{ name: RuiIcons; size: number }[]>([

@@ -91,13 +91,19 @@ export default rotki({
    * The table wires a composable per concern (columns, sort, pagination, grouping, selection, ...),
    * and its optional models one more, `usePropModel`, as does the date-time picker. Splitting
    * either component to drop an import would only move that wiring somewhere less obvious.
+   * Counts include the explicit `vue` and VueUse imports.
    */
   files: [
     'packages/ui-library/src/components/date-time-picker/RuiDateTimePicker.vue',
     'packages/ui-library/src/components/tables/RuiDataTable.vue',
   ],
   rules: {
-    '@rotki/max-dependencies': ['error', { max: 21 }],
+    '@rotki/max-dependencies': ['error', { max: 23 }],
+  },
+}, {
+  files: ['packages/ui-library/src/components/forms/auto-complete/RuiAutoComplete.vue'],
+  rules: {
+    '@rotki/max-dependencies': ['error', { max: 22 }],
   },
 }, {
   /*

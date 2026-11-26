@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { type ProgressProps, RuiProgress } from '@rotki/ui-library';
+import { ref } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 const progress = ref<ProgressProps[]>([

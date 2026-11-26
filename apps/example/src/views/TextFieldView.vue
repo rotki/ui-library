@@ -7,6 +7,7 @@ import {
   type TextFieldProps,
 } from '@rotki/ui-library';
 import { objectOmit } from '@vueuse/shared';
+import { ref } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 type TextFieldData = TextFieldProps &

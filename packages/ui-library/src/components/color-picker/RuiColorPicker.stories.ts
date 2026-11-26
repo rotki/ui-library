@@ -1,5 +1,6 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { expect } from 'storybook/test';
+import { computed } from 'vue';
 import RuiCard from '@/components/cards/RuiCard.vue';
 import RuiColorPicker from '@/components/color-picker/RuiColorPicker.vue';
 import preview from '~/.storybook/preview';

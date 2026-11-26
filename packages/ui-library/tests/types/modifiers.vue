@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
 /*
  * Checked by `vue-tsc -p tsconfig.strict-templates.json`, never rendered. The text inputs declare
  * the `v-model` modifiers they take, so a modifier is checked like any other prop.

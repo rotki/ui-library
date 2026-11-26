@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { provide } from 'vue';
 import RuiLogo from '@/components/logos/RuiLogo.vue';
 import { type LogoResolver, LogoSymbol } from '@/composables/defaults/logo';
 import preview from '~/.storybook/preview';

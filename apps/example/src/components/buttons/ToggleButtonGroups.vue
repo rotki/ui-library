@@ -1,6 +1,7 @@
 <script setup lang='ts'>
 import { RuiButton, RuiButtonGroup, RuiIcon } from '@rotki/ui-library';
-import { objectOmit } from '@vueuse/shared';
+import { objectOmit, set } from '@vueuse/shared';
+import { onBeforeMount, ref } from 'vue';
 import ComponentGroup from '@/components/ComponentGroup.vue';
 import { type ButtonGroupData, generateButtonGroupData } from '@/utils/buttons';
 

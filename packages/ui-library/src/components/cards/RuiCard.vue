@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { VueClassValue } from '@/types/class-value';
-import { computed, type HTMLAttributes } from 'vue';
+import { get } from '@vueuse/shared';
+import { computed, type HTMLAttributes, useTemplateRef } from 'vue';
 import RuiCardHeader from '@/components/cards/RuiCardHeader.vue';
 import { useKeyboardScroll } from '@/composables/keyboard-scroll';
 import { cn } from '@/utils/tv';

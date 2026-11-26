@@ -1,5 +1,7 @@
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
+import { get } from '@vueuse/shared';
 import { afterEach, describe, expect, it } from 'vitest';
+import { computed, ref } from 'vue';
 import { useTableColumns } from '@/composables/tables/data-table/columns';
 import { withSetup } from '~/tests/helpers/with-setup';
 

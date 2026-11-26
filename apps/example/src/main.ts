@@ -4,6 +4,7 @@ import {
 } from '@rotki/ui-library';
 import { createPinia, storeToRefs } from 'pinia';
 import detectedIcons from 'virtual:rotki-icons';
+import { createApp } from 'vue';
 import { createI18n } from 'vue-i18n';
 import App from '@/App.vue';
 import { router } from '@/router';

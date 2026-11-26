@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { setSSRHandler } from '@vueuse/core';
+import { get } from '@vueuse/shared';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { defineComponent, nextTick } from 'vue';
 import { useRotkiTheme } from '@/composables/theme';

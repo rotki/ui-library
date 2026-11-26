@@ -1,4 +1,6 @@
+import { get } from '@vueuse/shared';
 import { afterEach, describe, expect, it } from 'vitest';
+import { ref } from 'vue';
 import { useTableExpansion } from '@/composables/tables/data-table/expansion';
 import { withSetup } from '~/tests/helpers/with-setup';
 

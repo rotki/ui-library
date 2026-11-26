@@ -1,5 +1,5 @@
-import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue';
 import { get, set } from '@vueuse/shared';
+import { computed, type ComputedRef, type MaybeRefOrGetter, type Ref, toValue, watch } from 'vue';
 import { assert } from '@/utils/assert';
 import { isEqual } from '@/utils/is-equal';
 

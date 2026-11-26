@@ -4,6 +4,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import { describe, expect, it, vi } from 'vitest';
+import { nextTick } from 'vue';
 
 import { TransitionGroupStub } from '@/__test__/transition-group-stub';
 import { assert } from '@/utils/assert';

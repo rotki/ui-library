@@ -5,6 +5,8 @@ import {
   RuiNotification,
   RuiTextField,
 } from '@rotki/ui-library';
+import { useToNumber } from '@vueuse/core';
+import { ref } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 const visible = ref<boolean>(false);

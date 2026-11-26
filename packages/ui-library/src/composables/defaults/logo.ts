@@ -1,4 +1,4 @@
-import type { InjectionKey } from 'vue';
+import { inject, type InjectionKey } from 'vue';
 
 /**
  * Returns the image URL for a named logo, or `undefined` to keep the bundled one.

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import type { ClassValue, SVGAttributes } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
-import { objectOmit } from '@vueuse/shared';
+import { get, objectOmit } from '@vueuse/shared';
+import { type ClassValue, computed, type SVGAttributes } from 'vue';
 import { useIcons } from '@/composables/icons';
 import { cn } from '@/utils/tv';
 import { iconStyles } from './icon-styles';

@@ -1,4 +1,5 @@
 <script lang="ts" setup generic="TItem">
+import { computed } from 'vue';
 import RuiChip from '@/components/chips/RuiChip.vue';
 import { getTextToken } from '@/utils/helpers';
 

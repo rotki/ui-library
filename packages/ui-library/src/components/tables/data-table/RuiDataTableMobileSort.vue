@@ -1,5 +1,7 @@
 <script lang="ts" setup generic="T extends object">
 import type { SortColumn, TableColumn, TableRowKey } from '@/components/tables/RuiTableHead.vue';
+import { get } from '@vueuse/shared';
+import { computed } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import RuiMenu from '@/components/overlays/menu/RuiMenu.vue';

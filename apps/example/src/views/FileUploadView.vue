@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { RuiButton, RuiFileUpload } from '@rotki/ui-library';
+import { get, set } from '@vueuse/shared';
+import { ref, watch } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 const singleFile = ref<File | undefined>(undefined);

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { HTMLAttributes } from 'vue';
+import { computed, type HTMLAttributes } from 'vue';
 import { useRotkiTheme } from '@/composables/theme';
 import { emptyStyles } from './table-empty-state-styles';
 import noDataPlaceholder from './table_no_data_placeholder.svg';

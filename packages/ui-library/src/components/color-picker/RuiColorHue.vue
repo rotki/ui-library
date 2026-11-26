@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { clamp } from '@vueuse/shared';
+import { clamp, get, set } from '@vueuse/shared';
+import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { cn } from '@/utils/tv';
 import { colorHueStyles } from './color-hue-styles';
 import { roundTwoDecimal, useElementDrag } from './utils';

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { RuiAccordion, RuiAccordions } from '@rotki/ui-library';
+import { ref } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 interface AccordionItem {

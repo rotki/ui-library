@@ -3,7 +3,6 @@ import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
-import AutoImport from 'unplugin-auto-import/vite';
 import { defineConfig } from 'vitest/config';
 
 /** The pnpm store prefix of a bundled dependency, up to its package path. */
@@ -54,11 +53,6 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     vue(),
-    AutoImport({
-      imports: ['vue', '@vueuse/core', { '@vueuse/shared': ['get', 'set'] }],
-      dts: 'src/auto-imports.d.ts',
-      vueTemplate: true,
-    }),
     vendorPaths(),
   ],
   build: {

@@ -1,5 +1,8 @@
 <script lang="ts" setup>
 import type { SideNavLink } from '@/types';
+import { get } from '@vueuse/shared';
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 
 const { navigation } = defineProps<{
   navigation: Array<{

@@ -1,5 +1,6 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { expect } from 'storybook/test';
+import { computed } from 'vue';
 import RuiCheckbox from '@/components/forms/checkbox/RuiCheckbox.vue';
 import { contextColors } from '@/consts/colors';
 import preview from '~/.storybook/preview';

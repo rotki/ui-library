@@ -1,4 +1,5 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
+import { computed } from 'vue';
 import RuiFileUpload from '@/components/forms/file-upload/RuiFileUpload.vue';
 import preview from '~/.storybook/preview';
 

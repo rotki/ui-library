@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { clamp } from '@vueuse/shared';
+import { clamp, get, set } from '@vueuse/shared';
 import tinycolor from 'tinycolor2';
+import { computed, onMounted, reactive, ref, useTemplateRef, watch } from 'vue';
 import { cn } from '@/utils/tv';
 import { colorBoardStyles } from './color-board-styles';
 import { type Color, useElementDrag } from './utils';

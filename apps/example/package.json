@@ -33,7 +33,6 @@
     "@vitejs/plugin-vue": "catalog:",
     "@vue/tsconfig": "catalog:",
     "typescript": "catalog:",
-    "unplugin-auto-import": "catalog:",
     "vite": "catalog:",
     "vue-tsc": "catalog:"
   }

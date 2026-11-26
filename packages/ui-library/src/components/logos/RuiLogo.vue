@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from 'vue';
+import { get, set } from '@vueuse/shared';
+import { computed, type HTMLAttributes, onMounted, ref, useTemplateRef, watch, watchEffect } from 'vue';
 import fallback from '@/components/logos/logo.svg';
 import { getVerifiedLogoUrl, removeVerifiedLogoUrl, setVerifiedLogoUrl } from '@/components/logos/verified-logo';
 import { useLogoOptions } from '@/composables/defaults/logo';

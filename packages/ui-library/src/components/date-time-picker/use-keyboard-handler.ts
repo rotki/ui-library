@@ -1,12 +1,11 @@
 import type { Dayjs } from 'dayjs';
-import type { Ref, ShallowRef } from 'vue';
 import type { TimeAccuracy } from '@/consts/time-accuracy';
+import { isDefined } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { computed, nextTick, type Ref, shallowReadonly, type ShallowRef, shallowRef } from 'vue';
 import { type Segment, SEGMENT_CONFIG, SEGMENT_METHODS } from '@/components/date-time-picker/segment-config';
 import { getClickPosition, parseAndSetDateValues } from '@/components/date-time-picker/segment-utils';
-import {
-  type DateTimeSegmentType,
-  isDateTimeSegmentType,
-} from '@/components/date-time-picker/types';
+import { type DateTimeSegmentType, isDateTimeSegmentType } from '@/components/date-time-picker/types';
 import { assert } from '@/utils/assert';
 
 interface KeyboardHandlerOptions {

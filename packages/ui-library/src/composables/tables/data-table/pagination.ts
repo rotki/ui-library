@@ -1,7 +1,8 @@
-import type { ComputedRef, DeepReadonly, Ref, ShallowRef } from 'vue';
 import type { TableSortData } from '@/components/tables/RuiTableHead.vue';
 import type { TablePaginationData } from '@/components/tables/RuiTablePagination.vue';
 import type { TableOptions as TableDefaultOptions } from '@/composables/defaults/table';
+import { get, set } from '@vueuse/shared';
+import { computed, type ComputedRef, type DeepReadonly, readonly, type Ref, ref, type ShallowRef, shallowRef, watch } from 'vue';
 import { type GroupedTableRow, isRow } from '@/composables/tables/data-table/types';
 
 export interface UseTablePaginationOptions {

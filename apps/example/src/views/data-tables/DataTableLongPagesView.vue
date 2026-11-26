@@ -7,6 +7,7 @@ import {
   RuiDialog,
   type TablePaginationData,
 } from '@rotki/ui-library/components';
+import { ref } from 'vue';
 import { fixedColumns, fixedRows } from '@/data/table-configs';
 
 function longRows(count: number): ExtendedUser[] {

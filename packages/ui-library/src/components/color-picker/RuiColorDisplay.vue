@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useClipboard } from '@vueuse/core';
 import RuiTooltip from '@/components/overlays/tooltip/RuiTooltip.vue';
 
 defineOptions({

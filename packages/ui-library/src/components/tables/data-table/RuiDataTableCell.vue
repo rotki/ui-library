@@ -1,5 +1,7 @@
 <script lang="ts" setup generic="T extends object">
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
+import { get } from '@vueuse/shared';
+import { computed } from 'vue';
 import { useDataTableColumns, useDataTableExpansion, useDataTableStyling } from '@/components/tables/data-table/context';
 import RuiExpandButton from '@/components/tables/RuiExpandButton.vue';
 import { getColumnLabel } from '@/components/tables/table-props';

@@ -1,5 +1,6 @@
-import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue';
 import { useEventListener, useTimeoutFn } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { computed, type ComputedRef, type MaybeRefOrGetter, type Ref, shallowRef, toValue, watch } from 'vue';
 
 /** A little past the 200ms height transition, for when no `transitionend` arrives. */
 const SETTLE_FALLBACK_MS = 300;

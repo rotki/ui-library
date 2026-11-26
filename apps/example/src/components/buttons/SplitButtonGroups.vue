@@ -1,5 +1,6 @@
 <script setup lang='ts'>
 import { RuiButton, RuiButtonGroup, RuiIcon, RuiMenu, RuiTooltip } from '@rotki/ui-library';
+import { ref } from 'vue';
 
 const variants = ['default', 'outlined'] as const;
 

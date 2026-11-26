@@ -1,4 +1,5 @@
-import type { ComputedRef, Ref } from 'vue';
+import { get, set } from '@vueuse/shared';
+import { computed, type ComputedRef, type Ref } from 'vue';
 
 export interface UseTableExpansionOptions<T extends object, IdType extends keyof T> {
   /** The property on each row used as the unique row identifier. */

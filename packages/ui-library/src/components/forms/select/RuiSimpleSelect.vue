@@ -1,5 +1,5 @@
 <script lang="ts" setup generic="TValue extends string | number">
-import type { HTMLAttributes } from 'vue';
+import { computed, type HTMLAttributes } from 'vue';
 import RuiIcon from '@/components/icons/RuiIcon.vue';
 import { simpleSelectStyles } from './simple-select-styles';
 

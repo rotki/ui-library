@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { RuiChip, useBreakpoint } from '@rotki/ui-library';
+import { get } from '@vueuse/shared';
+import { computed } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 const {

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
 /*
  * Checked by `vue-tsc -p tsconfig.strict-templates.json`, never rendered. A `v-model` takes a ref of
  * exactly the type the component emits: no `undefined` it never sends, and the single or multiple

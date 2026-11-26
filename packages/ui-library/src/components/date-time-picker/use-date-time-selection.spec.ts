@@ -1,10 +1,11 @@
 import { mount } from '@vue/test-utils';
+import { get, set } from '@vueuse/shared';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { defineComponent } from 'vue';
+import { defineComponent, nextTick, ref } from 'vue';
 import { useDateTimeSelection } from './use-date-time-selection';
 
 dayjs.extend(utc);

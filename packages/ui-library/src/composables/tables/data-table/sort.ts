@@ -1,6 +1,7 @@
-import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue';
 import type { SortColumn, TableRowKey, TableSortData } from '@/components/tables/RuiTableHead.vue';
 import type { TablePaginationData } from '@/components/tables/RuiTablePagination.vue';
+import { get, set } from '@vueuse/shared';
+import { computed, type ComputedRef, type MaybeRefOrGetter, type Ref, toValue } from 'vue';
 import { SortDirection } from '@/components/tables/table-props';
 import { getObjectKeys } from '@/composables/tables/data-table/types';
 import { assert } from '@/utils/assert';

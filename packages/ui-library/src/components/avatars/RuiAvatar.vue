@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import type { HTMLAttributes } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
 import { get, set } from '@vueuse/shared';
+import { computed, type HTMLAttributes, ref, watch } from 'vue';
 import {
   type AvatarSize,
   type AvatarVariant,

@@ -2,6 +2,9 @@
 import type { ContextColorsType } from '@/consts/colors';
 import type { InputAttributes } from '@/types/attributes';
 import type { VueClassValue } from '@/types/class-value';
+import { useElementBounding, useEventListener } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { computed, ref, useAttrs, useId, useTemplateRef } from 'vue';
 import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';
 import RuiSliderTicks from '@/components/forms/slider/RuiSliderTicks.vue';
 import { HIGHLIGHT_COLOR_MAP, HIGHLIGHT_DEFAULT, SliderInteraction, sliderStyles } from '@/components/forms/slider/slider-styles';

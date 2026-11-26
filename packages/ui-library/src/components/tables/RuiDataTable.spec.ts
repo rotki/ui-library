@@ -1,7 +1,8 @@
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
 import { type GlobalMountOptions, mount } from '@vue/test-utils';
+import { get } from '@vueuse/shared';
 import { describe, expect, it, vi } from 'vitest';
-import { type DeepReadonly, h } from 'vue';
+import { type DeepReadonly, h, nextTick, ref } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiDataTable from '@/components/tables/RuiDataTable.vue';
 import RuiTablePagination from '@/components/tables/RuiTablePagination.vue';

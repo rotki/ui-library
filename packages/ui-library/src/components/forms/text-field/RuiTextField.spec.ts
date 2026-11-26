@@ -1,6 +1,6 @@
 import { mount, type VueWrapper } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
-import { h, ref } from 'vue';
+import { h, nextTick, ref } from 'vue';
 import RuiFieldDefaults from '@/components/forms/field-defaults/RuiFieldDefaults.vue';
 import RuiTextField from '@/components/forms/text-field/RuiTextField.vue';
 import { textFieldStyles } from '@/components/forms/text-field/text-field-styles';

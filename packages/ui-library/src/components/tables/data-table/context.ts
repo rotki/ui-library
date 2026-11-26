@@ -1,7 +1,7 @@
-import type { ComputedRef, InjectionKey, Ref } from 'vue';
 import type { TableColumn } from '@/components/tables/RuiTableHead.vue';
 import type { GroupExpandButtonPosition } from '@/components/tables/table-props';
 import type { GroupHeader } from '@/composables/tables/data-table/types';
+import { type ComputedRef, inject, type InjectionKey, provide, type Ref } from 'vue';
 
 export interface DataTableClasses {
   td: string;

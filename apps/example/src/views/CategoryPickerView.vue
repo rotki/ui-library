@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { RuiButton, RuiCategoryPicker } from '@rotki/ui-library';
+import { ref } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 interface CountryOption { id: number; label: string; continent: string }

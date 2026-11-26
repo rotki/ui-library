@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { RuiAutoComplete } from '@rotki/ui-library/components';
+import { ref } from 'vue';
 
 const primitiveOptions: string[] = ['Lorem', 'Ipsum', 'Dolor', 'Sit amet', 'Consecteur'];
 

@@ -1,4 +1,5 @@
 import tinycolor, { type ColorInput } from 'tinycolor2';
+import { onUnmounted } from 'vue';
 
 export type ColorFormat = 'rgb' | 'hex';
 

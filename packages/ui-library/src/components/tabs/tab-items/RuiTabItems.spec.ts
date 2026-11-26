@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { nextTick } from 'vue';
 import RuiTabItem from '@/components/tabs/tab-item/RuiTabItem.vue';
 import RuiTabItems from '@/components/tabs/tab-items/RuiTabItems.vue';
 import { syncAnimationFrames } from '~/tests/helpers/animation-frame';

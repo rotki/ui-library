@@ -1,4 +1,4 @@
-import type { ComponentOptions } from 'vue';
+import type { ComponentOptions, PropType } from 'vue';
 
 export const TransitionGroupStub: ComponentOptions = {
   emits: [

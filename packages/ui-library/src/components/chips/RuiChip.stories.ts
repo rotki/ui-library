@@ -1,6 +1,7 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
-import { objectOmit } from '@vueuse/shared';
+import { objectOmit, set } from '@vueuse/shared';
 import { expect } from 'storybook/test';
+import { computed, ref } from 'vue';
 import RuiChip from '@/components/chips/RuiChip.vue';
 import { contextColors } from '@/consts/colors';
 import preview from '~/.storybook/preview';

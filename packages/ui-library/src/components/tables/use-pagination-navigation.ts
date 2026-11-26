@@ -1,5 +1,6 @@
-import type { ComputedRef, MaybeRefOrGetter, Ref, WritableComputedRef } from 'vue';
 import type { TableOptions } from '@/composables/defaults/table';
+import { get, set } from '@vueuse/shared';
+import { computed, type ComputedRef, type MaybeRefOrGetter, type Ref, toValue, type WritableComputedRef } from 'vue';
 import { formatInteger } from '@/utils/helpers';
 
 interface LimitEntry { limit: number }

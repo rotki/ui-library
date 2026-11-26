@@ -1,8 +1,9 @@
 <script lang="ts" setup generic="TValue, TItem">
-import type { HTMLAttributes } from 'vue';
 import type { KeyOfType } from '@/composables/dropdown-menu';
 import type { VueClassValue } from '@/types/class-value';
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
+import { breakpointsTailwind, useBreakpoints, useFocus } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { computed, type HTMLAttributes, nextTick, ref, useId, useTemplateRef, watch } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import { categoryPickerActivatorStyles, categoryPickerStyles } from '@/components/forms/category-picker/category-picker-styles';
 import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';

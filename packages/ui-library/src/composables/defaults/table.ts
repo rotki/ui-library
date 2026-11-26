@@ -1,4 +1,4 @@
-import type { InjectionKey, MaybeRef, Ref } from 'vue';
+import { inject, type InjectionKey, type MaybeRef, type Ref, ref } from 'vue';
 
 export interface TableOptions {
   itemsPerPage: Ref<number>;

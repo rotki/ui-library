@@ -2,7 +2,6 @@ import { fileURLToPath, URL } from 'node:url';
 import { ruiIconsPlugin } from '@rotki/ui-library/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
-import AutoImport from 'unplugin-auto-import/vite';
 import { defineConfig } from 'vite';
 import VueRouter from 'vue-router/vite';
 
@@ -17,29 +16,6 @@ export default defineConfig({
     vue(),
     ruiIconsPlugin({
       debug: true,
-    }),
-    AutoImport({
-      include: [
-        /\.[jt]sx?$/, // .ts, .tsx, .js, .jsx
-        /\.vue$/,
-        /\.vue\?vue/, // .vue
-        /\.md$/, // .md
-      ],
-      imports: [
-        'vue',
-        '@vueuse/core',
-        'pinia',
-        { '@vueuse/shared': ['get', 'set'] },
-        'vue-router',
-      ],
-      dts: 'src/auto-imports.d.ts',
-      dirs: [
-        'src/composables/**',
-        'src/store/**',
-        'src/utils/**',
-      ],
-      vueTemplate: true,
-      injectAtEnd: true,
     }),
   ],
   resolve: {

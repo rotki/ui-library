@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { RuiSkeletonLoader, type SkeletonLoaderProps } from '@rotki/ui-library';
+import { set } from '@vueuse/shared';
+import { onMounted, ref } from 'vue';
 import ComponentGroup from '@/components/ComponentGroup.vue';
 import ComponentView from '@/components/ComponentView.vue';
 

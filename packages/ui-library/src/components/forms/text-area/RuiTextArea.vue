@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-import type { TextareaHTMLAttributes } from 'vue';
 import type { ContextColorsType } from '@/consts/colors';
 import type { RuiIcons } from '@/icons';
+import { useFocus, watchDebounced } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { computed, nextTick, onMounted, ref, type TextareaHTMLAttributes, useAttrs, useId, useTemplateRef, watch } from 'vue';
 import RuiButton from '@/components/buttons/button/RuiButton.vue';
 import RuiFieldLabel from '@/components/forms/field-label/RuiFieldLabel.vue';
 import { textAreaStyles } from '@/components/forms/text-area/text-area-styles';

@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 // Inspired by https://github.com/aesoper101/vue3-colorpicker/
-import type { HTMLAttributes } from 'vue';
+import { whenever } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { type HTMLAttributes, reactive, watch } from 'vue';
 import RuiColorBoard from '@/components/color-picker/RuiColorBoard.vue';
 import RuiColorDisplay from '@/components/color-picker/RuiColorDisplay.vue';
 import RuiColorHue from '@/components/color-picker/RuiColorHue.vue';

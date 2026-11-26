@@ -1,5 +1,6 @@
-import type { ComputedRef, Ref } from 'vue';
 import { useMutationObserver, useResizeObserver } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { computed, type ComputedRef, onMounted, type Ref, shallowRef } from 'vue';
 
 /** What a keyboard user can tab to inside a scrolling box, and so scroll it by. */
 const FOCUSABLE = [

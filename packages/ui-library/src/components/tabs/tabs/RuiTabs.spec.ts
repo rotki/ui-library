@@ -1,5 +1,7 @@
 import type { ComponentMountingOptions } from '@vue/test-utils';
+import { get, set } from '@vueuse/shared';
 import { describe, expect, it, vi } from 'vitest';
+import { nextTick, reactive, ref } from 'vue';
 import RuiTab from '@/components/tabs/tab/RuiTab.vue';
 import RuiTabs from '@/components/tabs/tabs/RuiTabs.vue';
 import { assertExists } from '~/tests/helpers/dom-helpers';

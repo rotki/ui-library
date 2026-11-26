@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { RuiButton, RuiIcon, RuiMenuSelect } from '@rotki/ui-library';
+import { ref } from 'vue';
 import { createOptions } from '@/data/options';
 
 const options = createOptions();

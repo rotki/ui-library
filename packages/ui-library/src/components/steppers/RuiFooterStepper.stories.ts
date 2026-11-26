@@ -1,5 +1,6 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { expect } from 'storybook/test';
+import { computed } from 'vue';
 import RuiFooterStepper from '@/components/steppers/RuiFooterStepper.vue';
 import preview from '~/.storybook/preview';
 

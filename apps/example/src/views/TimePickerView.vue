@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { ExtractPropTypes } from 'vue';
 import { RuiTimePicker } from '@rotki/ui-library';
 import { objectOmit } from '@vueuse/shared';
+import { type ExtractPropTypes, ref } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 type RuiTimePickerProps = ExtractPropTypes<typeof RuiTimePicker['props']>;

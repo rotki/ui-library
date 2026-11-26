@@ -5,6 +5,8 @@ import {
   RuiButton,
   RuiIcon,
 } from '@rotki/ui-library/components';
+import { set } from '@vueuse/shared';
+import { onBeforeMount, ref } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 const defaultModelValue = true;

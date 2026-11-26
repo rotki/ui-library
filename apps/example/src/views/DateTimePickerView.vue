@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RuiButton, RuiDateTimePicker, type RuiDateTimePickerProps, RuiMenu } from '@rotki/ui-library';
 import { objectOmit } from '@vueuse/shared';
+import { ref } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 /** A picker in the list. It keeps the default `epoch-ms` type, so its model holds milliseconds. */

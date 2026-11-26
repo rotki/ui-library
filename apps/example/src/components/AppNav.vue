@@ -1,5 +1,8 @@
 <script lang="ts" setup>
 import { RuiButton, RuiButtonGroup, RuiIcon, type RuiIcons, ThemeMode, useRotkiTheme } from '@rotki/ui-library';
+import { useElementSize } from '@vueuse/core';
+import { get } from '@vueuse/shared';
+import { useTemplateRef, watchEffect } from 'vue';
 
 const { switchThemeScheme, store } = useRotkiTheme();
 

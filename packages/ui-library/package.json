@@ -158,7 +158,6 @@
     "tsc-alias": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
-    "unplugin-auto-import": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
     "vue": "catalog:",

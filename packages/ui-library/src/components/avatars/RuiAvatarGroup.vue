@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { get } from '@vueuse/shared';
-import { Comment, defineComponent, Fragment, type HTMLAttributes, Text, type VNode } from 'vue';
+import { Comment, computed, defineComponent, Fragment, type HTMLAttributes, provide, Text, type VNode } from 'vue';
 import {
   avatarGroupInjectionKey,
   AvatarGroupSpacing,

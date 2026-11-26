@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useResizeObserver } from '@vueuse/core';
+import { get, set } from '@vueuse/shared';
+import { computed, nextTick, ref, useTemplateRef, watch } from 'vue';
 import { type FormDetails, useFormTextDetail } from '@/utils/form-text-detail';
 
 /**

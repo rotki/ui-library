@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import type { HTMLAttributes } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
 import type { ContextColorsType } from '@/consts/colors';
 import type { VueClassValue } from '@/types/class-value';
+import { get } from '@vueuse/shared';
+import { computed, type HTMLAttributes, useId } from 'vue';
 import { TabAlignment, TabIndicatorPosition, TabLayout, TabVariant } from '@/components/tabs/tab-props';
 import { useTabLink } from '@/components/tabs/tab/use-tab-link';
 import { cn } from '@/utils/tv';

@@ -1,5 +1,6 @@
 <script setup lang='ts'>
 import { RuiCard, RuiColorPicker } from '@rotki/ui-library';
+import { ref } from 'vue';
 import ComponentView from '@/components/ComponentView.vue';
 
 interface ColorPickerItem {

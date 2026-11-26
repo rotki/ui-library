@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { ContextColorsType } from '@/consts/colors';
 import type { InputAttributes } from '@/types/attributes';
+import { get, set } from '@vueuse/shared';
+import { computed } from 'vue';
 import RuiFormTextDetail from '@/components/helpers/RuiFormTextDetail.vue';
 import { type FormDetails, useFormDetails, useFormTextDetail } from '@/utils/form-text-detail';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';

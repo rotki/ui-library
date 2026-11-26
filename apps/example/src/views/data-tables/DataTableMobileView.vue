@@ -8,6 +8,7 @@ import {
   RuiIcon,
   type TablePaginationData,
 } from '@rotki/ui-library/components';
+import { ref } from 'vue';
 import { fixedRows } from '@/data/table-configs';
 
 // A trimmed column set with one column hidden in the stacked mobile layout.

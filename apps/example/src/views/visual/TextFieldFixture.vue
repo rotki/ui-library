@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { type LabelPlacement, RuiTextField } from '@rotki/ui-library';
+import { ref } from 'vue';
 import VisualGrid from '@/views/visual/VisualGrid.vue';
 
 interface Cell {

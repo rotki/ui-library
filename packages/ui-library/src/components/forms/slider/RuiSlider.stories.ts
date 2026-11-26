@@ -1,5 +1,6 @@
 import type { ComponentPropsAndSlots } from '@storybook/vue3-vite';
 import { expect, waitFor } from 'storybook/test';
+import { computed } from 'vue';
 import RuiSlider from '@/components/forms/slider/RuiSlider.vue';
 import { contextColors } from '@/consts/colors';
 import preview from '~/.storybook/preview';

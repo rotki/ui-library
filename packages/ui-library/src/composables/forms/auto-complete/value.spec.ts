@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils';
+import { set } from '@vueuse/shared';
 import { describe, expect, it, vi } from 'vitest';
-import { defineComponent, nextTick, ref, shallowRef, toValue } from 'vue';
+import { defineComponent, nextTick, type Ref, ref, type ShallowRef, shallowRef, toValue } from 'vue';
 import { useAutoCompleteValue, type UseAutoCompleteValueDeps, type UseAutoCompleteValueOptions, type UseAutoCompleteValueReturn } from '@/composables/forms/auto-complete/value';
 
 interface Harness<TValue, TItem> {

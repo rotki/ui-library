@@ -1,5 +1,7 @@
 import type { TableSortData } from '@/components/tables/RuiTableHead.vue';
+import { get } from '@vueuse/shared';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { ref } from 'vue';
 import { useTableSort } from '@/composables/tables/data-table/sort';
 import { assert } from '@/utils/assert';
 import { withSetup } from '~/tests/helpers/with-setup';

@@ -1,5 +1,6 @@
-import type { MaybeRefOrGetter, Ref } from 'vue';
 import { useTimeoutFn } from '@vueuse/core';
+import { get } from '@vueuse/shared';
+import { type MaybeRefOrGetter, type Ref, toValue, watch } from 'vue';
 import { isDevelopment } from '@/utils/development';
 
 /** Long enough for an opening accordion or tab panel to settle before the check reads its overflow. */
