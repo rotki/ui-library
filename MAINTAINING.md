@@ -10,6 +10,16 @@ is a rule for code, in the same pull request. There is no other place this knowl
 ## Ownership
 
 - `CODEOWNERS` assigns everything to `@rotki/frontend`.
+- Access, as of 2026-11-26. Re-check after any team change. A release needs an approver of the `npm`
+  environment; changing the package's npm settings (trusted publishing, owners) needs an npm owner.
+  - npm package owners: `kelsos`, `lefterisjp` (`pnpm view @rotki/ui-library maintainers`).
+  - Approvers of the `npm` environment, which gates every publish: `kelsos`, `LefterisJP`, `yabirgb`
+    (repository settings, Environments, `npm`). Publishing itself uses npm trusted publishing (OIDC),
+    configured on the package's npm settings page for `release.yml`.
+  - Branch protection on `main`: one approving review, linear history, and these required checks:
+    `license/cla`, `Commit lint`, `Lint & typecheck`, `Unit tests`, `E2E tests (1)`, `E2E tests (2)`,
+    `Visual regression`. Admins are exempt, which is what lets a fast-forward push land a PR. Storybook
+    tests and coverage are not required, so check them by eye before landing.
 - Consumers: [rotki](https://github.com/rotki/rotki) (frontend, on 3.x), the premium components (on GitLab,
   built against the version rotki pins), [rotki.com](https://github.com/rotki/rotki.com) (still on 2.27.0
   as of 2026-11). A breaking change has to be carried into each of them; plan that before merging it.
