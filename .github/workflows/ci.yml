@@ -71,6 +71,12 @@ jobs:
 
   # actionlint (syntax, expressions, shellcheck) and zizmor (security). Keep
   # the versions in step with `lint:workflows` in the root package.json.
+  #
+  # The job always runs and reports, so it can be a required check, but on a
+  # pull request that changes nothing under `.github/` it skips both tools.
+  # A pull request's checkout is the merge commit, so its diff against the
+  # base is exactly the pull request's changes. Pushes and merge groups always
+  # run both tools.
   workflow-lint:
     name: Workflow lint
     runs-on: ubuntu-latest
@@ -83,10 +89,24 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Check for workflow changes
+        id: changes
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git fetch --depth=1 origin "${BASE_SHA}"
+          if git diff --quiet "${BASE_SHA}" HEAD -- .github/; then
+            echo "skip=true" >> "${GITHUB_OUTPUT}"
+            echo "Nothing under .github/ changed; skipping actionlint and zizmor."
+          fi
+
       - name: Run actionlint
+        if: steps.changes.outputs.skip != 'true'
         run: docker run --rm -v "${GITHUB_WORKSPACE}:/repo" -w /repo rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667 -color
 
       - name: Run zizmor
+        if: steps.changes.outputs.skip != 'true'
         uses: zizmorcore/zizmor-action@45d7276c9ca790aabd705e31ca99c6185c3e76dd # v0.8.1
         with:
           version: 1.32.0

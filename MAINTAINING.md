@@ -105,6 +105,10 @@ Changes under `.github/workflows/` must pass actionlint and zizmor: the `workflo
 about the YAML anchors in `ci.yml`; that is expected. A finding that is a deliberate choice gets an inline
 `# zizmor: ignore[<rule>] <reason>`, never an ignore without a reason.
 
+`workflow-lint` is a required check. On a pull request that changes nothing under `.github/` it skips both
+tools but still reports, so it never blocks such a pull request. Do not replace that with a `paths:` filter:
+a required check that never runs blocks the pull request.
+
 Two rules no tool checks: every job has `timeout-minutes`, and every permission has a comment saying what
 it is for.
 
