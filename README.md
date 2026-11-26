@@ -7,9 +7,8 @@ A Vue component library and design system for rotki
 [![codecov](https://codecov.io/gh/rotki/ui-library/graph/badge.svg?token=9PIS7KMFC7)](https://codecov.io/gh/rotki/ui-library)
 [![license](https://img.shields.io/github/license/rotki/ui-library)](https://github.com/rotki/ui-library/blob/main/LICENSE.md)
 
-Vue 3 components, composables, icons and a Tailwind CSS 4 theme, used by
-[rotki](https://github.com/rotki/rotki), [rotki.com](https://github.com/rotki/rotki.com) and the other rotki
-frontends.
+Vue 3 components, composables, icons and a Tailwind CSS 4 theme, used by rotki, rotki.com and the premium
+components.
 
 ## Using the library
 

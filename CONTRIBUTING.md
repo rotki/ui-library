@@ -176,7 +176,7 @@ Look at the change in a browser as well: `pnpm run storybook` for the component 
 `pnpm --filter example dev` for the example app. Check light and dark themes. Tests assert behaviour; they
 miss a color that went missing or a class that stopped applying.
 
-To try an unreleased build in a consumer app (rotki, rotki.com), run `pnpm --filter @rotki/ui-library pack`
+To try an unreleased build in a consumer (rotki, rotki.com or the premium components), run `pnpm --filter @rotki/ui-library pack`
 after `build:prod`, give the tarball a unique name (pnpm reuses a same-named tarball), and point the
 consumer at it with `pnpm.overrides` (catalogs reject `file:`).
 

@@ -18,8 +18,8 @@ Everything the project has learned is in this file, [CONTRIBUTING.md](./CONTRIBU
 
 `@rotki/ui-library` is a Vue 3 component library and design system for rotki: components, composables,
 icons and a Tailwind CSS 4 theme, built with Vite and TypeScript. It is a library, not an app: components
-must work in any Vue 3.5+ project, and anything exported is public API that rotki, the premium components
-and rotki.com depend on.
+must work in any Vue 3.5+ project, and anything exported is public API that rotki, rotki.com and the
+premium components depend on.
 
 - `packages/ui-library/`: the published package. Components in `src/components/<area>/`, composables in
   `src/composables/`, theme in `src/theme/`, icons generated into `src/icons/` (gitignored), the icon Vite

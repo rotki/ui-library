@@ -13,8 +13,7 @@ is a rule for code, in the same pull request. There is no other place this knowl
   access, so the team keeps write access to the repository.
 - Every publish waits for a reviewer of the `npm` environment. The upload uses npm trusted publishing
   (OIDC), so no npm token is stored.
-- Consumers: [rotki](https://github.com/rotki/rotki), the premium components, and
-  [rotki.com](https://github.com/rotki/rotki.com). A breaking change has to be carried into each of them.
+- Consumers: rotki, rotki.com and the premium components.
 
 Who has access changes, so look it up rather than writing it down:
 
@@ -99,8 +98,8 @@ gh release edit vX.Y.Z --repo rotki/ui-library --notes-file notes.md
 A major version also needs its `UPGRADING.md` section. Write it while the changes land, not at release
 time.
 
-After the release, bump `@rotki/ui-library` in the consumers that should get it (rotki first; the
-premium components follow rotki's pin). A version nobody installs has not been tested in a real app.
+After the release, bump `@rotki/ui-library` in the consumers that should get it. A version nobody installs
+has not been tested in a real app.
 
 ## Dependency updates
 
