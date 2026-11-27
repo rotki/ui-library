@@ -4,7 +4,7 @@ import { get } from '@vueuse/shared';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { defineComponent, nextTick } from 'vue';
 import { useRotkiTheme } from '@/composables/theme';
-import { ThemeMode } from '@/types/theme';
+import { type InitThemeOptions, type ThemeContent, ThemeMode } from '@/types/theme';
 
 /**
  * Runs a composable inside a component, so it gets the lifecycle hooks it
@@ -183,6 +183,56 @@ describe('composables/theme', () => {
 
       // @ts-expect-error clearing the SSR handler restores the fallback, which the types do not allow
       setSSRHandler('updateHTMLAttrs', undefined);
+    });
+  });
+
+  // Each test loads a fresh module, as a page reload does, over what an earlier visit saved.
+  describe('init', () => {
+    const storageKey = 'vueuse-color-scheme';
+
+    /**
+     * Loads the theme the way a page load does: a fresh module, then init.
+     *
+     * @param options - what the app passes to init
+     * @returns the theme state after init
+     */
+    async function load(options: InitThemeOptions): Promise<ThemeContent> {
+      vi.resetModules();
+      const { useRotkiTheme: useRotkiThemeFresh } = await import('@/composables/theme');
+      const { result } = withSetup(() => useRotkiThemeFresh());
+      result.init(options);
+      await nextTick();
+      return result;
+    }
+
+    afterEach(() => {
+      localStorage.removeItem(storageKey);
+    });
+
+    it('keeps the mode the user saved when the app passes no mode', async () => {
+      localStorage.setItem(storageKey, ThemeMode.dark);
+
+      const result = await load({});
+
+      expect(get(result.store)).toBe(ThemeMode.dark);
+      expect(get(result.isDark)).toBe(true);
+      expect(localStorage.getItem(storageKey)).toBe(ThemeMode.dark);
+    });
+
+    it('starts on auto when nothing is saved and the app passes no mode', async () => {
+      const result = await load({});
+
+      expect(get(result.store)).toBe(ThemeMode.auto);
+      expect(get(result.isAutoControlled)).toBe(true);
+    });
+
+    it('uses the mode the app passes over the saved one', async () => {
+      localStorage.setItem(storageKey, ThemeMode.dark);
+
+      const result = await load({ mode: ThemeMode.light });
+
+      expect(get(result.store)).toBe(ThemeMode.light);
+      expect(get(result.isLight)).toBe(true);
     });
   });
 });

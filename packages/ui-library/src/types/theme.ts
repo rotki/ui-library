@@ -26,6 +26,10 @@ export interface ThemeConfig {
 }
 
 export interface InitThemeOptions {
+  /**
+   * The mode to start in, replacing the one the user saved. Leave it out to
+   * keep the saved mode, or auto when nothing is saved.
+   */
   mode?: ThemeMode;
   config?: ThemeConfig;
   icons?: GeneratedIcon[];

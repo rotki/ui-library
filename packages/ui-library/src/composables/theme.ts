@@ -88,13 +88,16 @@ export const useRotkiTheme = createSharedComposable<() => ThemeContent>(() => {
   };
 
   /**
-   * Sets the theme up. Call once, from the app's entry point.
+   * Sets the theme up. Call once, from the app's entry point. It writes a mode
+   * only when the app passes one: writing a default would replace the mode the
+   * user saved on every page load.
    *
-   * @param options - the starting mode and palettes; each falls back to its
-   * default when left out
+   * @param options - the palettes, and a mode only if the app picks it; without
+   * one, the mode the user saved stays (auto when nothing is saved)
    */
   const init = (options: InitThemeOptions): void => {
-    switchThemeScheme(options.mode ?? ThemeMode.auto);
+    if (options.mode)
+      switchThemeScheme(options.mode);
     setThemeConfig(options.config ?? { ...defaultTheme });
   };
 
